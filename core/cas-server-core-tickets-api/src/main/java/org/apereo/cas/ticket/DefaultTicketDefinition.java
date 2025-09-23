@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.apache.commons.lang3.builder.CompareToBuilder;
+import jakarta.annotation.Nonnull;
+import java.io.Serial;
+import java.util.Comparator;
 
 /**
  * This is {@link DefaultTicketDefinition}.
@@ -20,6 +22,9 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 @RequiredArgsConstructor
 public class DefaultTicketDefinition implements TicketDefinition {
 
+    @Serial
+    private static final long serialVersionUID = 1607439557834230284L;
+
     private final Class<? extends Ticket> implementationClass;
 
     private final Class<? extends Ticket> apiClass;
@@ -31,11 +36,11 @@ public class DefaultTicketDefinition implements TicketDefinition {
     private final int order;
 
     @Override
-    public int compareTo(final TicketDefinition o) {
-        return new CompareToBuilder()
-            .append(this.prefix, o.getPrefix())
-            .append(this.implementationClass, o.getImplementationClass())
-            .append(this.apiClass, o.getApiClass())
-            .build();
+    public int compareTo(@Nonnull final TicketDefinition definition) {
+        return Comparator
+            .comparing(TicketDefinition::getPrefix)
+            .thenComparing(TicketDefinition::getImplementationClass, Comparator.comparing(Class::getName))
+            .thenComparing(TicketDefinition::getApiClass, Comparator.comparing(Class::getName))
+            .compare(this, definition);
     }
 }

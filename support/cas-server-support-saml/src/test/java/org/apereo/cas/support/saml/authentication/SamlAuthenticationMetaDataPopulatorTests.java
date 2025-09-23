@@ -26,12 +26,12 @@ class SamlAuthenticationMetaDataPopulatorTests {
     private SamlAuthenticationMetaDataPopulator populator;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         this.populator = new SamlAuthenticationMetaDataPopulator();
     }
 
     @Test
-    void verifyAuthenticationTypeFound() throws Throwable {
+    void verifyAuthenticationTypeFound() {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         this.populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
@@ -42,7 +42,7 @@ class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    void verifyAuthenticationTypeFoundByDefault() throws Throwable {
+    void verifyAuthenticationTypeFoundByDefault() {
         val credentials = new CustomCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         this.populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
@@ -51,7 +51,7 @@ class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    void verifyAuthenticationTypeFoundCustom() throws Throwable {
+    void verifyAuthenticationTypeFoundCustom() {
         val credentials = new CustomCredential();
 
         val added = new HashMap<String, String>();

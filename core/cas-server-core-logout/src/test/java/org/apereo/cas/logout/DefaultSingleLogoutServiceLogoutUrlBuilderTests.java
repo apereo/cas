@@ -7,11 +7,13 @@ import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("Logout")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = CasCoreLogoutAutoConfigurationTests.SharedTestConfiguration.class)
 class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     @Autowired
@@ -43,7 +46,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    void verifyLogoutUrlByService() throws Throwable {
+    void verifyLogoutUrlByService() {
         val registeredService = getRegisteredService("https://www.google.com");
         registeredService.setLogoutUrl("http://www.example.com/logout");
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
@@ -61,7 +64,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    void verifyLogoutUrlUnknownUrlProtocol() throws Throwable {
+    void verifyLogoutUrlUnknownUrlProtocol() {
         val registeredService = getRegisteredService(".+");
         registeredService.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
@@ -70,7 +73,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    void verifyLocalLogoutUrlWithLocalUrlNotAllowed() throws Throwable {
+    void verifyLocalLogoutUrlWithLocalUrlNotAllowed() {
         val svc = getRegisteredService(".+");
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
@@ -106,7 +109,7 @@ class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    void verifyLocalLogoutUrlWithInvalidRegExValidationAndLocalUrlNotAllowed() throws Throwable {
+    void verifyLocalLogoutUrlWithInvalidRegExValidationAndLocalUrlNotAllowed() {
         val svc = getRegisteredService(".+");
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false, "\\d*", true);

@@ -30,7 +30,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].trust-store-type=JKS",
     "cas.authn.ldap[0].trust-manager=ANY",
     "cas.authn.ldap[0].trust-store-password=changeit",
-    "cas.authn.ldap[0].hostname-verifier=default"
+    "cas.authn.ldap[0].hostname-verifier=ANY"
 })
 @EnabledIfListeningOnPort(port = 10390)
 @Tag("ActiveDirectory")

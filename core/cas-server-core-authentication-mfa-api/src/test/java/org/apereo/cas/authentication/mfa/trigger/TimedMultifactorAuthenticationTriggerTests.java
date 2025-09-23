@@ -5,16 +5,11 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.TimeBasedAuthenticationProperties;
-
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-
+import org.springframework.context.support.StaticApplicationContext;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -25,11 +20,9 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("MFATrigger")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
-    @Order(2)
-    void verifyUndefined() throws Throwable {
+    void verifyUndefined() {
         val props = new CasConfigurationProperties();
         var trigger = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
         var result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
@@ -41,8 +34,7 @@ class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenti
     }
 
     @Test
-    @Order(3)
-    void verifyProvider() throws Throwable {
+    void verifyProvider() {
         val props = new CasConfigurationProperties();
         val timeProps = new TimeBasedAuthenticationProperties();
         timeProps.setProviderId(TestMultifactorAuthenticationProvider.ID);
@@ -62,11 +54,13 @@ class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenti
     }
 
     @Test
-    @Tag("DisableProviderRegistration")
-    @Order(1)
-    void verifyNoProviders() throws Throwable {
+    void verifyNoProviders() {
         val props = new CasConfigurationProperties();
-        val trigger = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
+
+        val appContext = new StaticApplicationContext();
+        appContext.refresh();
+
+        val trigger = new TimedMultifactorAuthenticationTrigger(props, appContext);
         val timeProps = new TimeBasedAuthenticationProperties();
         timeProps.setProviderId(TestMultifactorAuthenticationProvider.ID);
         timeProps.setOnOrAfterHour(2);

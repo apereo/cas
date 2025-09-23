@@ -7,7 +7,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -15,19 +14,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.AbstractMap;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -58,7 +52,7 @@ class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests
 
     private static Map<String, List<String>> splitQuery(final String fragment) {
         if (StringUtils.isBlank(fragment)) {
-            return new HashMap<>(0);
+            return new HashMap<>();
         }
         return Arrays
             .stream(fragment.split("&"))
@@ -84,8 +78,8 @@ class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests
 
         val service = RegisteredServiceTestUtils.getService("example");
         val attributes = new HashMap<String, List<Object>>();
-        attributes.put(OAuth20Constants.STATE, Collections.singletonList(STATE));
-        attributes.put(OAuth20Constants.NONCE, Collections.singletonList(NONCE));
+        attributes.put(OAuth20Constants.STATE, List.of(STATE));
+        attributes.put(OAuth20Constants.NONCE, List.of(NONCE));
 
         val holder = AccessTokenRequestContext
             .builder()
@@ -106,7 +100,7 @@ class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests
         val redirectUrl = ((AbstractUrlBasedView) modelAndView.getView()).getUrl();
         val params = splitQuery(redirectUrl.substring(redirectUrl.indexOf('#') + 1));
 
-        verifyParam(params, OAuth20Constants.STATE, URLEncoder.encode(STATE, StandardCharsets.UTF_8));
-        verifyParam(params, OAuth20Constants.NONCE, URLEncoder.encode(NONCE, StandardCharsets.UTF_8));
+        verifyParam(params, OAuth20Constants.STATE, STATE);
+        verifyParam(params, OAuth20Constants.NONCE, NONCE);
     }
 }

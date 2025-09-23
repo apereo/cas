@@ -1,12 +1,12 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHolder;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Response;
@@ -24,6 +24,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -36,14 +37,17 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.WWWFormCodec;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.engine.Flow;
@@ -56,7 +60,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -79,6 +82,10 @@ public class WebUtils {
      * Flow attribute to indicate surrogate authn is requested..
      */
     public static final String REQUEST_SURROGATE_ACCOUNT_ATTRIBUTE = "requestSurrogateAccount";
+    /**
+     * Parameter to indicate logout request is confirmed.
+     */
+    public static final String REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED = "LogoutRequestConfirmed";
 
     /**
      * Ticket-granting ticket id parameter used in various flow scopes.
@@ -134,7 +141,7 @@ public class WebUtils {
      * @return the http servlet request
      */
     public static HttpServletRequest getHttpServletRequestFromExternalWebflowContext() {
-        val servletExternalContext = (ExternalContext) ExternalContextHolder.getExternalContext();
+        val servletExternalContext = ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletRequest) servletExternalContext.getNativeRequest();
         }
@@ -158,7 +165,7 @@ public class WebUtils {
      * @return the http servlet response
      */
     public static HttpServletResponse getHttpServletResponseFromExternalWebflowContext() {
-        val servletExternalContext = (ExternalContext) ExternalContextHolder.getExternalContext();
+        val servletExternalContext = ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletResponse) servletExternalContext.getNativeResponse();
         }
@@ -404,7 +411,7 @@ public class WebUtils {
      * @return warning cookie value, if present.
      */
     public static boolean getWarningCookie(final RequestContext context) {
-        val val = ObjectUtils.defaultIfNull(context.getFlowScope().get("warnCookieValue"), Boolean.FALSE.toString()).toString();
+        val val = ObjectUtils.getIfNull(context.getFlowScope().get("warnCookieValue"), Boolean.FALSE.toString()).toString();
         return Boolean.parseBoolean(val);
     }
 
@@ -453,7 +460,7 @@ public class WebUtils {
      * Gets credential from the context.
      *
      * @param context the context
-     * @return the credential, or null if it cant be found in the context or if it has no id.
+     * @return the credential, or null if it can't be found in the context or if it has no id.
      */
     public static Credential getCredential(final RequestContext context) {
         val cFromRequest = (Credential) context.getRequestScope().get(PARAMETER_CREDENTIAL);
@@ -529,13 +536,13 @@ public class WebUtils {
      * @return true if the cookie value is present
      */
     public static boolean isAuthenticatingAtPublicWorkstation(final RequestContext ctx) {
-        if (ctx.getFlowScope().contains(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION)) {
+        val foundParameter = ctx.getFlowScope().contains(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION);
+        if (foundParameter && BooleanUtils.toBoolean(ctx.getFlowScope().getBoolean(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION))) {
             LOGGER.debug("Public workstation flag detected. SSO session will be considered renewed.");
             return true;
         }
         return false;
     }
-
 
     /**
      * Put public workstation into the flow if request parameter present.
@@ -543,7 +550,8 @@ public class WebUtils {
      * @param context the context
      */
     public static void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
-        if (context.getRequestParameters().contains(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION)) {
+        val foundParameter = context.getRequestParameters().contains(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION);
+        if (foundParameter && context.getRequestParameters().getBoolean(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION)) {
             context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION, Boolean.TRUE);
         }
     }
@@ -557,9 +565,11 @@ public class WebUtils {
     public static void putWarnCookieIfRequestParameterPresent(final CasCookieBuilder warnCookieGenerator, final RequestContext context) {
         if (warnCookieGenerator != null) {
             LOGGER.trace("Evaluating request to determine if warning cookie should be generated");
-            if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
+            val foundParameter = context.getRequestParameters().contains(CasWebflowConstants.ATTRIBUTE_WARN_ON_REDIRECT);
+            if (foundParameter && context.getRequestParameters().getBoolean(CasWebflowConstants.ATTRIBUTE_WARN_ON_REDIRECT)) {
                 val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-                warnCookieGenerator.addCookie(response, "true");
+                val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+                warnCookieGenerator.addCookie(request, response, "true");
             }
         } else {
             LOGGER.trace("No warning cookie generator is defined");
@@ -573,7 +583,8 @@ public class WebUtils {
      * @param requestContext the ctx
      */
     public static void putAuthentication(final Authentication authentication, final RequestContext requestContext) {
-        requestContext.getConversationScope().put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
+        putAuthentication(authentication, requestContext.getConversationScope());
+        putAuthentication(authentication, requestContext.getFlowScope());
     }
 
     /**
@@ -589,13 +600,33 @@ public class WebUtils {
     }
 
     /**
+     * Put authentication.
+     *
+     * @param authentication the authentication
+     * @param scope          the scope
+     */
+    public static void putAuthentication(final Authentication authentication, final MutableAttributeMap scope) {
+        scope.put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
+    }
+
+    /**
      * Gets authentication from conversation scope.
      *
      * @param ctx the ctx
      * @return the authentication
      */
     public static Authentication getAuthentication(final RequestContext ctx) {
-        return ctx.getConversationScope().get(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, Authentication.class);
+        return getAuthentication(ctx.getConversationScope());
+    }
+
+    /**
+     * Gets authentication.
+     *
+     * @param ctx the ctx
+     * @return the authentication
+     */
+    public static Authentication getAuthentication(final MutableAttributeMap<Object> ctx) {
+        return ctx.get(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, Authentication.class);
     }
 
     /**
@@ -759,7 +790,7 @@ public class WebUtils {
     public static void putRecaptchaPropertiesFlowScope(final RequestContext context, final GoogleRecaptchaProperties googleRecaptcha) {
         val flowScope = context.getFlowScope();
         if (googleRecaptcha.isEnabled()) {
-            flowScope.put("recaptchaSiteKey", googleRecaptcha.getSiteKey());
+            flowScope.put("recaptchaSiteKey", SpringExpressionLanguageValueResolver.getInstance().resolve(googleRecaptcha.getSiteKey()));
             flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
             flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
             flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase(Locale.ENGLISH));
@@ -774,7 +805,7 @@ public class WebUtils {
      */
     public static String getRecaptchaSiteKey(final RequestContext context) {
         val flowScope = context.getFlowScope();
-        return flowScope.get("recaptchaSiteKey", String.class);
+        return SpringExpressionLanguageValueResolver.getInstance().resolve(flowScope.get("recaptchaSiteKey", String.class));
     }
 
     /**
@@ -931,49 +962,6 @@ public class WebUtils {
         return context.getFlowScope().getBoolean("rememberMeAuthenticationEnabled", Boolean.FALSE);
     }
 
-    /**
-     * Gets multifactor authentication trust record.
-     *
-     * @param <T>     the type parameter
-     * @param context the context
-     * @param clazz   the clazz
-     * @return the multifactor authentication trust record
-     */
-    public static <T> Optional<T> getMultifactorAuthenticationTrustRecord(final RequestContext context, final Class<T> clazz) {
-        return Optional.ofNullable(context.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, clazz));
-    }
-
-    /**
-     * Put multifactor authentication trust record.
-     *
-     * @param context the context
-     * @param object  the object
-     */
-    public static void putMultifactorAuthenticationTrustRecord(final RequestContext context, final Serializable object) {
-        context.getFlowScope().put(CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, object);
-    }
-
-    /**
-     * Put resolved multifactor authentication providers into scope.
-     *
-     * @param context the context
-     * @param value   the value
-     */
-    public static void putResolvedMultifactorAuthenticationProviders(final RequestContext context,
-                                                                     final Collection<MultifactorAuthenticationProvider> value) {
-        val providerIds = value.stream().map(MultifactorAuthenticationProvider::getId).collect(Collectors.toSet());
-        context.getConversationScope().put("resolvedMultifactorAuthenticationProviders", providerIds);
-    }
-
-    /**
-     * Gets resolved multifactor authentication providers.
-     *
-     * @param context the context
-     * @return the resolved multifactor authentication providers
-     */
-    public static Collection<String> getResolvedMultifactorAuthenticationProviders(final RequestContext context) {
-        return context.getConversationScope().get("resolvedMultifactorAuthenticationProviders", Collection.class);
-    }
 
     /**
      * Sets service user interface metadata.
@@ -1062,7 +1050,10 @@ public class WebUtils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final String view, final Throwable e) {
-        val mv = new ModelAndView(view, CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, e));
+        val rootCause = (e instanceof final RuntimeException er && er.getCause() != null)
+            ? ExceptionUtils.getRootCause(e)
+            : e;
+        val mv = new ModelAndView(view, CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, rootCause));
         mv.setStatus(HttpStatus.BAD_REQUEST);
         LoggingUtils.error(LOGGER, e);
         return mv;
@@ -1071,13 +1062,13 @@ public class WebUtils {
     /**
      * Produce error view.
      *
-     * @param request    the request
-     * @param badRequest the bad request
-     * @param message    the message
+     * @param request the request
+     * @param status  the bad request
+     * @param message the message
      */
-    public static void produceErrorView(final HttpServletRequest request, final HttpStatus badRequest, final String message) {
-        request.setAttribute("status", HttpStatus.BAD_REQUEST.value());
-        request.setAttribute("error", HttpStatus.BAD_REQUEST.name());
+    public static void produceErrorView(final HttpServletRequest request, final HttpStatus status, final String message) {
+        request.setAttribute("status", status.value());
+        request.setAttribute("error", status.name());
         request.setAttribute("message", message);
     }
 
@@ -1098,9 +1089,8 @@ public class WebUtils {
      */
     public static Authentication getInProgressAuthentication() {
         val context = RequestContextHolder.getRequestContext();
-        return Optional.ofNullable(context).map(WebUtils::getAuthentication).orElse(null);
+        return Optional.ofNullable(context).map(WebUtils::getAuthentication).orElseGet(AuthenticationHolder::getCurrentAuthentication);
     }
-
 
     /**
      * Put request surrogate authentication.
@@ -1391,120 +1381,6 @@ public class WebUtils {
     }
 
     /**
-     * Add the mfa provider id into flow scope.
-     *
-     * @param context  request context
-     * @param provider the mfa provider
-     */
-    public static void putMultifactorAuthenticationProvider(final RequestContext context, final MultifactorAuthenticationProvider provider) {
-        context.getFlowScope().put(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, provider.getId());
-    }
-
-    /**
-     * Get the mfa provider id from flow scope.
-     *
-     * @param context request context
-     * @return provider id
-     */
-    public static String getMultifactorAuthenticationProvider(final RequestContext context) {
-        return context.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, String.class);
-    }
-
-    /**
-     * Put selectable multifactor authentication providers.
-     *
-     * @param requestContext the request context
-     * @param mfaProviders   the mfa providers
-     */
-    public static void putSelectableMultifactorAuthenticationProviders(final RequestContext requestContext, final List<String> mfaProviders) {
-        requestContext.getViewScope().put("mfaSelectableProviders", mfaProviders);
-    }
-
-    /**
-     * Gets selectable multifactor authentication providers.
-     *
-     * @param requestContext the request context
-     * @return the selectable multifactor authentication providers
-     */
-    public static List<String> getSelectableMultifactorAuthenticationProviders(final RequestContext requestContext) {
-        return requestContext.getViewScope().get("mfaSelectableProviders", List.class);
-    }
-
-    /**
-     * Put one time token account.
-     *
-     * @param requestContext the request context
-     * @param account        the account
-     */
-    public static void putOneTimeTokenAccount(final RequestContext requestContext, final OneTimeTokenAccount account) {
-        requestContext.getFlowScope().put("registeredDevice", account);
-    }
-
-    /**
-     * Put one time token accounts.
-     *
-     * @param requestContext the request context
-     * @param accounts       the accounts
-     */
-    public static void putOneTimeTokenAccounts(final RequestContext requestContext, final Collection accounts) {
-        requestContext.getFlowScope().put("registeredDevices", accounts);
-    }
-
-    /**
-     * Gets one time token accounts.
-     *
-     * @param requestContext the request context
-     * @return the one time token accounts
-     */
-    public static Collection getOneTimeTokenAccounts(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("registeredDevices", Collection.class);
-    }
-
-    /**
-     * Gets one time token account.
-     *
-     * @param <T>            the type parameter
-     * @param requestContext the request context
-     * @param clazz          the clazz
-     * @return the one time token account
-     */
-    public static <T extends OneTimeTokenAccount> T getOneTimeTokenAccount(final RequestContext requestContext, final Class<T> clazz) {
-        return requestContext.getFlowScope().get("registeredDevice", clazz);
-    }
-
-
-    /**
-     * Put google authenticator multiple device registration enabled.
-     *
-     * @param requestContext the request context
-     * @param enabled        the enabled
-     */
-    public static void putGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext,
-                                                                               final boolean enabled) {
-        requestContext.getFlowScope().put("gauthMultipleDeviceRegistrationEnabled", enabled);
-    }
-
-    /**
-     * Is google authenticator multiple device registration enabled?
-     *
-     * @param requestContext the request context
-     * @return true /false
-     */
-    public static Boolean isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("gauthMultipleDeviceRegistrationEnabled", Boolean.class);
-    }
-
-    /**
-     * Put yubikey multiple device registration enabled.
-     *
-     * @param requestContext the request context
-     * @param enabled        the enabled
-     */
-    public static void putYubiKeyMultipleDeviceRegistrationEnabled(final RequestContext requestContext, final boolean enabled) {
-        requestContext.getFlowScope().put("yubikeyMultipleDeviceRegistrationEnabled", enabled);
-    }
-
-    /**
      * Put single logout request.
      *
      * @param request       the request
@@ -1605,37 +1481,6 @@ public class WebUtils {
         return requestContext.getFlowScope().get("recaptchaPasswordManagementEnabled", Boolean.class);
     }
 
-    /**
-     * Put simple multifactor authentication token.
-     *
-     * @param requestContext the request context
-     * @param token          the token
-     */
-    public static void putSimpleMultifactorAuthenticationToken(final RequestContext requestContext, final Ticket token) {
-        requestContext.getFlowScope().put("simpleMultifactorAuthenticationToken", token);
-    }
-
-    /**
-     * Remove simple multifactor authentication token.
-     *
-     * @param requestContext the request context
-     */
-    public static void removeSimpleMultifactorAuthenticationToken(final RequestContext requestContext) {
-        requestContext.getFlowScope().remove("simpleMultifactorAuthenticationToken");
-    }
-
-    /**
-     * Gets simple multifactor authentication token.
-     *
-     * @param <T>            the type parameter
-     * @param requestContext the request context
-     * @param clazz          the clazz
-     * @return the simple multifactor authentication token
-     */
-    public static <T extends Ticket> T getSimpleMultifactorAuthenticationToken(final RequestContext requestContext,
-                                                                               final Class<T> clazz) {
-        return requestContext.getFlowScope().get("simpleMultifactorAuthenticationToken", clazz);
-    }
 
     /**
      * Resolve registered service.
@@ -1810,25 +1655,6 @@ public class WebUtils {
     }
 
     /**
-     * Remove interrupt authentication flow finalized.
-     *
-     * @param requestContext the request context
-     */
-    public static void removeInterruptAuthenticationFlowFinalized(final RequestContext requestContext) {
-        requestContext.getRequestScope().remove("authenticationFlowInterruptFinalized");
-    }
-
-    /**
-     * Gets multifactor authentication parent credential.
-     *
-     * @param requestContext the request context
-     * @return the multifactor authentication parent credential
-     */
-    public static Credential getMultifactorAuthenticationParentCredential(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("parentCredential", Credential.class);
-    }
-
-    /**
      * Put ws federation delegated clients.
      *
      * @param context the context
@@ -1848,48 +1674,6 @@ public class WebUtils {
      */
     public static <T extends Serializable> List<T> getWsFederationDelegatedClients(final RequestContext context, final Class<T> clazz) {
         return (List<T>) context.getFlowScope().get("wsfedUrls", List.class);
-    }
-
-    /**
-     * Put multifactor authentication registered devices.
-     *
-     * @param requestContext the request context
-     * @param accounts       the accounts
-     */
-    public static void putMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext, final List accounts) {
-        val list = ObjectUtils.defaultIfNull(getMultifactorAuthenticationRegisteredDevices(requestContext), new ArrayList<>());
-        list.addAll(accounts);
-        requestContext.getFlowScope().put("multifactorRegisteredAccounts", list);
-    }
-
-    /**
-     * Put multifactor authentication trusted devices.
-     *
-     * @param requestContext the request context
-     * @param accounts       the accounts
-     */
-    public static void putMultifactorAuthenticationTrustedDevices(final RequestContext requestContext, final List accounts) {
-        requestContext.getFlowScope().put("multifactorTrustedDevices", accounts);
-    }
-
-    /**
-     * Gets multifactor authentication trusted devices.
-     *
-     * @param requestContext the request context
-     * @return the multifactor authentication trusted devices
-     */
-    public List getMultifactorAuthenticationTrustedDevices(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("multifactorTrustedDevices", List.class);
-    }
-
-    /**
-     * Gets multifactor authentication registered devices.
-     *
-     * @param requestContext the request context
-     * @return the multifactor authentication registered devices
-     */
-    public List getMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("multifactorRegisteredAccounts", List.class);
     }
 
     /**
@@ -2012,9 +1796,8 @@ public class WebUtils {
      *
      * @param httpServletRequest the http servlet request
      * @return the browser storage
-     * @throws Exception the exception
      */
-    public static Optional<String> getBrowserStoragePayload(final HttpServletRequest httpServletRequest) throws Exception {
+    public static Optional<String> getBrowserStoragePayload(final HttpServletRequest httpServletRequest) {
         val parameters = getHttpRequestParametersFromRequestBody(httpServletRequest);
         FunctionUtils.doIfNotBlank(httpServletRequest.getParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE),
             value -> parameters.put(BrowserStorage.PARAMETER_BROWSER_STORAGE, value));
@@ -2075,7 +1858,8 @@ public class WebUtils {
      * @return the http request parameters from request body
      */
     public static Map<String, String> getHttpRequestParametersFromRequestBody(final HttpServletRequest httpServletRequest) {
-        if (HttpMethod.POST.matches(httpServletRequest.getMethod())) {
+        if (HttpMethod.POST.matches(httpServletRequest.getMethod())
+            && Strings.CI.equals(httpServletRequest.getContentType(), MediaType.APPLICATION_FORM_URLENCODED_VALUE)) {
             try (val is = httpServletRequest.getInputStream()) {
                 if (!is.isFinished()) {
                     val requestBody = IOUtils.toString(is, StandardCharsets.UTF_8);
@@ -2116,5 +1900,69 @@ public class WebUtils {
         return Optional.ofNullable(request.getParameter(name))
             .or(() -> Optional.ofNullable((String) request.getAttribute(name)))
             .filter(StringUtils::isNotBlank);
+    }
+
+    /**
+     * Track failed authentication attempts.
+     *
+     * @param requestContext the request context
+     */
+    public static void trackFailedAuthenticationAttempt(final RequestContext requestContext) {
+        val flowScope = requestContext.getFlowScope();
+        val attempts = flowScope.contains("authenticationFailureCount", Integer.class)
+            ? flowScope.get("authenticationFailureCount", Integer.class)
+            : 0;
+        flowScope.put("authenticationFailureCount", attempts + 1);
+    }
+
+    /**
+     * Gets authentication failure count.
+     *
+     * @param requestContext the request context
+     * @return the authentication failure count
+     */
+    public static Integer countFailedAuthenticationAttempts(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("authenticationFailureCount", Integer.class);
+    }
+
+    /**
+     * To model and view.
+     *
+     * @param status   the status
+     * @param viewName the view name
+     * @return the model and view
+     */
+    public static ModelAndView toModelAndView(final HttpStatus status, final String viewName) {
+        val mv = new ModelAndView();
+        mv.setStatus(HttpStatusCode.valueOf(status.value()));
+        mv.setViewName(viewName);
+        return mv;
+    }
+
+    /**
+     * Add warning message to context.
+     *
+     * @param context the context
+     * @param warning the warning
+     */
+    public static void addWarningMessageToContext(final MessageContext context, final MessageDescriptor warning) {
+        val builder = new MessageBuilder()
+            .warning()
+            .code(warning.getCode())
+            .defaultText(warning.getDefaultMessage())
+            .args((Object[]) warning.getParams());
+        context.addMessage(builder.build());
+    }
+
+    /**
+     * Is logout request confirmed?.
+     *
+     * @param requestContext the request context
+     * @return true/false
+     */
+    public static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        return request.getParameterMap().containsKey(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED)
+            && Boolean.parseBoolean(request.getParameter(REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED));
     }
 }

@@ -121,7 +121,7 @@ public class X509Properties implements CasFeatureModule, Serializable {
     /**
      * List of CRL resources to use for fetching.
      */
-    private List<String> crlResources = new ArrayList<>(0);
+    private List<String> crlResources = new ArrayList<>();
 
     /**
      * When CRLs are cached, indicate maximum number of elements kept in memory.

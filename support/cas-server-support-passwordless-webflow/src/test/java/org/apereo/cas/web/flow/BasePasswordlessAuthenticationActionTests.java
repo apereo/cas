@@ -19,16 +19,14 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPasswordlessAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 
@@ -38,12 +36,8 @@ import org.springframework.context.annotation.Bean;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    MockMvcAutoConfiguration.class,
-    ErrorMvcAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasDelegatedAuthenticationAutoConfiguration.class,
     CasCoreWebflowAutoConfiguration.class,
@@ -57,7 +51,7 @@ import org.springframework.context.annotation.Bean;
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
@@ -65,6 +59,7 @@ import org.springframework.context.annotation.Bean;
     CasPasswordlessAuthenticationAutoConfiguration.class,
     CasPasswordlessAuthenticationWebflowAutoConfiguration.class
 })
+@ExtendWith(CasTestExtension.class)
 public abstract class BasePasswordlessAuthenticationActionTests {
     @Autowired
     protected ConfigurableApplicationContext applicationContext;

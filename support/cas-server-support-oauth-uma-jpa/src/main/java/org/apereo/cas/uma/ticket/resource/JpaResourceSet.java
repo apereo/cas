@@ -1,7 +1,6 @@
 package org.apereo.cas.uma.ticket.resource;
 
 import lombok.Getter;
-import org.hibernate.annotations.GenericGenerator;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,7 +23,12 @@ public class JpaResourceSet extends ResourceSet {
     private static final long serialVersionUID = -592895072654246305L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private long id = -1;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @Override
+    public void setId(final long id) {
+        super.setId(id);
+        this.id = id;
+    }
 }

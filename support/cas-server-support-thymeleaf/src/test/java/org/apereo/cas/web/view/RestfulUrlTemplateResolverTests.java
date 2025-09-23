@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 class RestfulUrlTemplateResolverTests {
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         RequestContextHolder.resetRequestAttributes();
         setRequestAttributes();
     }

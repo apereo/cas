@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class DelegatingExpirationPolicyTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val policy = new BaseDelegatingExpirationPolicy() {
             @Serial
             private static final long serialVersionUID = -5896270899735612574L;
@@ -44,7 +44,6 @@ class DelegatingExpirationPolicyTests {
         assertTrue(policy.isExpired(ticketState));
         assertEquals(0, (long) policy.getTimeToLive(ticketState));
         assertEquals(0, (long) policy.getTimeToLive());
-        assertEquals(0, (long) policy.getTimeToIdle());
 
         ticketState = mock(TicketGrantingTicketAwareTicket.class);
         when(ticketState.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("expired"));

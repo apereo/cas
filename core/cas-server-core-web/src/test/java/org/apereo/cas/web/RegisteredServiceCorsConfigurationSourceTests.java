@@ -9,12 +9,14 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.support.RegisteredServiceCorsConfigurationSource;
+import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -32,11 +34,10 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Web")
+@ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class
-}, properties = {
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = RefreshAutoConfiguration.class, properties = {
     "cas.http-web-request.cors.allow-credentials=true",
     "cas.http-web-request.cors.allow-origins[0]=*",
     "cas.http-web-request.cors.allow-origin-patterns[0]=https://*.example.com",
@@ -51,7 +52,7 @@ class RegisteredServiceCorsConfigurationSourceTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyDefault() throws Throwable {
+    void verifyDefault() {
         val servicesManager = mock(ServicesManager.class);
         val argumentExtractor = mock(ArgumentExtractor.class);
         val source = new RegisteredServiceCorsConfigurationSource(casProperties,
@@ -71,7 +72,7 @@ class RegisteredServiceCorsConfigurationSourceTests {
     }
 
     @Test
-    void verifyService() throws Throwable {
+    void verifyService() {
         val props = new LinkedHashMap<String, RegisteredServiceProperty>();
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_ALLOW_CREDENTIALS.getPropertyName(),
             new DefaultRegisteredServiceProperty("false"));
@@ -95,7 +96,8 @@ class RegisteredServiceCorsConfigurationSourceTests {
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
 
         val argumentExtractor = mock(ArgumentExtractor.class);
-        when(argumentExtractor.extractService(any())).thenReturn(RegisteredServiceTestUtils.getService());
+        val service = RegisteredServiceTestUtils.getService();
+        when(argumentExtractor.extractService(any())).thenReturn(service);
 
         val source = new RegisteredServiceCorsConfigurationSource(casProperties,
             servicesManager, argumentExtractor);

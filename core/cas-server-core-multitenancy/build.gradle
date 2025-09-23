@@ -1,0 +1,57 @@
+description = "Apereo CAS Multitenancy Core"
+dependencies {
+    implementation libraries.pac4jcore
+    implementation libraries.nimbus
+    implementation libraries.jose4j
+    implementation libraries.springsecurityconfig
+    implementation libraries.springsecurityweb
+
+    api project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api")
+    api project(":api:cas-server-core-api-audit")
+    api project(":api:cas-server-core-api-cookie")
+    api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-multitenancy")
+
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-services-registry")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-validation-api")
+    implementation project(":core:cas-server-core-logout-api")
+
+    testImplementation libraries.springboottomcat
+
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
+    testImplementation project(":core:cas-server-core-notifications")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-scripting")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
+
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+
+}

@@ -1,17 +1,19 @@
 package org.apereo.cas.util.spring;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -30,9 +32,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("Simple")
+@ExtendWith(CasTestExtension.class)
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
+    AopAutoConfiguration.class,
     RefreshableHandlerInterceptorTests.RefreshableHandlerInterceptorTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -42,7 +45,7 @@ class RefreshableHandlerInterceptorTests {
     private ObjectProvider<HandlerInterceptor> localeChangeHandlerInterceptor;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
 
@@ -58,7 +61,7 @@ class RefreshableHandlerInterceptorTests {
     }
 
     @Test
-    void verifySupplierOperation() throws Throwable {
+    void verifySupplierOperation() {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
 

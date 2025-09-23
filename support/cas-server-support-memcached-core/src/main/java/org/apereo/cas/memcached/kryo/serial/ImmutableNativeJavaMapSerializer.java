@@ -15,7 +15,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-public class ImmutableNativeJavaMapSerializer extends Serializer<Map<Object, ? extends Object>> {
+public class ImmutableNativeJavaMapSerializer extends Serializer<Map<Object, ?>> {
 
     public ImmutableNativeJavaMapSerializer() {
         super(true, true);

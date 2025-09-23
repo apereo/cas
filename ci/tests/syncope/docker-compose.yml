@@ -1,5 +1,3 @@
-version: '3.3'
-
 services:
   db:
     image: postgres:latest
@@ -12,7 +10,7 @@ services:
   syncope:
     depends_on:
       - db
-    image: apache/syncope:3.0.6
+    image: apache/syncope:4.1.0-SNAPSHOT
     ports:
       - "18080:8080"
     restart: always
@@ -28,5 +26,20 @@ services:
       KEYMASTER_USERNAME: syncope
       KEYMASTER_PASSWORD: syncope
       SERVICE_DISCOVERY_ADDRESS: http://syncope:8080/syncope/rest/
+      ANONYMOUS_USER: syncope
+      ANONYMOUS_KEY: syncope
+  syncope-console:
+    depends_on:
+      - syncope
+    image: apache/syncope-console:4.1.0-SNAPSHOT
+    ports:
+      - "28080:8080"
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: docker,postgresql
+      KEYMASTER_ADDRESS: http://syncope:8080/syncope/rest/keymaster
+      KEYMASTER_USERNAME: syncope
+      KEYMASTER_PASSWORD: syncope
+      SERVICE_DISCOVERY_ADDRESS: http://syncope-console:8080/syncope-console/
       ANONYMOUS_USER: syncope
       ANONYMOUS_KEY: syncope

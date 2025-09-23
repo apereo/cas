@@ -10,17 +10,15 @@ import org.apereo.cas.authentication.principal.Service;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public interface TicketGrantingTicketFactory extends TicketFactory {
+public interface TicketGrantingTicketFactory<T extends TicketGrantingTicket> extends TicketFactory {
 
     /**
      * Create the ticket object.
      *
-     * @param <T>            the type parameter
      * @param authentication the authentication
      * @param service        the service
-     * @param clazz          the clazz
      * @return the t
      * @throws Throwable the throwable
      */
-    <T extends TicketGrantingTicket> T create(Authentication authentication, Service service, Class<T> clazz) throws Throwable;
+    T create(Authentication authentication, Service service) throws Throwable;
 }

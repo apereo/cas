@@ -1,8 +1,9 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.NamedObject;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
+import org.springframework.core.Ordered;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -19,7 +20,7 @@ import java.util.stream.Stream;
  * @author Dmitriy Kopylenko
  * @since 3.1
  */
-public interface ServiceRegistry {
+public interface ServiceRegistry extends NamedObject, Ordered {
 
     /**
      * Bean name.
@@ -120,7 +121,7 @@ public interface ServiceRegistry {
 
         if (!clazz.isAssignableFrom(service.getClass())) {
             throw new ClassCastException("Object [" + service + " is of type " + service.getClass()
-                                         + " when we were expecting " + clazz);
+                + " when we were expecting " + clazz);
         }
         return clazz.cast(service);
     }
@@ -183,7 +184,7 @@ public interface ServiceRegistry {
 
         if (!clazz.isAssignableFrom(service.getClass())) {
             throw new ClassCastException("Object [" + service + " is of type " + service.getClass()
-                                         + " when we were expecting " + clazz);
+                + " when we were expecting " + clazz);
         }
         return clazz.cast(service);
     }
@@ -212,13 +213,8 @@ public interface ServiceRegistry {
         return load().size();
     }
 
-    /**
-     * Returns the friendly name of this registry.
-     *
-     * @return the name.
-     * @since 5.2.0
-     */
-    default String getName() {
-        return this.getClass().getSimpleName();
+    @Override
+    default int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
     }
 }

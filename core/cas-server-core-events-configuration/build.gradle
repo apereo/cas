@@ -9,7 +9,10 @@ ext {
 dependencies {
     api project(":api:cas-server-core-api-configuration-model")
 
+    implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-events")
+    
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

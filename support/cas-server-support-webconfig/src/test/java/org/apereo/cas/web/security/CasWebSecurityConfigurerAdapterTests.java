@@ -1,17 +1,17 @@
 package org.apereo.cas.web.security;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.context.web.WebAppConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseWebSecurityTests.SharedTestConfiguration.class,
     properties = {
-        "management.endpoint.info.enabled=true",
-        "management.endpoint.beans.enabled=true",
+        "management.endpoint.info.access=UNRESTRICTED",
+        "management.endpoint.beans.access=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*",
 
         "cas.monitor.endpoints.jaas.login-config=classpath:/jaas-endpoints.conf",
@@ -59,6 +59,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @WebAppConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("LdapAuthentication")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 10389)
 class CasWebSecurityConfigurerAdapterTests {
 
@@ -67,7 +68,7 @@ class CasWebSecurityConfigurerAdapterTests {
     private SecurityFilterChain casWebSecurityConfigurerAdapter;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(casWebSecurityConfigurerAdapter);
     }
 }

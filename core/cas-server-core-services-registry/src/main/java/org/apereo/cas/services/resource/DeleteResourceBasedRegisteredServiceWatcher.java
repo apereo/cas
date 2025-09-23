@@ -27,7 +27,7 @@ public class DeleteResourceBasedRegisteredServiceWatcher extends BaseResourceBas
     @Override
     public void accept(final File file) {
         val fileName = file.getName();
-        if (!fileName.startsWith(".") && Arrays.stream(serviceRegistryDao.getExtensions()).anyMatch(fileName::endsWith)) {
+        if (!(!fileName.isEmpty() && fileName.charAt(0) == '.') && Arrays.stream(serviceRegistryDao.getExtensions()).anyMatch(fileName::endsWith)) {
             LOGGER.debug("Service definition [{}] was deleted. Reloading cache...", file);
             val service = serviceRegistryDao.getRegisteredServiceFromFile(file);
             val clientInfo = ClientInfoHolder.getClientInfo();

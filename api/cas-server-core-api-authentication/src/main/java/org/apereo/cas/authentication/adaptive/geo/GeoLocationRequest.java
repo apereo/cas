@@ -37,6 +37,8 @@ public class GeoLocationRequest implements Serializable {
 
     private String timestamp;
 
+    private String address;
+
     public GeoLocationRequest(final double latitude, final double longitude) {
         this.latitude = String.valueOf(latitude);
         this.longitude = String.valueOf(longitude);

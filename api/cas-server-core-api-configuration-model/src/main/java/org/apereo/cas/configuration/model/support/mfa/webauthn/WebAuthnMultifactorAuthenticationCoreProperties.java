@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.mfa.webauthn;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("WebAuthnMultifactorAuthenticationCoreProperties")
 public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -919073482703977440L;
@@ -138,6 +136,15 @@ public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializ
      */
     private boolean multipleDeviceRegistrationEnabled;
 
+    /**
+     * When enabled, allows the user to a scan a QR code on an external device
+     * and authenticate later on the primary device. This is useful in scenarios
+     * where the primary authentication device is not registered with CAS
+     * and the user has a secondary device that is registered and does not wish
+     * to use the primary device to authenticate for security or other practical reasons.
+     */
+    private boolean qrCodeAuthenticationEnabled;
+    
     public WebAuthnMultifactorAuthenticationCoreProperties() {
         trustSource.getTrustedDeviceMetadata().setLocation(new ClassPathResource("webauthn-metadata.json"));
     }

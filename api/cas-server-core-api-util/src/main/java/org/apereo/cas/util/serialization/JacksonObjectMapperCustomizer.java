@@ -12,17 +12,7 @@ import java.util.Map;
  * @since 6.6.0
  */
 public interface JacksonObjectMapperCustomizer extends Ordered {
-
-    /**
-     * No-Op customizer.
-     *
-     * @return the customizer
-     */
-    static JacksonObjectMapperCustomizer noOp() {
-        return new JacksonObjectMapperCustomizer() {
-        };
-    }
-
+    
     /**
      * Get injectable values from this customer to ultimately
      * collect and stuff into the mapper itself.

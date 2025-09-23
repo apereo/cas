@@ -12,7 +12,7 @@ def authenticate(final Object... args) {
     if (credential.username == credential.toPassword()) {
         def principal = principalFactory.createPrincipal(credential.username)
         return new DefaultAuthenticationHandlerExecutionResult(authenticationHandler,
-                credential, principal, new ArrayList<>(0))
+                credential, principal, new ArrayList<>())
     }
     throw new FailedLoginException()
 }

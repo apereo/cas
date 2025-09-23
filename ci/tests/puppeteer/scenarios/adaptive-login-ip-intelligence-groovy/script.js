@@ -12,5 +12,5 @@ const cas = require("../../cas.js");
     await cas.sleep(2000);
     await cas.assertTextContent(page, "#content h2", "Authentication attempt is blocked.");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

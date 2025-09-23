@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
+import org.apereo.cas.util.NamedObject;
 
 import lombok.val;
 import org.springframework.core.Ordered;
@@ -20,7 +21,7 @@ import java.util.stream.Stream;
  * @author Scott Battaglia
  * @since 3.1
  */
-public interface ServicesManager extends Ordered {
+public interface ServicesManager extends Ordered, NamedObject {
     /**
      * Implementation bean name.
      */
@@ -31,7 +32,7 @@ public interface ServicesManager extends Ordered {
      *
      * @param toSave the services to import and save
      */
-    void save(Stream<RegisteredService> toSave);
+    void save(Stream<? extends RegisteredService> toSave);
 
     /**
      * Register a service with CAS, or update an existing an entry.
@@ -39,7 +40,9 @@ public interface ServicesManager extends Ordered {
      * @param registeredService the {@link RegisteredService} to update or add.
      * @return newly persisted {@link RegisteredService} instance
      */
-    RegisteredService save(RegisteredService registeredService);
+    default RegisteredService save(final RegisteredService registeredService) {
+        return save(registeredService, true);
+    }
 
     /**
      * Register a service with CAS, or update an existing an entry.
@@ -216,16 +219,7 @@ public interface ServicesManager extends Ordered {
     default long count() {
         return 0;
     }
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
-
+    
     /**
      * Returns true if this manager supports the type of service passed.
      *

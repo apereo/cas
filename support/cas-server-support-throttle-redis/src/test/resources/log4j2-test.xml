@@ -6,7 +6,7 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="error" additivity="false" />
+        <Logger name="org.apereo" level="error" />
         <Logger name="org.springframework.data.redis" level="error" />
         <Logger name="org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="off">
             <AppenderRef ref="console"/>

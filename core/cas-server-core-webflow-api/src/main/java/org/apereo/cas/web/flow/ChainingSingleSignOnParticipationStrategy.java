@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class ChainingSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
-    private final List<SingleSignOnParticipationStrategy> providers = new ArrayList<>(0);
+    private final List<SingleSignOnParticipationStrategy> providers = new ArrayList<>();
 
     /**
      * Add provider.

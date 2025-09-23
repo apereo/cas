@@ -10,7 +10,7 @@ accommodate and how lines of development are managed. CAS adopters can also expe
 for each release type. All new improvements, fixes, enhancements, and changes are weighed against
 the release strategy for consideration in future release.
 
-<div class="alert alert-warning"><strong>Stop Coding</strong><p>
+<div class="alert alert-warning">:warning: <strong>Stop Coding</strong><p>
 It is in your best interest to try and avoid making changes to the internals of the CAS software, to make future upgrades relatively easy and painless. The more you
  modify the inner workings of CAS to implement and deliver <i>custom</i> use cases, the more trouble it would be for the deployment down the road as you would 
  face configuration and API changes. Being a single parent is tough, so avoid carrying the maintenance burden solely on your own. Consider discussing and sharing

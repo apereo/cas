@@ -5,14 +5,12 @@ import org.apereo.cas.support.oauth.OAuth20ClaimTokenFormats;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.util.CollectionUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-
+import org.apache.commons.lang3.Strings;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +47,7 @@ public class UmaServerDiscoverySettings {
         OAuth20ClaimTokenFormats.JWT.getType());
 
     @JsonProperty("uma_profiles_supported")
-    private List<String> umaProfilesSupported = new ArrayList<>(0);
+    private List<String> umaProfilesSupported = new ArrayList<>();
 
     @JsonProperty("pat_grant_types_supported")
     private List<String> patGrantTypesSupported = CollectionUtils.wrapList(
@@ -65,26 +63,26 @@ public class UmaServerDiscoverySettings {
 
     @JsonProperty("token_endpoint")
     public String getTokenEndpoint() {
-        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.ACCESS_TOKEN_URL);
+        return Strings.CI.appendIfMissing(issuer, "/").concat(OAuth20Constants.ACCESS_TOKEN_URL);
     }
     
     @JsonProperty("requesting_party_claims_endpoint")
     public String getRequestingPartyClaimsEndpoint() {
-        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL);
+        return Strings.CI.appendIfMissing(issuer, "/").concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL);
     }
     
     @JsonProperty("resource_set_registration_endpoint")
     public String getResourceSetRegistrationEndpoint() {
-        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL);
+        return Strings.CI.appendIfMissing(issuer, "/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL);
     }
 
     @JsonProperty("permission_registration_endpoint")
     public String getPermissionRegistrationEndpoint() {
-        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.UMA_PERMISSION_URL);
+        return Strings.CI.appendIfMissing(issuer, "/").concat(OAuth20Constants.UMA_PERMISSION_URL);
     }
 
     @JsonProperty("rpt_endpoint")
     public String getAuthorizationRequestEndpoint() {
-        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL);
+        return Strings.CI.appendIfMissing(issuer, "/").concat(OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL);
     }
 }

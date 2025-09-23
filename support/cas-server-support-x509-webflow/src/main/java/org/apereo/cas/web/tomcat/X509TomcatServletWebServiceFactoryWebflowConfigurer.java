@@ -3,7 +3,6 @@ package org.apereo.cas.web.tomcat;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.X509TomcatServletFactoryInitialAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
-
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -18,10 +17,10 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 public class X509TomcatServletWebServiceFactoryWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public X509TomcatServletWebServiceFactoryWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+                                                               final FlowDefinitionRegistry flowDefinitionRegistry,
+                                                               final ConfigurableApplicationContext applicationContext,
+                                                               final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         setOrder(casProperties.getAuthn().getX509().getWebflow().getOrder());
     }
 

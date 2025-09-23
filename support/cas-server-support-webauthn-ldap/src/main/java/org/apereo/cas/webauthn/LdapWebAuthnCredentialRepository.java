@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -67,7 +68,7 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
                 .filter(Objects::nonNull)
                 .map(StringUtils::trim)
                 .filter(StringUtils::isNotBlank)
-                .map(record -> getCipherExecutor().decode(record))
+                .map(record -> FunctionUtils.doAndHandle(() -> getCipherExecutor().decode(record)))
                 .filter(Objects::nonNull)
                 .map(LdapWebAuthnCredentialRepository::mapFromJson)
                 .filter(Objects::nonNull)
@@ -88,7 +89,7 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
                 .filter(Objects::nonNull)
                 .map(StringUtils::trim)
                 .filter(StringUtils::isNotBlank)
-                .map(record -> getCipherExecutor().decode(record))
+                .map(record -> FunctionUtils.doAndHandle(() -> getCipherExecutor().decode(record)))
                 .filter(Objects::nonNull)
                 .map(LdapWebAuthnCredentialRepository::mapFromJson)
                 .filter(Objects::nonNull)
@@ -101,7 +102,7 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
     protected void update(final String username, final Collection<CredentialRegistration> givenRecords) {
         if (givenRecords.isEmpty()) {
             LOGGER.debug("No records are provided for [{}] so entry will be removed", username);
-            executeModifyOperation(new HashSet<>(0), Optional.ofNullable(locateLdapEntryFor(username)));
+            executeModifyOperation(new HashSet<>(), Optional.ofNullable(locateLdapEntryFor(username)));
         } else {
             val records = givenRecords.stream()
                 .map(record -> {
@@ -115,7 +116,9 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
                 .map(Unchecked.function(reg -> WebAuthnUtils.getObjectMapper().writeValueAsString(records)))
                 .map(reg -> getCipherExecutor().encode(reg))
                 .collect(Collectors.toSet());
-            executeModifyOperation(results, Optional.ofNullable(locateLdapEntryFor(username)));
+            if (!executeModifyOperation(results, Optional.ofNullable(locateLdapEntryFor(username)))) {
+                LOGGER.error("Failed to update records for [{}]", username);
+            }
         }
     }
 
@@ -182,6 +185,6 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

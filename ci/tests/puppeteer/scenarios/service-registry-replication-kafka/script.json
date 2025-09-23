@@ -1,13 +1,15 @@
 {
   "dependencies": "json-service-registry,service-registry-stream-kafka,reports",
-
+  "conditions": {
+    "docker": "true"
+  },
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "properties": [
     "--logging.level.org.apereo.cas=warn",
     "--logging.level.org.springframework.kafka=info",
     "--logging.level.org.apache.kafka=warn",
 
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=*",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
 

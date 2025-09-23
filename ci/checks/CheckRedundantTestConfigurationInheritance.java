@@ -18,10 +18,31 @@ import java.util.regex.Pattern;
 public class CheckRedundantTestConfigurationInheritance {
     public static void main(final String[] args) throws Exception {
         var patternBootTestClasses = Pattern.compile("@SpringBootTest\\(classes\\s*=\\s*\\{(.*?)\\}", Pattern.DOTALL);
+        var patternBootTestClass = Pattern.compile("@SpringBootTest\\(classes\\s*=\\s*(.*)");
         var importedTestClasses = Pattern.compile("@Import\\(\\{(.*?)\\}\\)", Pattern.DOTALL);
-
         checkPattern(args[0], patternBootTestClasses);
         checkDuplicateTestConfiguration(args[0], patternBootTestClasses, importedTestClasses);
+        checkCasTestExtension(args[0], patternBootTestClasses, patternBootTestClass);
+    }
+    
+    private static void checkCasTestExtension(final String arg, final Pattern... patternBootTestClasses) throws Exception {
+        var failBuild = new AtomicBoolean(false);
+        Files.walk(Paths.get(arg))
+            .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith("Tests.java"))
+            .forEach(file -> {
+                var text = readFile(file);
+                Arrays.stream(patternBootTestClasses)
+                    .forEach(pattern -> {
+                        var matcher = pattern.matcher(text);
+                        if (matcher.find() && !text.contains("CasTestExtension")) {
+                            print("Class %s must be annotated with @ExtendWith(CasTestExtension.class)", file.toFile().getName());
+                            failBuild.set(true);
+                        }
+                    });
+            });
+        if (failBuild.get()) {
+            System.exit(1);
+        }
     }
 
     protected static void checkDuplicateTestConfiguration(final String arg, final Pattern... patterns) throws Exception {
@@ -59,6 +80,7 @@ public class CheckRedundantTestConfigurationInheritance {
 
     private static void print(final String message, final Object... args) {
         //CHECKSTYLE:OFF
+        System.out.print("\uD83C\uDFC1 ");
         System.out.printf(message, args);
         System.out.println();
         //CHECKSTYLE:ON
@@ -80,8 +102,8 @@ public class CheckRedundantTestConfigurationInheritance {
         var failBuild = new AtomicBoolean(false);
         var parentClasses = new TreeMap<String, File>();
 
-        var abstractClazzPattern1 = Pattern.compile("public abstract class (\\w+)");
-        var abstractClazzPattern2 = Pattern.compile("public abstract static class (\\w+)");
+        var abstractClazzPattern1 = Pattern.compile("(public)* abstract class (\\w+)");
+        var abstractClazzPattern2 = Pattern.compile("(public)* abstract static class (\\w+)");
         Files.walk(Paths.get(arg))
             .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith("Tests.java"))
             .forEach(file -> {
@@ -89,12 +111,12 @@ public class CheckRedundantTestConfigurationInheritance {
 
                 var matcher = abstractClazzPattern1.matcher(text);
                 while (matcher.find()) {
-                    parentClasses.put(matcher.group(1), file.toFile());
+                    parentClasses.put(matcher.group(2), file.toFile());
                 }
 
                 matcher = abstractClazzPattern2.matcher(text);
                 while (matcher.find()) {
-                    parentClasses.put(matcher.group(1), file.toFile());
+                    parentClasses.put(matcher.group(2), file.toFile());
                 }
             });
 
@@ -109,7 +131,7 @@ public class CheckRedundantTestConfigurationInheritance {
                     if (matcher.find() && text.contains("@SpringBootTest")) {
                         var group = matcher.group(2);
                         if (!parentClasses.containsKey(group)) {
-                            print("Unable to find %s as a parent class", group);
+                            print("Unable to find %s as a parent class in %s", group, file);
                             System.exit(1);
                         }
                         var parent = parentClasses.get(group);

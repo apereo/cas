@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 clear
+
+chmod +x "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+${PWD}/ci/tests/httpbin/run-httpbin-server.sh
+
 ${PWD}/ci/tests/postgres/run-postgres-server.sh
 echo "Waiting for PostgreSQL database to get ready..."
 sleep 10

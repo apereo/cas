@@ -17,10 +17,10 @@ import org.apache.commons.io.IOUtils;
 import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.ClassPathResource;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -54,7 +54,7 @@ public class InMemoryTestLdapDirectoryServer implements AutoCloseable, Disposabl
             config.addAdditionalBindCredentials(p.getProperty("ldap.managerDn"), p.getProperty("ldap.managerPassword"));
 
             LOGGER.debug("Loading keystore file...");
-            val keystoreFile = File.createTempFile("key", "store");
+            val keystoreFile = Files.createTempFile("key", "store").toFile();
             try (val outputStream = new FileOutputStream(keystoreFile)) {
                 IOUtils.copy(new ClassPathResource("/ldapServerTrustStore").getInputStream(), outputStream);
             }
@@ -82,7 +82,7 @@ public class InMemoryTestLdapDirectoryServer implements AutoCloseable, Disposabl
             config.setMaxConnections(-1);
 
             LOGGER.debug("Loading LDAP schema...");
-            val file = File.createTempFile("ldap", "schema");
+            val file = Files.createTempFile("ldap", "schema").toFile();
             try (OutputStream outputStream = new FileOutputStream(file)) {
                 IOUtils.copy(schemaFile, outputStream);
             }
@@ -95,7 +95,7 @@ public class InMemoryTestLdapDirectoryServer implements AutoCloseable, Disposabl
             LOGGER.debug("Populating directory...");
 
             LOGGER.debug("Loading LDIF file...");
-            val ldif = File.createTempFile("ldiff", "file");
+            val ldif = Files.createTempFile("ldiff", "file").toFile();
             try (val outputStream = new FileOutputStream(ldif)) {
                 IOUtils.copy(ldifFile, outputStream);
             }

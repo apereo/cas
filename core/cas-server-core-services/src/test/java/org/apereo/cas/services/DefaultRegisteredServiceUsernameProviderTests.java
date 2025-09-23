@@ -89,7 +89,7 @@ class DefaultRegisteredServiceUsernameProviderTests {
             .principal(principal)
             .build();
         val id = provider.resolveUsername(usernameContext);
-        assertEquals(id, "CASUSER");
+        assertEquals("CASUSER", id);
     }
 
     @Test
@@ -131,7 +131,7 @@ class DefaultRegisteredServiceUsernameProviderTests {
     }
 
     @Test
-    void verifyEquality() throws Throwable {
+    void verifyEquality() {
         val provider = new DefaultRegisteredServiceUsernameProvider();
         val provider2 = new DefaultRegisteredServiceUsernameProvider();
         assertEquals(provider, provider2);

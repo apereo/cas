@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class EndpointLdapAuthenticationProviderDefaultRolesTests extends BaseEndpointLdapAuthenticationProviderTests {
 
     @Test
-    void verifyAuthorizedByRole() throws Throwable {
+    void verifyAuthorizedByRole() {
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(List.of("ROLE_888"));
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();
@@ -42,7 +42,7 @@ class EndpointLdapAuthenticationProviderDefaultRolesTests extends BaseEndpointLd
     }
 
     @Test
-    void verifyEmptyRoles() throws Throwable {
+    void verifyEmptyRoles() {
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(List.of());
         val ldap = casProperties.getMonitor().getEndpoints().getLdap();

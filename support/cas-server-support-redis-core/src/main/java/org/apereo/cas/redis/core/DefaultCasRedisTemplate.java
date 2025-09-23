@@ -41,6 +41,20 @@ public class DefaultCasRedisTemplate<K, V> extends RedisTemplate<K, V> implement
     }
 
     @Override
+    public long count(final String pattern) {
+        val scanOptions = ScanOptions.scanOptions().match(pattern);
+        val connection = Objects.requireNonNull(getConnectionFactory()).getConnection();
+        val cursor = connection.keyCommands().scan(scanOptions.build());
+        return StreamSupport
+            .stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
+            .onClose(() -> {
+                IOUtils.closeQuietly(cursor);
+                connection.close();
+            })
+            .count();
+    }
+    
+    @Override
     public void initialize() {
         afterPropertiesSet();
     }

@@ -24,9 +24,11 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @author Jerome LELEU
  * @since 6.1.0
+ * @deprecated Since 7.3.0; Use storage options that store sessions backed by the container, and replicate sessions instead.
  */
 @Slf4j
 @RequiredArgsConstructor
+@Deprecated(since = "7.3.0", forRemoval = true)
 public class TicketRegistrySessionStore implements SessionStore {
     private static final String SESSION_ID_IN_REQUEST_ATTRIBUTE = "sessionIdInRequestAttribute";
 

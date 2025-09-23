@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
-import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
+import org.apereo.cas.authentication.handler.support.ProxyAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -69,13 +69,16 @@ class CasCoreAuthenticationHandlersConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationHandler proxyAuthenticationHandler(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier("proxyPrincipalFactory") final PrincipalFactory proxyPrincipalFactory,
-            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT_TRUST_STORE) final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) throws Exception {
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("proxyPrincipalFactory")
+            final PrincipalFactory proxyPrincipalFactory,
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT_TRUST_STORE)
+            final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) throws Exception {
             return BeanSupplier.of(AuthenticationHandler.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new HttpBasedServiceCredentialsAuthenticationHandler(null,
-                    servicesManager, proxyPrincipalFactory, Integer.MIN_VALUE,
+                .supply(() -> new ProxyAuthenticationHandler(null,
+                    proxyPrincipalFactory, Integer.MIN_VALUE,
                     supportsTrustStoreSslSocketFactoryHttpClient))
                 .otherwiseProxy()
                 .get();
@@ -97,7 +100,8 @@ class CasCoreAuthenticationHandlersConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalResolver proxyPrincipalResolver(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("proxyPrincipalFactory") final PrincipalFactory proxyPrincipalFactory) throws Exception {
+            @Qualifier("proxyPrincipalFactory")
+            final PrincipalFactory proxyPrincipalFactory) throws Exception {
             return BeanSupplier.of(PrincipalResolver.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new ProxyingPrincipalResolver(proxyPrincipalFactory))
@@ -110,8 +114,10 @@ class CasCoreAuthenticationHandlersConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer proxyAuthenticationEventExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("proxyAuthenticationHandler") final AuthenticationHandler proxyAuthenticationHandler,
-            @Qualifier("proxyPrincipalResolver") final PrincipalResolver proxyPrincipalResolver) throws Exception {
+            @Qualifier("proxyAuthenticationHandler")
+            final AuthenticationHandler proxyAuthenticationHandler,
+            @Qualifier("proxyPrincipalResolver")
+            final PrincipalResolver proxyPrincipalResolver) throws Exception {
             return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(proxyAuthenticationHandler, proxyPrincipalResolver))
@@ -133,7 +139,7 @@ class CasCoreAuthenticationHandlersConfiguration {
                     .map(pattern::split)
                     .collect(Collectors.toMap(userAndPassword -> userAndPassword[0], userAndPassword -> userAndPassword[1]));
             }
-            return new HashMap<>(0);
+            return new HashMap<>();
         }
 
 
@@ -150,12 +156,15 @@ class CasCoreAuthenticationHandlersConfiguration {
         public AuthenticationHandler acceptUsersAuthenticationHandler(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier("acceptUsersPrincipalFactory") final PrincipalFactory acceptUsersPrincipalFactory,
-            @Qualifier("acceptPasswordPolicyConfiguration") final PasswordPolicyContext acceptPasswordPolicyConfiguration) {
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("acceptUsersPrincipalFactory")
+            final PrincipalFactory acceptUsersPrincipalFactory,
+            @Qualifier("acceptPasswordPolicyConfiguration")
+            final PasswordPolicyContext acceptPasswordPolicyConfiguration) {
             val props = casProperties.getAuthn().getAccept();
             val handler = new AcceptUsersAuthenticationHandler(props.getName(),
-                servicesManager, acceptUsersPrincipalFactory, props.getOrder(), getParsedUsers(casProperties));
+                acceptUsersPrincipalFactory, props.getOrder(), getParsedUsers(casProperties));
             handler.setState(props.getState());
             handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder(), applicationContext));
             handler.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
@@ -166,7 +175,7 @@ class CasCoreAuthenticationHandlersConfiguration {
             if (passwordPolicy.isEnabled()) {
                 val cfg = new PasswordPolicyContext(passwordPolicy);
                 if (passwordPolicy.isAccountStateHandlingEnabled()) {
-                    cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
+                    cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>());
                 } else {
                     LOGGER.debug("Handling account states is disabled via CAS configuration");
                 }
@@ -237,41 +246,43 @@ class CasCoreAuthenticationHandlersConfiguration {
         public BeanContainer<AuthenticationHandler> jaasAuthenticationHandlers(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier("jaasPrincipalFactory") final PrincipalFactory jaasPrincipalFactory) {
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier("jaasPrincipalFactory")
+            final PrincipalFactory jaasPrincipalFactory) {
             return BeanContainer.of(casProperties.getAuthn().getJaas()
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> {
-                    val h = new JaasAuthenticationHandler(jaas.getName(), servicesManager, jaasPrincipalFactory, jaas.getOrder());
-                    h.setState(jaas.getState());
-                    h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
-                    h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
-                    h.setRealm(jaas.getRealm());
-                    h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder(), applicationContext));
+                    val handler = new JaasAuthenticationHandler(jaas.getName(), jaasPrincipalFactory, jaas.getOrder());
+                    handler.setState(jaas.getState());
+                    handler.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
+                    handler.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
+                    handler.setRealm(jaas.getRealm());
+                    handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder(), applicationContext));
 
-                    FunctionUtils.doIfNotBlank(jaas.getLoginConfigType(), __ -> h.setLoginConfigType(jaas.getLoginConfigType()));
+                    FunctionUtils.doIfNotBlank(jaas.getLoginConfigType(), __ -> handler.setLoginConfigType(jaas.getLoginConfigType()));
 
                     if (StringUtils.isNotBlank(jaas.getLoginConfigurationFile())) {
                         val file = FunctionUtils.doAndHandle(() -> ResourceUtils.getResourceFrom(jaas.getLoginConfigurationFile()).getFile());
                         LOGGER.debug("Using JAAS login configuration file [{}] for realm [{}]", file, jaas.getRealm());
-                        h.setLoginConfigurationFile(file);
+                        handler.setLoginConfigurationFile(file);
                     }
                     val passwordPolicy = jaas.getPasswordPolicy();
-                    h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy, applicationContext));
+                    handler.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy, applicationContext));
                     if (passwordPolicy.isEnabled()) {
                         LOGGER.debug("Password policy is enabled for JAAS. Constructing password policy configuration for [{}]", jaas.getRealm());
                         val cfg = new PasswordPolicyContext(passwordPolicy);
                         if (passwordPolicy.isAccountStateHandlingEnabled()) {
-                            cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
+                            cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>());
                         } else {
                             LOGGER.debug("Handling account states is disabled via CAS configuration");
                         }
-                        h.setPasswordPolicyConfiguration(cfg);
+                        handler.setPasswordPolicyConfiguration(cfg);
                     }
-                    h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
-                    h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(jaas.getCredentialCriteria()));
-                    return h;
+                    handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
+                    handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(jaas.getCredentialCriteria()));
+                    return handler;
                 })
                 .collect(Collectors.toList()));
         }
@@ -280,8 +291,10 @@ class CasCoreAuthenticationHandlersConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer jaasAuthenticationEventExecutionPlanConfigurer(
-            @Qualifier("jaasAuthenticationHandlers") final BeanContainer<AuthenticationHandler> jaasAuthenticationHandlers,
-            @Qualifier("jaasPersonDirectoryPrincipalResolvers") final BeanContainer<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers) {
+            @Qualifier("jaasAuthenticationHandlers")
+            final BeanContainer<AuthenticationHandler> jaasAuthenticationHandlers,
+            @Qualifier("jaasPersonDirectoryPrincipalResolvers")
+            final BeanContainer<PrincipalResolver> jaasPersonDirectoryPrincipalResolvers) {
             return plan -> plan.registerAuthenticationHandlersWithPrincipalResolver(jaasAuthenticationHandlers.toList(),
                 jaasPersonDirectoryPrincipalResolvers.toList());
         }

@@ -6,6 +6,7 @@ dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-cookie")
     api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-multitenancy")
 
     implementation libraries.bouncycastle
 
@@ -17,6 +18,9 @@ dependencies {
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-authentication-mfa-api")
+
+    testImplementation project(":core:cas-server-core-scripting")
     
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

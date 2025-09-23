@@ -24,7 +24,6 @@ public interface OidcPushedAuthorizationRequestFactory extends TicketFactory {
      *
      * @param authzRequest the authz request
      * @return the access token request data holder
-     * @throws Throwable the throwable
      */
-    AccessTokenRequestContext toAccessTokenRequest(OidcPushedAuthorizationRequest authzRequest) throws Throwable;
+    AccessTokenRequestContext toAccessTokenRequest(OidcPushedAuthorizationRequest authzRequest);
 }

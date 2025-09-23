@@ -4,8 +4,10 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria;
 import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
@@ -13,8 +15,9 @@ import org.apereo.cas.services.ExcludedAuthenticationHandlersRegisteredServiceAu
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.registry.DefaultTicketRegistrySupport;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
@@ -23,6 +26,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Webflow")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTests {
 
@@ -53,20 +58,28 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
     @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
 
+    @Autowired
+    @Qualifier(TicketRegistrySupport.BEAN_NAME)
+    protected TicketRegistrySupport ticketRegistrySupport;
+    
+    @Autowired
+    @Qualifier(TenantExtractor.BEAN_NAME)
+    protected TenantExtractor tenantExtractor;
+
     private SingleSignOnParticipationStrategy getSingleSignOnStrategy(final RegisteredService registeredService) {
-        val authenticationExecutionPlan = new DefaultAuthenticationEventExecutionPlan();
+        val authenticationExecutionPlan = new DefaultAuthenticationEventExecutionPlan(new DefaultAuthenticationHandlerResolver(), tenantExtractor);
         authenticationExecutionPlan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler());
 
         servicesManager.save(registeredService);
         return new RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategy(servicesManager,
-            new DefaultTicketRegistrySupport(ticketRegistry),
+            ticketRegistrySupport,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             authenticationExecutionPlan, applicationContext);
     }
 
     @Test
     void verifyNoServiceOrPolicy() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = MockRequestContext.create(applicationContext).setClientInfo();
 
         val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();
@@ -90,7 +103,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
 
     @Test
     void verifyNoServiceOrSso() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = MockRequestContext.create(applicationContext).setClientInfo();
 
         val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         val strategy = getSingleSignOnStrategy(svc);
@@ -107,7 +120,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
 
     @Test
     void verifySsoWithMismatchedHandlers() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = MockRequestContext.create(applicationContext).setClientInfo();
 
         val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();
@@ -133,7 +146,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
 
     @Test
     void verifySsoWithHandlers() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = MockRequestContext.create(applicationContext).setClientInfo();
 
         val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();
@@ -159,7 +172,7 @@ class RegisteredServiceAuthenticationPolicySingleSignOnParticipationStrategyTest
 
     @Test
     void verifySsoWithExcludedHandlers() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
+        val context = MockRequestContext.create(applicationContext).setClientInfo();
 
         val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();

@@ -1,0 +1,30 @@
+{
+  "dependencies": "oidc,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+    
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.ticket.st.time-to-kill-in-seconds=900",
+
+    "--cas.authn.oauth.session-replication.replicate-sessions=false",
+    "--cas.authn.oauth.core.user-profile-view-type=FLAT",
+
+    "--cas.authn.oidc.core.issuer=${cas.server.name}/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/keystore.jwks",
+    
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.organization=apereo",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
+

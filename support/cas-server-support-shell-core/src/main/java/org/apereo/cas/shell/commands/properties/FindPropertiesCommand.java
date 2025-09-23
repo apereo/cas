@@ -3,7 +3,6 @@ package org.apereo.cas.shell.commands.properties;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.RegexUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -14,7 +13,6 @@ import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -68,7 +66,7 @@ public class FindPropertiesCommand {
             } else {
                 LOGGER.info("Property: [{}]", k);
                 LOGGER.info("Group: [{}]", StringUtils.substringBeforeLast(k, "."));
-                LOGGER.info("Default Value: [{}]", ObjectUtils.defaultIfNull(v.getDefaultValue(), "[blank]"));
+                LOGGER.info("Default Value: [{}]", ObjectUtils.getIfNull(v.getDefaultValue(), "[blank]"));
                 LOGGER.info("Type: [{}]", v.getType());
                 LOGGER.info("Summary: [{}]", StringUtils.normalizeSpace(v.getShortDescription()));
                 LOGGER.info("Description: [{}]", StringUtils.normalizeSpace(v.getDescription()));

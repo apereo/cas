@@ -3,12 +3,12 @@ package org.apereo.cas.config;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.impl.token.JpaPasswordlessAuthenticationEntity;
 import org.apereo.cas.impl.token.JpaPasswordlessTokenRepository;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.jpa.JpaConfigurationContext;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -143,7 +143,10 @@ public class CasJpaPasswordlessAuthenticationAutoConfiguration {
         private final PasswordlessTokenRepository repository;
 
         @Override
-        @Scheduled(initialDelayString = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.start-delay:PT30S}",
+        @Scheduled(
+            zone = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.cron-time-zone:}",
+            cron = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.cron-expression:}",
+            initialDelayString = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.start-delay:PT30S}",
             fixedDelayString = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.repeat-interval:PT35S}")
         public void clean() {
             lock.tryLock(__ -> repository.clean());

@@ -5,8 +5,8 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.Assert;
 import jakarta.persistence.Transient;
 import java.io.Serial;
 import java.io.Serializable;
@@ -51,7 +52,7 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private transient WatchableGroovyScriptResource executableScript;
+    private transient ExecutableCompiledScript executableScript;
 
     @Override
     public AuthenticationPolicyExecutionResult isSatisfiedBy(
@@ -78,22 +79,22 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     @Override
     public boolean shouldResumeOnFailure(final Throwable failure) {
-        return Unchecked.supplier(() -> {
+        val supplier = Unchecked.supplier(() -> {
             initializeWatchableScriptIfNeeded();
             val args = CollectionUtils.wrap("failure", failure, "logger", LOGGER);
             executableScript.setBinding(args);
             return executableScript.execute("shouldResumeOnFailure", Boolean.class, args.values().toArray());
-        }).get();
+        });
+        val result = supplier.get();
+        Assert.notNull(result, "Authentication policy result cannot be null");
+        return result;
     }
 
     private void initializeWatchableScriptIfNeeded() throws Exception {
         if (this.executableScript == null) {
-            val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
-            if (!matcherFile.find()) {
-                throw new IllegalArgumentException("Unable to locate groovy script file at " + script);
-            }
             val resource = ResourceUtils.getRawResourceFrom(script);
-            this.executableScript = new WatchableGroovyScriptResource(resource);
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            this.executableScript = scriptFactory.fromResource(resource);
         }
     }
 

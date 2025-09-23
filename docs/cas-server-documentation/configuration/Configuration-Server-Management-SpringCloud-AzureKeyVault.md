@@ -13,9 +13,7 @@ properties and settings. Support is provided via the following dependency in the
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-configuration-cloud-azure-keyvault" %}
 
-**IMPORTANT**: The allowed  name pattern in Azure Key Vault is `^[0-9a-zA-Z-]+$`. For properties that contain
-that contain `.` in the name (i.e. `cas.some.property`),  replace `.` with `-` when
-you store the setting in Azure Key Vault (i.e. `cas-some-property`).
+**IMPORTANT**: The allowed name pattern in Azure Key Vault is `^[0-9a-zA-Z-]+$`. For properties that contain `.` in the name (i.e. `cas.some.property`), replace `.` with `-` when you store the setting in Azure Key Vault (i.e. `cas-some-property`).
 The module will handle the transformation for you.
 
 <div class="alert alert-info mt-3">:information_source: <strong>Usage</strong><p>The configuration modules provided here may also 

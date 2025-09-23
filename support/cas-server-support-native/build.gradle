@@ -13,6 +13,7 @@ ext {
 dependencies {
     compileOnly libraries.graalvmsdk
     implementation libraries.graalvmpolyglot
+    implementation libraries.bouncycastle
     
     testImplementation libraries.graalvmsdk
     
@@ -24,9 +25,11 @@ dependencies {
     implementation project(":core:cas-server-core-validation-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-configuration-api")
 
     testImplementation project(":core:cas-server-core-logging")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-mfa")

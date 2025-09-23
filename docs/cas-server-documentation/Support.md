@@ -12,7 +12,7 @@ Our premier *free* support channel is community discussion mediated primarily vi
 
 ## Apereo Foundation Membership
 
-The Apereo Foundation is a New Jersey non-stock, non-profit corporation, with members drawn from all walks of life and industry sectors on four continents. **It’s mission is to help educational organizations deliver their mission, by developing and sustaining open source software**. By becoming an Apereo Foundation member, you –
+The Apereo Foundation is a New Jersey non-stock, non-profit corporation, with members drawn from all walks of life and industry sectors on four continents. **Its mission is to help educational organizations deliver their mission by developing and sustaining open source software**. By becoming an Apereo Foundation member, you –
 
 - **Ensure support for software you rely on**. Your membership dues work to ensure effective licensing, IPR management practices, infrastructure support, community coordination, outreach, and more.
 - **Give your institution a say in the way Apereo is run, and how it sets priorities**. Your institution has a vote in elections for the Apereo Foundation Board, which provides strategic leadership for the foundation.
@@ -66,14 +66,13 @@ Commercial support for CAS is provided by the following entities:
 
 Please take the following steps to obtain support from the CAS user community.
 
-<div class="alert alert-info"><strong>Community Etiquette</strong><p>Remember that activity on the mailing lists and all other support channels
+<div class="alert alert-info">:information_source: <strong>Community Etiquette</strong><p>Remember that activity on the mailing lists and all other support channels
 is entirely voluntary. There are no SLAs. There are no guarantees. You may opt into professional support agreements with 
 Apereo commercial service providers if that is unacceptable. Also unless explicitly asked, please <b>avoid</b> contacting individual project members directly.</p></div>
 
 ### Chat Rooms
 
-The CAS community chat room is provided by [Gitter][casgitter]. Apereo also has an 
-official [Slack chat workspace](https://apereo.slack.com) where you may find a `#cas` 
+Apereo has an official [Slack chat workspace](https://apereo.slack.com) where you may find a `#cas` 
 channel. The sign-up page is [available here](https://apereo.slack.com/signup). A 
 specific `cas` tag is also available for StackOverflow.
 
@@ -89,5 +88,3 @@ The [Apereo Foundation](http://www.apereo.org/) (formerly Jasig) offers a number
 presentations and training on a number of software products, including CAS, that are relevant to Higher Education.
 Conferences are an excellent venue for strengthening ties to the larger CAS community and related open source software
 ecosystem.
-
-[casgitter]: https://app.gitter.im/#/room/#apereo_cas:gitter.im

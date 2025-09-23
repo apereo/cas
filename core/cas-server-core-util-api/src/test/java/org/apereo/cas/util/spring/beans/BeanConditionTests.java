@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BeanConditionTests {
 
     @Test
-    void verifyCopyCondition() throws Throwable {
+    void verifyCopyCondition() {
         val c1 = BeanCondition.on("cas.property1");
         val c2 = c1.toStartWith().and("cas.property2");
         assertNotEquals(c1, c2);
@@ -27,7 +27,7 @@ class BeanConditionTests {
     }
 
     @Test
-    void verifyExpressionLanguageEmbedded() throws Throwable {
+    void verifyExpressionLanguageEmbedded() {
         val env = new MockEnvironment();
         env.setProperty("cas.property1", "time-${#localDateTimeUtc}");
         val condition = BeanCondition.on("cas.property1")
@@ -37,7 +37,7 @@ class BeanConditionTests {
     }
 
     @Test
-    void verifyExpressionLanguagePassing() throws Throwable {
+    void verifyExpressionLanguagePassing() {
         val env = new MockEnvironment();
         env.setProperty("cas.property1", "${#localDateTimeUtc}");
         val condition = BeanCondition.on("cas.property1")
@@ -47,7 +47,7 @@ class BeanConditionTests {
     }
 
     @Test
-    void verifyMultipleConditions() throws Throwable {
+    void verifyMultipleConditions() {
         val env = new MockEnvironment();
         env.setProperty("cas.property1", "value");
         env.setProperty("cas.property2", "https://github.com");
@@ -62,7 +62,7 @@ class BeanConditionTests {
     }
 
     @Test
-    void verifyExistsOperation() throws Throwable {
+    void verifyExistsOperation() {
         val env = new MockEnvironment();
         env.setProperty("cas.property.location", "classpath:/x509.crt");
         val condition = BeanCondition.on("cas.property.location")
@@ -73,7 +73,7 @@ class BeanConditionTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val env = new MockEnvironment();
         env.setProperty("cas.property-name.prefix", "value");
         val condition = BeanCondition.on("cas.property-name.prefix")
@@ -85,7 +85,7 @@ class BeanConditionTests {
     }
 
     @Test
-    void verifyBlankValue() throws Throwable {
+    void verifyBlankValue() {
         val env = new MockEnvironment();
         env.setProperty("cas.property-name.prefix", StringUtils.EMPTY);
         val condition = BeanCondition.on("cas.property-name.prefix")
@@ -96,7 +96,7 @@ class BeanConditionTests {
     }
 
     @Test
-    void verifyDefaultValue() throws Throwable {
+    void verifyDefaultValue() {
         val env = new MockEnvironment();
         val condition = BeanCondition.on("cas.property-name.prefix")
             .withDefaultValue("defaultValue")
@@ -106,7 +106,7 @@ class BeanConditionTests {
     }
 
     @Test
-    void verifyTrueValue() throws Throwable {
+    void verifyTrueValue() {
         val env = new MockEnvironment();
         env.setProperty("cas.property.name", "TRUE");
         val condition = BeanCondition.on("cas.property.name")
@@ -117,13 +117,13 @@ class BeanConditionTests {
     }
 
     @Test
-    void verifyBooleanValue() throws Throwable {
+    void verifyBooleanValue() {
         val env = new MockEnvironment();
         assertFalse(BeanCondition.alwaysTrue().and(() -> false).given(env).get());
     }
 
     @Test
-    void verifyMatchMissing() throws Throwable {
+    void verifyMatchMissing() {
         val env = new MockEnvironment();
         env.setProperty("cas.property.name", "value");
         val condition = BeanCondition.on("cas.property.other-name")
@@ -135,7 +135,7 @@ class BeanConditionTests {
     }
 
     @Test
-    void verifyMatchMissingFails() throws Throwable {
+    void verifyMatchMissingFails() {
         val env = new MockEnvironment();
         env.setProperty("cas.property.name", "value");
         val condition = BeanCondition.on("cas.property.other-name")

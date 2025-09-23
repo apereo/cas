@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.query.RegisteredServiceQueryIndex;
+import org.apereo.cas.util.NamedObject;
 
 import org.springframework.core.Ordered;
 
@@ -15,7 +16,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-public interface ServicesManagerRegisteredServiceLocator extends Ordered {
+public interface ServicesManagerRegisteredServiceLocator extends Ordered, NamedObject {
     /**
      * Default order, used to determine the execution sequence.
      */
@@ -43,15 +44,6 @@ public interface ServicesManagerRegisteredServiceLocator extends Ordered {
     @Override
     default int getOrder() {
         return DEFAULT_ORDER;
-    }
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
     }
 
     default List<RegisteredServiceQueryIndex> getRegisteredServiceIndexes() {

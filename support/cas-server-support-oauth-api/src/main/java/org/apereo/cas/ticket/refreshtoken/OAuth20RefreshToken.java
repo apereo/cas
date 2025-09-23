@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.ticket.ServiceAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -15,7 +16,7 @@ import java.util.Set;
  * @since 5.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface OAuth20RefreshToken extends OAuth20Token {
+public interface OAuth20RefreshToken extends OAuth20Token, ServiceAwareTicket {
 
     /**
      * The prefix for refresh tokens.
@@ -34,6 +35,6 @@ public interface OAuth20RefreshToken extends OAuth20Token {
      * @since 6.2
      */
     default Set<String> getAccessTokens() {
-        return new HashSet<>(0);
+        return new HashSet<>();
     }
 }

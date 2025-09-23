@@ -1,6 +1,6 @@
 package org.apereo.cas.nativex;
 
-import com.hazelcast.sql.impl.SqlServiceImpl;
+import org.apereo.cas.ticket.registry.MapAttributeValueExtractor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Native")
 class HazelcastTicketRegistryRuntimeHintsTests {
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new HazelcastTicketRegistryRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.reflection().onType(SqlServiceImpl.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.reflection().onType(MapAttributeValueExtractor.class).test(hints));
     }
 }

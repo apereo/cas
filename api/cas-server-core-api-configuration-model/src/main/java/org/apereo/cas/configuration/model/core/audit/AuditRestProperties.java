@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.core.audit;
 import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -16,11 +15,10 @@ import java.io.Serial;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiresModule(name = "cas-server-support-audit-rest", automated = true)
+@RequiresModule(name = "cas-server-support-audit-rest")
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("AuditRestProperties")
 public class AuditRestProperties extends RestEndpointProperties {
 
     @Serial

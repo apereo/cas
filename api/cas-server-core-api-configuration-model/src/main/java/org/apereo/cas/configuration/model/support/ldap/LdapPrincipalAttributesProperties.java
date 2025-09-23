@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.ldap;
 
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("LdapPrincipalAttributesProperties")
 public class LdapPrincipalAttributesProperties extends AbstractLdapSearchProperties {
 
     @Serial
@@ -78,7 +76,7 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapSearchPropert
      * The key is always the name of the query attribute that is defined by CAS and passed internally,
      * and the value is the column/field that should map.
      */
-    private Map<String, String> queryAttributes = new HashMap<>(0);
+    private Map<String, String> queryAttributes = new HashMap<>();
 
 
 }

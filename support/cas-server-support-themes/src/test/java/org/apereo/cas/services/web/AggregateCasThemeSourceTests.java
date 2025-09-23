@@ -2,11 +2,13 @@ package org.apereo.cas.services.web;
 
 import org.apereo.cas.BaseThemeTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.view.template-prefixes[0]=classpath:/ext-templates",
         "cas.view.template-prefixes[1]=classpath:/more-ext-templates"
     })
+@ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class AggregateCasThemeSourceTests {
     @Autowired
@@ -37,7 +40,7 @@ class AggregateCasThemeSourceTests {
     private ThemeSource themeSource;
 
     @Test
-    void verifyCustomSource() throws Throwable {
+    void verifyCustomSource() {
         val theme = themeSource.getTheme("my-theme");
         assertNotNull(theme);
         val message = theme.getMessageSource().getMessage("cas.theme.name",

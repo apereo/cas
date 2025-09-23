@@ -80,13 +80,15 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         val dto = new CasEvent();
         dto.setType(CasTicketGrantingTicketCreatedEvent.class.getName());
         dto.putTimestamp(new Date().getTime());
-        dto.setCreationTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
+        dto.setCreationTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(5).toInstant());
         dto.putEventId("TGT-" + i + '-' + RandomUtils.randomAlphanumeric(16));
         dto.setPrincipalId(user);
         dto.putClientIpAddress(getMockClientIpAddress());
         dto.putServerIpAddress("127.0.0.1");
         dto.putAgent(getMockUserAgent());
         dto.putGeoLocation(getMockGeoLocation());
+        dto.putDeviceFingerprint(RandomUtils.randomAlphanumeric(16));
+        dto.putTenant("CAS");
         casEventRepository.save(dto);
         return dto;
     }
@@ -95,7 +97,7 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         createEvent("casuser", i, casEventRepository);
     }
 
-    public static void createEvents(final CasEventRepository casEventRepository) throws Throwable {
+    public static void createEvents(final CasEventRepository casEventRepository) {
         IntStream.range(1, 1000).forEach(Unchecked.intConsumer(i -> createEvent(i, casEventRepository)));
     }
 }

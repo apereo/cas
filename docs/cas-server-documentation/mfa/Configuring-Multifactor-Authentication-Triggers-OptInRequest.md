@@ -24,4 +24,4 @@ https://.../cas/login?service=...&<PARAMETER_NAME>=<MFA_PROVIDER_ID>
 
 The same strategy also applied to triggers that are based on request/session 
 attributes, which tend to get used for internal communications between 
-APIs and CAS components specially when designing extensions.
+APIs and CAS components especially when designing extensions.

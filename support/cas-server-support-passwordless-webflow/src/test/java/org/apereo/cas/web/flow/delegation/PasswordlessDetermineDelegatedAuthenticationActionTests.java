@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.delegation;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.config.CasDelegatedAuthenticationCasAutoConfiguration;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BasePasswordlessAuthenticationActionTests;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
@@ -61,6 +63,7 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
     }
 
     @Nested
+    @ImportAutoConfiguration(CasDelegatedAuthenticationCasAutoConfiguration.class)
     @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
     @TestPropertySource(properties = {
         "cas.authn.pac4j.cas[0].login-url=https://casserver.herokuapp.com/cas/login",

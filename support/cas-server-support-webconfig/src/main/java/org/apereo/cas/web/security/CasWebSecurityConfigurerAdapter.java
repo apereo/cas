@@ -13,27 +13,36 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
+import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.boot.autoconfigure.web.WebProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
+import org.springframework.security.config.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.authentication.www.BasicAuthenticationConverter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.util.ResourceUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -51,7 +60,9 @@ public class CasWebSecurityConfigurerAdapter {
         @Override
         public <O extends BasicAuthenticationFilter> O postProcess(final O object) {
             val patternsToIgnore = getAllowedPatternsToIgnore()
-                .stream().map(AntPathRequestMatcher::new).collect(Collectors.toSet());
+                .stream()
+                .map(url -> PathPatternRequestMatcher.withDefaults().matcher(url))
+                .collect(Collectors.toSet());
             object.setAuthenticationConverter(new BasicAuthenticationConverter() {
                 @Override
                 public UsernamePasswordAuthenticationToken convert(final HttpServletRequest request) {
@@ -66,6 +77,8 @@ public class CasWebSecurityConfigurerAdapter {
     private final CasConfigurationProperties casProperties;
 
     private final WebEndpointProperties webEndpointProperties;
+    
+    private final ManagementServerProperties managementServerProperties;
 
     private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
 
@@ -73,9 +86,11 @@ public class CasWebSecurityConfigurerAdapter {
 
     private final SecurityContextRepository securityContextRepository;
 
+    private final WebProperties webProperties;
+
     private static List<String> prepareProtocolEndpoint(final String endpoint) {
-        val baseEndpoint = StringUtils.prependIfMissing(endpoint, "/");
-        return List.of(baseEndpoint.concat("**"), StringUtils.appendIfMissing(endpoint, "/").concat("**"));
+        val baseEndpoint = Strings.CI.prependIfMissing(endpoint, "/");
+        return List.of(baseEndpoint.concat("**"), Strings.CI.appendIfMissing(endpoint, "/").concat("**"));
     }
 
     private static void configureJaasAuthenticationProvider(final HttpSecurity http,
@@ -103,18 +118,22 @@ public class CasWebSecurityConfigurerAdapter {
      * @return the http security
      * @throws Exception the exception
      */
-    public HttpSecurity configureHttpSecurity(final HttpSecurity http) throws Exception {
+    public HttpSecurity configureHttpSecurity(final HttpSecurity http, final ApplicationContext applicationContext) throws Exception {
         http
             .cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
             .headers(AbstractHttpConfigurer::disable)
             .logout(AbstractHttpConfigurer::disable)
-            .requiresChannel(customizer -> customizer.requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null).requiresSecure());
+            .redirectToHttps(https -> https.requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null));
 
         val patterns = getAllowedPatternsToIgnore();
         LOGGER.debug("Configuring protocol endpoints [{}] to exclude/ignore from http security", patterns);
-        var requests = http.authorizeHttpRequests(customizer -> {
-            val matchers = patterns.stream().map(AntPathRequestMatcher::new).toList().toArray(new RequestMatcher[0]);
+        val requests = http.authorizeHttpRequests(customizer -> {
+            val matchers = patterns
+                .stream()
+                .map(url -> PathPatternRequestMatcher.withDefaults().matcher(url))
+                .toList()
+                .toArray(new RequestMatcher[0]);
             customizer.requestMatchers(matchers).permitAll();
         });
         webSecurityConfigurers
@@ -128,7 +147,7 @@ public class CasWebSecurityConfigurerAdapter {
             endpointProps.getAccess().forEach(Unchecked.consumer(
                 access -> configureEndpointAccess(requests, access, endpointProps, endpoint)));
         }));
-        configureEndpointAccessToDenyUndefined(requests);
+        configureEndpointAccessToDenyUndefined(requests, applicationContext);
         configureEndpointAccessForStaticResources(requests);
         configureEndpointAccessByFormLogin(requests);
 
@@ -158,40 +177,66 @@ public class CasWebSecurityConfigurerAdapter {
         patterns.add("/css/**");
         patterns.add("/images/**");
         patterns.add("/static/**");
+        patterns.add("/public/**");
         patterns.add("/error");
         patterns.add("/favicon.ico");
         patterns.add(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN);
         patterns.add("/");
         patterns.add(webEndpointProperties.getBasePath());
+        FunctionUtils.doIfNotBlank(managementServerProperties.getBasePath(), patterns::add);
+        patterns.addAll(casProperties.getMonitor().getEndpoints().getIgnoredEndpoints());
         return patterns;
     }
 
     protected void configureEndpointAccessToDenyUndefined(
-        final HttpSecurity http) {
+        final HttpSecurity http, final ApplicationContext applicationContext) {
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
-        val endpointDefaults = casProperties.getMonitor().getEndpoints().getDefaultEndpointProperties();
-        pathMappedEndpoints.getObject()
+        val mappedEndpoints = pathMappedEndpoints.getObject();
+        mappedEndpoints
             .stream()
             .filter(BeanSupplier::isNotProxy)
-            .forEach(endpoint -> {
+            .forEach(Unchecked.consumer(endpoint -> {
                 val rootPath = endpoint.getRootPath();
+                val endpointMatcher = EndpointRequest.to(rootPath).excludingLinks();
                 if (endpoints.contains(rootPath)) {
                     LOGGER.trace("Endpoint security is defined for endpoint [{}]", rootPath);
                 } else {
-                    val defaultAccessRules = endpointDefaults.getAccess();
-                    LOGGER.trace("Endpoint security is NOT defined for endpoint [{}]. Using default security rules [{}]", rootPath, endpointDefaults);
-                    val endpointRequest = EndpointRequest.to(rootPath).excludingLinks();
-                    defaultAccessRules.forEach(Unchecked.consumer(access ->
-                        configureEndpointAccess(http, access, endpointDefaults, endpointRequest)));
+                    val accessLevel = applicationContext.getEnvironment().getProperty("management.endpoint.%s.access".formatted(rootPath));
+                    if (StringUtils.isNotBlank(accessLevel)) {
+                        val access = Access.valueOf(accessLevel.toUpperCase(Locale.ENGLISH));
+                        switch (access) {
+                            case UNRESTRICTED, READ_ONLY -> configureEndpointAccessPermitAll(http, endpointMatcher);
+                            case NONE -> configureEndpointAccessToDenyAll(http, endpointMatcher);
+                        }
+                    } else {
+                        val endpointDefaults = casProperties.getMonitor().getEndpoints().getDefaultEndpointProperties();
+                        val defaultAccessRules = endpointDefaults.getAccess();
+                        LOGGER.trace("Endpoint security is NOT defined for endpoint [{}]. Using default security rules [{}]", rootPath, endpointDefaults);
+                        defaultAccessRules.forEach(Unchecked.consumer(access ->
+                            configureEndpointAccess(http, access, endpointDefaults, endpointMatcher)));
+                    }
                 }
-            });
+            }));
     }
 
     protected void configureEndpointAccessForStaticResources(final HttpSecurity requests) throws Exception {
         requests.authorizeHttpRequests(customizer -> {
             customizer.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll();
-            customizer.requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll();
-            customizer.requestMatchers(new AntPathRequestMatcher("/static/**")).permitAll();
+            customizer.requestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/resources/**")).permitAll();
+            customizer.requestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/static/**")).permitAll();
+            customizer.requestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/public/**")).permitAll();
+            customizer.requestMatchers(PathPatternRequestMatcher.withDefaults().matcher("/favicon**")).permitAll();
+            Arrays.stream(webProperties.getResources().getStaticLocations())
+                .forEach(location -> {
+                    if (location.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
+                        val file = new File(Strings.CI.remove(location, ResourceUtils.FILE_URL_PREFIX));
+                        if (file.exists() && file.isDirectory()) {
+                            val directories = Arrays.stream(file.listFiles(File::isDirectory)).toList();
+                            LOGGER.info("Directories to authorize for static public resources are [{}]", directories);
+                            directories.forEach(directory -> customizer.requestMatchers(PathPatternRequestMatcher.withDefaults().matcher('/' + directory.getName() + "/**")).permitAll());
+                        }
+                    }
+                });
         });
     }
 
@@ -245,7 +290,7 @@ public class CasWebSecurityConfigurerAdapter {
         final HttpSecurity http,
         final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         http.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint).authenticated())
-            .httpBasic(customizer -> customizer.withObjectPostProcessor(basicAuthFilterPostProcessor));
+            .httpBasic(customizer -> customizer.addObjectPostProcessor(basicAuthFilterPostProcessor));
     }
 
     protected void configureEndpointAccessByRole(
@@ -254,7 +299,7 @@ public class CasWebSecurityConfigurerAdapter {
         final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         http.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint)
                 .hasAnyRole(properties.getRequiredRoles().toArray(ArrayUtils.EMPTY_STRING_ARRAY)))
-            .httpBasic(customizer -> customizer.withObjectPostProcessor(basicAuthFilterPostProcessor));
+            .httpBasic(customizer -> customizer.addObjectPostProcessor(basicAuthFilterPostProcessor));
     }
 
     protected void configureEndpointAccessByAuthority(
@@ -263,6 +308,6 @@ public class CasWebSecurityConfigurerAdapter {
         final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         http.authorizeHttpRequests(customizer -> customizer.requestMatchers(endpoint)
                 .hasAnyAuthority(properties.getRequiredAuthorities().toArray(ArrayUtils.EMPTY_STRING_ARRAY)))
-            .httpBasic(customizer -> customizer.withObjectPostProcessor(basicAuthFilterPostProcessor));
+            .httpBasic(customizer -> customizer.addObjectPostProcessor(basicAuthFilterPostProcessor));
     }
 }

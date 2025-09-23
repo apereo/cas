@@ -20,6 +20,8 @@ This option is more relevant if you have more than one provider configured or if
 
 Needless to say, the attributes need to have been resolved for the principal prior to this step.
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% include_cached casproperties.html properties="cas.authn.mfa.triggers.principal" %}
 
 

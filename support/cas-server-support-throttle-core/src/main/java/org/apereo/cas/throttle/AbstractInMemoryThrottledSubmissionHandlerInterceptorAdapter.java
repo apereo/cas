@@ -10,10 +10,8 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of a {@link InMemoryThrottledSubmissionHandlerInterceptor} that keeps track of a mapping
@@ -67,18 +65,16 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
             LOGGER.trace("Found existing throttled submission [{}] for key [{}]", submission, key);
             if (!submission.hasExpiredAlready()) {
                 LOGGER.warn("Throttled submission [{}] remains throttled; submission expires at [{}]", key, submission.getExpiration());
+                request.setAttribute(ThrottledSubmission.class.getSimpleName(), submission);
                 return true;
             }
         }
-        return store.exceedsThreshold(key, getThresholdRate());
-    }
-
-    @Override
-    public Collection getRecords() {
-        return getConfigurationContext().getThrottledSubmissionStore()
-            .entries()
-            .map(entry -> entry.getKey() + "<->" + entry.getValue())
-            .collect(Collectors.toList());
+        if (store.exceedsThreshold(key, getThresholdRate())) {
+            val submission = store.get(key);
+            request.setAttribute(ThrottledSubmission.class.getSimpleName(), submission);
+            return true;
+        }
+        return false;
     }
 
     @Override

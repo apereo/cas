@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -35,10 +34,10 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET)
     private Action action;
-
+    
     @Test
     void verifySkipTgt() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val tgt = new MockTicketGrantingTicket("casuser-new");
         val added = (TicketGrantingTicket) getTicketRegistry().addTicket(tgt);
@@ -51,7 +50,7 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
 
     @Test
     void verifyCreateTgt() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         prepareRequestContextForAuthentication(context, authentication);
@@ -64,7 +63,7 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
 
     @Test
     void verifyCreateTgtWithWarnings() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val handlerResult = new DefaultAuthenticationHandlerExecutionResult();
@@ -88,8 +87,8 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
         val result = mock(AuthenticationResult.class);
         when(result.getAuthentication()).thenReturn(authentication);
 
-        when(builder.build(any(PrincipalElectionStrategy.class))).thenReturn(result);
-        when(builder.build(any(PrincipalElectionStrategy.class), any(Service.class))).thenReturn(result);
+        when(builder.build()).thenReturn(result);
+        when(builder.build(any(Service.class))).thenReturn(result);
 
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());

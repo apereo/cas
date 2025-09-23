@@ -29,14 +29,14 @@ while (( "$#" )); do
   esac
 done
 
-function printred() {
-  printf "${RED}$1${ENDCOLOR}\n"
-}
 function printgreen() {
-  printf "${GREEN}$1${ENDCOLOR}\n"
+  printf "☘️ ${GREEN}$1${ENDCOLOR}\n"
+}
+function printred() {
+  printf "🚨 ${RED}$1${ENDCOLOR}\n"
 }
 function printyellow() {
-  printf "${YELLOW}$1${ENDCOLOR}\n"
+  printf "⚠️  ${YELLOW}$1${ENDCOLOR}\n"
 }
 
 if [[ "${BUILD}" == "true" ]]; then
@@ -90,7 +90,7 @@ if [[ "${RUN}" == "true" ]]; then
       exit 1
     fi
   else
-    # We cannot do this in Github Actions/CI; curl seems to hang indefinitely
+    # We cannot do this in GitHub Actions/CI; curl seems to hang indefinitely
     until curl -k -L --connect-timeout 10 --output /dev/null --silent --fail https://localhost:8443/cas/login; do
        echo -n '.'
        sleep 1

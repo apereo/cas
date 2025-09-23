@@ -1,13 +1,11 @@
 package org.apereo.cas.support.geo;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
-
 import java.net.InetAddress;
 
 /**
@@ -19,7 +17,7 @@ import java.net.InetAddress;
 @RequiredArgsConstructor
 @Slf4j
 public class GroovyGeoLocationService extends AbstractGeoLocationService {
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     private final ApplicationContext applicationContext;
 

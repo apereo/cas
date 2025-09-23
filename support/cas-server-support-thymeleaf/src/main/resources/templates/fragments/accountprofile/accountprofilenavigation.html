@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>Account Profile</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+
+<span th:fragment="navigation">
+    <nav class="sidebar-navigation" id="navigationMenu">
+            <ul>
+                <li class="active" onclick="showPanel('#divOverview');" id="linkOverview" href="#divOverview">
+                    <i class="mdi mdi-home" aria-hidden="true"></i>
+                    <span class="tooltip">Home</span>
+                </li>
+                <li onclick="showPanel('#divAttributes');" id="linkAttributes" href="#divAttributes">
+                    <i class="mdi mdi-account-details" aria-hidden="true"></i>
+                    <span class="tooltip">Attributes</span>
+                </li>
+                <li onclick="showPanel('#divSessions');" id="linkSessions" href="#divSessions">
+                    <i class="mdi mdi-account-clock" aria-hidden="true"></i>
+                    <span class="tooltip">SSO Sessions</span>
+                </li>
+                <li th:if="${authorizedServices}" onclick="showPanel('#divApplications');" id="linkApplications" href="#divApplications">
+                    <i class="mdi mdi-apps" aria-hidden="true"></i>
+                    <span class="tooltip">Applications</span>
+                </li>
+                <li th:if="${auditLog}" onclick="showPanel('#divAuditLog');" id="linkAuditLog" href="#divAuditLog">
+                    <i class="mdi mdi-account-reactivate" aria-hidden="true"></i>
+                    <span class="tooltip">Audit Log & Activity</span>
+                </li>
+                <li th:if="${multifactorRegisteredAccounts}" onclick="showPanel('#divMfaRegisteredAccounts');" id="linkMfaRegisteredAccounts" href="#divMfaRegisteredAccounts">
+                    <i class="mdi mdi-cellphone" aria-hidden="true"></i>
+                    <span class="tooltip">Registered Multifactor Authentication Devices</span>
+                </li>
+                <li th:if="${multifactorTrustedDevices}" onclick="showPanel('#divMultifactorTrustedDevices');" id="linkMfaTrustedDevices" href="#divMultifactorTrustedDevices">
+                    <i class="mdi mdi-cellphone-check" aria-hidden="true"></i>
+                    <span class="tooltip">Registered Trusted Multifactor Authentication Devices</span>
+                </li>
+                <li th:if="${consentDecisions}"
+                    onclick="showPanel('#divConsentDecisions');" id="linkConsentDecisions" href="#divConsentDecisions">
+                    <i class="mdi mdi-head-check-outline" aria-hidden="true"></i>
+                    <span class="tooltip">Attribute Consent</span>
+                </li>
+                <li th:if="${!#lists.isEmpty(oidcAccessTokens)}"
+                     onclick="showPanel('#divOidcAccessTokens');" id="linkOidcAccessTokens" href="#divOidcAccessTokens">
+                    <i class="mdi mdi-cloud-key-outline" aria-hidden="true"></i>
+                    <span class="tooltip">Access Tokens</span>
+                </li>
+
+                <li th:if="${passwordManagementEnabled != null && passwordManagementEnabled}"
+                    onclick="document.forms.fmChangePsw.submit()"
+                    id="linkPasswordManagement">
+                    <i class="mdi mdi-form-textbox-password" aria-hidden="true"></i>
+                    <span class="tooltip">Change your password. <span th:text="#{screen.account.tooltip.logout}"></span></span>
+
+                    <form method="post" id="fmChangePsw" name="fmChangePsw">
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="_eventId" value="resetPassword"/>
+                    </form>
+                </li>
+                <li th:if="${securityQuestionsEnabled}"
+                    onclick="showPanel('#divSecurityQuestions');" id="linkSecurityQuestions" href="#divSecurityQuestions">
+                    <i class="mdi mdi-security" aria-hidden="true"></i>
+                    <span class="tooltip">Security Questions</span>
+                </li>
+                <li onclick="logout()" id="linkLogout">
+                    <i class="mdi mdi-logout-variant" aria-hidden="true"></i>
+                    <span class="tooltip">Logout</span>
+                </li>
+
+                <script type="text/javascript" th:inline="javascript">
+                    /*<![CDATA[*/
+                    const casServerLogoutUrl = /*[[@{/logout}]]*/;
+                    /*]]>*/
+
+                    function logout() {
+                        Swal.fire({
+                            title: `Are you sure you want to logout?`,
+                            icon: "warning",
+                            showConfirmButton: true,
+                            showDenyButton: true
+                        })
+                        .then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = casServerLogoutUrl;
+                            }
+                        });
+                    }
+                </script>
+            </ul>
+        </nav>
+</span>
+
+
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+description = "Apereo CAS Azure Monitor & Application Insights Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Monitoring",
+            title: "Azure Monitor Insights",
+            aliases: ["azureinsights", "azuremonitor"]
+    ]
+}
+
+dependencies {
+    implementation libraries.azureinsightsagent
+    implementation libraries.azurekustolog4j
+
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-notifications-api")
+    implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-configuration-api")
+
+    api project(":api:cas-server-core-api-audit")
+    api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api")
+
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    
+}

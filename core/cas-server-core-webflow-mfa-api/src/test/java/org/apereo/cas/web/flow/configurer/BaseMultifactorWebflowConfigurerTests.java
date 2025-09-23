@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,9 +16,7 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.TransitionableState;
-
 import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,8 +32,8 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     protected CasWebflowExecutionPlan casWebflowExecutionPlan;
 
     @Autowired
-    @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-    protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+    protected FlowDefinitionRegistry flowDefinitionRegistry;
 
     @Autowired
     protected CasConfigurationProperties casProperties;
@@ -61,8 +58,8 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
         val states = Arrays.asList(flow.getStateIds());
         states.forEach(stateId -> {
             val state = (State) flow.getState(stateId);
-            if (state instanceof TransitionableState) {
-                ((TransitionableState) state).getTransitionSet().forEach(t -> assertTrue(flow.containsState(t.getTargetStateId()),
+            if (state instanceof final TransitionableState transitionableState) {
+                transitionableState.getTransitionSet().forEach(t -> assertTrue(flow.containsState(t.getTargetStateId()),
                     () -> String.format("Destination of transition [%s]-%s->[%s] must be in flow definition",
                         stateId, t.getId(), t.getTargetStateId())));
             }
@@ -70,19 +67,19 @@ public abstract class BaseMultifactorWebflowConfigurerTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val registry = getMultifactorFlowDefinitionRegistry();
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_MFA_CHECK_BYPASS));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_MFA_CHECK_AVAILABLE));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_MFA_FAILURE));
-        val loginFlow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val loginFlow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertInstanceOf(SubflowState.class, loginFlow.getState(getMultifactorEventId()));
     }
 
     @Test
-    void verifyTrustedDevice() throws Throwable {
+    void verifyTrustedDevice() {
         val registry = getMultifactorFlowDefinitionRegistry();
         assertTrue(registry.containsFlowDefinition(getMultifactorEventId()));
         val flow = (Flow) registry.getFlowDefinition(getMultifactorEventId());

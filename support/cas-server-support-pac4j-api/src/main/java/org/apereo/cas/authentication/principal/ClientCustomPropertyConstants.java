@@ -27,4 +27,9 @@ public interface ClientCustomPropertyConstants {
      * CSS class assigned to this client to be used in the UI.
      */
     String CLIENT_CUSTOM_PROPERTY_CSS_CLASS = "cssClass";
+
+    /**
+     * Indicate whether this client's idp metadata points to an aggregate xml metadata.
+     */
+    String CLIENT_CUSTOM_PROPERTY_IDENTITY_PROVIDER_METADATA_AGGREGATE = "identityProviderMetadataAggregate";
 }

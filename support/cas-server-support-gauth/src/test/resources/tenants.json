@@ -1,0 +1,16 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "description": "Example tenant",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.authn.mfa.gauth.core.issuer": "CASShire",
+        "cas.authn.mfa.gauth.core.label": "CASShireLabel",
+        "cas.authn.mfa.gauth.core.scratch-codes.encryption.key": "12345678901234567890123456789012",
+      }
+    }
+  ]
+]

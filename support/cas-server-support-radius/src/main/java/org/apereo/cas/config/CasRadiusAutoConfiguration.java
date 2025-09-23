@@ -106,7 +106,7 @@ public class CasRadiusAutoConfiguration {
     public RadiusServer radiusServer(final CasConfigurationProperties casProperties,
                                      final ConfigurableApplicationContext applicationContext,
                                      @Qualifier(CasSSLContext.BEAN_NAME)
-                                     final CasSSLContext casSslContext) throws Exception {
+                                     final CasSSLContext casSslContext) {
         return BeanSupplier.of(RadiusServer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
@@ -126,7 +126,7 @@ public class CasRadiusAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(BeanContainer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
@@ -155,12 +155,12 @@ public class CasRadiusAutoConfiguration {
         @Qualifier("radiusPasswordPolicyConfiguration")
         final PasswordPolicyContext radiusPasswordPolicyConfiguration,
         @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) throws Exception {
+        final ServicesManager servicesManager) {
         return BeanSupplier.of(AuthenticationHandler.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val radius = casProperties.getAuthn().getRadius();
-                val h = new RadiusAuthenticationHandler(radius.getName(), servicesManager,
+                val h = new RadiusAuthenticationHandler(radius.getName(),
                     radiusPrincipalFactory, radiusServers.toList(), radius.isFailoverOnException(),
                     radius.isFailoverOnAuthenticationFailure());
                 h.setState(radius.getState());
@@ -182,7 +182,7 @@ public class CasRadiusAutoConfiguration {
         @Qualifier("radiusAuthenticationHandler")
         final AuthenticationHandler radiusAuthenticationHandler,
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final PrincipalResolver defaultPrincipalResolver) throws Exception {
+        final PrincipalResolver defaultPrincipalResolver) {
         return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> plan -> {
@@ -211,7 +211,7 @@ public class CasRadiusAutoConfiguration {
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(MultifactorAuthenticationProviderResolver.BEAN_NAME)
-        final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver) throws Exception {
+        final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver) {
         return BeanSupplier.of(MultifactorAuthenticationTrigger.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new RadiusAccessChallengedMultifactorAuthenticationTrigger(casProperties,
@@ -225,12 +225,12 @@ public class CasRadiusAutoConfiguration {
     @Lazy(false)
     public CasWebflowEventResolver radiusAccessChallengedAuthenticationWebflowEventResolver(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
         final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
         @Qualifier("radiusAccessChallengedMultifactorAuthenticationTrigger")
         final MultifactorAuthenticationTrigger radiusAccessChallengedMultifactorAuthenticationTrigger,
-        @Qualifier("casWebflowConfigurationContext")
-        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) throws Exception {
+        @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
+        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
         return BeanSupplier.of(CasWebflowEventResolver.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {

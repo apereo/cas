@@ -136,7 +136,7 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
     private CookieStore cookieStore;
 
     /**
-     * Interface for deciding whether a connection can be re-used for subsequent requests and should be kept alive.
+     * Interface for deciding whether a connection can be reused for subsequent requests and should be kept alive.
      **/
     private ConnectionReuseStrategy connectionReuseStrategy = new DefaultConnectionReuseStrategy();
 
@@ -162,7 +162,7 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
     /**
      * Default headers to be sent.
      **/
-    private Collection<? extends Header> defaultHeaders = new ArrayList<>(0);
+    private Collection<? extends Header> defaultHeaders = new ArrayList<>();
 
     /**
      * Default strategy implementation for proxy host authentication.
@@ -230,8 +230,8 @@ public class SimpleHttpClientFactoryBean implements HttpClientFactory {
     private CloseableHttpClient buildHttpClient() {
         val sslFactory = Optional.ofNullable(this.sslSocketFactory)
             .orElseGet(() -> new SSLConnectionSocketFactory(
-                ObjectUtils.defaultIfNull(this.sslContext, SSLContexts.createDefault()),
-                ObjectUtils.defaultIfNull(this.hostnameVerifier, new DefaultHostnameVerifier())));
+                ObjectUtils.getIfNull(this.sslContext, SSLContexts.createDefault()),
+                ObjectUtils.getIfNull(this.hostnameVerifier, new DefaultHostnameVerifier())));
         
         val plainSocketFactory = PlainConnectionSocketFactory.getSocketFactory();
         val registry = RegistryBuilder.<ConnectionSocketFactory>create()

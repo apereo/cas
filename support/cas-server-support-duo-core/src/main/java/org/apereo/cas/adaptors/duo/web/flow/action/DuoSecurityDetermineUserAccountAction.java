@@ -6,7 +6,9 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationRegistrationCi
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
@@ -18,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
@@ -34,25 +35,28 @@ import java.util.UUID;
 @Slf4j
 public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAuthenticationAction<DuoSecurityMultifactorAuthenticationProvider> {
 
-    private final CasConfigurationProperties casProperties;
+    protected final CasConfigurationProperties casProperties;
 
-    private final ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
 
-    private final PrincipalResolver principalResolver;
+    protected final PrincipalResolver principalResolver;
 
+    protected final ServiceFactory serviceFactory;
+
+    protected final TenantExtractor tenantExtractor;
+    
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         val account = getDuoSecurityUserAccount(principal);
-        val eventFactorySupport = new EventFactorySupport();
-        if (account.getStatus() == DuoSecurityUserAccountStatus.ENROLL) {
-            if (StringUtils.isNotBlank(provider.getRegistration().getRegistrationUrl())) {
-                val url = buildDuoRegistrationUrlFor(requestContext, provider, principal);
-                LOGGER.info("Duo Security registration url for enrollment is [{}]", url);
-                requestContext.getFlowScope().put("duoRegistrationUrl", url);
-                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
-            }
+        val eventFactorySupport = eventFactory;
+        if (account.getStatus() == DuoSecurityUserAccountStatus.ENROLL
+            && StringUtils.isNotBlank(provider.getRegistration().getRegistrationUrl())) {
+            val url = buildDuoRegistrationUrlFor(requestContext, provider, principal);
+            LOGGER.info("Duo Security registration url for enrollment is [{}]", url);
+            requestContext.getFlowScope().put("duoRegistrationUrl", url);
+            return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
         }
         if (account.getStatus() == DuoSecurityUserAccountStatus.ALLOW) {
             return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_BYPASS);
@@ -86,7 +90,8 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
             DuoSecurityAuthenticationRegistrationCipherExecutor.class);
         val builder = new URIBuilder(provider.getRegistration().getRegistrationUrl());
         if (cipher.isEnabled()) {
-            val jwtBuilder = new JwtBuilder(cipher, applicationContext, servicesManager, principalResolver, casProperties);
+            val jwtBuilder = new JwtBuilder(cipher, applicationContext, servicesManager,
+                principalResolver, casProperties, serviceFactory);
             val jwtRequest = JwtBuilder.JwtRequest
                 .builder()
                 .serviceAudience(Set.of(builder.getHost()))

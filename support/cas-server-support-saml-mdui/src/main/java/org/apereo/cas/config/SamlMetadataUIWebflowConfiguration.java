@@ -13,6 +13,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -45,18 +46,19 @@ class SamlMetadataUIWebflowConfiguration {
     public CasWebflowConfigurer samlMetadataUIWebConfigurer(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
         return new SamlMetadataUIWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SAML_METADATA_UI_PARSER)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public Action samlMetadataUIParserAction(
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("chainingSamlMetadataUIMetadataResolverAdapter")
         final MetadataResolverAdapter chainingSamlMetadataUIMetadataResolverAdapter,
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -66,9 +68,17 @@ class SamlMetadataUIWebflowConfiguration {
         final ArgumentExtractor argumentExtractor,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory<WebApplicationService> serviceFactory) {
-        val parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(), SamlProtocolConstants.PARAMETER_ENTITY_ID);
-        return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter,
-            serviceFactory, servicesManager, argumentExtractor);
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> {
+                val parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(), SamlProtocolConstants.PARAMETER_ENTITY_ID);
+                return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter,
+                    serviceFactory, servicesManager, argumentExtractor);
+            })
+            .withId(CasWebflowConstants.ACTION_ID_SAML_METADATA_UI_PARSER)
+            .build()
+            .get();
     }
 
     @Bean

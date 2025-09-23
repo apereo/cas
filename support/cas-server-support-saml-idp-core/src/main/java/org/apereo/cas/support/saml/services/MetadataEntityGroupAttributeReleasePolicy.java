@@ -39,7 +39,7 @@ public class MetadataEntityGroupAttributeReleasePolicy extends BaseSamlRegistere
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
-        final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
+        final RegisteredServiceAttributeReleasePolicyContext context) {
 
         val affiliationDescriptor = entityDescriptor.getAffiliationDescriptor();
         if (affiliationDescriptor != null) {
@@ -48,11 +48,10 @@ public class MetadataEntityGroupAttributeReleasePolicy extends BaseSamlRegistere
                 return authorizeReleaseOfAllowedAttributes(context, attributes);
             }
         }
-        if (entityDescriptor.getParent() instanceof final EntitiesDescriptor ed) {
-            if (RegexUtils.find(this.group, ed.getName())) {
-                return authorizeReleaseOfAllowedAttributes(context, attributes);
-            }
+        if (entityDescriptor.getParent() instanceof final EntitiesDescriptor ed
+            && RegexUtils.find(this.group, ed.getName())) {
+            return authorizeReleaseOfAllowedAttributes(context, attributes);
         }
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 }

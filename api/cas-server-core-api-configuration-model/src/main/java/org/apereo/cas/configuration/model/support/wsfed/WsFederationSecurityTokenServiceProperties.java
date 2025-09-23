@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,7 +23,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("WsFederationSecurityTokenServiceProperties")
 @RequiresModule(name = "cas-server-support-ws-sts")
 public class WsFederationSecurityTokenServiceProperties implements Serializable {
 
@@ -125,7 +123,7 @@ public class WsFederationSecurityTokenServiceProperties implements Serializable 
      * Collection of fully-qualified claims prefixed with the appropriate
      * namespace that are expected to be released via attribute release policy.
      */
-    private List<String> customClaims = new ArrayList<>(0);
+    private List<String> customClaims = new ArrayList<>();
 
     public WsFederationSecurityTokenServiceProperties() {
         crypto.getEncryption().setKeySize(EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);

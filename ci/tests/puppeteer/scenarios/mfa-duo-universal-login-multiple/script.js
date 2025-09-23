@@ -8,7 +8,7 @@ const assert = require("assert");
     await login(page, "mfa-duo", "https://localhost:9859/anything/cas");
     await cas.sleep(1000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function login(page, providerId, service = undefined) {
@@ -26,12 +26,9 @@ async function login(page, providerId, service = undefined) {
     await cas.screenshot(page);
     if (service !== undefined) {
         await cas.sleep(4000);
-        await page.url();
         await cas.logPage(page);
         const ticket = await cas.assertTicketParameter(page);
-        const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-        await cas.log(body);
-        const json = JSON.parse(body);
+        const json = await cas.validateTicket(service, ticket);
         const authenticationSuccess = json.serviceResponse.authenticationSuccess;
         assert(authenticationSuccess.attributes.authnContextClass === undefined);
     } else {

@@ -65,7 +65,7 @@ public class RegexUtils {
      * case insensitive.
      *
      * @param pattern the pattern, may not be null.
-     * @return the pattern or or {@link RegexUtils#MATCH_NOTHING_PATTERN}
+     * @return the pattern or {@link RegexUtils#MATCH_NOTHING_PATTERN}
      * if pattern is null or invalid.
      */
     public static Pattern createPattern(final String pattern) {

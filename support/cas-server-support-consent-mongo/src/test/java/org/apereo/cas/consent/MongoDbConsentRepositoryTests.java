@@ -1,9 +1,11 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.config.CasConsentMongoDbAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
         "cas.consent.mongo.database-name=consent"
     })
 @Tag("MongoDb")
+@ExtendWith(CasTestExtension.class)
 @Getter
 @EnabledIfListeningOnPort(port = 27017)
 class MongoDbConsentRepositoryTests extends BaseConsentRepositoryTests {

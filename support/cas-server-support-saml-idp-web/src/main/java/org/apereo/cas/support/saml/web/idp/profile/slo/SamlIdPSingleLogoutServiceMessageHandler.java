@@ -23,6 +23,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
+import org.apereo.cas.web.HttpMessage;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import java.nio.charset.StandardCharsets;
@@ -93,7 +95,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
     }
 
     @Override
-    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg,
+    protected boolean sendMessageToEndpoint(final HttpMessage msg,
                                             final SingleLogoutRequestContext request,
                                             final SingleLogoutMessage logoutMessage) {
         if (request.getExecutionRequest().getHttpServletRequest().isPresent()) {
@@ -115,7 +117,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
         HttpResponse response = null;
         try {
             val logoutRequest = (LogoutRequest) logoutMessage.getMessage();
-            LOGGER.trace("Sending logout request for binding [{}]", binding);
+            LOGGER.debug("Sending logout request for binding [{}]", binding);
             if (SAMLConstants.SAML2_REDIRECT_BINDING_URI.equalsIgnoreCase(binding)) {
                 val encoder = new SamlIdPHttpRedirectDeflateEncoder(msg.getUrl().toExternalForm(), logoutRequest);
                 encoder.doEncode();
@@ -129,16 +131,16 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                 response = HttpUtils.execute(exec);
             } else {
                 val payload = SerializeSupport.nodeToString(XMLObjectSupport.marshall(logoutRequest));
-                LOGGER.trace("Logout request payload is [{}]", payload);
+                LOGGER.debug("Logout request payload is [{}]", payload);
 
                 val message = EncodingUtils.encodeBase64(payload.getBytes(StandardCharsets.UTF_8), false);
-                LOGGER.trace("Logout message encoded in base64 is [{}]", message);
+                LOGGER.debug("Logout message encoded in base64 is [{}]", message);
 
                 val exec = HttpExecutionRequest.builder()
                     .method(HttpMethod.POST)
                     .url(msg.getUrl().toExternalForm())
                     .parameters(CollectionUtils.wrap(SamlProtocolConstants.PARAMETER_SAML_REQUEST, message))
-                    .headers(CollectionUtils.wrap("Content-Type", msg.getContentType()))
+                    .headers(CollectionUtils.wrap(HttpHeaders.CONTENT_TYPE, msg.getContentType()))
                     .httpClient(getHttpClient())
                     .build();
                 response = HttpUtils.execute(exec);
@@ -157,5 +159,10 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
         }
         LOGGER.warn("No (successful) logout response received from the url [{}]", msg.getUrl().toExternalForm());
         return false;
+    }
+
+    @Override
+    public HttpMessage prepareLogoutHttpMessageToSend(final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
+        return new LogoutHttpMessage(SamlProtocolConstants.PARAMETER_SAML_REQUEST, request.getLogoutUrl(), logoutMessage.getPayload(), isAsynchronous());
     }
 }

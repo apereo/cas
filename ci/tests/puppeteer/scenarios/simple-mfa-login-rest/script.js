@@ -9,12 +9,13 @@ const cas = require("../../cas.js");
 
     const payload = {
         "/new": {
-            "get": "514a61cc1518"
+            "post": "514a61cc1518"
         },
         "/": {
             "post": "514a61cc1518"
         },
         "/:id": {
+            "post": principal,
             "get": principal
         }
     };
@@ -45,6 +46,6 @@ const cas = require("../../cas.js");
         if (mockServer !== null) {
             mockServer.stop();
         }
-        await browser.close();
+        await cas.closeBrowser(browser);
     }
 })();

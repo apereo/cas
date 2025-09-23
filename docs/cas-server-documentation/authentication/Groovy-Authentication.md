@@ -35,7 +35,7 @@ def authenticate(final Object... args) {
     if (authenticationWorksCorrectly()) {
         def principal = principalFactory.createPrincipal(credential.username);
         return new DefaultAuthenticationHandlerExecutionResult(authenticationHandler,
-            credential, principal, new ArrayList<>(0));
+            credential, principal, new ArrayList<>());
     }
     throw new FailedLoginException();
 }
@@ -50,3 +50,5 @@ def supportsCredentialClass(final Object... args) {
     return credentialClazz == UsernamePasswordCredential.class
 }
 ```
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

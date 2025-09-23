@@ -7,11 +7,13 @@ import org.apereo.cas.config.CasSamlAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasValidationAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,9 +39,10 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "management.endpoints.web.exposure.include=*",
-        "management.endpoint.samlValidate.enabled=true"
+        "management.endpoint.samlValidate.access=UNRESTRICTED"
     })
 @Tag("SAML1")
+@ExtendWith(CasTestExtension.class)
 class SamlValidateEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("samlValidateEndpoint")
@@ -50,7 +53,7 @@ class SamlValidateEndpointTests extends AbstractCasEndpointTests {
     private CasWebSecurityConfigurer<Void> samlProtocolEndpointConfigurer;
 
     @Test
-    void verifyEndpoints() throws Throwable {
+    void verifyEndpoints() {
         assertFalse(samlProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 

@@ -8,8 +8,8 @@ const cas = require("../../cas.js");
     
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
-        "redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug&" +
-        "scope=openid%20email%20profile%20address%20phone&" +
+        "redirect_uri=https://localhost:9859/post&" +
+        `scope=${encodeURIComponent("openid email profile address phone")}&` +
         "response_type=code&" +
         "response_mode=form_post&" +
         "nonce=vn4qulthnx";
@@ -35,12 +35,12 @@ const cas = require("../../cas.js");
     await cas.click(page, "#allow");
     await cas.waitForNavigation(page);
     await cas.sleep(2000);
-    await cas.assertTextContent(page, "h1.green-text", "Success!");
-
     await cas.logPage(page);
+    const content = await cas.textContent(page, "body");
+    const payload = JSON.parse(content);
+    assert(payload.form.code !== undefined);
+    assert(payload.form.nonce !== undefined);
     await cas.screenshot(page);
-    assert(await page.url().startsWith("https://oidcdebugger.com/debug"));
-
     await cas.doGet("http://localhost:9666/scim/v2/Users?attributes=userName",
         (res) => {
             assert(res.status === 200);
@@ -53,5 +53,5 @@ const cas = require("../../cas.js");
             throw error;
         }, { "Authorization": "Basic c2NpbS11c2VyOmNoYW5nZWl0" });
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

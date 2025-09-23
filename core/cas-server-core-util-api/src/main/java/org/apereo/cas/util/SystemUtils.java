@@ -11,6 +11,7 @@ import org.springframework.core.SpringVersion;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import jakarta.servlet.http.HttpServlet;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.LinkedHashMap;
@@ -52,6 +53,7 @@ public class SystemUtils {
      *
      * @return the system info
      */
+    @SuppressWarnings("JavaTimeDefaultTimeZone")
     public static Map<String, Object> getSystemInfo() {
         val properties = System.getProperties();
 
@@ -74,11 +76,12 @@ public class SystemUtils {
         info.put("JVM Free Memory", FileUtils.byteCountToDisplaySize(runtime.freeMemory()));
         info.put("JVM Maximum Memory", FileUtils.byteCountToDisplaySize(runtime.maxMemory()));
         info.put("JVM Total Memory", FileUtils.byteCountToDisplaySize(runtime.totalMemory()));
-
+                               
         info.put("OS Architecture", properties.get("os.arch"));
         info.put("OS Name", properties.get("os.name"));
         info.put("OS Version", properties.get("os.version"));
         info.put("OS Date/Time", LocalDateTime.now(ZoneId.systemDefault()));
+        info.put("OS Timezone", Clock.systemDefaultZone().toString());
         info.put("OS Temp Directory", FileUtils.getTempDirectoryPath());
 
         return info;

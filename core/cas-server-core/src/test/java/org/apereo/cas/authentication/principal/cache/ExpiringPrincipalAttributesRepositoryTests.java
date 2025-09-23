@@ -9,22 +9,23 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilte
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,8 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("Attributes")
+@Tag("AttributeRepository")
+@ExtendWith(CasTestExtension.class)
 class ExpiringPrincipalAttributesRepositoryTests {
     private static final String MAIL = "mail";
 
@@ -62,7 +64,7 @@ class ExpiringPrincipalAttributesRepositoryTests {
 
         PRINCIPAL = FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory()
             .createPrincipal(UUID.randomUUID().toString(),
-                Collections.singletonMap(MAIL, CollectionUtils.wrapList("final@school.com"))));
+                Map.of(MAIL, CollectionUtils.wrapList("final@school.com"))));
     }
 
     protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final String unit, final long duration) {
@@ -70,12 +72,12 @@ class ExpiringPrincipalAttributesRepositoryTests {
     }
 
     @Nested
+    @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        ExpiringPrincipalAttributesRepositoryTests.CacheTestConfiguration.class
+        AopAutoConfiguration.class,
+        CacheTestConfiguration.class
     })
-    public class CachingTests {
+    class CachingTests {
 
         @Autowired
         private ConfigurableApplicationContext applicationContext;
@@ -117,7 +119,7 @@ class ExpiringPrincipalAttributesRepositoryTests {
         }
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "CacheTestConfiguration", proxyBeanMethods = false)
     static class CacheTestConfiguration {
         @Bean
         public PersonAttributeDao attributeRepository() {

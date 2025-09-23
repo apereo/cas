@@ -1,6 +1,7 @@
 package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.call.PhoneCallOperator;
 import org.apereo.cas.notifications.call.PhoneCallRequest;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
@@ -10,6 +11,7 @@ import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.function.FunctionUtils;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,6 +35,9 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
     private final NotificationSender notificationSender;
 
     private final PhoneCallOperator phoneCallOperator;
+
+    @Getter
+    private final TenantExtractor tenantExtractor;
 
     @Override
     public boolean isPhoneOperatorDefined() {
@@ -71,13 +76,13 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
     }
 
     @Override
-    public boolean sms(final SmsRequest smsRequest) throws Throwable {
-        val recipient = smsRequest.getRecipient();
+    public boolean sms(final SmsRequest smsRequest) {
+        val recipients = Objects.requireNonNull(smsRequest.getRecipients(), "SMS recipients cannot be undefined");
         if (!isSmsSenderDefined() || !smsRequest.isSufficient()) {
-            LOGGER.warn("Could not send SMS to [{}]; No from/text is found or SMS settings are undefined.", recipient);
+            LOGGER.warn("Could not send SMS to [{}]; No from/text is found or SMS settings are undefined.", recipients);
             return false;
         }
-        return smsSender.send(smsRequest.getFrom(), recipient, smsRequest.getText());
+        return recipients.stream().anyMatch(Unchecked.predicate(to -> smsSender.send(smsRequest.getFrom(), to, smsRequest.getText())));
     }
 
     @Override

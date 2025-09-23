@@ -3,15 +3,14 @@ package org.apereo.cas.support.oauth;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,7 +51,7 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
             .filter(it -> {
                 val profile = it.getValue();
                 return StringUtils.isBlank(clientId)
-                       || StringUtils.equals((CharSequence) profile.getAttribute(SESSION_CLIENT_ID), clientId);
+                       || Strings.CI.equals((CharSequence) profile.getAttribute(SESSION_CLIENT_ID), clientId);
             })
             .collect(Collectors.toMap(
                 Map.Entry::getKey,

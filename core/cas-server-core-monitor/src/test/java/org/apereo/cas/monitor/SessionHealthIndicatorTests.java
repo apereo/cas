@@ -1,9 +1,9 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -20,12 +20,13 @@ import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.*;
  * @since 3.5.0
  */
 @Tag("Metrics")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = CasCoreMonitorAutoConfigurationTests.SharedTestConfiguration.class,
     properties = "cas.ticket.tgt.core.only-track-most-recent-session=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -60,25 +62,21 @@ class SessionHealthIndicatorTests {
         }));
 
         if (ticket[0] != null) {
-            val testService = getService("junit");
+            val testService = RegisteredServiceTestUtils.getService("junit");
             IntStream.range(0, stCount).forEach(Unchecked.intConsumer(i -> registry.addTicket(ticket[0].grantServiceTicket(GENERATOR.getNewTicketId("ST"),
                 testService, TEST_EXP_POLICY, false, serviceTicketSessionTrackingPolicy))));
         }
     }
 
-    public static AbstractWebApplicationService getService(final String name) {
-        val request = new MockHttpServletRequest();
-        request.addParameter("service", name);
-        return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
-    }
-
     @BeforeEach
-    public void initialize() {
-        this.defaultRegistry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
+    void initialize() {
+        this.defaultRegistry = new DefaultTicketRegistry(
+            mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
+            mock(ConfigurableApplicationContext.class));
     }
 
     @Test
-    void verifyObserveOk() throws Throwable {
+    void verifyObserveOk() {
         addTicketsToRegistry(this.defaultRegistry, 5, 10);
         val monitor = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(defaultRegistry), -1, -1);
         val status = monitor.health();
@@ -86,7 +84,7 @@ class SessionHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveWarnSessionsExceeded() throws Throwable {
+    void verifyObserveWarnSessionsExceeded() {
         addTicketsToRegistry(this.defaultRegistry, 10, 1);
         val monitor = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(defaultRegistry), 0, 5);
         val status = monitor.health();
@@ -94,7 +92,7 @@ class SessionHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveWarnServiceTicketsExceeded() throws Throwable {
+    void verifyObserveWarnServiceTicketsExceeded() {
         addTicketsToRegistry(this.defaultRegistry, 1, 10);
         val monitor = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(defaultRegistry), 5, 0);
         val status = monitor.health();

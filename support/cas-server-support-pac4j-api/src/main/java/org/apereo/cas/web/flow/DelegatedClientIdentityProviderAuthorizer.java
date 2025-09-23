@@ -20,6 +20,12 @@ import java.util.ArrayList;
  * @since 6.6.0
  */
 public interface DelegatedClientIdentityProviderAuthorizer {
+
+    /**
+     * The bean name.
+     */
+    String BEAN_NAME = "delegatedClientIdentityProviderAuthorizer";
+
     /**
      * Is delegated client authorized for service?
      *
@@ -72,7 +78,7 @@ public interface DelegatedClientIdentityProviderAuthorizer {
      */
     default String getClientNameFromAuthentication(final Authentication authentication) {
         val clientNames = authentication.getAttributes().getOrDefault(
-            ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, new ArrayList<>(0));
+            ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, new ArrayList<>());
         return CollectionUtils.firstElement(clientNames).map(Object::toString).orElse(StringUtils.EMPTY);
     }
 

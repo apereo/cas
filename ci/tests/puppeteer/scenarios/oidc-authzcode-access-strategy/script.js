@@ -20,7 +20,7 @@ const assert = require("assert");
     assert(decoded["memberships"].includes("director"));
     assert(decoded["memberships"].includes("admin"));
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function getPayload(page, redirectUri, clientId, clientSecret) {

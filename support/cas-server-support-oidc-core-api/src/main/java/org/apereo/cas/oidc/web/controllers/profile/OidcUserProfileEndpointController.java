@@ -18,6 +18,10 @@ import com.nimbusds.oauth2.sdk.dpop.verifiers.DPoPIssuer;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.DPoPProtectedResourceRequestVerifier;
 import com.nimbusds.oauth2.sdk.id.ClientID;
 import com.nimbusds.oauth2.sdk.token.DPoPAccessToken;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.jee.context.JEEContext;
@@ -31,6 +35,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.net.URI;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +44,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Tag(name = "OpenID Connect")
 public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpointController<OidcConfigurationContext> {
 
     public OidcUserProfileEndpointController(final OidcConfigurationContext configurationContext) {
@@ -49,11 +55,13 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.PROFILE_URL,
         "/**/" + OidcConstants.PROFILE_URL
     }, produces = {MediaType.APPLICATION_JSON_VALUE, OidcConstants.CONTENT_TYPE_JWT})
+    @Operation(summary = "Handle user profile request",
+        parameters = @Parameter(name = "access_token", in = ParameterIn.QUERY, required = true, description = "Access token"))
     @Override
     public ResponseEntity handleGetRequest(final HttpServletRequest request,
-                                                   final HttpServletResponse response) throws Exception {
+                                           final HttpServletResponse response) throws Exception {
         val webContext = new JEEContext(request, response);
-        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.PROFILE_URL)) {
+        if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.PROFILE_URL, OAuth20Constants.PROFILE_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
@@ -64,6 +72,8 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.PROFILE_URL,
         "/**/" + OidcConstants.PROFILE_URL
     }, produces = {MediaType.APPLICATION_JSON_VALUE, OidcConstants.CONTENT_TYPE_JWT})
+    @Operation(summary = "Handle user profile request",
+        parameters = @Parameter(name = "access_token", in = ParameterIn.QUERY, required = true, description = "Access token"))
     @Override
     public ResponseEntity<String> handlePostRequest(final HttpServletRequest request,
                                                     final HttpServletResponse response) throws Exception {
@@ -90,7 +100,7 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
                 Assert.notNull(JWTParser.parse(accessTokenId), "Provided access token id must be a (signed) JWT");
                 val dpopAccessToken = new DPoPAccessToken(accessTokenId);
                 verifier.verify(request.getMethod(), new URI(request.getRequestURL().toString()),
-                    dPoPIssuer, signedProof, dpopAccessToken, confirmation);
+                    dPoPIssuer, signedProof, dpopAccessToken, confirmation, null);
             }));
         }
     }

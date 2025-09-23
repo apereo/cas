@@ -3,6 +3,7 @@ package org.apereo.cas.impl.account;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(properties = "cas.authn.passwordless.accounts.rest.url=http://localhost:9291")
+@TestPropertySource(properties = "cas.authn.passwordless.accounts.rest.url=http://localhost:${random.int[3000,9999]}")
 @Tag("RestfulApi")
 class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccountStoreTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -36,8 +38,13 @@ class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccou
     @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
     private PasswordlessUserAccountStore passwordlessUserAccountStore;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     @Test
     void verifyAction() throws Throwable {
+        val props = casProperties.getAuthn().getPasswordless().getAccounts().getRest();
+        val port = URI.create(props.getUrl()).getPort();
         val u = PasswordlessUserAccount.builder()
             .email("casuser@example.org")
             .phone("1234567890")
@@ -46,7 +53,7 @@ class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccou
             .attributes(Map.of("lastName", List.of("Smith")))
             .build();
         val data = MAPPER.writeValueAsString(u);
-        try (val webServer = new MockWebServer(9291,
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val user = passwordlessUserAccountStore.findUser(PasswordlessAuthenticationRequest
@@ -59,7 +66,9 @@ class RestfulPasswordlessUserAccountStoreTests extends BasePasswordlessUserAccou
 
     @Test
     void verifyFailsAction() throws Throwable {
-        try (val webServer = new MockWebServer(9291,
+        val props = casProperties.getAuthn().getPasswordless().getAccounts().getRest();
+        val port = URI.create(props.getUrl()).getPort();
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource("###".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val user = passwordlessUserAccountStore.findUser(

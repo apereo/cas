@@ -32,7 +32,7 @@ class ResponseHeadersEnforcementFilterTests {
     private MockFilterConfig filterConfig;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         val servletContext = new MockServletContext();
         this.filterConfig = new MockFilterConfig(servletContext);
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_CACHE_CONTROL, "true");
@@ -46,7 +46,7 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyUnrecognizedParam() throws Throwable {
+    void verifyUnrecognizedParam() {
         filterConfig.addInitParameter("bad-param", "bad-value");
         assertThrows(RuntimeException.class, () -> filter.init(filterConfig));
     }
@@ -66,7 +66,7 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyParam() throws Throwable {
+    void verifyParam() {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();
@@ -86,7 +86,7 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyNoCacheParamJpeg() throws Throwable {
+    void verifyNoCacheParamJpeg() {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();
@@ -101,7 +101,7 @@ class ResponseHeadersEnforcementFilterTests {
     }
 
     @Test
-    void verifyNoCacheParamPng() throws Throwable {
+    void verifyNoCacheParamPng() {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();
@@ -113,5 +113,45 @@ class ResponseHeadersEnforcementFilterTests {
         filter.destroy();
         assertNull(servletResponse.getHeaderValue("Cache-Control"));
         assertNull(servletResponse.getHeaderValue("Pragma"));
+    }
+
+    @Test
+    void verifyDynamicNonce() {
+        val servletContext = new MockServletContext();
+        val specificFilterConfig = new MockFilterConfig(servletContext);
+        specificFilterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_CONTENT_SECURITY_POLICY, "script-src '@nonce@';");
+        filter.init(specificFilterConfig);
+
+        val servletRequest = new MockHttpServletRequest();
+        servletRequest.setSecure(true);
+        val servletResponse = new MockHttpServletResponse();
+        filter.doFilter(servletRequest, servletResponse, new MockFilterChain());
+        filter.destroy();
+
+        val generatedNonce = servletRequest.getAttribute(ResponseHeadersEnforcementFilter.CSP_GENERATED_NONCE);
+        assertNotNull(generatedNonce);
+        val contentSecurityPolicy = servletResponse.getHeaderValue("Content-Security-Policy");
+        assertEquals("script-src '" + generatedNonce + "';", contentSecurityPolicy);
+    }
+
+    @Test
+    void verifyDynamicNonceAlreadyGenerated() {
+        val servletContext = new MockServletContext();
+        val specificFilterConfig = new MockFilterConfig(servletContext);
+        specificFilterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_CONTENT_SECURITY_POLICY, "script-src '@nonce@';");
+        filter.init(specificFilterConfig);
+
+        val servletRequest = new MockHttpServletRequest();
+        servletRequest.setSecure(true);
+        val alreadyGeneratedNonce = "123456";
+        servletRequest.setAttribute(ResponseHeadersEnforcementFilter.CSP_GENERATED_NONCE, alreadyGeneratedNonce);
+        val servletResponse = new MockHttpServletResponse();
+        filter.doFilter(servletRequest, servletResponse, new MockFilterChain());
+        filter.destroy();
+
+        val generatedNonce = servletRequest.getAttribute(ResponseHeadersEnforcementFilter.CSP_GENERATED_NONCE);
+        assertEquals(alreadyGeneratedNonce, generatedNonce);
+        val contentSecurityPolicy = servletResponse.getHeaderValue("Content-Security-Policy");
+        assertEquals("script-src '" + alreadyGeneratedNonce + "';", contentSecurityPolicy);
     }
 }

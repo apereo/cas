@@ -1,23 +1,25 @@
 package org.apereo.cas.influxdb;
 
 import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
-
-import com.influxdb.LogLevel;
-import com.influxdb.client.InfluxDBClient;
-import com.influxdb.client.InfluxDBClientFactory;
-import com.influxdb.client.domain.DeletePredicateRequest;
-import com.influxdb.client.domain.WritePrecision;
-import com.influxdb.client.write.Point;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import com.influxdb.v3.client.InfluxDBClient;
+import com.influxdb.v3.client.Point;
+import com.influxdb.v3.client.PointValues;
+import com.influxdb.v3.client.config.ClientConfig;
+import com.influxdb.v3.client.query.QueryOptions;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.io.Serializable;
+import org.apache.arrow.memory.DefaultAllocationManagerOption;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * This is {@link InfluxDbConnectionFactory}.
@@ -27,32 +29,34 @@ import java.util.Map;
  */
 @Slf4j
 public class InfluxDbConnectionFactory implements AutoCloseable {
-    /**
-     * The Influx db.
-     */
     private final InfluxDBClient influxDb;
 
-    /**
-     * The Influx db properties.
-     */
-    private final InfluxDbProperties influxDbProperties;
+    private final ClientConfig clientConfig;
 
+    static {
+        System.setProperty(
+            DefaultAllocationManagerOption.ALLOCATION_MANAGER_TYPE_PROPERTY_NAME,
+            DefaultAllocationManagerOption.AllocationManagerType.Netty.name()
+        );
+    }
 
-    /**
-     * Instantiates a new Influx db connection factory.
-     *
-     * @param props the props
-     */
     public InfluxDbConnectionFactory(final InfluxDbProperties props) {
-        this.influxDb = InfluxDBClientFactory.create(props.getUrl(), props.getUsername(), props.getPassword().toCharArray());
-        this.influxDb.enableGzip();
-        this.influxDb.setLogLevel(LogLevel.NONE);
-        if (LOGGER.isDebugEnabled()) {
-            this.influxDb.setLogLevel(LogLevel.BODY);
-        } else if (LOGGER.isInfoEnabled()) {
-            this.influxDb.setLogLevel(LogLevel.BASIC);
+        try {
+            val definedToken = SpringExpressionLanguageValueResolver.getInstance().resolve(props.getToken());
+            val tokenFile = FileUtils.getFile(definedToken);
+            val token = tokenFile.exists()
+                ? FileUtils.readFileToString(tokenFile, StandardCharsets.UTF_8).stripTrailing()
+                : definedToken;
+            clientConfig = new ClientConfig.Builder()
+                .token(token.toCharArray())
+                .database(props.getDatabase())
+                .host(props.getUrl())
+                .organization(props.getOrganization())
+                .build();
+            influxDb = InfluxDBClient.getInstance(clientConfig);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException(e);
         }
-        this.influxDbProperties = props;
     }
 
     /**
@@ -61,8 +65,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
      * @param point the point
      */
     public void write(final Point point) {
-        influxDb.getWriteApiBlocking().writePoint(influxDbProperties.getDatabase(),
-            influxDbProperties.getOrganization(), point);
+        influxDb.writePoint(point);
     }
 
     /**
@@ -73,38 +76,48 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
      * @param tags        the tags
      */
     public void write(final String measurement, final Map<String, Object> fields, final Map<String, String> tags) {
-        val p = Point.measurement(measurement)
-            .time(Instant.now(Clock.systemUTC()), WritePrecision.NS)
-            .addFields(fields)
-            .addTags(tags);
-        write(p);
+        val point = Point.measurement(measurement).setTimestamp(Instant.now(Clock.systemUTC())).setTags(tags);
+        fields.forEach((key, value) -> {
+            val stringValue = String.valueOf(value);
+            if (NumberUtils.isParsable(stringValue)) {
+                point.setField(key, Double.parseDouble(stringValue));
+            } else if (BooleanUtils.toBoolean(stringValue)) {
+                point.setField(key, Boolean.parseBoolean(stringValue));
+            } else {
+                point.setField(key, stringValue);
+            }
+        });
+        write(point);
     }
 
-    /**
-     * Delete all.
-     */
-    public void deleteAll() {
-        val predicate = new DeletePredicateRequest();
-        predicate.setStart(OffsetDateTime.now(Clock.systemUTC()).minus(10, ChronoUnit.DECADES));
-        predicate.setStop(OffsetDateTime.now(Clock.systemUTC()));
-        this.influxDb.getDeleteApi().delete(predicate, influxDbProperties.getDatabase(),
-            influxDbProperties.getOrganization());
-    }
 
     /**
      * Query all result.
      *
-     * @param <T>   the type parameter
-     * @param clazz the clazz
      * @return the query result
      */
-    public <T extends Serializable> List<T> query(final Class<T> clazz) {
-        val query = String.format("from(bucket:\"%s\") |> range(start: 0)", influxDbProperties.getDatabase());
-        return influxDb.getQueryApi().query(query, influxDbProperties.getOrganization(), clazz);
+    public Stream<PointValues> query(final String measurement) {
+        val query = "SELECT * FROM \"%s\"".formatted(measurement);
+        return query(measurement, query);
+    }
+
+    /**
+     * Query stream.
+     *
+     * @param measurement the measurement
+     * @param query       the query
+     * @return the stream
+     */
+    public Stream<PointValues> query(final String measurement, final String query) {
+        return influxDb.queryPoints(query, new QueryOptions(Objects.requireNonNull(clientConfig.getDatabase())));
     }
 
     @Override
     public void close() {
-        this.influxDb.close();
+        FunctionUtils.doAndHandle(__ -> influxDb.close());
+    }
+
+    public String getDatabase() {
+        return clientConfig.getDatabase();
     }
 }

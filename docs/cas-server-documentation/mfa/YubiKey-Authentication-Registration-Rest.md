@@ -20,5 +20,5 @@ The following endpoints are expected to be available and implemented by the REST
 | `GET`    | `/{user}`      | Get all registered records for the user.                                              |
 | `DELETE` | `/`            | Delete all registered records.                                                        |
 | `DELETE` | `/{user}`      | Delete all registered records for the user.                                           |
-| `DELETE` | `/{user}/{id}` | Delete the registered device by its id from the the registration record for the user. |
+| `DELETE` | `/{user}/{id}` | Delete the registered device by its id from the registration record for the user. |
 | `POST`   | `/`            | Store registration records passed as the request body.                                |

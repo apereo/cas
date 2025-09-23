@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@Endpoint(id = "serviceAccess", enableByDefault = false)
+@Endpoint(id = "serviceAccess", defaultAccess = Access.NONE)
 @Slf4j
 public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<ServicesManager> servicesManager;
@@ -71,7 +72,7 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
         this.principalResolver = principalResolver;
         this.principalFactory = principalFactory;
     }
-
+    
     /**
      * Authorize user based on application access strategy.
      *
@@ -84,15 +85,15 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
             MediaType.APPLICATION_JSON_VALUE
         },
         produces = {
+            MediaType.APPLICATION_JSON_VALUE,
             MEDIA_TYPE_SPRING_BOOT_V2_JSON,
             MEDIA_TYPE_SPRING_BOOT_V3_JSON,
-            MEDIA_TYPE_CAS_YAML,
-            MediaType.APPLICATION_JSON_VALUE
+            MEDIA_TYPE_CAS_YAML
         })
     @Operation(summary = "Verify if service access can be granted to the user", parameters = {
-        @Parameter(name = "username", required = true, in = ParameterIn.QUERY),
+        @Parameter(name = "username", required = true, in = ParameterIn.QUERY, description = "The username to authenticate"),
         @Parameter(name = "password", required = false, in = ParameterIn.QUERY, description = "The password to authenticate the user if necessary"),
-        @Parameter(name = "service", required = false, in = ParameterIn.QUERY),
+        @Parameter(name = "service", required = false, in = ParameterIn.QUERY, description = "The service to authorize access to"),
         @Parameter(name = "client_id", required = false, in = ParameterIn.QUERY, description = "The application client id for OAuth or OpenID Connect"),
         @Parameter(name = "entityId", required = false, in = ParameterIn.QUERY, description = "The entity id for SAML2 service providers")
     })

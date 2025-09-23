@@ -16,5 +16,5 @@ const cas = require("../../cas.js");
 
     await cas.assertVisibility(page, "#login_field");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

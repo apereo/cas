@@ -20,7 +20,7 @@ class JdbcServletContextListenerTests {
     private final JdbcServletContextListener listener = new JdbcServletContextListener();
 
     @Test
-    void verifyContextInitialized() throws Throwable {
+    void verifyContextInitialized() {
         listener.contextInitialized(null);
         assertFalse(DriverManager.getDrivers().hasMoreElements());
     }

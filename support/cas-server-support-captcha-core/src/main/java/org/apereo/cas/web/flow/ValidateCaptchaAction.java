@@ -33,7 +33,7 @@ public class ValidateCaptchaAction extends BaseCasWebflowAction {
         }
 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val userAgent = WebUtils.getHttpServletRequestUserAgentFromRequestContext();
+        val userAgent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(requestContext);
         val gRecaptchaResponse = captchaValidator.getRecaptchaResponse(request);
         if (StringUtils.isBlank(gRecaptchaResponse)) {
             LOGGER.warn("Recaptcha response/token is missing from the request");

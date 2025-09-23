@@ -26,7 +26,7 @@ class InitializeLoginActionTests extends AbstractWebflowActionsTests {
     @Test
     void disableFlowIfNoService() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().setMethod(HttpMethod.POST.name());
+        context.setMethod(HttpMethod.POST);
         assertThrows(NoSuchFlowExecutionException.class, () -> this.action.execute(context));
     }
 }

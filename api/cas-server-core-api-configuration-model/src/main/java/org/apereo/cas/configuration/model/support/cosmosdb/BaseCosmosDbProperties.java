@@ -4,12 +4,9 @@ import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,14 +22,13 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("BaseCosmosDbProperties")
 public abstract class BaseCosmosDbProperties implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 2528153816791719898L;
 
     /**
-     * Document Db host address (i.e. https://localhost:8081).
+     * Document Db host address (i.e. {@code https://localhost:8081}).
      */
     @RequiredProperty
     @ExpressionLanguageCapable
@@ -83,14 +79,6 @@ public abstract class BaseCosmosDbProperties implements Serializable {
      * The max auto scale throughput.
      */
     private int databaseThroughput = 4000;
-
-    /**
-     * Whether telemetry should be enabled by default.
-     * Sets the flag to enable client telemetry which will periodically collect
-     * database operations aggregation statistics, system information like cpu/memory and send
-     * it to cosmos monitoring service, which will be helpful during debugging.
-     */
-    private boolean allowTelemetry;
 
     /**
      * Sets the preferred regions for geo-replicated database accounts. For example, "East US" as the preferred region.
@@ -149,4 +137,17 @@ public abstract class BaseCosmosDbProperties implements Serializable {
      * </ul>
      */
     private String indexingMode = "NONE";
+
+    /**
+     * Controls the connection mode.
+     * Supported values are: {@code GATEWAY} and {@code DIRECT}.
+     * <ul>
+     *     <li>{@code GATEWAY}: HTTPS over REST. Java HTTPS stack (Apache HttpClient). Generally robust.
+     *      Limited bulk support. Works with HTTP proxies. Uses Java’s trust store + hostname verifier.</li>
+     *     <li>{@code DIRECT}: Custom binary protocol over TCP (RNTBD). Netty (manual TLS/SSL context & connections).
+     *      Highly efficient, but sensitive to connection issues. Does not support HTTP proxies. Uses Netty TLS.
+     *     </li>
+     * </ul>
+     */
+    private String mode = "GATEWAY";
 }

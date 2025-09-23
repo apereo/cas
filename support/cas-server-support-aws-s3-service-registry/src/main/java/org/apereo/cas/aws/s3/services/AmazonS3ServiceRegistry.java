@@ -8,7 +8,6 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -24,7 +23,6 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -49,8 +47,8 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
     private final StringSerializer<RegisteredService> registeredServiceSerializer;
 
     public AmazonS3ServiceRegistry(final ConfigurableApplicationContext applicationContext,
-        final Collection<ServiceRegistryListener> serviceRegistryListeners,
-        final S3Client s3Client) {
+                                   final Collection<ServiceRegistryListener> serviceRegistryListeners,
+                                   final S3Client s3Client) {
         super(applicationContext, serviceRegistryListeners);
         this.s3Client = s3Client;
         this.registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
@@ -59,6 +57,7 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService save(final RegisteredService rs) {
         try {
+            rs.assignIdIfNecessary();
             LOGGER.trace("Saving registered service [{}]", rs);
             invokeServiceRegistryListenerPreSave(rs);
             val bucketNameToUse = determineBucketName(rs);
@@ -78,7 +77,7 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
                     "id", String.valueOf(rs.getId()),
                     "description", rs.getDescription()))
                 .build();
-            val body = this.registeredServiceSerializer.toString(rs);
+            val body = registeredServiceSerializer.toString(rs);
             val clientInfo = ClientInfoHolder.getClientInfo();
             s3Client.putObject(request, RequestBody.fromString(body));
             LOGGER.trace("Saved registered service [{}]", rs);

@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +22,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("AuthenticationExceptionsProperties")
 public class AuthenticationExceptionsProperties implements Serializable {
 
     @Serial
@@ -39,7 +37,7 @@ public class AuthenticationExceptionsProperties implements Serializable {
      * To map custom exceptions, one would need map the exception, they can be defined here
      * and then linked to custom messages.
      */
-    private List<Class<? extends Throwable>> exceptions = new ArrayList<>(0);
+    private List<Class<? extends Throwable>> exceptions = new ArrayList<>();
 
     /**
      * Handle exceptions using a groovy script.

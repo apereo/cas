@@ -5,9 +5,10 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.With;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serial;
@@ -17,12 +18,15 @@ import java.io.Serial;
  *
  * @author Misagh Moayyed
  * @since 6.4.0
+ * @deprecated since 7.3.0
  */
 @Getter
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-pac4j-api")
-@JsonFilter("CookieSessionReplicationProperties")
+@AllArgsConstructor
+@With
+@Deprecated(since = "7.3.0", forRemoval = true)
 public class CookieSessionReplicationProperties extends PinnableCookieProperties {
     /**
      * Default cookie name.
@@ -36,15 +40,20 @@ public class CookieSessionReplicationProperties extends PinnableCookieProperties
      * Decide if cookie paths should be automatically configured
      * based on the application context path, when the cookie
      * path is not configured.
+     * @deprecated since 7.3.0
      */
+    @Deprecated(since = "7.3.0", forRemoval = true)
     private boolean autoConfigureCookiePath = true;
 
     /**
      * Crypto settings that determine how the cookie should be signed and encrypted.
+     * @deprecated since 7.3.0
      */
     @NestedConfigurationProperty
+    @Deprecated(since = "7.3.0", forRemoval = true)
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
+    @Deprecated(since = "7.3.0", forRemoval = true)
     public CookieSessionReplicationProperties() {
         crypto.getEncryption().setKeySize(EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);

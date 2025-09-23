@@ -34,7 +34,7 @@ class DefaultMultifactorAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyContextFailsValidationWithNoProviders() throws Throwable {
+    void verifyContextFailsValidationWithNoProviders() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
@@ -46,7 +46,7 @@ class DefaultMultifactorAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyContextFailsValidationWithMissingProvider() throws Throwable {
+    void verifyContextFailsValidationWithMissingProvider() {
         val applicationContext = getStaticApplicationContext();
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "trusted_authn", applicationContext);
@@ -58,7 +58,7 @@ class DefaultMultifactorAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyContextPassesValidationWithProvider() throws Throwable {
+    void verifyContextPassesValidationWithProvider() {
         val applicationContext = getStaticApplicationContext();
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "trusted_authn", applicationContext);
@@ -71,7 +71,7 @@ class DefaultMultifactorAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyContextPassesValidationWithChainProvider() throws Throwable {
+    void verifyContextPassesValidationWithChainProvider() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -103,7 +103,7 @@ class DefaultMultifactorAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyTrustedAuthnFoundInContext() throws Throwable {
+    void verifyTrustedAuthnFoundInContext() {
         val applicationContext = getStaticApplicationContext();
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "trusted_authn", applicationContext);
@@ -116,7 +116,7 @@ class DefaultMultifactorAuthenticationContextValidatorTests {
     }
 
     @Test
-    void verifyTrustedAuthnFoundFromContext() throws Throwable {
+    void verifyTrustedAuthnFoundFromContext() {
         val applicationContext = getStaticApplicationContext();
         val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "trusted_authn", applicationContext);

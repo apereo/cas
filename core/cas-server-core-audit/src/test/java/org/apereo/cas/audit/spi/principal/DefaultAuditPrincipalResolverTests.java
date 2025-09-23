@@ -4,9 +4,11 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableEntity;
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.MockRequestContext;
@@ -17,6 +19,7 @@ import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -25,6 +28,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.mock.web.MockHttpServletRequest;
 import java.util.UUID;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,9 +42,10 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("Audits")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseAuditConfigurationTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultAuditPrincipalResolverTests {
+class DefaultAuditPrincipalResolverTests {
     @Autowired
     @Qualifier("auditablePrincipalResolver")
     private PrincipalResolver auditablePrincipalResolver;
@@ -48,10 +53,11 @@ public class DefaultAuditPrincipalResolverTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    
     @ParameterizedTest
     @MethodSource("getAuditParameters")
-    void verifyOperation(final Object argument, final Object returnValue) throws Exception {
-        if (argument instanceof MockRequestContext ctx) {
+    void verifyOperation(final Object argument, final Object returnValue) {
+        if (argument instanceof final MockRequestContext ctx) {
             ctx.setApplicationContext(applicationContext);
         }
         val jp = mockJoinPointWithFirstArg(argument);
@@ -61,7 +67,7 @@ public class DefaultAuditPrincipalResolverTests {
 
     @ParameterizedTest
     @MethodSource("getAuditReturnValueParameters")
-    void verifyReturnValue(final Object returnValue) throws Exception {
+    void verifyReturnValue(final Object returnValue) {
         val jp = mockJoinPointWithFirstArg(new Object());
         val principalId = auditablePrincipalResolver.resolveFrom(jp, returnValue);
         assertNotEquals(PrincipalResolver.UNKNOWN_USER, principalId);
@@ -84,7 +90,7 @@ public class DefaultAuditPrincipalResolverTests {
         assertEquals(PrincipalResolver.UNKNOWN_USER, auditablePrincipalResolver.resolveFrom(jp, new Object()));
     }
 
-    public static Stream<Arguments> getAuditReturnValueParameters() throws Throwable {
+    public static Stream<Arguments> getAuditReturnValueParameters() {
         val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
         val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication, NeverExpiresExpirationPolicy.INSTANCE);
         val authenticationResult = CoreAuthenticationTestUtils.getAuthenticationResult(authentication);
@@ -95,11 +101,19 @@ public class DefaultAuditPrincipalResolverTests {
         val assertion = mock(Assertion.class);
         when(assertion.getPrimaryAuthentication()).thenReturn(authentication);
 
+        val auditableEntity = new AuditableEntity() {
+            @Override
+            public String getAuditablePrincipal() {
+                return UUID.randomUUID().toString();
+            }
+        };
+
         return Stream.of(
             arguments(ticketGrantingTicket),
             arguments(auditableContext),
             arguments(ticketGrantingTicket),
-            arguments(assertion)
+            arguments(assertion),
+            arguments(auditableEntity)
         );
     }
 
@@ -128,6 +142,9 @@ public class DefaultAuditPrincipalResolverTests {
         val auditableEntity = mock(AuditableEntity.class);
         when(auditableEntity.getAuditablePrincipal()).thenReturn(authentication.getPrincipal().getId());
 
+        val httpRequest = new MockHttpServletRequest();
+        httpRequest.setAttribute(Principal.class.getName(), authentication.getPrincipal());
+        
         return Stream.of(
             arguments(context, null),
             arguments(sloRequest, null),
@@ -137,7 +154,8 @@ public class DefaultAuditPrincipalResolverTests {
             arguments(auditableContext, null),
             arguments(authentication, null),
             arguments(assertion, null),
-            arguments(auditableEntity, null)
+            arguments(auditableEntity, null),
+            arguments(httpRequest, null)
         );
     }
 

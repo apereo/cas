@@ -26,5 +26,5 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.assertTicketParameter(page);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

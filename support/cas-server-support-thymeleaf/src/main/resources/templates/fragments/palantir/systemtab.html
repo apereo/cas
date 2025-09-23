@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <div class="attribute-tab w-100 d-none" id="attribute-tab-1">
+        <div class="jqueryui-tabs">
+          <ul>
+            <li><a id="systeminfotab" href="#systeminfo-tab">System Info</a></li>
+            <li><a id="systemstatustab" href="#systemstatus-tab">System Status</a></li>
+            <li><a id="httprequeststab" href="#httprequests-tab">HTTP Requests</a></li>
+            <li><a id="casfeaturestab" href="#casfeaturestab-tab">Feature Catalog</a></li>
+            <li><a id="caswebflowtab" href="#caswebflowtab-tab">Authentication Flows</a></li>
+          </ul>
+
+            <div id="systeminfo-tab">
+                <div>
+                    <p>CAS Server is publicly identified with the following URL:</p>
+                    <pre><code id="casServerPrefix" class="border-rounded language-html"></code></pre>
+
+                    <p>CAS Server host currently active and handling requests is:</p>
+                    <pre><code id="casServerHost" class="border-rounded language-html"></code></pre>
+                </div>
+            </div>
+
+            <div id="systemstatus-tab">
+                <table id="systemTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                        <tr class="mdc-data-table__header-row">
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+                        </tr>
+                    </thead>
+                        <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+
+                <div class="mdc-layout-grid">
+                  <div class="mdc-layout-grid__inner">
+                    <div class="mdc-layout-grid__cell"><canvas id="memoryChart"></canvas></div>
+                    <div class="mdc-layout-grid__cell"><canvas id="statisticsChart"></canvas></div>
+                    <div class="mdc-layout-grid__cell"><canvas id="systemHealthChart"></canvas></div>
+                  </div>
+                </div>
+            </div>
+
+            <div id="httprequests-tab">
+                <div id="httpRequests" class="text-center">
+                    <div class="elevation-surface mdc-elevation--z20">
+                        <div class="text-center">
+                            <sub><i class="mdc-tab__icon mdi mdi-numeric" aria-hidden="true"></i>Count</sub><strong>
+                            <h1 class="pt-3 pr-2 pl-2"><code id="httpRequestsCount">0</code></h1></strong>
+                        </div>
+                    </div>
+                    <div class="elevation-surface mdc-elevation--z20">
+                        <div class="text-center">
+                            <sub><i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i>Total Time</sub><strong>
+                            <h1 class="pt-3 pr-2 pl-2"><code id="httpRequestsTotalTime">0</code></h1></strong>
+                        </div>
+                    </div>
+                    <div class="elevation-surface mdc-elevation--z20">
+                        <div class="text-center">
+                            <sub><i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i>Maximum Time</sub><strong>
+                            <h1 class="pt-3 pr-2 pl-2"><code id="httpRequestsMaxTime">0</code></h1></strong>
+                        </div>
+                    </div>
+                    <div class="elevation-surface mdc-elevation--z20">
+                        <div class="text-center">
+                            <sub><i class="mdc-tab__icon mdi mdi-numeric" aria-hidden="true"></i>Active</sub><strong>
+                            <h1 class="pt-3 pr-2 pl-2"><code id="httpRequestsActive">0</code></h1></strong>
+                        </div>
+                    </div>
+                    <div class="elevation-surface mdc-elevation--z20">
+                        <div class="text-center">
+                            <sub><i class="mdc-tab__icon mdi mdi-timer" aria-hidden="true"></i>Duration</sub><strong>
+                            <h1 class="pt-3 pr-2 pl-2"><code id="httpRequestsDuration">0</code></h1></strong>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="mdc-layout-grid">
+                        <div class="mdc-layout-grid__inner">
+                            <div class="mdc-layout-grid__cell">
+                                <canvas id="httpRequestResponsesChart"></canvas>
+                            </div>
+                            <div class="mdc-layout-grid__cell">
+                                <canvas id="httpRequestsByUrlChart"></canvas>
+                            </div>
+                            <div class="mdc-layout-grid__cell">
+                                <canvas id="auditEventsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="downloadHeapDumpButton" class="mdc-button mdc-button--raised">
+                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-download-circle" aria-hidden="true"></i>Heap Dump</span>
+                </button>
+            </div>
+
+            <div id="casfeaturestab-tab">
+                <div class="d-flex align-items-start mb-4">
+                    <div id="casFeaturesChipset" class="mdc-chip-set" role="grid">
+                    </div>
+                </div>
+            </div>
+
+            <div id="caswebflowtab-tab">
+                <label for="webflowFilter">Flow: </label><select id="webflowFilter" class="jqueryui-selectmenu"></select>
+                <label for="webflowStateFilter">State: </label><select id="webflowStateFilter" class="jqueryui-selectmenu"></select>
+                <br>
+                <div id="webflowContainer"></div>
+                
+                <div id="webflowMarkdownContainer" class="hide">
+                    <p>The above diagram is generated using the following markdown:</p>
+                    <pre><code id="webflowMarkdown" class="border-rounded language-markdown"></code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</span>
+</body>
+</html>

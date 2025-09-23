@@ -119,7 +119,7 @@ class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
             @Qualifier("radiusBypassEvaluator")
             final MultifactorAuthenticationProviderBypassEvaluator radiusBypassEvaluator,
             @Qualifier("failureModeEvaluator")
-            final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) throws Exception {
+            final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
             return BeanSupplier.of(MultifactorAuthenticationProvider.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
@@ -153,13 +153,14 @@ class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
             @Qualifier("radiusTokenServers")
             final BeanContainer<RadiusServer> radiusTokenServers,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) throws Exception {
+            final ServicesManager servicesManager) {
             return BeanSupplier.of(AuthenticationHandler.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val radius = casProperties.getAuthn().getMfa().getRadius();
-                    return new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager,
-                        radiusTokenPrincipalFactory, radiusTokenServers.toList(), radius.isFailoverOnException(),
+                    return new RadiusTokenAuthenticationHandler(radius.getName(),
+                        radiusTokenPrincipalFactory, radiusTokenServers.toList(),
+                        radius.isFailoverOnException(),
                         radius.isFailoverOnAuthenticationFailure(),
                         radius.getOrder(), multifactorAuthenticationProvider);
                 })
@@ -195,7 +196,7 @@ class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
             @Qualifier("radiusTokenAuthenticationHandler")
             final AuthenticationHandler radiusTokenAuthenticationHandler,
             @Qualifier("radiusMultifactorAuthenticationProvider")
-            final MultifactorAuthenticationProvider radiusMultifactorAuthenticationProvider) throws Exception {
+            final MultifactorAuthenticationProvider radiusMultifactorAuthenticationProvider) {
             return BeanSupplier.of(AuthenticationMetaDataPopulator.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
@@ -222,7 +223,7 @@ class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
             @Qualifier("radiusTokenAuthenticationHandler")
             final AuthenticationHandler radiusTokenAuthenticationHandler,
             @Qualifier("radiusAuthenticationMetaDataPopulator")
-            final AuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator) throws Exception {
+            final AuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator) {
             return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> {

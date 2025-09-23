@@ -43,8 +43,10 @@ public interface OidcJsonWebKeystoreGeneratorService {
      * @throws Exception the exception
      */
     static JsonWebKeySet toJsonWebKeyStore(final Resource resource) throws Exception {
-        val result = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-        return new JsonWebKeySet(result);
+        try (val is = resource.getInputStream()) {
+            val result = IOUtils.toString(is, StandardCharsets.UTF_8);
+            return new JsonWebKeySet(result);
+        }
     }
 
     /**

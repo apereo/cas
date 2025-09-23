@@ -5,16 +5,15 @@ import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServic
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -27,6 +26,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class,
     properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
 @Tag("Impersonation")
+@ExtendWith(CasTestExtension.class)
 class SurrogateAuthenticationPostProcessorTests {
     @Autowired
     @Qualifier("surrogateAuthenticationPostProcessor")
@@ -45,7 +45,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifySurrogateCredentialNotFound() throws Throwable {
+    void verifySurrogateCredentialNotFound() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");
@@ -58,7 +58,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifyProcessorWorks() throws Throwable {
+    void verifyProcessorWorks() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");
@@ -70,7 +70,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifyNoPrimaryCredential() throws Throwable {
+    void verifyNoPrimaryCredential() {
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(
             RegisteredServiceTestUtils.getService("service"));
         val builder = mock(AuthenticationBuilder.class);
@@ -81,7 +81,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifyAuthN() throws Throwable {
+    void verifyAuthN() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");
@@ -98,7 +98,7 @@ class SurrogateAuthenticationPostProcessorTests {
     }
 
     @Test
-    void verifyFailAuthN() throws Throwable {
+    void verifyFailAuthN() {
         val credential = new UsernamePasswordCredential();
         credential.setUsername("casuser");
         credential.assignPassword("Mellon");

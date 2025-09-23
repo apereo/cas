@@ -1,28 +1,19 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.attribute.CaseCanonicalizationMode;
+import org.apereo.cas.authentication.attribute.TenantPersonAttributeDaoBuilder;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
-import org.apereo.cas.configuration.model.support.jdbc.JdbcPrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.jdbc.AbstractJdbcPersonAttributeDao;
-import org.apereo.cas.jdbc.MultiRowJdbcPersonAttributeDao;
-import org.apereo.cas.jdbc.QueryType;
-import org.apereo.cas.jdbc.SingleRowJdbcPersonAttributeDao;
+import org.apereo.cas.jdbc.JdbcPersonAttributeUtils;
+import org.apereo.cas.jdbc.TenantJdbcPersonAttributeDaoBuilder;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,8 +23,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import java.util.ArrayList;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -62,72 +51,12 @@ class CasPersonDirectoryJdbcConfiguration {
             return BeanSupplier.of(BeanContainer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val list = new ArrayList<PersonAttributeDao>();
-                    val attrs = casProperties.getAuthn().getAttributeRepository();
-                    attrs.getJdbc()
-                        .stream()
-                        .filter(jdbc -> StringUtils.isNotBlank(jdbc.getSql()) && StringUtils.isNotBlank(jdbc.getUrl()))
-                        .forEach(jdbc -> {
-                            val jdbcDao = createJdbcPersonAttributeDao(jdbc);
-                            FunctionUtils.doIfNotNull(jdbc.getId(), id -> jdbcDao.setId(id));
-
-                            val queryAttributes = CollectionUtils.wrap("username", jdbc.getUsername());
-                            queryAttributes.putAll(jdbc.getQueryAttributes());
-                            jdbcDao.setQueryAttributeMapping(queryAttributes);
-
-                            val mapping = jdbc.getAttributes();
-                            if (mapping != null && !mapping.isEmpty()) {
-                                LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", jdbc.getUrl(), jdbc.getAttributes());
-                                jdbcDao.setResultAttributeMapping(mapping);
-                            }
-                            jdbcDao.setRequireAllQueryAttributes(jdbc.isRequireAllAttributes());
-
-                            val caseMode = CaseCanonicalizationMode.valueOf(jdbc.getCaseCanonicalization().toUpperCase(Locale.ENGLISH));
-                            jdbcDao.setUsernameCaseCanonicalizationMode(caseMode);
-                            jdbcDao.setDefaultCaseCanonicalizationMode(caseMode);
-                            jdbcDao.setQueryType(QueryType.valueOf(jdbc.getQueryType().toUpperCase(Locale.ENGLISH)));
-                            jdbcDao.setOrder(jdbc.getOrder());
-                            jdbcDao.setEnabled(jdbc.getState() != AttributeRepositoryStates.DISABLED);
-                            jdbcDao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
-                                jdbc.getState() == AttributeRepositoryStates.ACTIVE);
-                            list.add(jdbcDao);
-                        });
+                    val jdbc = casProperties.getAuthn().getAttributeRepository().getJdbc();
+                    val list = JdbcPersonAttributeUtils.newJdbcAttributeRepositoryDao(jdbc);
                     return BeanContainer.of(list);
                 })
                 .otherwise(BeanContainer::empty)
                 .get();
-        }
-
-        private static AbstractJdbcPersonAttributeDao configureJdbcPersonAttributeDao(
-            final AbstractJdbcPersonAttributeDao dao, final JdbcPrincipalAttributesProperties jdbc) {
-
-            val attributes = jdbc.getCaseInsensitiveQueryAttributes();
-            val results = CollectionUtils.convertDirectedListToMap(attributes);
-
-            dao.setCaseInsensitiveQueryAttributes(results
-                .entrySet()
-                .stream()
-                .map(entry -> Pair.of(entry.getKey(),
-                    StringUtils.isBlank(entry.getValue())
-                        ? CaseCanonicalizationMode.valueOf(jdbc.getCaseCanonicalization().toUpperCase(Locale.ENGLISH))
-                        : CaseCanonicalizationMode.valueOf(entry.getValue().toUpperCase(Locale.ENGLISH))))
-                .collect(Collectors.toMap(Pair::getKey, Pair::getValue)));
-            return dao;
-        }
-
-        private static AbstractJdbcPersonAttributeDao createJdbcPersonAttributeDao(final JdbcPrincipalAttributesProperties jdbc) {
-            val url = SpringExpressionLanguageValueResolver.getInstance().resolve(jdbc.getUrl());
-            val sql = SpringExpressionLanguageValueResolver.getInstance().resolve(jdbc.getSql());
-            if (jdbc.isSingleRow()) {
-                LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", url);
-                val singleRow = new SingleRowJdbcPersonAttributeDao(JpaBeans.newDataSource(jdbc), sql);
-                return configureJdbcPersonAttributeDao(singleRow, jdbc);
-            }
-            LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", url);
-            val jdbcDao = new MultiRowJdbcPersonAttributeDao(JpaBeans.newDataSource(jdbc), sql);
-            LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", url, jdbc.getColumnMappings());
-            jdbcDao.setNameValueColumnMappings(jdbc.getColumnMappings());
-            return configureJdbcPersonAttributeDao(jdbcDao, jdbc);
         }
     }
 
@@ -151,6 +80,24 @@ class CasPersonDirectoryJdbcConfiguration {
                     plan.registerAttributeRepositories(results);
                 })
                 .otherwiseProxy()
+                .get();
+        }
+    }
+
+    @Configuration(value = "JdbcAttributeRepositoryMultitenancyConfiguration", proxyBeanMethods = false)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Multitenancy)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class JdbcAttributeRepositoryMultitenancyConfiguration {
+        @ConditionalOnMissingBean(name = "jdbcTenantPersonAttributeDaoBuilder")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public TenantPersonAttributeDaoBuilder jdbcTenantPersonAttributeDaoBuilder(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(TenantPersonAttributeDaoBuilder.class)
+                .when(BeanCondition.on("cas.multitenancy.core.enabled").isTrue().given(applicationContext))
+                .supply(TenantJdbcPersonAttributeDaoBuilder::new)
+                .otherwise(TenantPersonAttributeDaoBuilder::noOp)
                 .get();
         }
     }

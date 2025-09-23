@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Import({
+@ImportAutoConfiguration({
     CasPasswordManagementAutoConfiguration.class,
     CasPasswordManagementWebflowAutoConfiguration.class
 })
@@ -47,10 +47,10 @@ class PasswordManagementCaptchaWebflowConfigurerTests extends BaseWebflowConfigu
         initCaptchaAction.execute(context);
         assertTrue(WebUtils.isRecaptchaPasswordManagementEnabled(context));
     }
-    
+
     @Test
-    void verifyOperation() throws Throwable {
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+    void verifyOperation() {
+        val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         val state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_SEND_PASSWORD_RESET_INSTRUCTIONS);
         assertEquals(CasWebflowConstants.STATE_ID_SEND_RESET_PASSWORD_ACCT_INFO,

@@ -115,6 +115,13 @@ public interface AuditableActions {
      * Auditable action {@code SAML2_METADATA_RESOLUTION}.
      */
     String SAML2_METADATA_RESOLUTION = "SAML2_METADATA_RESOLUTION";
+
+
+    /**
+     * Auditable action {@code OIDC_CIBA_RESPONSE}.
+     */
+    String OIDC_CIBA_RESPONSE = "OIDC_CIBA_RESPONSE";
+    
     /**
      * Auditable action {@code OAUTH2_ACCESS_TOKEN_RESPONSE}.
      */

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("DuoSecurity")
 class DuoSecurityAuthenticationResultTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val result = DuoSecurityAuthenticationResult.builder().success(true).username("casuser").build();
         assertNotNull(result.getUsername());
         assertNotNull(result.getAttributes());

@@ -6,6 +6,7 @@ import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.AttributeModification;
@@ -15,7 +16,7 @@ import org.ldaptive.ModifyRequest;
 import org.ldaptive.ResultCode;
 import org.ldaptive.ad.UnicodePwdAttribute;
 
-import java.util.Collections;
+import java.util.List;
 
 /**
  * This is {@link LdapPasswordSynchronizationAuthenticationPostProcessor}.
@@ -24,15 +25,11 @@ import java.util.Collections;
  * @since 6.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class LdapPasswordSynchronizationAuthenticationPostProcessor implements AuthenticationPostProcessor {
     private final LdapConnectionFactory searchFactory;
 
     private final LdapPasswordSynchronizationProperties ldapProperties;
-
-    public LdapPasswordSynchronizationAuthenticationPostProcessor(final LdapPasswordSynchronizationProperties properties) {
-        this.ldapProperties = properties;
-        this.searchFactory = new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(properties));
-    }
 
     @Override
     public void destroy() {
@@ -50,7 +47,7 @@ public class LdapPasswordSynchronizationAuthenticationPostProcessor implements A
         try {
             val credential = (UsernamePasswordCredential) primaryCredential.get();
             val filter = LdapUtils.newLdaptiveSearchFilter(ldapProperties.getSearchFilter(),
-                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, Collections.singletonList(credential.getUsername()));
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, List.of(credential.getUsername()));
             LOGGER.trace("Constructed LDAP filter [{}] to locate user and update password", filter);
 
             val response = searchFactory.executeSearchOperation(ldapProperties.getBaseDn(), filter, this.ldapProperties.getPageSize());

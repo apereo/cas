@@ -2,13 +2,10 @@ package org.apereo.cas.configuration.model.support.mfa.gauth;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -22,7 +19,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("CoreGoogleAuthenticatorMultifactorProperties")
 public class CoreGoogleAuthenticatorMultifactorProperties implements Serializable {
 
     @Serial
@@ -60,11 +56,28 @@ public class CoreGoogleAuthenticatorMultifactorProperties implements Serializabl
     private int windowSize = 3;
 
     /**
+     * Maximum number of authentication attempts allowed
+     * for a token validation attempt. If the number of attempts
+     * exceeds this value, authentication will halt.
+     * A negative or zero value (default) means no limits are enforced.
+     * Note that the user account is not locked out by default; only the
+     * CAS authentication flow is halted and user is notified and required
+     * to restart the authentication process again.
+     */
+    private int maximumAuthenticationAttempts;
+
+    /**
      * When enabled, allows the user/system to accept multiple accounts
      * and device registrations per user, allowing one to switch between
      * or register new devices/accounts automatically.
      */
     private boolean multipleDeviceRegistrationEnabled;
+
+    /**
+     * When enabled, allows the user/system to register accounts
+     * and devices.
+     */
+    private boolean deviceRegistrationEnabled = true;
 
     /**
      * Indicates whether this provider should support trusted devices.

@@ -36,7 +36,7 @@ class UrlResourceMetadataResolverTests {
     class ForceMetadatRefreshTests extends BaseSamlIdPServicesTests {
 
         @Test
-        void verifyResolverSupports() throws Throwable {
+        void verifyResolverSupports() {
             try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {
                 webServer.start();
                 val resolver = getMetadataResolver();
@@ -84,7 +84,7 @@ class UrlResourceMetadataResolverTests {
         }
 
         @Test
-        void verifyResolverResolvesFailsAccess() throws Throwable {
+        void verifyResolverResolvesFailsAccess() {
             val resolver = getMetadataResolver();
             try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {
                 webServer.start();
@@ -103,7 +103,7 @@ class UrlResourceMetadataResolverTests {
             val service = new SamlRegisteredService();
             service.setName(RandomUtils.randomAlphabetic(12));
             service.setId(RandomUtils.nextInt());
-            service.setMetadataLocation("http://localhost:%s".formatted(RandomUtils.nextInt()));
+            service.setMetadataLocation("https://this-is-unknown.com:444");
             assertTrue(resolver.resolve(service).isEmpty());
         }
     }

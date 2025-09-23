@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apereo.cas.util.thread.Cleanable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * An interface used to make an audit trail record.
@@ -60,9 +60,17 @@ public interface AuditTrailManager extends Cleanable {
          */
         GEO_LOCATION,
         /**
+         * Device/Browser fingerprint extracted from the browser.
+         */
+        DEVICE_FINGERPRINT,
+        /**
          * Headers attached to the request.
          */
-        HEADERS
+        HEADERS,
+        /**
+         * Tenant information/id.
+         */
+        TENANT
     }
 
     /**
@@ -76,7 +84,11 @@ public interface AuditTrailManager extends Cleanable {
         /**
          * Limit results by principal/subject.
          */
-        PRINCIPAL
+        PRINCIPAL,
+        /**
+         * Limit the results by a total count of records retrieved.
+         */
+        COUNT
     }
 
     /**
@@ -119,8 +131,8 @@ public interface AuditTrailManager extends Cleanable {
      * @param whereClause the where clause
      * @return the audit records since
      */
-    default Set<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
-        return Set.of();
+    default List<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
+        return List.of();
     }
 
     /**

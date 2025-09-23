@@ -22,6 +22,7 @@ import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolv
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +60,8 @@ class CasCoreAuthenticationPrincipalConfiguration {
         @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalResolver defaultPrincipalResolver(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final List<PrincipalResolutionExecutionPlanConfigurer> configurers,
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
@@ -71,11 +74,9 @@ class CasCoreAuthenticationPrincipalConfiguration {
                 cfg.configurePrincipalResolutionExecutionPlan(plan);
             }));
             plan.registerPrincipalResolver(new EchoingPrincipalResolver());
-
             val registeredPrincipalResolvers = plan.getRegisteredPrincipalResolvers();
-            val resolver = new ChainingPrincipalResolver(principalElectionStrategy, casProperties);
-            resolver.setChain(registeredPrincipalResolvers);
-            return resolver;
+            return new ChainingPrincipalResolver(principalElectionStrategy, tenantExtractor,
+                registeredPrincipalResolvers, casProperties);
         }
     }
 
@@ -87,7 +88,8 @@ class CasCoreAuthenticationPrincipalConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalElectionStrategy principalElectionStrategy(
             final List<PrincipalElectionStrategyConfigurer> configurers,
-            @Qualifier("principalElectionAttributeMerger") final AttributeMerger attributeMerger) {
+            @Qualifier("principalElectionAttributeMerger")
+            final AttributeMerger attributeMerger) {
             LOGGER.trace("Building principal election strategies from [{}]", configurers);
             val chain = new ChainingPrincipalElectionStrategy();
             chain.setAttributeMerger(attributeMerger);
@@ -119,10 +121,13 @@ class CasCoreAuthenticationPrincipalConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
-            @Qualifier(PrincipalElectionStrategyConflictResolver.BEAN_NAME) final PrincipalElectionStrategyConflictResolver defaultPrincipalElectionStrategyConflictResolver,
-            @Qualifier("principalElectionAttributeMerger") final AttributeMerger attributeMerger,
+            @Qualifier(PrincipalElectionStrategyConflictResolver.BEAN_NAME)
+            final PrincipalElectionStrategyConflictResolver defaultPrincipalElectionStrategyConflictResolver,
+            @Qualifier("principalElectionAttributeMerger")
+            final AttributeMerger attributeMerger,
             final CasConfigurationProperties casProperties,
-            @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory) {
+            @Qualifier(PrincipalFactory.BEAN_NAME)
+            final PrincipalFactory principalFactory) {
             return chain -> {
                 val strategy = new DefaultPrincipalElectionStrategy(principalFactory, defaultPrincipalElectionStrategyConflictResolver);
                 strategy.setAttributeMerger(attributeMerger);

@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -25,7 +24,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
 @ToString
-@JsonFilter("SpringResourceProperties")
+
 public class SpringResourceProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 4142130961445546358L;
@@ -35,7 +34,7 @@ public class SpringResourceProperties implements CasFeatureModule, Serializable 
      * files found either on the classpath or outside somewhere
      * in the file system.
      * <p>
-     * In the event the configured resource is a Groovy script, specially if the script set to reload on changes,
+     * In the event the configured resource is a Groovy script, especially if the script is set to reload on changes,
      * you may need to adjust the total number of {@code inotify} instances.
      * On Linux, you may need to add the following line to {@code /etc/sysctl.conf}:
      * {@code fs.inotify.max_user_instances = 256}.

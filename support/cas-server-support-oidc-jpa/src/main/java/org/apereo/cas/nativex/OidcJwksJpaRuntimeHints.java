@@ -15,7 +15,7 @@ import java.util.List;
 public class OidcJwksJpaRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        registerSpringProxy(hints, OidcJsonWebKeystoreGeneratorService.class, JpaPersistenceUnitProvider.class);
+        registerSpringProxyHints(hints, OidcJsonWebKeystoreGeneratorService.class, JpaPersistenceUnitProvider.class);
         registerReflectionHints(hints, List.of(JpaPersistenceUnitProvider.class));
     }
 

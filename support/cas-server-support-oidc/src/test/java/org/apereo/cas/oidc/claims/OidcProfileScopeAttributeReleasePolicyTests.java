@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("OIDC")
+@Tag("OIDCAttributes")
 class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTests {
 
     @Test
@@ -45,7 +45,7 @@ class OidcProfileScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val policy = new OidcProfileScopeAttributeReleasePolicy();
         policy.setAllowedAttributes(CollectionUtils.wrapList("name", "gender"));
         val chain = new ChainingAttributeReleasePolicy();

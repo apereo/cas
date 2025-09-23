@@ -1,0 +1,39 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "caspassword" : {
+    "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
+    "username": "caspassword",
+    "name" : "CAS",
+    "allowSelectionMenu": true,
+    "requestPassword": true
+  },
+  "casdelegation" : {
+    "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
+    "username": "casdelegation",
+    "name" : "CAS",
+    "allowSelectionMenu": true,
+    "delegatedAuthenticationEligible": "TRUE",
+    "allowedDelegatedClients" : [ "java.util.ArrayList", [ "CasClient" ] ]
+  },
+  "castoken" : {
+    "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
+    "username": "castoken",
+    "name" : "CAS",
+    "allowSelectionMenu": true,
+    "email": "casuser@example.org"
+  },
+  "casmfa": {
+    "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
+    "username": "casmfa",
+    "name" : "CAS",
+    "allowSelectionMenu": true,
+    "email": "casuser@example.org",
+    "multifactorAuthenticationEligible": "TRUE",
+    "attributes" : {
+      "@class" : "java.util.TreeMap",
+      "memberOf" : [ "java.util.ArrayList", [ "mfa" ] ],
+      "email": [ "java.util.ArrayList", [ "casuser@example.org" ] ]
+    }
+  }
+}
+

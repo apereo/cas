@@ -16,8 +16,6 @@ to manage access to their resources.
 may carry special scopes such as <code>uma_protection</code> or <code>uma_authorization</code> must not only be
 requested in the initial authorization request, but should also be explicitly authorized in the registered service definition.</p></div>
 
-To learn more about UMA, please [read the specification](https://docs.kantarainitiative.org/uma/rec-uma-core.html).
-
 ## Configuration
 
 Support is enabled by including the following dependency in the WAR overlay:

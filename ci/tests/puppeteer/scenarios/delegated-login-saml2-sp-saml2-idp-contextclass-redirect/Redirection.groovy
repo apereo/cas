@@ -27,7 +27,7 @@ def run(Object[] args) {
     if (providers.stream().noneMatch(provider -> {
         return provider.type.equalsIgnoreCase("saml2") })) {
         logger.info("No SAML2 providers found")
-        return null;
+        return null
     }
 
     /**

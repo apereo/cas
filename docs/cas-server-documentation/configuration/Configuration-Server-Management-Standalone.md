@@ -76,6 +76,8 @@ profiles {
 cas.common.setting="value"
 ``` 
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 You can also use a dedicated configuration file to directly feed a collection of properties
 to CAS in form of a file or classpath resource. This is specially useful in cases
 where a bare CAS server is deployed in the cloud without
@@ -91,7 +93,7 @@ modify the built in <code>application.properties</code> or <code>bootstrap.prope
 This will only complicate and weaken your deployment.
 Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the defaults, 
 override via <code>application.yml</code>, <code>application-standalone.properties</code> or
-use the <a href="Configuration-Management.html#overview">outlined strategies</a>. Likewise, try to instruct CAS to locate
+use the <a href="Configuration-Management.html">outlined strategies</a>. Likewise, try to instruct CAS to locate
 configuration files external to its own. Premature optimization will only lead to chaos.</p></div>
 
 {% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.config" excludes=".discovery" %}

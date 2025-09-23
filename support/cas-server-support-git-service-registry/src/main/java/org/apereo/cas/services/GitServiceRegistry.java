@@ -49,7 +49,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
 
     private final String rootDirectory;
 
-    private Collection<RegisteredService> registeredServices = new ArrayList<>(0);
+    private Collection<RegisteredService> registeredServices = new ArrayList<>();
 
     public GitServiceRegistry(final ConfigurableApplicationContext applicationContext,
                               final GitRepository gitRepository,
@@ -69,10 +69,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         return Unchecked.supplier(() -> {
-            if (registeredService.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
-                LOGGER.trace("Service id not set. Calculating id based on system time...");
-                registeredService.setId(System.currentTimeMillis());
-            }
+            registeredService.assignIdIfNecessary();
 
             val message = "Saved changes to registered service " + registeredService.getName();
             val result = locateExistingRegisteredServiceFile(registeredService);
@@ -170,7 +167,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
                             LOGGER.error("Error reading configuration file [{}]", file.toPath());
                             LoggingUtils.error(LOGGER, ex);
                         }
-                        return new ArrayList<RegisteredService>(0);
+                        return new ArrayList<RegisteredService>();
                     }))
                     .flatMap(List::stream)
                     .sorted()

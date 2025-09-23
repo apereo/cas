@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +18,10 @@ import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * This is {@link SelectiveMultifactorAuthenticationProviderWebflowEventResolver}
@@ -69,7 +69,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
                                                final RegisteredService registeredService,
                                                final HttpServletRequest request,
                                                final RequestContext context,
-                                               final Service service) {
+                                               final Service service) throws Throwable {
         if (resolveEvents.isEmpty()) {
             LOGGER.trace("No events resolved for authentication transaction [{}] and service [{}]",
                 authentication, registeredService);
@@ -80,7 +80,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
         }
         val result = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request, service);
         return result.map(pair -> {
-            WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
+            MultifactorAuthenticationWebflowUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
             return new HashSet<>(pair.getKey());
         }).orElseGet(HashSet::new);
     }
@@ -90,7 +90,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
         final Authentication authentication,
         final RegisteredService registeredService,
         final HttpServletRequest request,
-        final Service service) {
+        final Service service) throws Throwable {
 
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(
@@ -98,7 +98,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
 
         if (providers.isEmpty()) {
             LOGGER.debug("No providers are available to honor this request. Moving on...");
-            return Optional.of(Pair.of(resolveEvents, new HashSet<>(0)));
+            return Optional.of(Pair.of(resolveEvents, new HashSet<>()));
         }
 
         val providerValues = providers.values();
@@ -107,8 +107,11 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
         resolveEvents.removeIf(e -> providerValues.stream().noneMatch(p -> p.matches(e.getId())));
 
         LOGGER.debug("Finalized set of resolved events are [{}]", resolveEvents);
-        val finalEvents = new TreeSet<>(Comparator.comparing(Event::getId));
-        finalEvents.addAll(resolveEvents);
-        return Optional.of(Pair.of(finalEvents, providerValues));
+        val selectedProvider = getConfigurationContext().getMultifactorAuthenticationProviderSelector().resolve(providerValues,
+            registeredService, authentication.getPrincipal());
+        val finalEvent = resolveEvents.stream()
+            .filter(event -> selectedProvider.matches(event.getId())).findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Unable to locate multifactor authentication provider by id " + selectedProvider.getId()));
+        return Optional.of(Pair.of(List.of(finalEvent), List.of(selectedProvider)));
     }
 }

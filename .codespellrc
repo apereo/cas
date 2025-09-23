@@ -1,0 +1,3 @@
+[codespell]
+skip = *.jar,package.json,package-lock.json,_config.yml,*.key,EmailTemplate_*.html,*.xml,pygment_*.css,**/generated/**,**/work/db,idpselect.js,*.jmx,messages_*.properties,*.wsdl,*.jwks,./ci/tests/puppeteer/chromium,**/out,**/build,**/dist,**/node_modules,**/vendor,**/lib,**/bin,**/obj,*.iml,*.png,*.jpg,*.jpeg,*.gif,*.svg,*.zip,*.tar,*.gz,*.bz2,*.xz,*.7z,*.rar,*.exe,*.dll,*.so,*.dylib,*.o,*.a,*.class,*.pyc,*.pyo,*.pyd,*.db,*.sqlite3,*.log,*.out,*.tmp,*.swp,*.swo,*.lock,*.pid,*.pid.lock,*.seed,*.egg-info,*.egg,*.whl,*.tar.gz,*.tgz,*.zip.egg
+ignore-words-list = pressEnter,errorprone,thirdparty,AfterAll,BeforeAll,BeforeEach,AfterEach,atMost,rouge,bais,aNULL,ist,juli,SART,mis,Ue,ser,ADMN,ecReT

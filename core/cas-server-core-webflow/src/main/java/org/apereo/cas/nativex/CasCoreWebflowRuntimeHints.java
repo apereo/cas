@@ -6,12 +6,15 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import org.apereo.cas.web.flow.configurer.CasWebflowCustomizer;
 import org.apereo.cas.web.flow.decorator.WebflowDecorator;
+import org.apereo.cas.web.flow.executor.CasFlowExecutor;
 import org.apereo.cas.web.flow.executor.ClientFlowExecutionRepository;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
-import org.springframework.webflow.conversation.impl.ContainedConversation;
+import org.springframework.webflow.conversation.Conversation;
+import org.springframework.webflow.conversation.ConversationId;
 import org.springframework.webflow.conversation.impl.ConversationContainer;
 import org.springframework.webflow.core.AnnotatedObject;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -23,8 +26,10 @@ import org.springframework.webflow.engine.TransitionSet;
 import org.springframework.webflow.engine.builder.ViewFactoryCreator;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.FlowExecution;
+import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.repository.impl.FlowExecutionSnapshotGroup;
 import java.util.List;
 
 /**
@@ -38,6 +43,7 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         registerProxyHints(hints, List.of(
             Action.class,
+            FlowDefinitionRegistry.class,
             TransitionDefinition.class,
             StateDefinition.class,
             CasWebflowConfigurer.class,
@@ -47,12 +53,18 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
             CasWebflowExecutionPlanConfigurer.class,
             CasWebflowExceptionHandler.class
         ));
-
+        registerSpringProxyHints(hints, CasFlowExecutor.class);
+        registerSpringProxyHints(hints, CasDelegatingWebflowEventResolver.class, CasWebflowEventResolver.class);
         registerSerializationHints(hints,
-            ContainedConversation.class,
             ClientFlowExecutionRepository.SerializedFlowExecutionState.class,
             ConversationContainer.class,
-            LocalAttributeMap.class);
+            ConversationId.class,
+            LocalAttributeMap.class
+        );
+
+        registerSerializationHints(hints, findSubclassesInPackage(FlowExecutionSnapshotGroup.class, "org.springframework.webflow"));
+        registerSerializationHints(hints, findSubclassesInPackage(Conversation.class, "org.springframework.webflow"));
+        registerSerializationHints(hints, findSubclassesOf(FlowExecutionKey.class));
 
         registerReflectionHints(hints, findSubclassesInPackage(MessageContext.class, "org.springframework.binding"));
         registerReflectionHints(hints, findSubclassesInPackage(ValidationContext.class, "org.springframework.binding"));
@@ -70,5 +82,6 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerReflectionHints(hints,
             findSubclassesInPackage(AnnotatedObject.class, "org.springframework.webflow"));
+
     }
 }

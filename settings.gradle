@@ -1,53 +1,35 @@
+/*
+    The Develocity gradle plugin MUST be applied here.
+ */
 plugins {
-    id 'com.gradle.enterprise' version "${gradleEnterprisePluginVersion}"
-    id 'com.gradle.common-custom-user-data-gradle-plugin' version "${gradleCommonUserDataPluginVersion}"
+    id "com.gradle.develocity" version "4.2"
+    id "com.gradle.common-custom-user-data-gradle-plugin" version "2.4.0"
 }
 
 ext.isCiServer = System.getenv().containsKey("CI")
-ext.buildCacheUser = System.getenv("GRADLE_BUILDCACHE_USER")
-ext.buildCachePsw = System.getenv("GRADLE_BUILDCACHE_PSW")
-ext.gradleEnterpriseAccessKey = System.getenv("GRADLE_ENTERPRISE_ACCESS_KEY")
 ext.githubPackageRegistryUser = System.getenv("GH_PACKAGE_REGISTRY_USER")
 ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
 
-/*
-buildCache {
-    local {
-        enabled = !(buildCachePsw?.trim() && buildCacheUser?.trim())
-    }
-    remote(HttpBuildCache) {
-        enabled = (buildCachePsw?.trim() && buildCacheUser?.trim())
-        url = 'https://cas-gradle-buildcache.herokuapp.com/cache/'
-        push = isCiServer
-
-        credentials {
-            username = buildCacheUser
-            password = buildCachePsw
-        }
-    }
-}
-*/
 
 buildCache {
     local { enabled = true }
-    remote(gradleEnterprise.buildCache) {
+    remote(develocity.buildCache) {
         enabled = true
         // Also check access key to avoid warning logs
-        def accessKey = System.getenv("GRADLE_ENTERPRISE_ACCESS_KEY")
+        def accessKey = System.getenv("DEVELOCITY_ACCESS_KEY")
         push = isCiServer && accessKey != null && !accessKey.isEmpty()
     }
 }
 
-gradleEnterprise {
-    server = 'https://develocity.apereo.org/'
-    allowUntrustedServer = false
+develocity {
+    server = "${develocityApereoServerUrl}"
     buildScan {
-        publishAlways()
-        publishIfAuthenticated()
-        capture {
-            taskInputFiles = true
-        }
+        publishing.onlyIf { it.authenticated }
         uploadInBackground = !isCiServer
+        tag(isCiServer ? "CI" : "LOCAL")
+        tag(System.getProperty("os.name"))
+        tag(System.getProperty("os.arch"))
+        tag(Boolean.valueOf(System.getProperty("PTS_ENABLED")) ? "PTS_ENABLED" : "PTS_DISABLED")
     }
 }
 
@@ -69,7 +51,7 @@ dependencyResolutionManagement {
         }
         mavenCentral()
         maven {
-            url "https://build.shibboleth.net/maven/snapshots"
+            url = "https://build.shibboleth.net/maven/snapshots"
             mavenContent { snapshotsOnly() }
             content {
                 includeGroupByRegex "org\\.opensaml.*"
@@ -77,7 +59,7 @@ dependencyResolutionManagement {
             }
         }
         maven {
-            url "https://build.shibboleth.net/maven/releases/"
+            url = "https://build.shibboleth.net/maven/releases/"
             mavenContent {releasesOnly() }
             content {
                 includeGroupByRegex "org\\.opensaml.*"
@@ -85,69 +67,44 @@ dependencyResolutionManagement {
             }
         }
         maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
+            url = "https://oss.sonatype.org/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
         }
         maven {
-            url "https://repository.apache.org/content/repositories/snapshots"
+            url = "https://repository.apache.org/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
         }
         maven {
-            url "https://repository.apache.org/content/repositories/releases"
+            url = "https://repository.apache.org/content/repositories/releases"
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://oss.sonatype.org/content/repositories/releases"
+            url = "https://oss.sonatype.org/content/repositories/releases"
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://splunk.jfrog.io/splunk/ext-releases-local"
+            url = "https://splunk.jfrog.io/splunk/ext-releases-local"
             content {
                 includeGroupByRegex ".*splunk.*"
             }
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://repo.spring.io/milestone"
+            url = "https://repo.spring.io/milestone"
+            content {
+                includeGroupByRegex ".*springframework.*"
+                includeGroupByRegex ".*projectreactor.*"
+                includeGroupByRegex ".*micrometer.*"
+            }
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://repo.spring.io/snapshot"
-            mavenContent { snapshotsOnly() }
-        }
-        maven {
-            url "https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates"
+            url = "https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates"
             content {
                 includeGroupByRegex ".*netflix.*"
             }
             mavenContent { releasesOnly() }
         }
-        maven {
-            url "https://jitpack.io"
-            content {
-                includeGroupByRegex ".*wss4j.*"
-            }
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://projectlombok.org/edge-releases"
-            content {
-                includeGroupByRegex ".*projectlombok.*"
-            }
-            mavenContent { snapshotsOnly() }
-        }
-//        if (githubPackageRegistryUser != null && githubPackageRegistryPassword != null) {
-//            maven {
-//                url "https://maven.pkg.github.com/mmoayyed/ws-wss4j"
-//                content {
-//                    includeGroupByRegex "org.apache.wss4j"
-//                }
-//                credentials {
-//                    username githubPackageRegistryUser
-//                    password githubPackageRegistryPassword
-//                }
-//            }
-//        }
     }
 }
 
@@ -163,7 +120,9 @@ include "api:cas-server-core-api-events"
 include "api:cas-server-core-api-logout"
 include "api:cas-server-core-api-mfa"
 include "api:cas-server-core-api-monitor"
+include "api:cas-server-core-api-multitenancy"
 include "api:cas-server-core-api-protocol"
+include "api:cas-server-core-api-scripting"
 include "api:cas-server-core-api-services"
 include "api:cas-server-core-api-throttle"
 include "api:cas-server-core-api-ticket"
@@ -183,7 +142,6 @@ include "core:cas-server-core-authentication-mfa-api"
 include "core:cas-server-core-authentication-throttle"
 include "core:cas-server-core-configuration"
 include "core:cas-server-core-configuration-api"
-include "core:cas-server-core-configuration-metadata-repository"
 include "core:cas-server-core-cookie"
 include "core:cas-server-core-cookie-api"
 include "core:cas-server-core-events-api"
@@ -195,10 +153,12 @@ include "core:cas-server-core-logging-api"
 include "core:cas-server-core-logout"
 include "core:cas-server-core-logout-api"
 include "core:cas-server-core-monitor"
+include "core:cas-server-core-multitenancy"
 include "core:cas-server-core-notifications-api"
 include "core:cas-server-core-notifications"
 include "core:cas-server-core-rest"
 include "core:cas-server-core-rest-api"
+include "core:cas-server-core-scripting"
 include "core:cas-server-core-services"
 include "core:cas-server-core-services-api"
 include "core:cas-server-core-services-authentication"
@@ -225,6 +185,7 @@ include "support:cas-server-support-account-mgmt"
 include "support:cas-server-support-acme"
 include "support:cas-server-support-actions-core"
 include "support:cas-server-support-actions"
+include "support:cas-server-support-audit-aws-firehose"
 include "support:cas-server-support-audit-dynamodb"
 include "support:cas-server-support-audit-jdbc"
 include "support:cas-server-support-audit-mongo"
@@ -241,7 +202,9 @@ include "support:cas-server-support-aws"
 include "support:cas-server-support-aws-cloudwatch"
 include "support:cas-server-support-aws-cognito-authentication"
 include "support:cas-server-support-aws-s3-service-registry"
+include "support:cas-server-support-aws-ses"
 include "support:cas-server-support-azuread-authentication"
+include "support:cas-server-support-azure-monitor"
 include "support:cas-server-support-basic"
 include "support:cas-server-support-bom"
 include "support:cas-server-support-bootadmin"
@@ -267,6 +230,7 @@ include "support:cas-server-support-configuration-cloud-mongo"
 include "support:cas-server-support-configuration-cloud-rest"
 include "support:cas-server-support-configuration-cloud-vault"
 include "support:cas-server-support-configuration-cloud-zookeeper"
+include "support:cas-server-support-configuration-metadata-repository"
 include "support:cas-server-support-consent-api"
 include "support:cas-server-support-consent-core"
 include "support:cas-server-support-consent-dynamodb"
@@ -294,6 +258,7 @@ include "support:cas-server-support-eureka-client"
 include "support:cas-server-support-events-dynamodb"
 include "support:cas-server-support-events-influxdb"
 include "support:cas-server-support-events-jpa"
+include "support:cas-server-support-events-kafka"
 include "support:cas-server-support-events-memory"
 include "support:cas-server-support-events-mongo"
 include "support:cas-server-support-events-redis"
@@ -309,9 +274,11 @@ include "support:cas-server-support-gcp-logging"
 include "support:cas-server-support-gcp-pubsub-ticket-registry"
 include "support:cas-server-support-gcp-firestore-ticket-registry"
 include "support:cas-server-support-gcp-firestore-service-registry"
+include "support:cas-server-support-gcp-storage-service-registry"
 include "support:cas-server-support-generic"
 include "support:cas-server-support-generic-remote-webflow"
 include "support:cas-server-support-geolocation"
+include "support:cas-server-support-geode-ticket-registry"
 include "support:cas-server-support-geolocation-azure"
 include "support:cas-server-support-geolocation-googlemaps"
 include "support:cas-server-support-geolocation-maxmind"
@@ -330,9 +297,9 @@ include "support:cas-server-support-hazelcast-discovery-gcp"
 include "support:cas-server-support-hazelcast-discovery-jclouds"
 include "support:cas-server-support-hazelcast-discovery-kubernetes"
 include "support:cas-server-support-hazelcast-discovery-zookeeper"
-include "support:cas-server-support-hazelcast-discovery-swarm"
 include "support:cas-server-support-hazelcast-monitor"
 include "support:cas-server-support-hazelcast-ticket-registry"
+include "support:cas-server-support-heimdall"
 include "support:cas-server-support-ignite-ticket-registry"
 include "support:cas-server-support-influxdb-core"
 include "support:cas-server-support-interrupt-api"
@@ -340,6 +307,7 @@ include "support:cas-server-support-interrupt-core"
 include "support:cas-server-support-interrupt-webflow"
 include "support:cas-server-support-inwebo-mfa"
 include "support:cas-server-support-javamelody"
+include "support:cas-server-support-javers"
 include "support:cas-server-support-jdbc"
 include "support:cas-server-support-jdbc-authentication"
 include "support:cas-server-support-jdbc-drivers"
@@ -353,14 +321,20 @@ include "support:cas-server-support-jpa-ticket-registry"
 include "support:cas-server-support-jpa-util"
 include "support:cas-server-support-json-service-registry"
 include "support:cas-server-support-kafka-core"
+include "support:cas-server-support-kafka-ticket-registry"
 include "support:cas-server-support-ldap"
 include "support:cas-server-support-ldap-core"
 include "support:cas-server-support-ldap-monitor"
 include "support:cas-server-support-ldap-service-registry"
 include "support:cas-server-support-logback"
 include "support:cas-server-support-logging-config-fluentd"
+include "support:cas-server-support-logging-config-loki"
 include "support:cas-server-support-logging-config-splunk"
 include "support:cas-server-support-logging-config-sqs"
+include "support:cas-server-support-lucene"
+include "support:cas-server-support-mail-microsoft"
+include "support:cas-server-support-mailgun"
+include "support:cas-server-support-mailjet"
 include "support:cas-server-support-memcached-aws-elasticache"
 include "support:cas-server-support-memcached-core"
 include "support:cas-server-support-memcached-monitor"
@@ -373,12 +347,12 @@ include "support:cas-server-support-mongo-monitor"
 include "support:cas-server-support-mongo-service-registry"
 include "support:cas-server-support-mongo-ticket-registry"
 include "support:cas-server-support-native"
+include "support:cas-server-support-notifications-apn"
 include "support:cas-server-support-notifications-fcm"
 include "support:cas-server-support-notifications-slack"
 include "support:cas-server-support-oauth"
 include "support:cas-server-support-oauth-api"
 include "support:cas-server-support-oauth-core-api"
-include "support:cas-server-support-oauth-core"
 include "support:cas-server-support-oauth-services"
 include "support:cas-server-support-oauth-uma"
 include "support:cas-server-support-oauth-uma-core"
@@ -395,8 +369,11 @@ include "support:cas-server-support-openrewrite"
 include "support:cas-server-support-otp-mfa"
 include "support:cas-server-support-otp-mfa-core"
 include "support:cas-server-support-pac4j-api"
+include "support:cas-server-support-pac4j-cas"
 include "support:cas-server-support-pac4j-core"
 include "support:cas-server-support-pac4j-core-clients"
+include "support:cas-server-support-pac4j-oidc"
+include "support:cas-server-support-pac4j-saml"
 include "support:cas-server-support-pac4j-webflow"
 include "support:cas-server-support-palantir"
 include "support:cas-server-support-passwordless-api"
@@ -421,6 +398,7 @@ include "support:cas-server-support-radius-core-mfa"
 include "support:cas-server-support-radius-mfa"
 include "support:cas-server-support-redis-authentication"
 include "support:cas-server-support-redis-core"
+include "support:cas-server-support-redis-modules"
 include "support:cas-server-support-redis-service-registry"
 include "support:cas-server-support-redis-ticket-registry"
 include "support:cas-server-support-reports-core"
@@ -443,6 +421,7 @@ include "support:cas-server-support-saml-idp-metadata-aws-s3"
 include "support:cas-server-support-saml-idp-metadata-jpa"
 include "support:cas-server-support-saml-idp-metadata-git"
 include "support:cas-server-support-saml-idp-metadata-mongo"
+include "support:cas-server-support-saml-idp-metadata-dynamodb"
 include "support:cas-server-support-saml-idp-metadata-redis"
 include "support:cas-server-support-saml-idp-metadata-rest"
 include "support:cas-server-support-saml-idp-ticket"
@@ -461,6 +440,7 @@ include "support:cas-server-support-session-hazelcast"
 include "support:cas-server-support-session-jdbc"
 include "support:cas-server-support-session-mongo"
 include "support:cas-server-support-session-redis"
+include "support:cas-server-support-session-ticket-registry"
 include "support:cas-server-support-shell-core"
 include "support:cas-server-support-shell"
 include "support:cas-server-support-shibboleth"
@@ -471,7 +451,6 @@ include "support:cas-server-support-sms-clickatell"
 include "support:cas-server-support-sms-smsmode"
 include "support:cas-server-support-sms-nexmo"
 include "support:cas-server-support-sms-textmagic"
-include "support:cas-server-support-soap-authentication"
 include "support:cas-server-support-spnego"
 include "support:cas-server-support-spnego-webflow"
 include "support:cas-server-support-stateless-ticket-registry"
@@ -485,6 +464,7 @@ include "support:cas-server-support-surrogate-webflow"
 include "support:cas-server-support-swagger"
 include "support:cas-server-support-syncope-authentication"
 include "support:cas-server-support-themes"
+include "support:cas-server-support-themes-bootstrap"
 include "support:cas-server-support-themes-collection"
 include "support:cas-server-support-themes-core"
 include "support:cas-server-support-throttle"
@@ -502,6 +482,7 @@ include "support:cas-server-support-token-core-api"
 include "support:cas-server-support-token-core"
 include "support:cas-server-support-token-tickets"
 include "support:cas-server-support-token-webflow"
+include "support:cas-server-support-tracing-jaeger"
 include "support:cas-server-support-tracing-otel"
 include "support:cas-server-support-tracing-zipkin"
 include "support:cas-server-support-trusted"
@@ -514,6 +495,7 @@ include "support:cas-server-support-trusted-mfa-rest"
 include "support:cas-server-support-trusted-mfa-dynamodb"
 include "support:cas-server-support-trusted-webflow"
 include "support:cas-server-support-twilio"
+include "support:cas-server-support-twilio-mfa"
 include "support:cas-server-support-validation"
 include "support:cas-server-support-validation-core"
 include "support:cas-server-support-webauthn"

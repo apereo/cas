@@ -12,9 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Audits")
-public class WhereClauseMatchCriteriaTests {
+class WhereClauseMatchCriteriaTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val criteria1 = new NoMatchWhereClauseMatchCriteria();
         assertTrue(criteria1.getParameterValues().isEmpty());
         assertNotNull(criteria1.toString());

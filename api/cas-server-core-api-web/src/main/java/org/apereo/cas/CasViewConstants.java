@@ -28,7 +28,7 @@ public interface CasViewConstants {
      * Represents the chained authentication objects
      * in the view for proxying.
      */
-    String MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS = "chainedAuthentications";
+    String MODEL_ATTRIBUTE_NAME_PROXIES = "proxies";
 
     /**
      * Represents the
@@ -55,6 +55,11 @@ public interface CasViewConstants {
      * The constant representing the validated service in the response.
      */
     String MODEL_ATTRIBUTE_NAME_SERVICE = "service";
+
+    /**
+     * The constant representing the registered service in the response.
+     */
+    String MODEL_ATTRIBUTE_REGISTERED_SERVICE = "registeredService";
 
     /**
      * The constant representing the PGTIOU in the response.

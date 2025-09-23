@@ -1,5 +1,5 @@
 {
-  "dependencies": "core",
+  "dependencies": "scripting",
   "conditions": {
     "docker": "true"
   },

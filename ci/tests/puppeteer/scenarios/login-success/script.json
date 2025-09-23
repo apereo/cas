@@ -1,5 +1,5 @@
 {
-  "dependencies": "core,google-analytics",
+  "dependencies": "core,google-analytics,sentry",
   "conditions": {
     "docker": "true"
   },
@@ -10,14 +10,33 @@
     "--cas.server.name=http://localhost:8080",
     "--cas.server.prefix=http://localhost:8080/cas",
 
+    "--cas.sso.mail.from=admin@apereo.org",
+    "--cas.sso.mail.subject=Authentication",
+    "--cas.sso.mail.attribute-name=mail",
+    
     "--cas.google-analytics.google-analytics-tracking-id=G-XF7F4RCQ0J",
-    "--logging.level.org.apereo.cas=info",
-
+    "--cas.authn.accept.users=casuser::Mellon,fancyuser::jleleuâ¬",
     "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@apereo.org",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoints.enabled-by-default=true"
+    "--management.endpoints.access.default=UNRESTRICTED",
+    "--management.server.port=8081"
   ],
-  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+  "SPRING_APPLICATION_JSON": {
+    "cas": {
+      "sso": {
+        "mail": {
+          "text": "${#principal.id} @ ${#clientInfo.clientIpAddress}"
+        }
+      }
+    }
+  },
+  "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true",
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/mail/run-mail-server.sh"
 }

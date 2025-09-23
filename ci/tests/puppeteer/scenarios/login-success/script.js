@@ -17,21 +17,24 @@ const fs = require("fs");
 
     await cas.gotoLogin(page);
     await page.focus("#username");
-    await page.keyboard.press("Tab");
+    await cas.pressTab(page);
     await page.focus("#password");
-    await page.keyboard.press("Tab");
+    await cas.pressTab(page);
     await cas.screenshot(page);
     await cas.assertVisibility(page, "#usernameValidationMessage");
     await cas.assertVisibility(page, "#passwordValidationMessage");
 
     await cas.loginWith(page);
-    await cas.sleep(1000);
+    await cas.sleep(2000);
     await cas.screenshot(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 
-    await cas.sleep(1000);
+    const message = await cas.extractFromEmail(browser);
+    assert(message === "casuser @ 127.0.0.1");
+    
+    await cas.sleep(2000);
     assert (await cas.pageVariable(page, "googleAnalyticsTrackingId") !== null);
 
     await cas.gotoLogout(page);
@@ -59,13 +62,20 @@ const fs = require("fs");
     await cas.log(`Login page is written to ${loginFile}`);
 
     await cas.goto(page, `file://${loginFile}`);
-    await cas.sleep(1000);
+    await cas.sleep(2000);
     await cas.loginWith(page);
-    await cas.sleep(1000);
+    await cas.sleep(2000);
     const content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
     assert(payload.form.ticket !== undefined);
     await cas.gotoLogout(page);
-    
-    await browser.close();
+    await cas.sleep(1000);
+
+    await cas.gotoLogin(page);
+    await cas.loginWith(page, "fancyuser", "jleleuâ¬");
+    await cas.sleep(1000);
+    await cas.assertCookie(page);
+    await cas.gotoLogout(page);
+    await cas.sleep(1000);
+    await cas.closeBrowser(browser);
 })();

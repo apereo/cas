@@ -22,6 +22,7 @@ import org.apereo.cas.audit.spi.resource.TicketValidationResourceResolver;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -29,6 +30,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.util.text.MessageSanitizer;
+import org.apereo.cas.web.flow.CasWebflowCredentialProvider;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
@@ -42,15 +44,16 @@ import org.apereo.inspektr.audit.spi.support.MessageBundleAwareResourceResolver;
 import org.apereo.inspektr.audit.spi.support.NullableReturnValueAuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditResourceResolver;
+import org.apereo.inspektr.audit.support.DelegatingAuditEventRepository;
 import org.apereo.inspektr.audit.support.GroovyAuditTrailManager;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.AuditActionDateProvider;
 import org.apereo.inspektr.common.spi.ClientInfoResolver;
 import org.apereo.inspektr.common.spi.DefaultClientInfoResolver;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
-import org.springframework.boot.actuate.audit.InMemoryAuditEventRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -64,7 +67,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.StringUtils;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -90,9 +92,11 @@ public class CasCoreAuditAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalResolver auditablePrincipalResolver(
+            @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)
+            final CasWebflowCredentialProvider casWebflowCredentialProvider,
             @Qualifier("auditPrincipalIdProvider")
             final AuditPrincipalIdProvider auditPrincipalIdProvider) {
-            return new DefaultAuditPrincipalResolver(auditPrincipalIdProvider);
+            return new DefaultAuditPrincipalResolver(auditPrincipalIdProvider, casWebflowCredentialProvider);
         }
 
         @ConditionalOnMissingBean(name = "auditPrincipalIdProvider")
@@ -286,13 +290,15 @@ public class CasCoreAuditAutoConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasCoreAuditEventsConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "inMemoryAuditEventRepository")
+        @ConditionalOnMissingBean(name = "auditEventRepository")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditEventRepository inMemoryAuditEventRepository(
-            final ConfigurableApplicationContext applicationContext) throws Exception {
+        public AuditEventRepository auditEventRepository(
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final ObjectProvider<CasEventRepository> casEventRepository,
+            final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(AuditEventRepository.class)
                 .when(CONDITION_AUDIT.given(applicationContext.getEnvironment()))
-                .supply(InMemoryAuditEventRepository::new)
+                .supply(() -> new DelegatingAuditEventRepository(casEventRepository))
                 .otherwiseProxy()
                 .get();
         }
@@ -511,7 +517,7 @@ public class CasCoreAuditAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailExecutionPlanConfigurer casAuditTrailExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(AuditTrailExecutionPlanConfigurer.class)
                 .when(BeanCondition.on("cas.audit.slf4j.enabled").isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> {

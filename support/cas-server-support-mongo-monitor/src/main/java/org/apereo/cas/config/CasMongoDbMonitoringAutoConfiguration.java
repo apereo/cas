@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import java.util.stream.Collectors;
@@ -53,10 +54,10 @@ public class CasMongoDbMonitoringAutoConfiguration {
     @ConditionalOnEnabledHealthIndicator("mongoHealthIndicator")
     @ConditionalOnMissingBean(name = "mongoHealthIndicator")
     public HealthIndicator mongoHealthIndicator(
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("mongoHealthIndicatorTemplate")
         final BeanContainer<CasMongoOperations> mongoHealthIndicatorTemplate) {
-
         val warn = casProperties.getMonitor().getWarn();
         val results = mongoHealthIndicatorTemplate.toList()
             .stream()

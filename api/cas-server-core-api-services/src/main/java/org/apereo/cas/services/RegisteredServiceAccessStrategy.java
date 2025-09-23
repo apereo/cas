@@ -103,7 +103,7 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      * @return required attributes
      */
     default Map<String, Set<String>> getRequiredAttributes() {
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 
 }

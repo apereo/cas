@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,15 +23,14 @@ import java.time.Duration;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("DeviceFingerprintProperties")
 public class DeviceFingerprintProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 747021103142441353L;
 
     /**
-     * Component Separator for device fingerprints.
+     * Core settings for device fingerprinting.
      */
-    private String componentSeparator = "@";
+    private Core core = new Core();
 
     /**
      * Configure usage of client ip within trusted device fingerprints.
@@ -84,7 +82,7 @@ public class DeviceFingerprintProperties implements Serializable {
         /**
          * The default max age for the cookie component.
          */
-        private static final int DEFAULT_MAX_AGE_DAYS = 30;
+        private static final Duration DEFAULT_MAX_AGE_DAYS = Duration.ofDays(30);
 
         /**
          * Is this component enabled or not.
@@ -104,7 +102,7 @@ public class DeviceFingerprintProperties implements Serializable {
 
         public Cookie() {
             setName("MFATRUSTED");
-            setMaxAge((int) Duration.ofDays(DEFAULT_MAX_AGE_DAYS).getSeconds());
+            setMaxAge(DEFAULT_MAX_AGE_DAYS.toString());
 
             crypto.getEncryption().setKeySize(EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
             crypto.getSigning().setKeySize(SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
@@ -166,5 +164,18 @@ public class DeviceFingerprintProperties implements Serializable {
             setEnabled(false);
             setOrder(DEFAULT_ORDER);
         }
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    @RequiresModule(name = "cas-server-support-trusted-mfa")
+    public static class Core implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 3290828606869889754L;
+        /**
+         * Component Separator for device fingerprints.
+         */
+        private String componentSeparator = "@";
     }
 }

@@ -8,8 +8,8 @@ category: User Interface
 
 # Groovy Themes - User Interface Customization
 
-If you have multiple themes defined, it may be desirable to dynamically determine a theme for a given service definition. In 
-order to do, you may calculate the final theme name via a Groovy script of your own design. The theme assigned to 
+If you have multiple themes defined, it may be desirable to dynamically determine a theme for a given service definition. In
+order to do so, you may calculate the final theme name via a Groovy script of your own design. The theme assigned to
 the service definition needs to point to the location of the script:
 
 ```json
@@ -45,3 +45,5 @@ Returning `null` or blank will have CAS switch to the default theme. The followi
 | `queryStrings`      | Textual representation of all query strings found in the request, if any.   |
 | `headers`           | `Map` of all request headers and their values found in the request, if any. |
 | `logger`            | The object responsible for issuing log messages such as `logger.info(...)`. |
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

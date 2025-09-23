@@ -57,6 +57,19 @@ public abstract class AbstractStringAuditTrailManager implements AuditTrailManag
         return getAuditLineString(auditActionContext);
     }
 
+    protected void buildSingleAuditLineForField(final AuditableFields field, final Object value, final StringBuilder builder) {
+        if (isFieldAuditable(field)) {
+            if (useSingleLine) {
+                builder.append(value);
+                builder.append(getEntrySeparator());
+            } else {
+                builder.append("%s: ".formatted(field.name()));
+                builder.append(value);
+                builder.append('\n');
+            }
+        }
+    }
+    
     protected String getAuditLineString(final AuditActionContext auditActionContext) {
         val builder = new StringBuilder();
 
@@ -65,93 +78,18 @@ public abstract class AbstractStringAuditTrailManager implements AuditTrailManag
             builder.append("=============================================================\n");
         }
 
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.WHEN)) {
-            if (useSingleLine) {
-                builder.append(auditActionContext.getWhenActionWasPerformed());
-                builder.append(getEntrySeparator());
-            } else {
-                builder.append("WHEN: ");
-                builder.append(auditActionContext.getWhenActionWasPerformed());
-                builder.append('\n');
-            }
-        }
-
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.WHO)) {
-            if (useSingleLine) {
-                builder.append(auditActionContext.getPrincipal());
-                builder.append(getEntrySeparator());
-            } else {
-                builder.append("WHO: ");
-                builder.append(auditActionContext.getPrincipal());
-                builder.append('\n');
-            }
-        }
-
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.WHAT)) {
-            if (useSingleLine) {
-                builder.append(auditActionContext.getResourceOperatedUpon());
-                builder.append(getEntrySeparator());
-            } else {
-                builder.append("WHAT: ");
-                builder.append(auditActionContext.getResourceOperatedUpon());
-                builder.append('\n');
-            }
-        }
-
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.ACTION)) {
-            if (useSingleLine) {
-                builder.append(auditActionContext.getActionPerformed());
-                builder.append(getEntrySeparator());
-            } else {
-                builder.append("ACTION: ");
-                builder.append(auditActionContext.getActionPerformed());
-                builder.append('\n');
-            }
-        }
-
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.APPLICATION)) {
-            if (useSingleLine) {
-                builder.append(auditActionContext.getApplicationCode());
-                builder.append(getEntrySeparator());
-            } else {
-                builder.append("APPLICATION: ");
-                builder.append(auditActionContext.getApplicationCode());
-                builder.append('\n');
-            }
-        }
-
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.USER_AGENT)) {
-            if (useSingleLine) {
-                builder.append(auditActionContext.getClientInfo().getUserAgent());
-                builder.append(getEntrySeparator());
-            } else {
-                builder.append("USER-AGENT: ");
-                builder.append(auditActionContext.getClientInfo().getUserAgent());
-                builder.append('\n');
-            }
-        }
-
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.CLIENT_IP)) {
-            if (useSingleLine) {
-                builder.append(auditActionContext.getClientInfo().getClientIpAddress());
-                builder.append(getEntrySeparator());
-            } else {
-                builder.append("CLIENT IP ADDRESS: ");
-                builder.append(auditActionContext.getClientInfo().getClientIpAddress());
-                builder.append('\n');
-            }
-        }
-
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.SERVER_IP)) {
-            if (useSingleLine) {
-                builder.append(auditActionContext.getClientInfo().getServerIpAddress());
-                builder.append(getEntrySeparator());
-            } else {
-                builder.append("SERVER IP ADDRESS: ");
-                builder.append(auditActionContext.getClientInfo().getServerIpAddress());
-                builder.append('\n');
-            }
-        }
+        val clientInfo = auditActionContext.getClientInfo();
+        buildSingleAuditLineForField(AuditableFields.WHEN, auditActionContext.getWhenActionWasPerformed(), builder);
+        buildSingleAuditLineForField(AuditableFields.WHO, auditActionContext.getPrincipal(), builder);
+        buildSingleAuditLineForField(AuditableFields.WHAT, auditActionContext.getResourceOperatedUpon(), builder);
+        buildSingleAuditLineForField(AuditableFields.ACTION, auditActionContext.getActionPerformed(), builder);
+        buildSingleAuditLineForField(AuditableFields.APPLICATION, auditActionContext.getApplicationCode(), builder);
+        buildSingleAuditLineForField(AuditableFields.USER_AGENT, clientInfo.getUserAgent(), builder);
+        buildSingleAuditLineForField(AuditableFields.CLIENT_IP, clientInfo.getClientIpAddress(), builder);
+        buildSingleAuditLineForField(AuditableFields.SERVER_IP, clientInfo.getServerIpAddress(), builder);
+        buildSingleAuditLineForField(AuditableFields.DEVICE_FINGERPRINT, clientInfo.getDeviceFingerprint(), builder);
+        buildSingleAuditLineForField(AuditableFields.HEADERS, clientInfo.getHeaders(), builder);
+        buildSingleAuditLineForField(AuditableFields.TENANT, clientInfo.getTenant(), builder);
 
         if (!useSingleLine) {
             builder.append("=============================================================");
@@ -171,37 +109,48 @@ public abstract class AbstractStringAuditTrailManager implements AuditTrailManag
 
     protected Map<String, ?> getMappedAuditActionContext(final AuditActionContext auditActionContext) {
         var map = new LinkedHashMap<String, Object>();
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.WHO)) {
+        if (isFieldAuditable(AuditableFields.WHO)) {
             map.put("who", readFieldValue(auditActionContext.getPrincipal()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.WHAT)) {
+        if (isFieldAuditable(AuditableFields.WHAT)) {
             map.put("what", readFieldValue(auditActionContext.getResourceOperatedUpon()));
         }
-
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.ACTION)) {
+        if (isFieldAuditable(AuditableFields.ACTION)) {
             map.put("action", readFieldValue(auditActionContext.getActionPerformed()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.APPLICATION)) {
+        if (isFieldAuditable(AuditableFields.APPLICATION)) {
             map.put("application", readFieldValue(auditActionContext.getApplicationCode()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.WHEN)) {
+        if (isFieldAuditable(AuditableFields.WHEN)) {
             map.put("when", readFieldValue(auditActionContext.getWhenActionWasPerformed().toString()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.CLIENT_IP)) {
-            map.put("clientIpAddress", readFieldValue(auditActionContext.getClientInfo().getClientIpAddress()));
+        
+        val clientInfo = auditActionContext.getClientInfo();
+        if (isFieldAuditable(AuditableFields.CLIENT_IP)) {
+            map.put("clientIpAddress", readFieldValue(clientInfo.getClientIpAddress()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.SERVER_IP)) {
-            map.put("serverIpAddress", readFieldValue(auditActionContext.getClientInfo().getServerIpAddress()));
+        if (isFieldAuditable(AuditableFields.SERVER_IP)) {
+            map.put("serverIpAddress", readFieldValue(clientInfo.getServerIpAddress()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.USER_AGENT)) {
-            map.put("userAgent", readFieldValue(auditActionContext.getClientInfo().getUserAgent()));
+        if (isFieldAuditable(AuditableFields.USER_AGENT)) {
+            map.put("userAgent", readFieldValue(clientInfo.getUserAgent()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.HEADERS)) {
-            map.put("headers", auditActionContext.getClientInfo().getHeaders());
+        if (isFieldAuditable(AuditableFields.HEADERS)) {
+            map.put("headers", clientInfo.getHeaders());
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.GEO_LOCATION)) {
-            map.put("geoLocation", readFieldValue(auditActionContext.getClientInfo().getGeoLocation()));
+        if (isFieldAuditable(AuditableFields.GEO_LOCATION)) {
+            map.put("geoLocation", readFieldValue(clientInfo.getGeoLocation()));
+        }
+        if (isFieldAuditable(AuditableFields.DEVICE_FINGERPRINT)) {
+            map.put("deviceFingerprint", readFieldValue(clientInfo.getDeviceFingerprint()));
+        }
+        if (isFieldAuditable(AuditableFields.TENANT)) {
+            map.put("tenant", readFieldValue(clientInfo.getTenant()));
         }
         return map;
+    }
+
+    private boolean isFieldAuditable(final AuditableFields field) {
+        return auditableFields.isEmpty() || auditableFields.contains(field);
     }
 }

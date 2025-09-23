@@ -20,7 +20,7 @@ class UnrecognizableServiceForServiceTicketValidationExceptionTests {
     private final Service service = RegisteredServiceTestUtils.getService();
 
     @Test
-    void verifyThrowableConstructor() throws Throwable {
+    void verifyThrowableConstructor() {
         val t =
             new UnrecognizableServiceForServiceTicketValidationException(this.service);
 

@@ -44,7 +44,6 @@ public interface DelegatedClientAuthenticationWebflowManager {
      * @param webContext     the web context
      * @param client         the client
      * @return the service
-     * @throws Throwable the throwable
      */
-    Service retrieve(RequestContext requestContext, WebContext webContext, Client client) throws Throwable;
+    Service retrieve(RequestContext requestContext, WebContext webContext, Client client);
 }

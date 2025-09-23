@@ -7,6 +7,7 @@ ext {
     ]
 }
 dependencies {
+    api project(":api:cas-server-core-api-scripting")
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-configuration-model")
     api project(":api:cas-server-core-api-ticket")
@@ -20,7 +21,10 @@ dependencies {
     implementation project(":support:cas-server-support-jpa-util")
     implementation project(":core:cas-server-core-util")
 
+
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+
+    testImplementation project(":core:cas-server-core-scripting")
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

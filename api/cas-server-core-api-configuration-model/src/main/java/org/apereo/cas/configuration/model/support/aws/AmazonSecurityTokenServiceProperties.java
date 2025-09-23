@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.aws;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,7 +19,6 @@ import java.io.Serial;
 @Setter
 @RequiresModule(name = "cas-server-support-aws")
 @Accessors(chain = true)
-@JsonFilter("AmazonSecurityTokenServiceProperties")
 public class AmazonSecurityTokenServiceProperties extends BaseAmazonWebServicesProperties {
     @Serial
     private static final long serialVersionUID = 5426637051495147084L;
@@ -44,7 +42,7 @@ public class AmazonSecurityTokenServiceProperties extends BaseAmazonWebServicesP
     /**
      * When set to {@code true}, credentials will be obtained based on
      * roles as attributes resolved for the user. Typically, you could use roles
-     * wthin your account or for cross-account access.
+     * within your account or for cross-account access.
      * <p>
      * When set to {@code true}, the {@link #getPrincipalAttributeName()}
      * must contain {@code roleArn}s as values.

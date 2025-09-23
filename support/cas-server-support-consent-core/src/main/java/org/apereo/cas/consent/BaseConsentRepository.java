@@ -34,7 +34,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     @Serial
     private static final long serialVersionUID = 1736846688546785564L;
 
-    private Set<ConsentDecision> consentDecisions = Collections.synchronizedSet(new LinkedHashSet<>(0));
+    private Set<ConsentDecision> consentDecisions = Collections.synchronizedSet(new LinkedHashSet<>());
 
     @Override
     public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,
@@ -66,7 +66,7 @@ public abstract class BaseConsentRepository implements ConsentRepository {
         if (consent) {
             getConsentDecisions().remove(decision);
         } else {
-            decision.setId(RandomUtils.nextLong());
+            decision.setId(RandomUtils.nextInt());
         }
         getConsentDecisions().add(decision);
         return decision;

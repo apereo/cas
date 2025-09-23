@@ -3,5 +3,5 @@
   "serviceId": "^https://localhost:9859/anything/cas.*",
   "name": "Sample",
   "id": 2,
-  "description": "Github"
+  "description": "GitHub"
 }

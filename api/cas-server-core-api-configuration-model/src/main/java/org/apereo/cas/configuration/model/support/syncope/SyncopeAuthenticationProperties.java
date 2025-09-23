@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -26,7 +25,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SyncopeAuthenticationProperties")
 public class SyncopeAuthenticationProperties extends BaseSyncopeProperties {
 
     @Serial
@@ -47,6 +45,11 @@ public class SyncopeAuthenticationProperties extends BaseSyncopeProperties {
      * The order of this authentication handler in the chain.
      */
     private int order = Integer.MAX_VALUE;
+
+    /**
+     * Max retry attempts for the authentication.
+     */
+    private int maxRetryAttempts;
 
     /**
      * Password encoder settings for the authentication handler.
@@ -74,7 +77,7 @@ public class SyncopeAuthenticationProperties extends BaseSyncopeProperties {
      * For example, the convention {@code lastLoginDate->lastDate} will process the
      * Syncope attribute {@code lastLoginDate} and will internally rename that to {@code lastDate}.
      * If no mapping is specified, CAS defaults will be used instead.
-     * In other words, this settings allows one to virtually rename and remap Syncopen attributes
+     * In other words, this settings allows one to virtually rename and remap Syncope attributes
      * during the authentication event.
      */
     private Map<String, String> attributeMappings = new LinkedHashMap<>();

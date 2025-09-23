@@ -34,7 +34,7 @@ async function cleanUp() {
             await cas.assertInnerText(page, "#authnContextClass", "https://refeds.org/profile/mfa");
             await cleanUp();
         } finally {
-            await browser.close();
+            await cas.closeBrowser(browser);
         }
     }, async (error) => {
         await cas.log(error);

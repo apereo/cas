@@ -15,7 +15,7 @@ const assert = require("assert");
     await cas.loginWith(page);
     const tgc = await cas.assertCookie(page);
     assert(tgc.path === "/cas");
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
@@ -24,7 +24,7 @@ const assert = require("assert");
     await cas.gotoLogin(page);
     await cas.assertCookie(page);
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function buildCookie(page, value, path, name = "TGC") {

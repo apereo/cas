@@ -37,7 +37,7 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
     /**
      * Default instance for the ticket id generator.
      */
-    protected final UniqueTicketIdGenerator oAuthCodeIdGenerator;
+    protected final UniqueTicketIdGenerator ticketIdGenerator;
 
     @Getter
     protected final ExpirationPolicyBuilder<OAuth20Code> expirationPolicyBuilder;
@@ -67,7 +67,7 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
                               final OAuth20GrantTypes grantType) throws Throwable {
 
         val expirationPolicyToUse = determineExpirationPolicyForService(clientId);
-        val codeId = oAuthCodeIdGenerator.getNewTicketId(OAuth20Code.PREFIX);
+        val codeId = ticketIdGenerator.getNewTicketId(OAuth20Code.PREFIX);
 
         val codeIdToUse = FunctionUtils.doIf(cipherExecutor.isEnabled(), () -> {
             LOGGER.trace("Attempting to encode OAuth code [{}]", codeId);
@@ -80,9 +80,8 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
             expirationPolicyToUse, ticketGrantingTicket, scopes,
             codeChallenge, codeChallengeMethod, clientId,
             requestClaims, responseType, grantType);
-
+        FunctionUtils.doIfNotNull(service, __ -> oauthCode.setTenantId(service.getTenant()));
         descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, oauthCode);
-
         return oauthCode;
     }
 
@@ -98,7 +97,7 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
             val count = policy.getNumberOfUses();
             val ttl = policy.getTimeToLive();
             if (count > 0 && StringUtils.isNotBlank(ttl)) {
-                return new OAuth20CodeExpirationPolicy(count, Beans.newDuration(ttl).getSeconds());
+                return new OAuth20CodeExpirationPolicy(count, Beans.newDuration(ttl).toSeconds());
             }
         }
         return this.expirationPolicyBuilder.buildTicketExpirationPolicy();

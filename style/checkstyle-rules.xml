@@ -43,6 +43,7 @@
         </module>
         <module name="JavadocMethod">
             <property name="accessModifiers" value="protected"/>
+            <property name="allowInlineReturn" value="true"/>
             <property name="severity" value="error"/>
             <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF"/>
         </module>
@@ -64,12 +65,13 @@
         <module name="JavadocVariable">
             <property name="id" value="javadocForAllPublicFields"/>
             <property name="severity" value="error"/>
-            <property name="scope" value="public"/>
+            <property name="accessModifiers" value="public"/>
             <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER|casProperties"/>
         </module>
         <module name="JavadocVariable">
             <property name="id" value="javadocForPropertyFields"/>
             <property name="severity" value="error"/>
+            <property name="accessModifiers" value="public"/>
             <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
         </module>
         <module name="JavadocStyle">
@@ -83,6 +85,15 @@
             <property name="severity" value="error"/>
         </module>
         <module name="UnusedLocalVariable">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="UnnecessaryNullCheckWithInstanceOf">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="UnnecessarySemicolonInEnumeration">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="WhenShouldBeUsed">
             <property name="severity" value="error"/>
         </module>
         <module name="Indentation">
@@ -304,12 +315,9 @@
             <property name="forceStrictCondition" value="false"/>
             <property name="severity" value="error"/>
         </module>
-        <!--
-        <module name="MissingCtor">
+        <module name="PatternVariableAssignment">
             <property name="severity" value="error" />
         </module>
-        -->
-
         <module name="OuterTypeFilename">
             <property name="severity" value="error"/>
         </module>
@@ -371,7 +379,7 @@
         </module>
         <module name="BooleanExpressionComplexity">
             <property name="severity" value="error"/>
-            <property name="max" value="4"/>
+            <property name="max" value="5"/>
         </module>
         <module name="ArrayTypeStyle">
             <property name="severity" value="error"/>
@@ -468,6 +476,16 @@
             <property name="format" value="\.stream\(\)\.forEach\("/>
             <property name="message"
                       value="Simplify the Stream API. Using stream().forEach() is unnecessary where forEach() can be used directly."/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="lombok-sneaky-throws"/>
+            <metadata name="net.sf.eclipsecs.core.comment"
+                      value="Do not use @SneakyThrows as it may create a large maintenance cost.. Find alternatives in FunctionUtils to handle checked exceptions"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="@SneakyThrows"/>
+            <property name="message"
+                      value="Do not use @SneakyThrows as it may create a large maintenance cost. Find alternatives in FunctionUtils to handle checked exceptions"/>
         </module>
 
         <module name="RegexpSinglelineJava">
@@ -622,7 +640,7 @@
             <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
             <property name="severity" value="error"/>
             <property name="format"
-                      value="^\s*(?!return|throw|private|public|protected|val)(final\s+)*\b(?!var)\w+\b\s*(\b[a-z]\w*\b)(\s*=\s+(?!null).+)*;"/>
+                      value="^\s*(?!return|throw|private|public|protected|val|yield)(final\s+)*\b(?!var)\w+\b\s*(\b[a-z]\w*\b)(\s*=\s+(?!null).+)*;"/>
             <property name="message" value="Use lombok.val or JDK var keyword when declaring variable definitions."/>
         </module>
 
@@ -715,7 +733,7 @@
         <metadata name="net.sf.eclipsecs.core.comment" value="Use @TestConfiguration"/>
         <property name="severity" value="error"/>
         <property name="id" value="useTestConfiguration"/>
-        <property name="format" value="@Configuration"/>
+        <property name="format" value="@Configuration\b"/>
         <property name="message" value="Configuration classes for tests must be marked with @TestConfiguration"/>
     </module>
 
@@ -747,7 +765,7 @@
         <metadata name="net.sf.eclipsecs.core.comment" value="Arrays.asList() method call"/>
         <property name="severity" value="error"/>
         <property name="format" value="Lists\.newArrayList\(.+"/>
-        <property name="message" value="Use Arrays.asList() or Collections.singletonList() instead."/>
+        <property name="message" value="Use List.of() instead."/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Test class is named incorrectly"/>
@@ -756,10 +774,10 @@
         <property name="message" value="Name of the test class MUST end in 'Tests'"/>
     </module>
     <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Use Collections.singleton instead"/>
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use List.of() instead"/>
         <property name="severity" value="info"/>
         <property name="format" value="new.*Set&lt;&gt;\((Arrays\.asList\([^,]+\)|Collections\.singletonList\(.*\))\)"/>
-        <property name="message" value="Consider using Collections.singleton instead"/>
+        <property name="message" value="Consider using List.of() instead"/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use org.apereo.cas.util.RandomUtils for random-number generation"/>

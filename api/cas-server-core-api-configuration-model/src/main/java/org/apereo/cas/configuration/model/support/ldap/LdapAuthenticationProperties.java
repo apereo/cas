@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -26,7 +25,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("LdapAuthenticationProperties")
 public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProperties {
 
     @Serial
@@ -80,7 +78,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * To fetch and resolve attributes that carry tags/options,
      * consider tagging the mapped attribute as such: {@code homePostalAddress:homePostalAddress;}.
      */
-    private List<String> principalAttributeList = new ArrayList<>(0);
+    private List<String> principalAttributeList = new ArrayList<>();
 
     /**
      * Sets a flag that determines whether multiple values are allowed for the {@link #principalAttributeId}.
@@ -93,7 +91,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
     /**
      * List of additional attributes to retrieve, if any.
      */
-    private List<String> additionalAttributes = new ArrayList<>(0);
+    private List<String> additionalAttributes = new ArrayList<>();
 
     /**
      * Flag to indicate whether CAS should block authentication

@@ -22,5 +22,5 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#loginProviders");
     await cas.assertVisibility(page, "li #CasClient");
     mockServer.stop();
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

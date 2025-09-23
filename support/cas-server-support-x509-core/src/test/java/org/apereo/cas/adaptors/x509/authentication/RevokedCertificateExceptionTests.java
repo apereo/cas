@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @Tag("X509")
 class RevokedCertificateExceptionTests {
     @Test
-    void verifyReason() throws Throwable {
+    void verifyReason() {
         val entry = mock(X509CRLEntry.class);
         when(entry.hasExtensions()).thenReturn(Boolean.TRUE);
         when(entry.getSerialNumber()).thenReturn(BigInteger.ONE);

@@ -1,0 +1,25 @@
+dn: cn=casuser,ou=people,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: person
+objectClass: account
+objectClass: mailRecipient
+objectClass: top
+cn: casuser
+userPassword: Mellon
+sn: casuser
+uid: casuser
+telephoneNumber: 123456789
+mail: casuser@example.org
+
+dn: cn=cassystem,ou=people,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: person
+objectClass: account
+objectClass: mailRecipient
+objectClass: top
+cn: cassystem
+userPassword: Mellon
+sn: cassystem
+uid: cassystem
+telephoneNumber: 123456789
+mail: cassystem@system.org

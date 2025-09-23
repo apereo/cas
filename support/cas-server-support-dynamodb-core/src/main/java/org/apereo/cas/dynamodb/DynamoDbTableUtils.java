@@ -3,7 +3,6 @@ package org.apereo.cas.dynamodb;
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,7 +25,6 @@ import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 import software.amazon.awssdk.services.dynamodb.model.TimeToLiveSpecification;
 import software.amazon.awssdk.services.dynamodb.model.UpdateTimeToLiveRequest;
-
 import java.io.Serial;
 import java.util.List;
 import java.util.Map;
@@ -131,14 +129,16 @@ public class DynamoDbTableUtils {
                                                final List<KeySchemaElement> keySchemaElements) throws Exception {
 
         val billingMode = BillingMode.fromValue(dynamoDbProperties.getBillingMode().name());
-        val throughput = billingMode == BillingMode.PROVISIONED ? ProvisionedThroughput.builder()
-            .readCapacityUnits(dynamoDbProperties.getReadCapacity())
-            .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
-            .build() : null;
+        val provisionedThroughput = billingMode == BillingMode.PROVISIONED
+            ? ProvisionedThroughput.builder()
+                .readCapacityUnits(dynamoDbProperties.getReadCapacity())
+                .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
+                .build()
+            : null;
         val request = CreateTableRequest.builder()
             .attributeDefinitions(attributeDefinitions)
             .keySchema(keySchemaElements)
-            .provisionedThroughput(throughput)
+            .provisionedThroughput(provisionedThroughput)
             .tableName(tableName)
             .billingMode(billingMode)
             .build();
@@ -169,15 +169,17 @@ public class DynamoDbTableUtils {
     public static void enableTimeToLiveOnTable(final DynamoDbClient dynamoDbClient,
                                                final String tableName,
                                                final String ttlAttributeName) {
-        val ttlSpec = TimeToLiveSpecification.builder()
-            .attributeName(ttlAttributeName)
-            .enabled(true)
-            .build();
-        val request = UpdateTimeToLiveRequest.builder()
-            .tableName(tableName)
-            .timeToLiveSpecification(ttlSpec)
-            .build();
-        dynamoDbClient.updateTimeToLive(request);
+        FunctionUtils.doAndHandle(__ -> {
+            val ttlSpec = TimeToLiveSpecification.builder()
+                .attributeName(ttlAttributeName)
+                .enabled(true)
+                .build();
+            val request = UpdateTimeToLiveRequest.builder()
+                .tableName(tableName)
+                .timeToLiveSpecification(ttlSpec)
+                .build();
+            dynamoDbClient.updateTimeToLive(request);
+        });
     }
 
     /**
@@ -218,12 +220,29 @@ public class DynamoDbTableUtils {
     public static ScanResponse scan(final DynamoDbClient dynamoDbClient,
                                     final String tableName,
                                     final List<? extends DynamoDbQueryBuilder> queries) {
+        return scan(dynamoDbClient, tableName, -1, queries);
+    }
+
+    /**
+     * Scan scan response.
+     *
+     * @param dynamoDbClient the dynamo db client
+     * @param tableName      the table name
+     * @param count          the count
+     * @param queries        the queries
+     * @return the scan response
+     */
+    public static ScanResponse scan(final DynamoDbClient dynamoDbClient,
+                                    final String tableName,
+                                    final long count,
+                                    final List<? extends DynamoDbQueryBuilder> queries) {
         try {
             val scanFilter = buildRequestQueryFilter(queries);
-            val scanRequest = ScanRequest.builder()
-                .tableName(tableName)
-                .scanFilter(scanFilter)
-                .build();
+            val scanRequestBuilder = ScanRequest.builder().tableName(tableName).scanFilter(scanFilter);
+            if (count > 0) {
+                scanRequestBuilder.limit((int) count);
+            }
+            val scanRequest = scanRequestBuilder.build();
             LOGGER.debug("Submitting request [{}] to get record with keys [{}]", scanRequest, queries);
             return dynamoDbClient.scan(scanRequest);
         } catch (final Exception e) {
@@ -265,7 +284,26 @@ public class DynamoDbTableUtils {
                                                  final String tableName,
                                                  final List<? extends DynamoDbQueryBuilder> queries,
                                                  final Function<Map<String, AttributeValue>, T> itemMapper) {
-        val scanResponse = scan(dynamoDbClient, tableName, queries);
+        return getRecordsByKeys(dynamoDbClient, tableName, -1, queries, itemMapper);
+    }
+
+    /**
+     * Gets records by keys.
+     *
+     * @param <T>            the type parameter
+     * @param dynamoDbClient the dynamo db client
+     * @param tableName      the table name
+     * @param count          the count
+     * @param queries        the queries
+     * @param itemMapper     the item mapper
+     * @return the records by keys
+     */
+    public static <T> Stream<T> getRecordsByKeys(final DynamoDbClient dynamoDbClient,
+                                                 final String tableName,
+                                                 final long count,
+                                                 final List<? extends DynamoDbQueryBuilder> queries,
+                                                 final Function<Map<String, AttributeValue>, T> itemMapper) {
+        val scanResponse = scan(dynamoDbClient, tableName, count, queries);
         val items = scanResponse.items();
         return items.stream().map(itemMapper);
     }

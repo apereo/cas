@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 class TicketRegistryCleanerTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val cleaner = mock(TicketRegistryCleaner.class);
         when(cleaner.clean()).thenCallRealMethod();
         when(cleaner.cleanTicket(any())).thenCallRealMethod();

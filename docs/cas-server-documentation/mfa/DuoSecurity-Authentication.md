@@ -8,7 +8,7 @@ category: Multifactor Authentication
 
 # Duo Security Authentication
 
-[Duo Security](https://www.duo.com) is a two-step verification service the provides 
+[Duo Security](https://www.duo.com) is a two-step verification service that provides
 additional security for access to institutional and personal data.  
 
 Duo offers several options for authenticating users:
@@ -23,6 +23,11 @@ Duo offers several options for authenticating users:
 ## Configuration
 
 {% include_cached casproperties.html properties="cas.authn.mfa.duo" %}
+
+### Bypass
+
+{% include_cached casproperties.html properties="cas.authn.mfa.duo" includes=".bypass" %}
+
 
 ## Actuator Endpoints
       
@@ -47,21 +52,6 @@ flows as necessary. The provider id need not be defined if there is only a singl
 The integration with Duo Security is able to provide user device registration information to the 
 account profile management feature in CAS. [See this guide](../registration/Account-Management-Overview.html) for better details.
 
-## User Account Status
-
-If users are unregistered with Duo Security or allowed through via a direct bypass, 
-CAS will query Duo Security for the user account apriori to learn
-whether user is registered or configured for direct bypass. If the account is configured for direct bypass or the
-user account is not registered yet the new-user enrollment policy allows the user to skip registration, CAS will bypass
-Duo Security altogether and shall not challenge the user and will also **NOT** report back a multifactor-enabled 
-authentication context back to the application.
-
-<div class="alert alert-warning">:warning: <strong>YMMV</strong><p>In recent conversations with Duo Security, it 
-turns out that the API behavior has changed (for security reasons) where it may no longer accurately 
-report back account status. This means even if the above conditions hold true, CAS may continue to route 
-the user to Duo Security having received an eligibility status from the API. Duo Security is reportedly 
-working on a fix to restore the API behavior in a more secure way. In the meanwhile, YMMV.</p></div>
-
 ## Health Status
 
 CAS is able to contact Duo Security, on demand, in order to inquire 
@@ -70,23 +60,6 @@ The results of the operations are recorded and reported using `health` endpoint
 provided by [CAS Monitoring endpoints](../monitoring/Monitoring-Statistics.html).
 Of course, the same result throughout the Duo authentication flow is also used to determine failure modes.
   
-## User Registration
-
-If you would rather not rely on Duo Security's built-in registration flow and have your
-own registration application that allows users to onboard and enroll with Duo Security, you can instruct CAS
-to redirect to your enrollment application, if the user's account status is determined to require enrollment.
-This typically means that you must turn on user-account-status checking in CAS so that it can verify
-the user's account status directly with Duo Security. You must also make sure your integration type, as selected
-in Duo Security's admin dashboard, is chosen to be the correct type that would allow CAS to execute such
-requests and of course, the user in question must not have been onboard, enrolled or created previously anywhere
-in Duo Security. 
-                   
-The redirect URL to your enrollment application may include a special `principal` parameter that contains
-the user's identity as JWT. Cipher operations and settings must be enabled in CAS settings for Duo Security's
-registration before this parameter can be built and added to the final URL.
-
-{% include_cached casproperties.html properties="cas.authn.mfa.duo[].registration" %}
-
 ## Universal Prompt
 
 Universal Prompt is a variation of Duo Multifactor Authentication 
@@ -99,10 +72,10 @@ response from Duo Security is passed to CAS as a browser redirect
 and CAS will begin to negotiate and exchange that response in favor of
 a JWT that contains the multifactor authentication user profile details.
 
-Universal Prompt no longer requires you to generate and use a application
+Universal Prompt no longer requires you to generate and use an application
 key value. Instead, it requires a *client id* and *client secret*, which
 are known and taught CAS using the integration key and secret key
-configuration settings. You will need get your integration key, secret key, and API
+configuration settings. You will need to get your integration key, secret key, and API
 hostname from Duo Security when you register CAS as a protected application.
  
 ## Non-Browser MFA
@@ -131,7 +104,7 @@ curl --location --header "Content-Type: application/cas" https://apps.example.or
 In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a 
 special credential extractor is injected into the REST authentication engine in order 
 to recognize credentials and authenticate them as part of the REST request.
-The expected parameter name in the request body is `passcode` that can be found from
+The expected parameter name in the request body is `passcode`, which can be found from
 Duo Security's mobile application or received via SMS.
  
 ## Passwordless Authentication

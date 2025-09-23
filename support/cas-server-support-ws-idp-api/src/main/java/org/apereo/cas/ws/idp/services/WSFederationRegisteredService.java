@@ -24,10 +24,14 @@ import java.io.Serial;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class WSFederationRegisteredService extends BaseWebBasedRegisteredService {
+    /**
+     * Friendly name for this service.
+     */
+    public static final String FRIENDLY_NAME = "WS Federation Relying Party";
 
     @Serial
     private static final long serialVersionUID = -3700571300568534062L;
-
+    
     private String realm = WSFederationConstants.REALM_DEFAULT_URI;
 
     private String protocol = WSFederationConstants.WST_NS_05_12;
@@ -51,7 +55,7 @@ public class WSFederationRegisteredService extends BaseWebBasedRegisteredService
     @JsonIgnore
     @Override
     public String getFriendlyName() {
-        return "WS Federation Relying Party";
+        return FRIENDLY_NAME;
     }
 
     @JsonIgnore

@@ -2,6 +2,7 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
  * @since 5.1.0
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@Tag(name = "CAS Actuator")
 public abstract class BaseCasActuatorEndpoint {
     /**
      * Spring Boot v2 JSON media type.

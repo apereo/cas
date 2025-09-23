@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +22,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("StubPrincipalAttributesProperties")
 public class StubPrincipalAttributesProperties implements Serializable {
 
     @Serial
@@ -40,7 +38,7 @@ public class StubPrincipalAttributesProperties implements Serializable {
      * attribute map is the original attribute,
      * and the value should be the virtually-renamed attribute.
      */
-    private Map<String, String> attributes = new HashMap<>(0);
+    private Map<String, String> attributes = new HashMap<>();
 
     /**
      * A value can be assigned to this field to uniquely identify this resolver.

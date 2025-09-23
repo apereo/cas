@@ -25,13 +25,8 @@ public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthentica
 
     private final Map<String, String> credentialMap;
 
-    /**
-     * Creates a new instance with a map that defines the one-time passwords that can be authenticated.
-     *
-     * @param credentialMap Non-null map of one-time password identifiers to password values.
-     */
     public TestOneTimePasswordAuthenticationHandler(final Map<String, String> credentialMap) {
-        super(StringUtils.EMPTY, null, PrincipalFactoryUtils.newPrincipalFactory(), null);
+        super(StringUtils.EMPTY, PrincipalFactoryUtils.newPrincipalFactory(), null);
         this.credentialMap = credentialMap;
     }
 

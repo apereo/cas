@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal.merger;
 
 import lombok.val;
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,9 @@ import java.util.Map;
  * @since 7.1.0
  */
 public class NoncollidingAttributeAdder extends BaseAdditiveAttributeMerger {
+
+    @Serial
+    private static final long serialVersionUID = 7924308725638148943L;
 
     @Override
     protected Map<String, List<Object>> mergePersonAttributes(final Map<String, List<Object>> toModify, final Map<String, List<Object>> toConsider) {

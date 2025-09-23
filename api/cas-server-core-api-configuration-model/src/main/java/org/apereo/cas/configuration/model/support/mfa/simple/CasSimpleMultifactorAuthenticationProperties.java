@@ -1,12 +1,10 @@
 package org.apereo.cas.configuration.model.support.mfa.simple;
 
-import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.model.support.phone.PhoneProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,7 +22,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("CasSimpleMultifactorProperties")
 public class CasSimpleMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
     /**
      * Provider id by default.
@@ -50,7 +47,7 @@ public class CasSimpleMultifactorAuthenticationProperties extends BaseMultifacto
      * Email settings for notifications.
      */
     @NestedConfigurationProperty
-    private EmailProperties mail = new EmailProperties();
+    private CasSimpleMultifactorAuthenticationEmailProperties mail = new CasSimpleMultifactorAuthenticationEmailProperties();
 
     /**
      * SMS settings for notifications.

@@ -10,7 +10,7 @@ import lombok.val;
 import java.util.regex.Pattern;
 
 /**
- * A transformer that matches the username against a given regex patten
+ * A transformer that matches the username against a given regex pattern
  * and throws back an error if a match is found.
  *
  * @author Misagh Moayyed

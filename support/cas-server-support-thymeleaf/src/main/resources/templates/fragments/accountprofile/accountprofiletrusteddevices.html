@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>Account Profile</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+<body>
+<span th:fragment="trusteddevices">
+        <script type="text/javascript">
+            ((material, bootstrap) =>
+                document.addEventListener("DOMContentLoaded", () => {
+                    $("#trustedDevicesTable").DataTable();
+                    let dialogId = "trustedDevice-dialog";
+                    let dialog = material ?
+                        material.dialog.MDCDialog.attachTo(document.getElementById(dialogId)) :
+                        new bootstrap.Modal(document.getElementById(dialogId), {});
+                    document.getElementsByName("viewTrustedDeviceDetails").forEach(btn =>
+                        btn.addEventListener("click", event => {
+                            let caller = event.target || event.srcElement;
+                            let json = $(caller).next("span").text().trim();
+                            $("#trustedDeviceDetails").text(json);
+                            hljs.highlightAll();
+                            dialog[material ? "open" : "show"]();
+                            event.preventDefault();
+                        }, false));
+                }))(window.mdc ? mdc : null, window.bootstrap ? bootstrap : null);
+        </script>
+        <div class="mdc-dialog modal" id="trustedDevice-dialog" role="alertdialog"
+             aria-modal="true" aria-labelledby="trusted-dialog-title" aria-describedby="trusted-dialog-content">
+            <div class="mdc-dialog__container w-100 modal-dialog">
+                <div class="mdc-dialog__surface mw-100 modal-content">
+                    <h1 class="mdc-dialog__title mt-lg-2 modal-header" id="trusted-dialog-title"
+                        th:utext="#{screen.account.trusteddevices.devicepanel.title}"></h1>
+                    <div class="mdc-dialog__content modal-body" id="trusted-dialog-content">
+                        <p th:utext="#{screen.account.trusteddevices.devicepanel.text}"></p>
+                        <pre><code id="trustedDeviceDetails" class="border-rounded language-json">Text</code></pre>
+                    </div>
+                    <footer class="mdc-dialog__actions modal-footer">
+                        <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
+                                data-mdc-dialog-action="accept" data-mdc-dialog-button-default data-bs-dismiss="modal">
+                        <span class="mdc-button__label">Close</span>
+                        </button>
+                    </footer>
+                </div>
+            </div>
+            <div class="mdc-dialog__scrim"></div>
+        </div>
+
+        <div id="divMultifactorTrustedDevices"
+             th:if="${multifactorTrustedDevices}"
+             class="profile-content w-100"
+             style="display: none;">
+            <h2>
+                <i class="mdi mdi-account-reactivate fas fa-door-open" aria-hidden="true"></i>
+                <span th:utext="#{screen.account.trusteddevices.title}">Multifactor Authentication Trusted Devices</span>
+            </h2>
+            <p th:utext="#{screen.account.trusteddevices.subtitle}">Trusted Devices are listed here</p>
+
+            <table id="trustedDevicesTable" class="mdc-data-table__table table table-striped noborder">
+                <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Source</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Key</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Fingerprint</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Created Date</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Expiration Date</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody class="mdc-data-table__content">
+                    <tr th:each="entry : ${multifactorTrustedDevices}" class="mdc-data-table__row">
+                       <td class="mdc-data-table__cell">
+                            <span th:switch="${entry.source}">
+                                <span th:case="'Google Authenticator'"><i class="mdi mdi-google" aria-hidden="true"></i></span>
+                                <span th:case="'Web Authn'"><i class="mdi mdi-fingerprint" aria-hidden="true"></i></span>
+                                <span th:case="*"></span>
+                            </span>
+                            <span th:utext="${entry.source}"/>
+                        </td>
+                        <td class="mdc-data-table__cell" th:title="${entry.id}" th:utext="*{entry.id}?: 'N/A'">Value</td>
+                        <td class="mdc-data-table__cell" th:title="${entry.model}" th:utext="*{entry.model}?: 'N/A'">Value</td>
+                        <td class="mdc-data-table__cell" th:title="${entry.type}" th:utext="*{entry.type}?: 'N/A'">Value</td>
+                        <td class="mdc-data-table__cell" th:title="${entry.name}" th:utext="*{entry.name}?: 'N/A'">Value</td>
+                        <td class="mdc-data-table__cell" th:title="${entry.lastUsedDateTime}" th:utext="*{entry.lastUsedDateTime}?: 'N/A'">Value</td>
+                        <td class="mdc-data-table__cell" th:title="${entry.expirationDateTime}" th:utext="*{entry.expirationDateTime}?: 'N/A'">Value</td>
+                        <td class="mdc-data-table__cell">
+                            <div class="d-flex" th:if="${entry.payload}">
+                                <button type="button" name="viewTrustedDeviceDetails"  
+                                        class="mdc-button mdc-button--raised me-2 btn btn-link min-width-48x">
+                                    <i class="mdi mdi-account-details fas fa-eye" aria-hidden="true"></i>
+                                    <span style="display: none" th:utext="${entry.payload}"/>
+                                </button>
+                                <form id="fm3" method="post" th:action="@{/account#divMultifactorTrustedDevices}">
+                                    <button class="mdc-button mdc-button--raised me-2 btn btn-link text-danger min-width-48x">
+                                        <i class="mdi mdi-delete fas fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                    <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                                    <input type="hidden" name="key" th:value="${entry.model}" />
+                                    <input type="hidden" name="_eventId" value="deleteTrustedDevice" />
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+</span>
+</body>
+</html>

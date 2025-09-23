@@ -6,7 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,21 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public interface Service extends Principal {
+public interface Service extends Serializable {
+
+    /**
+     * Service attribute to keep track of various HTTP request properties.
+     */
+    String SERVICE_ATTRIBUTE_HTTP_REQUEST = "httpRequest";
+    /**
+     * Service attribute to keep track of the available cookies.
+     */
+    String SERVICE_ATTRIBUTE_COOKIES = "cookies";
+    /**
+     * Service attribute to keep track of the request headers.
+     */
+    String SERVICE_ATTRIBUTE_HEADERS = "headers";
+    
     /**
      * Logger instance.
      */
@@ -38,7 +53,7 @@ public interface Service extends Principal {
      *
      * @param attributes the new attributes
      */
-    void setAttributes(Map<String, List<Object>> attributes);
+    void setAttributes(Map<String, Object> attributes);
 
     /**
      * Return the original url provided (as {@code service} or {@code targetService} request parameter).
@@ -47,6 +62,69 @@ public interface Service extends Principal {
      * @return the original url provided.
      */
     String getOriginalUrl();
+
+    /**
+     * Principal id.
+     *
+     * @return the unique id for the Principal
+     */
+    String getId();
+
+    /**
+     * Gets tenant.
+     *
+     * @return the tenant
+     */
+    String getTenant();
+
+    /**
+     * Sets tenant.
+     *
+     * @param tenant the tenant
+     */
+    void setTenant(String tenant);
+
+    /**
+     * Principal attributes.
+     *
+     * @return the map of configured attributes for this principal
+     */
+    default Map<String, Object> getAttributes() {
+        return new LinkedHashMap<>();
+    }
+
+    /**
+     * Gets attribute as requested type.
+     *
+     * @param <T>   the type parameter
+     * @param name  the name
+     * @param clazz the clazz
+     * @return the attribute as
+     */
+    default <T> T getAttributeAs(final String name, final Class<T> clazz) {
+        val attribute = getAttributes().get(name);
+        if (attribute == null) {
+            return null;
+        }
+        if (!clazz.isAssignableFrom(attribute.getClass())) {
+            throw new ClassCastException("Attribute " + name + '[' + attribute
+                + " is of type " + attribute.getClass() + " when we were expecting " + clazz);
+        }
+        return (T) attribute;
+    }
+
+    /**
+     * Gets first attribute value with requested type.
+     *
+     * @param <T>   the type parameter
+     * @param name  the name
+     * @param clazz the clazz
+     * @return the first attribute
+     */
+    default <T> T getFirstAttribute(final String name, final Class<T> clazz) {
+        val values = getAttributeAs(name, List.class);
+        return values == null || values.isEmpty() ? null : clazz.cast(values.getFirst());
+    }
 
     /**
      * Gets shortened id.
@@ -82,5 +160,4 @@ public interface Service extends Principal {
         }
         return serviceId;
     }
-
 }

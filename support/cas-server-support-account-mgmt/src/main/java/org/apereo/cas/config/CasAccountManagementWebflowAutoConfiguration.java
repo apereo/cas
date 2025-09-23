@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.acct.AccountRegistrationPropertyLoader;
 import org.apereo.cas.acct.AccountRegistrationRequestAuditPrincipalIdResolver;
+import org.apereo.cas.acct.AccountRegistrationRequestValidator;
 import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.acct.AccountRegistrationTokenCipherExecutor;
 import org.apereo.cas.acct.AccountRegistrationUsernameBuilder;
@@ -29,15 +30,16 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
-import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
+import org.apereo.cas.scim.v2.provisioning.ScimPrincipalAttributeMapper;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -52,7 +54,6 @@ import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
-
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
@@ -70,7 +71,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -104,6 +104,8 @@ public class CasAccountManagementWebflowAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = AccountRegistrationService.BEAN_NAME)
     public AccountRegistrationService accountMgmtRegistrationService(
+        @Qualifier("accountMgmtRegistrationRequestValidator")
+        final AccountRegistrationRequestValidator accountMgmtRegistrationRequestValidator,
         final CasConfigurationProperties casProperties,
         @Qualifier("accountMgmtRegistrationPropertyLoader")
         final AccountRegistrationPropertyLoader accountMgmtRegistrationPropertyLoader,
@@ -113,8 +115,10 @@ public class CasAccountManagementWebflowAutoConfiguration {
         final AccountRegistrationUsernameBuilder accountRegistrationUsernameBuilder,
         @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
         final AccountRegistrationProvisioner accountMgmtRegistrationProvisioner) {
-        return new DefaultAccountRegistrationService(accountMgmtRegistrationPropertyLoader, casProperties, accountMgmtCipherExecutor, accountRegistrationUsernameBuilder,
-            accountMgmtRegistrationProvisioner);
+        return new DefaultAccountRegistrationService(
+            accountMgmtRegistrationPropertyLoader, casProperties,
+            accountMgmtCipherExecutor, accountRegistrationUsernameBuilder,
+            accountMgmtRegistrationProvisioner, accountMgmtRegistrationRequestValidator);
     }
 
     @Bean
@@ -123,6 +127,13 @@ public class CasAccountManagementWebflowAutoConfiguration {
     public AccountRegistrationPropertyLoader accountMgmtRegistrationPropertyLoader(final CasConfigurationProperties casProperties) {
         val resource = casProperties.getAccountRegistration().getCore().getRegistrationProperties().getLocation();
         return new DefaultAccountRegistrationPropertyLoader(resource);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "accountMgmtRegistrationRequestValidator")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public AccountRegistrationRequestValidator accountMgmtRegistrationRequestValidator() {
+        return AccountRegistrationRequestValidator.noOp();
     }
 
     @Configuration(value = "CasAccountManagementProvisioningConfiguration", proxyBeanMethods = false)
@@ -172,15 +183,16 @@ public class CasAccountManagementWebflowAutoConfiguration {
                     .exists().given(applicationContext.getEnvironment()))
                 .supply(() -> () -> {
                     val groovy = casProperties.getAccountRegistration().getProvisioning().getGroovy();
+                    val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
                     return new GroovyAccountRegistrationProvisioner(
-                        new WatchableGroovyScriptResource(groovy.getLocation()), applicationContext);
+                        scriptFactory.fromResource(groovy.getLocation()), applicationContext);
                 })
                 .otherwiseProxy()
                 .get();
         }
     }
 
-    @ConditionalOnClass(ScimV2PrincipalAttributeMapper.class)
+    @ConditionalOnClass(ScimPrincipalAttributeMapper.class)
     @Configuration(value = "CasAccountManagementScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountRegistration, module = "scim")
@@ -211,11 +223,11 @@ public class CasAccountManagementWebflowAutoConfiguration {
         public CasWebflowConfigurer accountMgmtWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
-            return new AccountManagementWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+            return new AccountManagementWebflowConfigurer(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         }
 
     }
@@ -294,6 +306,8 @@ public class CasAccountManagementWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_SUBMIT)
         public Action submitAccountRegistrationAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(AccountRegistrationService.BEAN_NAME)
@@ -308,7 +322,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new SubmitAccountRegistrationAction(accountMgmtRegistrationService, casProperties,
-                    communicationsManager, defaultTicketFactory, ticketRegistry))
+                    communicationsManager, defaultTicketFactory, ticketRegistry, tenantExtractor))
                 .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_SUBMIT)
                 .build()
                 .get();
@@ -358,8 +372,8 @@ public class CasAccountManagementWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public CasWebflowConfigurer accountMgmtRegistrationCaptchaWebflowConfigurer(
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             final CasConfigurationProperties casProperties,
@@ -368,7 +382,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val configurer = new AccountManagementRegistrationCaptchaWebflowConfigurer(flowBuilderServices,
-                        loginFlowDefinitionRegistry, applicationContext, casProperties);
+                        flowDefinitionRegistry, applicationContext, casProperties);
                     configurer.setOrder(casProperties.getAccountRegistration().getWebflow().getOrder() + 2);
                     return configurer;
                 })
@@ -399,7 +413,7 @@ public class CasAccountManagementWebflowAutoConfiguration {
                         .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_REGISTRATION_VALIDATE_CAPTCHA)
                         .build()
                         .get())
-                .otherwiseProxy()
+                .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
 

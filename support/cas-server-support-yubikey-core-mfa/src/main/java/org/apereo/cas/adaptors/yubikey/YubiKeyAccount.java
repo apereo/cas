@@ -55,6 +55,12 @@ public class YubiKeyAccount implements Serializable, Cloneable {
      */
     public static final String FIELD_DEVICES = "devices";
 
+    /**
+     * Tenant field.
+     */
+    public static final String FIELD_TENANT = "tenant";
+
+    
     @Serial
     private static final long serialVersionUID = 311869140885521905L;
 
@@ -62,19 +68,23 @@ public class YubiKeyAccount implements Serializable, Cloneable {
     @JsonProperty
     @Transient
     @Builder.Default
-    private long id = System.currentTimeMillis();
+    private long id = -1;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "YubiKeyRegisteredDevice")
     @Builder.Default
-    private List<YubiKeyRegisteredDevice> devices = new ArrayList<>(0);
+    private List<YubiKeyRegisteredDevice> devices = new ArrayList<>();
 
     @Column(nullable = false)
     @JsonProperty
     private String username;
 
+    @Column
+    @JsonProperty
+    private String tenant;
+
     @Override
-    public YubiKeyAccount clone() {
+    public final YubiKeyAccount clone() {
         return FunctionUtils.doUnchecked(() -> {
             val account = (YubiKeyAccount) super.clone();
             account.setDevices(getDevices()

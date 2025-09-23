@@ -9,7 +9,6 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +23,7 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import java.time.Clock;
@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("OAuth")
-public class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
+class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthTokenExchangeGrantTypeTokenRequestValidator")
     private OAuth20TokenRequestValidator validator;
@@ -51,9 +51,9 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends Abs
     private MockHttpServletRequest request;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         request = new MockHttpServletRequest();
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Firefox");
+        request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
         val response = new MockHttpServletResponse();
         context = new JEEContext(request, response);
         val profile = new CommonProfile();
@@ -74,7 +74,7 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends Abs
     }
 
     @Test
-    void verifyWithoutSubjectToken() throws Throwable {
+    void verifyWithoutSubjectToken() {
         val service = addRegisteredService(Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE), UUID.randomUUID().toString(), UUID.randomUUID().toString());
         request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());

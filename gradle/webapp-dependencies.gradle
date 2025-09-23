@@ -1,3 +1,21 @@
+configurations {
+    configureEach {
+        withDependencies { deps ->
+            def hasLogback = deps.any { it.group == 'org.apereo.cas' && it.name == 'cas-server-support-logback' }
+            if (hasLogback) {
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-api")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-jakarta-web")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-web")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j2-impl")
+                it.exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
+            }
+        }
+    }
+}
+
+
 dependencies {
     implementation project(":core:cas-server-core")
     implementation project(":core:cas-server-core-audit")
@@ -12,6 +30,7 @@ dependencies {
     implementation project(":core:cas-server-core-validation")
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-notifications")
+    implementation project(":core:cas-server-core-multitenancy")
 
     compileOnly project(":support:cas-server-support-jpa-util")
 
@@ -19,6 +38,7 @@ dependencies {
     implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-person-directory")
     implementation project(":support:cas-server-support-themes")
+    implementation project(":support:cas-server-support-themes-bootstrap")
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-thymeleaf")
     implementation project(":support:cas-server-support-pm-webflow")
@@ -28,18 +48,22 @@ dependencies {
     implementation project(":webapp:cas-server-webapp-resources")
 
     def casModules = providers.systemProperty("casModules").getOrNull()
-    if (casModules != null) {
+    if (casModules != null && casModules.trim().length() > 0) {
         def dependencies = casModules.split(",")
-        dependencies.each {
+        dependencies.findAll {it.length() > 0 }.each {
             def projectsToAdd = rootProject.subprojects.findAll {project ->
                 def pattern = /cas-server-${it}|cas-server-core-${it}|cas-server-support-${it}/
                 logger.debug("Matching ${pattern} against CAS module ${project.name}")
                 project.name.matches(pattern)
             }
 
-            ansi.green("Including CAS module(s): ${projectsToAdd}")
-            projectsToAdd.each {
-                implementation it
+            if (projectsToAdd.isEmpty()) {
+                ansi.yellow("No CAS module(s) found for ${it}")
+            } else {
+                ansi.green("Including CAS module(s): ${projectsToAdd}")
+                projectsToAdd.each {
+                    implementation it
+                }
             }
         }
     }
@@ -47,7 +71,7 @@ dependencies {
     implementation libraries.springcloudconfigclient
     implementation libraries.springcloudbootstrap
     implementation libraries.springbootpropertymigrator
-    if (!rootProject.publishFlag) {
+    if (!rootProject.publishFlag && !rootProject.skipSpringBootDevTools) {
         runtimeOnly libraries.springbootdevtools
     }
 }

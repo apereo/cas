@@ -6,11 +6,9 @@ import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtCipherExecutor;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +20,6 @@ import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
-
 import java.io.Serializable;
 import java.security.Key;
 import java.util.Objects;
@@ -67,12 +64,12 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
         val cipher = new InternalJwtAccessTokenCipherExecutor(encryptionKey, signingKey, cipherExecutor);
         Unchecked.consumer(__ -> {
             if (EncodingUtils.isJsonWebKey(encryptionKey)) {
-                val jsonWebKey = toJsonWebKey(encryptionKey);
+                val jsonWebKey = toJsonWebKey(encryptionKey, registeredService);
                 cipher.setEncryptionKey(jsonWebKey.getPublicKey());
                 cipher.setEncryptionWebKey(jsonWebKey);
             }
             if (EncodingUtils.isJsonWebKey(signingKey)) {
-                val jsonWebKey = toJsonWebKey(signingKey);
+                val jsonWebKey = toJsonWebKey(signingKey, registeredService);
 
                 /*
                  * Use the private key as the primary key to handle signing operations.
@@ -82,7 +79,7 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
                  * that can only verify signed objects, which would be useful when processing signed
                  * request objects that are sent by the RP, which has the only copy of the private key.
                  */
-                cipher.setSigningKey(ObjectUtils.defaultIfNull(jsonWebKey.getPrivateKey(), jsonWebKey.getKey()));
+                cipher.setSigningKey(ObjectUtils.getIfNull(jsonWebKey.getPrivateKey(), jsonWebKey.getKey()));
                 cipher.setSigningWebKey(jsonWebKey);
             }
         }).accept(cipher);
@@ -97,13 +94,12 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
 
 
     private Key getEncryptionKeyForDecryption(final RegisteredService registeredService) {
-        val svc = (OAuthRegisteredService) registeredService;
-        if (svc instanceof OidcRegisteredService) {
+        if (registeredService instanceof final OidcRegisteredService oidcService) {
             val jwks = Objects.requireNonNull(cipherExecutor.getRegisteredServiceJsonWebKeystoreCache().get(
-                new OidcJsonWebKeyCacheKey(svc, OidcJsonWebKeyUsage.ENCRYPTION)));
+                new OidcJsonWebKeyCacheKey(oidcService, OidcJsonWebKeyUsage.ENCRYPTION)));
             if (jwks.isEmpty()) {
-                LOGGER.warn("Service [{}] with client id [{}] is configured to encrypt tokens, yet no JSON web key is available",
-                    svc.getServiceId(), svc.getClientId());
+                LOGGER.debug("Service [{}] with client id [{}] is configured to encrypt tokens, yet no JSON web key is available",
+                    oidcService.getServiceId(), oidcService.getClientId());
                 return null;
             }
             val jsonWebKey = (PublicJsonWebKey) jwks.get().getJsonWebKeys().getFirst();
@@ -113,7 +109,7 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
                             + "when operating on service [{}] with client id [{}]. Operations that deal "
                             + "with JWT encryption/decryption may not be functional, until a private "
                             + "key can be loaded for JSON web key [{}]",
-                    svc.getServiceId(), svc.getClientId(), jsonWebKey.getKeyId());
+                    oidcService.getServiceId(), oidcService.getClientId(), jsonWebKey.getKeyId());
                 return null;
             }
             return jsonWebKey.getPrivateKey();
@@ -122,7 +118,7 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
     }
 
 
-    private static PublicJsonWebKey toJsonWebKey(final String key) throws Exception {
+    protected static PublicJsonWebKey toJsonWebKey(final String key, final RegisteredService registeredService) throws Exception {
         val details = EncodingUtils.parseJsonWebKey(key);
         if (details.containsKey(JsonWebKeySet.JWK_SET_MEMBER_NAME)) {
             return (PublicJsonWebKey) new JsonWebKeySet(key).getJsonWebKeys().getFirst();
@@ -141,7 +137,7 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
                 val alg = StringUtils.defaultIfBlank(key.getAlgorithm(),
                     getSigningAlgorithmFor(key.getKey()));
                 getSigningOpHeaders().put(JsonWebKey.ALGORITHM_PARAMETER, alg);
-                return super.signWith(value, alg, signingKey);
+                return signWith(value, alg, signingKey);
             })
             .orElseGet(() -> super.sign(value, signingKey));
     }

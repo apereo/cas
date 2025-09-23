@@ -38,6 +38,8 @@ public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket,
     private static final long serialVersionUID = 8203377063087967768L;
 
     private final String id;
+    
+    private String tenantId;
 
     private final ZonedDateTime creationTime;
 
@@ -106,10 +108,6 @@ public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket,
     @Override
     public ZonedDateTime getPreviousTimeUsed() {
         return ZonedDateTime.now(ZoneId.systemDefault());
-    }
-
-    @Override
-    public void update() {
     }
 
     @Override

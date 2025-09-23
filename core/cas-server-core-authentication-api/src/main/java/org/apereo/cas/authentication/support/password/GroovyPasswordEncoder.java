@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication.support.password;
 
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -21,12 +21,13 @@ import org.springframework.security.crypto.password.AbstractPasswordEncoder;
 @RequiredArgsConstructor
 public class GroovyPasswordEncoder extends AbstractPasswordEncoder implements DisposableBean {
 
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     private final ApplicationContext applicationContext;
 
     public GroovyPasswordEncoder(final Resource groovyScript, final ApplicationContext applicationContext) {
-        this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        this.watchableScript = scriptFactory.fromResource(groovyScript);
         this.applicationContext = applicationContext;
     }
 

@@ -83,6 +83,23 @@ public AccountRegistrationPropertyLoader accountMgmtRegistrationPropertyLoader()
 }
 ```
 
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about
+how to register configurations into the CAS runtime.
+
+### Account Registration Validation
+
+The validation of registration requests can be customized using the following component:
+
+```java
+@Bean
+public AccountRegistrationRequestValidator accountMgmtRegistrationRequestValidator() {
+    return new MyAccountRegistrationRequestValidator();
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about
+how to register configurations into the CAS runtime.
+
 ## Communication Strategy
              
 Account creation requests are expected to be verified using a dedicated activation link that 
@@ -94,7 +111,7 @@ or [this guide](../notifications/Sending-Email-Configuration.html), or [this gui
 
 {% include_cached casproperties.html properties="cas.account-registration" includes=".mail,.sms" %}
    
-## Username Validations
+## Username Extraction
       
 By default, registration requests allow the user to choose a username, Construction and 
 extraction of a `usename` field from the registration request can be customized using the following component:

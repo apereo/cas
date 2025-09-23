@@ -16,6 +16,7 @@ dependencies {
 
     implementation project(":support:cas-server-support-aws")
     implementation project(":support:cas-server-support-dynamodb-core")
+    
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services-registry")
@@ -36,6 +37,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-notifications")
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-authentication-attributes")

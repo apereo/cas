@@ -4,9 +4,12 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasGoogleCloudFirestoreTicketRegistryAutoConfiguration;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
+import org.apereo.cas.util.lock.LockRepository;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.auth.ApiKeyCredentials;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.spring.autoconfigure.core.GcpContextAutoConfiguration;
 import com.google.cloud.spring.autoconfigure.firestore.GcpFirestoreAutoConfiguration;
@@ -17,14 +20,19 @@ import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
+import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -39,8 +47,8 @@ import static org.mockito.Mockito.*;
  */
 @Getter
 @Tag("GCP")
-@Import({
-    GoogleCloudFirestoreTicketRegistryTests.GoogleCloudFirestoreTestConfiguration.class,
+@Import(GoogleCloudFirestoreTicketRegistryTests.GoogleCloudFirestoreTestConfiguration.class)
+@ImportAutoConfiguration({
     CasGoogleCloudFirestoreTicketRegistryAutoConfiguration.class,
     GcpFirestoreAutoConfiguration.class,
     GcpContextAutoConfiguration.class
@@ -51,6 +59,7 @@ import static org.mockito.Mockito.*;
     "spring.cloud.gcp.firestore.emulator.enabled=true",
     "spring.cloud.gcp.firestore.host-port=127.0.0.1:9980"
 })
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class GoogleCloudFirestoreTicketRegistryTests extends BaseTicketRegistryTests {
     private static final int COUNT = 100;
 
@@ -60,22 +69,48 @@ class GoogleCloudFirestoreTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(1)
     @Tag("TicketRegistryTestWithEncryption")
-    void verifyLargeDataset() throws Throwable {
+    void verifyLargeDataset() {
         val ticketGrantingTickets = Stream.generate(() -> {
             val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                 .getNewTicketId(TicketGrantingTicket.PREFIX);
             return new TicketGrantingTicketImpl(tgtId,
-                CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+                CoreAuthenticationTestUtils.getAuthentication(),
+                NeverExpiresExpirationPolicy.INSTANCE);
         }).limit(COUNT);
 
-        var stopwatch = new StopWatch();
+        val stopwatch = new StopWatch();
         stopwatch.start();
         newTicketRegistry.addTicket(ticketGrantingTickets);
         val size = newTicketRegistry.getTickets().size();
         stopwatch.stop();
         assertEquals(COUNT, size);
-        var time = stopwatch.getTime(TimeUnit.SECONDS);
+        val time = stopwatch.getTime(TimeUnit.SECONDS);
         assertTrue(time <= 20);
+    }
+
+    @RepeatedTest(1)
+    @Tag("TicketRegistryTestWithEncryption")
+    @Order(0)
+    void verifyCleanLargeBatch() throws Throwable {
+        newTicketRegistry.deleteAll();
+        for (var i = 0; i < COUNT; i++) {
+            val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                .getNewTicketId(TicketGrantingTicket.PREFIX);
+            val tgt = new TicketGrantingTicketImpl(tgtId,
+                CoreAuthenticationTestUtils.getAuthentication(),
+                new HardTimeoutExpirationPolicy(1));
+            newTicketRegistry.addTicket(tgt);
+        }
+        Thread.sleep(Duration.ofSeconds(1));
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, newTicketRegistry);
+
+        val stopwatch = new StopWatch();
+        stopwatch.start();
+        val cleaned = cleaner.clean();
+        stopwatch.stop();
+        val time = stopwatch.getTime(TimeUnit.SECONDS);
+        assertTrue(time <= 5);
+        assertEquals(COUNT, cleaned);
     }
 
     @TestConfiguration(value = "GoogleCloudFirestoreTestConfiguration", proxyBeanMethods = false)
@@ -94,7 +129,7 @@ class GoogleCloudFirestoreTicketRegistryTests extends BaseTicketRegistryTests {
         @Bean
         public FirestoreOptions firestoreOptions(final GcpFirestoreProperties properties) {
             return FirestoreOptions.getDefaultInstance().toBuilder()
-                .setCredentials(new FirestoreOptions.EmulatorCredentials())
+                .setCredentials(ApiKeyCredentials.create(UUID.randomUUID().toString()))
                 .setProjectId(properties.getProjectId())
                 .setChannelProvider(InstantiatingGrpcChannelProvider.newBuilder()
                     .setEndpoint(properties.getHostPort())

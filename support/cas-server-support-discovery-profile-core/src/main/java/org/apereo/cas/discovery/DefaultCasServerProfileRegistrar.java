@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketFactory;
@@ -16,6 +17,8 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -51,7 +54,7 @@ public class DefaultCasServerProfileRegistrar implements CasServerProfileRegistr
 
 
     @Override
-    public CasServerProfile getProfile() {
+    public CasServerProfile getProfile(final HttpServletRequest request, final HttpServletResponse response) {
         val profile = new CasServerProfile();
         profile.setRegisteredServiceTypesSupported(locateRegisteredServiceTypesSupported());
         profile.setMultifactorAuthenticationProviderTypesSupported(locateMultifactorAuthenticationProviderTypesSupported());
@@ -59,7 +62,7 @@ public class DefaultCasServerProfileRegistrar implements CasServerProfileRegistr
         profile.setAvailableAuthenticationHandlers(locateAvailableAuthenticationHandlers());
         profile.setTicketTypesSupported(locateTicketTypesSupported());
         val customizers = applicationContext.getBeansOfType(CasServerProfileCustomizer.class).values();
-        customizers.forEach(customizer -> customizer.customize(profile));
+        customizers.forEach(customizer -> customizer.customize(profile, request, response));
         return profile;
     }
 
@@ -81,7 +84,9 @@ public class DefaultCasServerProfileRegistrar implements CasServerProfileRegistr
                     val expirationPolicy = ticket.getExpirationPolicyBuilder().buildTicketExpirationPolicy();
                     details.put("name", expirationPolicy.getName());
                     details.put("timeToLive", expirationPolicy.getTimeToLive());
-                    details.put("timeToIdle", expirationPolicy.getTimeToIdle());
+                    if (expirationPolicy instanceof final IdleExpirationPolicy iep) {
+                        details.put("timeToIdle", iep.getTimeToIdle());
+                    }
                     return details;
                 }));
     }
@@ -95,7 +100,7 @@ public class DefaultCasServerProfileRegistrar implements CasServerProfileRegistr
     }
 
     private Set<String> locateAvailableAuthenticationHandlers() {
-        return authenticationEventExecutionPlan.getAuthenticationHandlers()
+        return authenticationEventExecutionPlan.resolveAuthenticationHandlers()
             .stream()
             .map(AuthenticationHandler::getName)
             .collect(Collectors.toSet());

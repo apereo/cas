@@ -42,6 +42,7 @@ public class RestfulLoginWebflowDecorator implements WebflowDecorator {
                     .basicAuthUsername(restProperties.getBasicAuthUsername())
                     .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                     .url(restProperties.getUrl())
+                    .headers(restProperties.getHeaders())
                     .build();
                 response = HttpUtils.execute(exec);
                 val statusCode = response.getCode();

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@TestPropertySource(properties = "management.endpoint.releaseAttributes.enabled=true")
+@TestPropertySource(properties = "management.endpoint.releaseAttributes.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 class CasReleaseAttributesReportEndpointTests extends AbstractCasEndpointTests {
     @Autowired
@@ -33,7 +33,7 @@ class CasReleaseAttributesReportEndpointTests extends AbstractCasEndpointTests {
     private RegisteredService registeredService;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         servicesManager.save(registeredService);
     }

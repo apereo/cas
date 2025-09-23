@@ -14,7 +14,9 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
+import org.springframework.context.ConfigurableApplicationContext;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -42,8 +44,9 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     public DynamoDbTicketRegistry(final CipherExecutor cipherExecutor,
                                   final TicketSerializationManager ticketSerializationManager,
                                   final TicketCatalog ticketCatalog,
+                                  final ConfigurableApplicationContext applicationContext,
                                   final DynamoDbTicketRegistryFacilitator dbTableService) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.dbTableService = dbTableService;
     }
 
@@ -95,7 +98,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) throws Exception {
+    public List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) {
         val initialList = toSave.toList();
         val toPut = initialList.stream().map(Unchecked.function(this::toTicketPayload));
         dbTableService.put(toPut);
@@ -138,8 +141,12 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Stream<? extends Ticket> stream() {
-        return dbTableService.stream().map(this::decodeTicket);
+    public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
+        return dbTableService
+            .stream()
+            .skip(criteria.getFrom())
+            .limit(criteria.getCount())
+            .map(this::decodeTicket);
     }
 
     @Override
@@ -167,12 +174,12 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
         return dbTableService
-            .query(criteria)
+            .query(criteria.withId(digestIdentifier(criteria.getId())))
             .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
             .filter(Objects::nonNull)
             .filter(ticket -> StringUtils.isBlank(criteria.getPrincipal())
                 || (ticket instanceof final AuthenticationAwareTicket aat
-                && StringUtils.equalsIgnoreCase(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
+                && Strings.CI.equals(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
             .collect(Collectors.toList());
     }
 

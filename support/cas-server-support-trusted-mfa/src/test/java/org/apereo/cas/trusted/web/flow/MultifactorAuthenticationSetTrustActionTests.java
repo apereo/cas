@@ -5,16 +5,17 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class)
 @Tag("WebflowMfaActions")
+@ExtendWith(CasTestExtension.class)
 @Execution(ExecutionMode.SAME_THREAD)
 class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
@@ -41,7 +43,7 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
     void verifySetDeviceWithNoName() throws Throwable {
         val context = getMockRequestContext();
         val bean = new MultifactorAuthenticationTrustBean().setDeviceName(StringUtils.EMPTY);
-        WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
+        MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustRecord(context, bean);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
     }
 
@@ -49,7 +51,7 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
     void verifySetDevice() throws Throwable {
         val context = getMockRequestContext();
         val bean = new MultifactorAuthenticationTrustBean().setDeviceName("ApereoCAS");
-        WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
+        MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustRecord(context, bean);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
         val authn = WebUtils.getAuthentication(context);
         assertTrue(authn.containsAttribute(
@@ -63,7 +65,7 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
             .setTimeUnit(ChronoUnit.MONTHS)
             .setExpiration(2)
             .setDeviceName("ApereoCAS-Device");
-        WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
+        MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustRecord(context, bean);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
         val authn = WebUtils.getAuthentication(context);
         assertTrue(authn.containsAttribute(
@@ -103,7 +105,7 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
         val context = getMockRequestContext();
         MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(context);
         val bean = new MultifactorAuthenticationTrustBean().setDeviceName("ApereoCAS");
-        WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
+        MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustRecord(context, bean);
 
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
         val record = mfaTrustEngine.get("casuser-setdevice");
@@ -121,7 +123,7 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
 
         context.setRemoteAddr("123.456.789.000");
         context.setLocalAddr("123.456.789.000");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        context.withUserAgent();
         context.setClientInfo();
         
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser-setdevice");

@@ -1,13 +1,13 @@
 package org.apereo.cas.services.util;
 
 import org.apereo.cas.services.RegisteredService;
-
+import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.core.PrettyPrinter;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
-
 import java.io.File;
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
@@ -19,13 +19,18 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public class RegisteredServiceJsonSerializer extends BaseRegisteredServiceSerializer {
+public class RegisteredServiceJsonSerializer extends BaseJacksonSerializer<RegisteredService> {
 
     @Serial
     private static final long serialVersionUID = 7645698151115635245L;
 
     public RegisteredServiceJsonSerializer(final ConfigurableApplicationContext applicationContext) {
-        super(applicationContext);
+        super(applicationContext, RegisteredService.class);
+    }
+
+    public RegisteredServiceJsonSerializer(final PrettyPrinter prettyPrinter,
+                                           final ConfigurableApplicationContext applicationContext) {
+        super(prettyPrinter, applicationContext, RegisteredService.class);
     }
 
     @Override
@@ -42,14 +47,14 @@ public class RegisteredServiceJsonSerializer extends BaseRegisteredServiceSerial
     public boolean supports(final String content) {
         return content.contains(JsonTypeInfo.Id.CLASS.getDefaultPropertyName());
     }
-
-    @Override
-    public Class<RegisteredService> getTypeToSerialize() {
-        return RegisteredService.class;
-    }
-
+    
     @Override
     public List<MediaType> getContentTypes() {
         return List.of(MediaType.APPLICATION_JSON);
+    }
+
+    @Override
+    protected boolean isLenient() {
+        return true;
     }
 }

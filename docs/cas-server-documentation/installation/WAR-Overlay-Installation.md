@@ -26,7 +26,7 @@ installation process will attempt to download the provided
 binary artifact first. Then the tool will locate your configuration files and settings made available 
 inside the same project directory and will merge those into the downloaded artifact in order to produce
 one wholesome archive (i.e. `cas.war`) . Overridden artifacts may include 
-resources, java classes, images, CSS and javascript files. In order for the merge
+resources, java classes, images, CSS and JavaScript files. In order for the merge
 process to successfully execute, the location and names of the overridden artifacts 
 locally must **EXACTLY** match that of those provided by the project
 inside the originally downloaded archive. Java code in the overlay project's `src/main/java` 

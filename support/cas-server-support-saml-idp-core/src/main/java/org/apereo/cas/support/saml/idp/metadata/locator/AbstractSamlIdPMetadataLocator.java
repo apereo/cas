@@ -36,9 +36,6 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
 
     private static final String CACHE_KEY_METADATA = "CasSamlIdentityProviderMetadata";
 
-    /**
-     * Cipher executor to encrypt/sign metadata.
-     */
     protected final CipherExecutor<String, String> metadataCipherExecutor;
 
     private final Cache<String, SamlIdPMetadataDocument> metadataCache;
@@ -65,7 +62,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         val metadataDocument = fetch(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
             LOGGER.trace("Fetching signing certificate resource for metadata document [{}]", metadataDocument.getId());
-            return getResource(metadataDocument.getSigningCertificateDecoded());
+            return getResource(metadataDocument.getSigningCertificate());
         }
         return ResourceUtils.EMPTY_RESOURCE;
     }
@@ -87,17 +84,17 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         val metadataDocument = fetch(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
             LOGGER.trace("Fetching metadata resource for metadata document [{}]", metadataDocument.getId());
-            return getResource(metadataDocument.getMetadataDecoded());
+            return getResource(metadataDocument.getMetadata());
         }
         return ResourceUtils.EMPTY_RESOURCE;
     }
 
     @Override
-    public Resource getEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) throws Throwable {
+    public Resource resolveEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val metadataDocument = fetch(registeredService);
         if (metadataDocument != null && metadataDocument.isValid()) {
             LOGGER.trace("Fetching encryption certificate resource for metadata document [{}]", metadataDocument.getId());
-            return getResource(metadataDocument.getEncryptionCertificateDecoded());
+            return getResource(metadataDocument.getEncryptionCertificate());
         }
         return ResourceUtils.EMPTY_RESOURCE;
     }

@@ -17,7 +17,7 @@ request safe.
 
 {% tabs adaptiveriskcalc %}
 
-{% tab adaptiveriskcalc IP Address %}
+{% tab adaptiveriskcalc <i class="fa fa-computer px-1"></i> IP Address %}
 
 This calculator looks into past authentication events that match the client ip address. It is applicable if you wish
 to consider authentication requests from unknown ip addresses suspicious for the user. The story here is:
@@ -28,7 +28,7 @@ to consider authentication requests from unknown ip addresses suspicious for the
 
 {% endtab %}
 
-{% tab adaptiveriskcalc Browser User Agent %}
+{% tab adaptiveriskcalc <i class="fa-brands fa-chrome px-1"></i>Browser User Agent %}
 
 This calculator looks into past authentication events that match the client's `user-agent` string. It is applicable if you wish
 to consider authentication requests from unknown browsers suspicious for the user. The story here is:
@@ -39,7 +39,7 @@ to consider authentication requests from unknown browsers suspicious for the use
 
 {% endtab %}
 
-{% tab adaptiveriskcalc Geolocation %}
+{% tab adaptiveriskcalc <i class="fa fa-globe px-1"></i>Geolocation %}
 
 This calculator looks into past authentication events that contain geolocation data, and compares those with the current geolocation.
 If current geolocation data is unavailable, it will attempt to geocode the location based on the current client ip address. This feature
@@ -54,7 +54,7 @@ The story here is:
 
 {% endtab %}
 
-{% tab adaptiveriskcalc Date/Time %}
+{% tab adaptiveriskcalc <i class="fa fa-clock px-1"></i>Date/Time %}
 
 This calculator looks into past authentication events that fit within the defined time-window. It is applicable if you wish
 to consider authentication requests outside that window suspicious for the user. The story here is:
@@ -62,6 +62,15 @@ to consider authentication requests outside that window suspicious for the user.
 > Find all past authentication events that are established X hours before/after now and calculate an averaged score.
 
 {% include_cached casproperties.html properties="cas.authn.adaptive.risk.date-time" %}
+
+{% endtab %}
+
+{% tab adaptiveriskcalc Device Fingerprint %}
+
+This calculator looks into past authentication events that match the device fingerprint. The device (browser) fingerprint 
+is calculated via client-side JavaScript and collected during authentication events.
+
+{% include_cached casproperties.html properties="cas.authn.adaptive.risk.device-fingerprint" %}
 
 {% endtab %}
 

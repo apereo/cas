@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,7 +19,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SamlIdPAuthenticationContextProperties")
 public class SamlIdPAuthenticationContextProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -2848175783676789852L;
@@ -43,7 +41,7 @@ public class SamlIdPAuthenticationContextProperties implements Serializable {
      * <p>
      * Example might be {@code https://refeds.org/profile/mfa->http://schemas.microsoft.com/claims/multipleauthn}.
      */
-    private List<String> authenticationContextClassMappings = new ArrayList<>(0);
+    private List<String> authenticationContextClassMappings = new ArrayList<>();
 
     /**
      * The default authentication context class to include in the response

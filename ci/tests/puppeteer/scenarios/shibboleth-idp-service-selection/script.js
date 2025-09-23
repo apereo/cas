@@ -22,5 +22,5 @@ function getShibbolethUrlForEntityId(entityId) {
     await cas.assertVisibility(page, "#resendButton");
     await cas.assertVisibility(page, "#loginButton");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

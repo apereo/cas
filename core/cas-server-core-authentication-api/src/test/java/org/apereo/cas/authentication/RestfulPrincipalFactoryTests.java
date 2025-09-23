@@ -54,7 +54,7 @@ class RestfulPrincipalFactoryTests {
     }
 
     @Test
-    void verifyBadResponse() throws Throwable {
+    void verifyBadResponse() {
         try (val webServer = new MockWebServer("abcde123456")) {
             webServer.start();
             val props = new RestEndpointProperties();

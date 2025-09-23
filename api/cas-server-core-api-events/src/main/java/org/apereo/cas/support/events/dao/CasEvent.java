@@ -1,19 +1,18 @@
 package org.apereo.cas.support.events.dao;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
-
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -21,10 +20,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
-
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -37,54 +37,64 @@ import java.util.Map;
 @ToString
 @Getter
 @Setter
-@AllArgsConstructor
+@NoArgsConstructor
 @Accessors(chain = true)
+@AllArgsConstructor
 public class CasEvent implements Serializable {
 
     /**
-     * The constant FIELD_TIMESTAMP.
+     * Field name for the timestamp of the event.
      */
     public static final String FIELD_TIMESTAMP = "timestamp";
 
     /**
-     * The constant FIELD_EVENT_ID.
+     * Field name for the unique identifier of the event.
      */
     public static final String FIELD_EVENT_ID = "eventId";
 
     /**
-     * The constant FIELD_CLIENTIP.
+     * Field name for the client IP address associated with the event.
      */
     public static final String FIELD_CLIENT_IP = "clientip";
 
     /**
-     * The constant FIELD_SERVERIP.
+     * Field name for the server IP address associated with the event.
      */
     public static final String FIELD_SERVER_IP = "serverip";
 
     /**
-     * The constant FIELD_AGENT.
+     * Field name for the user agent or device information.
      */
     public static final String FIELD_AGENT = "agent";
 
     /**
-     * The constant FIELD_GEO_LATITUDE.
+     * Field name for the geographical latitude of the event's location.
      */
     public static final String FIELD_GEO_LATITUDE = "geoLatitude";
 
     /**
-     * The constant FIELD_GEO_LONGITUDE.
+     * Field name for the geographical longitude of the event's location.
      */
     public static final String FIELD_GEO_LONGITUDE = "geoLongitude";
 
     /**
-     * The constant FIELD_GEO_ACCURACY.
+     * Field name for the accuracy of the geographical location.
      */
     public static final String FIELD_GEO_ACCURACY = "geoAccuracy";
+    /**
+     * Field name for the address associated with the geographical location.
+     */
+    public static final String FIELD_GEO_ADDRESS = "geoAddress";
 
     /**
-     * The constant FIELD_GEO_TIMESTAMP.
+     * Field name for the timestamp of the geographical location data.
      */
     public static final String FIELD_GEO_TIMESTAMP = "geoTimestamp";
+
+    /**
+     * Field name for the tenant or organization associated with the event.
+     */
+    public static final String FIELD_TENANT = "tenant";
 
     @Serial
     private static final long serialVersionUID = -4206712375316470417L;
@@ -94,7 +104,7 @@ public class CasEvent implements Serializable {
     @Id
     @JsonProperty
     @Transient
-    private long id = -1;
+    private long id;
 
     @JsonProperty("type")
     @Column(nullable = false)
@@ -106,18 +116,14 @@ public class CasEvent implements Serializable {
 
     @JsonProperty("creationTime")
     @Column(nullable = false)
-    private String creationTime;
+    private Instant creationTime;
 
     @JsonProperty("properties")
     @ElementCollection
     @MapKeyColumn(name = "name")
-    @Column(name = "value")
+    @Column(name = "value", length = 4_000)
     @CollectionTable(name = "events_properties", joinColumns = @JoinColumn(name = "eventId"))
-    private Map<String, String> properties = new HashMap<>(0);
-
-    public CasEvent() {
-        this.id = System.currentTimeMillis();
-    }
+    private Map<String, String> properties = new HashMap<>();
 
     /**
      * Put timestamp.
@@ -169,6 +175,16 @@ public class CasEvent implements Serializable {
         return put(FIELD_AGENT, dev);
     }
 
+    /**
+     * Put tenant.
+     *
+     * @param tenant the tenant
+     * @return the cas event
+     */
+    public CasEvent putTenant(final String tenant) {
+        return put(FIELD_TENANT, tenant);
+    }
+
     @JsonIgnore
     public Long getTimestamp() {
         return Long.valueOf(get(FIELD_TIMESTAMP));
@@ -192,6 +208,11 @@ public class CasEvent implements Serializable {
     @JsonIgnore
     public String getServerIpAddress() {
         return get(FIELD_SERVER_IP);
+    }
+
+    @JsonIgnore
+    public String getTenant() {
+        return get(FIELD_TENANT);
     }
 
     /**
@@ -233,7 +254,19 @@ public class CasEvent implements Serializable {
         putGeoLatitude(location.getLatitude());
         putGeoLongitude(location.getLongitude());
         putGeoTimestamp(location.getTimestamp());
+        putGeoAddress(location.getAddress());
         return this;
+    }
+
+    /**
+     * Put geo address cas event.
+     *
+     * @param address the address
+     * @return the cas event
+     */
+    @CanIgnoreReturnValue
+    public CasEvent putGeoAddress(final String address) {
+        return put(FIELD_GEO_ADDRESS, address);
     }
 
     /**
@@ -269,16 +302,14 @@ public class CasEvent implements Serializable {
         request.setLatitude(get(FIELD_GEO_LATITUDE));
         return request;
     }
-    
+
     private CasEvent putGeoLatitude(final String s) {
         return put(FIELD_GEO_LATITUDE, s);
     }
 
-
     private CasEvent putGeoLongitude(final String s) {
         return put(FIELD_GEO_LONGITUDE, s);
     }
-
 
     private CasEvent putGeoAccuracy(final String s) {
         return put(FIELD_GEO_ACCURACY, s);
@@ -286,5 +317,45 @@ public class CasEvent implements Serializable {
 
     private CasEvent putGeoTimestamp(final String s) {
         return put(FIELD_GEO_TIMESTAMP, s);
+    }
+
+    /**
+     * Assign id if undefined.
+     *
+     * @return the registered service
+     */
+    @CanIgnoreReturnValue
+    public CasEvent assignIdIfNecessary() {
+        if (getId() <= 0) {
+            setId(System.currentTimeMillis());
+        }
+        return this;
+    }
+
+    /**
+     * As new entity event.
+     *
+     * @return the cas event
+     */
+    @CanIgnoreReturnValue
+    public CasEvent asNewEntity() {
+        setId(0L);
+        return this;
+    }
+
+    /**
+     * From cas event to a new event.
+     *
+     * @param event the event
+     * @return the cas event
+     */
+    public static CasEvent from(final CasEvent event) {
+        val newEvent = new CasEvent();
+        newEvent.setId(event.getId());
+        newEvent.setType(event.getType());
+        newEvent.setPrincipalId(event.getPrincipalId());
+        newEvent.setCreationTime(event.getCreationTime());
+        newEvent.setProperties(new LinkedHashMap<>(event.getProperties()));
+        return newEvent;
     }
 }

@@ -92,9 +92,10 @@ public class WsFederationHelper {
 
     private static Credential getEncryptionCredential(final WsFederationConfiguration config) throws Exception {
         LOGGER.debug("Locating encryption credential private key [{}]", config.getEncryptionPrivateKey());
-        val br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
         LOGGER.debug("Parsing credential private key");
-        try (val pemParser = new PEMParser(br)) {
+        try (val keyStream = config.getEncryptionPrivateKey().getInputStream();
+             val br = new BufferedReader(new InputStreamReader(keyStream, StandardCharsets.UTF_8));
+             val pemParser = new PEMParser(br)) {
             val privateKeyPemObject = pemParser.readObject();
             val converter = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider());
 
@@ -114,11 +115,13 @@ public class WsFederationHelper {
 
             val certParser = new X509CertParser();
             LOGGER.debug("Locating encryption certificate [{}]", config.getEncryptionCertificate());
-            certParser.engineInit(config.getEncryptionCertificate().getInputStream());
-            LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
-            val cert = (X509Certificate) certParser.engineRead();
-            LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
-            return new BasicX509Credential(cert, kp.getPrivate());
+            try (val is = config.getEncryptionCertificate().getInputStream()) {
+                certParser.engineInit(is);
+                LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
+                val cert = (X509Certificate) certParser.engineRead();
+                LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
+                return new BasicX509Credential(cert, kp.getPrivate());
+            }
         }
 
     }
@@ -319,7 +322,7 @@ public class WsFederationHelper {
         val providers = WsFederationCertificateProvider.getProvider(wsFederationConfiguration, openSamlConfigBean);
         val signingWallet = providers.getSigningCredentials();
         LOGGER.debug("Building signature trust engine based on the following signing certificates:");
-        signingWallet.forEach(c -> LOGGER.debug("Credential entity id [{}] with public key [{}]", c.getEntityId(), c.getPublicKey()));
+        signingWallet.forEach(credential -> LOGGER.debug("Credential entity id [{}] with public key [{}]", credential.getEntityId(), credential.getPublicKey()));
 
         val resolver = new StaticCredentialResolver(signingWallet);
         val keyResolver = new StaticKeyInfoCredentialResolver(signingWallet);
@@ -337,8 +340,8 @@ public class WsFederationHelper {
                 val it = config.iterator();
                 while (it.hasNext()) {
                     try {
-                        val c = it.next();
-                        val decrypter = buildAssertionDecrypter(c);
+                        val data = it.next();
+                        val decrypter = buildAssertionDecrypter(data);
                         LOGGER.trace("Built an instance of [{}]", decrypter.getClass().getName());
                         return decrypter.decryptData(encryptedData);
                     } catch (final Exception e) {

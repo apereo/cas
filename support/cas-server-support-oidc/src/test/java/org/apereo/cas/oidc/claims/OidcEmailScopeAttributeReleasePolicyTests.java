@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("OIDC")
+@Tag("OIDCAttributes")
 @TestPropertySource(properties = {
     "cas.authn.oidc.core.claims-map.email=mail",
     "cas.authn.oidc.core.claims-map.email_verified=mail_confirmed"
@@ -82,7 +82,7 @@ class OidcEmailScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val policy = new OidcEmailScopeAttributeReleasePolicy();
         val chain = new ChainingAttributeReleasePolicy();
         chain.addPolicies(policy);

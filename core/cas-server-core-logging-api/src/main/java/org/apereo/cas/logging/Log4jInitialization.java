@@ -1,12 +1,10 @@
 package org.apereo.cas.logging;
 
 import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
-
 import lombok.NoArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.core.lookup.MainMapLookup;
-
 import java.util.Arrays;
 
 /**
@@ -21,7 +19,7 @@ public class Log4jInitialization implements ApplicationEntrypointInitializer {
     public ApplicationEntrypointInitializer initialize(final String[] mainArguments) {
         val args = Arrays.stream(mainArguments)
             .filter(arg -> arg.startsWith("--logging.level"))
-            .map(arg -> StringUtils.replace(arg, "=", " "))
+            .map(arg -> Strings.CI.replace(arg, "=", " "))
             .toArray(String[]::new);
         MainMapLookup.setMainArguments(args);
         return this;

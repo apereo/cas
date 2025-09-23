@@ -2,19 +2,21 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.data.annotation.Id;
-
+import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -35,6 +37,7 @@ import java.util.Set;
 @Setter
 @EqualsAndHashCode(exclude = "id")
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@Accessors(chain = true)
 public abstract class BaseRegisteredService implements RegisteredService {
 
     @Serial
@@ -66,15 +69,14 @@ public abstract class BaseRegisteredService implements RegisteredService {
     private RegisteredServiceExpirationPolicy expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
 
     private RegisteredServiceTicketGrantingTicketExpirationPolicy ticketGrantingTicketExpirationPolicy;
-
-
+    
     private int evaluationOrder;
 
     private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
 
     private RegisteredServiceLogoutType logoutType = RegisteredServiceLogoutType.BACK_CHANNEL;
 
-    private Set<String> environments = new LinkedHashSet<>(0);
+    private Set<String> environments = new LinkedHashSet<>();
 
     private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
 
@@ -93,19 +95,19 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     private RegisteredServiceAuthenticationPolicy authenticationPolicy = new DefaultRegisteredServiceAuthenticationPolicy();
 
-    private Map<String, RegisteredServiceProperty> properties = new HashMap<>(0);
+    private Map<String, RegisteredServiceProperty> properties = new HashMap<>();
 
-    private List<RegisteredServiceContact> contacts = new ArrayList<>(0);
+    private List<RegisteredServiceContact> contacts = new ArrayList<>();
 
     @Override
-    public int compareTo(final RegisteredService other) {
-        return new CompareToBuilder()
-            .append(getEvaluationPriority(), other.getEvaluationPriority())
-            .append(getEvaluationOrder(), other.getEvaluationOrder())
-            .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(Locale.ENGLISH),
-                StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase(Locale.ENGLISH))
-            .append(getServiceId(), other.getServiceId()).append(getId(), other.getId())
-            .toComparison();
+    public int compareTo(@Nonnull final RegisteredService other) {
+        return Comparator
+            .comparingInt(RegisteredService::getEvaluationPriority)
+            .thenComparingInt(RegisteredService::getEvaluationOrder)
+            .thenComparing(service -> StringUtils.defaultString(service.getName()).toLowerCase(Locale.ENGLISH))
+            .thenComparing(RegisteredService::getServiceId)
+            .thenComparingLong(RegisteredService::getId)
+            .compare(this, other);
     }
 
     @Override
@@ -127,5 +129,18 @@ public abstract class BaseRegisteredService implements RegisteredService {
         if (getMatchingStrategy() == null) {
             setMatchingStrategy(new FullRegexRegisteredServiceMatchingStrategy());
         }
+    }
+
+    /**
+     * Mark as internal base registered service.
+     *
+     * @return the base registered service
+     */
+    @CanIgnoreReturnValue
+    @JsonIgnore
+    public BaseRegisteredService markAsInternal() {
+        getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.INTERNAL_SERVICE_DEFINITION.getPropertyName(),
+            new DefaultRegisteredServiceProperty("true"));
+        return this;
     }
 }

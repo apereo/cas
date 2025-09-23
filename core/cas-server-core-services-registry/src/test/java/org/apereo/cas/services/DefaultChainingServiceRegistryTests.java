@@ -26,7 +26,7 @@ class DefaultChainingServiceRegistryTests {
     }
 
     @Test
-    void verifySync() throws Throwable {
+    void verifySync() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         val chain = new DefaultChainingServiceRegistry(appCtx);
@@ -39,7 +39,7 @@ class DefaultChainingServiceRegistryTests {
     }
 
     @Test
-    void verifyChainOps() throws Throwable {
+    void verifyChainOps() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 

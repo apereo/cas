@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProper
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.OptBoolean;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,35 +31,42 @@ import java.time.ZoneOffset;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class OidcRegisteredService extends OAuthRegisteredService {
+    /**
+     * Friendly name for this OAuth service.
+     */
+    public static final String OIDC_REGISTERED_SERVICE_FRIENDLY_NAME = "OpenID Connect Relying Party";
 
     @Serial
     private static final long serialVersionUID = 1310899699465091444L;
-
+    
     @ExpressionLanguageCapable
     private String jwks;
 
-    @JacksonInject("jwksKeyId")
+    @JacksonInject(value = "jwksKeyId", optional = OptBoolean.TRUE)
     private String jwksKeyId;
 
     @DurationCapable
     private String jwksCacheDuration;
 
-    @JacksonInject("signIdToken")
+    @JacksonInject(value = "signIdToken", optional = OptBoolean.TRUE)
     private boolean signIdToken = true;
 
-    @JacksonInject("encryptIdToken")
+    @JacksonInject(value = "encryptIdToken", optional = OptBoolean.TRUE)
     private boolean encryptIdToken;
 
-    @JacksonInject("idTokenEncryptionOptional")
+    @JacksonInject(value = "includeIdTokenClaims", optional = OptBoolean.TRUE)
+    private boolean includeIdTokenClaims;
+
+    @JacksonInject(value = "idTokenEncryptionOptional", optional = OptBoolean.TRUE)
     private boolean idTokenEncryptionOptional;
 
-    @JacksonInject("idTokenEncryptionAlg")
+    @JacksonInject(value = "idTokenEncryptionAlg", optional = OptBoolean.TRUE)
     private String idTokenEncryptionAlg;
 
-    @JacksonInject("idTokenSigningAlg")
+    @JacksonInject(value = "idTokenSigningAlg", optional = OptBoolean.TRUE)
     private String idTokenSigningAlg;
 
-    @JacksonInject("userInfoSigningAlg")
+    @JacksonInject(value = "userInfoSigningAlg", optional = OptBoolean.TRUE)
     private String userInfoSigningAlg;
 
     private String userInfoEncryptedResponseAlg;
@@ -79,12 +87,12 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private RegisteredServiceOidcIdTokenExpirationPolicy idTokenExpirationPolicy;
 
-    @JacksonInject("backchannelTokenDeliveryMode")
+    @JacksonInject(value = "backchannelTokenDeliveryMode", optional = OptBoolean.TRUE)
     private String backchannelTokenDeliveryMode = OidcBackchannelTokenDeliveryModes.POLL.getMode();
     
     private String backchannelClientNotificationEndpoint;
 
-    @JacksonInject("backchannelAuthenticationRequestSigningAlg")
+    @JacksonInject(value = "backchannelAuthenticationRequestSigningAlg", optional = OptBoolean.TRUE)
     private String backchannelAuthenticationRequestSigningAlg;
 
     private boolean backchannelUserCodeParameterSupported;
@@ -107,7 +115,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @JsonIgnore
     @Override
     public String getFriendlyName() {
-        return "OpenID Connect Relying Party";
+        return OIDC_REGISTERED_SERVICE_FRIENDLY_NAME;
     }
 
     /**

@@ -3,6 +3,7 @@ package org.apereo.cas.pac4j.discovery;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.context.WebContext;
 
 import java.util.Optional;
 
@@ -24,11 +25,12 @@ public interface DelegatedAuthenticationDynamicDiscoveryProviderLocator {
     /**
      * Locate.
      *
-     * @param request the request
+     * @param request    the request
+     * @param webContext the web context
      * @return the client
      * @throws Throwable the throwable
      */
-    Optional<IndirectClient> locate(DynamicDiscoveryProviderRequest request) throws Throwable;
+    Optional<IndirectClient> locate(DynamicDiscoveryProviderRequest request, WebContext webContext) throws Throwable;
 
     @SuperBuilder
     @Getter

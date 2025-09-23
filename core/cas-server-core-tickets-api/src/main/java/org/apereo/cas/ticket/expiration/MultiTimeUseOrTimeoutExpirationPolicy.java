@@ -2,9 +2,7 @@ package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -13,10 +11,8 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.Assert;
-
 import java.io.Serial;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 
 /**
  * ExpirationPolicy that is based on certain number of uses of a ticket or a
@@ -52,7 +48,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     @Override
     public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
         val creationTime = ticketState.getCreationTime();
-        return creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        return creationTime.plusSeconds(this.timeToKillInSeconds);
     }
 
     @Override
@@ -69,7 +65,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
         }
         val systemTime = ZonedDateTime.now(getClock());
         val creationTime = ticketState.getCreationTime();
-        val expiringTime = creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val expiringTime = creationTime.plusSeconds(this.timeToKillInSeconds);
         if (expiringTime.isBefore(systemTime)) {
             LOGGER.debug("Ticket [{}] has expired; difference between current time [{}] and ticket creation time [{}] is greater than or equal to [{}].",
                 ticketState.getId(), systemTime, creationTime, this.timeToKillInSeconds);
@@ -82,13 +78,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     public Long getTimeToLive() {
         return timeToKillInSeconds;
     }
-
-    @JsonIgnore
-    @Override
-    public Long getTimeToIdle() {
-        return 0L;
-    }
-
+    
     /**
      * The Proxy ticket expiration policy.
      */

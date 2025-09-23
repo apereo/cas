@@ -2,6 +2,7 @@ package org.apereo.cas.syncope;
 
 import org.apereo.cas.authentication.attribute.BasePersonAttributeDao;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttributesProperties;
@@ -28,15 +29,19 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
     @Override
     public PersonAttributes getPerson(final String uid, final Set<PersonAttributes> resolvedPeople, final PersonAttributeDaoFilter filter) {
         val attributes = new HashMap<String, List<Object>>();
-        val results = syncopeSearch(uid);
+        val results = syncopeUserSearch(uid);
         results.forEach(attributes::putAll);
+        if (properties.isIncludeUserGroups()) {
+            val groups = syncopeUserGroupsSearch(uid);
+            groups.forEach(attributes::putAll);
+        }
         return new SimplePersonAttributes(uid, attributes);
     }
 
     @Override
     public Set<PersonAttributes> getPeople(final Map<String, Object> map, final PersonAttributeDaoFilter filter,
                                            final Set<PersonAttributes> resolvedPeople) {
-        return getPeopleWithMultivaluedAttributes(stuffAttributesIntoList(map, filter), filter);
+        return getPeopleWithMultivaluedAttributes(PersonAttributeDao.stuffAttributesIntoList(map), filter);
     }
 
     @Override
@@ -50,10 +55,16 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
             .filter(e -> properties.getSearchFilter().contains(e.getKey()))
             .findFirst()
             .map(e -> Set.of(getPerson(e.getValue().getFirst().toString(), resolvedPeople, filter)))
-            .orElseGet(() -> new LinkedHashSet<>(0));
+            .orElseGet(LinkedHashSet::new);
     }
 
-    protected List<Map<String, List<Object>>> syncopeSearch(final String username) {
+    protected List<Map<String, List<Object>>> syncopeUserSearch(final String username) {
         return SyncopeUtils.syncopeUserSearch(properties, username);
     }
+
+    protected List<Map<String, List<Object>>> syncopeUserGroupsSearch(final String username) {
+        return SyncopeUtils.syncopeUserGroupsSearch(properties, username);
+    }
+
+    
 }

@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,11 +17,10 @@ import java.io.Serial;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@RequiresModule(name = "cas-server-support-interrupt-webflow", automated = true)
+@RequiresModule(name = "cas-server-support-interrupt-webflow")
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("InterruptCookieProperties")
 public class InterruptCookieProperties extends PinnableCookieProperties {
     @Serial
     private static final long serialVersionUID = -266090748600049578L;

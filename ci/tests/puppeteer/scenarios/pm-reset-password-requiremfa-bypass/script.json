@@ -1,0 +1,42 @@
+{
+  "dependencies": "generic,pm-webflow,simple-mfa",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.authn.pm.core.enabled=true",
+    "--cas.authn.pm.core.password-policy-pattern=.+",
+    "--cas.authn.pm.reset.multifactor-authentication-enabled=true",
+    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/passwords.json",
+
+    "--cas.authn.pm.reset.mail.from=cas@apereo.org",
+    "--cas.authn.pm.reset.mail.text=${url}",
+    "--cas.authn.pm.reset.mail.subject=Reset",
+    "--cas.authn.pm.reset.mail.attribute-name=mail",
+    "--cas.authn.pm.reset.security-questions-enabled=false",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.server.scope=example.net",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.authn.mfa.simple.mail.html=false",
+    "--cas.authn.mfa.simple.mail.from=cas@example.com",
+    "--cas.authn.mfa.simple.mail.subject=CASToken",
+    "--cas.authn.mfa.simple.mail.text=${token}",
+    "--cas.authn.mfa.simple.bypass.principal-attribute-name=mail",
+    "--cas.authn.mfa.simple.bypass.principal-attribute-value=.+@example.+",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.accept.enabled=false",
+    "--cas.audit.engine.audit-format=JSON"
+  ],
+  "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true",
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
+}
+

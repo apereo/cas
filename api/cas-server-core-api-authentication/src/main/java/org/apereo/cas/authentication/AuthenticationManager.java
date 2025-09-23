@@ -18,6 +18,10 @@ public interface AuthenticationManager {
      * Authentication method attribute name.
      **/
     String AUTHENTICATION_METHOD_ATTRIBUTE = "authenticationMethod";
+    /**
+     * Tenant ID attribute.
+     */
+    String TENANT_ID_ATTRIBUTE = "tenant";
 
     /**
      * Authentication session timeout attribute

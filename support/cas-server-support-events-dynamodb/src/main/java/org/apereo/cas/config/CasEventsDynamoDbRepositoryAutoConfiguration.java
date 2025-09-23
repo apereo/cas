@@ -54,11 +54,11 @@ public class CasEventsDynamoDbRepositoryAutoConfiguration {
         final DynamoDbClient dynamoDbEventRepositoryClient,
         final CasConfigurationProperties casProperties) throws Exception {
         val db = casProperties.getEvents().getDynamoDb();
-        val f = new DynamoDbCasEventsFacilitator(db, dynamoDbEventRepositoryClient);
+        val facilitator = new DynamoDbCasEventsFacilitator(db, dynamoDbEventRepositoryClient);
         if (!db.isPreventTableCreationOnStartup()) {
-            f.createTable(db.isDropTablesOnStartup());
+            facilitator.createTable(db.isDropTablesOnStartup());
         }
-        return f;
+        return facilitator;
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

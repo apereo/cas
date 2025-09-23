@@ -16,5 +16,5 @@ const cas = require("../../cas.js");
     await cas.click(page, "#casapplication");
     await cas.waitForNavigation(page);
     await cas.assertTicketParameter(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

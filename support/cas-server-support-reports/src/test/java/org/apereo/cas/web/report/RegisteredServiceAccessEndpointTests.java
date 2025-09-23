@@ -5,12 +5,8 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.context.TestPropertySource;
 import java.util.Map;
 import java.util.Set;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -23,24 +19,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 7.1.0
  */
 @Tag("ActuatorEndpoint")
-@AutoConfigureMockMvc
-@SpringBootTest(classes = AbstractCasEndpointTests.SharedTestConfiguration.class,
-    properties = {
-        "cas.authn.attribute-repository.stub.attributes.uid=cas",
-        "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
-        "cas.authn.attribute-repository.stub.attributes.phone=123456789",
-        "server.port=8181",
-
-        "cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-        "management.endpoint.serviceAccess.enabled=true",
-        "management.endpoints.web.exposure.include=*"
-    },
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTests {
-    @Autowired
-    @Qualifier("mockMvc")
-    private MockMvc mockMvc;
-
+@TestPropertySource(properties = {
+    "cas.authn.attribute-repository.stub.attributes.uid=cas",
+    "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
+    "cas.authn.attribute-repository.stub.attributes.phone=123456789",
+    "management.endpoint.serviceAccess.access=UNRESTRICTED",
+    "cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS"
+})
+class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTests {
     @Test
     void verifyForbiddenOperation() throws Throwable {
         mockMvc.perform(post("/actuator/serviceAccess")
@@ -49,6 +35,14 @@ public class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTes
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void verifyHead() throws Throwable {
+        mockMvc.perform(head("/actuator/serviceAccess")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
     }
 
     @Test

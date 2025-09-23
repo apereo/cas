@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -34,7 +35,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Endpoint(id = "duoAdmin", enableByDefault = false)
+@Endpoint(id = "duoAdmin", defaultAccess = Access.NONE)
 public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
 
     public DuoSecurityAdminApiEndpoint(final CasConfigurationProperties casProperties,
@@ -51,8 +52,8 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @GetMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch Duo Security user account from Duo Admin API", parameters = {
-        @Parameter(name = "username", required = true, in = ParameterIn.PATH),
-        @Parameter(name = "providerId")
+        @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to fetch"),
+        @Parameter(name = "providerId", description = "The multifactor authentication provider id defined in CAS settings")
     })
     public Map<String, DuoSecurityUserAccount> getUser(@PathVariable("username") final String username,
                                                        @RequestParam(required = false) final String providerId) {
@@ -62,11 +63,10 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
             .stream()
             .filter(Objects::nonNull)
             .filter(BeanSupplier::isNotProxy)
-            .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .filter(provider -> StringUtils.isBlank(providerId) || provider.matches(providerId))
             .filter(provider -> provider.getDuoAuthenticationService().getAdminApiService().isPresent())
             .forEach(Unchecked.consumer(p -> {
-                val duoService = p.getDuoAuthenticationService().getAdminApiService().get();
+                val duoService = p.getDuoAuthenticationService().getAdminApiService().orElseThrow();
                 duoService.getDuoSecurityUserAccount(username).ifPresent(user -> results.put(p.getId(), user));
             }));
         return results;
@@ -81,9 +81,9 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
      * @return the map
      */
     @Operation(summary = "Create bypass codes using Duo Admin API", parameters = {
-        @Parameter(name = "username", required = true),
-        @Parameter(name = "providerId"),
-        @Parameter(name = "userId")
+        @Parameter(name = "username", required = true, in = ParameterIn.QUERY, description = "The username to create bypass codes for"),
+        @Parameter(name = "providerId", description = "The multifactor authentication provider id defined in CAS settings"),
+        @Parameter(name = "userId", description = "The user identifier, supplied by Duo Security to create bypass codes for")
     })
     @PostMapping(path = "/bypassCodes",
         consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -97,11 +97,10 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
             .stream()
             .filter(Objects::nonNull)
             .filter(BeanSupplier::isNotProxy)
-            .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .filter(provider -> StringUtils.isBlank(providerId) || provider.matches(providerId))
             .filter(provider -> provider.getDuoAuthenticationService().getAdminApiService().isPresent())
             .forEach(Unchecked.consumer(provider -> {
-                val duoService = provider.getDuoAuthenticationService().getAdminApiService().get();
+                val duoService = provider.getDuoAuthenticationService().getAdminApiService().orElseThrow();
                 val uid = StringUtils.isBlank(userId)
                     ? duoService.getDuoSecurityUserAccount(username).map(DuoSecurityUserAccount::getUserId).orElse(StringUtils.EMPTY)
                     : userId;
@@ -123,7 +122,7 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @PutMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update Duo Security user account from Duo Admin API", parameters = {
-        @Parameter(name = "username", required = true, in = ParameterIn.PATH),
+        @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to update"),
         @Parameter(name = "providerId", description = "The multifactor authentication provider id defined in CAS settings")
     })
     public ResponseEntity updateUser(@PathVariable("username") final String username,
@@ -139,11 +138,10 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
             .stream()
             .filter(Objects::nonNull)
             .filter(BeanSupplier::isNotProxy)
-            .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .filter(provider -> StringUtils.isBlank(providerId) || provider.matches(providerId))
             .filter(provider -> provider.getDuoAuthenticationService().getAdminApiService().isPresent())
             .forEach(Unchecked.consumer(provider -> {
-                val duoService = provider.getDuoAuthenticationService().getAdminApiService().get();
+                val duoService = provider.getDuoAuthenticationService().getAdminApiService().orElseThrow();
                 duoService.modifyDuoSecurityUserAccount(account.withUsername(username))
                     .ifPresent(user -> results.put(provider.getId(), user));
             }));

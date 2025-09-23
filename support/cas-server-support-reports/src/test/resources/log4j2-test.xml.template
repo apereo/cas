@@ -38,15 +38,18 @@
                 <SizeBasedTriggeringPolicy size="90 MB"/>
             </Policies>
         </RollingFile>
+        <CasAppender name="casConsole" maxEntries="5">
+            <AppenderRef ref="console" />
+        </CasAppender>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="error"   />
+        <Logger name="org.apereo" level="warn"   />
         <Logger name="org.springframework.data" level="error" />
         <Logger name="org.springframework.web" level="error" />
         <Logger name="org.springframework.boot" level="error" />
         <Logger name="org.springframework.security" level="error" />
-        <Root level="off">
-            <AppenderRef ref="console"/>
+        <Root level="warn">
+            <AppenderRef ref="casConsole"/>
             <AppenderRef ref="rolling-random"/>
             <AppenderRef ref="file"/>
             <AppenderRef ref="random"/>

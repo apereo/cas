@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.cognito.AmazonCognitoAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import com.nimbusds.jose.proc.SimpleSecurityContext;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
@@ -43,12 +42,12 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
     private final ConfigurableJWTProcessor jwtProcessor;
 
     public AmazonCognitoAuthenticationAuthenticationHandler(
-        final ServicesManager servicesManager,
+
         final PrincipalFactory principalFactory,
         final CognitoIdentityProviderClient cognitoIdentityProvider,
         final AmazonCognitoAuthenticationProperties properties,
         final ConfigurableJWTProcessor jwtProcessor) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
+        super(properties.getName(), principalFactory, properties.getOrder());
         this.cognitoIdentityProvider = cognitoIdentityProvider;
         this.properties = properties;
         this.jwtProcessor = jwtProcessor;
@@ -76,7 +75,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             val authenticationResult = result.authenticationResult();
             val claims = jwtProcessor.process(authenticationResult.idToken(), new SimpleSecurityContext());
             if (StringUtils.isBlank(claims.getSubject())) {
-                throw new FailedLoginException("Unable to accept the id token with an invalid [sub] claim");
+                throw new FailedLoginException("Unable to accept the ID token with an invalid [sub] claim");
             }
 
             val userResult = cognitoIdentityProvider.adminGetUser(AdminGetUserRequest.builder()
@@ -99,7 +98,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             });
 
             val principal = principalFactory.createPrincipal(userResult.username(), attributes);
-            return createHandlerResult(credential, principal, new ArrayList<>(0));
+            return createHandlerResult(credential, principal, new ArrayList<>());
         } catch (final NotAuthorizedException e) {
             val message = e.getMessage();
             if (message.contains("expired")) {

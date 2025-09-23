@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * This is {@link AuthenticationTransactionFactory},
- * whch produces {@link AuthenticationTransaction} objects
+ * which produces {@link AuthenticationTransaction} objects
  * that may contain one more or credentials.
  *
  * @author Misagh Moayyed

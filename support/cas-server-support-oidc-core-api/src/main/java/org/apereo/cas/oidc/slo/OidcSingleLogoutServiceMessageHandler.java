@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.slo;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.slo.BaseSingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
@@ -21,11 +20,13 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
+import org.apereo.cas.web.HttpMessage;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.http.HttpResponse;
 import org.jose4j.jwt.ReservedClaimNames;
 import org.pac4j.core.util.CommonHelper;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import java.util.Collection;
@@ -52,8 +53,9 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
         final boolean asynchronous,
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
         final OidcIssuerService issuerService) {
-        super(httpClient, logoutMessageBuilder, servicesManager, singleLogoutServiceLogoutUrlBuilder,
-            asynchronous, authenticationRequestServiceSelectionStrategies);
+        super(httpClient, logoutMessageBuilder, servicesManager,
+            singleLogoutServiceLogoutUrlBuilder, asynchronous,
+            authenticationRequestServiceSelectionStrategies);
         this.issuerService = issuerService;
     }
 
@@ -63,7 +65,8 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
     }
 
     @Override
-    protected boolean supportsInternal(final WebApplicationService singleLogoutService, final RegisteredService registeredService,
+    protected boolean supportsInternal(final WebApplicationService singleLogoutService,
+                                       final RegisteredService registeredService,
                                        final SingleLogoutExecutionRequest context) {
         return registeredService instanceof OidcRegisteredService;
     }
@@ -84,7 +87,7 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
                         issuerService.determineIssuer(Optional.empty()));
                     newUrl = CommonHelper.addParameter(newUrl, OidcConstants.CLAIM_SESSION_ID,
                         DigestUtils.sha(context.getTicketGrantingTicket().getId()));
-                    newSloUrl = new SingleLogoutUrl(newUrl, logoutType);
+                    newSloUrl = new SingleLogoutUrl(newUrl, RegisteredServiceLogoutType.FRONT_CHANNEL);
                 }
                 return createLogoutRequest(ticketId, selectedService, registeredService, newSloUrl, context);
             })
@@ -93,8 +96,8 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
     }
 
     @Override
-    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg, final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
-
+    protected boolean sendMessageToEndpoint(final HttpMessage msg, final SingleLogoutRequestContext request,
+                                            final SingleLogoutMessage logoutMessage) {
         val payload = logoutMessage.getPayload();
         HttpResponse response = null;
         try {
@@ -102,11 +105,12 @@ public class OidcSingleLogoutServiceMessageHandler extends BaseSingleLogoutServi
                 .method(HttpMethod.POST)
                 .url(msg.getUrl().toExternalForm())
                 .entity("logout_token=" + payload)
-                .headers(CollectionUtils.wrap("Content-Type", msg.getContentType()))
+                .headers(CollectionUtils.wrap(HttpHeaders.CONTENT_TYPE, msg.getContentType()))
+                .httpClient(getHttpClient())
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && !Objects.requireNonNull(HttpStatus.resolve(response.getCode())).isError()) {
-                LOGGER.trace("Received OK logout response");
+                LOGGER.trace("Received logout response [{}]", response.getCode());
                 return true;
             }
         } finally {

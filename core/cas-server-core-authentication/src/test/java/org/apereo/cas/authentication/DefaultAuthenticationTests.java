@@ -36,9 +36,10 @@ class DefaultAuthenticationTests {
     }
 
     @Test
-    void verifyUpdateAttributes() throws Throwable {
+    void verifyUpdateAttributes() {
         val principal1 = CoreAuthenticationTestUtils.getPrincipal(UUID.randomUUID().toString(), Map.of("cn", List.of("Apereo")));
         val authentication1 = CoreAuthenticationTestUtils.getAuthentication(principal1, Map.of("method", List.of("simple")));
+        assertEquals("simple", authentication1.getSingleValuedAttribute("method"));
         val principal2 = CoreAuthenticationTestUtils.getPrincipal(UUID.randomUUID().toString(), Map.of("cn", List.of("CAS"), "name", List.of("casuser", "casperson")));
         val authentication2 = CoreAuthenticationTestUtils.getAuthentication(principal2, Map.of("method", List.of("strong")));
         authentication1.updateAttributes(authentication2);
@@ -48,7 +49,7 @@ class DefaultAuthenticationTests {
     }
 
     @Test
-    void verifyReplaceAttributes() throws Throwable {
+    void verifyReplaceAttributes() {
         val principal1 = CoreAuthenticationTestUtils.getPrincipal(UUID.randomUUID().toString(), Map.of("cn", List.of("Apereo")));
         val authentication1 = CoreAuthenticationTestUtils.getAuthentication(principal1, Map.of("method", List.of("simple")));
         val principal2 = CoreAuthenticationTestUtils.getPrincipal(UUID.randomUUID().toString(), Map.of("cn", List.of("CAS"), "name", List.of("casuser", "casperson")));

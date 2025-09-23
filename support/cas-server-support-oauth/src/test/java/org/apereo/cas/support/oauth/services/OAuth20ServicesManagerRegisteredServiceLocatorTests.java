@@ -39,7 +39,7 @@ class OAuth20ServicesManagerRegisteredServiceLocatorTests extends AbstractOAuth2
     private ServicesManagerRegisteredServiceLocator oauthServicesManagerRegisteredServiceLocator;
     
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(oauthServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, oauthServicesManagerRegisteredServiceLocator.getOrder());
         val service = getRegisteredService("clientid123456", UUID.randomUUID().toString());

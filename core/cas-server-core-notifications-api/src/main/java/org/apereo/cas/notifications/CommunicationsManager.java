@@ -1,10 +1,12 @@
 package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.call.PhoneCallRequest;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.sms.SmsRequest;
+import java.util.List;
 
 /**
  * This is {@link CommunicationsManager}.
@@ -69,9 +71,19 @@ public interface CommunicationsManager {
      *
      * @param request the request
      * @return true /false
+     */
+    boolean sms(SmsRequest request);
+
+    /**
+     * Sms multiple requests.
+     *
+     * @param requests the requests
+     * @return true/false
      * @throws Throwable the throwable
      */
-    boolean sms(SmsRequest request) throws Throwable;
+    default boolean sms(final List<SmsRequest> requests) throws Throwable {
+        return requests.stream().anyMatch(this::sms);
+    }
 
     /**
      * make a phone call.
@@ -88,4 +100,20 @@ public interface CommunicationsManager {
      * @return true, if email or sms providers, etc are defined for CAS.
      */
     boolean validate();
+
+    /**
+     * Is communication channel available.
+     *
+     * @return true or false
+     */
+    default boolean isCommunicationChannelAvailable() {
+        return isMailSenderDefined() || isSmsSenderDefined() || isPhoneOperatorDefined() || isNotificationSenderDefined();
+    }
+
+    /**
+     * Gets tenant extractor.
+     *
+     * @return the tenant extractor
+     */
+    TenantExtractor getTenantExtractor();
 }

@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -28,7 +27,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SpnegoProperties")
 public class SpnegoProperties implements Serializable {
 
     @Serial
@@ -44,10 +42,10 @@ public class SpnegoProperties implements Serializable {
      * Individual authentication settings for spengo that are grouped
      * and fed to the spnego authentication object to form a collection.
      */
-    private final List<SpnegoAuthenticationProperties> properties = new ArrayList<>(0);
+    private final List<SpnegoAuthenticationProperties> properties = new ArrayList<>();
 
     /**
-     * If specified, will create the principal by ths name on successful authentication.
+     * If specified, will create the principal by this name on successful authentication.
      */
     private boolean principalWithDomainName;
 

@@ -2,11 +2,14 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.CoreAttributesTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
@@ -15,16 +18,14 @@ import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -41,11 +42,12 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Tag("Attributes")
+@Tag("AttributeRelease")
+@ExtendWith(CasTestExtension.class)
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class
 })
 class ReturnMappedAttributeReleasePolicyTests {
 
@@ -139,7 +141,7 @@ class ReturnMappedAttributeReleasePolicyTests {
             .build();
         val result = policyWritten.getAttributes(releasePolicyContext);
         assertTrue(result.containsKey("attr1"));
-        assertEquals(2, ((Collection) result.get("attr1")).size());
+        assertEquals(2, result.get("attr1").size());
     }
 
     @Test
@@ -324,7 +326,7 @@ class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyRequestedDefinitions() throws Throwable {
+    void verifyRequestedDefinitions() {
         val allowed1 = CollectionUtils.<String, Object>wrap("uid", "my-userid");
         val policy = new ReturnMappedAttributeReleasePolicy().setAllowedAttributes(allowed1);
 
@@ -365,7 +367,7 @@ class ReturnMappedAttributeReleasePolicyTests {
     @Test
     void verifyExternalGroovyFailsPartially() throws Throwable {
         val allowed1 = ArrayListMultimap.<String, Object>create();
-        val file = File.createTempFile("something", ".groovy");
+        val file = Files.createTempFile("something", ".groovy").toFile();
         FileUtils.write(file, "bad-data", StandardCharsets.UTF_8);
         allowed1.put("attr1", "file:" + file.getCanonicalPath());
         allowed1.put("uid", "userId");
@@ -428,7 +430,7 @@ class ReturnMappedAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyChainDependingOnPreviousAttributes() throws Throwable {
+    void verifyChainDependingOnPreviousAttributes() {
         val policy1 = new ReturnMappedAttributeReleasePolicy();
         policy1.setAllowedAttributes(CollectionUtils.wrap("uid", "my-userid"));
         policy1.setOrder(1);

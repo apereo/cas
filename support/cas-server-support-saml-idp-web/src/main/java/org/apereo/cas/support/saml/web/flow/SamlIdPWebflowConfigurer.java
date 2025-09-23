@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
-
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -21,10 +20,10 @@ import org.springframework.webflow.engine.support.TransitionExecutingFlowExecuti
 public class SamlIdPWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public SamlIdPWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-        final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+                                    final FlowDefinitionRegistry flowDefinitionRegistry,
+                                    final ConfigurableApplicationContext applicationContext,
+                                    final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override
@@ -33,9 +32,9 @@ public class SamlIdPWebflowConfigurer extends AbstractCasWebflowConfigurer {
         if (flow != null) {
             val state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             state.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SAML_IDP_METADATA_UI_PARSER));
-            val h = new TransitionExecutingFlowExecutionExceptionHandler();
-            h.add(SamlException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
-            flow.getExceptionHandlerSet().add(h);
+            val handler = new TransitionExecutingFlowExecutionExceptionHandler();
+            handler.add(SamlException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
+            flow.getExceptionHandlerSet().add(handler);
         }
     }
 }

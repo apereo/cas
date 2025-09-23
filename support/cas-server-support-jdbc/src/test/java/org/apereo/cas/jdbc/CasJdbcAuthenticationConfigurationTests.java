@@ -4,8 +4,11 @@ import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -16,20 +19,19 @@ import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,12 +56,12 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.jdbc.query[0].driver-class=org.hsqldb.jdbcDriver",
         "cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-authn-db",
         "cas.authn.jdbc.query[0].dialect=org.hibernate.dialect.HSQLDialect",
-
-        "cas.authn.jdbc.search[0].order=1000",
         "cas.authn.jdbc.query[0].field-user=uid",
         "cas.authn.jdbc.query[0].field-password=psw",
         "cas.authn.jdbc.query[0].table-users=custom_users_table",
 
+        "cas.authn.jdbc.search[0].order=1000",
+        
         "cas.authn.jdbc.bind[0].name=BindHandler",
         "cas.authn.jdbc.bind[0].order=1000",
         "cas.authn.jdbc.bind[0].driver-class=org.hsqldb.jdbcDriver",
@@ -67,6 +69,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.jdbc.bind[0].dialect=org.hibernate.dialect.HSQLDialect"
     })
 @Tag("JDBCAuthentication")
+@ExtendWith(CasTestExtension.class)
 class CasJdbcAuthenticationConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -76,7 +79,7 @@ class CasJdbcAuthenticationConfigurationTests {
     private AuthenticationManager authenticationManager;
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         val props = casProperties.getAuthn().getJdbc().getQuery().getFirst();
         val dataSource = JpaBeans.newDataSource(props.getDriverClass(), props.getUser(),
             props.getPassword(), props.getUrl());
@@ -98,14 +101,8 @@ class CasJdbcAuthenticationConfigurationTests {
         assertNotNull(result);
     }
 
+    @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
-        MailSenderAutoConfiguration.class,
-        AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
         CasHibernateJpaAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
@@ -113,12 +110,16 @@ class CasJdbcAuthenticationConfigurationTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
+        CasCoreMultitenancyAutoConfiguration.class,
+        CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasJdbcAuthenticationAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(CasRegisteredServicesTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 

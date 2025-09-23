@@ -1,19 +1,26 @@
-
 {
   "@class": "java.util.HashMap",
-  "casuser":
-  [
+  "casuser": [
     "java.util.ArrayList",
     [
       {
         "@class": "org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount",
-        "scratchCodes":
-        [
+        "scratchCodes": [
           "java.util.ArrayList",
           [
+            20207703,
+            20207711,
+            20207712,
             62216084,
+            20207700,
+            20207701,
             20207704,
-            20207705
+            20207705,
+            20207706,
+            20207707,
+            20207708,
+            20207709,
+            20207710
           ]
         ],
         "id": 1,
@@ -21,7 +28,8 @@
         "validationCode": 999666,
         "username": "casuser",
         "name": "RecordName",
-        "registrationDate": "2020-12-13T07:07:17.905141Z"
+        "registrationDate": "2020-12-13T07:07:17.905141Z",
+        "source": "Google Authenticator"
       }
     ]
   ]

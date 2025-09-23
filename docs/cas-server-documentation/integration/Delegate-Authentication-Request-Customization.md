@@ -8,7 +8,7 @@ category: Authentication
 
 # Delegated Authentication Request Customization
 
-Authentication (HTTP) requests that are sent from CAS to configured identity providers are can be 
+Authentication (HTTP) requests that are sent from CAS to configured identity providers can be
 customized at runtime. This customization phase of the authentication request happens right before the request 
 is constructed and passed onto the client browser. Before the customizer proceeds, it also must declare its support 
 for the given identity provider and/or request, and it also is given the chance to determine if the identity provider 
@@ -58,7 +58,9 @@ The parameters passed are as follows:
 | `service`    | The `WebApplicationService` for the incoming application request.           |
 | `appContext` | The Spring `ApplicationContext`.                                            |
 | `logger`     | The object responsible for issuing log messages such as `logger.info(...)`. |
-  
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 ## Custom
 
 For more advanced scenarios, you can also design your webflow exception handler

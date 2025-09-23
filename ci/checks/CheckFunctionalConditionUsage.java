@@ -19,6 +19,7 @@ public class CheckFunctionalConditionUsage {
 
     private static void print(final String message, final Object... args) {
         //CHECKSTYLE:OFF
+        System.out.print("\uD83C\uDFC1 ");
         System.out.printf(message, args);
         //CHECKSTYLE:ON
     }
@@ -28,14 +29,6 @@ public class CheckFunctionalConditionUsage {
             return Files.readString(file);
         } catch (final IOException e) {
             throw new RuntimeException(file.toFile().getAbsolutePath(), e);
-        }
-    }
-
-    private static void writeFile(final Path file, final String value) {
-        try {
-            Files.writeString(file, value, StandardCharsets.UTF_8);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

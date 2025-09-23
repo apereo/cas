@@ -28,6 +28,12 @@ public class OpenSamlConfigurationPropertiesSource implements ConfigurationPrope
      */
     public static final String CONFIG_APACHE_XML_IGNORE_LINEBREAKS = "org.apache.xml.security.ignoreLineBreaks";
 
+    static {
+        System.setProperty(CONFIG_STRICT_MODE, "true");
+        System.setProperty(CONFIG_SUN_XML_IGNORE_LINEBREAKS, "true");
+        System.setProperty(CONFIG_APACHE_XML_IGNORE_LINEBREAKS, "true");
+    }
+    
     @Override
     public ConfigurationProperties getProperties() {
         val properties = new Properties();

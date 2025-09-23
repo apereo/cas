@@ -1,9 +1,11 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("AuthenticationThrottling")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class ConcurrentThrottledSubmissionsStoreTests {
@@ -28,7 +31,7 @@ class ConcurrentThrottledSubmissionsStoreTests {
     private ThrottledSubmissionsStore<ThrottledSubmission> throttleSubmissionStore;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val key = UUID.randomUUID().toString();
         throttleSubmissionStore.put(ThrottledSubmission.builder().key(key).build());
         assertNotNull(throttleSubmissionStore.get(key));
@@ -39,7 +42,7 @@ class ConcurrentThrottledSubmissionsStoreTests {
     }
 
     @Test
-    void verifyExpiredSubmissions() throws Throwable {
+    void verifyExpiredSubmissions() {
         val submission = ThrottledSubmission
             .builder()
             .key(UUID.randomUUID().toString())
@@ -60,7 +63,7 @@ class ConcurrentThrottledSubmissionsStoreTests {
     }
 
     @Test
-    void verifyExpirationWindowDuringRelease() throws Throwable {
+    void verifyExpirationWindowDuringRelease() {
         val submission = ThrottledSubmission
             .builder()
             .key(UUID.randomUUID().toString())

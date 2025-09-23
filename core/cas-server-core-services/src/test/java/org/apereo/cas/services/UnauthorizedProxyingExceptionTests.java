@@ -16,20 +16,20 @@ class UnauthorizedProxyingExceptionTests {
     private static final String MESSAGE = "GG";
 
     @Test
-    void verifyGetCode() throws Throwable {
+    void verifyGetCode() {
         val e = new UnauthorizedProxyingException();
         assertEquals(UnauthorizedProxyingException.CODE, e.getMessage());
     }
 
     @Test
-    void verifyCodeConstructor() throws Throwable {
+    void verifyCodeConstructor() {
         val e = new UnauthorizedProxyingException(MESSAGE);
 
         assertEquals(MESSAGE, e.getMessage());
     }
 
     @Test
-    void verifyThrowableConstructorWithCode() throws Throwable {
+    void verifyThrowableConstructorWithCode() {
         val r = new RuntimeException();
         val e = new UnauthorizedProxyingException(MESSAGE, r);
 

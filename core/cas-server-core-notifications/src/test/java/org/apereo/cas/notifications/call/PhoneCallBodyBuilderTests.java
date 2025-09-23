@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("SMS")
-public class PhoneCallBodyBuilderTests {
+class PhoneCallBodyBuilderTests {
     @Test
     void verifyOperation() {
         val body = PhoneCallBodyBuilder.builder()

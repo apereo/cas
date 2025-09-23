@@ -4,9 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,8 +60,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
 
     protected Optional<String> getMappedClaim(final String claim,
                                               final RegisteredServiceAttributeReleasePolicyContext context) {
-        val applicationContext = ApplicationContextProvider.getApplicationContext();
-        val mapper = applicationContext.getBean(OidcAttributeToScopeClaimMapper.DEFAULT_BEAN_NAME,
+        val mapper = context.getApplicationContext().getBean(OidcAttributeToScopeClaimMapper.DEFAULT_BEAN_NAME,
             OidcAttributeToScopeClaimMapper.class);
         LOGGER.debug("Attempting to process claim [{}]", claim);
         return mapper.containsMappedAttribute(claim, context.getRegisteredService())
@@ -79,9 +76,10 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
             val mappedAttr = mappedClaimResult.get();
             LOGGER.trace("Attribute [{}] is mapped to claim [{}]", mappedAttr, claim);
 
-            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttr);
-            if (matcherInline.find()) {
-                val script = matcherInline.group(1);
+            val scriptFactoryInstance = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+
+            if (scriptFactoryInstance.isPresent() && scriptFactoryInstance.get().isInlineScript(mappedAttr)) {
+                val script = scriptFactoryInstance.get().getInlineScript(mappedAttr).orElseThrow();
                 LOGGER.trace("Locating attribute value via script [{}] for definition [{}]", script, claim);
                 try (val cacheManager = ApplicationContextProvider.getScriptResourceCacheManager()
                     .orElseThrow(() -> new IllegalArgumentException("No groovy script cache manager is available to execute claim mappings"))) {
@@ -102,13 +100,13 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
             if (resolvedAttributes.containsKey(claim)) {
                 val value = resolvedAttributes.get(claim);
                 LOGGER.debug("CAS is unable to find the attribute [{}] that is mapped to claim [{}]. "
-                             + "However, since resolved attributes [{}] already contain this claim, "
-                             + "CAS will use [{}] with value(s) [{}]",
+                        + "However, since resolved attributes [{}] already contain this claim, "
+                        + "CAS will use [{}] with value(s) [{}]",
                     mappedAttr, claim, resolvedAttributes, claim, value);
                 return Pair.of(claim, value);
             }
             LOGGER.warn("Located claim [{}] mapped to attribute [{}], yet "
-                        + "resolved attributes [{}] do not contain attribute [{}]",
+                    + "resolved attributes [{}] do not contain attribute [{}]",
                 claim, mappedAttr, resolvedAttributes, mappedAttr);
         }
 
@@ -120,25 +118,23 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     @Override
     public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
                                                            final Map<String, List<Object>> attributes) {
-        val applicationContext = ApplicationContextProvider.getApplicationContext();
-        if (applicationContext == null) {
-            LOGGER.warn("Could not locate the application context to process attributes");
-            return new HashMap<>(0);
-        }
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);
 
         val attributesToRelease = new HashMap<String, List<Object>>(attributes.size());
         LOGGER.debug("Attempting to map and filter claims based on resolved attributes [{}]", resolvedAttributes);
 
-        val properties = applicationContext.getBean(CasConfigurationProperties.class);
-        val supportedClaims = properties.getAuthn().getOidc().getDiscovery().getClaims();
-
         val allowedClaims = new LinkedHashSet<>(getAllowedAttributes());
-        allowedClaims.retainAll(supportedClaims);
-        LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
-                     + "supported claims [{}], the final collection of allowed attributes is [{}]",
-            getClass().getSimpleName(), getAllowedAttributes(), getScopeType(), supportedClaims, allowedClaims);
+        if (claimsMustBeDefinedViaDiscovery()) {
+            val properties = context.getApplicationContext().getBean(CasConfigurationProperties.class);
+            val supportedClaims = properties.getAuthn().getOidc().getDiscovery().getClaims();
+            allowedClaims.retainAll(supportedClaims);
+            LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
+                    + "supported claims [{}], the final collection of allowed attributes is [{}]",
+                getClass().getSimpleName(), getAllowedAttributes(), getScopeType(), supportedClaims, allowedClaims);
+        } else {
+            LOGGER.debug("[{}] is designed to allow claims [{}].", getClass().getSimpleName(), allowedClaims);
+        }
 
         allowedClaims
             .stream()
@@ -152,5 +148,10 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     public List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
         val attributes = getAllowedAttributes();
         return attributes != null ? attributes : new ArrayList<>();
+    }
+
+    @JsonIgnore
+    protected boolean claimsMustBeDefinedViaDiscovery() {
+        return true;
     }
 }

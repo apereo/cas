@@ -1,16 +1,16 @@
 package org.apereo.cas.util.cipher;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,15 +21,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Cipher")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class WebflowConversationStateCipherExecutorTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    void verifyAction() throws Throwable {
-        val cipher = new WebflowConversationStateCipherExecutor(null, null,
-            "AES", 512, 16, "webflow");
+    void verifyAction() {
+        val cipher = new WebflowConversationStateCipherExecutor("AES", 512, 16);
         val encoded = cipher.encode("ST-1234567890".getBytes(StandardCharsets.UTF_8));
         assertEquals("ST-1234567890", new String(cipher.decode(encoded), StandardCharsets.UTF_8));
         assertNotNull(cipher.getName());
@@ -38,7 +38,7 @@ class WebflowConversationStateCipherExecutorTests {
     }
 
     @Test
-    void verifyCipherWithProps() throws Throwable {
+    void verifyCipherWithProps() {
         val crypto = casProperties.getWebflow().getCrypto();
         val cipher = new WebflowConversationStateCipherExecutor(
             "P4fxK62MCY5xL5y1DGb3_Q",
@@ -55,7 +55,7 @@ class WebflowConversationStateCipherExecutorTests {
     }
 
     @Test
-    void verifyCipherWithoutSigning() throws Throwable {
+    void verifyCipherWithoutSigning() {
         val crypto = casProperties.getWebflow().getCrypto();
         val cipher = new WebflowConversationStateCipherExecutor(
             "P4fxK62MCY5xL5y1DGb3_Q",

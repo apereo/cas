@@ -7,8 +7,8 @@ import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseWsFederationWebflowTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.wsfed[0].identity-provider-url=https://example.com/adfs/ls/",
@@ -92,7 +94,7 @@ class WsFederationResponseValidatorTests {
 
         context.setRemoteAddr("185.86.151.11");
         context.setLocalAddr("185.88.151.11");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.withUserAgent();
         context.setClientInfo();
 
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://wsfedservice-validate");
@@ -103,7 +105,7 @@ class WsFederationResponseValidatorTests {
         val wsConfig = wsFederationConfigurations.toList().getFirst();
         val id = wsConfig.getId();
         context.setParameter(WsFederationNavigationController.PARAMETER_NAME, id);
-        wsFederationNavigationController.redirectToProvider(context.getHttpServletRequest(), context.getHttpServletResponse());
+        wsFederationNavigationController.redirectToProvider(id, context.getHttpServletRequest(), context.getHttpServletResponse());
         context.setRequestCookiesFromResponse();
 
         val wresult = IOUtils.toString(new ClassPathResource("goodTokenResponse.txt").getInputStream(), StandardCharsets.UTF_8);

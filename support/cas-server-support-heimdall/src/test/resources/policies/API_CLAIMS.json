@@ -1,0 +1,40 @@
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources",
+  "resources": [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 1453626,
+        "pattern": "/api/claims",
+        "method": "PUT",
+        "policies": [ "java.util.ArrayList", [
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredIssuerAuthorizationPolicy",
+            "issuer" : "^http://.*"
+          },
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAMRAuthorizationPolicy",
+            "amrs" : [ "java.util.HashSet", [ "mfa-.*" ] ]
+          },
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredACRAuthorizationPolicy",
+            "acrs" : [ "java.util.HashSet", [ ".*" ] ]
+          },
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RejectedAttributesAuthorizationPolicy",
+            "attributes" : {
+              "@class" : "java.util.HashMap",
+              "jurisdiction" : [ "java.util.HashSet", [ ".*land.*" ] ]
+            }
+          },
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAudienceAuthorizationPolicy",
+            "audience" : [ "java.util.HashSet", [ ".*" ] ]
+          }
+        ]]
+      }
+    ]
+  ],
+  "namespace": "API_CLAIMS"
+}

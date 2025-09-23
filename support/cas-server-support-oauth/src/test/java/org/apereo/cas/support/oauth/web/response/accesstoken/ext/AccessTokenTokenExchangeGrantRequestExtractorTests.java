@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("OAuth")
-public class AccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOAuth20Tests {
+class AccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("accessTokenTokenExchangeGrantRequestExtractor")
     private AccessTokenGrantRequestExtractor extractor;

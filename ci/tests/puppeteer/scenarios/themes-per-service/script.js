@@ -1,5 +1,4 @@
 
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -15,7 +14,7 @@ const cas = require("../../cas.js");
     const imgs = await page.$$eval("#cas-logo", (imgs) => imgs.map((img) => img.getAttribute("src")));
     const logo = imgs.pop();
     await cas.log(logo);
-    assert(logo === "/cas/themes/example/images/logo.png");
+    await cas.assertTextMatches(logo, /\/cas\/themes\/example\/images\/logo-.*.png/);
 
     await cas.log("Logging out...");
     await cas.goto(page, `https://localhost:8443/cas/logout?service=${service}`);
@@ -28,13 +27,12 @@ const cas = require("../../cas.js");
     await cas.submitForm(page, "#fm1");
 
     await cas.sleep(1000);
-    const url = await page.url();
     await cas.logPage(page);
-    assert(url.toString().startsWith("https://localhost:8443/cas/logout"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:8443/cas/logout");
     await cas.assertCookie(page, false);
 
     await cas.assertVisibility(page, "#twitter-link");
     await cas.assertVisibility(page, "#youtube-link");
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

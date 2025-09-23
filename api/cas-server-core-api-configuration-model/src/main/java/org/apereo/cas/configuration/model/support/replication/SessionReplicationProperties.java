@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.replication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -16,12 +15,13 @@ import java.io.Serializable;
  *
  * @author Jerome LELEU
  * @since 6.1.2
+ * @deprecated Since 7.3.0.
  */
 @RequiresModule(name = "cas-server-core-api", automated = true)
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SessionReplicationProperties")
+@Deprecated(since = "7.3.0", forRemoval = true)
 public class SessionReplicationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -3839399712674610962L;
@@ -34,13 +34,17 @@ public class SessionReplicationProperties implements Serializable {
      * Without this option, profile data and other related
      * pieces of information should be manually replicated
      * via means and libraries outside of CAS.
+     * @deprecated since 7.3.0
      */
+    @Deprecated(since = "7.3.0", forRemoval = true)
     private boolean replicateSessions = true;
 
     /**
      * Cookie setting for session replication.
+     * @deprecated since 7.3.0
      */
     @NestedConfigurationProperty
+    @Deprecated(since = "7.3.0", forRemoval = true)
     private CookieSessionReplicationProperties cookie = new CookieSessionReplicationProperties();
 
 }

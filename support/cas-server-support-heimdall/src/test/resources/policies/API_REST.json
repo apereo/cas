@@ -1,0 +1,25 @@
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources",
+  "resources": [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 22453625,
+        "pattern": "/api/rest",
+        "method": "POST",
+        "policies": [ "java.util.ArrayList", [
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RestfulAuthorizationPolicy",
+            "url": "http://localhost:9581",
+            "headers": {
+              "@class": "java.util.LinkedHashMap",
+              "header": "${#randomNumber8}"
+            }
+          }
+        ]]
+      }
+    ]
+  ],
+  "namespace": "API_REST"
+}

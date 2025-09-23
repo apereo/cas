@@ -1,6 +1,3 @@
-
-const assert = require("assert");
-
 const cas = require("../../cas.js");
 
 (async () => {
@@ -9,8 +6,7 @@ const cas = require("../../cas.js");
 
     await cas.gotoLogin(page);
 
-    const pswd = await page.$("#password");
-    assert(pswd === null);
+    await cas.assertElementDoesNotExist(page, "#password");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
@@ -30,5 +26,5 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "firstname");
     await cas.sleep(2000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -1,0 +1,22 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "...",
+  "clientSecret": "...",
+  "serviceId": "^https://.*",
+  "name": "OIDC",
+  "id": 2,
+  "description": "OpenID Connect service definition that allows the client to use the authorization code grant flow and directly controls the attribute release policy regardless of scopes.",
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code", "client_credentials" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "scopes" : [ "java.util.HashSet", ["openid"]],
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "name" : "groovy { return ['casuser'] }",
+      "cn" : "groovy { return 'CAS' }",
+      "membership": "groups",
+      "given-name" : "groovy { return 'CAS User' }"
+    }
+  }
+}

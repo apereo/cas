@@ -3,6 +3,7 @@ package org.apereo.inspektr.common.web;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import jakarta.annotation.Nonnull;
 import java.util.HashMap;
@@ -18,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Audits")
-public class ClientInfoTests {
+class ClientInfoTests {
     @Test
-    void verifyClientInfoCreation() throws Throwable {
+    void verifyClientInfoCreation() {
         try {
             val clientInfo = new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "Paris")
                 .setHeaders(new HashMap<>())
@@ -43,7 +44,7 @@ public class ClientInfoTests {
     }
 
     @Test
-    void verifyClientInfoFromHttp() throws Throwable {
+    void verifyClientInfoFromHttp() {
         try {
             val request = getHttpServletRequest();
             ClientInfoHolder.setClientInfo(ClientInfo.from(request));
@@ -57,7 +58,7 @@ public class ClientInfoTests {
     }
 
     @Test
-    void verifyClientInfoWithServerHost() throws Throwable {
+    void verifyClientInfoWithServerHost() {
         try {
             val request = getHttpServletRequest();
             val options = ClientInfoExtractionOptions.builder()
@@ -76,7 +77,7 @@ public class ClientInfoTests {
     }
 
     @Test
-    void verifyHeaderExtractionForAllHeaders() throws Throwable {
+    void verifyHeaderExtractionForAllHeaders() {
         try {
             val request = getHttpServletRequest();
             val options = ClientInfoExtractionOptions.builder()
@@ -88,33 +89,33 @@ public class ClientInfoTests {
             val clientInfo = ClientInfo.from(request, options);
             assertTrue(clientInfo.getHeaders().containsKey("server-header"));
             assertTrue(clientInfo.getHeaders().containsKey("client-header"));
-            assertTrue(clientInfo.getHeaders().containsKey("user-agent"));
+            assertTrue(clientInfo.getHeaders().containsKey(HttpHeaders.USER_AGENT));
         } finally {
             ClientInfoHolder.clear();
         }
     }
 
     @Test
-    void verifyHeaderExtractionForDefinedHeaders() throws Throwable {
+    void verifyHeaderExtractionForDefinedHeaders() {
         try {
             val request = getHttpServletRequest();
             val options = ClientInfoExtractionOptions.builder()
                 .useServerHostAddress(true)
                 .alternateServerAddrHeaderName("server-header")
                 .alternateLocalAddrHeaderName("client-header")
-                .httpRequestHeaders(List.of("user-agent"))
+                .httpRequestHeaders(List.of(HttpHeaders.USER_AGENT))
                 .build();
             val clientInfo = ClientInfo.from(request, options);
             assertFalse(clientInfo.getHeaders().containsKey("server-header"));
             assertFalse(clientInfo.getHeaders().containsKey("client-header"));
-            assertTrue(clientInfo.getHeaders().containsKey("user-agent"));
+            assertTrue(clientInfo.getHeaders().containsKey(HttpHeaders.USER_AGENT));
         } finally {
             ClientInfoHolder.clear();
         }
     }
 
     @Test
-    void verifyClientInfoWithoutServerHost() throws Throwable {
+    void verifyClientInfoWithoutServerHost() {
         try {
             val request = getHttpServletRequest();
             val options = ClientInfoExtractionOptions.builder()
@@ -137,7 +138,7 @@ public class ClientInfoTests {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.11");
         request.setLocalAddr("185.88.151.11");
-        request.addHeader("user-agent", "firefox");
+        request.addHeader(HttpHeaders.USER_AGENT, "firefox");
         request.addHeader("server-header", "1.2.3.4");
         request.addHeader("client-header", "5.6.7.8");
         return request;

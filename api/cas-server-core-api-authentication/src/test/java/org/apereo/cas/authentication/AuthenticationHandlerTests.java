@@ -35,7 +35,7 @@ class AuthenticationHandlerTests {
     }
 
     @Test
-    void verifyDisabledOperation() throws Throwable {
+    void verifyDisabledOperation() {
         val input = AuthenticationHandler.disabled();
 
         assertEquals(AuthenticationHandlerStates.ACTIVE, input.getState());

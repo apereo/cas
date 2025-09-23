@@ -92,14 +92,7 @@ about how to configure SAML2 security configuration.
   
 ## Unsolicited SSO
 
-SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
-
-| Parameter    | Description                                                    |
-|--------------|----------------------------------------------------------------|
-| `providerId` | Required. Entity ID of the service provider.                   |
-| `shire`      | Optional. Response location (ACS URL) of the service provider. |
-| `target`     | Optional. Relay state.                                         |
-| `time`       | Optional. Skew the authentication request.                     |
+Please see [this guide](../authentication/Configuring-SAML2-Authentication-Unsolicited.html) for more details.
 
 ## Attribute Queries
 
@@ -111,11 +104,6 @@ For Java-based applications, the following frameworks may be used to integrate y
 
 - [Spring Security SAML](https://docs.spring.io/spring-security/reference)
 - [Pac4j](http://www.pac4j.org/docs/clients/saml.html)
-
-## Sample Client Applications
-
-- [Spring Security SAML Sample Webapp](https://github.com/apereo/saml2-sample-java-webapp)
-- [SAMLTEST.ID](https://samltest.id/)
 
 ## Troubleshooting
 

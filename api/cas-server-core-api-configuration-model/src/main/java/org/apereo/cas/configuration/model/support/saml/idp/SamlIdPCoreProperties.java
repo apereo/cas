@@ -1,15 +1,16 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
 import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
+import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.configuration.model.support.replication.SessionReplicationProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
@@ -27,7 +28,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SamlIdPCoreProperties")
 public class SamlIdPCoreProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -1848175783676789852L;
@@ -64,11 +64,21 @@ public class SamlIdPCoreProperties implements Serializable {
      * A mapping of attribute names to their friendly names, defined globally.
      * Example might be {@code urn:oid:1.3.6.1.4.1.5923.1.1.1.6->eduPersonPrincipalName}.
      */
-    private List<String> attributeFriendlyNames = new ArrayList<>(0);
+    private List<String> attributeFriendlyNames = new ArrayList<>();
 
     /**
      * Control settings for session replication.
+     * @deprecated Since 7.3.0.
      */
     @NestedConfigurationProperty
+    @Deprecated(since = "7.3.0", forRemoval = true)
     private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
+
+    @Deprecated(since = "7.3.0", forRemoval = true)
+    public SamlIdPCoreProperties() {
+        if (StringUtils.isBlank(getSessionReplication().getCookie().getName())) {
+            getSessionReplication().getCookie().setName("%s%s".formatted(
+                CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME, "SamlServerSupport"));
+        }
+    }
 }

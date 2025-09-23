@@ -56,11 +56,11 @@ public class CasSupportDynamoDbAuditAutoConfiguration {
         final DynamoDbClient amazonDynamoDbAuditTrailManagerClient,
         final CasConfigurationProperties casProperties) {
         val db = casProperties.getAudit().getDynamoDb();
-        val f = new DynamoDbAuditTrailManagerFacilitator(db, amazonDynamoDbAuditTrailManagerClient);
+        val facilitator = new DynamoDbAuditTrailManagerFacilitator(db, amazonDynamoDbAuditTrailManagerClient);
         if (!db.isPreventTableCreationOnStartup()) {
-            f.createTable(db.isDropTablesOnStartup());
+            facilitator.createTable(db.isDropTablesOnStartup());
         }
-        return f;
+        return facilitator;
     }
 
     @Bean

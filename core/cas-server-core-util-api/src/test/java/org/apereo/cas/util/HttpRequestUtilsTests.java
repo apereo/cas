@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class HttpRequestUtilsTests {
 
     @Test
-    void verifyBadGeoLocation() throws Throwable {
+    void verifyBadGeoLocation() {
         val request = new MockHttpServletRequest();
         request.setParameter("geolocation", "34,45,1,12345");
         assertNotNull(HttpRequestUtils.getHttpServletRequestGeoLocation(request));
@@ -31,18 +31,18 @@ class HttpRequestUtilsTests {
     }
 
     @Test
-    void verifyNoRequest() throws Throwable {
+    void verifyNoRequest() {
         assertNull(HttpRequestUtils.getHttpServletRequestFromRequestAttributes());
     }
 
     @Test
-    void verifyNoLoc() throws Throwable {
+    void verifyNoLoc() {
         val loc = HttpRequestUtils.getHttpServletRequestGeoLocation(new MockHttpServletRequest());
         assertNull(loc.getLongitude());
     }
 
     @Test
-    void verifyHeader() throws Throwable {
+    void verifyHeader() {
         val request = new MockHttpServletRequest();
         request.addHeader("h1", "v1");
         request.addHeader("h2", "v2");
@@ -50,7 +50,7 @@ class HttpRequestUtilsTests {
     }
 
     @Test
-    void verifyPing() throws Throwable {
+    void verifyPing() {
         assertNotNull(HttpRequestUtils.pingUrl("https://github.com"));
         assertEquals(HttpStatus.SERVICE_UNAVAILABLE, HttpRequestUtils.pingUrl("bad-endpoint"));
     }

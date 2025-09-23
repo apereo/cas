@@ -48,13 +48,13 @@ class TicketGrantingTicketExpirationPolicyTests extends BaseTicketFactoryTests {
     private TicketGrantingTicketImpl ticketGrantingTicket;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         expirationPolicy = new TicketGrantingTicketExpirationPolicy(HARD_TIMEOUT, SLIDING_TIMEOUT);
         ticketGrantingTicket = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), expirationPolicy);
     }
 
     @Test
-    void verifyTgtIsExpiredByHardTimeOut() throws Throwable {
+    void verifyTgtIsExpiredByHardTimeOut() {
         val creationTime = ticketGrantingTicket.getCreationTime();
 
         expirationPolicy.setClock(Clock.fixed(creationTime.plusSeconds(HARD_TIMEOUT).minusNanos(1).toInstant(), ZoneOffset.UTC));
@@ -67,7 +67,7 @@ class TicketGrantingTicketExpirationPolicyTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifyTgtIsExpiredBySlidingWindow() throws Throwable {
+    void verifyTgtIsExpiredBySlidingWindow() {
         ticketGrantingTicket.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(),
             expirationPolicy, false, serviceTicketSessionTrackingPolicy);
 
@@ -87,7 +87,7 @@ class TicketGrantingTicketExpirationPolicyTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, TicketGrantingTicketExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);

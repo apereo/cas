@@ -15,7 +15,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("Ignite")
-@Import(CasIgniteTicketRegistryAutoConfiguration.class)
+@ImportAutoConfiguration(CasIgniteTicketRegistryAutoConfiguration.class)
 @TestPropertySource(
     properties = {
         "cas.ticket.registry.ignite.tickets-cache.write-synchronization-mode=FULL_ASYNC",
@@ -60,7 +60,7 @@ class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("igniteConfiguration")
     private IgniteConfiguration igniteConfiguration;
-
+    
     @BeforeAll
     public static void beforeAll() throws Exception {
         val ks = KeyStore.getInstance("pkcs12");
@@ -72,10 +72,10 @@ class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(1)
-    void verifyDeleteUnknown() throws Throwable {
+    void verifyDeleteUnknown() {
         val catalog = mock(TicketCatalog.class);
-        val registry = new IgniteTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, catalog, igniteConfiguration,
-            casProperties.getTicket().getRegistry().getIgnite());
+        val registry = new IgniteTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, catalog, applicationContext,
+            igniteConfiguration, casProperties.getTicket().getRegistry().getIgnite());
         registry.initialize();
         assertTrue(registry.deleteSingleTicket(new MockTicketGrantingTicket(RegisteredServiceTestUtils.getAuthentication())) > 0);
         registry.destroy();

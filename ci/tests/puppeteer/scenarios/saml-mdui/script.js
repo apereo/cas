@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     await cas.logg("Testing dynamic metadata (MDQ) for MDUI");
     await runTestsFor(page, "urn:mace:incommon:uchicago.edu:mdupload", false);
     await runTestsFor(page, "http://unicon.instructure.com/saml2");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function runTestsFor(page, entityId, hasInfoUrl = true) {

@@ -2,8 +2,8 @@ package org.apereo.cas.support.pac4j.authentication.attributes;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,13 +18,13 @@ import java.io.Serializable;
  */
 @Slf4j
 public class GroovyAttributeConverter extends AbstractAttributeConverter {
-    private ExecutableCompiledGroovyScript script;
+    private ExecutableCompiledScript script;
 
     public GroovyAttributeConverter() {
         super(Serializable.class);
     }
 
-    public GroovyAttributeConverter(final ExecutableCompiledGroovyScript script) {
+    public GroovyAttributeConverter(final ExecutableCompiledScript script) {
         this();
         this.script = script;
     }
@@ -43,9 +43,9 @@ public class GroovyAttributeConverter extends AbstractAttributeConverter {
 
     @Override
     public Boolean accept(final String typeName) {
-        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(typeName);
-        if (matcherInline.find()) {
-            val inlineGroovy = matcherInline.group(1);
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        if (scriptFactory.isInlineScript(typeName)) {
+            val inlineGroovy = scriptFactory.getInlineScript(typeName).orElseThrow();
             val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager().orElseThrow(() ->
                 new RuntimeException("No Groovy script cache manager is available"));
             this.script = cacheMgr.resolveScriptableResource(inlineGroovy, inlineGroovy);

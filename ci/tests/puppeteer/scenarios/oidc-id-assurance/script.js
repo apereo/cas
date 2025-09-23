@@ -24,7 +24,7 @@ const assert = require("assert");
     assert(decoded["verified_claims"]["verification"]["evidence"][0]["type"] === "document");
     assert(decoded["verified_claims"]["claims"]["given_name"] === "CAS");
     assert(decoded["verified_claims"]["claims"]["family_name"] === "Apereo");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function getPayload(page, redirectUri, clientId, clientSecret) {

@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import java.util.function.Function;
@@ -38,32 +39,7 @@ public class CassandraTicketRegistryAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasTicketCatalogConfigurationValuesProvider cassandraTicketCatalogConfigurationValuesProvider() {
-        return new CasTicketCatalogConfigurationValuesProvider() {
-            @Override
-            public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
-                return p -> "serviceTicketsTable";
-            }
-
-            @Override
-            public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
-                return p -> "proxyTicketsTable";
-            }
-
-            @Override
-            public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
-                return p -> "ticketGrantingTicketsTable";
-            }
-
-            @Override
-            public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
-                return p -> "proxyGrantingTicketsTable";
-            }
-
-            @Override
-            public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
-                return p -> "transientSessionTicketsTable";
-            }
-        };
+        return new CassandraTicketCatalogConfigurationValuesProvider();
     }
     
     @Bean
@@ -71,6 +47,7 @@ public class CassandraTicketRegistryAutoConfiguration {
     public TicketRegistry ticketRegistry(
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("cassandraTicketRegistrySessionFactory")
         final CassandraSessionFactory cassandraTicketRegistrySessionFactory,
@@ -78,7 +55,7 @@ public class CassandraTicketRegistryAutoConfiguration {
         final TicketSerializationManager ticketSerializationManager) {
         val cassandra = casProperties.getTicket().getRegistry().getCassandra();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(cassandra.getCrypto(), "cassandra");
-        return new CassandraTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
+        return new CassandraTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, applicationContext,
             cassandraTicketRegistrySessionFactory, cassandra);
     }
 
@@ -91,5 +68,32 @@ public class CassandraTicketRegistryAutoConfiguration {
         final CasSSLContext casSslContext) {
         val cassandra = casProperties.getTicket().getRegistry().getCassandra();
         return new DefaultCassandraSessionFactory(cassandra, casSslContext.getSslContext());
+    }
+
+    private static final class CassandraTicketCatalogConfigurationValuesProvider implements CasTicketCatalogConfigurationValuesProvider {
+        @Override
+        public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
+            return p -> "serviceTicketsTable";
+        }
+
+        @Override
+        public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
+            return p -> "proxyTicketsTable";
+        }
+
+        @Override
+        public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
+            return p -> "ticketGrantingTicketsTable";
+        }
+
+        @Override
+        public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
+            return p -> "proxyGrantingTicketsTable";
+        }
+
+        @Override
+        public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
+            return p -> "transientSessionTicketsTable";
+        }
     }
 }

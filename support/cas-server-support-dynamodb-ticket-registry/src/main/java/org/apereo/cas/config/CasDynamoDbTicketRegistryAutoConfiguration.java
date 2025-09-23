@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -41,32 +42,7 @@ public class CasDynamoDbTicketRegistryAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasTicketCatalogConfigurationValuesProvider dynamoDbTicketCatalogConfigurationValuesProvider() {
-            return new CasTicketCatalogConfigurationValuesProvider() {
-                @Override
-                public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
-                    return p -> p.getTicket().getRegistry().getDynamoDb().getServiceTicketsTableName();
-                }
-
-                @Override
-                public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
-                    return p -> p.getTicket().getRegistry().getDynamoDb().getProxyTicketsTableName();
-                }
-
-                @Override
-                public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
-                    return p -> p.getTicket().getRegistry().getDynamoDb().getTicketGrantingTicketsTableName();
-                }
-
-                @Override
-                public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
-                    return p -> p.getTicket().getRegistry().getDynamoDb().getProxyGrantingTicketsTableName();
-                }
-
-                @Override
-                public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
-                    return p -> p.getTicket().getRegistry().getDynamoDb().getTransientSessionTicketsTableName();
-                }
-            };
+            return new DynamoDbTicketCatalogConfigurationValuesProvider();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -76,13 +52,42 @@ public class CasDynamoDbTicketRegistryAutoConfiguration {
             final TicketCatalog ticketCatalog,
             @Qualifier(TicketSerializationManager.BEAN_NAME)
             final TicketSerializationManager ticketSerializationManager,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("dynamoDbTicketRegistryFacilitator")
             final DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator,
             final CasConfigurationProperties casProperties) {
             val db = casProperties.getTicket().getRegistry().getDynamoDb();
             val crypto = db.getCrypto();
             val cipherExecutor = CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "dynamo-db");
-            return new DynamoDbTicketRegistry(cipherExecutor, ticketSerializationManager, ticketCatalog, dynamoDbTicketRegistryFacilitator);
+            return new DynamoDbTicketRegistry(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext,
+                dynamoDbTicketRegistryFacilitator);
+        }
+
+        private static final class DynamoDbTicketCatalogConfigurationValuesProvider implements CasTicketCatalogConfigurationValuesProvider {
+            @Override
+            public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getServiceTicketsTableName();
+            }
+
+            @Override
+            public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getProxyTicketsTableName();
+            }
+
+            @Override
+            public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getTicketGrantingTicketsTableName();
+            }
+
+            @Override
+            public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getProxyGrantingTicketsTableName();
+            }
+
+            @Override
+            public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
+                return p -> p.getTicket().getRegistry().getDynamoDb().getTransientSessionTicketsTableName();
+            }
         }
     }
 

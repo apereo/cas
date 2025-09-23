@@ -1,8 +1,8 @@
 package org.apereo.cas.util;
 
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * An implementation of {@link UniqueTicketIdGenerator} that is able auto-configure
@@ -22,14 +22,10 @@ import org.apache.commons.lang3.StringUtils;
  * @since 4.1.0
  */
 public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
+    public HostNameBasedUniqueTicketIdGenerator() {
+        this(UniqueTicketIdGenerator.TICKET_SIZE, StringUtils.EMPTY);
+    }
 
-
-    /**
-     * Instantiates a new Host name based unique ticket id generator.
-     *
-     * @param maxLength the max length
-     * @param suffix    the suffix
-     */
     public HostNameBasedUniqueTicketIdGenerator(final long maxLength, final String suffix) {
         super(maxLength, determineTicketSuffixByHostName(suffix));
     }
@@ -50,6 +46,9 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
      * @since 4.1.0
      */
     private static String determineTicketSuffixByHostName(final String suffix) {
+        if (Strings.CI.equals(suffix, "off")) {
+            return StringUtils.EMPTY;
+        }
         if (StringUtils.isNotBlank(suffix)) {
             return suffix;
         }

@@ -26,7 +26,7 @@ The configuration server itself, similar to CAS, can be deployed using the [CAS 
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-webapp-config-server" %}
 
-In addition to the [strategies outlined here](Configuration-Management.html#overview), the configuration server may load CAS settings and properties via the
+In addition to the [strategies outlined here](Configuration-Management.html), the configuration server may load CAS settings and properties via the
 following order and mechanics:
 
 1. Profile-specific application properties outside of your packaged web application (`application-{profile}.properties|yml`)

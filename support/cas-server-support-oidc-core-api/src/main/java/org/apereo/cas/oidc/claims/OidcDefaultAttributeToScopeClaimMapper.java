@@ -58,8 +58,8 @@ public class OidcDefaultAttributeToScopeClaimMapper implements OidcAttributeToSc
     }
 
     private static Stream<Map.Entry<String, String>> getClaimMappingsForPolicy(final RegisteredServiceAttributeReleasePolicy policy) {
-        return policy instanceof OidcRegisteredServiceAttributeReleasePolicy
-            ? ((OidcRegisteredServiceAttributeReleasePolicy) policy).getClaimMappings().entrySet().stream()
+        return policy instanceof final OidcRegisteredServiceAttributeReleasePolicy oidcPolicy
+            ? oidcPolicy.getClaimMappings().entrySet().stream()
             : Stream.empty();
     }
 }

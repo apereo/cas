@@ -27,7 +27,7 @@ public class AllServicesSessionTrackingPolicy implements TicketTrackingPolicy {
         val ticketGrantingTicket = (TicketGrantingTicket) ownerTicket;
         val trackedEntry = String.format("%s,%s", serviceTicket.getId(), serviceTicket.getService());
         lock.tryLock(__ -> {
-            ownerTicket.update();
+            ticketGrantingTicket.update();
             serviceTicket.getService().setPrincipal(ticketGrantingTicket.getRoot().getAuthentication().getPrincipal().getId());
             beforeTrackingServiceTicket(ownerTicket, serviceTicket);
             ticketGrantingTicket.getServices().put(serviceTicket.getId(), serviceTicket.getService());

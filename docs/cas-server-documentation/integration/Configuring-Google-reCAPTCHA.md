@@ -21,7 +21,7 @@ Support is enabled by including the following module in the WAR Overlay:
 
 <div class="alert alert-info">:information_source: <strong>Use Case</strong><p>Note that this particular integration
 applies to login and authentication attempts. Several other CAS modules do also support reCAPTCHA
-integrations for their own special flows, specially when it comes to reCAPTCHA activation strategies,
+integrations for their own special flows, especially when it comes to reCAPTCHA activation strategies,
 separate from what is documented and available here.</p></div>
 
 ## Internet Explorer

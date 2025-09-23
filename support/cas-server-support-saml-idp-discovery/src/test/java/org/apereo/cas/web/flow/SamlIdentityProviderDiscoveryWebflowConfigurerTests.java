@@ -3,13 +3,11 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasSamlIdentityProviderDiscoveryAutoConfiguration;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.webflow.engine.Flow;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,10 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import({
-    WebMvcAutoConfiguration.class,
-    MockMvcAutoConfiguration.class,
-    ErrorMvcAutoConfiguration.class,
+@SpringBootTestAutoConfigurations
+@ImportAutoConfiguration({
     CasCoreSamlAutoConfiguration.class,
     CasDelegatedAuthenticationAutoConfiguration.class,
     CasSamlIdentityProviderDiscoveryAutoConfiguration.class
@@ -30,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML2Web")
 class SamlIdentityProviderDiscoveryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
     }
 }

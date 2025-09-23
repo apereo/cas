@@ -2,12 +2,14 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,8 +28,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class ChainingRegisteredServiceAttributeReleaseActivationCriteriaTests {
+class ChainingRegisteredServiceAttributeReleaseActivationCriteriaTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -49,7 +52,7 @@ public class ChainingRegisteredServiceAttributeReleaseActivationCriteriaTests {
     }
 
     @Test
-    void verifyPolicyWithAND() throws Throwable {
+    void verifyPolicyWithAND() {
         val chain = new ChainingRegisteredServiceAttributeReleaseActivationCriteria().setOperator(LogicalOperatorTypes.AND);
         val criteria1 = new AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria()
             .setRequiredAttributes(Map.of("memberOf", List.of("sports")));
@@ -60,7 +63,7 @@ public class ChainingRegisteredServiceAttributeReleaseActivationCriteriaTests {
     }
 
     @Test
-    void verifyPolicyWithOR() throws Throwable {
+    void verifyPolicyWithOR() {
         val chain = new ChainingRegisteredServiceAttributeReleaseActivationCriteria().setOperator(LogicalOperatorTypes.OR);
         val criteria2 = new AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria()
             .setRequiredAttributes(Map.of("memberOf", List.of("staff")));
@@ -70,7 +73,7 @@ public class ChainingRegisteredServiceAttributeReleaseActivationCriteriaTests {
         assertTrue(getAttributesFromPolicy(chain));
     }
 
-    private boolean getAttributesFromPolicy(final RegisteredServiceAttributeReleaseActivationCriteria policy) throws Throwable {
+    private boolean getAttributesFromPolicy(final RegisteredServiceAttributeReleaseActivationCriteria policy) {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())

@@ -3,7 +3,6 @@ package org.apereo.cas.util;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -65,7 +64,8 @@ public class DateTimeUtils {
 
         if (result == null) {
             try {
-                result = LocalDateTime.parse(value.toUpperCase(Locale.ENGLISH), DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"));
+                result = LocalDateTime.parse(value.toUpperCase(Locale.ENGLISH),
+                    DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a", Locale.ENGLISH));
             } catch (final Exception e) {
                 result = null;
             }
@@ -73,7 +73,8 @@ public class DateTimeUtils {
 
         if (result == null) {
             try {
-                result = LocalDateTime.parse(value.toUpperCase(Locale.ENGLISH), DateTimeFormatter.ofPattern("MM/dd/yyyy h:mm a"));
+                result = LocalDateTime.parse(value.toUpperCase(Locale.ENGLISH),
+                    DateTimeFormatter.ofPattern("MM/dd/yyyy h:mm a", Locale.ENGLISH));
             } catch (final Exception e) {
                 result = null;
             }
@@ -81,7 +82,8 @@ public class DateTimeUtils {
 
         if (result == null) {
             try {
-                result = LocalDateTime.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm"));
+                result = LocalDateTime.parse(value,
+                    DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm", Locale.ENGLISH));
             } catch (final Exception e) {
                 result = null;
             }
@@ -89,7 +91,8 @@ public class DateTimeUtils {
 
         if (result == null) {
             try {
-                val ld = LocalDate.parse(value, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+                val ld = LocalDate.parse(value,
+                    DateTimeFormatter.ofPattern("MM/dd/yyyy", Locale.ENGLISH));
                 result = LocalDateTime.of(ld, LocalTime.now(ZoneId.systemDefault()));
             } catch (final Exception e) {
                 result = null;
@@ -253,26 +256,6 @@ public class DateTimeUtils {
 
     public static Date dateOf(final Instant time) {
         return Date.from(time);
-    }
-
-    /**
-     * Gets Timestamp for ZonedDateTime.
-     *
-     * @param time Time object to be converted.
-     * @return Timestamp representing time
-     */
-    public static Timestamp timestampOf(final ChronoZonedDateTime time) {
-        return timestampOf(time.toInstant());
-    }
-
-    /**
-     * Gets Timestamp for Instant.
-     *
-     * @param time Time object to be converted.
-     * @return Timestamp representing time
-     */
-    private static Timestamp timestampOf(final Instant time) {
-        return Timestamp.from(time);
     }
 
     /**

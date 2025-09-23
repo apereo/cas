@@ -33,7 +33,7 @@ class DefaultAuthenticationBuilderTests {
     }
 
     @Test
-    void verifyMergeCredentialMetadata() throws Throwable {
+    void verifyMergeCredentialMetadata() {
         val credential1 = getCredential();
         credential1.setCredentialMetadata(new BasicCredentialMetadata(credential1, Map.of("P1", "V1")));
         val credential2 = getCredential();
@@ -59,7 +59,7 @@ class DefaultAuthenticationBuilderTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val credential = getCredential();
         credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
 
@@ -88,16 +88,16 @@ class DefaultAuthenticationBuilderTests {
         builder2.mergeAttribute("key", CollectionUtils.wrapList(443322));
         val authn2 = builder2.build();
 
-        val resultBuilder = new DefaultAuthenticationResultBuilderFactory().newBuilder();
         val strategy = new DefaultPrincipalElectionStrategy();
+        val resultBuilder = new DefaultAuthenticationResultBuilderFactory(strategy).newBuilder();
         strategy.setAttributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED));
-        val resultAuthn = resultBuilder.collect(authn1).collect(authn2).build(strategy);
+        val resultAuthn = resultBuilder.collect(authn1).collect(authn2).build();
         assertNotNull(resultAuthn);
         assertEquals(5, resultAuthn.getAuthentication().getAttributes().get("key").size());
     }
 
     @Test
-    void verifyUpdateOperation() throws Throwable {
+    void verifyUpdateOperation() {
         val credential = getCredential();
         credential.setCredentialMetadata(new BasicCredentialMetadata(credential));
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
@@ -118,7 +118,7 @@ class DefaultAuthenticationBuilderTests {
     }
 
     @Test
-    void verifyMergeAttributes() throws Throwable {
+    void verifyMergeAttributes() {
         val authn = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication(Map.of("cn", List.of("cn1"))))
             .mergeAttributes(Map.of("cn", List.of("cn2")))
             .build();

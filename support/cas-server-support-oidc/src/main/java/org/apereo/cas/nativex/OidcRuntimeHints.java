@@ -44,7 +44,7 @@ public class OidcRuntimeHints implements CasRuntimeHintsRegistrar {
 
         val entries = findSubclassesInPackage(OidcJsonWebKeystoreGeneratorService.class, CentralAuthenticationService.NAMESPACE);
         registerReflectionHints(hints, entries);
-        registerSpringProxy(hints, OidcJsonWebKeystoreGeneratorService.class, DisposableBean.class);
+        registerSpringProxyHints(hints, OidcJsonWebKeystoreGeneratorService.class, DisposableBean.class);
     }
 
 }

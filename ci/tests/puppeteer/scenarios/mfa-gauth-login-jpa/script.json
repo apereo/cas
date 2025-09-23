@@ -1,0 +1,30 @@
+{
+  "dependencies": "gauth,gauth-jpa,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "server": "external",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=gauthCredentialRepository",
+    "--management.endpoints.access.default=UNRESTRICTED",
+    
+    "--cas.authn.mfa.gauth.core.multiple-device-registration-enabled=true",
+    "--cas.authn.mfa.gauth.core.maximum-authentication-attempts=3",
+    "--cas.authn.mfa.gauth.id=GoogleAuth",
+
+    "--cas.authn.mfa.gauth.crypto.signing.key=7zNPHGAiD-xPLt1EPJgbx9itrLg1zqnA6gI3YSWjwly6rVTSTwnM3h4DB4kt0rOCPZJGI1SmhVAxYw0G-lwJEw",
+    "--cas.authn.mfa.gauth.crypto.encryption.key=RdiUkQaVzPiAQThap5mcBxSJRgV027Ckxl2hWY_3_OSFqsRFliM-b8H4tLOF9j_irsb7_uJy1l49fjdlocc2wg",
+    
+    "--cas.authn.mfa.gauth.jpa.ddl-auto=create",
+    "--cas.authn.mfa.gauth.jpa.user=root",
+    "--cas.authn.mfa.gauth.jpa.password=mypass",
+    "--cas.authn.mfa.gauth.jpa.driver-class=org.mariadb.jdbc.Driver",
+    "--cas.authn.mfa.gauth.jpa.url=jdbc:mariadb://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "--cas.authn.mfa.gauth.jpa.dialect=org.hibernate.dialect.MariaDBDialect"
+  ],
+  "initScript": "${PWD}/ci/tests/mariadb/run-mariadb-server.sh"
+}

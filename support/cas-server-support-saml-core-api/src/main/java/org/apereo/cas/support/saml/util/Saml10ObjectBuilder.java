@@ -33,10 +33,8 @@ import org.opensaml.saml.saml1.core.SubjectConfirmation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
-import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -50,9 +48,6 @@ import java.util.Map;
 @Slf4j
 public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
-
-    @Serial
-    private static final long serialVersionUID = -4711012620700270554L;
 
     public Saml10ObjectBuilder(final OpenSamlConfigBean configBean) {
         super(configBean);
@@ -126,7 +121,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         val conditions = SamlUtils.newSamlObject(Conditions.class);
         conditions.setNotBefore(issuedAt.toInstant());
 
-        val notOnOrAfter = ZonedDateTime.now(ZoneOffset.UTC).plus(issueLength, ChronoUnit.SECONDS);
+        val notOnOrAfter = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(issueLength);
         conditions.setNotOnOrAfter(notOnOrAfter.toInstant());
 
         val audienceRestriction = SamlUtils.newSamlObject(AudienceRestrictionCondition.class);
@@ -138,7 +133,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     }
 
     /**
-     * New status status.
+     * New status.
      *
      * @param codeValue the code value
      * @return the status

@@ -13,7 +13,7 @@ import lombok.With;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-
+import org.apache.commons.lang3.Strings;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -108,7 +108,7 @@ public class DuoSecurityUserAccount implements Serializable {
      */
     @CanIgnoreReturnValue
     public DuoSecurityUserAccount addAttribute(final String key, final String value) {
-        if (!StringUtils.equalsAnyIgnoreCase("null", value) && StringUtils.isNotBlank(value)) {
+        if (!Strings.CI.equalsAny("null", value) && StringUtils.isNotBlank(value)) {
             this.metadata.put(key, value);
         }
         return this;
@@ -135,11 +135,11 @@ public class DuoSecurityUserAccount implements Serializable {
     }
 
     public Instant getLastLogin() {
-        return Instant.ofEpochMilli(Long.valueOf(metadata.getOrDefault("last_login", "0")));
+        return Instant.ofEpochMilli(Long.parseLong(metadata.getOrDefault("last_login", "0")));
     }
 
     public Instant getCreated() {
-        return Instant.ofEpochMilli(Long.valueOf(metadata.getOrDefault("created", "0")));
+        return Instant.ofEpochMilli(Long.parseLong(metadata.getOrDefault("created", "0")));
     }
 
     public boolean isEnrolled() {
@@ -149,8 +149,8 @@ public class DuoSecurityUserAccount implements Serializable {
     public String getPhone() {
         return this.devices
             .stream()
-            .filter(device -> StringUtils.equalsIgnoreCase(device.getType(), "phone")
-                || StringUtils.equalsIgnoreCase(device.getType(), "mobile"))
+            .filter(device -> Strings.CI.equals(device.getType(), "phone")
+                || Strings.CI.equals(device.getType(), "mobile"))
             .map(DuoSecurityUserDevice::getNumber)
             .filter(StringUtils::isNotBlank)
             .findFirst()

@@ -43,7 +43,7 @@ public class AttributeQueryAttributeReleasePolicy extends BaseSamlRegisteredServ
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
-        final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
+        final RegisteredServiceAttributeReleasePolicyContext context) {
 
         LOGGER.trace("Evaluating attribute release policy for service request [{}]", context.getService());
         return authorizeReleaseOfAllowedAttributes(context, attributes);
@@ -51,7 +51,7 @@ public class AttributeQueryAttributeReleasePolicy extends BaseSamlRegisteredServ
 
     @Override
     protected boolean supports(final RegisteredServiceAttributeReleasePolicyContext context) {
-        val serviceAttributes = context.getService().getAttributes().getOrDefault("owner", List.of());
+        val serviceAttributes = (List) context.getService().getAttributes().getOrDefault("owner", List.of());
         return super.supports(context) && serviceAttributes.contains(SamlAttributeQueryTicket.class.getName());
     }
 }

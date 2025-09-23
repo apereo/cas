@@ -1,0 +1,23 @@
+description = "Apereo CAS Scripting with Apache Groovy"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Apache Groovy",
+            category: "Scripting",
+            aliases: ["groovy"]
+    ]
+}
+
+dependencies {
+    api libraries.groovy
+
+    api project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-util")
+    api project(":api:cas-server-core-api-scripting")
+
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-util")
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+}

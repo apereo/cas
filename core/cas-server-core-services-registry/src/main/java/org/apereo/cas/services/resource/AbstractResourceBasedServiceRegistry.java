@@ -3,7 +3,6 @@ package org.apereo.cas.services.resource;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceDefinition;
 import org.apereo.cas.services.ResourceBasedServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
@@ -192,16 +191,13 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     @Override
     public RegisteredService save(final RegisteredService service) {
-        if (service.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
-            LOGGER.debug("Service id not set. Calculating id based on system time...");
-            service.setId(System.currentTimeMillis());
-        }
+        service.assignIdIfNecessary();
         val fileName = getRegisteredServiceFileName(service);
         try (val out = Files.newOutputStream(fileName.toPath())) {
             invokeServiceRegistryListenerPreSave(service);
-            val result = registeredServiceSerializers.stream().anyMatch(s -> {
+            val result = registeredServiceSerializers.stream().anyMatch(serializer -> {
                 try {
-                    s.to(out, service);
+                    serializer.to(out, service);
                     return true;
                 } catch (final Exception e) {
                     LOGGER.debug(e.getMessage(), e);
@@ -282,23 +278,23 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         val fileName = file.getName();
         if (!file.canRead()) {
             LOGGER.warn("[{}] is not readable. Check file permissions", fileName);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         if (!file.exists()) {
             LOGGER.warn("[{}] is not found at the path specified", fileName);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         if (file.length() == 0) {
             LOGGER.debug("[{}] appears to be empty so no service definition will be loaded", fileName);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
-        if (fileName.startsWith(".")) {
+        if (!fileName.isEmpty() && fileName.charAt(0) == '.') {
             LOGGER.debug("[{}] starts with ., ignoring", fileName);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
         if (Arrays.stream(getExtensions()).noneMatch(fileName::endsWith)) {
             LOGGER.debug("[{}] doesn't end with valid extension, ignoring", fileName);
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         }
 
         if (!RegexUtils.matches(this.serviceFileNamePattern, fileName)) {
@@ -325,7 +321,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             LOGGER.error("Error reading configuration file [{}]", fileName);
             LoggingUtils.error(LOGGER, e);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override
@@ -354,18 +350,13 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         this.serviceRegistryWatcherService.close();
     }
 
-    /**
-     * Remove registered service.
-     *
-     * @param service the service
-     */
     protected void removeRegisteredService(final RegisteredService service) {
         this.services.remove(service.getId());
     }
 
     protected RegisteredService getRegisteredServiceFromFile(final File file) {
         val fileName = file.getName();
-        if (fileName.startsWith(".")) {
+        if (!fileName.isEmpty() && fileName.charAt(0) == '.') {
             LOGGER.trace("[{}] starts with ., ignoring...", fileName);
             return null;
         }
@@ -425,9 +416,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                     final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                     final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                     final WatcherService serviceRegistryConfigWatcher) {
-        this.registeredServiceReplicationStrategy = ObjectUtils.defaultIfNull(registeredServiceReplicationStrategy,
+        this.registeredServiceReplicationStrategy = ObjectUtils.getIfNull(registeredServiceReplicationStrategy,
             new NoOpRegisteredServiceReplicationStrategy());
-        this.resourceNamingStrategy = ObjectUtils.defaultIfNull(resourceNamingStrategy, new DefaultRegisteredServiceResourceNamingStrategy());
+        this.resourceNamingStrategy = ObjectUtils.getIfNull(resourceNamingStrategy, new DefaultRegisteredServiceResourceNamingStrategy());
         this.registeredServiceSerializers = serializers;
 
         this.serviceFileNamePattern = resourceNamingStrategy.buildNamingPattern(getExtensions());

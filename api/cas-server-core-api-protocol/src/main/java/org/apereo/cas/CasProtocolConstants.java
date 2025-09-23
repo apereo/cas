@@ -120,6 +120,11 @@ public interface CasProtocolConstants {
      */
     String PARAMETER_PROXY_GRANTING_TICKET_URL = "pgtUrl";
 
+    /**
+     * Constant representing the logout parameter in the request.
+     */
+    String PARAMETER_LOGOUT_REQUEST = "logoutRequest";
+
     /* CAS Protocol Error Codes. **/
 
     /**

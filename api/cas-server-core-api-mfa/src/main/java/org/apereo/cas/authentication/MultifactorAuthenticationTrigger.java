@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.NamedObject;
 
 import org.springframework.core.Ordered;
 
@@ -17,7 +18,7 @@ import java.util.Optional;
  * @since 6.0.0
  */
 @FunctionalInterface
-public interface MultifactorAuthenticationTrigger extends Ordered {
+public interface MultifactorAuthenticationTrigger extends Ordered, NamedObject {
 
     /**
      * Is activated optional.
@@ -55,9 +56,5 @@ public interface MultifactorAuthenticationTrigger extends Ordered {
     @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
-    }
-
-    default String getName() {
-        return getClass().getSimpleName();
     }
 }

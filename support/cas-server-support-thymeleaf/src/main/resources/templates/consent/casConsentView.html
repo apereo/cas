@@ -14,12 +14,12 @@
         let data = {
             attributes: /*[[${attributes}]]*/
         };
-        function jqueryReady() {
+        document.addEventListener("DOMContentLoaded", (event) => {
             let consentjs = /*[[@{/js/consent.js}]]*/
 
             $.getScript(consentjs, (data, textStatus, jqxhr) => {
             });
-        }
+        });
 
         /*]]>*/
     </script>
@@ -65,7 +65,7 @@
 
 
                     <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divAttributes">
-                        <table id="attributesTable" class="table table-striped">
+                        <table id="attributesTable" class="table table-striped auto-init">
                             <thead>
                             <tr class="mdc-data-table__header-row">
                                 <th class="mdc-data-table__header-cell" role="columnheader" scope="col"
@@ -241,27 +241,12 @@
             </section>
             <hr class="my-4"/>
             <section class="cas-section form-actions mt-4 d-flex justify-content-center">
-                <button class="mdc-button mdc-button--raised btn btn-primary me-2"
-                        name="confirm"
-                        id="confirm"
-                        accesskey="l"
-                        type="submit">
-                    <span class="mdc-button__label" th:text="#{screen.consent.confirm}">Confirm</span>
-                </button>
-                <a class="mdc-button mdc-button--raised btn btn-outline-secondary" id="cancel" name="cancel"
-                   th:href="@{/login}">
+                <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.consent.confirm', id='confirm', name='confirm')}"/>
+                <a class="mdc-button mdc-button--raised btn btn-outline-secondary button-cancel" id="cancel" name="cancel" th:href="@{/login}">
                     <span class="mdc-button__label" th:text="#{screen.consent.cancel}">Cancel</span>
                 </a>
             </section>
         </form>
-
-        <script type="text/javascript" th:inline="javascript">
-            if (typeof mdc !== 'undefined') {
-                let div = document.querySelector('#divAttributes');
-                new mdc.dataTable.MDCDataTable(div);
-            }
-        </script>
-
     </div>
 </main>
 </body>

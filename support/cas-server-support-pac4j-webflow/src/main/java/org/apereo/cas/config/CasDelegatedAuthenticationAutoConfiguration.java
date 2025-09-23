@@ -23,7 +23,6 @@ import org.springframework.context.annotation.Import;
     DelegatedAuthenticationProvisioningConfiguration.class,
     DelegatedAuthenticationWebflowConfiguration.class,
     DelegatedAuthenticationDynamicDiscoverySelectionConfiguration.class,
-    DelegatedAuthenticationSAMLConfiguration.class,
     DelegatedAuthenticationProfileSelectionConfiguration.class
 })
 public class CasDelegatedAuthenticationAutoConfiguration {

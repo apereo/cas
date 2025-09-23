@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.CompressionUtils;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -17,6 +16,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
@@ -32,9 +32,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
+import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.Set;
 
@@ -45,7 +46,7 @@ import java.util.Set;
  * @since 5.3.0
  */
 @Slf4j
-@Endpoint(id = "multifactorTrustedDevices", enableByDefault = false)
+@Endpoint(id = "multifactorTrustedDevices", defaultAccess = Access.NONE)
 public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseCasRestActuatorEndpoint {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
@@ -79,19 +80,21 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
      * @return the set
      */
     @GetMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get collection of trusted devices for the user", parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH))
+    @Operation(summary = "Get collection of trusted devices for the user",
+        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to look up"))
     public Set<? extends MultifactorAuthenticationTrustRecord> devicesForUser(@PathVariable(name = "username") final String username) {
         cleanExpiredRecords();
         return mfaTrustEngine.getObject().get(username);
     }
-
+    
     /**
      * Revoke record and return status.
      *
      * @param key the key
      * @return the integer
      */
-    @Operation(summary = "Remove trusted device using its key", parameters = @Parameter(name = "key", required = true, in = ParameterIn.PATH))
+    @Operation(summary = "Remove trusted device using its key",
+        parameters = @Parameter(name = "key", required = true, in = ParameterIn.PATH, description = "The key to look up"))
     @DeleteMapping(value = "/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Integer revoke(@PathVariable(name = "key") final String key) {
         mfaTrustEngine.getObject().remove(key);
@@ -117,10 +120,10 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
      * @return the integer
      */
     @Operation(summary = "Remove expired trusted devices given an expiration date as a threshold",
-        parameters = @Parameter(name = "date", required = true, in = ParameterIn.QUERY))
+        parameters = @Parameter(name = "date", required = true, in = ParameterIn.QUERY, description = "The expiration date to use"))
     @DeleteMapping(value = "/expire", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Integer removeSince(@RequestParam(name = "expiration") final Date date) {
-        mfaTrustEngine.getObject().remove(DateTimeUtils.zonedDateTimeOf(date));
+    public Integer removeSince(@RequestParam(name = "expiration") final LocalDateTime date) {
+        mfaTrustEngine.getObject().remove(date.atZone(ZoneOffset.UTC));
         return HttpStatus.OK.value();
     }
 
@@ -139,8 +142,8 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
         val deviceRec = MAPPER.readValue(requestBody, new TypeReference<MultifactorAuthenticationTrustRecord>() {
         });
         LOGGER.trace("Storing device record: [{}]", deviceRec);
-        mfaTrustEngine.getObject().save(deviceRec);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        val created = mfaTrustEngine.getObject().save(deviceRec);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     /**
@@ -150,14 +153,15 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
      */
     @GetMapping(path = "/export/{username}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    @Operation(summary = "Export all device records as a zip file for a given username")
+    @Operation(summary = "Export all device records as a zip file for a given username",
+        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to look up"))
     public ResponseEntity<Resource> exportUserDevices(@PathVariable("username") final String username) {
         val accounts = mfaTrustEngine.getObject().get(username);
         val resource = CompressionUtils.toZipFile(accounts.stream(),
             Unchecked.function(entry -> {
                 val acct = (MultifactorAuthenticationTrustRecord) entry;
                 val fileName = String.format("%s-%s", acct.getPrincipal(), acct.getName());
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 MAPPER.writeValue(sourceFile, acct);
                 return sourceFile;
             }), "mfatrusteddevices-" + username);
@@ -181,7 +185,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
             Unchecked.function(entry -> {
                 val acct = (MultifactorAuthenticationTrustRecord) entry;
                 val fileName = String.format("%s-%s", acct.getPrincipal(), acct.getName());
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 MAPPER.writeValue(sourceFile, acct);
                 return sourceFile;
             }), "mfatrusteddevices");

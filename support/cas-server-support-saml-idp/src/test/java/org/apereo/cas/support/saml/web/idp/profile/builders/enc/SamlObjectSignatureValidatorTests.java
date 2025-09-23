@@ -137,7 +137,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
         val secContext = messageContext.ensureSubcontext(SecurityParametersContext.class);
 
         val provider = new DefaultSignatureSigningParametersProvider(saml2ClientConfiguration);
-        Objects.requireNonNull(secContext).setSignatureSigningParameters(provider.build(adaptor.ssoDescriptor()));
+        Objects.requireNonNull(secContext).setSignatureSigningParameters(provider.build(adaptor.getSsoDescriptor()));
 
         val handler = new SAMLOutboundProtocolMessageSigningHandler();
         handler.initialize();
@@ -171,7 +171,7 @@ class SamlObjectSignatureValidatorTests extends BaseSamlIdPConfigurationTests {
         val secContext = messageContext.ensureSubcontext(SecurityParametersContext.class);
 
         val provider = new DefaultSignatureSigningParametersProvider(saml2ClientConfiguration);
-        Objects.requireNonNull(secContext).setSignatureSigningParameters(provider.build(adaptor.ssoDescriptor()));
+        Objects.requireNonNull(secContext).setSignatureSigningParameters(provider.build(adaptor.getSsoDescriptor()));
 
         assertDoesNotThrow(() -> samlObjectSignatureValidator.verifySamlProfileRequest(authnRequest, adaptor, request, samlContext));
 

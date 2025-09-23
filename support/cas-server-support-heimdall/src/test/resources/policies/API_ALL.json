@@ -1,0 +1,29 @@
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources",
+  "resources": [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 1453625,
+        "enforceAllPolicies": true,
+        "pattern": "/api/all",
+        "method": "POST",
+        "policies": [ "java.util.ArrayList", [
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAttributesAuthorizationPolicy",
+            "attributes" : {
+              "@class" : "java.util.HashMap",
+              "memberOf" : [ "java.util.HashSet", [ ".*admin.*" ] ]
+            }
+          },
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredScopesAuthorizationPolicy",
+            "scopes" : [ "java.util.HashSet", [ "unknown-scope" ] ]
+          }
+        ]]
+      }
+    ]
+  ],
+  "namespace": "API_ALL",
+}

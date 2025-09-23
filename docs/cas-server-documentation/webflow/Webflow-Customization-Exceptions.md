@@ -58,6 +58,8 @@ The parameters passed are as follows:
 | `applicationContext` | The object representing the Spring `ApplicationContext`.                    |
 | `logger`             | The object responsible for issuing log messages such as `logger.info(...)`. |
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 ## Custom Error Handling
      
 For more advanced scenarios, you can also design your webflow exception handler

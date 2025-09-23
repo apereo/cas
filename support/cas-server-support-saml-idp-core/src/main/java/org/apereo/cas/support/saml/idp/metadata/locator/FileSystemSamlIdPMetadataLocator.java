@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -61,7 +63,7 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
     }
 
     @Override
-    public Resource getEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) throws Throwable {
+    public Resource resolveEncryptionCertificate(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         return getMetadataArtifact(registeredService, "idp-encryption.crt");
     }
 
@@ -85,23 +87,36 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
     protected SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) throws Exception {
         return FunctionUtils.doUnchecked(() -> {
             val doc = new SamlIdPMetadataDocument();
-            doc.setMetadata(IOUtils.toString(resolveMetadata(registeredService).getInputStream(), StandardCharsets.UTF_8));
-            doc.setEncryptionCertificate(IOUtils.toString(getEncryptionCertificate(registeredService).getInputStream(), StandardCharsets.UTF_8));
-            doc.setEncryptionKey(IOUtils.toString(resolveEncryptionKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
-            doc.setSigningCertificate(IOUtils.toString(resolveSigningCertificate(registeredService).getInputStream(), StandardCharsets.UTF_8));
-            doc.setSigningKey(IOUtils.toString(resolveSigningKey(registeredService).getInputStream(), StandardCharsets.UTF_8));
+            try (val in = resolveMetadata(registeredService).getInputStream()) {
+                doc.setMetadata(IOUtils.toString(in, StandardCharsets.UTF_8));
+            }
+            try (val in = resolveEncryptionCertificate(registeredService).getInputStream()) {
+                doc.setEncryptionCertificate(IOUtils.toString(in, StandardCharsets.UTF_8));
+            }
+            try (val in = resolveEncryptionKey(registeredService).getInputStream()) {
+                doc.setEncryptionKey(IOUtils.toString(in, StandardCharsets.UTF_8));
+            }
+            try (val in = resolveSigningCertificate(registeredService).getInputStream()) {
+                doc.setSigningCertificate(IOUtils.toString(in, StandardCharsets.UTF_8));
+            }
+            try (val in = resolveSigningKey(registeredService).getInputStream()) {
+                doc.setSigningKey(IOUtils.toString(in, StandardCharsets.UTF_8));
+            }
             doc.setAppliesTo(getAppliesToFor(registeredService));
             return doc;
         });
     }
 
-    protected Resource getMetadataArtifact(final Optional<SamlRegisteredService> result, final String artifactName) throws Throwable {
-        if (result.isPresent()) {
-            val serviceDirectory = new File(this.metadataLocation, getAppliesToFor(result));
-            LOGGER.trace("Metadata directory location for [{}] is [{}]", result.get().getName(), serviceDirectory);
+    protected Resource getMetadataArtifact(final Optional<SamlRegisteredService> registeredService, final String artifactName) throws Throwable {
+        if (registeredService.isPresent()) {
+            val samlRegisteredService = registeredService.get();
+            val serviceDirectory = StringUtils.isNotBlank(samlRegisteredService.getIdpMetadataLocation())
+                ? ResourceUtils.getRawResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(samlRegisteredService.getIdpMetadataLocation())).getFile()
+                : new File(this.metadataLocation, getAppliesToFor(registeredService));
+            LOGGER.debug("Metadata directory location for [{}] is [{}]", samlRegisteredService.getName(), serviceDirectory);
             if (serviceDirectory.exists()) {
                 val artifact = new File(serviceDirectory, artifactName);
-                LOGGER.trace("Artifact location for [{}] and [{}] is [{}]", artifactName, result.get().getName(), artifact);
+                LOGGER.trace("Artifact location for [{}] and [{}] is [{}]", artifactName, samlRegisteredService.getName(), artifact);
                 if (artifact.exists()) {
                     LOGGER.debug("Using metadata artifact [{}] at [{}]", artifactName, artifact);
                     return ResourceUtils.toFileSystemResource(artifact);
@@ -110,9 +125,13 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
         }
         initializeMetadataDirectory();
         val resource = ResourceUtils.toFileSystemResource(new File(this.metadataLocation, artifactName));
-        if (resource.exists()) {
+        if (resource.exists() && resource.isReadable()) {
             val content = FileUtils.readFileToString(resource.getFile(), StandardCharsets.UTF_8);
-            return resolveContentToResource(content);
+            if (StringUtils.isNotBlank(content)) {
+                return resolveContentToResource(content);
+            }
+            LOGGER.warn("Metadata artifact at [{}] is empty and invalid and will be deleted", resource);
+            FileUtils.deleteQuietly(resource.getFile());
         }
         return ResourceUtils.toFileSystemResource(resource.getFile());
     }

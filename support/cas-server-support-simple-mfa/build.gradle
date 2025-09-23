@@ -25,6 +25,7 @@ dependencies {
     implementation project(":core:cas-server-core-notifications-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-multitenancy")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":core:cas-server-core-webflow-mfa-api")
@@ -35,6 +36,8 @@ dependencies {
     compileOnly project(":support:cas-server-support-surrogate-api")
     compileOnly project(":core:cas-server-core-rest-api")
 
+    testImplementation libraries.springboottomcat
+    
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-services-authentication")
@@ -53,13 +56,17 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-rest")
     testImplementation project(":core:cas-server-core-rest-api")
-
+    testImplementation project(":core:cas-server-core-scripting")
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
+    testImplementation project(":support:cas-server-support-surrogate-core")
     testImplementation project(":support:cas-server-support-surrogate-authentication")
     testImplementation project(":support:cas-server-support-surrogate-webflow")
     testImplementation project(":support:cas-server-support-reports")
+    testImplementation project(":support:cas-server-support-webconfig")
+    testImplementation project(":support:cas-server-support-validation")
+    testImplementation project(":support:cas-server-support-thymeleaf")
 
     testImplementation project(path: ":core:cas-server-core-webflow-mfa-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")

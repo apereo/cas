@@ -10,6 +10,8 @@ category: Logs & Audits
 Groovy-based audits have the ability to receive and process the auditable context parameters
 and build the final auditable record in any text format or representation. 
 The final auditable record is then passed to the logging framework, typically tagged under `INFO`.
+    
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% include_cached casproperties.html properties="cas.audit.groovy" %}
 

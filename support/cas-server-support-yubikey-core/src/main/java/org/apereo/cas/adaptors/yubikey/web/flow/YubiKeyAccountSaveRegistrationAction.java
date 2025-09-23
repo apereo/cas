@@ -3,10 +3,11 @@ package org.apereo.cas.adaptors.yubikey.web.flow;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,12 +37,14 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractMultifactorAut
 
     private static final String CODE_FAILURE = "cas.mfa.yubikey.register.fail";
 
-    private final YubiKeyAccountRegistry registry;
+    protected final YubiKeyAccountRegistry registry;
+    protected final TenantExtractor tenantExtractor;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
-            val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal(), requestContext);
+            val authentication = WebUtils.getAuthentication(requestContext);
+            val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
             val uid = principal.getId();
             val token = WebUtils.getRequestParameterOrAttribute(requestContext, PARAMETER_NAME_TOKEN).orElseThrow();
             val accountName = WebUtils.getRequestParameterOrAttribute(requestContext, PARAMETER_NAME_ACCOUNT).orElseThrow();
@@ -50,6 +53,7 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractMultifactorAut
                 .username(uid)
                 .name(accountName)
                 .token(token)
+                .tenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(null))
                 .build();
 
             if (StringUtils.isNotBlank(token) && registry.registerAccountFor(regRequest)) {

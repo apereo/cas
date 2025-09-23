@@ -4,7 +4,9 @@ title: CAS - Release Notes
 category: Planning
 ---
 
-# 7.1.0-RC2 Release Notes
+{% include variables.html %}
+
+# 7.3.0-RC2 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
 you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note
@@ -41,121 +43,74 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
-### Spring Boot 3.3
+### Spring Boot 3.5
 
-The migration of the entire codebase to Spring Boot `3.3` is ongoing, and at the
-moment is waiting for the wider ecosystem of supporting frameworks and libraries to catch up to
-changes. We anticipate the work to finalize in the next few release candidates and certainly prior to the final release.
+The migration of the entire codebase to Spring Boot `3.5` is now complete and CAS is now running
+on Spring Boot `3.5.x`. 
+
+### OpenRewrite Recipes
+
+CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
+in place from one version to the next. [See this guide](../installation/OpenRewrite-Upgrade-Recipes.html) to learn more.
 
 ### Graal VM Native Images
 
 A CAS server installation and deployment process can be tuned to build and run
-as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html).
+as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html). We continue to polish native runtime hints.
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
 to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
 
 ### Testing Strategy
 
-The collection of end-to-end [browser tests based via Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `475` distinct scenarios. The overall
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `519` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
-  
-Finally, the overall execution of the [browser tests based via Puppeteer](../../developer/Test-Process.html) is reduced
-by approximately `8~10` minutes for every run of the test suite by removing unnecessary *wait* times and delays in test scenarios.
 
-### OAuth/OpenID Connect Token Exchange
+### Java 24
 
-[OAuth Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html) protocol can now support ID token exchanges
-when CAS is running as an OpenID Connect provider..
-  
-### Develocity Predictive Test Selection
-
-[Develocity Predictive Test Selection](https://develocity.apereo.org/scans/test-selection) is now turned on for all 
-CAS unit test categories. This feature saves testing time by identifying, prioritizing, and running only 
-tests that are likely to provide useful feedback during test runs and it accomplishes 
-this by applying a machine learning model that uniquely incorporates fine-grained code snapshots, 
-comprehensive test analytics, and flaky test data.
-
-To accommodate the machine learning model, CAS will also run its suite of unit tests using a fixed schedule.
-The scheduled workflow runs disable the predictive test selection feature and instead run all tests in the suite to
-avoid accidents and mistakes made when a test run is incorrectly skipped. As the number of runs increase, 
-we expect the model to improve and learn more efficiently.
-
-This capability is provided by [Develocity](https://gradle.com/develocity/) to the Apereo CAS project for free and is proving
-to be extremely valuable in cutting down test execution time and therefor resulting in a quicker feedback loop. 
-
-### Startup Time Improvements
-
-CAS web application startup time has been improved by approximately `3` seconds by removing unnecessary initializations.
-Notable changes in this area include:
-
-- Removing unnecessary I/O operations during startup to verify existence of embedded application resources on the classpath.
-- Removing the `org.webjars:webjars-locator-core` library which does classpath scanning at startup to locate assets.
-- ...and as a result, the *Hal Browser* interface that listed the CAS actuator endpoints has been removed.
-- Delaying the construction of the CAS webflow execution plan until the application container is fully ready.
-
-### Passwordless Authentication w/ Duo Security
-
-[Duo Security](../authentication/Passwordless-Authentication-Storage-DuoSecurity.html) can now 
-act as a passwordless authentication account store to verify and locate passwordless accounts.
-Furthermore, [passwordless authentication](../authentication/Passwordless-Authentication.html) can now be selectively controlled per application.
+As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. CAS is now able to
+build and run using Java `24`. Once more, remember that the baseline requirement will remain unchanged
+and this is just a preparatory step to ensure CAS is ready for the next version of Java.
  
-### Surrogate Authentication
+### Multitenancy
 
-Multiple [surrogate account stores](../authentication/Surrogate-Authentication.html) can be used simultaneously to verify and locate surrogate accounts.
-Furthermore, the [surrogate access strategy](../authentication/Surrogate-Authentication-AccessStrategy.html) has removed the `surrogateEnabled` flag and is 
-also modified to allow the strategy to authorize the request for non-surrogate requests. You now have the ability to disable surrogate authentication requests
-for specific services by using a dedicated [surrogate authentication policy](../authentication/Surrogate-Authentication-AccessStrategy.html).
+Multitenancy support is improved to support attribute resolution per each tenant. Supported modules include:
 
-Finally, multiple [LDAP surrogate account stores](../authentication/Surrogate-Authentication-Storage-LDAP.html) 
-can now be configured to locate accounts.
-
-### Attribute Definitions
-
-[JSON attribute definitions](../integration/Attribute-Definitions.html) that are taught to CAS via settings 
-are given the ability to override attribute definitions that ship directly with CAS.
+- [REST](../integration/Attribute-Resolution-REST.html)
+- [Stub](../integration/Attribute-Resolution-Stub.html)
+- [LDAP](../integration/Attribute-Resolution-LDAP.html)
+- [Apache Syncope](../integration/Attribute-Resolution-Syncope.html)
+      
+Furthermore, tenant properties now support [CAS configuration security](../configuration/Configuration-Properties-Security-CAS.html) 
+and [Spring expression language](../configuration/Configuration-Spring-Expressions.html).
+      
+There is dedicated routing support to allow CAS to route requests to the appropriate tenant
+internally based on the `Host` http header, in scenarios where CAS is deployed behind a reverse proxy.
 
 ## Other Stuff
-
-- Internal enhancements to allow a few more ticket registries to support more advanced querying operations and session management features.
-- [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html) correctly sets the expiration time for principal records tied to ticket objects.           
-- [LDAP passwordless authentication](../authentication/Passwordless-Authentication-Storage-LDAP.html) can be configured to require specific user attributes and values before triggering the flow.
-- [Account Profile Management](../registration/Account-Management-Overview.html) can now display the list of access tokens that are issued for an authenticated user.
-- [MDC](../logging/Logging-MDC.html) logging gains options to control what parameters or headers should be excluded from the logging output.
-- [Triggering interrupts](../webflow/Webflow-Customization-Interrupt-PerService.html) per service can now be controlled via Groovy.
-- [LDAP attribute repositories](../integration/Attribute-Resolution-LDAP.html) can now virtually rename an attribute to multiple names.
-- Multiple [passwordless account stores](../authentication/Passwordless-Authentication.html) can be used simultaneously to verify and locate passwordless accounts.
-
-## Library Upgrades
-           
-- AWS SDK
-- Slack
-- Twilio
-- Commons Codec
-- Spring Cloud CosmosDb
-- Spring Data CosmosDb
-- Spring Boot
-- Puppeteer
-- Spring Integration
-- Spring Data
-- Micrometer
-- Jose4j
-- Elastic APM
-- SendGrid
-- JavaMelody
-- Apache Tomcat
-- Logback
-- Apache Log4j
-- MariaDb
-- Ldaptive
-- Gradle
-- PostgreSQL
-- Apache Cassandra
-- Zipkin Brave
-- Grouper
-- MongoDb
-- ACME
-- Apache Kafka
-- Sentry
-- IP GeoLocation
+        
+- A new [Heimdall authorization policy](../authorization/Heimdall-Authorization-Overview.html) for SQL databases.
+- We have laid the groundwork to begin supporting OpenID Connect federations. Support for this topic will gradually mature as federations begin to operate and remain functional. 
+- Apache Tomcat's `RewriteValve` can be added as an engine valve.
+- A visual representation of the CAS authentication flows, as a state diagram, is now available in the [Palantir admin console](../installation/Admin-Dashboard.html).
+- CAS is publishing events internally when webflow actions are executed. Such events are recorded into the [CAS event repository](../authentication/Configuring-Authentication-Events.html) and are also available in the [Palantir admin console](../installation/Admin-Dashboard.html).
+- Redis integration tests are upgraded to use the latest Redis `8.0` server.
+- Apache Syncope integration tests are upgraded to use the latest Syncope `4.0` server.
+- Support for [ACME Integration](../integration/ACME-Integration.html) is deprecated.
+- [GitHub Actions CI workflows](https://github.com/apereo/cas/actions) check for code spelling mistakes and typos.
+- [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html) is to tuned to apply an LZ4 compression routine to stored documents.
+- The CAS server host name can be accessed via the user interface and is displayed in the footer.
+- The usage criteria of a ticket-granting ticket is updated when OpenID Connect access tokens are exchanged for a user profile.
+- Activation of [Remember-Me functionality](../authentication/Configuring-SSO-Cookie.html) now explicitly looks for the `rememberMe` parameter in the request with a truthy value.
+- [Puppeteer tests](../../developer/Test-Process.html) have the ability to verify CAS functionality using an external Apache Tomcat server.
+- The entire CAS configuration catalog is indexed and published online to offer [search functionality](../configuration/Configuration-Properties.html).
+- The [BlackDot IP Intelligence](../mfa/Adaptive-Authentication-IP-Intelligence.html) functionality is corrected to create the correct component instance.
+- Webflow transitions for multifactor device registration requests are re-organized to allow for this functionality in the [user account profile](../registration/Account-Management-Overview.html).
+- [User account profile](../registration/Account-Management-Overview.html) gains the ability to delete registered multifactor authentication devices.
+- CAS endpoints are grouped and tagged for better visibility in the [Swagger UI](../integration/Swagger-Integration.html).
+- A large collection of documentation improvements and fixes to remove typos and grammatical errors.
+- Using advanced static analysis tools, a large number of leaking IO streams are closed properly.
+- CAS documentation is built with YJIT enabled, and the build time is cut down by approximately 6 minutes.
+- When processing logout requests for OpenID Connect, the `iss` claim of the ID token hint is now cross-checked against the `idTokenIssuer` property of the registered client application.
+- A series of small user interface improvements to assist with accessibility and usability.

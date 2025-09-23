@@ -1,5 +1,6 @@
 #!/bin/bash
 
+${PWD}/ci/tests/httpbin/run-httpbin-server.sh
 ${PWD}/ci/tests/ldap/run-ldap-server.sh
 ${PWD}/ci/tests/mail/run-mail-server.sh
 

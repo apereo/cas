@@ -1,4 +1,4 @@
 cas:
   audit:
     jdbc:
-      max-age-days: 71
+      max-age-days: 29

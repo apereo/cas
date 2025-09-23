@@ -25,6 +25,6 @@ public class OidcOpenIdScopeAttributeReleasePolicy extends BaseOidcScopeAttribut
     @JsonIgnore
     @Override
     public List<String> getAllowedAttributes() {
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

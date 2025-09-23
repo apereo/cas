@@ -31,7 +31,7 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val input = mock(RegisteredServiceSingleSignOnParticipationPolicy.class);
         when(input.getOrder()).thenCallRealMethod();
         when(input.getCreateCookieOnRenewedAuthentication()).thenCallRealMethod();
@@ -40,7 +40,7 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     }
 
     @Test
-    void verifySsoParticipationByAuthenticationDateFails() throws Throwable {
+    void verifySsoParticipationByAuthenticationDateFails() {
         val authn = mock(Authentication.class);
         when(authn.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(10));
 
@@ -52,7 +52,7 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     }
 
     @Test
-    void verifySsoParticipationByAuthnAttribute() throws Throwable {
+    void verifySsoParticipationByAuthnAttribute() {
         val state = mock(AuthenticationAwareTicket.class);
         when(state.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(Map.of("tag", List.of("123-abc"))));
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
@@ -63,7 +63,7 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     }
 
     @Test
-    void verifySsoParticipationByPrincipalAttribute() throws Throwable {
+    void verifySsoParticipationByPrincipalAttribute() {
         val state = mock(AuthenticationAwareTicket.class);
         when(state.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("casuser", Map.of("cn", List.of("1/2/3"))));
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
@@ -85,7 +85,7 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     }
 
     @Test
-    void verifySsoParticipationAllAttributes() throws Throwable {
+    void verifySsoParticipationAllAttributes() {
         val state = mock(AuthenticationAwareTicket.class);
         when(state.getAuthentication()).thenReturn(
             CoreAuthenticationTestUtils.getAuthentication("casuser", Map.of("cn", List.of("1/2/3"))));
@@ -99,7 +99,7 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
 
 
     @Test
-    void verifySsoParticipationByAuthenticationDatePasses() throws Throwable {
+    void verifySsoParticipationByAuthenticationDatePasses() {
         val authn = mock(Authentication.class);
         when(authn.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(5));
 
@@ -112,7 +112,7 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     }
 
     @Test
-    void verifySsoParticipationByLastUsedTimeFails() throws Throwable {
+    void verifySsoParticipationByLastUsedTimeFails() {
         val state = mock(AuthenticationAwareTicket.class);
         when(state.getLastTimeUsed()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(10));
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
@@ -121,7 +121,7 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     }
 
     @Test
-    void verifySsoParticipationByLastUsedTimePasses() throws Throwable {
+    void verifySsoParticipationByLastUsedTimePasses() {
         val state = mock(AuthenticationAwareTicket.class);
         when(state.getLastTimeUsed()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(5));
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
@@ -131,7 +131,7 @@ class ChainingRegisteredServiceSingleSignOnParticipationPolicyTests {
     }
 
     @Test
-    void verifyPolicies() throws Throwable {
+    void verifyPolicies() {
         val chain = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         chain.addPolicies(new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 10, 0));
         assertFalse(chain.getPolicies().isEmpty());

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import org.apereo.cas.util.NamedObject;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import java.io.Serializable;
@@ -16,7 +17,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public interface YubiKeyAccountRegistry {
+public interface YubiKeyAccountRegistry extends NamedObject {
     /**
      * Determines whether the registered
      * YubiKey public id is allowed for the {@code username} received.
@@ -99,13 +100,5 @@ public interface YubiKeyAccountRegistry {
      * Delete all.
      */
     void deleteAll();
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
+    
 }

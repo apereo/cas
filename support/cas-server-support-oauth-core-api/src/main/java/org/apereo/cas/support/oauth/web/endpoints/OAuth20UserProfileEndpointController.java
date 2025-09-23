@@ -2,15 +2,19 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.pac4j.core.context.HttpConstants;
-import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +33,7 @@ import java.util.Map;
  * @since 3.5.0
  */
 @Slf4j
+@Tag(name = "OAuth")
 public class OAuth20UserProfileEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
     public OAuth20UserProfileEndpointController(final T configurationContext) {
         super(configurationContext);
@@ -49,6 +54,8 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
      */
     @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL,
         produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Handle user profile request",
+        parameters = @Parameter(name = "access_token", in = ParameterIn.QUERY, required = true, description = "Access token"))
     public ResponseEntity<String> handlePostRequest(final HttpServletRequest request,
                                                     final HttpServletResponse response) throws Exception {
         return handleGetRequest(request, response);
@@ -64,6 +71,8 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.PROFILE_URL,
         produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Handle user profile request",
+        parameters = @Parameter(name = "access_token", in = ParameterIn.QUERY, required = true, description = "Access token"))
     public ResponseEntity<String> handleGetRequest(final HttpServletRequest request,
                                                    final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -93,8 +102,7 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
         try {
             validateAccessToken(accessTokenResult.getKey(), accessTokenTicket, request, response);
             updateAccessTokenUsage(accessTokenTicket);
-            val context = new JEEContext(request, response);
-            val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket, context);
+            val map = getConfigurationContext().getUserProfileDataCreator().createFrom(accessTokenTicket);
             return getConfigurationContext().getUserProfileViewRenderer().render(map, accessTokenTicket, response);
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
@@ -109,10 +117,15 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
     protected void updateAccessTokenUsage(final OAuth20AccessToken accessTokenTicket) throws Exception {
         if (!accessTokenTicket.isStateless()) {
             accessTokenTicket.update();
+            val ticketRegistry = getConfigurationContext().getTicketRegistry();
             if (accessTokenTicket.isExpired()) {
-                getConfigurationContext().getTicketRegistry().deleteTicket(accessTokenTicket.getId());
+                ticketRegistry.deleteTicket(accessTokenTicket.getId());
             } else {
-                getConfigurationContext().getTicketRegistry().updateTicket(accessTokenTicket);
+                ticketRegistry.updateTicket(accessTokenTicket);
+                FunctionUtils.doAndHandle(__ -> {
+                    val tgt = ticketRegistry.getTicket(accessTokenTicket.getTicketGrantingTicket().getId(), TicketGrantingTicket.class);
+                    ticketRegistry.updateTicket(tgt.update());
+                });
             }
         }
     }

@@ -27,7 +27,7 @@ that sequence to trigger CAS into generating tickets, executing certain
 actions, etc. Any link in this collection is exactly that; just a link. If a 
 link points to applications that are integrated with CAS, accessing those 
 applications via the link will prompt the user for credentials again 
-specially if single sign-on isn't already established. Remember that 
+especially if single sign-on isn't already established. Remember that 
 interrupt notifications typically execute after the authentication step 
 and before any single sign-on session is created.</p></div>
 

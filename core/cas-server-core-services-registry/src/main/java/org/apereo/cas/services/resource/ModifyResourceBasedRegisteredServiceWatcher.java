@@ -26,7 +26,7 @@ public class ModifyResourceBasedRegisteredServiceWatcher extends BaseResourceBas
     @Override
     public void accept(final File file) {
         val fileName = file.getName();
-        if (!fileName.startsWith(".") && Arrays.stream(serviceRegistryDao.getExtensions()).anyMatch(fileName::endsWith)) {
+        if (!(!fileName.isEmpty() && fileName.charAt(0) == '.') && Arrays.stream(serviceRegistryDao.getExtensions()).anyMatch(fileName::endsWith)) {
             LOGGER.debug("New service definition [{}] was modified. Locating service entry from cache...", file);
             val newServices = serviceRegistryDao.load(file);
             val clientInfo = ClientInfoHolder.getClientInfo();

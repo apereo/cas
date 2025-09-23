@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 clear
-${PWD}/ci/tests/mongodb/run-mongodb-server.sh
+"${PWD}"/ci/tests/httpbin/run-httpbin-server.sh
+"${PWD}"/ci/tests/mongodb/run-mongodb-server.sh
 echo "Waiting for MongoDb database to get ready..."
 sleep 10
 

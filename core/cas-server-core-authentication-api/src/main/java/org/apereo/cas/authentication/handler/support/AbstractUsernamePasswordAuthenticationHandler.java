@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
@@ -41,7 +40,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     /**
      * Decide how to execute password policy handling, if at all.
      */
-    protected AuthenticationPasswordPolicyHandlingStrategy passwordPolicyHandlingStrategy = (o, o2) -> new ArrayList<>(0);
+    protected AuthenticationPasswordPolicyHandlingStrategy passwordPolicyHandlingStrategy = (o, o2) -> new ArrayList<>();
 
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
@@ -49,9 +48,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     private PasswordPolicyContext passwordPolicyConfiguration;
 
-    protected AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                                            final PrincipalFactory principalFactory, final Integer order) {
-        super(name, servicesManager, principalFactory, order);
+    protected AbstractUsernamePasswordAuthenticationHandler(final String name, final PrincipalFactory principalFactory, final Integer order) {
+        super(name, principalFactory, order);
     }
 
     @Override

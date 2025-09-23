@@ -1,16 +1,16 @@
 package org.apereo.cas.notifications.mail;
 
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
+import org.apereo.cas.notifications.BaseNotificationTests;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.Locale;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,16 +22,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Mail")
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class
-})
+@ExtendWith(CasTestExtension.class)
+@SpringBootTest(classes = BaseNotificationTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class EmailMessageBodyBuilderTests {
 
     @Test
-    void verifyNoBody() throws Throwable {
+    void verifyNoBody() {
         val props = new EmailProperties();
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -43,7 +40,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyLocalizedFileFound() throws Throwable {
+    void verifyLocalizedFileFound() {
         val props = new EmailProperties().setText("classpath:/EmailTemplate.html");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -56,7 +53,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyLocalizedFileNotFound() throws Throwable {
+    void verifyLocalizedFileNotFound() {
         val props = new EmailProperties().setText("classpath:/EmailTemplate.html");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -69,7 +66,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val props = new EmailProperties().setText("${key1}, ${key2}");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -82,7 +79,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyTemplateOperation() throws Throwable {
+    void verifyTemplateOperation() {
         val props = new EmailProperties().setText("classpath:/GroovyEmailTemplate.gtemplate");
 
         val results = EmailMessageBodyBuilder.builder()
@@ -98,7 +95,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyInlineGroovyOperation() throws Throwable {
+    void verifyInlineGroovyOperation() {
         val props = new EmailProperties().setText("groovy { key + ', ' + key2 }");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)
@@ -111,7 +108,7 @@ class EmailMessageBodyBuilderTests {
     }
 
     @Test
-    void verifyGroovyOperation() throws Throwable {
+    void verifyGroovyOperation() {
         val props = new EmailProperties().setText("classpath:/GroovyMessageBody.groovy");
         val results = EmailMessageBodyBuilder.builder()
             .properties(props)

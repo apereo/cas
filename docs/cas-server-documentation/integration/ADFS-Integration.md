@@ -36,7 +36,7 @@ repositories {
 ```
 
 <div class="alert alert-info">:information_source: <strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle 
-installed in your Java environment that is used by CAS, specially if you need to consume encrypted payloads issued by ADFS. 
+installed in your Java environment that is used by CAS, especially if you need to consume encrypted payloads issued by ADFS.
 Be sure to pick the right version of the JCE for your Java version. Java 
 versions can be detected via the <code>java -version</code> command.</p></div>
 
@@ -104,6 +104,8 @@ The parameters passed to the script are as follows:
 
 Note that the execution result of the script *MUST* ensure that attributes are collected into a `Map`
 where the attribute name, the key, is a simple `String` and the attribute value is transformed into a collection.
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 ## Handling CAS Logout
 

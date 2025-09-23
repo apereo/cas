@@ -2,14 +2,12 @@ package org.apereo.cas.configuration.model.support.saml.idp;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,7 +20,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SamlIdPLogoutProperties")
 public class SamlIdPLogoutProperties implements Serializable {
 
     @Serial
@@ -61,9 +58,9 @@ public class SamlIdPLogoutProperties implements Serializable {
     private boolean singleLogoutCallbacksDisabled;
 
     /**
-     * The order in which the logout request binginds should be tried (if available at the SP level).
+     * The order in which the logout request bindings should be tried (if available at the SP level).
      */
-    private List<String> logoutRequestBindings = Arrays.asList(
+    private List<String> logoutRequestBindings = List.of(
         "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
         "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
         "urn:oasis:names:tc:SAML:2.0:bindings:SOAP"

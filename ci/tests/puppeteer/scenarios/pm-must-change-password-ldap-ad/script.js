@@ -9,10 +9,11 @@ const cas = require("../../cas.js");
     await cas.sleep(2000);
 
     await cas.assertInnerText(page, "#pwdmain h3", "Hello, mustchangepassword. You must change your password.");
+    await cas.type(page, "#currentPassword", "P@ssw0rd");
     await cas.type(page,"#password", "Jv!e0mKD&dCNl^Q");
     await cas.type(page,"#confirmedPassword", "Jv!e0mKD&dCNl^Q");
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
     await cas.assertInnerText(page, "#content h2", "Password Change Successful");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

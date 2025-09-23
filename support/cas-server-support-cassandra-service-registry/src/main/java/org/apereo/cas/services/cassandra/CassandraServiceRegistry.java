@@ -52,6 +52,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
     @Override
     public RegisteredService save(final RegisteredService rs) {
         try {
+            rs.assignIdIfNecessary();
             val data = serializer.toString(rs);
             invokeServiceRegistryListenerPreSave(rs);
             val options = InsertOptions.builder()

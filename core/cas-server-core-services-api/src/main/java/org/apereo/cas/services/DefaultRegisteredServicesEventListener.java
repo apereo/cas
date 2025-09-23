@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
@@ -8,14 +9,15 @@ import org.apereo.cas.notifications.sms.SmsBodyBuilder;
 import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
-
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
-
+import org.springframework.context.event.ContextRefreshedEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,12 +29,15 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Slf4j
+@Getter
 public class DefaultRegisteredServicesEventListener implements RegisteredServicesEventListener {
     private final ServicesManager servicesManager;
 
     private final CasConfigurationProperties casProperties;
 
     private final CommunicationsManager communicationsManager;
+
+    private final TenantExtractor tenantExtractor;
 
     @Override
     public void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
@@ -42,6 +47,12 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
     @Override
     public void handleEnvironmentChangeEvent(final EnvironmentChangeEvent event) {
         servicesManager.load();
+    }
+
+    @Override
+    public void handleContextRefreshedEvent(final ContextRefreshedEvent event) {
+        val manager = event.getApplicationContext().getBean(ServicesManager.BEAN_NAME, ServicesManager.class);
+        manager.load();
     }
 
     @Override
@@ -73,6 +84,7 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
                     val emailRequest = EmailMessageRequest.builder()
                         .emailProperties(mail)
                         .to(List.of(contact.getEmail()))
+                        .tenant(event.getClientInfo().getTenant())
                         .body(body).build();
                     communicationsManager.email(emailRequest);
                 });
@@ -84,8 +96,13 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
                 .stream()
                 .filter(contact -> StringUtils.isNotBlank(contact.getPhone()))
                 .forEach(Unchecked.consumer(contact -> {
-                    val smsRequest = SmsRequest.builder().from(sms.getFrom())
-                        .to(contact.getPhone()).text(message).build();
+                    val recipients = new ArrayList<>(org.springframework.util.StringUtils.commaDelimitedListToSet(contact.getPhone()));
+                    val smsRequest = SmsRequest.builder()
+                        .from(sms.getFrom())
+                        .to(recipients)
+                        .text(message)
+                        .tenant(event.getClientInfo().getTenant())
+                        .build();
                     communicationsManager.sms(smsRequest);
                 }));
         }

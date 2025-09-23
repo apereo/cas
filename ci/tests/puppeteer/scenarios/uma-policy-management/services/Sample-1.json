@@ -2,7 +2,7 @@
   "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
   "clientId": "client",
   "clientSecret": "secret",
-  "serviceId": "https://apereo.github.io.*",
+  "serviceId": "^https://apereo.github.io.*",
   "name": "Sample",
   "id": 1,
   "scopes" : [ "java.util.HashSet", [ "uma_protection" ] ]

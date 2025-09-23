@@ -32,6 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
+    "cas.authn.passwordless.tokens.sms.text=Your token is ${token}",
+    "cas.authn.passwordless.tokens.sms.from=347746584",
     "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy"
 })
 @Tag("Mail")
@@ -42,7 +44,7 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     static class PasswordlessAuthenticationActionTestConfiguration {
         @Bean
         public SmsSender smsSender() {
-            return MockSmsSender.INSTANCE;
+            return MockSmsSender.withMessage("Your token is \\d+");
         }
     }
     
@@ -72,6 +74,16 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     }
 
     @Test
+    void verifyActionWithExistingAccountInFlow() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.setCurrentEvent(new Event(this, "processing"));
+        val request = PasswordlessAuthenticationRequest.builder().username("casuser").build();
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, passwordlessUserAccountStore.findUser(request).orElseThrow());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_CREATE,
+            displayBeforePasswordlessAuthenticationAction.execute(context).getId());
+    }
+
+    @Test
     void verifyNoUser() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         context.setCurrentEvent(new Event(this, "processing"));
@@ -92,7 +104,7 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
         val attributes = new LocalAttributeMap("error", new IllegalArgumentException("Bad account"));
         context.setCurrentEvent(new Event(this, "processing", attributes));
         val request = PasswordlessAuthenticationRequest.builder().username("casuser").build();
-        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, passwordlessUserAccountStore.findUser(request).get());
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, passwordlessUserAccountStore.findUser(request).orElseThrow());
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, displayBeforePasswordlessAuthenticationAction.execute(context).getId());
     }
 }

@@ -17,6 +17,15 @@
             The service you are attempting to log into, has identified a problem
             with your profile or request. Please contact your IT helpdesk for support.
         </p>
+
+        <p class="text-justify" th:if="${rootCauseException instanceof T(org.apereo.cas.authentication.RootCasException)}"
+           th:utext="#{${rootCauseException.code}}" />
+
+        <ul>
+            <li th:if="${param.entityId}"><strong>SAML2 Service Provider Entity ID:</strong><br/><code th:text="${param.entityId}"></code></li>
+            <p/>
+            <li th:if="${param.srid}"><strong>SAML2 Authentication Request ID:</strong><br/><code th:text="${param.srid}"></code></li>
+        </ul>
     </div>
 </main>
 </body>

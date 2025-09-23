@@ -60,7 +60,7 @@ public record RequestHeaderX509CertificateExtractor(String sslClientCertHeader) 
      * multiple ' '
      * The code assumes that the trimmed header value starts with '-----BEGIN
      * CERTIFICATE-----' and ends with '-----END CERTIFICATE-----'.
-     * Note: For Java 7, the the BEGIN and END markers must be on separate lines as
+     * Note: For Java 7, the BEGIN and END markers must be on separate lines as
      * must each of the original content lines. The CertificateFactory is tolerant
      * of any additional whitespace such as leading and trailing spaces and new
      * lines as long as they do not appear in the middle of an original content

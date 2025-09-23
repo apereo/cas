@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -43,7 +43,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     private Map<String, List<Object>> fetchAttributeValueFromExternalGroovyScript(final String file,
                                                                                   final RegisteredServiceAttributeReleasePolicyContext context,
                                                                                   final Map<String, List<Object>> attributes) throws Throwable {
-        val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager().get();
+        val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager().orElseThrow();
         val script = cacheMgr.resolveScriptableResource(file, file);
         return script != null
             ? fetchAttributeValueFromScript(script, context, attributes)
@@ -51,7 +51,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     protected Map<String, List<Object>> fetchAttributeValueFromScript(
-        final ExecutableCompiledGroovyScript script,
+        final ExecutableCompiledScript script,
         final RegisteredServiceAttributeReleasePolicyContext context,
         final Map<String, List<Object>> attributes) throws Throwable {
         val args = new Object[]{attributes, LOGGER, context.getPrincipal(), context.getRegisteredService()};
@@ -75,6 +75,6 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
             LoggingUtils.error(LOGGER, e);
         }
         LOGGER.warn("Groovy script [{}] does not exist or cannot be loaded", groovyScript);
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 }

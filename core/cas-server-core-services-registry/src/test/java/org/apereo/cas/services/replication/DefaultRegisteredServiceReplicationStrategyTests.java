@@ -5,15 +5,17 @@ import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -29,12 +31,11 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class
-}, properties = "cas.service-registry.stream.core.replication-mode=ACTIVE")
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = RefreshAutoConfiguration.class, properties = "cas.service-registry.stream.core.replication-mode=ACTIVE")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("RegisteredService")
+@ExtendWith(CasTestExtension.class)
 class DefaultRegisteredServiceReplicationStrategyTests {
 
     @Autowired
@@ -50,7 +51,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifySetInCache() throws Throwable {
+    void verifySetInCache() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -67,7 +68,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyGetInCacheAndRemove() throws Throwable {
+    void verifyGetInCacheAndRemove() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -91,7 +92,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyGetInCacheAndSave() throws Throwable {
+    void verifyGetInCacheAndSave() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -113,7 +114,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyGetInCacheAndUpdate() throws Throwable {
+    void verifyGetInCacheAndUpdate() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -138,7 +139,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyGetInCacheAndMatch() throws Throwable {
+    void verifyGetInCacheAndMatch() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -161,7 +162,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyUpdateWithMatch() throws Throwable {
+    void verifyUpdateWithMatch() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
@@ -187,7 +188,7 @@ class DefaultRegisteredServiceReplicationStrategyTests {
     }
 
     @Test
-    void verifyUpdateWithNoMatch() throws Throwable {
+    void verifyUpdateWithNoMatch() {
         val id = new PublisherIdentifier();
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();

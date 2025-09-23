@@ -23,23 +23,23 @@ class Cas20WithoutProxyingValidationSpecificationTests extends BaseCasCoreTests 
 
 
     @Test
-    void verifySatisfiesSpecOfTrue() throws Throwable {
+    void verifySatisfiesSpecOfTrue() {
         assertTrue(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(true), new MockHttpServletRequest()));
     }
 
     @Test
-    void verifyNotSatisfiesSpecOfTrue() throws Throwable {
+    void verifyNotSatisfiesSpecOfTrue() {
         validationSpecification.setRenew(true);
         assertFalse(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(false), new MockHttpServletRequest()));
     }
 
     @Test
-    void verifySatisfiesSpecOfFalse() throws Throwable {
+    void verifySatisfiesSpecOfFalse() {
         assertTrue(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(false), new MockHttpServletRequest()));
     }
 
     @Test
-    void verifyDoesNotSatisfiesSpecOfFalse() throws Throwable {
+    void verifyDoesNotSatisfiesSpecOfFalse() {
         assertFalse(validationSpecification.isSatisfiedBy(
             CoreValidationTestUtils.getAssertion(false, new String[]{"test2"}), new MockHttpServletRequest()));
     }

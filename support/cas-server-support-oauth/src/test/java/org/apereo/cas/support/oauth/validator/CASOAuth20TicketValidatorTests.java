@@ -11,7 +11,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -23,6 +22,7 @@ import org.pac4j.core.profile.factory.ProfileManagerFactory;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -62,7 +62,7 @@ class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.AUTHORIZE_URL);
         mockRequest.setParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
         mockRequest.setParameter(CasProtocolConstants.PARAMETER_SERVICE, st.getService().getId());
-        mockRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        mockRequest.addHeader(HttpHeaders.USER_AGENT, "MSIE");
         val mockResponse = new MockHttpServletResponse();
         val callContext = new CallContext(new JEEContext(mockRequest, mockResponse),
             oauthDistributedSessionStore, ProfileManagerFactory.DEFAULT);
@@ -74,7 +74,7 @@ class CASOAuth20TicketValidatorTests extends AbstractOAuth20Tests {
         assertTrue(profileResult.isPresent());
         val up = (BasicUserProfile) profileResult.get();
         assertTrue(up.containsAttribute(TicketGrantingTicket.class.getName()));
-        assertTrue(up.containsAttribute("stateless"));
+        assertTrue(up.containsAttribute(OAuth20Constants.CAS_OAUTH_STATELESS_PROPERTY));
         assertTrue(up.containsAttribute("uid"));
         assertTrue(up.containsAttribute("givenName"));
         assertTrue(up.containsAttribute("memberOf"));

@@ -1,15 +1,16 @@
 package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class,
     properties = "cas.authn.mfa.trusted.device-fingerprint.browser.enabled=true")
 @Tag("MFATrustedDevices")
+@ExtendWith(CasTestExtension.class)
 class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Test
@@ -31,7 +33,7 @@ class DefaultDeviceFingerprintStrategyTests extends AbstractMultifactorAuthentic
         val request = context.getHttpServletRequest();
         request.setRemoteAddr("123.456.789.000");
         request.setLocalAddr("123.456.789.000");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        context.withUserAgent();
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         val authentication = RegisteredServiceTestUtils.getAuthentication();

@@ -15,6 +15,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -26,6 +27,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
@@ -106,6 +108,26 @@ public class OAuth20Utils {
     }
 
     /**
+     * Gets registered oauth service by client id.
+     *
+     * @param <T>             the type parameter
+     * @param servicesManager the services manager
+     * @param clientId        the client id
+     * @param clazz           the clazz
+     * @return the registered o auth service by client id
+     */
+    public static <T extends OAuthRegisteredService> T getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager,
+                                                                                           final String clientId,
+                                                                                           final Class<T> clazz) {
+        return FunctionUtils.doIfNotBlank(clientId,
+            () -> {
+                val query = RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", clientId).withIncludeAssignableTypes(true);
+                return servicesManager.findServicesBy(query).findFirst().map(clazz::cast).orElse(null);
+            },
+            () -> null);
+    }
+
+    /**
      * Locate the requested instance of {@link OAuthRegisteredService} by the given clientId.
      *
      * @param servicesManager the service registry DAO instance.
@@ -114,12 +136,7 @@ public class OAuth20Utils {
      */
     public static OAuthRegisteredService getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager,
                                                                              final String clientId) {
-        return FunctionUtils.doIfNotBlank(clientId,
-            () -> {
-                val query = RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", clientId).withIncludeAssignableTypes(true);
-                return servicesManager.findServicesBy(query).findFirst().map(OAuthRegisteredService.class::cast).orElse(null);
-            },
-            () -> null);
+        return getRegisteredOAuthServiceByClientId(servicesManager, clientId, OAuthRegisteredService.class);
     }
 
     /**
@@ -268,9 +285,9 @@ public class OAuth20Utils {
         val matchingStrategy = Optional.of(registeredService).map(RegisteredService::getMatchingStrategy).orElse(null);
         validateRedirectUri(redirectUri);
         if (matchingStrategy == null || !matchingStrategy.matches(registeredService, redirectUri)) {
-            LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
-                         + "Service is considered unauthorized. Verify the service matching strategy used in the service "
-                         + "definition is correct and does in fact match the client [{}]",
+            LOGGER.warn("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
+                    + "Service is considered unauthorized. Verify the service matching strategy used in the service "
+                    + "definition is correct and does in fact match the client [{}]",
                 OAuth20Constants.REDIRECT_URI, redirectUri, registeredService.getServiceId(), redirectUri);
             return false;
         }
@@ -316,7 +333,7 @@ public class OAuth20Utils {
      * @return the set
      */
     public static Set<String> parseUserInfoRequestClaims(final OAuth20Token token) {
-        return token != null ? token.getClaims().getOrDefault("userinfo", new HashMap<>(0)).keySet() : new HashSet<>();
+        return token != null ? token.getClaims().getOrDefault("userinfo", new HashMap<>()).keySet() : new HashSet<>();
     }
 
 
@@ -377,7 +394,7 @@ public class OAuth20Utils {
                                                                   final OAuth20ClientAuthenticationMethods... authenticationMethod) {
         return !OAuth20Utils.isAccessTokenRequest(callContext.webContext())
             || StringUtils.isBlank(registeredService.getTokenEndpointAuthenticationMethod())
-            || Arrays.stream(authenticationMethod).anyMatch(method -> StringUtils.equalsIgnoreCase(registeredService.getTokenEndpointAuthenticationMethod(), method.getType()));
+            || Arrays.stream(authenticationMethod).anyMatch(method -> Strings.CI.equals(registeredService.getTokenEndpointAuthenticationMethod(), method.getType()));
     }
 
     /**
@@ -397,11 +414,12 @@ public class OAuth20Utils {
 
     /**
      * Find stateless ticket validation result.
+     *
      * @param profile the profile
      * @return the ticket validation result
      */
     public static Boolean isStatelessAuthentication(final UserProfile profile) {
-        val validationResult = (Boolean) profile.getAttribute("stateless");
+        val validationResult = (Boolean) profile.getAttribute(OAuth20Constants.CAS_OAUTH_STATELESS_PROPERTY);
         val principal = profile.getAttribute(Principal.class.getName());
         return validationResult != null && validationResult && principal != null;
     }
@@ -419,10 +437,26 @@ public class OAuth20Utils {
                 if (token.isStateless()) {
                     val duration = Duration.between(ZonedDateTime.now(Clock.systemUTC()),
                         token.getExpirationPolicy().toMaximumExpirationTime(token));
-                    return duration.getSeconds();
+                    return duration.toSeconds();
                 }
                 return ((OAuth20AccessToken) token).getExpiresIn();
             })
             .orElse(0L);
+    }
+
+    /**
+     * Extract client id from token.
+     *
+     * @param token the token
+     * @return the string
+     * @throws Exception the exception
+     */
+    public static String extractClientIdFromToken(final String token) throws Exception {
+        val claims = JwtBuilder.parse(token);
+        if (claims != null) {
+            return claims.getClaimAsString(OAuth20Constants.CLIENT_ID);
+        }
+        val header = JwtBuilder.parseHeader(token);
+        return (String) header.getCustomParam(OAuth20Constants.CLIENT_ID);
     }
 }

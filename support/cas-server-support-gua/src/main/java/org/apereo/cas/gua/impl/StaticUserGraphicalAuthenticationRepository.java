@@ -2,14 +2,12 @@ package org.apereo.cas.gua.impl;
 
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.util.LoggingUtils;
-
 import com.google.common.io.ByteSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
-
 import java.io.ByteArrayOutputStream;
 import java.io.Serial;
 import java.util.Map;
@@ -30,9 +28,9 @@ public class StaticUserGraphicalAuthenticationRepository implements UserGraphica
 
     @Override
     public ByteSource getGraphics(final String username) {
-        try {
-            val bos = new ByteArrayOutputStream();
-            IOUtils.copy(graphicResource.get(username).getInputStream(), bos);
+        try (val resourceStream = graphicResource.get(username).getInputStream();
+             val bos = new ByteArrayOutputStream()) {
+            IOUtils.copy(resourceStream, bos);
             return ByteSource.wrap(bos.toByteArray());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

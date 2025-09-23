@@ -1,7 +1,3 @@
-ext {
-    skipPublication = true
-}
-
 description = "Apereo CAS Bill of Material"
 
 def getProjectNamePattern() {
@@ -12,7 +8,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             pom.withXml {
-                ansi.green "Creating BOM with all project dependencies for ${project.name}"
+                logger.info "Creating BOM with all project dependencies for ${project.name}"
 
                 def iter = asNode().iterator()
                 while (iter.hasNext()) {

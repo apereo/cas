@@ -45,12 +45,12 @@ class SecurityTokenServiceClientBuilderTests extends BaseCoreWsSecurityIdentityP
     private ServicesManager servicesManager;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         servicesManager.deleteAll();
     }
 
     @Test
-    void verifyClientSecurityRequest() throws Throwable {
+    void verifyClientSecurityRequest() {
         val registeredService = getWsFederationRegisteredService();
         assertNotNull(securityTokenServiceClientBuilder.buildClientForSecurityTokenRequests(registeredService));
         val bus = BusFactory.getDefaultBus();
@@ -68,7 +68,7 @@ class SecurityTokenServiceClientBuilderTests extends BaseCoreWsSecurityIdentityP
     }
 
     @Test
-    void verifyRelyingPartyTokenResponses() throws Throwable {
+    void verifyRelyingPartyTokenResponses() {
         val registeredService = getWsFederationRegisteredService();
         val token = new SecurityToken(UUID.randomUUID().toString());
         assertNotNull(securityTokenServiceClientBuilder.buildClientForRelyingPartyTokenResponses(token, registeredService));

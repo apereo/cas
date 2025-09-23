@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.springframework.beans.factory.DisposableBean;
 import jakarta.annotation.Nullable;
 import java.io.File;
@@ -17,7 +18,8 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import static java.nio.file.StandardWatchEventKinds.*;
 
@@ -36,16 +38,18 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
     @Nullable
     private WatchService watchService;
 
-    private final Consumer<File> onCreate;
+    private final CheckedConsumer<File> onCreate;
 
-    private final Consumer<File> onModify;
+    private final CheckedConsumer<File> onModify;
 
-    private final Consumer<File> onDelete;
+    private final CheckedConsumer<File> onDelete;
 
     @Nullable
     private Thread thread;
 
-    public PathWatcherService(final File watchablePath, final Consumer<File> onModify) {
+    private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
+
+    public PathWatcherService(final File watchablePath, final CheckedConsumer<File> onModify) {
         this(watchablePath.toPath(),
             __ -> {
             }, onModify,
@@ -53,8 +57,8 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
             });
     }
 
-    public PathWatcherService(final Path watchablePath, final Consumer<File> onCreate,
-                              final Consumer<File> onModify, final Consumer<File> onDelete) {
+    public PathWatcherService(final Path watchablePath, final CheckedConsumer<File> onCreate,
+                              final CheckedConsumer<File> onModify, final CheckedConsumer<File> onDelete) {
         LOGGER.info("Watching directory path at [{}]", watchablePath);
         this.onCreate = onCreate;
         this.onModify = onModify;
@@ -65,12 +69,14 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
     }
 
     @Override
+    @SuppressWarnings("FutureReturnValueIgnored")
     public void run() {
         if (shouldEnableWatchService()) {
             try {
                 var key = (WatchKey) null;
                 while ((key = watchService.take()) != null) {
-                    handleEvent(key);
+                    val finalKey = key;
+                    executorService.submit(() -> handleEvent(finalKey));
                     val valid = key.reset();
                     if (!valid) {
                         LOGGER.info("Directory key is no longer valid. Quitting watcher service");
@@ -90,6 +96,7 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
         if (this.thread != null) {
             thread.interrupt();
         }
+        executorService.shutdownNow();
         LOGGER.trace("Closed service registry watcher thread");
     }
 

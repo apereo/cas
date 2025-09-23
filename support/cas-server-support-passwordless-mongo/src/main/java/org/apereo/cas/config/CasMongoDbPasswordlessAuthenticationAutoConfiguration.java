@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.api.PasswordlessTokenRepository;
+import org.apereo.cas.api.PasswordlessUserAccountCustomizer;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -29,6 +30,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.Scheduled;
+import java.util.List;
 
 /**
  * This is {@link CasMongoDbPasswordlessAuthenticationAutoConfiguration}.
@@ -61,13 +63,16 @@ public class CasMongoDbPasswordlessAuthenticationAutoConfiguration {
         @ConditionalOnMissingBean(name = "mongoDbPasswordlessUserAccountStore")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public BeanSupplier<PasswordlessUserAccountStore> mongoDbPasswordlessUserAccountStore(
+            final List<PasswordlessUserAccountCustomizer> customizerList,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("mongoDbPasswordlessAuthenticationTemplate")
             final MongoOperations mongoDbPasswordlessAuthenticationTemplate,
             final CasConfigurationProperties casProperties) {
             val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
             return BeanSupplier.of(PasswordlessUserAccountStore.class)
                 .alwaysMatch()
-                .supply(() -> new MongoDbPasswordlessUserAccountStore(mongoDbPasswordlessAuthenticationTemplate, accounts.getMongo()));
+                .supply(() -> new MongoDbPasswordlessUserAccountStore(mongoDbPasswordlessAuthenticationTemplate,
+                    accounts.getMongo(), applicationContext, customizerList));
         }
     }
 
@@ -128,7 +133,10 @@ public class CasMongoDbPasswordlessAuthenticationAutoConfiguration {
         private final PasswordlessTokenRepository repository;
 
         @Override
-        @Scheduled(initialDelayString = "${cas.authn.passwordless.tokens.mongo.cleaner.schedule.start-delay:PT30S}",
+        @Scheduled(
+            cron = "${cas.authn.passwordless.tokens.mongo.cleaner.schedule.cron-expression:}",
+            zone = "${cas.authn.passwordless.tokens.mongo.cleaner.schedule.cron-time-zone:}",
+            initialDelayString = "${cas.authn.passwordless.tokens.mongo.cleaner.schedule.start-delay:PT30S}",
             fixedDelayString = "${cas.authn.passwordless.tokens.mongo.cleaner.schedule.repeat-interval:PT35S}")
         public void clean() {
             lock.tryLock(__ -> repository.clean());

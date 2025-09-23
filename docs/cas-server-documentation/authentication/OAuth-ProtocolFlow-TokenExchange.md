@@ -24,7 +24,7 @@ the relevant registered service definition.
 
 {% tabs tokenexchangesvc %}
 
-{% tab tokenexchangesvc Impersonation %}
+{% tab tokenexchangesvc <i class="fa fa-masks-theater px-1"></i> Impersonation %}
 
 ```json
 {

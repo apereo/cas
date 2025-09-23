@@ -3,14 +3,13 @@ package org.apereo.cas.configuration.model.support.pm;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is {@link RestfulPasswordManagementProperties}.
@@ -22,7 +21,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("RestfulPasswordManagementProperties")
 public class RestfulPasswordManagementProperties implements CasFeatureModule, Serializable {
 
     @Serial
@@ -96,4 +94,10 @@ public class RestfulPasswordManagementProperties implements CasFeatureModule, Se
      */
     @RequiredProperty
     private String fieldNamePasswordOld = "oldPassword";
+
+    /**
+     * Additional headers to be included in REST API calls for password management.
+     * The map keys are header names and the corresponding values are header values.
+     */
+    private Map<String, String> headers = new HashMap<>();
 }

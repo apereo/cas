@@ -4,24 +4,24 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.velocity.VelocityContext;
+import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import java.util.concurrent.Executors;
 
 /**
  * A metadata generator based on a predefined template.
@@ -40,34 +40,48 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     public SamlIdPMetadataDocument generate(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val idp = configurationContext.getCasProperties().getAuthn().getSamlIdp();
         LOGGER.debug("Preparing to generate metadata for entity id [{}]", idp.getCore().getEntityId());
-        val samlIdPMetadataLocator = configurationContext.getSamlIdPMetadataLocator();
-        if (!samlIdPMetadataLocator.exists(registeredService)) {
+        if (!doesMetadataExistFor(registeredService)) {
             val owner = getAppliesToFor(registeredService);
             LOGGER.trace("Metadata does not exist for [{}]", owner);
             if (shouldGenerateMetadata(registeredService)) {
                 LOGGER.trace("Creating metadata artifacts for [{}]...", owner);
 
-                LOGGER.info("Creating self-signed certificate for signing...");
-                val signing = buildSelfSignedSigningCert(registeredService);
-
-                LOGGER.info("Creating self-signed certificate for encryption...");
-                val encryption = buildSelfSignedEncryptionCert(registeredService);
-
-                LOGGER.info("Creating SAML2 metadata for identity provider...");
-                val metadata = buildMetadataGeneratorParameters(signing, encryption, registeredService);
-
                 val doc = newSamlIdPMetadataDocument();
-                doc.setEncryptionCertificate(encryption.getKey());
-                doc.setEncryptionKey(encryption.getValue());
-                doc.setSigningCertificate(signing.getKey());
-                doc.setSigningKey(signing.getValue());
-                doc.setMetadata(metadata);
+                try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                    val signingCertTask = Unchecked.callable(() -> {
+                        LOGGER.info("Creating self-signed certificate for signing...");
+                        return buildSelfSignedSigningCert(registeredService);
+                    });
+                    val encryptionCertTask = Unchecked.callable(() -> {
+                        LOGGER.info("Creating self-signed certificate for encryption...");
+                        return buildSelfSignedEncryptionCert(registeredService);
+                    });
+
+                    val signingFuture = executor.submit(signingCertTask);
+                    val encryptionFuture = executor.submit(encryptionCertTask);
+                    val signing = signingFuture.get();
+                    val encryption = encryptionFuture.get();
+                    LOGGER.info("Creating SAML2 metadata for identity provider...");
+                    val metadata = buildMetadataGeneratorParameters(signing, encryption, registeredService);
+
+                    doc.setEncryptionCertificate(encryption.getKey());
+                    doc.setEncryptionKey(encryption.getValue());
+                    doc.setSigningCertificate(signing.getKey());
+                    doc.setSigningKey(signing.getValue());
+                    doc.setMetadata(metadata);
+                }
                 return finalizeMetadataDocument(doc, registeredService);
             }
             LOGGER.debug("Skipping metadata generation process for [{}]", owner);
         }
 
+        val samlIdPMetadataLocator = configurationContext.getSamlIdPMetadataLocator();
         return samlIdPMetadataLocator.fetch(registeredService);
+    }
+
+    protected boolean doesMetadataExistFor(final Optional<SamlRegisteredService> registeredService) throws Throwable {
+        val samlIdPMetadataLocator = configurationContext.getSamlIdPMetadataLocator();
+        return samlIdPMetadataLocator.exists(registeredService);
     }
 
     protected boolean shouldGenerateMetadata(final Optional<SamlRegisteredService> registeredService) {
@@ -127,12 +141,6 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
         return metadata;
     }
 
-    /**
-     * Generate certificate and key pair.
-     *
-     * @return the pair where key/left is the certificate and value is the key
-     * @throws Exception the exception
-     */
     protected Pair<String, String> generateCertificateAndKey() throws Exception {
         try (val certWriter = new StringWriter(); val keyWriter = new StringWriter()) {
             configurationContext.getSamlIdPCertificateAndKeyWriter().writeCertificateAndKey(keyWriter, certWriter);
@@ -213,7 +221,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
                 .ssoServiceSoapBindingEnabled(metadataCore.isSsoServiceSoapBindingEnabled())
                 .sloServicePostBindingEnabled(metadataCore.isSloServicePostBindingEnabled())
                 .sloServiceRedirectBindingEnabled(metadataCore.isSloServiceRedirectBindingEnabled())
-                .errorUrl(StringUtils.appendIfMissing(getIdPEndpointUrl(), "/error"))
+                .errorUrl(Strings.CI.appendIfMissing(getIdPEndpointUrl(), "/error"))
                 .build();
 
             val template = configurationContext.getVelocityEngine()

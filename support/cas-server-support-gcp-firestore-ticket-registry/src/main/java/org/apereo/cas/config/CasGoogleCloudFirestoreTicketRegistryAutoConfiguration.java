@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -32,7 +33,7 @@ import java.util.function.Function;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableScheduling
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "gcp")
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "gcp-firestore")
 @AutoConfiguration
 public class CasGoogleCloudFirestoreTicketRegistryAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -44,10 +45,11 @@ public class CasGoogleCloudFirestoreTicketRegistryAutoConfiguration {
         @Qualifier("firestore")
         final Firestore firestore,
         @Qualifier(TicketSerializationManager.BEAN_NAME)
-        final TicketSerializationManager ticketSerializationManager) {
+        final TicketSerializationManager ticketSerializationManager,
+        final ConfigurableApplicationContext applicationContext) {
         val firestoreProps = casProperties.getTicket().getRegistry().getGoogleCloudFirestore();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(firestoreProps.getCrypto(), "firestore");
-        return new GoogleCloudFirestoreTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, firestore);
+        return new GoogleCloudFirestoreTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, applicationContext, firestore);
     }
 
 
@@ -58,33 +60,36 @@ public class CasGoogleCloudFirestoreTicketRegistryAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasTicketCatalogConfigurationValuesProvider googleCloudFirestoreTicketCatalogConfigurationValuesProvider() {
-            return new CasTicketCatalogConfigurationValuesProvider() {
+            return new GoogleCloudFirestoreTicketCatalogConfigurationValuesProvider();
+        }
 
-                @Override
-                public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
-                    return p -> "serviceTicketsCollection";
-                }
+        private static final class GoogleCloudFirestoreTicketCatalogConfigurationValuesProvider
+            implements CasTicketCatalogConfigurationValuesProvider {
 
-                @Override
-                public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
-                    return p -> "proxyTicketsCollection";
-                }
+            @Override
+            public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
+                return p -> "serviceTicketsCollection";
+            }
 
-                @Override
-                public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
-                    return p -> "ticketGrantingTicketsCollection";
-                }
+            @Override
+            public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
+                return p -> "proxyTicketsCollection";
+            }
 
-                @Override
-                public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
-                    return p -> "proxyGrantingTicketsCollection";
-                }
+            @Override
+            public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
+                return p -> "ticketGrantingTicketsCollection";
+            }
 
-                @Override
-                public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
-                    return p -> "transientSessionTicketsCollection";
-                }
-            };
+            @Override
+            public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
+                return p -> "proxyGrantingTicketsCollection";
+            }
+
+            @Override
+            public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
+                return p -> "transientSessionTicketsCollection";
+            }
         }
     }
 }

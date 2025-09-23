@@ -1,18 +1,16 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,13 +32,17 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
     private final Resource location;
 
-    private final StringSerializer<Map<String, List<OneTimeTokenAccount>>> serializer = new OneTimeAccountSerializer();
+    private final StringSerializer<Map<String, List<OneTimeTokenAccount>>> serializer;
 
-    public JsonGoogleAuthenticatorTokenCredentialRepository(final Resource location, final IGoogleAuthenticator googleAuthenticator,
-                                                            final CipherExecutor<String, String> tokenCredentialCipher,
-                                                            final CipherExecutor<Number, Number> scratchCodesCipher) {
+    public JsonGoogleAuthenticatorTokenCredentialRepository(
+        final Resource location,
+        final CasGoogleAuthenticator googleAuthenticator,
+        final CipherExecutor<String, String> tokenCredentialCipher,
+        final CipherExecutor<Number, Number> scratchCodesCipher,
+        final StringSerializer<Map<String, List<OneTimeTokenAccount>>> serializer) {
         super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
         this.location = location;
+        this.serializer = serializer;
     }
 
     @Override
@@ -52,13 +54,19 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 .flatMap(List::stream)
                 .filter(ac -> ac.getId() == id)
                 .findFirst()
+                .map(this::decode)
                 .orElse(null);
         });
     }
 
     @Override
     public OneTimeTokenAccount get(final String username, final long id) {
-        return lock.tryLock(() -> get(username).stream().filter(ac -> ac.getId() == id).findFirst().orElse(null));
+        return lock.tryLock(() -> get(username)
+            .stream()
+            .filter(ac -> ac.getId() == id)
+            .findFirst()
+            .map(this::decode)
+            .orElse(null));
     }
 
     @Override
@@ -67,17 +75,17 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             try {
                 if (!location.getFile().exists()) {
                     LOGGER.warn("JSON account repository file [{}] is not found.", location.getFile());
-                    return new ArrayList<>(0);
+                    return new ArrayList<>();
                 }
 
                 if (location.getFile().length() <= 0) {
                     LOGGER.debug("JSON account repository file location [{}] is empty.", location.getFile());
-                    return new ArrayList<>(0);
+                    return new ArrayList<>();
                 }
                 val map = serializer.from(location.getFile());
                 if (map == null) {
                     LOGGER.debug("JSON account repository file [{}] is empty.", location.getFile());
-                    return new ArrayList<>(0);
+                    return new ArrayList<>();
                 }
 
                 val account = map.get(username.trim().toLowerCase(Locale.ENGLISH));
@@ -87,7 +95,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             } catch (final Exception e) {
                 LoggingUtils.error(LOGGER, e);
             }
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         });
     }
 
@@ -95,12 +103,15 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     public Collection<? extends OneTimeTokenAccount> load() {
         return lock.tryLock(() -> {
             try {
-                return readAccountsFromJsonRepository().values()
-                    .stream().flatMap(List::stream).collect(Collectors.toList());
+                return readAccountsFromJsonRepository()
+                    .values()
+                    .stream()
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
             } catch (final Exception e) {
                 LoggingUtils.error(LOGGER, e);
             }
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         });
     }
 
@@ -108,6 +119,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
         return lock.tryLock(() -> {
             try {
+                account.assignIdIfNecessary();
                 LOGGER.debug("Storing google authenticator account for [{}]", account.getUsername());
                 val accounts = readAccountsFromJsonRepository();
                 LOGGER.debug("Found [{}] account(s) and added google authenticator account for [{}]",
@@ -140,6 +152,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                             act.setSecretKey(encoded.getSecretKey());
                             act.setScratchCodes(encoded.getScratchCodes());
                             act.setValidationCode(encoded.getValidationCode());
+                            act.setProperties(encoded.getProperties());
                             writeAccountsToJsonRepository(accounts);
                             return encoded;
                         })
@@ -154,7 +167,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
     @Override
     public void deleteAll() {
-        lock.tryLock(__ -> writeAccountsToJsonRepository(new HashMap<>(0)));
+        lock.tryLock(__ -> writeAccountsToJsonRepository(new HashMap<>()));
     }
 
     @Override
@@ -191,16 +204,6 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
         });
     }
 
-    private static final class OneTimeAccountSerializer extends AbstractJacksonBackedStringSerializer<Map<String, List<OneTimeTokenAccount>>> {
-        @Serial
-        private static final long serialVersionUID = 1466569521275630254L;
-
-        @Override
-        public Class getTypeToSerialize() {
-            return HashMap.class;
-        }
-    }
-
     private void writeAccountsToJsonRepository(final Map<String, List<OneTimeTokenAccount>> accounts) {
         FunctionUtils.doUnchecked(__ -> {
             if (location.getFile() != null) {
@@ -224,7 +227,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
                 LOGGER.debug("Read [{}] accounts from JSON repository file at [{}]", accounts.size(), file);
                 return accounts;
             }
-            return new HashMap<>(0);
+            return new HashMap<>();
         });
     }
 }

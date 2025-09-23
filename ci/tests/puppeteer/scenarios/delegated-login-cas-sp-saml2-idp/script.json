@@ -1,0 +1,39 @@
+{
+  "dependencies": "pac4j-webflow,pac4j-saml,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.authn.attribute-repository.stub.attributes.name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.department=SSO",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    "--cas.http-client.host-name-verifier=none",
+
+    "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].service-provider-entity-id=cas:apereo:pac4j:saml",
+    "--cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/sp-metadata.xml",
+    "--cas.authn.pac4j.saml[0].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/samlKeystore.jks",
+    "--cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=http://localhost:8988/realms/cas/protocol/saml/descriptor",
+    "--cas.authn.pac4j.saml[0].client-name=keycloak",
+    "--cas.authn.pac4j.saml[0].all-signature-validation-disabled=true",
+    "--cas.authn.pac4j.saml[0].principal-id-attribute=email",
+
+    "--cas.authn.pac4j.core.session-replication.cookie.same-site-policy=none",
+    
+    "--cas.logout.follow-service-redirects=true",
+
+    "--logging.level.PROTOCOL_MESSAGE=debug",
+    "--logging.level.org.springframework.webflow=info"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/keycloak/run-keycloak-server.sh"
+}

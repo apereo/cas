@@ -17,7 +17,7 @@ public class TicketGrantingTicketCompactor implements TicketCompactor<TicketGran
     private final TicketSerializationManager ticketSerializationManager;
 
     @Override
-    public String compact(final Ticket ticket) throws Exception {
+    public String compact(final Ticket ticket) {
         return ticketSerializationManager.serializeTicket(ticket);
     }
 

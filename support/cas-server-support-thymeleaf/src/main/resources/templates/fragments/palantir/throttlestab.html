@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <div class="attribute-tab w-100 d-none" id="attribute-tab-12">
+        <h3>Throttled Authentications</h3>
+        <table id="throttlesTable" class="mdc-data-table__table table table-striped noborder">
+            <thead>
+            <tr class="mdc-data-table__header-row">
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Key</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Date</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Username</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">IP Address</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Expiration</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+            </tr>
+            </thead>
+            <tbody class="mdc-data-table__content">
+            </tbody>
+        </table>
+
+        <div class="d-flex">
+            <button type="button" name="clearThrottlesButton" id="clearThrottlesButton"
+                    class="mdc-button mdc-button--raised">
+                <span class="mdc-button__label">
+                    <i class="mdc-tab__icon mdi mdi-delete"
+                       aria-hidden="true"></i>Clear</span>
+            </button>
+            <button type="button" name="releaseThrottlesButton" id="releaseThrottlesButton"
+                    class="mdc-button mdc-button--raised">
+                <span class="mdc-button__label">
+                    <i class="mdc-tab__icon mdi mdi-broom" aria-hidden="true"></i>Release</span>
+            </button>
+        </div>
+    </div>
+</span>
+</body>
+</html>

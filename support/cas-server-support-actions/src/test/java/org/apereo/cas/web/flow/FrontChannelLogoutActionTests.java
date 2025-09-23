@@ -117,7 +117,7 @@ class FrontChannelLogoutActionTests {
             val context = MockRequestContext.create(applicationContext);
 
 
-            WebUtils.putLogoutRequests(context, new ArrayList<>(0));
+            WebUtils.putLogoutRequests(context, new ArrayList<>());
             val event = frontChannelLogoutAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         }

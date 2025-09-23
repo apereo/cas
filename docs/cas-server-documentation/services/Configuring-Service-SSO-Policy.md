@@ -58,7 +58,7 @@ user may be asked for credentials. Such policies can be chained together and exe
         
 {% tabs ssoservicepolicy %}
 
-{% tab ssoservicepolicy Authentication Date %}
+{% tab ssoservicepolicy Authentication Date <i class="fa fa-calendar-days px-1"></i> %}
 
 Honor the existing single sign-on session, if any, if the authentication date is at most `5` seconds old. Otherwise, challenge
 the user for credentials and ignore the existing session.
@@ -88,7 +88,7 @@ the user for credentials and ignore the existing session.
 
 {% endtab %}
 
-{% tab ssoservicepolicy Last Used Time %}
+{% tab ssoservicepolicy <i class="fa fa-clock px-1"></i>Last Used Time %}
 
 Honor the existing single sign-on session, if any, if the last time an SSO session was used is at most `5` seconds old. Otherwise, challenge the
 user for credentials and ignore the existing session.
@@ -121,7 +121,7 @@ the ticket continues to actively issue service tickets, etc.
 
 {% endtab %}
 
-{% tab ssoservicepolicy Attributes %}
+{% tab ssoservicepolicy Attributes <i class="fa fa-id-card px-1"></i> %}
 
 The policy calculation here typically includes evaluating all authentication and principal attributes linked to the SSO session to check whether
 the ticket-granting ticket may continue to actively issue service tickets, etc. Each attribute defined in the policy will be examined against each principal
@@ -159,7 +159,7 @@ and value patterns defined in the policy are able to support the [Spring Express
 
 {% endtab %}
 
-{% tab ssoservicepolicy Groovy %}
+{% tab ssoservicepolicy <i class="fa fa-code px-1"></i>Groovy %}
 
 SSO participation decisions can be determined using a Groovy script, that may be defined either inline
 or outsourced to an external Groovy script.
@@ -228,9 +228,11 @@ You may also do the same sort of thing with an inline Groovy script:
 }
 ```
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
-{% tab ssoservicepolicy Custom %}
+{% tab ssoservicepolicy <i class="fa fa-code px-1"></i> Custom %}
 
 Participation in a single sign-on session can be customized and controlled using custom strategies registered with CAS per the below syntax:
 

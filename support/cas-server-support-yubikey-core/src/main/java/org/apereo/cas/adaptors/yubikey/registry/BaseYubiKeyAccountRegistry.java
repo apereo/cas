@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -93,9 +92,10 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
                 .name(request.getName())
                 .publicId(yubikeyPublicId)
                 .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
+                .tenant(request.getTenant())
                 .build();
 
-            var account = getAccountInternal(request.getUsername());
+            val account = getAccountInternal(request.getUsername());
             if (account == null) {
                 return save(request, device) != null;
             }
@@ -141,7 +141,7 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
             .stream()
             .map(device -> decodeYubiKeyRegisteredDevice(account, device))
             .filter(Objects::nonNull)
-            .collect(Collectors.toCollection(ArrayList::new));
+            .collect(Collectors.toList());
         yubiKeyAccount.setDevices(devices);
         return Optional.of(yubiKeyAccount);
     }
@@ -172,18 +172,7 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
         return null;
     }
 
-    /**
-     * Gets account internal.
-     *
-     * @param username the username
-     * @return the account internal
-     */
     protected abstract YubiKeyAccount getAccountInternal(String username);
 
-    /**
-     * Gets accounts internal.
-     *
-     * @return the accounts internal
-     */
     protected abstract Collection<? extends YubiKeyAccount> getAccountsInternal();
 }

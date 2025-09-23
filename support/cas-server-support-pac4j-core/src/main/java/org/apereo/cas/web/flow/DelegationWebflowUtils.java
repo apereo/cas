@@ -1,10 +1,10 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.ticket.Ticket;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
@@ -114,7 +114,7 @@ public class DelegationWebflowUtils {
     public static <T extends Serializable> List<T> getDelegatedClientAuthenticationResolvedCredentials(final RequestContext context,
                                                                                                        final Class<T> clazz) {
         val results = context.getFlowScope().get("delegatedAuthenticationCredentials", List.class);
-        return ObjectUtils.defaultIfNull(results, List.of());
+        return ObjectUtils.getIfNull(results, List.of());
     }
 
 
@@ -149,7 +149,7 @@ public class DelegationWebflowUtils {
         if (scope.contains("delegatedAuthenticationProviderConfigurations", Set.class)) {
             return scope.get("delegatedAuthenticationProviderConfigurations", Set.class);
         }
-        return new HashSet<>(0);
+        return new HashSet<>();
     }
 
     /**
@@ -204,4 +204,28 @@ public class DelegationWebflowUtils {
         return context.getFlowScope().get(FLOW_SCOPE_ATTR_DELEGATED_AUTHN_PROVIDER_PRIMARY);
     }
 
+    /**
+     * Put delegated authentication logout request ticket.
+     *
+     * @param requestContext         the request context
+     * @param ticket the transient session ticket
+     */
+    public static void putDelegatedAuthenticationLogoutRequestTicket(final RequestContext requestContext,
+                                                                     final Ticket ticket) {
+        if (ticket == null) {
+            requestContext.getFlowScope().remove(FLOW_SCOPE_ATTR_DELEGATED_AUTHN_PROVIDER_PRIMARY);
+        } else {
+            requestContext.getFlowScope().put(FLOW_SCOPE_ATTR_DELEGATED_AUTHN_PROVIDER_PRIMARY, ticket);
+        }
+    }
+
+    /**
+     * Gets delegated authentication logout request ticket.
+     *
+     * @param requestContext the request context
+     * @return the delegated authentication logout request ticket
+     */
+    public static Ticket getDelegatedAuthenticationLogoutRequestTicket(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get(FLOW_SCOPE_ATTR_DELEGATED_AUTHN_PROVIDER_PRIMARY, Ticket.class);
+    }
 }

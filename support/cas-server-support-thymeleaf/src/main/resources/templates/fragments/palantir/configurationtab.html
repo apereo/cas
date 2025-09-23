@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <div class="attribute-tab w-100 d-none" id="attribute-tab-7">
+        <h3>Active Profiles</h3>
+        <div class="d-flex align-items-start mb-4">
+            <div id="casActiveProfiles" class="mdc-chip-set" role="grid">
+            </div>
+        </div>
+
+        <div class="jqueryui-tabs">
+            <ul>
+                <li><a href="#environment-tab">Environment</a></li>
+                <li><a href="#config-tab">Configuration</a></li>
+                <li id="casConfigSecurity"><a href="#config-encryption-tab">Security</a></li>
+                <li id="casConfigSearch"><a href="#config-search">Search</a></li>
+            </ul>
+
+            <div id="environment-tab">
+                 <table id="configurationTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Source</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="config-tab">
+                <table id="configPropsTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Source</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="config-encryption-tab">
+                <p>You can ask CAS to encrypt or decrypt a configuration property value for you.</p>
+                
+                <form id="fmConfigEncryption" class="d-block" onsubmit="return false;">
+                    <section class="cas-field form-group my-3 mdc-input-group d-flex">
+                        <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                            <label for="configValue"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Configuration Property</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="configValue" tabindex="0" id="configValue" size="50" autocomplete="off" required/>
+                            </label>
+                        </div>
+                    </section>
+                    <div class="d-flex">
+                        <button type="button" id="encryptConfigButton" class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-lock" aria-hidden="true"></i>Encrypt</span>
+                        </button>
+                        <button type="button" id="decryptConfigButton" class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-lock-open" aria-hidden="true"></i>Decrypt</span>
+                        </button>
+                    </div>
+                    <div id="configEncryptionResult" class="d-none">
+                        <pre><code class="border-rounded language-json"></code></pre>
+                    </div>
+                </form>
+                
+            </div>
+
+            <div id="config-search">
+                <p>You can search the CAS configuration metadata to query for a configuration property.</p>
+                <form id="fmConfigSearch" class="d-block" onsubmit="return false;">
+                    <section class="cas-field form-group my-3 mdc-input-group d-flex">
+                        <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                            <label for="configSearchQuery"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Query</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="configSearchQuery"
+                                       tabindex="0" id="configSearchQuery" size="50" autocomplete="off" required/>
+                            </label>
+                        </div>
+                    </section>
+                    <div class="d-flex">
+                        <button type="submit" name="configSearchButton" id="configSearchButton"
+                                class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-magnify" aria-hidden="true"></i>Search</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div id="configSearchResults" class="hide">
+                     <table id="configSearchResultsTable" class="mdc-data-table__table table table-striped noborder">
+                        <thead>
+                        <tr class="mdc-data-table__header-row">
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
+                        </tr>
+                        </thead>
+                        <tbody class="mdc-data-table__content">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</span>
+</body>
+</html>

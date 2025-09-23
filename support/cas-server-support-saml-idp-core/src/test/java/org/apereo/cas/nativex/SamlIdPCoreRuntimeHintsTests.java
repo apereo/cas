@@ -12,10 +12,10 @@ import org.springframework.aot.hint.RuntimeHints;
  * @since 7.0.0
  */
 @Tag("Native")
-public class SamlIdPCoreRuntimeHintsTests {
+class SamlIdPCoreRuntimeHintsTests {
 
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new SamlIdPCoreRuntimeHints().registerHints(hints, getClass().getClassLoader());
     }

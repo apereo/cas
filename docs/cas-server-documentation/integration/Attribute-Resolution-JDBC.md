@@ -55,14 +55,19 @@ authenticates via `sAMAccountName`.
 
 ## Example #1
 
-If the resolver is configured to use `sAMAccoutName` as the attribute for the principal id, then when authentication is complete the resolver attempts
-to construct attributes from attribute repository sources, it sees `sAMAccoutName` as the attribute and sees the principal id is to
-be created by `sAMAccoutName`. So it would remove the `sAMAccoutName` from the attributes.
-The final result is is a principal whose id is `johnsmith` who has a `cn` attribute of `John Smith`.
+If the resolver is configured to use `sAMAccountName` as the attribute for the principal id, then when authentication is complete the resolver attempts
+to construct attributes from attribute repository sources, it sees `sAMAccountName` as the attribute and sees the principal id is to
+be created by `sAMAccountName`. So it would remove the `sAMAccountName` from the attributes.
+The final result is a principal whose id is `johnsmith` who has a `cn` attribute of `John Smith`.
 
 ## Example #2
 
 If the resolver is configured to use `cn` as the attribute for the principal id, then when authentication is complete the resolver attempts to
-construct attributes from attribute repository sources. It then sees `sAMAccoutName` as the attribute and sees the principal id is to be created by `cn`.
-So it would remove the `cn` from the attributes. The final result is is a principal whose id is `John Smith`
+construct attributes from attribute repository sources. It then sees `sAMAccountName` as the attribute and sees the principal id is to be created by `cn`.
+So it would remove the `cn` from the attributes. The final result is a principal whose id is `John Smith`
 who has a `sAMAccountName` attribute of `johnsmith`.
+
+# Multitenancy
+
+Configuration settings for SQL attribute resolution can be specified in a multitenant environment.
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.

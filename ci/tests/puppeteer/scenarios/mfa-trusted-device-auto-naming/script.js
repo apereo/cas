@@ -54,5 +54,5 @@ const os = require("os");
         "Content-Type": "application/json"
     }, 201, body);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

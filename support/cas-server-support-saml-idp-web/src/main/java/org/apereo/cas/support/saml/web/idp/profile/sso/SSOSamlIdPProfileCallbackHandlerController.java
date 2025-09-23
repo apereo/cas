@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlIdPProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.SamlProfileHandlerConfigurationContext;
@@ -11,6 +10,8 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +37,7 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
+@Tag(name = "SAML2")
 public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPProfileHandlerController {
 
     public SSOSamlIdPProfileCallbackHandlerController(final SamlProfileHandlerConfigurationContext config) {
@@ -52,12 +54,13 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
      * @throws Exception the exception
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
+    @Operation(summary = "Handle SAML2 SSO Callback Profile Request")
     protected ModelAndView handleCallbackProfileRequestGet(final HttpServletResponse response,
                                                            final HttpServletRequest request) throws Throwable {
         autoConfigureCookiePath(request);
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        if (type == SessionStorageTypes.BROWSER_STORAGE
+        if (type.isBrowserStorage()
             && !request.getParameterMap().containsKey(BrowserStorage.PARAMETER_BROWSER_STORAGE)) {
             val context = new JEEContext(request, response);
             val sessionStorage = configurationContext.getSessionStore()
@@ -70,12 +73,13 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
     }
 
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_CALLBACK)
+    @Operation(summary = "Handle SAML2 SSO Callback Profile Request")
     protected ModelAndView handleCallbackProfileRequestPost(final HttpServletResponse response,
                                                             final HttpServletRequest request) throws Throwable {
         autoConfigureCookiePath(request);
         val properties = configurationContext.getCasProperties();
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
-        if (type == SessionStorageTypes.BROWSER_STORAGE) {
+        if (type.isBrowserStorage()) {
             val storage = WebUtils.getBrowserStoragePayload(request);
             if (storage.isPresent()) {
                 val context = new JEEContext(request, response);
@@ -103,7 +107,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
             LOGGER.error("Unable to determine profile binding");
             return WebUtils.produceErrorView(new IllegalArgumentException("Unable to determine profile binding"));
         }
-        val resultObject = buildSamlResponse(response, request, authenticationContext, assertion, binding);
+        val resultObject = buildSamlResponse(response, request, authenticationContext, assertion, binding, ticket);
         request.setAttribute(Response.class.getName(), resultObject);
         return null;
     }

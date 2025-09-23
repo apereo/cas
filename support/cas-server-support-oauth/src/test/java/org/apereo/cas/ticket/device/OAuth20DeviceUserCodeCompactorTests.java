@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("OAuthToken")
-public class OAuth20DeviceUserCodeCompactorTests extends AbstractOAuth20Tests {
+class OAuth20DeviceUserCodeCompactorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauth20DeviceUserCodeTicketCompactor")
     private TicketCompactor<OAuth20DeviceUserCode> oauth20DeviceUserCodeTicketCompactor;

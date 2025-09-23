@@ -89,6 +89,8 @@ as a dynamic attribute whose value is determined by the inline Groovy script att
 }
 ```
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 ## File-based Groovy Claims
 
 Claims may produce their values from an external Groovy 
@@ -123,6 +125,8 @@ def run(final Object... args) {
     return [attributes["cn"][0] + "@example.org"]
 }
 ```
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 ## Custom Claims
 

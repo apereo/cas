@@ -39,7 +39,6 @@ class OidcUserProfileDataCreatorTests {
     class WithClaimMappingsTests extends AbstractOidcTests {
         @Test
         void verifyOperation() throws Throwable {
-            val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("email", List.of("casuser@example.org"),
                     "email-address", List.of("casuser@apereo.org")));
@@ -49,7 +48,7 @@ class OidcUserProfileDataCreatorTests {
             val registeredService = getOidcRegisteredService(accessToken.getClientId(), "https://oauth.example.org");
             servicesManager.save(registeredService);
 
-            val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+            val data = oidcUserProfileDataCreator.createFrom(accessToken);
             val attrs = (Map) data.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES);
             assertFalse(attrs.containsKey("email-address"));
             assertTrue(attrs.containsKey("email"));
@@ -65,10 +64,9 @@ class OidcUserProfileDataCreatorTests {
     class DefaultTests extends AbstractOidcTests {
         @Test
         void verifyOperation() throws Throwable {
-            val context = new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse());
             val accessToken = getAccessToken();
             ticketRegistry.addTicket(accessToken);
-            val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+            val data = oidcUserProfileDataCreator.createFrom(accessToken);
             assertFalse(data.isEmpty());
             assertEquals(((AuthenticationAwareTicket) accessToken.getTicketGrantingTicket()).getAuthentication()
                 .getAuthenticationDate().toEpochSecond(), (long) data.get(OidcConstants.CLAIM_AUTH_TIME));
@@ -94,7 +92,7 @@ class OidcUserProfileDataCreatorTests {
             val accessToken = getAccessToken();
             when(accessToken.getClaims()).thenReturn(result);
             ticketRegistry.addTicket(accessToken);
-            val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+            val data = oidcUserProfileDataCreator.createFrom(accessToken);
             assertFalse(data.isEmpty());
             assertTrue(data.containsKey(OAuth20Constants.CLAIM_SUB));
         }

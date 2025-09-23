@@ -20,5 +20,5 @@ const cas = require("../../cas.js");
     await cas.click(page2, "table tbody td a");
     await cas.sleep(1000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

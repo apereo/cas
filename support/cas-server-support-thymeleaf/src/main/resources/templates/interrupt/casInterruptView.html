@@ -46,7 +46,7 @@
                         <input type="hidden" id="linkToRedirect" name="link"/>
                     </form>
 
-                    <span th:with="linkid=${#strings.toLowerCase(#strings.replace(link.key, ' ', ''))}"
+                    <span th:with="linkid=${#strings.toLowerCase(link.key.replaceAll('[^A-Za-z0-9]', ''))}"
                           th:each="link : ${interrupt.links}">
                         <a class="mdc-button mdc-button--outline btn btn-primary me-2"
                            th:text="${link.key}"
@@ -69,7 +69,7 @@
             <div class="mdc-data-table table-responsive mt-2 mb-4">
                 <table id="attributesTable"
                        th:if="${interrupt.data} and ${#maps.size(interrupt.data) > 0}"
-                       class="table table-striped w-100"
+                       class="table table-striped w-100 auto-init"
                        aria-label="Attributes">
                     <thead>
                     <tr class="mdc-data-table__header-row">
@@ -95,18 +95,12 @@
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="proceed"/>
             <div class="form-actions d-flex align-items-center">
-                <button class="mdc-button mdc-button--raised btn btn-primary me-2"
-                        name="proceed"
-                        id="proceed"
-                        type="submit"
-                        accesskey="l">
-                    <span class="mdc-button__label" th:text="#{screen.interrupt.btn.proceed}">Proceed</span>
-                </button>
+                <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.interrupt.btn.proceed', id='proceed', name='proceed')}"/>
             </div>
         </form>
 
         <div th:if="${interrupt.block}">
-            <a class="mdc-button mdc-button--raised me-2 btn btn-outline-secondary" id="cancel" name="cancel" th:href="@{/login}">
+            <a class="mdc-button mdc-button--raised me-2 btn btn-outline-secondary button-cancel" id="cancel" name="cancel" th:href="@{/login}">
                 <span th:if="${interruptTriggerMode == 'AFTER_AUTHENTICATION'}" class="mdc-button__label"
                       th:text="#{screen.interrupt.btn.cancel}">Cancel</span>
 

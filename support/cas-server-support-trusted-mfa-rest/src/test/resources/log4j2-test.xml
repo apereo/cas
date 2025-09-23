@@ -7,6 +7,6 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo.cas.util.MockWebServer" level="info"/>
-        <Logger name="org.springframework.http.client" level="info"/>
+        <Logger name="org.springframework.http.client" level="warn"/>
     </Loggers>
 </Configuration>

@@ -2,7 +2,7 @@ package org.apereo.cas.util.spring;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.text.MessageSanitizer;
 import lombok.val;
@@ -121,7 +121,7 @@ public class ApplicationContextProvider implements ApplicationContextAware {
      *
      * @return the script resource cache manager
      */
-    public static Optional<ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript>> getScriptResourceCacheManager() {
+    public static Optional<ScriptResourceCacheManager<String, ExecutableCompiledScript>> getScriptResourceCacheManager() {
         return (Optional) getBean(ScriptResourceCacheManager.BEAN_NAME, ScriptResourceCacheManager.class);
     }
 

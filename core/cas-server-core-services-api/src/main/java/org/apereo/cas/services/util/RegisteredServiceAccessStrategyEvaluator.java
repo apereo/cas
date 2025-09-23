@@ -4,16 +4,13 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.util.scripting.GroovyShellScript;
-import org.apereo.cas.util.scripting.ScriptingUtils;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +35,7 @@ public class RegisteredServiceAccessStrategyEvaluator implements Function<Regist
      * for this service to proceed.
      */
     @Builder.Default
-    private Map<String, Set<String>> requiredAttributes = new HashMap<>(0);
+    private Map<String, Set<String>> requiredAttributes = new HashMap<>();
 
     /**
      * Collection of attributes
@@ -46,7 +43,7 @@ public class RegisteredServiceAccessStrategyEvaluator implements Function<Regist
      * policy to refuse access.
      */
     @Builder.Default
-    private Map<String, Set<String>> rejectedAttributes = new HashMap<>(0);
+    private Map<String, Set<String>> rejectedAttributes = new HashMap<>();
 
     /**
      * Indicates whether matching on required attribute values
@@ -160,11 +157,13 @@ public class RegisteredServiceAccessStrategyEvaluator implements Function<Regist
         val requiredValues = requiredAttributes.get(attributeName);
         val availableValues = CollectionUtils.toCollection(request.getAttributes().get(attributeName));
 
+        val scriptFactoryInstance = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+        
         val results = new ArrayList<>();
         for (val requiredValue : requiredValues) {
-            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(requiredValue);
-            if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
-                try (val executableScript = new GroovyShellScript(matcherInline.group(1))) {
+            if (scriptFactoryInstance.isPresent() && scriptFactoryInstance.get().isInlineScript(requiredValue) && CasRuntimeHintsRegistrar.notInNativeImage()) {
+                val script = scriptFactoryInstance.get().getInlineScript(requiredValue).orElseThrow();
+                try (val executableScript = scriptFactoryInstance.get().fromScript(script)) {
                     val args = CollectionUtils.<String, Object>wrap(
                         "principalId", request.getPrincipalId(),
                         "currentValues", availableValues,

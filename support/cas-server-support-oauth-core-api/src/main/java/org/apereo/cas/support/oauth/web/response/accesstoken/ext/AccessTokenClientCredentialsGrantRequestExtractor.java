@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.springframework.beans.factory.ObjectProvider;
 
 
 /**
@@ -11,7 +12,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
  * @since 5.1.0
  */
 public class AccessTokenClientCredentialsGrantRequestExtractor extends AccessTokenPasswordGrantRequestExtractor {
-    public AccessTokenClientCredentialsGrantRequestExtractor(final OAuth20ConfigurationContext oAuthConfigurationContext) {
+    public AccessTokenClientCredentialsGrantRequestExtractor(final ObjectProvider<OAuth20ConfigurationContext> oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 

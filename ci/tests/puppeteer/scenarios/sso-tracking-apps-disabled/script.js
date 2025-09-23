@@ -6,9 +6,9 @@ const cas = require("../../cas.js");
     const baseUrl = "https://localhost:8443/cas/actuator/ssoSessions";
 
     await cas.logg("Removing all SSO Sessions");
-    await cas.doRequest(`${baseUrl}?type=ALL&from=1&count=1000`, "DELETE", {});
+    await cas.doDelete(`${baseUrl}?type=ALL&from=1&count=1000`);
 
-    await login("https://apereo.github.io");
+    await login("https://localhost:9859/anything/cas");
 
     await cas.logg("Checking for SSO sessions for all users");
     await cas.doGet(`${baseUrl}?type=ALL`, async (res) => {
@@ -35,6 +35,6 @@ async function login(service) {
         }
         await cas.assertTicketParameter(page);
     }
-    await browser.close();
+    await cas.closeBrowser(browser);
 }
 

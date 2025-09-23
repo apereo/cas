@@ -30,9 +30,8 @@ const assert = require("assert");
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
     await cas.sleep(2000);
-    const url = `${await page.url()}`;
     await cas.logPage(page);
-    assert(url.includes(service));
+    await cas.assertPageUrlContains(page, service);
     await cas.assertTicketParameter(page);
 
     await cas.gotoLogin(page);
@@ -44,5 +43,5 @@ const assert = require("assert");
     await cas.screenshot(page);
     await cas.assertInnerTextStartsWith(page, "#triggeredRiskBasedAuthentication td code kbd", "[true]");
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

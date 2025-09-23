@@ -23,3 +23,5 @@ Multiple locations may be comma-separated.
 ```
 
 {% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.http" %}
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

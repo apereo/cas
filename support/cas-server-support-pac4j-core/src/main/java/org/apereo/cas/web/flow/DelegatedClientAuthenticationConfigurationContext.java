@@ -50,7 +50,7 @@ public class DelegatedClientAuthenticationConfigurationContext {
 
     private final DelegatedIdentityProviders identityProviders;
 
-    private final DelegatedAuthenticationCredentialExtractor credentialExtractor;
+    private final List<DelegatedAuthenticationCredentialExtractor> credentialExtractors;
 
     private final ServicesManager servicesManager;
 
@@ -84,6 +84,7 @@ public class DelegatedClientAuthenticationConfigurationContext {
 
     private final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
 
+    @Deprecated(since = "7.3.0", forRemoval = true)
     private final CasCookieBuilder delegatedClientDistributedSessionCookieGenerator;
 
     private final CasCookieBuilder delegatedClientCookieGenerator;

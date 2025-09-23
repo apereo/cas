@@ -2,14 +2,15 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.factory.BaseTicketFactoryTests;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseTicketFactoryTests.SharedTestConfiguration.class)
 @Tag("Tickets")
+@ExtendWith(CasTestExtension.class)
 class DefaultTicketCatalogTests {
     @Autowired
     @Qualifier(TicketCatalog.BEAN_NAME)
@@ -33,14 +35,14 @@ class DefaultTicketCatalogTests {
     private TicketTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     @Test
-    void verifyFindAll() throws Throwable {
+    void verifyFindAll() {
         val tickets = ticketCatalog.findAll();
         assertFalse(tickets.isEmpty());
         assertEquals(5, tickets.size());
     }
 
     @Test
-    void verifyByTicketType() throws Throwable {
+    void verifyByTicketType() {
         assertTrue(ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).isPresent());
         assertTrue(ticketCatalog.findTicketDefinition(ProxyGrantingTicket.class).isPresent());
         assertTrue(ticketCatalog.findTicketDefinition(ProxyTicket.class).isPresent());
@@ -49,7 +51,7 @@ class DefaultTicketCatalogTests {
     }
 
     @Test
-    void verifyUpdateAndFind() throws Throwable {
+    void verifyUpdateAndFind() {
         val defn = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).get();
         ticketCatalog.update(defn);
         assertTrue(ticketCatalog.contains(defn.getPrefix()));

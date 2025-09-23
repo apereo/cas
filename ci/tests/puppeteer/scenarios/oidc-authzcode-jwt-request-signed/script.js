@@ -43,7 +43,7 @@ const assert = require("assert");
         await cas.log("Decoding ID token...");
         const decoded = await cas.decodeJwt(res.data.id_token);
         assert(decoded.sub === "casuser");
-        assert(decoded.jti.startsWith("TGT-"));
+        assert(!decoded.jti.startsWith("TGT-"));
         assert(decoded.aud === "client");
         assert(decoded.jti !== undefined);
         assert(decoded.iat !== undefined);
@@ -57,5 +57,5 @@ const assert = require("assert");
         throw `Operation failed to obtain access token: ${error}`;
     });
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

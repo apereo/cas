@@ -18,10 +18,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -34,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Azure")
-@Import(CasCosmosDbTicketRegistryAutoConfiguration.class)
+@ImportAutoConfiguration(CasCosmosDbTicketRegistryAutoConfiguration.class)
 @TestPropertySource(properties = {
     "cas.tgc.crypto.enabled=false",
     "cas.http-client.host-name-verifier=none",
@@ -47,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @ResourceLock("cosmosdb-tickets")
 @Getter
+@Execution(ExecutionMode.SAME_THREAD)
 @EnabledIfEnvironmentVariable(named = "COSMOS_DB_URL", matches = ".+")
 @EnabledIfEnvironmentVariable(named = "COSMOS_DB_KEY", matches = ".+")
 class CosmosDbTicketRegistryTests extends BaseTicketRegistryTests {
@@ -58,7 +61,7 @@ class CosmosDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @RepeatedTest(1)
     @Tag("TicketRegistryTestWithEncryption")
-    void verifyLargeDataset() throws Throwable {
+    void verifyLargeDataset() {
         val ticketGrantingTickets = Stream.generate(() -> {
             val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                 .getNewTicketId(TicketGrantingTicket.PREFIX);

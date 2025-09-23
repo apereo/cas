@@ -1,11 +1,14 @@
 package org.apereo.inspektr.common.web;
 
+import lombok.experimental.UtilityClass;
+
 /**
  * Makes the {@link ClientInfo} available to the thread.
  *
  * @author Scott Battaglia
  * @since 1.0
  */
+@UtilityClass
 public class ClientInfoHolder {
 
     private static final ThreadLocal<ClientInfo> CLIENT_INFO_HOLDER = new InheritableThreadLocal<>();

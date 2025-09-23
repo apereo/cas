@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import org.apereo.cas.util.NamedObject;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.AccessLevel;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicator {
+public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicator implements NamedObject {
 
     private final long evictionThreshold;
 
@@ -68,14 +69,6 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
         }).accept(builder);
     }
 
-    /**
-     * Gets name of this indicator.
-     *
-     * @return the name
-     */
-    protected String getName() {
-        return getClass().getSimpleName();
-    }
 
     /**
      * Gets the statistics from this monitor.

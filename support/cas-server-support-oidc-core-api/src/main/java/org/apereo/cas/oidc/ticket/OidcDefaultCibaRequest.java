@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import java.io.Serial;
 import java.util.Set;
@@ -28,14 +29,27 @@ public class OidcDefaultCibaRequest extends AbstractTicket implements OidcCibaRe
 
     private final Authentication authentication;
 
+    private final String encodedId;
+
+    private boolean ready;
+    
     public OidcDefaultCibaRequest(final String id,
                                   final Authentication authentication,
                                   final ExpirationPolicy expirationPolicy,
                                   final Set<String> scopes,
-                                  final String clientId) {
+                                  final String clientId,
+                                  final String encodedId) {
         super(id, expirationPolicy);
         this.scopes = scopes;
         this.clientId = clientId;
         this.authentication = authentication;
+        this.encodedId = encodedId;
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    public OidcCibaRequest markTicketReady() {
+        this.ready = true;
+        return this;
     }
 }

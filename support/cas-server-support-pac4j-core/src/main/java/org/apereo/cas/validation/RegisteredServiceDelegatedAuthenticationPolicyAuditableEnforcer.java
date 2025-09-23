@@ -7,7 +7,6 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
 import org.apereo.cas.services.UnauthorizedServiceException;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
@@ -32,11 +31,9 @@ public class RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer ext
             val clientName = context.getProperties().get(Client.class.getSimpleName()).toString();
             LOGGER.trace("Checking delegated access strategy of [{}] for client [{}]", registeredService, clientName);
             val policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
-            if (policy != null) {
-                if (!policy.isProviderAllowed(clientName, registeredService)) {
-                    LOGGER.debug("Delegated access strategy for [{}] does not permit client [{}]", registeredService, clientName);
-                    result.setException(UnauthorizedServiceException.denied(clientName));
-                }
+            if (policy != null && !policy.isProviderAllowed(clientName, registeredService)) {
+                LOGGER.debug("Delegated access strategy for [{}] does not permit client [{}]", registeredService, clientName);
+                result.setException(UnauthorizedServiceException.denied(clientName));
             }
         }
         return result;

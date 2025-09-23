@@ -26,7 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePasswordManagementActionTests {
 
     @Nested
-    @TestPropertySource(properties = "cas.authn.pm.forgot-username.mail.text=classpath:ForgotUsernameEmailBody.groovy")
+    @TestPropertySource(properties = {
+        "cas.authn.attribute-repository.stub.attributes.uid=CAS",
+        "cas.authn.attribute-repository.stub.attributes.eduPersonAffiliation=developer",
+        "cas.authn.attribute-repository.stub.attributes.cn=CAS",
+        "cas.authn.attribute-repository.stub.attributes.givenName=casuser",
+        "cas.authn.pm.forgot-username.mail.text=classpath:ForgotUsernameEmailBody.groovy"
+    })
     class DefaultTests extends BasePasswordManagementActionTests {
 
         @Autowired
@@ -35,7 +41,7 @@ class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePass
 
         @Test
         void verifyOp() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             context.setParameter("email", "casuser@apereo.org");
             val result = sendForgotUsernameInstructionsAction.execute(context);
@@ -44,7 +50,7 @@ class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePass
 
         @Test
         void verifyBodyContainsUsername() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             context.setParameter("username", "casuser");
             context.setParameter("email", "casuser@apereo.org");
@@ -54,7 +60,7 @@ class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePass
             val resultAttributeName = new EventFactorySupport().getResultAttributeName();
             val emailResult = resultEvent.getAttributes().get(resultAttributeName, EmailCommunicationResult.class);
             assertTrue(emailResult.isSuccess());
-            assertEquals("Hello uid with email casuser@apereo.org, your affiliation is developer", emailResult.getBody());
+            assertEquals("Hello CAS with email casuser@apereo.org, your affiliation is developer", emailResult.getBody());
         }
     }
 
@@ -68,7 +74,7 @@ class SendForgotUsernameInstructionsActionEmailMessageBodyTests extends BasePass
 
         @Test
         void verifyBodyContainsUsername() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
 
             context.setParameter("username", "casuser");
             context.setParameter("email", "casuser@apereo.org");

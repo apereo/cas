@@ -17,7 +17,7 @@ for and designing complicated scripts.</p></div>
 
 {% tabs groovyinline %}
 
-{% tab groovyinline Basic %}
+{% tab groovyinline <i class="fa fa-pencil px-1"></i>Basic %}
 
 As an example, if you currently have resolved a `uid` attribute with a value of `piper`, you could then consider the following:
 
@@ -42,17 +42,19 @@ Inline scripts always begin with the syntax `groovy {...}` and are passed the cu
 attributes as an `attributes` binding variable. The result of the script can be a single/collection of value(s).
 
 The above configuration will produce a `uid` attribute for the application whose value is a concatenation of
-the original value of `uid` plus the words ` is great`, so the final result would be `piper is great`.
+the original value of `uid` plus the words `is great`. The final result would be `piper is great`.
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 
-{% tab groovyinline Complex %}
+{% tab groovyinline <i class="fa fa-gears px-1"></i>Complex %}
               
 This is a more complicated example of an inline Groovy script that calculates the value for the `memberOf` attribute. 
 You will notice the Groovy script is defined as a multiline string that is directly mapped to the attribute.
      
 Given a `memberOf` attribute value of `CN=Colleague Admins,OU=Computer Services Users`, the `memberOf` attribute
-that is caculated by the below attribute release policy will produce `Colleague Admins` as its value.
+that is calculated by the below attribute release policy will produce `Colleague Admins` as its value.
 
 ```json
 {
@@ -91,9 +93,11 @@ that is caculated by the below attribute release policy will produce `Colleague 
 You may also be interested in doing almost the same thing via [Pattern Matching](Attribute-Release-Policy-PatternMatching.html).
 
 <div class="alert alert-info">:information_source: <strong>Usage Warning</strong><p>As you may note, this can get ugly very quickly
-specially if you decide to be super creative with the scripting logic and/or decide to duplicate the same kind of script
+especially if you decide to be super creative with the scripting logic and/or decide to duplicate the same kind of script
 throughout other service policy files. Inline Groovy scripts are meant to be brief and efficient and you are encouraged
 to not get too complicated with the structure of the script and the behavior it delivers.</p></div>
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 

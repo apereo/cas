@@ -21,6 +21,7 @@ import java.util.Set;
 public class ByCredentialTypeAuthenticationHandlerResolver implements AuthenticationHandlerResolver {
     private final Collection<Class<? extends Credential>> credentials;
 
+    @SafeVarargs
     public ByCredentialTypeAuthenticationHandlerResolver(final Class<? extends Credential>... credentials) {
         this(CollectionUtils.wrapSet(credentials));
     }

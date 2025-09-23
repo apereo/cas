@@ -14,10 +14,12 @@ import org.apereo.cas.authentication.DefaultAuthenticationManager;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.TriStateBoolean;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -60,8 +62,10 @@ class CasCoreAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "authenticationResultBuilderFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuthenticationResultBuilderFactory authenticationResultBuilderFactory() {
-            return new DefaultAuthenticationResultBuilderFactory();
+        public AuthenticationResultBuilderFactory authenticationResultBuilderFactory(
+            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
+            final PrincipalElectionStrategy principalElectionStrategy) {
+            return new DefaultAuthenticationResultBuilderFactory(principalElectionStrategy);
         }
 
         @ConditionalOnMissingBean(name = AuthenticationTransactionFactory.BEAN_NAME)
@@ -122,13 +126,13 @@ class CasCoreAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier("defaultAuthenticationHandlerResolver")
             final AuthenticationHandlerResolver defaultAuthenticationHandlerResolver,
             final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
 
-            val plan = new DefaultAuthenticationEventExecutionPlan();
-            plan.setDefaultAuthenticationHandlerResolver(defaultAuthenticationHandlerResolver);
-            
+            val plan = new DefaultAuthenticationEventExecutionPlan(defaultAuthenticationHandlerResolver, tenantExtractor);
             val sortedConfigurers = new ArrayList<>(configurers);
             sortedConfigurers.removeIf(BeanSupplier::isProxy);
             AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);

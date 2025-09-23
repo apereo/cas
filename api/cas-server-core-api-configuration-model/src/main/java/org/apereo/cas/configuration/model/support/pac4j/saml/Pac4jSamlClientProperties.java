@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.TriStateBoolean;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,11 +20,10 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiresModule(name = "cas-server-support-pac4j-webflow")
+@RequiresModule(name = "cas-server-support-pac4j-saml")
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("Pac4jSamlClientProperties")
 public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
 
     @Serial
@@ -72,6 +70,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * credentials and it will automatically generate a new assertion for you. By default, the SAML client
      * will accept assertions based on a previous authentication for one hour.
      * You can adjust this behavior by modifying this setting. The unit of time here is seconds.
+     * To disable this check entirely, set the value to zero.
      */
     @DurationCapable
     private String maximumAuthenticationLifetime = "PT3600S";
@@ -92,7 +91,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * List arbitrary mappings of claims. Uses a "directed list" where the allowed
      * syntax would be {@code givenName->urn:oid:2.5.4.42}.
      */
-    private List<String> mappedAttributes = new ArrayList<>(0);
+    private List<String> mappedAttributes = new ArrayList<>();
 
     /**
      * The entity id of the SP/CAS that is used in the SP metadata generation process.
@@ -113,7 +112,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
     /**
      * Requested authentication context class in authn requests.
      */
-    private List<String> authnContextClassRef = new ArrayList<>(0);
+    private List<String> authnContextClassRef = new ArrayList<>();
 
     /**
      * Specifies the comparison rule that should be used to evaluate the specified authentication methods.
@@ -226,22 +225,22 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * List of attributes requested by the service provider
      * that would be put into the service provider metadata.
      */
-    private List<Pac4jSamlServiceProviderRequestedAttribute> requestedAttributes = new ArrayList<>(0);
+    private List<Pac4jSamlServiceProviderRequestedAttribute> requestedAttributes = new ArrayList<>();
 
     /**
      * Collection of signing signature blocked algorithms, if any, to override the global defaults.
      */
-    private List<String> blockedSignatureSigningAlgorithms = new ArrayList<>(0);
+    private List<String> blockedSignatureSigningAlgorithms = new ArrayList<>();
 
     /**
      * Collection of signing signature algorithms, if any, to override the global defaults.
      */
-    private List<String> signatureAlgorithms = new ArrayList<>(0);
+    private List<String> signatureAlgorithms = new ArrayList<>();
 
     /**
      * Collection of signing signature reference digest methods, if any, to override the global defaults.
      */
-    private List<String> signatureReferenceDigestMethods = new ArrayList<>(0);
+    private List<String> signatureReferenceDigestMethods = new ArrayList<>();
 
     /**
      * The signing signature canonicalization algorithm, if any, to override the global defaults.
@@ -267,7 +266,7 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * e.g. verification of retrieved responses. The default factory is an always empty store.
      * You may choose {@code org.pac4j.saml.store.HttpSessionStore} instead which allows
      * SAML messages to be stored in a distributed session store
-     * specially required for high availability deployments and validation operations.
+     * especially required for high availability deployments and validation operations.
      * <p>
      * Available options are:
      *

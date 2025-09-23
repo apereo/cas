@@ -2,11 +2,10 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.ticket.registry.AbstractTicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.azure.cosmos.CosmosContainer;
-import com.azure.cosmos.implementation.NotFoundException;
 import com.azure.cosmos.models.CosmosBulkOperations;
 import com.azure.cosmos.models.CosmosItemOperation;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
@@ -17,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,9 +43,12 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
 
     private final List<CosmosContainer> cosmosContainers;
 
-    public CosmosDbTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
-                                  final TicketCatalog ticketCatalog, final List<CosmosContainer> cosmosContainers) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+    public CosmosDbTicketRegistry(final CipherExecutor cipherExecutor,
+                                  final TicketSerializationManager ticketSerializationManager,
+                                  final TicketCatalog ticketCatalog,
+                                  final ConfigurableApplicationContext applicationContext,
+                                  final List<CosmosContainer> cosmosContainers) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.cosmosContainers = cosmosContainers;
     }
 
@@ -56,17 +58,18 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
             val encTicketId = digestIdentifier(ticketId);
             val metadata = StringUtils.isNotBlank(ticketId) ? ticketCatalog.find(ticketId) : null;
             if (metadata == null || StringUtils.isBlank(encTicketId)) {
+                LOGGER.warn("Ticket id [{}] cannot be found in the ticket catalog or cannot be encoded", ticketId);
                 return null;
             }
             val container = getTicketContainer(metadata);
             LOGGER.debug("Reading ticket with id [{}] from [{}]", encTicketId, container.getId());
-            val ticketHolder = container.readItem(encTicketId, new PartitionKey(metadata.getPrefix()), CosmosDbTicketDocument.class).getItem();
-            val result = decodeTicket(ticketHolder.getTicket());
+            val document = container.readItem(encTicketId, new PartitionKey(metadata.getPrefix()), CosmosDbTicketDocument.class).getItem();
+            val result = decodeTicket(ticketSerializationManager.deserializeTicket(document.getTicket(), document.getType()));
             return predicate != null && predicate.test(result) ? result : null;
-        } catch (final NotFoundException e) {
-            LOGGER.debug("Ticket id [{}] cannot be found", ticketId);
-            return null;
-        } 
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, "Ticket id [%s] cannot be found".formatted(ticketId), e);
+        }
+        return null;
     }
 
     @Override
@@ -108,8 +111,10 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
         val allCompletableFuture = allFutures.thenApply(future -> readOps.stream()
                 .map(CompletableFuture::join)
                 .collect(Collectors.toList()))
-            .thenApply(list -> list.stream().flatMap(List::stream)
-                .map(doc -> decodeTicket(doc.getTicket()))
+            .thenApply(list -> list
+                .stream()
+                .flatMap(List::stream)
+                .map(doc -> decodeTicket(ticketSerializationManager.deserializeTicket(doc.getTicket(), doc.getType())))
                 .collect(Collectors.toList()));
         return FunctionUtils.doUnchecked(allCompletableFuture::get);
     }
@@ -129,11 +134,11 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    protected Ticket addSingleTicket(final Ticket ticket) throws Exception {
+    protected Ticket addSingleTicket(final Ticket ticket) {
         val metadata = ticketCatalog.find(ticket);
         val container = getTicketContainer(metadata);
-        val holder = getCosmosDbTicketDocument(ticket, metadata);
-        container.upsertItem(holder);
+        val document = getCosmosDbTicketDocument(ticket, metadata);
+        container.upsertItem(document);
         return ticket;
     }
 
@@ -142,9 +147,9 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
         val operations = new HashMap<String, List<CosmosItemOperation>>();
         val results = toSave.peek(ticket -> {
             val ticketDefinition = ticketCatalog.find(ticket);
-            val holder = getCosmosDbTicketDocument(ticket, ticketDefinition);
-            val commands = (List<CosmosItemOperation>) operations.getOrDefault(ticketDefinition.getProperties().getStorageName(), new ArrayList<>());
-            commands.add(CosmosBulkOperations.getCreateItemOperation(holder, new PartitionKey(ticketDefinition.getPrefix())));
+            val document = getCosmosDbTicketDocument(ticket, ticketDefinition);
+            val commands = operations.getOrDefault(ticketDefinition.getProperties().getStorageName(), new ArrayList<>());
+            commands.add(CosmosBulkOperations.getCreateItemOperation(document, new PartitionKey(ticketDefinition.getPrefix())));
             operations.put(ticketDefinition.getProperties().getStorageName(), commands);
         }).toList();
         operations.forEach((key, value) -> {
@@ -160,18 +165,17 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     private CosmosDbTicketDocument getCosmosDbTicketDocument(final Ticket ticket, final TicketDefinition metadata) {
-        return FunctionUtils.doUnchecked(() -> {
-            val encTicket = encodeTicket(ticket);
-            val ttl = ticket.getExpirationPolicy().getTimeToLive();
-            return CosmosDbTicketDocument.builder()
-                .id(encTicket.getId())
-                .type(metadata.getImplementationClass().getName())
-                .principal(digestIdentifier(getPrincipalIdFrom(ticket)))
-                .timeToLive(ttl)
-                .ticket(encTicket)
-                .prefix(metadata.getPrefix())
-                .build();
-        });
+        val encodedTicket = FunctionUtils.doUnchecked(() -> encodeTicket(ticket));
+        val ttl = ticket.getExpirationPolicy().getTimeToLive();
+        return CosmosDbTicketDocument
+            .builder()
+            .id(encodedTicket.getId())
+            .type(encodedTicket.getClass().getName())
+            .principal(digestIdentifier(getPrincipalIdFrom(ticket)))
+            .timeToLive(ttl)
+            .ticket(ticketSerializationManager.serializeTicket(encodedTicket))
+            .prefix(metadata.getPrefix())
+            .build();
     }
 
     private CosmosContainer getTicketContainer(final TicketDefinition metadata) {
@@ -181,7 +185,8 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     private CosmosContainer getTicketContainer(final String containerId) {
-        return cosmosContainers.stream()
+        return cosmosContainers
+            .stream()
             .filter(cosmosContainer -> cosmosContainer.getId().equalsIgnoreCase(containerId))
             .findFirst()
             .orElseThrow();

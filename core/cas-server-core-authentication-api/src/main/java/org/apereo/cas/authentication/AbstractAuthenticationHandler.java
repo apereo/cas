@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.EqualsAndHashCode;
@@ -11,6 +10,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -29,11 +31,6 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      * Factory to create the principal type.
      **/
     protected final PrincipalFactory principalFactory;
-
-    /**
-     * The services manager instance, as the entry point to the registry.
-     **/
-    private final ServicesManager servicesManager;
 
     /**
      * Sets the authentication handler name. Authentication handler names SHOULD be unique within an
@@ -62,10 +59,13 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      */
     private AuthenticationHandlerStates state = AuthenticationHandlerStates.ACTIVE;
 
-    protected AbstractAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                            final PrincipalFactory principalFactory, final Integer order) {
+    /**
+     * Arbitrary runtime properties that may be used to configure the handler.
+     */
+    private Map<String, Serializable> tags = new LinkedHashMap<>();
+
+    protected AbstractAuthenticationHandler(final String name, final PrincipalFactory principalFactory, final Integer order) {
         this.name = StringUtils.isNotBlank(name) ? name : getClass().getSimpleName();
-        this.servicesManager = servicesManager;
         this.principalFactory = Objects.requireNonNullElseGet(principalFactory, DefaultPrincipalFactory::new);
         this.order = Objects.requireNonNullElseGet(order, () -> RandomUtils.nextInt(1, Integer.MAX_VALUE));
     }

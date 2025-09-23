@@ -25,6 +25,7 @@ import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolve
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -40,6 +41,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import java.util.List;
 
 /**
  * This is {@link CasTrustedAuthenticationAutoConfiguration}.
@@ -67,9 +69,7 @@ public class CasTrustedAuthenticationAutoConfiguration {
             final ServicesManager servicesManager) {
             val trusted = casProperties.getAuthn().getTrusted();
             return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(),
-                servicesManager,
-                trustedPrincipalFactory,
-                trusted.getOrder());
+                trustedPrincipalFactory, trusted.getOrder());
         }
     }
 
@@ -93,6 +93,8 @@ public class CasTrustedAuthenticationAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "trustedPrincipalResolver")
         public PrincipalResolver trustedPrincipalResolver(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
             final AttributeRepositoryResolver attributeRepositoryResolver,
             final ConfigurableApplicationContext applicationContext,
@@ -107,7 +109,6 @@ public class CasTrustedAuthenticationAutoConfiguration {
             final PrincipalFactory trustedPrincipalFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final PersonAttributeDao attributeRepository) {
-            val resolver = new ChainingPrincipalResolver(principalElectionStrategy, casProperties);
             val personDirectory = casProperties.getPersonDirectory();
             val trusted = casProperties.getAuthn().getTrusted().getPersonDirectory();
             val attributeMerger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
@@ -115,10 +116,10 @@ public class CasTrustedAuthenticationAutoConfiguration {
                 applicationContext, trustedPrincipalFactory,
                 attributeRepository, attributeMerger, PrincipalBearingPrincipalResolver.class,
                 servicesManager, attributeDefinitionStore, attributeRepositoryResolver, trusted, personDirectory);
-            resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bearingPrincipalResolver));
-            return resolver;
+            return new ChainingPrincipalResolver(principalElectionStrategy, tenantExtractor,
+                List.of(new EchoingPrincipalResolver(), bearingPrincipalResolver),
+                casProperties);
         }
-
     }
 
     @Configuration(value = "TrustedAuthenticationExtractorConfiguration", proxyBeanMethods = false)
@@ -163,11 +164,11 @@ public class CasTrustedAuthenticationAutoConfiguration {
             final PrincipalFactory trustedPrincipalFactory,
             @Qualifier("remoteRequestPrincipalAttributesExtractor")
             final RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor,
-            @Qualifier("adaptiveAuthenticationPolicy")
+            @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
             return new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver,
@@ -184,11 +185,11 @@ public class CasTrustedAuthenticationAutoConfiguration {
             final PrincipalFactory trustedPrincipalFactory,
             @Qualifier("remoteRequestPrincipalAttributesExtractor")
             final RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor,
-            @Qualifier("adaptiveAuthenticationPolicy")
+            @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
             return new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver,
@@ -201,16 +202,17 @@ public class CasTrustedAuthenticationAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "principalFromRemoteHeaderPrincipalAction")
         public PrincipalFromRequestExtractorAction principalFromRemoteHeaderPrincipalAction(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("trustedPrincipalFactory")
             final PrincipalFactory trustedPrincipalFactory,
             @Qualifier("remoteRequestPrincipalAttributesExtractor")
             final RemoteRequestPrincipalAttributesExtractor remoteRequestPrincipalAttributesExtractor,
-            @Qualifier("adaptiveAuthenticationPolicy")
+            @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
             val trusted = casProperties.getAuthn().getTrusted();
             return new PrincipalFromRequestHeaderNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
@@ -235,11 +237,11 @@ public class CasTrustedAuthenticationAutoConfiguration {
             final PrincipalFromRequestExtractorAction principalFromRemoteUserPrincipalAction,
             @Qualifier("principalFromRemoteHeaderPrincipalAction")
             final PrincipalFromRequestExtractorAction principalFromRemoteHeaderPrincipalAction,
-            @Qualifier("adaptiveAuthenticationPolicy")
+            @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
             val chain = new ChainingPrincipalFromRequestNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver,

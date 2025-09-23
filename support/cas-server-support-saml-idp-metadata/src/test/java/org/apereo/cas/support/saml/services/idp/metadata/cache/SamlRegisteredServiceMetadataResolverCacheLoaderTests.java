@@ -19,9 +19,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
-import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -53,7 +53,7 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
     }
 
     @Test
-    void verifyClasspathByExpression() throws Throwable {
+    void verifyClasspathByExpression() {
         System.setProperty("CLASSPATH_SP", "classpath:sample-sp.xml");
         val loader = buildCacheLoader(new ClasspathResourceMetadataResolver(new SamlIdPProperties(), openSamlConfigBean));
         val service = new SamlRegisteredService();
@@ -67,7 +67,7 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
 
     @Test
     void verifyFileByExpression() throws Throwable {
-        val mdFile = File.createTempFile("spsamlmetadata", ".xml");
+        val mdFile = Files.createTempFile("spsamlmetadata", ".xml").toFile();
         val content = IOUtils.toString(new ClassPathResource("sample-sp.xml").getInputStream(), StandardCharsets.UTF_8);
         FileUtils.writeStringToFile(mdFile, content, StandardCharsets.UTF_8);
         System.setProperty("FILE_EXPR_SP", mdFile.getCanonicalPath());
@@ -83,7 +83,7 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
     }
 
     @Test
-    void verifyEmptyResolvers() throws Throwable {
+    void verifyEmptyResolvers() {
         val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
         val loader = new SamlRegisteredServiceMetadataResolverCacheLoader(openSamlConfigBean, httpClient, plan);
         val service = new SamlRegisteredService();
@@ -92,7 +92,7 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
         service.setServiceId("https://example.org/saml");
         service.setMetadataLocation("${#systemProperties['EMPTY_SP_REF']}");
         val key = new SamlRegisteredServiceCacheKey(service, new CriteriaSet());
-        assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> loader.load(key));
+        assertThrows(SamlException.class, () -> loader.load(key));
     }
 
     private SamlRegisteredServiceMetadataResolverCacheLoader buildCacheLoader() throws Throwable {

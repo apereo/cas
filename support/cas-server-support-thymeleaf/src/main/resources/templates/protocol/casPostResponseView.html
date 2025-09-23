@@ -9,7 +9,7 @@
     
         <noscript>
             <p th:text="#{screen.post.response.message(${originalUrl})}"/>
-            <p><input type="submit" th:value="#{screen.button.continue}"/></p>
+            <p><div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.button.continue')}"/>
         </noscript>
     </form>
 </body>

@@ -2,13 +2,13 @@ package org.apereo.cas.adaptors.yubikey.web.flow;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -20,8 +20,9 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 public class YubiKeyAccountCheckRegistrationAction extends AbstractMultifactorAuthenticationAction<YubiKeyMultifactorAuthenticationProvider> {
-    private final YubiKeyAccountRegistry registry;
-
+    protected final YubiKeyAccountRegistry registry;
+    protected final TenantExtractor tenantExtractor;
+    
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
@@ -29,6 +30,6 @@ public class YubiKeyAccountCheckRegistrationAction extends AbstractMultifactorAu
         if (registry.isYubiKeyRegisteredFor(uid)) {
             return success();
         }
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_REGISTER);
     }
 }

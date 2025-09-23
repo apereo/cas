@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.idp.MissingSamlAuthnRequestException;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -50,17 +51,17 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             return null;
         }
         LOGGER.debug("Attempting to determine entity id for service [{}]", selectedService);
-        val entityIdAttribute = selectedService.getAttributes().get(SamlProtocolConstants.PARAMETER_ENTITY_ID);
+        val entityIdAttribute = selectedService.getAttributeAs(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.class);
         if (entityIdAttribute != null && !entityIdAttribute.isEmpty()) {
             LOGGER.debug("Found entity id [{}] as a service attribute", entityIdAttribute);
             return CollectionUtils.firstElement(entityIdAttribute).map(Object::toString).orElseThrow();
         }
-        val providerIdAttribute = selectedService.getAttributes().get(SamlIdPConstants.PROVIDER_ID);
+        val providerIdAttribute = selectedService.getAttributeAs(SamlIdPConstants.PROVIDER_ID, List.class);
         if (providerIdAttribute != null && !providerIdAttribute.isEmpty()) {
             LOGGER.debug("Found provider entity id [{}] as a service attribute", providerIdAttribute);
             return CollectionUtils.firstElement(providerIdAttribute).map(Object::toString).orElseThrow();
         }
-        val samlRequest = selectedService.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
+        val samlRequest = selectedService.getAttributeAs(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.class);
         if (samlRequest != null && !samlRequest.isEmpty()) {
             val applicationContext = context.getApplicationContext();
             val sessionStore = applicationContext.getBean("samlIdPDistributedSessionStore", SessionStore.class);
@@ -105,11 +106,14 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
         val webContext = new JEEContext(request, response);
-
         val result = SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
             .fetch(webContext, AuthnRequest.class);
         val authnRequest = (AuthnRequest) result
-            .orElseThrow(() -> new IllegalArgumentException("SAML request could not be determined from session store"))
+            .orElseThrow(() -> {
+                val samlAuthnRequestId = webContext.getRequestParameter(SamlIdPConstants.AUTHN_REQUEST_ID).orElse("N/A");
+                return new MissingSamlAuthnRequestException("SAML2 request could not be determined from session store %s for SAML2 request id %s"
+                    .formatted(sessionStore.getClass().getName(), samlAuthnRequestId));
+            })
             .getLeft();
         return Optional.of(authnRequest);
     }
@@ -136,10 +140,10 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
 
             if (facade.isEmpty()) {
                 LOGGER.warn("Could not locate metadata for [{}] to process attributes", entityId);
-                return new HashMap<>(0);
+                return new HashMap<>();
             }
 
-            val entityDescriptor = facade.get().entityDescriptor();
+            val entityDescriptor = facade.get().getEntityDescriptor();
             return getAttributesForSamlRegisteredService(attributes, resolver, facade.get(), entityDescriptor, context);
         }
         return authorizeReleaseOfAllowedAttributes(context, attributes);
@@ -150,5 +154,5 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         SamlRegisteredServiceCachingMetadataResolver resolver,
         SamlRegisteredServiceMetadataAdaptor facade,
         EntityDescriptor entityDescriptor,
-        RegisteredServiceAttributeReleasePolicyContext context) throws Throwable;
+        RegisteredServiceAttributeReleasePolicyContext context);
 }

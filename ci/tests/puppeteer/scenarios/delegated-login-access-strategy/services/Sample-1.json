@@ -3,7 +3,7 @@
   "serviceId": "^https://localhost:9859/anything/cas.*",
   "name": "Sample",
   "id": 1,
-  "description": "Github",
+  "description": "GitHub",
   "accessStrategy" : {
     "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
     "delegatedAuthenticationPolicy" : {

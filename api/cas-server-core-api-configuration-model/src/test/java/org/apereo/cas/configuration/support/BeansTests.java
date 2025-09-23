@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BeansTests {
 
     @Test
-    void verifyDurations() throws Throwable {
+    void verifyDurations() {
         assertNotNull(Beans.newDuration("0"));
         assertNotNull(Beans.newDuration("never"));
         assertNotNull(Beans.newDuration("infinite"));

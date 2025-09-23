@@ -83,7 +83,7 @@ class LdaptiveResourceCRLFetcherTests {
         private CRLFetcher fetcher;
 
         @Test
-        void verifyResourceFromResourceUrl() throws Throwable {
+        void verifyResourceFromResourceUrl() {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
             assertThrows(CertificateException.class, () -> fetcher.fetch(resource));
@@ -99,7 +99,7 @@ class LdaptiveResourceCRLFetcherTests {
         private CRLFetcher fetcher;
 
         @Test
-        void verifyResourceFromResourceUrl() throws Throwable {
+        void verifyResourceFromResourceUrl() {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
             assertThrows(CertificateException.class, () -> fetcher.fetch(resource));

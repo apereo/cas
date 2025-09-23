@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
@@ -90,7 +91,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
 
         registeredService.setSectorIdentifierUri(registrationRequest.getSectorIdentifierUri());
         registeredService.setSubjectType(registrationRequest.getSubjectType());
-        if (StringUtils.equalsIgnoreCase(OidcSubjectTypes.PAIRWISE.getType(), registeredService.getSubjectType())) {
+        if (Strings.CI.equals(OidcSubjectTypes.PAIRWISE.getType(), registeredService.getSubjectType())) {
             registeredService.setUsernameAttributeProvider(new PairwiseOidcRegisteredServiceUsernameAttributeProvider());
         }
 
@@ -183,7 +184,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
 
     private static void processUserInfoSigningAndEncryption(final OidcClientRegistrationRequest registrationRequest,
                                                             final OidcRegisteredService registeredService) {
-        if (!StringUtils.equalsIgnoreCase("none", registrationRequest.getUserInfoSignedResponseAlg())) {
+        if (!Strings.CI.equals("none", registrationRequest.getUserInfoSignedResponseAlg())) {
             registeredService.setUserInfoSigningAlg(registrationRequest.getUserInfoSignedResponseAlg());
         }
         registeredService.setUserInfoEncryptedResponseAlg(registrationRequest.getUserInfoEncryptedResponseAlg());
@@ -301,11 +302,11 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             }
         }
 
-        if (StringUtils.equalsAnyIgnoreCase(registeredService.getBackchannelTokenDeliveryMode(),
+        if (Strings.CI.equalsAny(registeredService.getBackchannelTokenDeliveryMode(),
             OidcBackchannelTokenDeliveryModes.PUSH.getMode(), OidcBackchannelTokenDeliveryModes.PING.getMode())) {
             Assert.hasText(registeredService.getBackchannelClientNotificationEndpoint(),
                 "Backchannel client notification endpoint must be specified");
-            Assert.isTrue(StringUtils.startsWith(registeredService.getBackchannelClientNotificationEndpoint(), "https://"),
+            Assert.isTrue(Strings.CI.startsWith(registeredService.getBackchannelClientNotificationEndpoint(), "https://"),
                 "Backchannel client notification endpoint MUST be an HTTPS url");
         }
         

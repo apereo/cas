@@ -6,13 +6,10 @@ import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import jakarta.persistence.LockModeType;
 
 import java.io.Serial;
 
@@ -26,7 +23,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("JpaTicketRegistryProperties")
 public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
     /**
@@ -42,7 +38,7 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
      * {@code READ,WRITE,OPTIMISTIC,OPTIMISTIC_FORCE_INCREMENT,PESSIMISTIC_READ,
      * PESSIMISTIC_WRITE,PESSIMISTIC_FORCE_INCREMENT,NONE}.
      */
-    private LockModeType ticketLockType = LockModeType.NONE;
+    private String ticketLockType = "NONE";
 
     /**
      * Indicates the lock duration when one is about to be acquired by the cleaner.
@@ -64,7 +60,7 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
     private boolean enabled = true;
 
     public JpaTicketRegistryProperties() {
-        super.setUrl("jdbc:hsqldb:mem:cas-ticket-registry");
+        setUrl("jdbc:hsqldb:mem:cas-ticket-registry");
         this.crypto.setEnabled(false);
     }
 }

@@ -1,14 +1,10 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.GenericGenerator;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,11 +34,16 @@ public class JpaGoogleAuthenticatorAccount extends GoogleAuthenticatorAccount {
     private static final long serialVersionUID = -4546447152725241946L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    @Builder.Default
-    private long id = -1;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
+
+    @Override
+    public void setId(final long id) {
+        super.setId(id);
+        this.id = id;
+    }
+    
     /**
      * Update account info from account object.
      *
@@ -59,8 +60,10 @@ public class JpaGoogleAuthenticatorAccount extends GoogleAuthenticatorAccount {
                 .stream()
                 .map(code -> BigInteger.valueOf(code.longValue()))
                 .collect(Collectors.toList()))
+            .properties(acct.getProperties())
             .registrationDate(acct.getRegistrationDate())
             .name(acct.getName())
+            .source(acct.getSource())
             .build();
     }
 }

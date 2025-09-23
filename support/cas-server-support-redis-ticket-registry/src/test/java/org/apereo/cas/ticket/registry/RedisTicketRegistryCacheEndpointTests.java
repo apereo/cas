@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,11 +28,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 6379)
 @Tag("Redis")
 @TestPropertySource(properties = {
-    "management.endpoint.redisTicketsCache.enabled=true",
+    "management.endpoint.redisTicketsCache.access=UNRESTRICTED",
     "cas.ticket.registry.core.enable-locking=false"
 })
 @Tag("ActuatorEndpoint")
-@Import({
+@ImportAutoConfiguration({
     CasRedisCoreAutoConfiguration.class,
     CasRedisTicketRegistryAutoConfiguration.class
 })
@@ -62,7 +62,7 @@ class RedisTicketRegistryCacheEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyUnknownTicket() throws Throwable {
+    void verifyUnknownTicket() {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val generator = new TicketGrantingTicketIdGenerator(10, "redis");
         val ticket = new TicketGrantingTicketImpl(generator.getNewTicketId(TicketGrantingTicket.PREFIX),

@@ -1,7 +1,6 @@
 package org.apereo.cas.uma.web.controllers.rpt;
 
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
@@ -11,10 +10,9 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-
+import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("UMA")
 class UmaRequestingPartyTokenJwksEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
-    void verifyUnknownFile() throws Throwable {
+    void verifyUnknownFile() {
         casProperties.getAuthn().getOauth().getUma().getRequestingPartyToken()
             .getJwksFile().setLocation(new FileSystemResource(new File("/tmp/uma-unknown.jkws")));
         val request = new MockHttpServletRequest();
@@ -37,7 +35,7 @@ class UmaRequestingPartyTokenJwksEndpointControllerTests extends BaseUmaEndpoint
 
     @Test
     void verifyBadFile() throws Throwable {
-        val file = File.createTempFile("uma", ".jwks");
+        val file = Files.createTempFile("uma", ".jwks").toFile();
         FileUtils.write(file, "@@", StandardCharsets.UTF_8);
         casProperties.getAuthn().getOauth().getUma().getRequestingPartyToken()
             .getJwksFile().setLocation(new FileSystemResource(file));
@@ -48,7 +46,7 @@ class UmaRequestingPartyTokenJwksEndpointControllerTests extends BaseUmaEndpoint
     }
 
     @Test
-    void verifySuccess() throws Throwable {
+    void verifySuccess() {
         casProperties.getAuthn().getOauth().getUma().getRequestingPartyToken()
             .getJwksFile().setLocation(new ClassPathResource("uma-keystore.jwks"));
         val request = new MockHttpServletRequest();

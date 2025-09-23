@@ -18,10 +18,10 @@ import static org.mockito.Mockito.*;
  * @since 7.1.0
  */
 @Tag("Delegation")
-public class DefaultDelegatedClientAuthenticationFailureEvaluatorTests {
+class DefaultDelegatedClientAuthenticationFailureEvaluatorTests {
 
     @Test
-    public void verifyThrottling() {
+    void verifyThrottling() {
         val evaluator = new DefaultDelegatedClientAuthenticationFailureEvaluator(
                 mock(DelegatedClientAuthenticationConfigurationContext.class));
         val optModelAndView = evaluator.evaluate(new MockHttpServletRequest(), HttpStatus.LOCKED.value());

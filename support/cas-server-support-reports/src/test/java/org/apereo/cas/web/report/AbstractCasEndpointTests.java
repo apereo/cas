@@ -9,11 +9,13 @@ import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreLoggingAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -23,29 +25,28 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasReportsAutoConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
+import org.apereo.cas.config.CasValidationAutoConfiguration;
+import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.ServletEndpointManagementContextConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.servlet.WebMvcEndpointManagementContextConfiguration;
-import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.test.web.servlet.MockMvc;
 
 /**
  * This is {@link AbstractCasEndpointTests}.
@@ -55,11 +56,18 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootTest(
     classes = AbstractCasEndpointTests.SharedTestConfiguration.class,
-    properties = "management.endpoints.web.exposure.include=*")
+    properties = "management.endpoints.web.exposure.include=*",
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
+@AutoConfigureMockMvc
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class AbstractCasEndpointTests {
+    @Autowired
+    @Qualifier("mockMvc")
+    protected MockMvc mockMvc;
+    
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
@@ -78,42 +86,38 @@ public abstract class AbstractCasEndpointTests {
             plan.registerAuditTrailManager(new MockAuditTrailManager());
         }
     }
-
+    
+    @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
-        RefreshAutoConfiguration.class,
-        HealthEndpointAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class,
-        EndpointAutoConfiguration.class,
-        WebEndpointAutoConfiguration.class,
-        ServletWebServerFactoryAutoConfiguration.class,
-        DispatcherServletAutoConfiguration.class,
-
-        ServletEndpointManagementContextConfiguration.class,
-        WebMvcEndpointManagementContextConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        CasCoreEnvironmentBootstrapAutoConfiguration.class,
         CasReportsAutoConfiguration.class,
         CasCoreLoggingAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        AbstractCasEndpointTests.AuditTestConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreValidationAutoConfiguration.class
+        CasWebAppAutoConfiguration.class,
+        CasCoreValidationAutoConfiguration.class,
+        CasValidationAutoConfiguration.class,
+        CasThymeleafAutoConfiguration.class,
+        CasThemesAutoConfiguration.class
+    })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import({
+        AbstractCasEndpointTests.AuditTestConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

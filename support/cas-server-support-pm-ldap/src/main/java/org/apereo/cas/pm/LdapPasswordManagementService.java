@@ -1,17 +1,18 @@
 package org.apereo.cas.pm;
 
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pm.LdapPasswordManagementProperties;
-import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.impl.BasePasswordManagementService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -22,6 +23,7 @@ import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.DisposableBean;
 import java.io.Serializable;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,18 +41,14 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class LdapPasswordManagementService extends BasePasswordManagementService implements DisposableBean {
-    private final List<LdapPasswordManagementProperties> ldapProperties;
-
     private final Map<String, ConnectionFactory> connectionFactoryMap;
 
     public LdapPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-                                         final String issuer,
-                                         final PasswordManagementProperties passwordManagementProperties,
+                                         final CasConfigurationProperties casProperties,
                                          final PasswordHistoryService passwordHistoryService,
                                          final Map<String, ConnectionFactory> connectionFactoryMap) {
-        super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
-        this.ldapProperties = passwordManagementProperties.getLdap();
-        this.connectionFactoryMap = connectionFactoryMap;
+        super(casProperties, cipherExecutor, passwordHistoryService);
+        this.connectionFactoryMap = Map.copyOf(connectionFactoryMap);
     }
 
     @Override
@@ -61,7 +59,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findEmail(final PasswordManagementQuery query) {
-        val email = findAttribute(query, properties.getReset().getMail().getAttributeName(),
+        val email = findAttribute(query, casProperties.getAuthn().getPm().getReset().getMail().getAttributeName(),
             CollectionUtils.wrap(query.getUsername()));
         if (EmailValidator.getInstance().isValid(email)) {
             LOGGER.debug("Email address [{}] for [{}] appears valid", email, query.getUsername());
@@ -73,20 +71,19 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findPhone(final PasswordManagementQuery query) {
-        return findAttribute(query, List.of(properties.getReset().getSms().getAttributeName()),
-            CollectionUtils.wrap(query.getUsername()));
+        return findAttribute(query, casProperties.getAuthn().getPm().getReset().getSms().getAttributeName(), CollectionUtils.wrap(query.getUsername()));
     }
 
     @Override
     public String findUsername(final PasswordManagementQuery query) {
-        return findAttribute(query, properties.getLdap().stream()
+        return findAttribute(query, casProperties.getAuthn().getPm().getLdap().stream()
             .map(LdapPasswordManagementProperties::getUsernameAttribute)
             .collect(Collectors.toList()), CollectionUtils.wrap(query.getEmail()));
     }
 
     @Override
     public void updateSecurityQuestions(final PasswordManagementQuery query) {
-        findEntries(CollectionUtils.wrap(query.getUsername()))
+        findEntries(CollectionUtils.wrap(query.getUsername()), true)
             .forEach((entry, ldap) -> {
                 LOGGER.debug("Located LDAP entry [{}] in the response", entry);
                 val questionsAndAnswers = new ArrayDeque<>(ldap.getSecurityQuestionsAttributes().entrySet());
@@ -105,7 +102,8 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public boolean unlockAccount(final Credential credential) {
-        return findEntries(CollectionUtils.wrap(credential.getId())).entrySet().stream().allMatch(entry -> {
+        val entries = findEntries(CollectionUtils.wrap(credential.getId()), true);
+        return entries.entrySet().stream().allMatch(entry -> {
             LOGGER.debug("Located LDAP entry [{}] in the response", entry);
             val ldapConnectionFactory = new LdapConnectionFactory(connectionFactoryMap.get(entry.getValue().getLdapUrl()));
             val attributes = new LinkedHashMap<String, Set<String>>();
@@ -116,8 +114,8 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
-        val results = new LinkedHashMap<String, String>(0);
-        findEntries(CollectionUtils.wrap(query.getUsername()))
+        val results = new LinkedHashMap<String, String>();
+        findEntries(CollectionUtils.wrap(query.getUsername()), true)
             .forEach((entry, ldap) -> {
                 LOGGER.debug("Located LDAP entry [{}] in the response", entry);
                 val questionsAndAnswers = ldap.getSecurityQuestionsAttributes();
@@ -158,24 +156,22 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public boolean changeInternal(final PasswordChangeRequest bean) {
-        return FunctionUtils.doAndHandle(() -> {
-            val results = findEntries(CollectionUtils.wrap(bean.getUsername()))
-                .entrySet()
-                .stream()
-                .map(entry -> {
-                    val dn = entry.getKey().getDn();
-                    LOGGER.debug("Updating account password for [{}]", dn);
-                    val ldapConnectionFactory = new LdapConnectionFactory(connectionFactoryMap.get(entry.getValue().getLdapUrl()));
-                    if (ldapConnectionFactory.executePasswordModifyOperation(dn, bean.getCurrentPassword(),
-                        bean.getPassword(), entry.getValue().getType())) {
-                        LOGGER.debug("Successfully updated the account password for [{}]", dn);
-                        return Boolean.TRUE;
-                    }
-                    LOGGER.error("Could not update the LDAP entry's password for [{}]", dn);
-                    return Boolean.FALSE;
-                }).toList();
-            return results.stream().allMatch(result -> result);
-        }, e -> false).get();
+        val results = findEntries(CollectionUtils.wrap(bean.getUsername()), true)
+            .entrySet()
+            .stream()
+            .map(entry -> {
+                val dn = entry.getKey().getDn();
+                LOGGER.debug("Updating account password for [{}]", dn);
+                val ldapConnectionFactory = new LdapConnectionFactory(connectionFactoryMap.get(entry.getValue().getLdapUrl()));
+                if (ldapConnectionFactory.executePasswordModifyOperation(dn, bean.getCurrentPassword(),
+                    bean.getPassword(), entry.getValue().getType())) {
+                    LOGGER.debug("Successfully updated the account password for [{}]", dn);
+                    return Boolean.TRUE;
+                }
+                LOGGER.error("Could not update the LDAP entry's password for [{}]", dn);
+                return Boolean.FALSE;
+            }).toList();
+        return !results.isEmpty() && results.stream().allMatch(BooleanUtils::isTrue);
     }
 
     /**
@@ -189,7 +185,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     protected String findAttribute(final PasswordManagementQuery context,
                                    final List<String> attributeNames,
                                    final List<String> ldapFilterParam) {
-        return findEntries(ldapFilterParam)
+        return findEntries(ldapFilterParam, false)
             .keySet()
             .stream()
             .map(entry -> {
@@ -218,14 +214,21 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             .orElse(null);
     }
 
-    private Map<LdapEntry, LdapPasswordManagementProperties> findEntries(final List<String> filterValues) {
-        val results = new LinkedHashMap<LdapEntry, LdapPasswordManagementProperties>(0);
-        ldapProperties
+    protected Map<LdapEntry, LdapPasswordManagementProperties> findEntries(
+        final List<String> filterValues, final boolean transform) {
+        val results = new LinkedHashMap<LdapEntry, LdapPasswordManagementProperties>();
+        casProperties.getAuthn().getPm().getLdap()
             .stream()
             .sorted(Comparator.comparing(LdapPasswordManagementProperties::getName))
             .forEach(Unchecked.consumer(ldap -> {
+                val effectiveFilters = new ArrayList<>(filterValues);
+                if (transform) {
+                    val transformer = PrincipalNameTransformerUtils.newPrincipalNameTransformer(ldap.getPrincipalTransformation());
+                    effectiveFilters.clear();
+                    effectiveFilters.addAll(filterValues.stream().map(Unchecked.function(transformer::transform)).toList());
+                }
                 val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
-                    LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, filterValues);
+                    LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, effectiveFilters);
                 LOGGER.debug("Constructed LDAP filter [{}]", filter);
                 val ldapConnectionFactory = new LdapConnectionFactory(connectionFactoryMap.get(ldap.getLdapUrl()));
                 val response = ldapConnectionFactory.executeSearchOperation(ldap.getBaseDn(), filter, ldap.getPageSize());

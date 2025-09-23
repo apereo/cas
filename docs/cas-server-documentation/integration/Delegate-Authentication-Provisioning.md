@@ -15,7 +15,7 @@ external/guest accounts with their equivalent found in the authentication source
       
 {% tabs delegatedauthnprov %}
 
-{% tab delegatedauthnprov Groovy %}
+{% tab delegatedauthnprov <i class="fa fa-file-code px-1"></i>Groovy %}
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.provisioning.groovy" %}
 
@@ -37,15 +37,18 @@ It is not expected for the script to return a value. The following parameters ar
 | `client`      | The `Client` configuration responsible for the exchange between CAS and the identity provider. |
 | `logger`      | The object responsible for issuing log messages such as `logger.info(...)`.                    |
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
 {% tab delegatedauthnprov REST %}
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.provisioning.rest" %}
 
-Provisioning tasks can be carried out using an external REST endpoint expected to receive the following:
+Provisioning tasks can be carried out using an external REST endpoint expected to 
+receive the following in the request body:
 
-| Header                | Description                                                                         |
+| Attribute             | Description                                                                         |
 |-----------------------|-------------------------------------------------------------------------------------|
 | `principalId`         | CAS authenticated principal identifier.                                             |
 | `principalAttributes` | CAS authenticated principal attributes.                                             |
@@ -69,7 +72,7 @@ delegated authentication is only handled via SCIM <code>v2</code>.</p></div>
 
 {% endtab %}
 
-{% tab delegatedauthnprov Custom %}
+{% tab delegatedauthnprov <i class="fa fa-code px-1"></i> Custom %}
 
 If you wish to create your own provisioner for delegated authentication, you will need to
 design a component and register it with CAS as such:

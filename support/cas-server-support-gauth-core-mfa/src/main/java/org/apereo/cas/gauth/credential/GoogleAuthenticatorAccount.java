@@ -1,11 +1,9 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
 import java.io.Serial;
 
 /**
@@ -36,6 +34,12 @@ public class GoogleAuthenticatorAccount extends OneTimeTokenAccount {
             .validationCode(acct.getValidationCode())
             .scratchCodes(acct.getScratchCodes())
             .registrationDate(acct.getRegistrationDate())
+            .source(acct.getSource())
             .build();
+    }
+
+    @Override
+    public String getSource() {
+        return "Google Authenticator";
     }
 }

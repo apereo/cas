@@ -2,8 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.attribute.CaseCanonicalizationMode;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -14,10 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
-
-
 import jakarta.persistence.PostLoad;
-
 import java.io.Serial;
 import java.util.Locale;
 import java.util.Optional;
@@ -79,7 +74,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     }
 
     protected String removePatternFromUsernameIfNecessary(final String username) {
-        return FunctionUtils.doIfNotNull(removePattern, () -> RegExUtils.removePattern(username, removePattern), () -> username).get();
+        return FunctionUtils.doIfNotNull(removePattern, () -> RegExUtils.removePattern((CharSequence) username, removePattern), () -> username).get();
     }
 
     protected String scopeUsernameIfNecessary(final String resolved) {
@@ -87,8 +82,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
     }
 
     protected String encryptResolvedUsername(final RegisteredServiceUsernameProviderContext context, final String username) {
-        val applicationContext = ApplicationContextProvider.getApplicationContext();
-        val cipher = applicationContext.getBean(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME, RegisteredServiceCipherExecutor.class);
+        val cipher = context.getApplicationContext().getBean(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME, RegisteredServiceCipherExecutor.class);
         return cipher.encode(username, Optional.of(context.getRegisteredService()));
     }
 

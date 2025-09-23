@@ -4,19 +4,20 @@ import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
-import com.duosecurity.Client;
+import com.duosecurity.model.Token;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 /**
  * An abstraction that encapsulates interaction with
@@ -28,94 +29,36 @@ import java.util.Optional;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
-    @Serial
-    private static final long serialVersionUID = -1690808348975271382L;
-
-    private final Client duoClient;
+    @Getter
+    private final DuoSecurityClient duoClient;
 
     public UniversalPromptDuoSecurityAuthenticationService(
         final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final HttpClient httpClient,
-        final Client duoClient,
+        final DuoSecurityClient duoClient,
         final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
-        final Cache<String, DuoSecurityUserAccount> userAccountCache) {
-        super(duoProperties, httpClient, multifactorAuthenticationPrincipalResolver, userAccountCache);
+        final Cache<String, DuoSecurityUserAccount> userAccountCache,
+        final TenantExtractor tenantExtractor) {
+        super(duoProperties, httpClient, tenantExtractor, multifactorAuthenticationPrincipalResolver, userAccountCache);
         this.duoClient = duoClient;
-    }
-
-    @Override
-    public Optional<Object> getDuoClient() {
-        return Optional.of(this.duoClient);
     }
 
     @Override
     public DuoSecurityAuthenticationResult authenticateInternal(final Credential credential) throws Exception {
         val duoCredential = (DuoSecurityUniversalPromptCredential) credential;
         LOGGER.trace("Exchanging Duo Security authorization code [{}]", credential.getId());
-        val principal = resolvePrincipal(duoCredential.getAuthentication().getPrincipal());
-        val result = duoClient.exchangeAuthorizationCodeFor2FAResult(credential.getId(), principal.getId());
+
+        val principalId = getDuoPrincipalId(duoCredential);
+        val client = duoClient.getInstance();
+        val result = client.exchangeAuthorizationCodeFor2FAResult(credential.getId(), principalId);
         LOGGER.debug("Validated Duo Security code [{}] with result [{}]", credential.getId(), result);
 
         val username = StringUtils.defaultIfBlank(result.getPreferred_username(), result.getSub());
         val attributes = new LinkedHashMap<String, List<Object>>();
-        if (getProperties().isCollectDuoAttributes()) {
-            attributes.put("duoExp", CollectionUtils.wrap(result.getExp()));
-            attributes.put("duoIss", CollectionUtils.wrap(result.getIss()));
-            attributes.put("duoIat", CollectionUtils.wrap(result.getIat()));
-            attributes.put("duoAuthTime", CollectionUtils.wrap(result.getAuth_time()));
-            attributes.put("duoSub", CollectionUtils.wrap(result.getSub()));
-            attributes.put("duoPreferredUsername", CollectionUtils.wrap(result.getPreferred_username()));
-            attributes.put("duoAud", CollectionUtils.wrap(result.getAud()));
-
-            val authContext = result.getAuth_context();
-            if (authContext != null) {
-                attributes.put("duoAuthCtxEventType", CollectionUtils.wrap(authContext.getEvent_type()));
-                attributes.put("duoAuthCtxFactor", CollectionUtils.wrap(authContext.getFactor()));
-                attributes.put("duoAuthCtxReason", CollectionUtils.wrap(authContext.getReason()));
-                attributes.put("duoAuthCtxResult", CollectionUtils.wrap(authContext.getResult()));
-                attributes.put("duoAuthCtxTimestamp", CollectionUtils.wrap(authContext.getTimestamp()));
-                attributes.put("duoAuthCtxTxId", CollectionUtils.wrap(authContext.getTxid()));
-                attributes.put("duoAuthCtxUserKey", CollectionUtils.wrap(authContext.getUser().getKey()));
-
-                val accessDevice = authContext.getAccess_device();
-                if (accessDevice != null) {
-                    if (StringUtils.isNotBlank(accessDevice.getHostname())) {
-                        attributes.put("duoAuthCtxAccessDeviceHostname", CollectionUtils.wrap(accessDevice.getHostname()));
-                    }
-                    attributes.put("duoAuthCtxAccessDeviceIp", CollectionUtils.wrap(accessDevice.getIp()));
-                    val accessLocation = accessDevice.getLocation();
-                    if (accessLocation != null) {
-                        attributes.put("duoAuthCtxAccessDeviceLocationCity", CollectionUtils.wrap(accessLocation.getCity()));
-                        attributes.put("duoAuthCtxAccessDeviceLocationCountry", CollectionUtils.wrap(accessLocation.getCountry()));
-                        attributes.put("duoAuthCtxAccessDeviceLocationState", CollectionUtils.wrap(accessLocation.getState()));
-                    }
-                }
-
-                val application = authContext.getApplication();
-                if (application != null) {
-                    attributes.put("duoAuthCtxApplicationName", CollectionUtils.wrap(application.getName()));
-                }
-
-                val authDevice = authContext.getAuth_device();
-                if (authDevice != null) {
-                    attributes.put("duoAuthCtxAuthDeviceHostname", CollectionUtils.wrap(authDevice.getName()));
-                    attributes.put("duoAuthCtxAuthDeviceIp", CollectionUtils.wrap(authDevice.getIp()));
-
-                    val authLocation = authDevice.getLocation();
-                    if (authLocation != null) {
-                        attributes.put("duoAuthCtxAuthDeviceLocationCity", CollectionUtils.wrap(authLocation.getCity()));
-                        attributes.put("duoAuthCtxAuthDeviceLocationCountry", CollectionUtils.wrap(authLocation.getCountry()));
-                        attributes.put("duoAuthCtxAuthDeviceLocationState", CollectionUtils.wrap(authLocation.getState()));
-                    }
-                }
-            }
-
-            val authResult = result.getAuth_result();
-            if (authResult != null) {
-                attributes.put("duoAuthResult", CollectionUtils.wrap(authResult.getResult()));
-                attributes.put("duoAuthResultStatus", CollectionUtils.wrap(authResult.getStatus()));
-                attributes.put("duoAuthResultStatusMessage", CollectionUtils.wrap(authResult.getStatus_msg()));
-            }
+        if (properties.isCollectDuoAttributes()) {
+            attributes.putAll(collectDuoAuthenticationAttributes(result));
+            attributes.putAll(collectDuoAuthenticationContextAttributes(result));
+            attributes.putAll(collectDuoAuthenticationResultAttributes(result));
         }
         return DuoSecurityAuthenticationResult.builder()
             .success(true)
@@ -124,10 +67,98 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
             .build();
     }
 
+    protected Map<String, List<Object>> collectDuoAuthenticationAttributes(final Token result) {
+        val attributes = new LinkedHashMap<String, List<Object>>();
+        collectDuoAttribute(attributes, "duoExp", CollectionUtils.wrap(result.getExp()));
+        collectDuoAttribute(attributes, "duoIss", CollectionUtils.wrap(result.getIss()));
+        collectDuoAttribute(attributes, "duoIat", CollectionUtils.wrap(result.getIat()));
+        collectDuoAttribute(attributes, "duoAuthTime", CollectionUtils.wrap(result.getAuth_time()));
+        collectDuoAttribute(attributes, "duoSub", CollectionUtils.wrap(result.getSub()));
+        collectDuoAttribute(attributes, "duoPreferredUsername", CollectionUtils.wrap(result.getPreferred_username()));
+        collectDuoAttribute(attributes, "duoAud", CollectionUtils.wrap(result.getAud()));
+        return attributes;
+    }
+
+    protected Map<String, List<Object>> collectDuoAuthenticationResultAttributes(final Token result) {
+        val attributes = new LinkedHashMap<String, List<Object>>();
+        val authResult = result.getAuth_result();
+        if (authResult != null) {
+            collectDuoAttribute(attributes, "duoAuthResult", CollectionUtils.wrap(authResult.getResult()));
+            collectDuoAttribute(attributes, "duoAuthResultStatus", CollectionUtils.wrap(authResult.getStatus()));
+            collectDuoAttribute(attributes, "duoAuthResultStatusMessage", CollectionUtils.wrap(authResult.getStatus_msg()));
+        }
+        return attributes;
+    }
+
+    protected Map<String, List<Object>> collectDuoAuthenticationContextAttributes(final Token result) {
+        val authContext = result.getAuth_context();
+        val attributes = new LinkedHashMap<String, List<Object>>();
+        if (authContext != null) {
+            collectDuoAttribute(attributes, "duoAuthCtxEventType", CollectionUtils.wrap(authContext.getEvent_type()));
+            collectDuoAttribute(attributes, "duoAuthCtxFactor", CollectionUtils.wrap(authContext.getFactor()));
+            collectDuoAttribute(attributes, "duoAuthCtxReason", CollectionUtils.wrap(authContext.getReason()));
+            collectDuoAttribute(attributes, "duoAuthCtxResult", CollectionUtils.wrap(authContext.getResult()));
+            collectDuoAttribute(attributes, "duoAuthCtxTimestamp", CollectionUtils.wrap(authContext.getTimestamp()));
+            collectDuoAttribute(attributes, "duoAuthCtxTxId", CollectionUtils.wrap(authContext.getTxid()));
+            collectDuoAttribute(attributes, "duoAuthCtxUserKey", CollectionUtils.wrap(authContext.getUser().getKey()));
+
+            val accessDevice = authContext.getAccess_device();
+            if (accessDevice != null) {
+                if (StringUtils.isNotBlank(accessDevice.getHostname())) {
+                    collectDuoAttribute(attributes, "duoAuthCtxAccessDeviceHostname", CollectionUtils.wrap(accessDevice.getHostname()));
+                }
+                if (StringUtils.isNotBlank(accessDevice.getIp())) {
+                    collectDuoAttribute(attributes, "duoAuthCtxAccessDeviceIp", CollectionUtils.wrap(accessDevice.getIp()));
+                }
+                val accessLocation = accessDevice.getLocation();
+                if (accessLocation != null) {
+                    collectDuoAttribute(attributes, "duoAuthCtxAccessDeviceLocationCity", CollectionUtils.wrap(accessLocation.getCity()));
+                    collectDuoAttribute(attributes, "duoAuthCtxAccessDeviceLocationCountry", CollectionUtils.wrap(accessLocation.getCountry()));
+                    collectDuoAttribute(attributes, "duoAuthCtxAccessDeviceLocationState", CollectionUtils.wrap(accessLocation.getState()));
+                }
+            }
+
+            val application = authContext.getApplication();
+            if (application != null) {
+                collectDuoAttribute(attributes, "duoAuthCtxApplicationId", CollectionUtils.wrap(application.getName()));
+            }
+
+            val authDevice = authContext.getAuth_device();
+            if (authDevice != null) {
+                collectDuoAttribute(attributes, "duoAuthCtxAuthDeviceHostname", CollectionUtils.wrap(authDevice.getName()));
+                collectDuoAttribute(attributes, "duoAuthCtxAuthDeviceIp", CollectionUtils.wrap(authDevice.getIp()));
+
+                val authLocation = authDevice.getLocation();
+                if (authLocation != null) {
+                    collectDuoAttribute(attributes, "duoAuthCtxAuthDeviceLocationCity", CollectionUtils.wrap(authLocation.getCity()));
+                    collectDuoAttribute(attributes, "duoAuthCtxAuthDeviceLocationCountry", CollectionUtils.wrap(authLocation.getCountry()));
+                    collectDuoAttribute(attributes, "duoAuthCtxAuthDeviceLocationState", CollectionUtils.wrap(authLocation.getState()));
+                }
+            }
+        }
+        return attributes;
+    }
+
+    protected void collectDuoAttribute(final Map<String, List<Object>> attributes,
+                                       final String name, final List values) {
+        if (values != null && !values.isEmpty()) {
+            attributes.put(name, values);
+        }
+    }
+
+    protected String getDuoPrincipalId(final DuoSecurityUniversalPromptCredential duoCredential) {
+        val principal = resolvePrincipal(duoCredential.getAuthentication().getPrincipal());
+        val principalAttribute = properties.getPrincipalAttribute();
+        if (principal.getAttributes().containsKey(principalAttribute)) {
+            return principal.getAttributes().get(principalAttribute).getFirst().toString();
+        }
+        return principal.getId();
+    }
+
     @Override
     public boolean ping() {
         try {
-            val response = duoClient.healthCheck();
+            val response = duoClient.getInstance().healthCheck();
             LOGGER.debug("Received Duo Security health check response [{}]", response);
             return true;
         } catch (final Exception e) {

@@ -21,7 +21,7 @@ class SpnegoCredentialsTests {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    void verifyToStringWithNoPrincipal() throws Throwable {
+    void verifyToStringWithNoPrincipal() {
         val credentials = new SpnegoCredential(ArrayUtils.EMPTY_BYTE_ARRAY);
         assertTrue(credentials.getId().contains("unknown"));
     }

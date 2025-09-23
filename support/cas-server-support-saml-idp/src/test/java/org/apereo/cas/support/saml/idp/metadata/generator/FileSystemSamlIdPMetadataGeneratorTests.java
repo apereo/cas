@@ -23,7 +23,7 @@ class FileSystemSamlIdPMetadataGeneratorTests {
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-        "cas.authn.saml-idp.core.cache-expiration=0",
+        "cas.authn.saml-idp.metadata.core.cache-expiration=0",
         "cas.authn.saml-idp.metadata.file-system.sign-metadata=true",
         "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata456"
     })
@@ -33,7 +33,7 @@ class FileSystemSamlIdPMetadataGeneratorTests {
             assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
             val metadata = samlIdPMetadataLocator.resolveMetadata(Optional.empty());
             assertNotNull(metadata);
-            assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
+            assertNotNull(samlIdPMetadataLocator.resolveEncryptionCertificate(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()));
@@ -44,7 +44,7 @@ class FileSystemSamlIdPMetadataGeneratorTests {
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-        "cas.authn.saml-idp.core.cache-expiration=0",
+        "cas.authn.saml-idp.metadata.core.cache-expiration=0",
         "cas.authn.saml-idp.metadata.file-system.sign-metadata=true",
         "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata599"
     })
@@ -60,7 +60,7 @@ class FileSystemSamlIdPMetadataGeneratorTests {
 
             samlIdPMetadataGenerator.generate(registeredService);
             assertNotNull(samlIdPMetadataLocator.resolveMetadata(registeredService));
-            assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(registeredService));
+            assertNotNull(samlIdPMetadataLocator.resolveEncryptionCertificate(registeredService));
             assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(registeredService));
             assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(registeredService));
             assertNotNull(samlIdPMetadataLocator.resolveSigningKey(registeredService));

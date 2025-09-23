@@ -20,7 +20,6 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.util.InitializableObject;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -46,7 +45,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
     protected final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
@@ -58,7 +57,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
         return FunctionUtils.doAndHandle(
                 () -> Optional.ofNullable(clientName)
                     .filter(StringUtils::isNotBlank)
-                    .map(name -> configContext.getIdentityProviders().findClient(name))
+                    .map(name -> configContext.getIdentityProviders().findClient(name, webContext))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .filter(client -> isDelegatedClientAuthorizedForService(client, service, requestContext))
@@ -73,7 +72,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
                         requestContext.getFlowScope().put(TransientSessionTicket.class.getName(), ticket);
                         return ticket;
                     }))
-                    .map(ticket -> new EventFactorySupport().event(this,
+                    .map(ticket -> eventFactory.event(this,
                         CasWebflowConstants.TRANSITION_ID_REDIRECT, ticket.getClass().getName(), ticket))
                     .stream()
                     .findFirst()

@@ -22,6 +22,7 @@ import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -35,15 +36,19 @@ import java.util.stream.Stream;
  * @since 6.3.0
  */
 @Slf4j
-public record DynamoDbCasEventsFacilitator(DynamoDbEventsProperties dynamoDbProperties, DynamoDbClient amazonDynamoDBClient) {
+@RequiredArgsConstructor
+public class DynamoDbCasEventsFacilitator {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
+
+    private final DynamoDbEventsProperties dynamoDbProperties;
+    private final DynamoDbClient amazonDynamoDBClient;
 
     private static Map<String, AttributeValue> buildTableAttributeValuesMap(final CasEvent record) throws Exception {
         val values = new HashMap<String, AttributeValue>();
         values.put(ColumnNames.PRINCIPAL.getColumnName(), AttributeValue.builder().s(record.getPrincipalId()).build());
         values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
-        values.put(ColumnNames.CREATION_TIME.getColumnName(), AttributeValue.builder().s(record.getCreationTime()).build());
+        values.put(ColumnNames.CREATION_TIME.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getCreationTime().toEpochMilli())).build());
         values.put(ColumnNames.TYPE.getColumnName(), AttributeValue.builder().s(record.getType()).build());
         val properties = MAPPER.writeValueAsString(record.getProperties());
         values.put(ColumnNames.PROPERTIES.getColumnName(), AttributeValue.builder().s(properties).build());
@@ -55,11 +60,11 @@ public record DynamoDbCasEventsFacilitator(DynamoDbEventsProperties dynamoDbProp
         val principal = item.get(ColumnNames.PRINCIPAL.getColumnName()).s();
         val id = Long.valueOf(item.get(ColumnNames.ID.getColumnName()).n());
         val type = item.get(ColumnNames.TYPE.getColumnName()).s();
-        val creationTime = item.get(ColumnNames.CREATION_TIME.getColumnName()).s();
+        val creationTime = Long.parseLong(item.get(ColumnNames.CREATION_TIME.getColumnName()).n());
         val properties = MAPPER.readValue(item.get(ColumnNames.PROPERTIES.getColumnName()).s(),
             new TypeReference<Map<String, String>>() {
             });
-        return new CasEvent(id, type, principal, creationTime, properties);
+        return new CasEvent(id, type, principal, Instant.ofEpochMilli(creationTime), properties);
     }
 
     /**
@@ -136,7 +141,7 @@ public record DynamoDbCasEventsFacilitator(DynamoDbEventsProperties dynamoDbProp
                     .build(),
                 DynamoDbQueryBuilder.builder()
                     .key(ColumnNames.CREATION_TIME.getColumnName())
-                    .attributeValue(List.of(AttributeValue.builder().s(dateTime.toString()).build()))
+                    .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(dateTime.toInstant().toEpochMilli())).build()))
                     .operator(ComparisonOperator.GE)
                     .build());
         return getRecordsByKeys(query);
@@ -158,7 +163,7 @@ public record DynamoDbCasEventsFacilitator(DynamoDbEventsProperties dynamoDbProp
                 .build(),
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.CREATION_TIME.getColumnName())
-                .attributeValue(List.of(AttributeValue.builder().s(dateTime.toString()).build()))
+                .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(dateTime.toInstant().toEpochMilli())).build()))
                 .operator(ComparisonOperator.GE)
                 .build());
         return getRecordsByKeys(query);
@@ -202,7 +207,7 @@ public record DynamoDbCasEventsFacilitator(DynamoDbEventsProperties dynamoDbProp
                 .build(),
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.CREATION_TIME.getColumnName())
-                .attributeValue(List.of(AttributeValue.builder().s(dateTime.toString()).build()))
+                .attributeValue(List.of(AttributeValue.builder().n(String.valueOf(dateTime.toInstant().toEpochMilli())).build()))
                 .operator(ComparisonOperator.GE)
                 .build());
         return getRecordsByKeys(query);

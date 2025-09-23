@@ -1,16 +1,17 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -20,13 +21,11 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    AopAutoConfiguration.class
-})
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = AopAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Metrics")
+@ExtendWith(CasTestExtension.class)
 class CacheHealthIndicatorTests {
 
     @Autowired
@@ -37,7 +36,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveOk() throws Throwable {
+    void verifyObserveOk() {
         val warn = casProperties.getMonitor().getWarn();
         val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
@@ -52,7 +51,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveWarn() throws Throwable {
+    void verifyObserveWarn() {
         val warn = casProperties.getMonitor().getWarn();
         val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
@@ -68,7 +67,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveError() throws Throwable {
+    void verifyObserveError() {
         val warn = casProperties.getMonitor().getWarn();
         val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
@@ -83,7 +82,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    void verifyObserveError2() throws Throwable {
+    void verifyObserveError2() {
         val warn = casProperties.getMonitor().getWarn();
         val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
@@ -97,13 +96,13 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    void verifyToString() throws Throwable {
+    void verifyToString() {
         val stat = new SimpleCacheStatistics(100, 110, 0, "test");
         assertNotNull(stat.toString(new StringBuilder()));
     }
 
     @Test
-    void verifyOut() throws Throwable {
+    void verifyOut() {
         val indicator = new AbstractCacheHealthIndicator(0, 0) {
             @Override
             protected CacheStatistics[] getStatistics() {
@@ -114,7 +113,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    void verifyDown() throws Throwable {
+    void verifyDown() {
         val indicator = new AbstractCacheHealthIndicator(0, 0) {
             @Override
             protected CacheStatistics[] getStatistics() {
@@ -132,7 +131,7 @@ class CacheHealthIndicatorTests {
     }
 
     @Test
-    void verifyError() throws Throwable {
+    void verifyError() {
         val indicator = new AbstractCacheHealthIndicator(0, 0) {
             @Override
             protected CacheStatistics[] getStatistics() {

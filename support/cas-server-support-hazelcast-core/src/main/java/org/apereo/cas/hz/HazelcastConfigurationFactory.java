@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProp
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.hazelcast.config.Config;
 import com.hazelcast.config.ConsistencyCheckStrategy;
 import com.hazelcast.config.DiscoveryConfig;
@@ -30,7 +29,6 @@ import com.hazelcast.config.WanBatchPublisherConfig;
 import com.hazelcast.config.WanQueueFullBehavior;
 import com.hazelcast.config.WanReplicationConfig;
 import com.hazelcast.config.WanSyncConfig;
-import com.hazelcast.nio.ssl.BasicSSLContextFactory;
 import com.hazelcast.spi.merge.DiscardMergePolicy;
 import com.hazelcast.spi.merge.ExpirationTimeMergePolicy;
 import com.hazelcast.spi.merge.HigherHitsMergePolicy;
@@ -44,7 +42,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.util.StringUtils;
-
 import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.UUID;
@@ -67,10 +64,10 @@ public class HazelcastConfigurationFactory {
     public static void setConfigMap(final NamedConfig namedConfig, final Config config) {
         if (namedConfig instanceof final MapConfig mappedConfig) {
             FunctionUtils.doIf(!config.getMapConfigs().containsKey(namedConfig.getName()),
-                u -> config.addMapConfig(mappedConfig)).accept(mappedConfig);
+                __ -> config.addMapConfig(mappedConfig)).accept(mappedConfig);
         } else if (namedConfig instanceof final ReplicatedMapConfig replicatedConfig) {
             FunctionUtils.doIf(!config.getReliableTopicConfigs().containsKey(namedConfig.getName()),
-                u -> config.addReplicatedMapConfig(replicatedConfig)).accept(replicatedConfig);
+                __ -> config.addReplicatedMapConfig(replicatedConfig)).accept(replicatedConfig);
         }
     }
 
@@ -133,7 +130,7 @@ public class HazelcastConfigurationFactory {
                 throw new IllegalArgumentException("Cannot activate WAN replication, a Hazelcast enterprise feature, without a license key");
             }
             LOGGER.warn("Using Hazelcast WAN Replication requires a Hazelcast Enterprise subscription. Make sure you "
-                        + "have acquired the proper license, SDK and tooling from Hazelcast before activating this feature.");
+                + "have acquired the proper license, SDK and tooling from Hazelcast before activating this feature.");
             buildWanReplicationSettingsForConfig(hz, config);
         }
 
@@ -146,7 +143,9 @@ public class HazelcastConfigurationFactory {
         LOGGER.trace("Created Hazelcast network configuration [{}]", networkConfig);
         config.setNetworkConfig(networkConfig);
         config.getSerializationConfig().setEnableCompression(hz.getCore().isEnableCompression());
-
+        config.getSerializationConfig().setUseNativeByteOrder(true);
+        config.getSerializationConfig().setAllowUnsafe(true);
+        
         val instanceName = StringUtils.hasText(cluster.getCore().getInstanceName())
             ? SpringExpressionLanguageValueResolver.getInstance().resolve(cluster.getCore().getInstanceName())
             : UUID.randomUUID().toString();
@@ -162,7 +161,6 @@ public class HazelcastConfigurationFactory {
     private static void buildNetworkSslConfig(final NetworkConfig networkConfig, final BaseHazelcastProperties hz) {
         val ssl = hz.getCluster().getNetwork().getSsl();
         val sslConfig = new SSLConfig();
-        sslConfig.setFactoryClassName(BasicSSLContextFactory.class.getName());
         FunctionUtils.doIfNotNull(ssl.getKeystore(), value -> sslConfig.setProperty("keystore", value));
         FunctionUtils.doIfNotNull(ssl.getProtocol(), value -> sslConfig.setProperty("protocol", value));
         FunctionUtils.doIfNotNull(ssl.getKeystorePassword(), value -> sslConfig.setProperty("keystorePassword", value));
@@ -331,6 +329,7 @@ public class HazelcastConfigurationFactory {
             .setStatisticsEnabled(true)
             .setMergePolicyConfig(mergePolicyConfig)
             .setMaxIdleSeconds((int) timeoutSeconds)
+            .setInMemoryFormat(InMemoryFormat.BINARY)
             .setBackupCount(cluster.getCore().getBackupCount())
             .setAsyncBackupCount(cluster.getCore().getAsyncBackupCount())
             .setEvictionConfig(evictionConfig);

@@ -29,7 +29,6 @@ import org.apereo.cas.configuration.model.support.redis.RedisAuthenticationPrope
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethIdPProperties;
-import org.apereo.cas.configuration.model.support.soap.SoapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
@@ -41,7 +40,6 @@ import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -62,7 +60,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("AuthenticationProperties")
 public class AuthenticationProperties implements Serializable {
 
     @Serial
@@ -145,13 +142,7 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AmazonCognitoAuthenticationProperties cognito = new AmazonCognitoAuthenticationProperties();
-
-    /**
-     * Settings that control SOAP authentication.
-     */
-    @NestedConfigurationProperty
-    private SoapAuthenticationProperties soap = new SoapAuthenticationProperties();
-
+    
     /**
      * Surrogate authentication settings.
      */
@@ -185,13 +176,13 @@ public class AuthenticationProperties implements Serializable {
     /**
      * REST-based authentication settings.
      */
-    private List<RestAuthenticationProperties> rest = new ArrayList<>(0);
+    private List<RestAuthenticationProperties> rest = new ArrayList<>();
 
     /**
      * Collection of settings related to LDAP authentication.
      * These settings are required to be indexed (i.e. ldap[0].xyz).
      */
-    private List<LdapAuthenticationProperties> ldap = new ArrayList<>(0);
+    private List<LdapAuthenticationProperties> ldap = new ArrayList<>();
 
     /**
      * Authentication throttling settings.
@@ -257,7 +248,7 @@ public class AuthenticationProperties implements Serializable {
      * Collection of settings related to JAAS authentication.
      * These settings are required to be indexed (i.e. jaas[0].xyz).
      */
-    private List<JaasAuthenticationProperties> jaas = new ArrayList<>(0);
+    private List<JaasAuthenticationProperties> jaas = new ArrayList<>();
 
     /**
      * JDBC authentication settings.
@@ -311,7 +302,7 @@ public class AuthenticationProperties implements Serializable {
      * Collection of settings related to WsFed delegated authentication.
      * These settings are required to be indexed (i.e. wsfed[0].xyz).
      */
-    private List<WsFederationDelegationProperties> wsfed = new ArrayList<>(0);
+    private List<WsFederationDelegationProperties> wsfed = new ArrayList<>();
 
     /**
      * WS-FED IdP authentication settings.

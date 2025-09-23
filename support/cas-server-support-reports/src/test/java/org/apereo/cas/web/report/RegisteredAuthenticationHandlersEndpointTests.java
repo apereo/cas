@@ -1,14 +1,12 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
-
+import org.apereo.cas.authentication.handler.support.ProxyAuthenticationHandler;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link RegisteredAuthenticationHandlersEndpointTests}.
@@ -16,17 +14,19 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Francesco Chicchiriccò
  * @since 6.3.0
  */
-@TestPropertySource(properties = "management.endpoint.authenticationHandlers.enabled=true")
+@TestPropertySource(properties = "management.endpoint.authenticationHandlers.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 class RegisteredAuthenticationHandlersEndpointTests extends AbstractCasEndpointTests {
 
-    @Autowired
-    @Qualifier("registeredAuthenticationHandlersEndpoint")
-    private RegisteredAuthenticationHandlersEndpoint endpoint;
-
     @Test
-    void verifyOperation() throws Throwable {
-        assertFalse(endpoint.handle().isEmpty());
-        assertNotNull(endpoint.fetchAuthnHandler(HttpBasedServiceCredentialsAuthenticationHandler.class.getSimpleName()));
+    void verifyOperation() throws Exception {
+        mockMvc.perform(get("/actuator/authenticationHandlers")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+        mockMvc.perform(get("/actuator/authenticationHandlers/" + ProxyAuthenticationHandler.class.getSimpleName())
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
     }
 }

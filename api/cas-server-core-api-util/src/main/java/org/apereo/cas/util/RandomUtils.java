@@ -39,18 +39,28 @@ public class RandomUtils {
     private static final String NATIVE_NON_BLOCKING_ALGORITHM = "NativePRNGNonBlocking";
 
     /**
-     * Get strong enough SecureRandom instance and of the checked exception.
-     *
-     * @return the strong instance
+     * Cached secure random instance.
      */
-    public static SecureRandom getNativeInstance() {
+    private static final SecureRandom SECURE_RANDOM = createSecureRandom();
+
+    private static SecureRandom createSecureRandom() {
         try {
-            val alg = StringUtils.defaultIfBlank(System.getProperty(SYSTEM_PROPERTY_SECURE_RANDOM_ALG), NATIVE_NON_BLOCKING_ALGORITHM);
+            val alg = StringUtils.defaultIfBlank(System.getProperty(SYSTEM_PROPERTY_SECURE_RANDOM_ALG),
+                NATIVE_NON_BLOCKING_ALGORITHM);
             return SecureRandom.getInstance(alg);
         } catch (final NoSuchAlgorithmException e) {
             LOGGER.trace(e.getMessage(), e);
             return new SecureRandom();
         }
+    }
+
+    /**
+     * Get strong enough SecureRandom instance and of the checked exception.
+     *
+     * @return the strong instance
+     */
+    public static SecureRandom getNativeInstance() {
+        return SECURE_RANDOM;
     }
 
     /**
@@ -131,8 +141,8 @@ public class RandomUtils {
         IntStream.range(0, bytes.length).forEach(i -> {
             val left = bytes[i] >> SECURE_ID_SHIFT_LENGTH & HEX_HIGH_BITS_BITWISE_FLAG;
             val right = bytes[i] & HEX_HIGH_BITS_BITWISE_FLAG;
-            chars[i * 2] = charMappings[left];
-            chars[i * 2 + 1] = charMappings[right];
+            chars[i << 1] = charMappings[left];
+            chars[(i << 1) + 1] = charMappings[right];
         });
         return String.valueOf(chars);
     }
@@ -205,7 +215,7 @@ public class RandomUtils {
      * <p>Creates a random string whose length is the number of characters
      * specified.</p>
      *
-     * <p>Characters will be chosen from the set of alpha-numeric
+     * <p>Characters will be chosen from the set of alphanumeric
      * characters as indicated by the arguments.</p>
      *
      * @param count   the length of random string to create
@@ -223,7 +233,7 @@ public class RandomUtils {
      * <p>Creates a random string whose length is the number of characters
      * specified.</p>
      *
-     * <p>Characters will be chosen from the set of alpha-numeric
+     * <p>Characters will be chosen from the set of alphanumeric
      * characters as indicated by the arguments.</p>
      *
      * @param count   the length of random string to create

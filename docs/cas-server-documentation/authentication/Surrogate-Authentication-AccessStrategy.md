@@ -41,7 +41,7 @@ A sample service definition follows:
 
 {% endtab %}
 
-{% tab impersonationaccess Groovy %}
+{% tab impersonationaccess <i class="fa fa-file-code px-1"></i>Groovy %}
 
 Decide whether the primary user is allowed to go through impersonation via
 an external Groovy script. A sample service file follows:
@@ -86,6 +86,8 @@ The parameters passed are as follows:
 | `principalAttributes` | Principal attributes collected for the primary user.                        |
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`. |
 
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
           

@@ -1,0 +1,71 @@
+config:
+  plugins: 
+    metrics-by-endpoint: 
+      useOnlyRequestNames: true
+  target: 'https://localhost:8443'
+  processor: "./saml.js"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+  http:
+    cookieJar: true
+  payload:
+    path: cas-users.csv
+    fields:
+      - username
+      - password
+  tls:
+    rejectUnauthorized: false
+  defaults:
+    headers:
+      Content-Type: application/x-www-form-urlencoded
+
+scenarios:
+  - flow:
+      - get:
+          url: 'http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp'
+          followRedirect: false
+          capture:
+            - as: redirectLocation
+              header: 'location'
+          expect:
+            - statusCode: 302
+      - get:
+          url: "{{ redirectLocation }}"
+          followRedirect: false
+          capture:
+            - as: redirectLocation
+              header: 'location'
+          expect:
+            - statusCode: 302
+          afterResponse: extractCookies
+      - get:
+          url: "{{ redirectLocation }}"
+          expect:
+            - statusCode: 200
+          capture:
+            - as: execution
+              group: 1
+              regexp: '<input type="hidden" name="execution" value="(.+?)"\s*/>'  
+      - post:
+          url: "{{ redirectLocation }}"
+          followRedirect: false
+          cookie:
+            JSESSIONID: "{{ JSESSIONID }}"
+          form:
+            username: "{{ username }}"
+            password: "{{ password }}"
+            execution: "{{ execution }}"
+            _eventId: submit
+          capture:
+            - as: redirectLocation
+              header: 'location'
+          expect:
+            - statusCode: 302
+      - get:
+          url: "{{ redirectLocation }}"
+          followRedirect: true
+          cookie:
+            JSESSIONID: "{{ JSESSIONID }}"
+          expect:
+            - statusCode: 200   

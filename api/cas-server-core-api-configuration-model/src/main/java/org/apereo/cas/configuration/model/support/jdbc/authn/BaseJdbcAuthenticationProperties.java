@@ -79,5 +79,5 @@ public abstract class BaseJdbcAuthenticationProperties extends AbstractJpaProper
      * <p>Attributes name are separated by a comma and may use a "directed list" syntax where the allowed
      * syntax would be {@code column-name->cas-attribute}.
      */
-    private List<String> principalAttributeList = new ArrayList<>(0);
+    private List<String> principalAttributeList = new ArrayList<>();
 }

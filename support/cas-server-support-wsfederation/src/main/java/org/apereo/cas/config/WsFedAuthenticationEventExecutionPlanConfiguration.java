@@ -15,6 +15,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegatedCookieProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.attributes.GroovyWsFederationAttributeMutator;
@@ -24,8 +25,9 @@ import org.apereo.cas.support.wsfederation.authentication.principal.WsFederation
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieCipherExecutor;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutorResolver;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -65,9 +67,12 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
     static class WsFedAuthenticationProvidersConfiguration {
         private static WsFederationAttributeMutator getAttributeMutatorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
             val location = wsfed.getAttributeMutatorScript().getLocation();
-            return location != null
-                ? new GroovyWsFederationAttributeMutator(new WatchableGroovyScriptResource(location))
-                : WsFederationAttributeMutator.noOp();
+            val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+            if (location != null && scriptFactory.isPresent()) {
+                val watchableScript = scriptFactory.get().fromResource(location);
+                return new GroovyWsFederationAttributeMutator(watchableScript);
+            }
+            return WsFederationAttributeMutator.noOp();
         }
 
         private static WsFederationConfiguration getWsFederationConfiguration(
@@ -110,7 +115,11 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
             val cookie = wsfed.getCookie();
             val cipher = getCipherExecutorForWsFederationConfig(cookie);
             val geoLocationService = applicationContext.getBeanProvider(GeoLocationService.class);
-            val valueManager = new DefaultCasCookieValueManager(cipher, geoLocationService,
+            val tenantExtractor = applicationContext.getBean(TenantExtractor.BEAN_NAME, TenantExtractor.class);
+
+            val valueManager = new DefaultCasCookieValueManager(
+                CipherExecutorResolver.with(cipher),
+                tenantExtractor, geoLocationService,
                 DefaultCookieSameSitePolicy.INSTANCE, cookie);
             return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(cookie), valueManager);
         }
@@ -120,8 +129,8 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
                 () -> CipherExecutorUtils.newStringCipherExecutor(cookie.getCrypto(), WsFederationCookieCipherExecutor.class),
                 () -> {
                     LOGGER.info("WsFederation delegated authentication cookie encryption/signing is turned off and "
-                                + "MAY NOT be safe in a production environment. "
-                                + "Consider using other choices to handle encryption, signing and verification of delegated authentication cookie.");
+                        + "MAY NOT be safe in a production environment. "
+                        + "Consider using other choices to handle encryption, signing and verification of delegated authentication cookie.");
                     return CipherExecutor.noOp();
                 }).get();
         }
@@ -179,9 +188,9 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
                 .getWsfed()
                 .stream()
                 .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
-                                 && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
+                    && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
                 .forEach(wsfed -> {
-                    val handler = new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager, wsfedPrincipalFactory, wsfed.getOrder());
+                    val handler = new WsFederationAuthenticationHandler(wsfed.getName(), wsfedPrincipalFactory, wsfed.getOrder());
                     if (wsfed.isAttributeResolverEnabled()) {
                         val cfg = wsFederationConfigurations.toSet().stream()
                             .filter(c -> {

@@ -3,14 +3,15 @@ package org.apereo.cas.web.flow.actions.composite;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.EventFactorySupport;
+import org.apache.commons.lang3.Strings;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -34,26 +35,25 @@ public class MultifactorProviderSelectedAction extends BaseCasWebflowAction {
 
     @Override
     protected Event doPreExecute(final RequestContext context) throws Exception {
-        val contextPath = context.getExternalContext().getContextPath();
-        val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
         val cookie = casProperties.getAuthn().getMfa().getCore().getProviderSelection().getCookie();
         if (cookie.isEnabled() && cookie.isAutoConfigureCookiePath()) {
-            val path = multifactorProviderCookieBuilder.getCookiePath();
-            if (StringUtils.isBlank(path)) {
-                LOGGER.debug("Setting path for cookies for multifactor authentication selection cookie generator to: [{}]", cookiePath);
-                multifactorProviderCookieBuilder.setCookiePath(cookiePath);
-            }
+            CookieUtils.configureCookiePath(context, multifactorProviderCookieBuilder);
         }
         return super.doPreExecute(context);
     }
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
+        val mfaOptional = casProperties.getAuthn().getMfa().getCore().getProviderSelection().isProviderSelectionOptional();
         val selectedProvider = WebUtils.getRequestParameterOrAttribute(requestContext, PARAMETER_SELECTED_MFA_PROVIDER)
             .orElseGet(() -> requestContext.getFlashScope().get(PARAMETER_SELECTED_MFA_PROVIDER, MultifactorAuthenticationProvider.class).getId());
+        if (mfaOptional && Strings.CI.equals(selectedProvider, "none")) {
+            LOGGER.debug("No multifactor authentication provider is selected, and provider selection is optional. Proceeding with authentication without MFA");
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_SKIP);
+        }
         LOGGER.debug("Selected multifactor authentication provider is [{}]", selectedProvider);
         rememberSelectedMultifactorAuthenticationProvider(requestContext, selectedProvider);
-        return new EventFactorySupport().event(this, selectedProvider);
+        return eventFactory.event(this, selectedProvider);
     }
 
     protected void rememberSelectedMultifactorAuthenticationProvider(final RequestContext requestContext, final String selectedProvider) {

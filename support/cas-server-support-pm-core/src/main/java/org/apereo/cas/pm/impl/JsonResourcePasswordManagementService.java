@@ -1,14 +1,13 @@
 package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
@@ -16,9 +15,9 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
-
 import java.io.InputStreamReader;
 import java.io.Serial;
 import java.io.Serializable;
@@ -43,11 +42,10 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     private Map<String, JsonBackedAccount> jsonBackedAccounts;
 
     public JsonResourcePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-                                                 final String issuer,
-                                                 final PasswordManagementProperties passwordManagementProperties,
+                                                 final CasConfigurationProperties casProperties,
                                                  final Resource jsonResource,
                                                  final PasswordHistoryService passwordHistoryService) {
-        super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
+        super(casProperties, cipherExecutor, passwordHistoryService);
         this.jsonResource = jsonResource;
         readAccountsFromJsonResource();
     }
@@ -58,7 +56,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
             LOGGER.error("Password cannot be blank");
             return false;
         }
-        if (!StringUtils.equals(bean.toPassword(), bean.toConfirmedPassword())) {
+        if (!Strings.CI.equals(bean.toPassword(), bean.toConfirmedPassword())) {
             LOGGER.error("Password does not match and cannot be confirmed");
             return false;
         }
@@ -99,7 +97,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         if (account != null) {
             return account.getSecurityQuestions();
         }
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 
     @Override
@@ -135,7 +133,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
 
         private String status;
 
-        private Map<String, String> securityQuestions = new HashMap<>(0);
+        private Map<String, String> securityQuestions = new HashMap<>();
     }
 
     private boolean writeAccountToJsonResource() {

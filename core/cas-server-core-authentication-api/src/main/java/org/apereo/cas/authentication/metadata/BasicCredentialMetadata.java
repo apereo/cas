@@ -3,13 +3,12 @@ package org.apereo.cas.authentication.metadata;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.CredentialTrait;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+import lombok.Setter;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -47,6 +46,9 @@ public class BasicCredentialMetadata implements CredentialMetadata {
 
     private final Map<String, Serializable> properties = new HashMap<>();
 
+    @Setter
+    private String tenant;
+
     public BasicCredentialMetadata(final Credential credential, final Map<String, ? extends Serializable> properties) {
         this.id = credential.getId();
         this.credentialClass = credential.getClass();
@@ -69,6 +71,11 @@ public class BasicCredentialMetadata implements CredentialMetadata {
     public CredentialMetadata putProperty(final String key, final Serializable value) {
         this.properties.put(key, value);
         return this;
+    }
+
+    @Override
+    public <T extends Serializable> T getProperty(final String key, final Class<T> clazz) {
+        return Optional.ofNullable(properties.get(key)).map(clazz::cast).orElse(null);
     }
 
     @Override
@@ -99,5 +106,10 @@ public class BasicCredentialMetadata implements CredentialMetadata {
     @JsonIgnore
     public boolean containsProperty(final String key) {
         return properties.containsKey(key);
+    }
+
+    @Override
+    public void removeProperty(final String name) {
+        this.properties.remove(name);
     }
 }

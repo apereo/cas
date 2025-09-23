@@ -28,5 +28,5 @@ const cas = require("../../cas.js");
 
     await context1.close();
     await context2.close();
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

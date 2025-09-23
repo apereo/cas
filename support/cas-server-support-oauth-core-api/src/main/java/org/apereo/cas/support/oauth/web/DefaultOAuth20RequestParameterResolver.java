@@ -12,7 +12,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +26,6 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.WebContextHelper;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -183,7 +180,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     public Collection<String> resolveRequestedScopes(final WebContext context) {
         val map = resolveRequestParameters(CollectionUtils.wrap(OAuth20Constants.SCOPE), context);
         if (map == null || map.isEmpty()) {
-            return new ArrayList<>(0);
+            return new HashSet<>();
         }
         val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getScopes();
         val results = new LinkedHashSet<>(map.get(OAuth20Constants.SCOPE));
@@ -237,7 +234,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     public Set<String> resolveRequestScopes(final WebContext context) {
         val parameterValues = resolveRequestParameter(context, OAuth20Constants.SCOPE);
         if (parameterValues.isEmpty()) {
-            return new HashSet<>(0);
+            return new HashSet<>();
         }
         val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().getScopes();
         val results = CollectionUtils.wrapSet(parameterValues.get().split(" "));
@@ -254,7 +251,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
             () -> StringUtils.EMPTY).get();
 
         if (StringUtils.isBlank(claims)) {
-            return new HashMap<>(0);
+            return new HashMap<>();
         }
         return MAPPER.readValue(JsonValue.readHjson(claims).toString(), Map.class);
     }
@@ -262,7 +259,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     @Override
     public Set<String> resolveUserInfoRequestClaims(final WebContext context) throws Exception {
         val requestedClaims = resolveRequestClaims(context);
-        return requestedClaims.getOrDefault(OAuth20Constants.CLAIMS_USERINFO, new HashMap<>(0)).keySet();
+        return requestedClaims.getOrDefault(OAuth20Constants.CLAIMS_USERINFO, new HashMap<>()).keySet();
     }
 
     @Override

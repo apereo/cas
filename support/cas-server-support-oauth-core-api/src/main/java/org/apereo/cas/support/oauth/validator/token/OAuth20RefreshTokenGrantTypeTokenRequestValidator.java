@@ -7,15 +7,14 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-
+import org.springframework.beans.factory.ObjectProvider;
 import java.util.Objects;
 
 /**
@@ -25,18 +24,19 @@ import java.util.Objects;
  * @since 5.3.0
  */
 @Slf4j
-public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator {
-    public OAuth20RefreshTokenGrantTypeTokenRequestValidator(final OAuth20ConfigurationContext configurationContext) {
+public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator<OAuth20ConfigurationContext> {
+    public OAuth20RefreshTokenGrantTypeTokenRequestValidator(final ObjectProvider<OAuth20ConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 
     @Override
     protected boolean validateInternal(final WebContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) throws Throwable {
-        val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
-        val clientId = getConfigurationContext().getRequestParameterResolver()
+        val configurationContext = getConfigurationContext().getObject();
+        val callContext = new CallContext(context, configurationContext.getSessionStore());
+        val clientId = configurationContext.getRequestParameterResolver()
             .resolveClientIdAndClientSecret(callContext).getLeft();
-        val refreshTokenResult = getConfigurationContext().getRequestParameterResolver()
+        val refreshTokenResult = configurationContext.getRequestParameterResolver()
             .resolveRequestParameter(context, OAuth20Constants.REFRESH_TOKEN);
         if (refreshTokenResult.isEmpty() || clientId.isEmpty()) {
             return false;
@@ -45,7 +45,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
         var refreshToken = (OAuth20RefreshToken) null;
         val token = refreshTokenResult.get();
         try {
-            refreshToken = getConfigurationContext().getTicketRegistry().getTicket(token, OAuth20RefreshToken.class);
+            refreshToken = configurationContext.getTicketRegistry().getTicket(token, OAuth20RefreshToken.class);
             LOGGER.trace("Found valid refresh token [{}] in the registry", refreshToken);
         } catch (final InvalidTicketException e) {
             LOGGER.warn("Provided refresh token [{}] cannot be found in the registry or has expired", token);
@@ -54,11 +54,11 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
 
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
-            getConfigurationContext().getServicesManager(), clientId);
+            configurationContext.getServicesManager(), clientId);
         val audit = AuditableContext.builder()
             .registeredService(registeredService)
             .build();
-        val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+        val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         accessResult.throwExceptionIfNeeded();
 
         if (!isGrantTypeSupportedBy(registeredService, grantType)) {
@@ -67,7 +67,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
             return false;
         }
 
-        if (!StringUtils.equalsIgnoreCase(refreshToken.getClientId(), clientId)) {
+        if (!Strings.CI.equals(refreshToken.getClientId(), clientId)) {
             LOGGER.warn("Provided refresh token [{}] does not belong to client [{}]", refreshToken.getId(), clientId);
             return false;
         }

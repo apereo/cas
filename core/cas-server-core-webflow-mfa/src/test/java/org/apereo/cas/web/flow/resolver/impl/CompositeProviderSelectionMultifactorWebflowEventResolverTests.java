@@ -14,7 +14,9 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -73,12 +75,12 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
     @TestPropertySource(properties = "cas.authn.mfa.core.provider-selection.provider-selection-enabled=true")
     class BypassTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
-        @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_SELECTIVE_AUTHENTICATION_EVENT_RESOLVER)
         private CasWebflowEventResolver compositeResolver;
 
         @Test
         void verifyCompositeBypass() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val provider = new DefaultChainingMultifactorAuthenticationProvider(applicationContext,
                 new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties));
             val event = new EventFactorySupport().event(this,
@@ -98,7 +100,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
     @TestPropertySource(properties = "cas.authn.mfa.core.provider-selection.provider-selection-enabled=true")
     class DefaultTests extends BaseCasWebflowMultifactorAuthenticationTests {
         @Autowired
-        @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
+        @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_SELECTIVE_AUTHENTICATION_EVENT_RESOLVER)
         private CasWebflowEventResolver compositeResolver;
 
         @Autowired
@@ -107,8 +109,9 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
 
         @Test
         void verifyCompositeWithCookie() throws Throwable {
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             multifactorAuthenticationProviderSelectionCookieGenerator.addCookie(
+                context.getHttpServletRequest(),
                 context.getHttpServletResponse(), TestMultifactorAuthenticationProvider.ID);
             context.setRequestCookiesFromResponse();
 
@@ -199,7 +202,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
             WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
             val result = compositeResolver.resolve(context);
             assertNotNull(result);
-            assertNotNull(WebUtils.getResolvedMultifactorAuthenticationProviders(context));
+            assertNotNull(MultifactorAuthenticationWebflowUtils.getResolvedMultifactorAuthenticationProviders(context));
             return result;
         }
     }

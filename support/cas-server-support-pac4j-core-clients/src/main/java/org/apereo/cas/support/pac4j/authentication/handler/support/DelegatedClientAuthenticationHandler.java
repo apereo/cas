@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProf
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationCoreProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.support.WebUtils;
@@ -47,13 +46,13 @@ public class DelegatedClientAuthenticationHandler extends BaseDelegatedClientAut
     private final ConfigurableApplicationContext applicationContext;
 
     public DelegatedClientAuthenticationHandler(final Pac4jDelegatedAuthenticationCoreProperties properties,
-                                                final ServicesManager servicesManager,
+
                                                 final PrincipalFactory principalFactory,
                                                 final DelegatedIdentityProviders identityProviders,
                                                 final DelegatedClientUserProfileProvisioner profileProvisioner,
                                                 final SessionStore sessionStore,
                                                 final ConfigurableApplicationContext applicationContext) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder(), sessionStore);
+        super(properties.getName(), principalFactory, properties.getOrder(), sessionStore);
         this.identityProviders = identityProviders;
         this.profileProvisioner = profileProvisioner;
         this.applicationContext = applicationContext;
@@ -65,21 +64,22 @@ public class DelegatedClientAuthenticationHandler extends BaseDelegatedClientAut
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws PreventedException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential,
+                                                                    final Service service) throws PreventedException {
         return FunctionUtils.doAndHandle(() -> {
-            val clientCredentials = (ClientCredential) credential;
-            LOGGER.debug("Located client credentials as [{}]", clientCredentials);
-
-            LOGGER.trace("Client name: [{}]", clientCredentials.getClientName());
-            val client = identityProviders.findClient(clientCredentials.getClientName())
-                .map(BaseClient.class::cast)
-                .orElseThrow(() -> new IllegalArgumentException("Unable to determine client based on client name "
-                    + clientCredentials.getClientName()));
-            LOGGER.trace("Delegated client is: [{}]", client);
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
             val webContext = new JEEContext(Objects.requireNonNull(request),
                 Objects.requireNonNull(response));
+            val clientCredentials = (ClientCredential) credential;
+            LOGGER.debug("Located client credentials as [{}]", clientCredentials);
+
+            LOGGER.trace("Client name: [{}]", clientCredentials.getClientName());
+            val client = identityProviders.findClient(clientCredentials.getClientName(), webContext)
+                .map(BaseClient.class::cast)
+                .orElseThrow(() -> new IllegalArgumentException("Unable to determine client based on client name "
+                    + clientCredentials.getClientName()));
+            LOGGER.trace("Delegated client is: [{}]", client);
 
             var userProfileResult = Optional.ofNullable(clientCredentials.getUserProfile());
             if (userProfileResult.isEmpty()) {

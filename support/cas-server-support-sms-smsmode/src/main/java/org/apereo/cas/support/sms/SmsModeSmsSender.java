@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,8 +46,8 @@ public record SmsModeSmsSender(SmsModeProperties properties) implements SmsSende
             data.put("from", from);
 
             val headers = CollectionUtils.<String, String>wrap(
-                "Content-Type", MediaType.APPLICATION_JSON_VALUE,
-                "Accept", MediaType.APPLICATION_JSON_VALUE,
+                HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE,
+                HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
                 "X-Api-Key", properties.getAccessToken());
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)

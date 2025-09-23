@@ -17,9 +17,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.webflow.execution.RequestContext;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
@@ -34,7 +36,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DefaultAuditPrincipalResolver implements PrincipalResolver {
     private final AuditPrincipalIdProvider auditPrincipalIdProvider;
-
+    private final CasWebflowCredentialProvider webflowCredentialProvider;
+    
     @Override
     public String resolveFrom(final JoinPoint auditTarget, final Object returnValue) {
         LOGGER.trace("Resolving principal at audit point [{}]", auditTarget);
@@ -66,18 +69,28 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
                 case final AuditableEntity auditableEntity -> getPrincipalFromAuditableEntity(auditTarget, returnValue, exception, auditableEntity);
                 case final Assertion assertion -> getPrincipalFromAssertion(auditTarget, returnValue, exception, assertion);
                 case final Credential credential -> getPrincipalFromCredential(auditTarget, returnValue, exception, credential);
+                case final HttpServletRequest httpServletRequest -> getPrincipalFromRequest(auditTarget, returnValue, exception, httpServletRequest);
                 default -> UNKNOWN_USER;
             };
         }
-        if (StringUtils.equals(currentPrincipal, UNKNOWN_USER) && returnValue != null) {
+        if (Strings.CI.equals(currentPrincipal, UNKNOWN_USER) && returnValue != null) {
             currentPrincipal = switch (returnValue) {
                 case final AuthenticationAwareTicket ticket -> getPrincipalFromTicket(auditTarget, returnValue, exception, ticket);
                 case final AuditableContext auditableContext -> getPrincipalFromAuditContext(auditTarget, returnValue, exception, auditableContext);
                 case final Assertion assertion -> getPrincipalFromAssertion(auditTarget, returnValue, exception, assertion);
+                case final AuditableEntity auditableEntity -> getPrincipalFromAuditableEntity(auditTarget, returnValue, exception, auditableEntity);
                 default -> UNKNOWN_USER;
             };
         }
         return currentPrincipal;
+    }
+
+    protected String getPrincipalFromRequest(final JoinPoint auditTarget, final Object returnValue,
+                                             final Exception exception, final HttpServletRequest httpServletRequest) {
+        return Optional.ofNullable(httpServletRequest.getAttribute(Principal.class.getName()))
+            .map(Principal.class::cast)
+            .map(Principal::getId)
+            .orElse(UNKNOWN_USER);
     }
 
     protected String getPrincipalFromCredential(final JoinPoint auditTarget, final Object returnValue, final Exception exception,
@@ -117,7 +130,7 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
     }
 
     protected String getPrincipalFromAuditableEntity(final JoinPoint auditTarget, final Object returnValue,
-                                                      final Exception exception, final AuditableEntity entity) {
+                                                     final Exception exception, final AuditableEntity entity) {
         return StringUtils.defaultIfBlank(entity.getAuditablePrincipal(), UNKNOWN_USER);
     }
 
@@ -141,10 +154,7 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
 
     protected String getPrincipalFromRequestContext(final JoinPoint auditTarget, final Object returnValue,
                                                     final Exception exception, final RequestContext requestContext) {
-
-        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
-        val credentialProvider = applicationContext.getBean(CasWebflowCredentialProvider.BEAN_NAME, CasWebflowCredentialProvider.class);
-        val credentials = credentialProvider.extract(requestContext);
+        val credentials = webflowCredentialProvider.extract(requestContext);
         val credentialId = credentials.stream().map(Credential::getId).findFirst().orElse(UNKNOWN_USER);
 
         val authentication = WebUtils.getAuthentication(requestContext);

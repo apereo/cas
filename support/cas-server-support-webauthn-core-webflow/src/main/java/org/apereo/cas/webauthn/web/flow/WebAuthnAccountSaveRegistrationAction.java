@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn.web.flow;
 
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
@@ -24,10 +25,12 @@ import org.springframework.webflow.execution.RequestContext;
 @Getter
 @Slf4j
 public class WebAuthnAccountSaveRegistrationAction extends AbstractMultifactorAuthenticationAction<WebAuthnMultifactorAuthenticationProvider> {
-    private final RegistrationStorage webAuthnCredentialRepository;
+    protected final RegistrationStorage webAuthnCredentialRepository;
 
-    private final SessionManager sessionManager;
+    protected final SessionManager sessionManager;
 
+    protected final TenantExtractor tenantExtractor;
+    
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val authentication = WebUtils.getAuthentication(requestContext);
@@ -36,10 +39,10 @@ public class WebAuthnAccountSaveRegistrationAction extends AbstractMultifactorAu
         LOGGER.trace("Checking registration record for [{}] by session id [{}]", principal.getId(), sessionToken);
         val token = ByteArray.fromBase64Url(sessionToken);
         val credentials = webAuthnCredentialRepository.getCredentialIdsForUsername(principal.getId());
-        if (!credentials.isEmpty() && sessionManager.getSession(token).isPresent()) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        if (!credentials.isEmpty() && sessionManager.getSession(request, token).isPresent()) {
             return success();
         }
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         WebUtils.produceErrorView(request, HttpStatus.BAD_REQUEST, "Unable to verify registration record");
         return error();
     }

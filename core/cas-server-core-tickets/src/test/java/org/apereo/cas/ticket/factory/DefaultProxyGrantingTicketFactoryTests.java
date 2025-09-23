@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultProxyGrantingTicketFactoryTests}.
@@ -23,17 +22,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Tickets")
 class DefaultProxyGrantingTicketFactoryTests extends BaseTicketFactoryTests {
-
-    @Test
-    void verifyMismatchedClass() throws Throwable {
-        val tgt = new MockTicketGrantingTicket("casuser");
-        val service = RegisteredServiceTestUtils.getService("otherExpirationPolicy");
-        val pgtFactory = (ProxyGrantingTicketFactory) this.ticketFactory.get(ProxyGrantingTicket.class);
-        val pgt = mock(ProxyGrantingTicket.class);
-        assertThrows(ClassCastException.class, () ->
-            pgtFactory.create(new MockServiceTicket("123456", service, tgt),
-                RegisteredServiceTestUtils.getAuthentication(), pgt.getClass()));
-    }
+    
 
     @Test
     void verifyCustomExpirationPolicy() throws Throwable {
@@ -45,7 +34,7 @@ class DefaultProxyGrantingTicketFactoryTests extends BaseTicketFactoryTests {
         val service = RegisteredServiceTestUtils.getService("customPgtExpirationPolicy");
         val pgtFactory = (ProxyGrantingTicketFactory) this.ticketFactory.get(ProxyGrantingTicket.class);
         val pgt = pgtFactory.create(new MockServiceTicket("123456", service, tgt),
-            RegisteredServiceTestUtils.getAuthentication(), ProxyGrantingTicket.class);
+            RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(pgt);
         assertEquals(60, pgt.getExpirationPolicy().getTimeToLive());
     }

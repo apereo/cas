@@ -2,20 +2,24 @@ package org.apereo.cas.logging.web;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreLoggingAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -32,8 +36,11 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Web")
+@ExtendWith(CasTestExtension.class)
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class,
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
     CasCoreCookieAutoConfiguration.class,
     CasCoreLoggingAutoConfiguration.class
 })
@@ -49,6 +56,8 @@ class ThreadContextMDCServletFilterTests {
         assertNotNull(threadContextMDCServletFilter);
 
         val request = new MockHttpServletRequest();
+        assertNotNull(request.getSession(true));
+
         request.setRequestURI("/cas/login");
         request.setRemoteAddr("1.2.3.4");
         request.setRemoteUser("casuser");
@@ -83,5 +92,8 @@ class ThreadContextMDCServletFilterTests {
         assertFalse(mdcElements.containsKey("password"));
         assertFalse(mdcElements.containsKey("confirmedPassword"));
         assertFalse(mdcElements.containsKey("cookie"));
+        assertNotNull(request.getAttribute("sessionId"));
+        assertNotNull(response.getHeader("X-RequestId"));
+        assertNotNull(response.getHeader("X-SessionId"));
     }
 }

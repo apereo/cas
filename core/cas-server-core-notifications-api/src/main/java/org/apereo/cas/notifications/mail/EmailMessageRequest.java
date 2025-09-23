@@ -3,6 +3,7 @@ package org.apereo.cas.notifications.mail;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.CollectionUtils;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
@@ -11,8 +12,10 @@ import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * This is {@link EmailMessageRequest}.
@@ -36,6 +39,11 @@ public class EmailMessageRequest {
     private final List<String> to;
 
     private final Locale locale;
+
+    private final String tenant;
+
+    @Builder.Default
+    private final Map<String, Object> context = new LinkedHashMap<>();
 
     /**
      * Has attribute value for the principal?
@@ -66,6 +74,6 @@ public class EmailMessageRequest {
     public List<String> getRecipients() {
         return hasAttributeValue()
             ? getAttributeValue()
-            : ObjectUtils.defaultIfNull(getTo(), List.of());
+            : ObjectUtils.getIfNull(getTo(), List.of());
     }
 }

@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @Tag("OAuth")
 class OAuth20AccessTokenResponseAuditResourceResolverTests {
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val resolver = new OAuth20AccessTokenResponseAuditResourceResolver(new AuditEngineProperties()
             .setAuditFormat(AuditEngineProperties.AuditFormatTypes.JSON));
         val result = new ModelAndView("dummyView", Map.of("k1", "v1"));

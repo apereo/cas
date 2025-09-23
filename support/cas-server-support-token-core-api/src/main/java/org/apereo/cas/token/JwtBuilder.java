@@ -3,7 +3,7 @@ package org.apereo.cas.token;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
@@ -14,6 +14,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import com.nimbusds.jose.Header;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.PlainHeader;
 import com.nimbusds.jwt.EncryptedJWT;
@@ -35,6 +36,7 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,9 +55,13 @@ import java.util.Set;
 @Getter
 public class JwtBuilder {
     /**
-     * Bean name of the builder that builds tickets as JWTs.
+     * Bean name of the builder that builds CAS tickets as JWTs.
      */
     public static final String TICKET_JWT_BUILDER_BEAN_NAME = "tokenTicketJwtBuilder";
+    /**
+     * Bean name of the builder that builds access tokens as JWTs.
+     */
+    public static final String ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME = "accessTokenJwtBuilder";
 
     private final CipherExecutor<Serializable, String> defaultTokenCipherExecutor;
 
@@ -67,13 +73,18 @@ public class JwtBuilder {
 
     private final RegisteredServiceCipherExecutor registeredServiceCipherExecutor;
 
+    private final ServiceFactory webApplicationServiceFactory;
+
     private final CasConfigurationProperties casProperties;
 
     public JwtBuilder(final CipherExecutor<Serializable, String> cipherExecutor,
-                      final ApplicationContext applicationContext, final ServicesManager servicesManager,
-                      final PrincipalResolver principalResolver, final CasConfigurationProperties properties) {
+                      final ApplicationContext applicationContext,
+                      final ServicesManager servicesManager,
+                      final PrincipalResolver principalResolver,
+                      final CasConfigurationProperties properties,
+                      final ServiceFactory webApplicationServiceFactory) {
         this(cipherExecutor, applicationContext, servicesManager, principalResolver,
-            RegisteredServiceCipherExecutor.noOp(), properties);
+            RegisteredServiceCipherExecutor.noOp(), webApplicationServiceFactory, properties);
     }
 
     /**
@@ -96,6 +107,23 @@ public class JwtBuilder {
         }
     }
 
+    /**
+     * Parse header from signed jwt.
+     *
+     * @param jwt the jwt
+     * @return the jws header
+     * @throws Exception the exception
+     */
+    public static Header parseHeader(final String jwt) throws Exception {
+        try {
+            val signedJWT = SignedJWT.parse(jwt);
+            return signedJWT.getHeader();
+        } catch (final Exception e) {
+            val encryptedJWT = EncryptedJWT.parse(jwt);
+            return encryptedJWT.getHeader();
+        }
+    }
+    
     /**
      * Build plain string.
      *
@@ -166,11 +194,12 @@ public class JwtBuilder {
      * @throws Throwable the throwable
      */
     public String build(final JwtRequest payload) throws Throwable {
-        val serviceAudience = payload.getServiceAudience();
         Objects.requireNonNull(payload.getIssuer(), "Issuer cannot be undefined");
-        Objects.requireNonNull(serviceAudience, "Audience cannot be undefined");
+        val targetAudience = new ArrayList<>(payload.getServiceAudience());
+        FunctionUtils.throwIf(targetAudience.isEmpty() && payload.getRegisteredService().isEmpty(),
+            () -> new IllegalArgumentException("Service audience cannot be empty"));
         val claims = new JWTClaimsSet.Builder()
-            .audience(new ArrayList<>(serviceAudience))
+            .audience(targetAudience)
             .issuer(payload.getIssuer())
             .jwtID(payload.getJwtId())
             .issueTime(payload.getIssueDate())
@@ -184,7 +213,7 @@ public class JwtBuilder {
             .filter(entry -> !entry.getValue().isEmpty())
             .forEach(entry -> {
                 val value = entry.getValue();
-                var claimValue = value.size() == 1 ? CollectionUtils.firstElement(value).get() : value;
+                var claimValue = value.size() == 1 ? CollectionUtils.firstElement(value).orElseThrow() : value;
                 if (claimValue instanceof ZonedDateTime) {
                     claimValue = claimValue.toString();
                 }
@@ -193,16 +222,19 @@ public class JwtBuilder {
         claims.expirationTime(payload.getValidUntilDate());
         val claimsSet = finalizeClaims(claims.build(), payload);
 
-        LOGGER.trace("Locating service [{}] in service registry", serviceAudience);
+        LOGGER.trace("Locating service [{}] in service registry", targetAudience);
+        if (targetAudience.size() == 1 && targetAudience.getFirst().equals(casProperties.getServer().getPrefix())) {
+            return build(null, claimsSet);
+        }
         val registeredService = payload.getRegisteredService()
-            .orElseGet(() -> serviceAudience.stream()
+            .orElseGet(() -> targetAudience.stream()
                 .map(this::locateRegisteredService)
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElseThrow(() -> {
                     val formatted = "There is no application record registered with the CAS service registry that would match %s. "
-                        + "Review the applications registered with the CAS service registry and make sure a matching record exists for %s.";
-                    return UnauthorizedServiceException.denied(formatted.formatted(serviceAudience, serviceAudience));
+                        + "Review the applications registered with the CAS service registry and make sure a matching record exists.";
+                    return UnauthorizedServiceException.denied(formatted.formatted(targetAudience));
                 }));
         return build(registeredService, claimsSet);
     }
@@ -217,29 +249,26 @@ public class JwtBuilder {
      */
     public String build(final RegisteredService registeredService,
                         final JWTClaimsSet claimsSet) {
-
-        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-
         val jwtJson = claimsSet.toString();
         LOGGER.debug("Generated JWT [{}]", jwtJson);
 
-        LOGGER.trace("Locating service specific signing and encryption keys for service [{}]", registeredService.getName());
         if (registeredServiceCipherExecutor.supports(registeredService)) {
             LOGGER.trace("Encoding JWT based on keys provided by service [{}]", registeredService.getServiceId());
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
             return registeredServiceCipherExecutor.encode(jwtJson, Optional.of(registeredService));
         }
 
         if (defaultTokenCipherExecutor.isEnabled()) {
-            LOGGER.trace("Encoding JWT based on default global keys for service [{}]", registeredService.getName());
+            LOGGER.trace("Encoding JWT based on default global keys");
             return defaultTokenCipherExecutor.encode(jwtJson);
         }
-        val token = buildPlain(claimsSet, Optional.of(registeredService));
+        val token = buildPlain(claimsSet, Optional.ofNullable(registeredService));
         LOGGER.trace("Generating plain JWT as the ticket: [{}]", token);
         return token;
     }
 
     protected RegisteredService locateRegisteredService(final String serviceAudience) {
-        val service = new WebApplicationServiceFactory().createService(serviceAudience);
+        val service = webApplicationServiceFactory.createService(serviceAudience);
         return servicesManager.findServiceBy(service);
     }
 
@@ -262,7 +291,8 @@ public class JwtBuilder {
     public static class JwtRequest {
         private final String jwtId;
 
-        private final Set<String> serviceAudience;
+        @Builder.Default
+        private final Set<String> serviceAudience = new HashSet<>();
 
         @Builder.Default
         private final Date issueDate = new Date();

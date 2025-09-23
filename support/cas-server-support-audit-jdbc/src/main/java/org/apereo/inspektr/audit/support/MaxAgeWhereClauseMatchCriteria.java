@@ -2,7 +2,6 @@ package org.apereo.inspektr.audit.support;
 
 import lombok.val;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,6 +36,6 @@ public class MaxAgeWhereClauseMatchCriteria extends AbstractWhereClauseMatchCrit
     public List<?> getParameterValues() {
         val cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH, -this.maxAge);
-        return Collections.singletonList(cal.getTime());
+        return List.of(cal.getTime());
     }
 }

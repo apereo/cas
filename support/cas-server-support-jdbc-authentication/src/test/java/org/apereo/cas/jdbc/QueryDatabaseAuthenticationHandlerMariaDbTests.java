@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
     "database.driver-class=org.mariadb.jdbc.Driver",
     "database.name=mysql",
     "database.url=jdbc:mariadb://localhost:3306/",
-    "database.dialect=org.hibernate.dialect.MariaDB106Dialect"
+    "database.dialect=org.hibernate.dialect.MariaDBDialect"
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MariaDb")
@@ -56,7 +56,7 @@ class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthent
     private DataSource dataSource;
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         try (val connection = this.dataSource.getConnection()) {
             connection.setAutoCommit(true);
             try (val pstmt = connection.prepareStatement("insert into casmariadbusers (username, password, location) values(?,?,?);")) {
@@ -82,7 +82,7 @@ class QueryDatabaseAuthenticationHandlerMariaDbTests extends BaseDatabaseAuthent
     void verifySuccess() throws Throwable {
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD).setFieldDisabled("disabled");
         properties.setPrincipalAttributeList(List.of("location"));
-        val q = new QueryDatabaseAuthenticationHandler(properties, null, PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
+        val q = new QueryDatabaseAuthenticationHandler(properties, PrincipalFactoryUtils.newPrincipalFactory(), dataSource);
         val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val result = q.authenticate(credential, mock(Service.class));
         assertNotNull(result);

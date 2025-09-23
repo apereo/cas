@@ -34,12 +34,9 @@
                 <input type="hidden" id="g-recaptcha-token" name="g-recaptcha-token"/>
 
                 <script type="text/javascript" th:inline="javascript">
-                    grecaptcha.ready(() => {
-                        grecaptcha.execute(/*[[${recaptchaSiteKey}]]*/, { action: 'login' })
-                            .then(token => {
-                                $('#g-recaptcha-token').val(token);
-                            });
-                    });
+                    grecaptcha.ready(() =>
+                        grecaptcha.execute(/*[[${recaptchaSiteKey}]]*/, {action: "login"})
+                            .then(token => $("#g-recaptcha-token").val(token)));
                 </script>
             </span>
 
@@ -49,6 +46,22 @@
                     <div class="h-captcha" th:attr="data-sitekey=${recaptchaSiteKey}"></div>
                 </section>
             </span>
+
+            <span th:if="${recaptchaSiteKey != null AND #strings.equalsIgnoreCase(recaptchaVersion, 'TURNSTILE')}" th:remove="tag">
+                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+                <section id="turnstileSection" class="form-group">
+                    <div class="cf-turnstile" th:attr="data-sitekey=${recaptchaSiteKey}"></div>
+                </section>
+            </span>
+
+            <span th:if="${recaptchaSiteKey != null AND #strings.equalsIgnoreCase(recaptchaVersion, 'FRIENDLY_CAPTCHA')}" th:remove="tag">
+                <script src="https://cdn.jsdelivr.net/npm/friendly-challenge@0.9.16/widget.min.js" async defer></script>
+
+                <section id="friendlyCaptchaSection" class="form-group">
+                    <div class="frc-captcha" th:attr="data-sitekey=${recaptchaSiteKey},data-lang=${#locale.language}"></div>
+                </section>
+            </span>
+
         </div>
     </main>
 </body>

@@ -1,27 +1,27 @@
-
 const cas = require("../../cas.js");
 const assert = require("assert");
 const path = require("path");
 const fs = require("fs");
-const YAML = require("yaml");
 
 (async () => {
     const configFilePath = path.join(__dirname, "config.yml");
     const file = fs.readFileSync(configFilePath, "utf8");
-    const configFile = YAML.parse(file);
-    
+    const configFile = await cas.parseYAML(file);
+
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
     await cas.loginWith(page, "unknown", "Mellon");
 
-    await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
-        "Content-Type": "application/json"
-    }, (res) => assert(res.data.length === 0), (error) => {
-        throw(error);
-    });
+    await cas.doGet("https://localhost:8443/cas/actuator/auditLog",
+        (res) => assert(res.data.length === 0),
+        (error) => {
+            throw (error);
+        }, {
+            "Content-Type": "application/json"
+        });
 
-    await cas.log("Updating configuration and waiting for changes to reload...");
+    await cas.log(`Updating configuration ${configFilePath} and waiting for changes to reload...`);
     await updateConfig(configFile, configFilePath, true);
     await cas.sleep(5000);
 
@@ -31,15 +31,17 @@ const YAML = require("yaml");
     await cas.loginWith(page, "unknown", "Mellon");
 
     try {
-        await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
-            "Content-Type": "application/json"
-        }, (res) => assert(res.data.length >= 1), (error) => {
-            throw(error);
-        });
+        await cas.doGet("https://localhost:8443/cas/actuator/auditLog",
+            (res) => assert(res.data.length >= 1),
+            (error) => {
+                throw (error);
+            }, {
+                "Content-Type": "application/json"
+            });
     } finally {
         await updateConfig(configFile, configFilePath, false);
     }
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function updateConfig(configFile, configFilePath, data) {
@@ -52,7 +54,7 @@ async function updateConfig(configFile, configFilePath, data) {
             }
         }
     };
-    const newConfig = YAML.stringify(config);
+    const newConfig = await cas.toYAML(config);
     await cas.log(`Updated configuration:\n${newConfig}`);
     await fs.writeFileSync(configFilePath, newConfig);
     await cas.log(`Wrote changes to ${configFilePath}`);

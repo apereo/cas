@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -39,12 +39,12 @@ public class GoogleCloudTicketRegistryQueuePublisher implements QueueableTicketR
     @Override
     public void publishMessageToQueue(final BaseMessageQueueCommand cmd) {
         FunctionUtils.doAndHandle(__ -> {
-            LOGGER.debug("[{}] is publishing message [{}]", cmd.getId().getId(), cmd);
-            val headers = Collections.singletonMap(GcpPubSubHeaders.ORDERING_KEY, cmd.getId().getId());
+            LOGGER.debug("[{}] is publishing message [{}]", cmd.getPublisherIdentifier().getId(), cmd);
+            val headers = Map.of(GcpPubSubHeaders.ORDERING_KEY, cmd.getPublisherIdentifier().getId());
             val future = pubSubTemplate.publish(QUEUE_TOPIC, cmd, headers);
             Objects.requireNonNull(future);
             val publishedMessage = future.get();
-            LOGGER.trace("Sent message [{}] from ticket registry id [{}]", publishedMessage, cmd.getId());
+            LOGGER.trace("Sent message [{}] from ticket registry id [{}]", publishedMessage, cmd.getPublisherIdentifier());
         });
     }
 }

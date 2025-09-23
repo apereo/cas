@@ -21,7 +21,7 @@ async function sendRequest(url, clientid, clientsecret) {
         const accessToken = await cas.decodeJwt(res.data.access_token);
         assert(accessToken.sub === "casuser");
         assert(accessToken.name === "ApereoCAS");
-        assert(accessToken["client_id"] === clientid);
+        assert(accessToken["aud"] === clientid);
         assert(accessToken["gender"] === "Female");
         assert(accessToken["family_name"] === "Apereo");
         assert(accessToken["given_name"] === "CAS");
@@ -40,7 +40,7 @@ async function sendRequest(url, clientid, clientsecret) {
         assert(idToken.sub === "casuser");
         assert(idToken["cn"] === undefined);
         assert(idToken.name === "ApereoCAS");
-        assert(idToken["client_id"] === clientid);
+        assert(idToken["aud"] === clientid);
         assert(idToken["preferred_username"] === "casuser");
         assert(idToken["gender"] === "Female");
         assert(idToken["family_name"] === "Apereo");

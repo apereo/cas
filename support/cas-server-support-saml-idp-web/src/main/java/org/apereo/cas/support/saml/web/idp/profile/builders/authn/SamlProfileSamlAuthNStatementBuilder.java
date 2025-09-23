@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -22,7 +21,6 @@ import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.SubjectLocality;
 
-import java.io.Serial;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -34,10 +32,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AuthnStatement> {
-
-    @Serial
-    private static final long serialVersionUID = 8761566449790497226L;
-
+    
     private final SamlProfileObjectBuilder<AuthnContext> authnContextClassRefBuilder;
 
     private final CasConfigurationProperties casProperties;
@@ -70,7 +65,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     protected AuthnStatement buildAuthnStatement(final SamlProfileBuilderContext context) throws Exception {
         
         val id = buildAuthnStatementSessionIdex(context);
-        val authnInstant = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().get().getAuthenticationDate());
+        val authnInstant = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().orElseThrow().getAuthenticationDate());
 
         val authnContextClass = authnContextClassRefBuilder.build(context);
         val statement = newAuthnStatement(authnContextClass, authnInstant, id);
@@ -87,10 +82,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     }
 
     private static String buildAuthnStatementSessionIdex(final SamlProfileBuilderContext context) {
-        var id = Optional.ofNullable(context.getHttpRequest())
-            .map(request -> request.getParameter(CasProtocolConstants.PARAMETER_TICKET))
-            .filter(StringUtils::isNotBlank)
-            .orElse(StringUtils.EMPTY);
+        var id = context.getSessionIndex();
         if (StringUtils.isBlank(id)) {
             LOGGER.info("Unable to locate service ticket as the session index; Generating random identifier instead...");
             id = '_' + String.valueOf(RandomUtils.nextLong());
@@ -99,7 +91,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     }
 
     protected Instant buildSessionNotOnOrAfter(final SamlProfileBuilderContext context) {
-        val dt = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().get().getValidUntilDate());
+        val dt = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().orElseThrow().getValidUntilDate());
         val skewAllowance = context.getRegisteredService().getSkewAllowance() != 0
             ? context.getRegisteredService().getSkewAllowance()
             : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();

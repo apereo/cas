@@ -1,0 +1,13 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.authn.rest[0].uri": "http://localhost:19999/authn"
+      }
+    }
+  ]
+]

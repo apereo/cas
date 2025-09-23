@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.HierarchicalMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
@@ -29,7 +29,7 @@ public class CasSendGridAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "sendGridEmailSender")
     public EmailSender emailSender(
-        @Qualifier("messageSource") final HierarchicalMessageSource messageSource,
+        @Qualifier("messageSource") final MessageSource messageSource,
         @Qualifier("sendGrid") final SendGridAPI sendGridAPI) {
         return new SendGridEmailSender(sendGridAPI, messageSource);
     }

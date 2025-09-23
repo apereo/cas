@@ -8,15 +8,12 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.AcceptableUsagePolicyStatus;
 import org.apereo.cas.services.WebBasedRegisteredService;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -36,8 +33,8 @@ public class AcceptableUsagePolicyVerifyAction extends BaseCasWebflowAction {
         actionResolverName = AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        return FunctionUtils.doUnchecked(() -> verify(requestContext));
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        return verify(requestContext);
     }
 
     /**
@@ -49,13 +46,13 @@ public class AcceptableUsagePolicyVerifyAction extends BaseCasWebflowAction {
      */
     private Event verify(final RequestContext context) throws Throwable {
         val authentication = WebUtils.getAuthentication(context);
-        val res = ObjectUtils.defaultIfNull(repository.verify(context),
+        val res = ObjectUtils.getIfNull(repository.verify(context),
             AcceptableUsagePolicyStatus.skipped(authentication.getPrincipal()));
 
         WebUtils.putPrincipal(context, res.getPrincipal());
         WebUtils.putAcceptableUsagePolicyStatusIntoFlowScope(context, res);
 
-        val eventFactorySupport = new EventFactorySupport();
+        val eventFactorySupport = eventFactory;
         val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(context);
 
         if (registeredService != null) {

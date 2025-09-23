@@ -1,9 +1,9 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
 
     public InMemoryGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
                                                                 final CipherExecutor<Number, Number> scratchCodesCipher,
-                                                                final IGoogleAuthenticator googleAuthenticator) {
+                                                                final CasGoogleAuthenticator googleAuthenticator) {
         super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
         this.accounts = new ConcurrentHashMap<>();
     }
@@ -56,12 +56,13 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
                 val account = accounts.get(userName.toLowerCase(Locale.ENGLISH).trim());
                 return decode(account);
             }
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         });
     }
 
     @Override
     public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
+        account.assignIdIfNecessary();
         return lock.tryLock(() -> {
             val encoded = encode(account);
             val records = accounts.getOrDefault(account.getUsername().trim().toLowerCase(Locale.ENGLISH), new ArrayList<>());
@@ -84,6 +85,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
                         act.setSecretKey(account.getSecretKey());
                         act.setScratchCodes(account.getScratchCodes());
                         act.setValidationCode(account.getValidationCode());
+                        act.setProperties(account.getProperties());
                     });
             }
             return encoded;

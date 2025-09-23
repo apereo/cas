@@ -30,7 +30,6 @@ class OAuth20RefreshTokenExpirationPolicyTests extends BaseOAuth20ExpirationPoli
         assertFalse(rt.isExpired(), "Refresh token should not be expired");
         tgt.markTicketExpired();
         assertTrue(rt.isExpired(), "Refresh token should be expired when TGT is expired");
-        assertEquals(0, rt.getExpirationPolicy().getTimeToIdle());
     }
 
     @Test

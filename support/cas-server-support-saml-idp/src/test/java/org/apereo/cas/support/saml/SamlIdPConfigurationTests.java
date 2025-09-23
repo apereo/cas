@@ -28,7 +28,7 @@ class SamlIdPConfigurationTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
-    void verifySigValidationFilter() throws Throwable {
+    void verifySigValidationFilter() {
         val filter = SamlUtils.buildSignatureValidationFilter(applicationContext, "classpath:metadata/idp-signing.crt");
         assertNotNull(filter);
     }

@@ -1,6 +1,5 @@
-
 const cas = require("../../cas.js");
-const YAML = require("yaml");
+
 const fs = require("fs");
 const path = require("path");
 const assert = require("assert");
@@ -18,17 +17,19 @@ async function callRegisteredServices() {
 }
 
 async function callAuditLog() {
-    await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
-        "Content-Type": "application/json"
-    }, (res) => cas.log(`Found ${res.data.length} audit records`), (error) => {
-        throw(error);
-    });
+    await cas.doGet("https://localhost:8443/cas/actuator/auditLog",
+        (res) => cas.log(`Found ${res.data.length} audit records`),
+        (error) => {
+            throw (error);
+        }, {
+            "Content-Type": "application/json"
+        });
 }
 
 (async () => {
     const configFilePath = path.join(__dirname, "config.yml");
     const file = fs.readFileSync(configFilePath, "utf8");
-    const configFile = YAML.parse(file);
+    const configFile = await cas.parseYAML(file);
 
     let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
@@ -39,7 +40,7 @@ async function callAuditLog() {
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.gotoLogout(page);
     await cas.sleep(6000);
-    await browser.close();
+    await cas.closeBrowser(browser);
 
     await callAuditLog();
 
@@ -64,8 +65,8 @@ async function callAuditLog() {
 
     await cas.log("Waiting for audit log cleaner to resume...");
     await cas.sleep(5000);
-    
-    await browser.close();
+
+    await cas.closeBrowser(browser);
 
 })();
 
@@ -79,7 +80,7 @@ async function updateConfig(configFile, configFilePath, data) {
             }
         }
     };
-    const newConfig = YAML.stringify(config);
+    const newConfig = await cas.toYAML(config);
     await cas.log(`Updated configuration:\n${newConfig}`);
     await fs.writeFileSync(configFilePath, newConfig);
     await cas.log(`Wrote changes to ${configFilePath}`);

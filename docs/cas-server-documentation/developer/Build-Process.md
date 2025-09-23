@@ -56,11 +56,6 @@ When done, you may build the codebase via the following command:
 ./gradlew build --parallel -x test -x javadoc -x check --build-cache --configure-on-demand
 ```
 
-<div class="alert alert-info">:information_source: <strong>Gradle Wrapper & Gum</strong>
-<p>Rather than using the Gradle Wrapper directly, you
-might want to <a href="https://github.com/kordamp/gm">use Gum</a>, which is able to 
-auto-detect the location of the Gradle Wrapper anywhere in the project structure.</p></div>
-
 The following commandline boolean flags are supported by the build and can be passed in form of system properties via `-D`:
 
 | Flag                          | Description                                                                                          |
@@ -74,13 +69,16 @@ The following commandline boolean flags are supported by the build and can be pa
 | `skipSonarqube`               | Ignore reporting results to Sonarqube.                                                               |
 | `skipErrorProneCompiler`      | Skip running the `error-prone` static-analysis compiler.                                             |
 | `skipBootifulArtifact`        | Do not apply the Spring Boot plugin to bootify application artifacts.                                |
+| `skipBootifulLaunchScript`    | Do not include the launch script when bootifying the final web application artifact.                 |
 | `skipAot`                     | Skip running AOT processes when building Graal VM native images.                                     |
+| `aotSpringActiveProfiles`     | List of spring active profiles to use when building Graal VM native images.                          |
 | `ignoreJavadocFailures`       | Ignore javadoc failures and let the build resume.                                                    |
 | `ignoreFindbugsFailures`      | Ignore Findbugs failures and let the build resume.                                                   |
 | `ignoreTestFailures`          | Ignore test failures and let the build resume.                                                       |
 | `casModules`                  | Build property; Comma separated list of modules without the `cas-server-[support/api/core]`          |
 | `buildScript`                 | Build fragment to include when building the project. Typically used by and during integration tests. |
-| `aotSpringActiveProfiles`     | List of spring active profiles to use when building Graal VM native images.                          |
+| `generateGitProperties`       | Include Git information in the final web application artifact.                                       |
+| `generateTimestamps`          | Include the build timestamp in the final web application artifact.                                   |
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
@@ -165,7 +163,7 @@ need to restart IDEA in order for changes to take full effect.
 ![image](https://user-images.githubusercontent.com/1205228/35231112-287f625a-ffad-11e7-8c1a-af23ff33918d.png)
 
 Note that the CAS-provided Checkstyle rules can be imported into idea to automate a number of 
-formatting rules specially related to package imports and layouts. Once imported, the rules
+formatting rules specifically related to package imports and layouts. Once imported, the rules
 should look something like the below screenshot:
 
 ![image](https://user-images.githubusercontent.com/1205228/42846621-b99539fc-8a2e-11e8-8128-9344bda7224d.png)

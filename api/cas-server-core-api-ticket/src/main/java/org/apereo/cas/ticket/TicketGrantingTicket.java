@@ -99,7 +99,7 @@ public interface TicketGrantingTicket extends TicketGrantingTicketAwareTicket {
      * @since 5.1
      */
     default Collection<String> getDescendantTickets() {
-        return new HashSet<>(0);
+        return new HashSet<>();
     }
 
     /**

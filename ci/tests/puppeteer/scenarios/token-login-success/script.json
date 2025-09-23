@@ -1,6 +1,8 @@
 {
   "dependencies": "reports,token-webflow",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
 
     "--cas.authn.token.sso-token-enabled=true",
@@ -12,7 +14,8 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

@@ -14,26 +14,27 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.DefaultPrincipalAttributesRepositoryCache;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -50,6 +51,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @Tag("RegisteredService")
+@ExtendWith(CasTestExtension.class)
 class RegisteredServiceAttributeReleasePolicyTests {
 
     private static final String ATTR_1 = "attr1";
@@ -66,7 +68,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
 
     private static final String PRINCIPAL_ID = "principalId";
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "CommonTestConfiguration", proxyBeanMethods = false)
     public static class CommonTestConfiguration {
         @Bean
         public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
@@ -75,13 +77,13 @@ class RegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Nested
+    @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
         CommonTestConfiguration.class,
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        CasCoreUtilAutoConfiguration.class
+        CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class
     })
-    public class DefaultTests {
+    class DefaultTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
@@ -291,7 +293,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
 
             val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100);
             repository.setAttributeRepositoryIds(Set.of(stub.getId()));
-            val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
+            val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid", Map.of("mail", List.of("final@example.com")));
 
             policy.setPrincipalAttributesRepository(repository);
 
@@ -329,7 +331,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
             assertEquals(0, policy.getOrder());
 
             val principal = PrincipalFactoryUtils.newPrincipalFactory()
-                .createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
+                .createPrincipal("uid", Map.of("mail", List.of("final@example.com")));
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAttributesTestUtils.getRegisteredService())
                 .service(CoreAttributesTestUtils.getService())
@@ -345,14 +347,14 @@ class RegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Nested
+    @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
         CommonTestConfiguration.class,
         AttributeRepositoryTests.AttributeRepositoryTestConfiguration.class,
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        CasCoreUtilAutoConfiguration.class
+        CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class
     })
-    public class AttributeRepositoryTests {
+    class AttributeRepositoryTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
@@ -361,7 +363,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
             val policy = new ReturnAllAttributeReleasePolicy();
             val repository = new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 0);
             val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid",
-                Collections.singletonMap("mail", List.of("final@example.com")));
+                Map.of("mail", List.of("final@example.com")));
 
             repository.setAttributeRepositoryIds(CollectionUtils.wrapSet("SampleStubRepository".toUpperCase(Locale.ENGLISH)));
             policy.setPrincipalAttributesRepository(repository);
@@ -380,7 +382,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
             assertEquals(1, attr.size());
         }
 
-        @TestConfiguration(proxyBeanMethods = false)
+        @TestConfiguration(value = "AttributeRepositoryTestConfiguration", proxyBeanMethods = false)
         public static class AttributeRepositoryTestConfiguration {
             @Bean
             public PersonAttributeDao attributeRepository() {

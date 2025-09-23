@@ -38,7 +38,7 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
     public Service resolveService(final Service service) throws Throwable {
         val strategy = this.strategies
             .stream()
-            .filter(s -> s.supports(service))
+            .filter(selectionStrategy -> selectionStrategy.supports(service))
             .findFirst();
 
         if (strategy.isPresent()) {

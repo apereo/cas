@@ -1,5 +1,5 @@
 {
-  "dependencies": "pac4j-webflow,reports",
+  "dependencies": "pac4j-webflow,reports,pac4j-saml",
   "conditions": {
     "docker": "true"
   },
@@ -15,7 +15,6 @@
     "--management.endpoints.web.cors.allow-credentials=true",
     "--cas.http-web-request.header.xframe-options=SAMEORIGIN",
     
-    "--cas.http-client.allow-local-urls=true",
     "--cas.http-client.host-name-verifier=none",
     
     "--cas.authn.pac4j.cookie.enabled=true",
@@ -34,12 +33,12 @@
 
     "--cas.service-registry.core.init-from-json=true",
     
-    "--logging.level.org.apereo.cas=info",
+
     "--logging.level.org.springframework.webflow=info",
     "--logging.level.org.springframework.webflow.mvc.servlet=warn",
 
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"

@@ -57,7 +57,7 @@ def run(Object[] args) {
             account.setRequestPassword(true)
         } else {
             account.setDelegatedAuthenticationEligible(TriStateBoolean.TRUE)
-            account.allowedDelegatedClients += rec.authType;
+            account.allowedDelegatedClients += rec.authType
         }
     }
 

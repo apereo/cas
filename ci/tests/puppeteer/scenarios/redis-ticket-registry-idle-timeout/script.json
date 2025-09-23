@@ -1,0 +1,35 @@
+{
+  "dependencies": "oidc,reports,redis-ticket-registry,redis-modules",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.gender=female",
+    "--cas.authn.attribute-repository.stub.attributes.preferred_username=casuser",
+
+    "--cas.authn.oauth.code.time-to-kill-in-seconds=60",
+    "--cas.authn.oauth.code.number-of-uses=1",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+    
+    "--CasFeatureModule.TicketRegistry.redis-messaging.enabled=false",
+    "--cas.ticket.registry.redis.host=localhost",
+    "--cas.ticket.registry.redis.port=6379",
+
+    "--cas.ticket.tgt.timeout.max-time-to-live-in-seconds=PT5S"
+  ],
+  "initScript": "${PWD}/ci/tests/redis/run-redis-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

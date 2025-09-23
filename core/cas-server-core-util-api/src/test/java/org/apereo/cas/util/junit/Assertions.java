@@ -1,5 +1,6 @@
 package org.apereo.cas.util.junit;
 
+import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.junit.jupiter.api.function.Executable;
 
@@ -14,6 +15,7 @@ import static org.springframework.core.NestedExceptionUtils.*;
  * @author Timur Duehr
  * @since 6.1.0
  */
+@UtilityClass
 public class Assertions {
 
     /**

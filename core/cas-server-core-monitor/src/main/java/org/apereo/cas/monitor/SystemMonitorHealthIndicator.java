@@ -66,6 +66,6 @@ public class SystemMonitorHealthIndicator extends AbstractHealthIndicator {
                 val measures = Optional.ofNullable(metric).map(MetricsEndpoint.MetricDescriptor::getMeasurements).orElse(null);
                 return measures != null ? measures.get(measure).getValue() : 0;
             })
-            .orElse(0D);
+            .orElse(0.0D);
     }
 }

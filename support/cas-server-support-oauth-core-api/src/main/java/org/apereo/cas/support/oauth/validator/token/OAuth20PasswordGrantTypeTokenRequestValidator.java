@@ -12,6 +12,7 @@ import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link OAuth20PasswordGrantTypeTokenRequestValidator}.
@@ -20,8 +21,8 @@ import org.pac4j.core.profile.UserProfile;
  * @since 5.3.0
  */
 @Slf4j
-public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator {
-    public OAuth20PasswordGrantTypeTokenRequestValidator(final OAuth20ConfigurationContext configurationContext) {
+public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator<OAuth20ConfigurationContext> {
+    public OAuth20PasswordGrantTypeTokenRequestValidator(final ObjectProvider<OAuth20ConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 
@@ -34,22 +35,23 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
     protected boolean validateInternal(final WebContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) throws Throwable {
 
-        val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
-        val clientIdAndSecret = getConfigurationContext().getRequestParameterResolver().resolveClientIdAndClientSecret(callContext);
+        val configurationContext = getConfigurationContext().getObject();
+        val callContext = new CallContext(context, configurationContext.getSessionStore());
+        val clientIdAndSecret = configurationContext.getRequestParameterResolver().resolveClientIdAndClientSecret(callContext);
 
         if (StringUtils.isBlank(clientIdAndSecret.getKey())) {
             return false;
         }
         val clientId = clientIdAndSecret.getKey();
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-        val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
+        val service = configurationContext.getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
         val audit = AuditableContext.builder()
             .service(service)
             .registeredService(registeredService)
             .build();
-        val accessResult = getConfigurationContext().getRegisteredServiceAccessStrategyEnforcer().execute(audit);
+        val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         accessResult.throwExceptionIfNeeded();
 
         if (!isGrantTypeSupportedBy(registeredService, grantType)) {

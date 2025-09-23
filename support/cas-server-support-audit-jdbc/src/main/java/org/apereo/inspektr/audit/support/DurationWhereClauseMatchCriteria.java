@@ -5,7 +5,6 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,6 +28,6 @@ public class DurationWhereClauseMatchCriteria extends AbstractWhereClauseMatchCr
     public List<?> getParameterValues() {
         val newTime = LocalDateTime.now(Clock.systemUTC()).toEpochSecond(ZoneOffset.UTC)
             + Duration.parse(duration).toMillis();
-        return Collections.singletonList(newTime);
+        return List.of(newTime);
     }
 }

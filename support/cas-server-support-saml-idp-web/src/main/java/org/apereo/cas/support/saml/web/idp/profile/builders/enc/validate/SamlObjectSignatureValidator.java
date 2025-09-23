@@ -118,7 +118,7 @@ public class SamlObjectSignatureValidator {
                                          final HttpServletRequest request,
                                          final MessageContext context) throws Throwable {
 
-        return verifySamlProfileRequest(profileRequest, adaptor.metadataResolver(), request, context);
+        return verifySamlProfileRequest(profileRequest, adaptor.getMetadataResolver(), request, context);
     }
 
     protected RoleDescriptorResolver getRoleDescriptorResolver(final MetadataResolver resolver,

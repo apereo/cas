@@ -1,7 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.Modification;
 import com.unboundid.ldap.sdk.ModificationType;
@@ -10,6 +10,7 @@ import com.unboundid.util.ssl.TrustAllTrustManager;
 import lombok.Cleanup;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Credential;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,15 +31,17 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "cas.authn.mfa.gauth.ldap.bind-credential=P@ssw0rd",
         "cas.authn.mfa.gauth.ldap.base-dn=CN=Users,DC=cas,DC=example,DC=org",
         "cas.authn.mfa.gauth.ldap.search-filter=cn={user}",
-        "cas.authn.mfa.gauth.ldap.trust-store=file:/tmp/adcacerts.jks",
+        "cas.authn.mfa.gauth.ldap.trust-store=file:${#systemProperties['java.io.tmpdir']}/adcacerts.jks",
         "cas.authn.mfa.gauth.ldap.trust-store-type=JKS",
         "cas.authn.mfa.gauth.ldap.trust-store-password=changeit",
         "cas.authn.mfa.gauth.ldap.min-pool-size=0",
-        "cas.authn.mfa.gauth.ldap.hostname-verifier=DEFAULT",
+        "cas.authn.mfa.gauth.ldap.hostname-verifier=ANY",
+        "cas.authn.mfa.gauth.ldap.trust-manager=ANY",
         "cas.authn.mfa.gauth.crypto.enabled=true"
     })
 @EnableScheduling
 @Tag("ActiveDirectory")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 10636)
 class ActiveDirectoryGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Override

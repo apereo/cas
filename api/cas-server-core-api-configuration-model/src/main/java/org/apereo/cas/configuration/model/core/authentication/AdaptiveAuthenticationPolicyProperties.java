@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -25,7 +24,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("AdaptiveAuthenticationPolicyProperties")
 public class AdaptiveAuthenticationPolicyProperties implements Serializable {
 
     @Serial
@@ -62,12 +60,12 @@ public class AdaptiveAuthenticationPolicyProperties implements Serializable {
      * </p>
      */
     @RegularExpressionCapable
-    private Map<String, String> requireMultifactor = new HashMap<>(0);
+    private Map<String, String> requireMultifactor = new HashMap<>();
 
     /**
      * This property binds a valid mfa provider to a collection of rules that deal with triggering mfa
      * based on that provider based on properties of date/time. One may want to force mfa during weekends,
      * after hours, etc and the ruleset provides a modest configuration set where time can also be treated as trigger.
      */
-    private List<TimeBasedAuthenticationProperties> requireTimedMultifactor = new ArrayList<>(0);
+    private List<TimeBasedAuthenticationProperties> requireTimedMultifactor = new ArrayList<>();
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.impl.account;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.api.PasswordlessUserAccountCustomizer;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
@@ -9,9 +10,12 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,13 +32,15 @@ public class JsonPasswordlessUserAccountStore extends SimplePasswordlessUserAcco
 
     private final Resource resource;
 
-    public JsonPasswordlessUserAccountStore(final Resource resource) {
-        super(readFromResource(resource));
+    public JsonPasswordlessUserAccountStore(final Resource resource,
+                                            final ConfigurableApplicationContext applicationContext,
+                                            final List<PasswordlessUserAccountCustomizer> customizerList) {
+        super(readFromResource(resource), applicationContext, customizerList);
         this.resource = resource;
         Unchecked.consumer(res -> {
             if (ResourceUtils.isFile(resource)) {
-                this.watcherService = new FileWatcherService(resource.getFile(), file -> reload());
-                this.watcherService.start(getClass().getSimpleName());
+                watcherService = new FileWatcherService(resource.getFile(), file -> reload());
+                watcherService.start(getClass().getSimpleName());
             }
         }).accept(resource);
     }
@@ -46,7 +52,11 @@ public class JsonPasswordlessUserAccountStore extends SimplePasswordlessUserAcco
     }
 
     private static Map<String, PasswordlessUserAccount> readFromResource(final Resource resource) {
-        return FunctionUtils.doUnchecked(() -> MAPPER.readValue(resource.getInputStream(), new TypeReference<>() {
-        }));
+        return FunctionUtils.doUnchecked(() -> {
+            try (val in = resource.getInputStream()) {
+                return MAPPER.readValue(in, new TypeReference<>() {
+                });
+            }
+        });
     }
 }

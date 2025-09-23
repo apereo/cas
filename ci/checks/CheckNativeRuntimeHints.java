@@ -21,6 +21,7 @@ public class CheckNativeRuntimeHints {
 
     private static void print(final String message, final Object... args) {
         //CHECKSTYLE:OFF
+        System.out.print("\uD83C\uDFC1 ");
         System.out.printf(message, args);
         System.out.println();
         //CHECKSTYLE:ON
@@ -71,7 +72,9 @@ public class CheckNativeRuntimeHints {
                     if (factoriesFile.exists()) {
                         var properties = new Properties();
 
-                        properties.load(new FileReader(factoriesFile));
+                        try (var reader = new FileReader(factoriesFile)) {
+                            properties.load(reader);
+                        }
 
                         if (properties.isEmpty()) {
                             print("aot.factories file %s is empty", factoriesFile);

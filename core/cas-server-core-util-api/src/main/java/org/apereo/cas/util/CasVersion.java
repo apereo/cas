@@ -5,7 +5,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.net.URL;
+import java.net.URI;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.jar.Manifest;
@@ -18,7 +18,7 @@ import java.util.jar.Manifest;
  * @since 3.0.0
  */
 @UtilityClass
-@SuppressWarnings("CatchAndPrintStackTrace")
+@SuppressWarnings({"CatchAndPrintStackTrace", "TimeInStaticInitializer"})
 public class CasVersion {
     private static final String IMPLEMENTATION_DATE;
 
@@ -51,7 +51,7 @@ public class CasVersion {
     }
 
     public static ZonedDateTime getDateTime() {
-        return DateTimeUtils.zonedDateTimeOf(IMPLEMENTATION_DATE);
+        return IMPLEMENTATION_DATE != null ? DateTimeUtils.zonedDateTimeOf(IMPLEMENTATION_DATE) : ZonedDateTime.now(Clock.systemUTC());
     }
 
     static {
@@ -61,9 +61,11 @@ public class CasVersion {
                 val className = CasVersion.class.getSimpleName() + ".class";
                 val classPath = CasVersion.class.getResource(className).toString();
                 val manifestPath = classPath.substring(0, classPath.lastIndexOf('!') + 1) + "/META-INF/MANIFEST.MF";
-                val manifest = new Manifest(new URL(manifestPath).openStream());
-                val attributes = manifest.getMainAttributes();
-                return StringUtils.defaultIfBlank(attributes.getValue("Implementation-Date"), ZonedDateTime.now(Clock.systemUTC()).toString());
+                try (val url = URI.create(manifestPath).toURL().openStream()) {
+                    val manifest = new Manifest(url);
+                    val attributes = manifest.getMainAttributes();
+                    return StringUtils.defaultIfBlank(attributes.getValue("Implementation-Date"), ZonedDateTime.now(Clock.systemUTC()).toString());
+                }
             });
     }
 }

@@ -49,5 +49,5 @@ const request = require("request");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertInnerTextContains(page, "#content div p", "CN=mmoayyed, OU=dev, O=bft, L=mt, C=world");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

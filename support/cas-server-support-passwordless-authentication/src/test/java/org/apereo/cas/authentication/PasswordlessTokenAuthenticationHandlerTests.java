@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepository;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -41,8 +40,8 @@ class PasswordlessTokenAuthenticationHandlerTests {
         private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
         @Test
-        void verifyDisable() throws Throwable {
-            val authenticationHandlers = authenticationEventExecutionPlan.getAuthenticationHandlersBy(PasswordlessTokenAuthenticationHandler.class::isInstance);
+        void verifyDisable() {
+            val authenticationHandlers = authenticationEventExecutionPlan.resolveAuthenticationHandlersBy(PasswordlessTokenAuthenticationHandler.class::isInstance);
             assertTrue(authenticationHandlers.isEmpty());
         }
     }
@@ -59,7 +58,6 @@ class PasswordlessTokenAuthenticationHandlerTests {
             var token = repository.createToken(passwordlessUserAccount, passwordlessRequest);
             token = repository.saveToken(passwordlessUserAccount, passwordlessRequest, token);
             val handler = new PasswordlessTokenAuthenticationHandler(null,
-                mock(ServicesManager.class),
                 PrincipalFactoryUtils.newPrincipalFactory(), 0, repository);
             val credential = new OneTimePasswordCredential(uid, token.getToken());
             credential.setCredentialMetadata(new BasicCredentialMetadata(credential));

@@ -6,11 +6,14 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -26,7 +29,7 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Slf4j
-@Controller("umaDeletePolicyForResourceSetEndpointController")
+@Tag(name = "User Managed Access")
 public class UmaDeletePolicyForResourceSetEndpointController extends BaseUmaEndpointController {
     public UmaDeletePolicyForResourceSetEndpointController(final UmaConfigurationContext umaConfigurationContext) {
         super(umaConfigurationContext);
@@ -42,6 +45,14 @@ public class UmaDeletePolicyForResourceSetEndpointController extends BaseUmaEndp
      * @return the policy for resource set
      */
     @DeleteMapping(OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}")
+    @Operation(
+        summary = "Delete policy for resource set",
+        description = "Deletes a policy for the specified resource set",
+        parameters = {
+            @Parameter(name = "resourceId", required = true, in = ParameterIn.PATH, description = "Resource ID"),
+            @Parameter(name = "policyId", required = true, in = ParameterIn.PATH, description = "Policy ID")
+        }
+    )
     public ResponseEntity deletePoliciesForResourceSet(
         @PathVariable("resourceId")
         final long resourceId,

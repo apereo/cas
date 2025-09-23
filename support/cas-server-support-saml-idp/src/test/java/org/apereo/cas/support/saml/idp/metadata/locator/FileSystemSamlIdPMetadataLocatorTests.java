@@ -38,7 +38,7 @@ class FileSystemSamlIdPMetadataLocatorTests {
         void verifyOperation() throws Throwable {
             samlIdPMetadataLocator.initialize();
             assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
-            assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
+            assertNotNull(samlIdPMetadataLocator.resolveEncryptionCertificate(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()));
@@ -53,7 +53,7 @@ class FileSystemSamlIdPMetadataLocatorTests {
     })
     class DefaultTests extends BaseSamlIdPConfigurationTests {
         @Test
-        void verifyUnknownDirectory() throws Throwable {
+        void verifyUnknownDirectory() {
             val locator = new FileSystemSamlIdPMetadataLocator(CipherExecutor.noOpOfStringToString(),
                 new File("/#**??#"), mock(Cache.class), applicationContext);
             assertThrows(IllegalArgumentException.class, locator::initialize);
@@ -64,7 +64,7 @@ class FileSystemSamlIdPMetadataLocatorTests {
             samlIdPMetadataLocator.initialize();
             assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
-            assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
+            assertNotNull(samlIdPMetadataLocator.resolveEncryptionCertificate(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()));
@@ -80,7 +80,22 @@ class FileSystemSamlIdPMetadataLocatorTests {
 
             samlIdPMetadataGenerator.generate(registeredService);
             assertNotNull(samlIdPMetadataLocator.resolveMetadata(registeredService));
-            assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(registeredService));
+            assertNotNull(samlIdPMetadataLocator.resolveEncryptionCertificate(registeredService));
+            assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(registeredService));
+            assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(registeredService));
+            assertNotNull(samlIdPMetadataLocator.resolveSigningKey(registeredService));
+        }
+
+        @Test
+        void verifyMetadataPerService() throws Throwable {
+            val service = new SamlRegisteredService();
+            service.setName("TestShib");
+            service.setId(2000);
+            service.setIdpMetadataLocation("file:src/test/resources/metadata/ObjectSignerTest-1000");
+            val registeredService = Optional.of(service);
+
+            assertNotNull(samlIdPMetadataLocator.resolveMetadata(registeredService));
+            assertNotNull(samlIdPMetadataLocator.resolveEncryptionCertificate(registeredService));
             assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(registeredService));
             assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(registeredService));
             assertNotNull(samlIdPMetadataLocator.resolveSigningKey(registeredService));

@@ -14,7 +14,7 @@
     "--cas.ticket.registry.jpa.user=postgres",
     "--cas.ticket.registry.jpa.password=password",
     "--cas.ticket.registry.jpa.url=jdbc:postgresql://localhost:5432/tickets",
-    "--logging.level.org.apereo.cas.ticket.registry=debug"
+    "--logging.level.org.apereo.cas.ticket.registry=info"
     ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "loadScript": "./ci/tests/puppeteer/scenarios/jpa-ticket-registry/test.js",

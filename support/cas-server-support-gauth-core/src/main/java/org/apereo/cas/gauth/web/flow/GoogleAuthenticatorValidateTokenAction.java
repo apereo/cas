@@ -3,6 +3,7 @@ package org.apereo.cas.gauth.web.flow;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountConfirmSelectionRegistrationAction;
@@ -28,6 +29,7 @@ public class GoogleAuthenticatorValidateTokenAction extends AbstractMultifactorA
     protected final CasConfigurationProperties casProperties;
     protected final OneTimeTokenCredentialRepository repository;
     protected final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator;
+    protected final TenantExtractor tenantExtractor;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
@@ -46,7 +48,7 @@ public class GoogleAuthenticatorValidateTokenAction extends AbstractMultifactorA
             }
             return success();
         }
-        LOGGER.warn("Authorization of OTP token [{}] has failed", token);
+        LOGGER.warn("Authorization of OTP token [{}] has failed for [{}]", token, authentication.getPrincipal().getId());
         throw new FailedLoginException("Failed to authenticate code " + token);
     }
 }

@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "cas.unknown.setting",
+      "type": "java.lang.String",
+      "description": "This is an unknown setting that is not recognized by the CAS server.",
+      "deprecation": {
+        "replacement": "cas.known.setting",
+        "reason": "Unknown setting",
+        "level": "error"
+      }
+    }
+  ],
+  "ignored": {
+    "properties": [
+    ]
+  },
+  "hints": [
+    {
+      "values": [
+        {
+          "value": "{\"owner\":\"org.apereo.cas.configuration.model.core.CasServerProperties\"}",
+          "description": "org.apereo.cas.configuration.support.PropertyOwner"
+        },
+      ],
+      "name": "cas.unknown.setting"
+    }
+  ]
+}

@@ -13,7 +13,7 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED",
     "--cas.monitor.endpoints.form-login-enabled=true",
 
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=*",
 
     "--cas.monitor.endpoints.ldap.ldap-url=ldap://localhost:10389",

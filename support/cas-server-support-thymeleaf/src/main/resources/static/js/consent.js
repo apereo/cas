@@ -20,8 +20,8 @@ function tabify(material) {
 }
 
 function optionSelected() {
-    var v = $('input[name=option]:checked', '#fm1').val();
-    if (v == 0) {
+    let v = $('input[name=option]:checked', '#fm1').val();
+    if (v === 0) {
         $('#reminderPanel').hide();
         $('#reminderTab').hide();
     } else {

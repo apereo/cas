@@ -3,13 +3,11 @@ package org.apereo.cas.ws.idp.services;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-
+import org.apache.commons.lang3.Strings;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +34,7 @@ public class CustomNamespaceWSFederationClaimsReleasePolicy extends AbstractRegi
     private Map<String, String> allowedAttributes;
 
     public CustomNamespaceWSFederationClaimsReleasePolicy() {
-        this(new HashMap<>(0));
+        this(new HashMap<>());
     }
 
     public CustomNamespaceWSFederationClaimsReleasePolicy(final Map<String, String> allowedAttributes) {
@@ -53,7 +51,7 @@ public class CustomNamespaceWSFederationClaimsReleasePolicy extends AbstractRegi
             if (resolvedAttributes.containsKey(value)) {
                 val attributeValue = resolvedAttributes.get(value);
                 if (attributeValue != null) {
-                    val claimName = StringUtils.appendIfMissing(this.namespace, "/") + key;
+                    val claimName = Strings.CI.appendIfMissing(this.namespace, "/") + key;
                     LOGGER.debug("Adding claim name [{}] with value [{}]", claimName, attributeValue);
                     attributesToRelease.put(claimName, attributeValue);
                 }

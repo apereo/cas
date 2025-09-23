@@ -1,12 +1,9 @@
 package org.apereo.cas.configuration.model.support.mfa.simple;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -20,7 +17,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("CasSimpleMultifactorAuthenticationTokenDefaultProperties")
 public class CoreCasSimpleMultifactorAuthenticationTokenProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -6333748853833491119L;
@@ -32,6 +28,33 @@ public class CoreCasSimpleMultifactorAuthenticationTokenProperties implements Se
 
     /**
      * The length of the generated token.
+     * Note that generating codes with a small length (i.e. smaller than `6` characters or digits)
+     * may lead to code creation collisions, typically under rather high load. CAS will attempt to retry
+     * and generate a unique code for given attempt, but may ultimately give up if a unique code cannot
+     * be generated and reserved.
      */
     private int tokenLength = 6;
+
+    /**
+     * This setting determines the type of characters used in the token.
+     */
+    private TokenType tokenType = TokenType.NUMERIC;
+
+    /**
+     * The type of characters used in the token.
+     */
+    public enum TokenType {
+        /**
+         * Token type is numeric.
+         */
+        NUMERIC,
+        /**
+         * Token type is alphanumeric.
+         */
+        ALPHANUMERIC,
+        /**
+         * Token type is alphabetic.
+         */
+        ALPHABETIC
+    }
 }

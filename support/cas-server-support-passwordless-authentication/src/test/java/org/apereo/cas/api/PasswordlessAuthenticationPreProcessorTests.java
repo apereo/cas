@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 @Tag("Simple")
 class PasswordlessAuthenticationPreProcessorTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val processor = mock(PasswordlessAuthenticationPreProcessor.class);
         when(processor.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, processor.getOrder());

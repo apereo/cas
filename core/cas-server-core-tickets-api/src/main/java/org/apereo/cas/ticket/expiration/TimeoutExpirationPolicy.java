@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.expiration;
 
 
+import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
@@ -19,13 +20,10 @@ import lombok.val;
 import java.io.Serial;
 import java.time.Clock;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 
 /**
  * Expiration policy that is based on a certain time period for a ticket to
- * exist.
- * <p>
- * The expiration policy defined by this class is one of inactivity.  If you are inactive for the specified
+ * exist. The expiration policy defined by this class is one of inactivity.  If you are inactive for the specified
  * amount of time, the ticket will be expired.
  *
  * @author Scott Battaglia
@@ -38,7 +36,7 @@ import java.time.temporal.ChronoUnit;
 @ToString(callSuper = true)
 @Builder
 @Slf4j
-public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
+public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy implements IdleExpirationPolicy {
     private static final long MAX_EXPIRATION_IN_YEARS = 50L;
     
     @Serial
@@ -86,7 +84,7 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     @Override
     public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
         val lastTimeUsed = ticketState.getLastTimeUsed();
-        return lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        return lastTimeUsed.plusSeconds(this.timeToKillInSeconds);
     }
 
     @Override

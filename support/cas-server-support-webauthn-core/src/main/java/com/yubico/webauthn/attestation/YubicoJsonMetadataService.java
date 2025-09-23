@@ -16,7 +16,6 @@ import lombok.val;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -57,20 +56,19 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
         @NonNull
         final Map<String, DeviceMatcher> matchers) {
         this.trustRootCertificates =
-            Collections.unmodifiableSet(
-                metadataObjects.stream()
-                    .flatMap(metadataObject -> metadataObject.getTrustedCertificates().stream())
-                    .map(
-                        pemEncodedCert -> {
-                            try {
-                                return CertificateParser.parsePem(pemEncodedCert);
-                            } catch (final CertificateException e) {
-                                LOGGER.error("Failed to parse trusted certificate", e);
-                                return null;
-                            }
-                        })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toSet()));
+            metadataObjects.stream()
+                .flatMap(metadataObject -> metadataObject.getTrustedCertificates().stream())
+                .map(
+                    pemEncodedCert -> {
+                        try {
+                            return CertificateParser.parsePem(pemEncodedCert);
+                        } catch (final CertificateException e) {
+                            LOGGER.error("Failed to parse trusted certificate", e);
+                            return null;
+                        }
+                    })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toUnmodifiableSet());
         this.metadataObjects = metadataObjects;
         this.matchers = CollectionUtil.immutableMap(matchers);
     }
@@ -100,8 +98,8 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
                 vendorProperties = Maps.filterValues(metadata.getVendorInfo(), Objects::nonNull);
                 for (val device : metadata.getDevices()) {
                     if (deviceMatches(device.get(SELECTORS), attestationCertificate)) {
-                        ImmutableMap.Builder<String, String> devicePropertiesBuilder = ImmutableMap.builder();
-                        for (final Map.Entry<String, JsonNode> deviceEntry : Lists.newArrayList(device.fields())) {
+                        val devicePropertiesBuilder = ImmutableMap.<String, String>builder();
+                        for (val deviceEntry : Lists.newArrayList(device.fields())) {
                             val value = deviceEntry.getValue();
                             if (value.isTextual()) {
                                 devicePropertiesBuilder.put(deviceEntry.getKey(), value.asText());

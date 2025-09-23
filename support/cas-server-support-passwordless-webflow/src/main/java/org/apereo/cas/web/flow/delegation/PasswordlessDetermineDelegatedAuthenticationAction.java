@@ -1,8 +1,11 @@
 package org.apereo.cas.web.flow.delegation;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.flow.BasePasswordlessCasWebflowAction;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -14,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
@@ -30,13 +32,16 @@ import java.util.Set;
 public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePasswordlessCasWebflowAction implements DisposableBean {
     private final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer;
 
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     public PasswordlessDetermineDelegatedAuthenticationAction(
         final CasConfigurationProperties casProperties,
+        final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+        final PrincipalFactory passwordlessPrincipalFactory,
+        final AuthenticationSystemSupport authenticationSystemSupport,
         final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer,
-        final WatchableGroovyScriptResource watchableScript) {
-        super(casProperties);
+        final ExecutableCompiledScript watchableScript) {
+        super(casProperties, multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory, authenticationSystemSupport);
         this.providerConfigurationProducer = providerConfigurationProducer;
         this.watchableScript = watchableScript;
     }
@@ -74,7 +79,7 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
             DelegationWebflowUtils.putDelegatedAuthenticationProviderPrimary(requestContext, clientConfig);
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             request.setAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, clientConfig.getName());
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_PROMPT);
         }
         LOGGER.trace("Delegated identity provider could not be determined for [{}] based on [{}]", user, clients);
         return success();
@@ -100,8 +105,7 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
         final Set<? extends DelegatedClientIdentityProviderConfiguration> clients) throws Throwable {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val args = new Object[]{user, clients, request, LOGGER};
-        return Optional.ofNullable(watchableScript.execute(args, DelegatedClientIdentityProviderConfiguration.class))
-            .map(DelegatedClientIdentityProviderConfiguration.class::cast);
+        return Optional.ofNullable(watchableScript.execute(args, DelegatedClientIdentityProviderConfiguration.class));
     }
 
 }

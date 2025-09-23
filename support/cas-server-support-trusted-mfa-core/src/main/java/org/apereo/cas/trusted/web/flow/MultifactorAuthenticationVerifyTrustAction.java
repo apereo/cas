@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
@@ -48,7 +49,10 @@ public class MultifactorAuthenticationVerifyTrustAction extends BaseCasWebflowAc
         }
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val service = WebUtils.getService(requestContext);
-        if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authentication)) {
+
+        val trustedDevicesDisabled = MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedDevicesDisabled(requestContext);
+        val publicWorkstation = WebUtils.isAuthenticatingAtPublicWorkstation(requestContext);
+        if (publicWorkstation || trustedDevicesDisabled || bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authentication)) {
             LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
             return result(CasWebflowConstants.TRANSITION_ID_SKIP);
         }
@@ -63,16 +67,19 @@ public class MultifactorAuthenticationVerifyTrustAction extends BaseCasWebflowAc
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val fingerprint = deviceFingerprintStrategy.determineFingerprint(authentication, request, response);
         LOGGER.trace("Retrieving authentication records for [{}] that matches [{}]", principal, fingerprint);
-        if (results.stream().noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {
+        val foundRecord = results.stream()
+            .filter(entry -> StringUtils.isNotBlank(entry.getDeviceFingerprint()))
+            .filter(entry -> entry.getDeviceFingerprint().equals(fingerprint))
+            .findAny();
+        if (foundRecord.isEmpty()) {
             LOGGER.debug("No trusted authentication records could be found for [{}] to match the current device fingerprint", principal);
             return no();
         }
-
         LOGGER.debug("Trusted authentication records found for [{}] that matches the current device fingerprint", principal);
         MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(requestContext);
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
-            authentication,
-            trustedProperties.getCore().getAuthenticationContextAttribute());
+            authentication, trustedProperties.getCore().getAuthenticationContextAttribute());
+        MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustRecord(requestContext, foundRecord.get());
         return yes();
     }
 }

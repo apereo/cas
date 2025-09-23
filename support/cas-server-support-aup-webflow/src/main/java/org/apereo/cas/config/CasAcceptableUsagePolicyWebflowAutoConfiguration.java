@@ -12,7 +12,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.AcceptableUsagePolicySubmitAction;
@@ -61,14 +61,14 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer(
             final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
                 .supply(() -> new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices,
-                    loginFlowDefinitionRegistry, applicationContext, casProperties))
+                    flowDefinitionRegistry, applicationContext, casProperties))
                 .otherwiseProxy()
                 .get();
         }
@@ -84,14 +84,16 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
-            final TicketRegistrySupport ticketRegistrySupport) throws Exception {
+            final TicketRegistrySupport ticketRegistrySupport) {
             return BeanSupplier.of(AcceptableUsagePolicyRepository.class)
                 .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val groovy = casProperties.getAcceptableUsagePolicy().getGroovy();
                     if (groovy.getLocation() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
-                        return new GroovyAcceptableUsagePolicyRepository(ticketRegistrySupport, casProperties.getAcceptableUsagePolicy(),
-                            new WatchableGroovyScriptResource(groovy.getLocation()), applicationContext);
+                        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+                        return new GroovyAcceptableUsagePolicyRepository(ticketRegistrySupport,
+                            casProperties.getAcceptableUsagePolicy(),
+                            scriptFactory.fromResource(groovy.getLocation()), applicationContext);
                     }
                     return new DefaultAcceptableUsagePolicyRepository(ticketRegistrySupport, casProperties.getAcceptableUsagePolicy());
                 })
@@ -123,7 +125,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
-            final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository) throws Exception {
+            final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -146,7 +148,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
             final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer) throws Exception {
+            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -167,7 +169,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
-            final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository) throws Exception {
+            final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -191,7 +193,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
             final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer) throws Exception {
+            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -215,7 +217,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
         public AuditTrailRecordResolutionPlanConfigurer casAcceptableUsagePolicyAuditTrailRecordResolutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("nullableReturnValueResourceResolver")
-            final AuditResourceResolver resourceResolver) throws Exception {
+            final AuditResourceResolver resourceResolver) {
 
             return BeanSupplier.of(AuditTrailRecordResolutionPlanConfigurer.class)
                 .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))

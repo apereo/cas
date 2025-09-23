@@ -1,0 +1,17 @@
+{
+  "dependencies": "metrics,reports,tracing-jaeger",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--management.tracing.enabled=true",
+    "--management.tracing.sampling.probability=1F",
+
+    "--cas.monitor.jaeger.endpoint=http://localhost:4317",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "initScript": "${PWD}/ci/tests/jaeger/run-jaeger-server.sh"
+}

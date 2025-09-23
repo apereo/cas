@@ -5,11 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.builder.CompareToBuilder;
-
+import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -27,34 +27,32 @@ public class SamlIdentityProviderEntity implements Serializable, Comparable<Saml
 
     @JsonProperty("Descriptions")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private final List<SamlIdentityProviderBasicEntity> descriptions = new ArrayList<>(0);
+    private final List<SamlIdentityProviderBasicEntity> descriptions = new ArrayList<>();
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @JsonProperty("Logos")
-    private final List<SamlIdentityProviderLogoEntity> logos = new ArrayList<>(0);
+    private final List<SamlIdentityProviderLogoEntity> logos = new ArrayList<>();
 
     @JsonProperty("DisplayNames")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private final List<SamlIdentityProviderBasicEntity> displayNames = new ArrayList<>(0);
+    private final List<SamlIdentityProviderBasicEntity> displayNames = new ArrayList<>();
 
     @JsonProperty("PrivacyStatementURLs")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private final List<SamlIdentityProviderBasicEntity> privacyStatementUrls = new ArrayList<>(0);
+    private final List<SamlIdentityProviderBasicEntity> privacyStatementUrls = new ArrayList<>();
 
     @JsonProperty("InformationURLs")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private final List<SamlIdentityProviderBasicEntity> informationUrls = new ArrayList<>(0);
+    private final List<SamlIdentityProviderBasicEntity> informationUrls = new ArrayList<>();
 
     @JsonProperty("Keywords")
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private final List<SamlIdentityProviderBasicEntity> keywords = new ArrayList<>(0);
+    private final List<SamlIdentityProviderBasicEntity> keywords = new ArrayList<>();
 
     private String entityID;
 
     @Override
-    public int compareTo(final SamlIdentityProviderEntity o) {
-        return new CompareToBuilder()
-            .append(entityID, o.entityID)
-            .build();
+    public int compareTo(@Nonnull final SamlIdentityProviderEntity entity) {
+        return Comparator.comparing(SamlIdentityProviderEntity::getEntityID).compare(this, entity);
     }
 }

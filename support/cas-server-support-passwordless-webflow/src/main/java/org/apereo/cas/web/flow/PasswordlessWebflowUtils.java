@@ -1,11 +1,15 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import lombok.experimental.UtilityClass;
+import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This is {@link PasswordlessWebflowUtils}.
@@ -32,6 +36,16 @@ public class PasswordlessWebflowUtils {
         requestContext.getFlowScope().put("passwordlessAuthenticationEnabled", value);
     }
 
+    /**
+     * Is passwordless authentication enabled.
+     *
+     * @param requestContext the request context
+     * @return true/false
+     */
+    public static boolean isPasswordlessAuthenticationEnabled(final RequestContext requestContext) {
+        return requestContext.getFlowScope().getBoolean("passwordlessAuthenticationEnabled", Boolean.FALSE);
+    }
+    
     /**
      * Put passwordless authentication request.
      *
@@ -105,4 +119,64 @@ public class PasswordlessWebflowUtils {
         return requestContext.getFlowScope().contains("passwordlessAccount");
     }
 
+    /**
+     * Put passwordless captcha enabled.
+     *
+     * @param requestContext the request context
+     * @param recaptcha      the recaptcha
+     */
+    public static void putPasswordlessCaptchaEnabled(final RequestContext requestContext, final GoogleRecaptchaProperties recaptcha) {
+        requestContext.getFlowScope().put("passwordlessCaptchaEnabled", recaptcha.isEnabled());
+    }
+
+    /**
+     * Is passwordless captcha enabled.
+     *
+     * @param requestContext the request context
+     * @return true/false
+     */
+    public static boolean isPasswordlessCaptchaEnabled(final RequestContext requestContext) {
+        val enabled = Objects.requireNonNullElse(requestContext.getFlowScope().getBoolean("passwordlessCaptchaEnabled", Boolean.FALSE), Boolean.FALSE);
+        return BooleanUtils.toBoolean(enabled);
+    }
+
+    /**
+     * Put multifactor authentication allowed.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putMultifactorAuthenticationAllowed(final RequestContext requestContext, final boolean value) {
+        requestContext.getFlowScope().put("passwordlessMultifactorAuthenticationAllowed", value);
+    }
+
+    /**
+     * Put delegated authentication allowed.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putDelegatedAuthenticationAllowed(final RequestContext requestContext, final boolean value) {
+        requestContext.getFlowScope().put("passwordlessDelegatedAuthenticationAllowed", value);
+    }
+
+    /**
+     * Is multifactor authentication allowed.
+     *
+     * @param context the context
+     * @return true or false
+     */
+    public static boolean isMultifactorAuthenticationAllowed(final RequestContext context) {
+        return context.getFlowScope().getBoolean("passwordlessMultifactorAuthenticationAllowed", Boolean.FALSE);
+    }
+
+    /**
+     * Is delegated authentication allowed.
+     *
+     * @param context the context
+     * @return true or false
+     */
+    public static boolean isDelegatedAuthenticationAllowed(final RequestContext context) {
+        return context.getFlowScope().getBoolean("passwordlessDelegatedAuthenticationAllowed", Boolean.FALSE);
+    }
 }

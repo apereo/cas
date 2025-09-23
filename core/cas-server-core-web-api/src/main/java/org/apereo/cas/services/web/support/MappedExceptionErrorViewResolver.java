@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.DefaultErrorViewResolver;
 import org.springframework.context.ApplicationContext;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -43,13 +45,15 @@ public class MappedExceptionErrorViewResolver extends DefaultErrorViewResolver {
         val defaultModelAndView = defaultFallback.apply(errorContext)
             .orElseGet(() -> super.resolveErrorView(request, status, map));
         val exception = (Exception) request.getAttribute("jakarta.servlet.error.exception");
+        val rootCause = ExceptionUtils.getRootCause(exception);
         if (exception != null) {
             return mappings.entrySet()
                 .stream()
                 .filter(entry -> entry.getKey().isAssignableFrom(exception.getClass())
-                    || (exception.getCause() != null && entry.getKey().isAssignableFrom(exception.getCause().getClass())))
+                    || (rootCause != null && entry.getKey().isAssignableFrom(rootCause.getClass())))
                 .map(Map.Entry::getValue)
-                .peek(mv -> mv.getModelMap().putAll(CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, exception)))
+                .peek(mv -> mv.getModelMap().putAll(CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION,
+                    Objects.requireNonNullElse(rootCause, exception))))
                 .findFirst()
                 .orElse(defaultModelAndView);
         }

@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("AuthenticationPolicy")
-public class RequiredAttributesAuthenticationPolicyTests {
+class RequiredAttributesAuthenticationPolicyTests {
     @Test
     void verifyAuthnAttributes() throws Throwable {
         val input = new RequiredAttributesAuthenticationPolicy(Map.of(

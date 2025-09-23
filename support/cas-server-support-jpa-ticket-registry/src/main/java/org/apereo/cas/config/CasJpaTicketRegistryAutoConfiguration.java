@@ -2,10 +2,10 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.CloseableDataSource;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.jpa.JpaConfigurationContext;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.catalog.CasTicketCatalogConfigurationValuesProvider;
 import org.apereo.cas.ticket.registry.JpaTicketEntityFactory;
@@ -106,7 +106,7 @@ public class CasJpaTicketRegistryAutoConfiguration {
             @Qualifier("ticketPackagesToScan")
             final BeanContainer<String> ticketPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            final JpaBeanFactory jpaBeanFactory) {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
             return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
@@ -202,7 +202,7 @@ public class CasJpaTicketRegistryAutoConfiguration {
                 .supply(() -> {
                     val jpa = casProperties.getTicket().getRegistry().getJpa();
                     val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jpa.getCrypto(), "jpa");
-                    return new JpaTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
+                    return new JpaTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, applicationContext,
                         jpaBeanFactory, jpaTicketRegistryTransactionTemplate, casProperties);
                 })
                 .otherwiseProxy()

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -28,7 +29,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Endpoint(id = "duoAccountStatus", enableByDefault = false)
+@Endpoint(id = "duoAccountStatus", defaultAccess = Access.NONE)
 public class DuoSecurityUserAccountStatusEndpoint extends BaseCasActuatorEndpoint {
     private final ApplicationContext applicationContext;
 
@@ -47,8 +48,8 @@ public class DuoSecurityUserAccountStatusEndpoint extends BaseCasActuatorEndpoin
      */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch Duo Security user account status", parameters = {
-        @Parameter(name = "username", required = true),
-        @Parameter(name = "providerId")
+        @Parameter(name = "username", required = true, description = "The username to fetch"),
+        @Parameter(name = "providerId", description = "The multifactor authentication provider id defined in CAS settings")
     })
     public Map<?, ?> fetchAccountStatus(@Selector final String username, @Nullable final String providerId) {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
@@ -58,7 +59,6 @@ public class DuoSecurityUserAccountStatusEndpoint extends BaseCasActuatorEndpoin
             .stream()
             .filter(Objects::nonNull)
             .filter(BeanSupplier::isNotProxy)
-            .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .filter(provider -> StringUtils.isBlank(providerId) || provider.matches(providerId))
             .forEach(provider -> {
                 val duoService = provider.getDuoAuthenticationService();

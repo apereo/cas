@@ -14,7 +14,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Credential;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -25,22 +25,26 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(
     properties = {
-        "cas.authn.mfa.web-authn.ldap.account-attribute-name=streetAddress",
+        "cas.authn.mfa.web-authn.crypto.signing.key=dK6PhAi8JSfDk3-CHHf07sBesFh_0OXaDUOsYgf9KLF83riM3MF4UjhC47vJ8M4CPvi_n-O2D2ygU2DDxgugXw",
+        "cas.authn.mfa.web-authn.crypto.encryption.key=qv5XggQkdy9OYuEbdgiF7shq0aCA6F1EQpfTy168ypWYb-En6Kn18idrj3K8XSqr0z0xGU6cZl3eQGFOvRrPyg",
+        
+        "cas.authn.mfa.web-authn.ldap.account-attribute-name=webauthndevices",
         "cas.authn.mfa.web-authn.ldap.ldap-url=ldaps://localhost:10636",
         "cas.authn.mfa.web-authn.ldap.bind-dn=CN=admin,CN=Users,DC=cas,DC=example,DC=org",
         "cas.authn.mfa.web-authn.ldap.bind-credential=P@ssw0rd",
         "cas.authn.mfa.web-authn.ldap.base-dn=CN=Users,DC=cas,DC=example,DC=org",
         "cas.authn.mfa.web-authn.ldap.search-filter=cn={user}",
-        "cas.authn.mfa.web-authn.ldap.trust-store=file:/tmp/adcacerts.jks",
+        "cas.authn.mfa.web-authn.ldap.trust-store=file:${#systemProperties['java.io.tmpdir']}/adcacerts.jks",
         "cas.authn.mfa.web-authn.ldap.trust-store-type=JKS",
         "cas.authn.mfa.web-authn.ldap.trust-store-password=changeit",
         "cas.authn.mfa.web-authn.ldap.min-pool-size=0",
-        "cas.authn.mfa.web-authn.ldap.hostname-verifier=DEFAULT"
+        "cas.authn.mfa.web-authn.ldap.hostname-verifier=ANY",
+        "cas.authn.mfa.web-authn.ldap.trust-manager=ANY"
     })
 @Tag("ActiveDirectory")
 @EnabledIfListeningOnPort(port = 10636)
 @Getter
-@Import(CasLdapWebAuthnAutoConfiguration.class)
+@ImportAutoConfiguration(CasLdapWebAuthnAutoConfiguration.class)
 class ActiveDirectoryWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
     @Override
     protected String getUsername() throws Exception {
@@ -56,7 +60,7 @@ class ActiveDirectoryWebAuthnCredentialRepositoryTests extends BaseWebAuthnCrede
             bindInit.getBindDn(), bindInit.getBindCredential().getString());
 
         connection.add(getLdif(uid));
-        val mod = new Modification(ModificationType.REPLACE, "streetAddress", " ");
+        val mod = new Modification(ModificationType.REPLACE, "webauthndevices", " ");
         connection.modify(String.format("CN=%s,CN=Users,DC=cas,DC=example,DC=org", uid), mod);
 
         return uid;

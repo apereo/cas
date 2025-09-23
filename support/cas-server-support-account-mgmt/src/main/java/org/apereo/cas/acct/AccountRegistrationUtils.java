@@ -111,7 +111,7 @@ public class AccountRegistrationUtils {
      * @param properties     the properties
      */
     public static void putAccountRegistrationCaptchaEnabled(final RequestContext requestContext,
-                                                                      final GoogleRecaptchaProperties properties) {
+                                                            final GoogleRecaptchaProperties properties) {
         requestContext.getFlowScope().put("accountRegistrationCaptchaEnabled", properties.isEnabled());
     }
 }

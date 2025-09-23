@@ -52,12 +52,12 @@ class WsFederationServicesManagerRegisteredServiceLocatorTests extends BaseCoreW
     private ServicesManager servicesManager;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         servicesManager.deleteAll();
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(wsFederationServicesManagerRegisteredServiceLocator);
         assertEquals(Ordered.HIGHEST_PRECEDENCE, wsFederationServicesManagerRegisteredServiceLocator.getOrder());
         val registeredService = getWsFederationRegisteredService("http://app.example.org/wsfed.*", "CAS");

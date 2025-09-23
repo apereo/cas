@@ -13,10 +13,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import java.nio.charset.StandardCharsets;
@@ -36,7 +37,9 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final PasswordlessAuthenticationRestAccountsProperties restProperties;
+    protected final PasswordlessAuthenticationRestAccountsProperties restProperties;
+
+    protected final ConfigurableApplicationContext applicationContext;
 
     @Override
     public Optional<PasswordlessUserAccount> findUser(final PasswordlessAuthenticationRequest request) {
@@ -49,8 +52,9 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
-                .url(StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(request.getUsername()))
+                .url(Strings.CI.appendIfMissing(restProperties.getUrl(), "/").concat(request.getUsername()))
                 .parameters(parameters)
+                .headers(restProperties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
 

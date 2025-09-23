@@ -6,17 +6,18 @@ import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashSet;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Slf4j
-@Controller("umaUpdatePolicyForResourceSetEndpointController")
+@Tag(name = "User Managed Access")
 public class UmaUpdatePolicyForResourceSetEndpointController extends BaseUmaEndpointController {
     public UmaUpdatePolicyForResourceSetEndpointController(final UmaConfigurationContext umaConfigurationContext) {
         super(umaConfigurationContext);
@@ -46,6 +47,13 @@ public class UmaUpdatePolicyForResourceSetEndpointController extends BaseUmaEndp
      * @return the policy for resource set
      */
     @PutMapping(OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}")
+    @Operation(
+        summary = "Update policy for resource set",
+        description = "Updates a policy for the specified resource set",
+        parameters = {
+            @Parameter(name = "resourceId", required = true, in = ParameterIn.PATH, description = "Resource ID"),
+            @Parameter(name = "policyId", required = true, in = ParameterIn.PATH, description = "Policy ID")
+        })
     public ResponseEntity updatePoliciesForResourceSet(
         @PathVariable("resourceId")
         final long resourceId,

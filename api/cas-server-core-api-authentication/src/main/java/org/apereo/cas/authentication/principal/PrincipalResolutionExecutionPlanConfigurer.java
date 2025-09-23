@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.util.NamedObject;
 import org.springframework.core.Ordered;
 
 /**
@@ -10,23 +10,14 @@ import org.springframework.core.Ordered;
  * @since 6.0.0
  */
 @FunctionalInterface
-public interface PrincipalResolutionExecutionPlanConfigurer extends Ordered {
+public interface PrincipalResolutionExecutionPlanConfigurer extends Ordered, NamedObject {
 
     /**
      * configure the plan.
      *
      * @param plan the plan
      */
-    void configurePrincipalResolutionExecutionPlan(PrincipalResolutionExecutionPlan plan) throws Exception;
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return StringUtils.defaultIfBlank(this.getClass().getSimpleName(), "Default");
-    }
+    void configurePrincipalResolutionExecutionPlan(PrincipalResolutionExecutionPlan plan);
 
     @Override
     default int getOrder() {

@@ -1,9 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.adaptive.intel.DefaultIPAddressIntelligenceService;
-import org.apereo.cas.authentication.adaptive.intel.GroovyIPAddressIntelligenceService;
-import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
-import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligenceService;
 import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
@@ -22,7 +18,6 @@ import org.apereo.cas.authentication.principal.merger.ReturnOriginalAttributeMer
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
-import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
@@ -30,7 +25,7 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalAttribute
 import org.apereo.cas.configuration.model.core.authentication.policy.BaseAuthenticationPolicyProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.validation.Assertion;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
@@ -41,6 +36,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -70,14 +66,14 @@ public class CoreAuthenticationUtils {
      * @param attributes the attributes
      * @return the map
      */
-    public static Map<String, Object> convertAttributeValuesToObjects(final Map<String, ? extends Object> attributes) {
+    public static Map<String, Object> convertAttributeValuesToObjects(final Map<String, ?> attributes) {
         val entries = attributes.entrySet();
         return entries
             .stream()
             .map(entry -> Map.entry(entry.getKey(), entry.getValue()))
             .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
                 val value = CollectionUtils.toCollection(entry.getValue());
-                return value.size() == 1 ? value.iterator().next() : value;
+                return value.size() == 1 && !(value.iterator().next() instanceof Map) ? value.iterator().next() : value;
             }));
     }
 
@@ -187,7 +183,7 @@ public class CoreAuthenticationUtils {
     }
 
     /**
-     * Transform principal attributes list into map map.
+     * Transform principal attributes list into map.
      *
      * @param list the list
      * @return the map
@@ -238,13 +234,14 @@ public class CoreAuthenticationUtils {
             if (StringUtils.isBlank(selectionCriteria)) {
                 return credential -> true;
             }
-            if (selectionCriteria.endsWith(".groovy") && CasRuntimeHintsRegistrar.notInNativeImage()) {
+            val scriptFactoryInstance = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+            if (scriptFactoryInstance.isPresent() && scriptFactoryInstance.get().isExternalScript(selectionCriteria) && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 val loader = new DefaultResourceLoader();
                 val resource = loader.getResource(selectionCriteria);
-                val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-                try (val classLoader = ScriptingUtils.newGroovyClassLoader()) {
-                    val clz = classLoader.parseClass(script);
-                    return (Predicate<Credential>) clz.getDeclaredConstructor().newInstance();
+                try (val is = resource.getInputStream()) {
+                    val script = IOUtils.toString(is, StandardCharsets.UTF_8);
+                    val scriptFactory = scriptFactoryInstance.get();
+                    return scriptFactory.newObjectInstance(script, Predicate.class);
                 }
             }
             val predicateClazz = ClassUtils.getClass(selectionCriteria);
@@ -346,26 +343,6 @@ public class CoreAuthenticationUtils {
             .setOrder(properties.getOrder());
     }
     
-    /**
-     * New ip address intelligence service.
-     *
-     * @param adaptive the adaptive
-     * @return the ip address intelligence service
-     */
-    public static IPAddressIntelligenceService newIpAddressIntelligenceService(final AdaptiveAuthenticationProperties adaptive) {
-        val intel = adaptive.getIpIntel();
-
-        if (StringUtils.isNotBlank(intel.getRest().getUrl())) {
-            return new RestfulIPAddressIntelligenceService(adaptive);
-        }
-        if (intel.getGroovy().getLocation() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
-            return new GroovyIPAddressIntelligenceService(adaptive);
-        }
-        if (StringUtils.isNotBlank(intel.getBlackDot().getEmailAddress())) {
-            return new RestfulIPAddressIntelligenceService(adaptive);
-        }
-        return new DefaultIPAddressIntelligenceService(adaptive);
-    }
 
     /**
      * New principal election strategy conflict resolver.
@@ -375,7 +352,7 @@ public class CoreAuthenticationUtils {
      */
     public static PrincipalElectionStrategyConflictResolver newPrincipalElectionStrategyConflictResolver(
         final PersonDirectoryPrincipalResolverProperties properties) {
-        if (StringUtils.equalsIgnoreCase(properties.getPrincipalResolutionConflictStrategy(), "first")) {
+        if (Strings.CI.equals(properties.getPrincipalResolutionConflictStrategy(), "first")) {
             return PrincipalElectionStrategyConflictResolver.first();
         }
         return PrincipalElectionStrategyConflictResolver.last();

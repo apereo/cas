@@ -9,6 +9,10 @@ import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.LoggingUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -41,6 +45,7 @@ import java.util.List;
  */
 @RestController("ticketGrantingTicketResource")
 @Slf4j
+@Tag(name = "CAS REST")
 @RequiredArgsConstructor
 public class TicketGrantingTicketResource {
     private final RestAuthenticationService authenticationService;
@@ -84,6 +89,8 @@ public class TicketGrantingTicketResource {
             MediaType.TEXT_HTML_VALUE,
             MediaType.TEXT_PLAIN_VALUE
         })
+    @Operation(summary = "Create ticket-granting ticket",
+        parameters = @Parameter(name = "requestBody", required = false, description = "Username and password data"))
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody(required = false) final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request,
                                                              final HttpServletResponse response) {
@@ -111,6 +118,8 @@ public class TicketGrantingTicketResource {
      */
     @DeleteMapping(value = RestProtocolConstants.ENDPOINT_TICKETS + "/{tgtId:.+}",
         produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Delete ticket-granting ticket",
+        parameters = @Parameter(name = "tgtId", in = ParameterIn.PATH, required = true, description = "Ticket-granting ticket id"))
     public ResponseEntity<List<SingleLogoutRequestContext>> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId,
                                                                                        final HttpServletRequest request,
                                                                                        final HttpServletResponse response) {

@@ -11,10 +11,10 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -22,8 +22,6 @@ import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.NameIDType;
-
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -37,8 +35,6 @@ import java.util.Optional;
  */
 @Slf4j
 public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<SAMLObject> {
-    @Serial
-    private static final long serialVersionUID = -6231886395225437320L;
 
     private final PersistentIdGenerator persistentIdGenerator;
 
@@ -77,28 +73,28 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         val fmt = StringUtils.defaultIfBlank(service.getRequiredNameIdFormat(), NameIDType.UNSPECIFIED).trim();
         LOGGER.debug("Required NameID format assigned to service [{}] is [{}]", service.getName(), fmt);
 
-        if (StringUtils.containsIgnoreCase(NameIDType.EMAIL, fmt)) {
+        if (Strings.CI.contains(NameIDType.EMAIL, fmt)) {
             return NameIDType.EMAIL;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.TRANSIENT, fmt)) {
+        if (Strings.CI.contains(NameIDType.TRANSIENT, fmt)) {
             return NameIDType.TRANSIENT;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.PERSISTENT, fmt)) {
+        if (Strings.CI.contains(NameIDType.PERSISTENT, fmt)) {
             return NameIDType.PERSISTENT;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.ENTITY, fmt)) {
+        if (Strings.CI.contains(NameIDType.ENTITY, fmt)) {
             return NameIDType.ENTITY;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.X509_SUBJECT, fmt)) {
+        if (Strings.CI.contains(NameIDType.X509_SUBJECT, fmt)) {
             return NameIDType.X509_SUBJECT;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.WIN_DOMAIN_QUALIFIED, fmt)) {
+        if (Strings.CI.contains(NameIDType.WIN_DOMAIN_QUALIFIED, fmt)) {
             return NameIDType.WIN_DOMAIN_QUALIFIED;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.KERBEROS, fmt)) {
+        if (Strings.CI.contains(NameIDType.KERBEROS, fmt)) {
             return NameIDType.KERBEROS;
         }
-        if (StringUtils.containsIgnoreCase(NameIDType.ENCRYPTED, fmt)) {
+        if (Strings.CI.contains(NameIDType.ENCRYPTED, fmt)) {
             return NameIDType.ENCRYPTED;
         }
         return NameIDType.UNSPECIFIED;
@@ -109,8 +105,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         LOGGER.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
         return requiredNameFormat;
     }
-
-
+    
     @Override
     public SAMLObject build(final SamlProfileBuilderContext context) throws SamlException {
         if (context.getSamlRequest() instanceof AttributeQuery) {
@@ -119,15 +114,6 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         return buildNameId(context);
     }
 
-    /**
-     * Build name id.
-     * If there are no explicitly defined NameIDFormats, include the default format.
-     * see: <a href="http://saml2int.org/profile/current/#section92">here</a>.
-     *
-     * @param context the context
-     * @return the name id
-     * @throws SamlException the saml exception
-     */
     protected NameID buildNameId(final SamlProfileBuilderContext context) throws SamlException {
         val supportedNameFormats = getSupportedNameIdFormats(context);
         val requiredNameFormat = getRequiredNameIdFormatIfAny(context);
@@ -140,7 +126,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                     final SamlProfileBuilderContext context) {
         if (nameid != null) {
             val registeredService = context.getRegisteredService();
-            if (!StringUtils.equalsIgnoreCase(registeredService.getNameIdQualifier(), "none")
+            if (!Strings.CI.equals(registeredService.getNameIdQualifier(), "none")
                 && !registeredService.isSkipGeneratingNameIdQualifier()) {
                 if (StringUtils.isNotBlank(registeredService.getNameIdQualifier())) {
                     nameid.setNameQualifier(registeredService.getNameIdQualifier());
@@ -149,7 +135,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                 }
             }
 
-            if (!StringUtils.equalsIgnoreCase(registeredService.getServiceProviderNameIdQualifier(), "none")
+            if (!Strings.CI.equals(registeredService.getServiceProviderNameIdQualifier(), "none")
                  && !registeredService.isSkipGeneratingServiceProviderNameIdQualifier()) {
                 FunctionUtils.doIf(StringUtils.isNotBlank(registeredService.getServiceProviderNameIdQualifier()),
                         value -> nameid.setSPNameQualifier(registeredService.getServiceProviderNameIdQualifier()),
@@ -173,13 +159,6 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         }
     }
 
-    /**
-     * Determine name id name id.
-     *
-     * @param supportedNameFormats the supported name formats
-     * @param context              the context
-     * @return the name id
-     */
     protected NameID determineNameId(final List<String> supportedNameFormats, final SamlProfileBuilderContext context) {
         for (val nameFormat : supportedNameFormats) {
             LOGGER.debug("Evaluating NameID format [{}]", nameFormat);
@@ -220,7 +199,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      */
     protected String prepareNameIdAttribute(final SamlProfileBuilderContext context,
                                             final String nameFormat) {
-        val principalId = context.getAuthenticatedAssertion().get().getName();
+        val principalId = context.getAuthenticatedAssertion().orElseThrow().getName();
         LOGGER.debug("Preparing NameID attribute for principal [{}]", principalId);
         val nameIdValue = getNameIdValueFromNameFormat(nameFormat, context);
         LOGGER.debug("NameID attribute value is set to [{}]", nameIdValue);
@@ -229,7 +208,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
     private String getNameIdValueFromNameFormat(final String nameFormat,
                                                 final SamlProfileBuilderContext context) {
-        val principalId = context.getAuthenticatedAssertion().get().getName();
+        val principalId = context.getAuthenticatedAssertion().orElseThrow().getName();
         if (NameIDType.TRANSIENT.equalsIgnoreCase(StringUtils.trim(nameFormat))) {
             val entityId = context.getAdaptor().getEntityId();
             if (context.getRegisteredService().isSkipGeneratingTransientNameId()) {

@@ -4,7 +4,9 @@ title: CAS - Release Notes
 category: Planning
 ---
 
-# 7.1.0-RC3 Release Notes
+{% include variables.html %}
+
+# 7.3.0-RC3 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
 you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note
@@ -41,68 +43,54 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
-### Spring Boot 3.3
+### OpenRewrite Recipes
 
-The migration of the entire codebase to Spring Boot `3.3` is ongoing, and at the
-moment is waiting for the wider ecosystem of supporting frameworks and libraries to catch up to
-changes. We anticipate the work to finalize in the next few release candidates and certainly prior to the final release.
-
-### Java 22
-
-CAS is able to successfully build and run with Java `22`, should you decide to switch. All compatible distributions
-such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
+CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
+in place from one version to the next. [See this guide](../installation/OpenRewrite-Upgrade-Recipes.html) to learn more.
 
 ### Graal VM Native Images
 
 A CAS server installation and deployment process can be tuned to build and run
-as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html).
+as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html). We continue to polish native runtime hints.
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
 to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
 
+Note that Apache Log4j `2.25.0` now supports native images and is no longer a blocker.
+Integration and functional tests are tuned to use Apache Log4j instead of Logback as the logging backend for CAS native images.
+ 
+### OpenID Connect Native SSO
+
+CAS now supports [OpenID Connect Native SSO](../authentication/OIDC-Authentication-NativeSSO-MobileApps.html).
+
+### OpenID Connect AuthZEN
+
+Basic support for [OpenID Connect AuthZEN](../authorization/Heimdall-Authorization-Overview.html) is now available.
+ 
+### Gradle 9.0
+
+CAS is now built with Gradle 9 and the build process has been updated to
+use the latest Gradle features and capabilities. 
+
 ### Testing Strategy
 
-The collection of end-to-end [browser tests based via Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `476` distinct scenarios. The overall
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `519` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
-### AWS Cloudwatch Metrics
-
-CAS metrics can now be exported to [AWS Cloudwatch](../monitoring/Configuring-Metrics-Storage-Cloudwatch.html).
-
-### Person Directory
-
-The [Person Directory](https://github.com/apereo/person-directory) project is now cleaned up and merged into the CAS codebase.
-The separate project and repository will no longer be maintained or managed separately, and all relevant components, resolvers
-and features are refactored, cleaned up and hand-picked to be part of the CAS codebase. While changes should largely be invisible
-to the typical user, the refactoring and cleanup should make it significantly easier to maintain and manage the codebase moving forward.
-
-## Library Upgrades
-
-- Sentry
-- JAXB
-- Yubico WebAuthN
-- Google Cloud Monitoring
-- Amazon SDK
-- Gradle
-- OpenSAML
-- Twilio
-- Jackson
-- ErrorProne
-- SpringDoc
-- Apache ZooKeeper
-- Apache CXF
-- Micrometer
-- Spring
-- Spring Security
-- Spring Integration
-- Spring Boot
-- Spring Boot Admin
-- Spring Data
-- Apache Tomcat
-- Spring Kafka
-- Slack
-- Pac4j
-- Logback
-- Hazelcast
-- Azure Identity
+## Other Stuff
+  
+- Support for *CSS Vars*, which provides CSS property/variable extraction for legacy browsers, is removed from the CAS.
+- Support for *ES5-Shim*, which provides ECMAScript5 utilities for older legacy JavaScript engines is removed from CAS.
+- Salt value used for generating persistent name IDs in particular for SAML2 responses or logout requests can be predefined.
+- Jakarta Persistence libraries are moved out of the CAS web application by default.
+- Extracting query parameters from the request URLs will check for URL validity and correctness.
+- SAML2 logout requests generated by CAS account for transient `NameID` formats.
+- A series of small improvements to ensure [Spring Session Management](../webflow/Webflow-Customization-Sessions.html) can work with [FIDO2 WebAuthN](../mfa/FIDO2-WebAuthn-Authentication.html).
+- A number of improvements to multifactor authentication registration flows, particularly when attempted from the [user account profile](../registration/Account-Management-Overview.html).
+- [Bootstrap libraries](../ux/User-Interface-Customization-ThemeCollections.html) are moved into their own module. 
+- Support for detection of `localhost` URLs and parameter extraction from such URLs is now controlled via a dedicated configuration property, `cas.http-client.allow-local-urls`. If you have any applications that specify `localhost` as the host name in their URLs, you may need to set this property to `true` to allow CAS to recognize the application correctly.
+- A series of improvements to the CAS user interface to streamline Thymeleaf constructs and remove duplicates. Thymeleaf templates via CAS themes allow for the inclusion of a special fragment that may be displayed to the left of the CAS login form as a side panel.
+- When validating OAuth or OpenID Connect requests via `clientId` and `clientSecret`, the resolution of scopes will also consider the scopes attached to the provided `code`, if any.
+- The super old `jqueryReady()` Javascript callback function is now removed from CAS. You may use `document.addEventListener("DOMContentLoaded", (event) => {});` instead to run code after the DOM is fully loaded.
+- [FIDO2 WebAuthN](../mfa/FIDO2-WebAuthn-Authentication.html) support is by default storing authentication requests and session data in HTTP session instead of local runtime memory. This option allows us to scale FIDO2 WebAuthN authentication requests across multiple CAS nodes in a cluster in the future by attempting to transparently share HTTP sessions across nodes.

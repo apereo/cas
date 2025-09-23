@@ -2,21 +2,20 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
-
+import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,11 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("RegisteredService")
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class
-},
-    properties = "cas.service-registry.templates.directory.location=classpath:/service-templates")
+@ExtendWith(CasTestExtension.class)
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = RefreshAutoConfiguration.class, properties = "cas.service-registry.templates.directory.location=classpath:/service-templates")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class DefaultRegisteredServicesTemplatesManagerTests {
     @Autowired
@@ -45,7 +42,7 @@ class DefaultRegisteredServicesTemplatesManagerTests {
     }
 
     @Test
-    void verifyNoTemplateLocation() throws Throwable {
+    void verifyNoTemplateLocation() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(1000);
         registeredService.setName("Unknown");
@@ -63,7 +60,7 @@ class DefaultRegisteredServicesTemplatesManagerTests {
     }
 
     @Test
-    void verifyNoTemplateName() throws Throwable {
+    void verifyNoTemplateName() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(1000);
         registeredService.setName("Unknown");
@@ -78,7 +75,7 @@ class DefaultRegisteredServicesTemplatesManagerTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val registeredService = new CasRegisteredService();
         registeredService.setName("CAS");
         registeredService.setTemplateName("ExampleTemplate");
@@ -102,7 +99,7 @@ class DefaultRegisteredServicesTemplatesManagerTests {
     }
 
     @Test
-    void verifyTemplateInheritance() throws Throwable {
+    void verifyTemplateInheritance() {
         val registeredService = new CasRegisteredService();
         registeredService.setName("CAS");
         registeredService.setTemplateName("Unknown,UsernameProviderTemplate,AttributeReleaseTemplate");
@@ -121,7 +118,7 @@ class DefaultRegisteredServicesTemplatesManagerTests {
     }
 
     @Test
-    void verifyGroovyTemplates() throws Throwable {
+    void verifyGroovyTemplates() {
         val registeredService = new CasRegisteredService();
         registeredService.setName("CAS");
         registeredService.setTemplateName("GroovyTemplate");

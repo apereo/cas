@@ -1,9 +1,14 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.trusted.web.flow.BasicMultifactorTrustedWebflowConfigurer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -11,7 +16,9 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
+import org.apereo.cas.web.flow.actions.DefaultMultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.authentication.FinalMultifactorAuthenticationTransactionWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -20,7 +27,6 @@ import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountCheckRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAccountSaveRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnAuthenticationWebflowAction;
-import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnMultifactorWebflowConfigurer;
 import org.apereo.cas.webauthn.web.flow.WebAuthnPopulateCsrfTokenAction;
 import org.apereo.cas.webauthn.web.flow.WebAuthnStartAuthenticationAction;
@@ -29,7 +35,6 @@ import org.apereo.cas.webauthn.web.flow.WebAuthnValidateSessionCredentialTokenAc
 import org.apereo.cas.webauthn.web.flow.account.WebAuthnMultifactorAccountProfilePrepareAction;
 import org.apereo.cas.webauthn.web.flow.account.WebAuthnMultifactorAccountProfileRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.account.WebAuthnMultifactorAccountProfileWebflowConfigurer;
-import org.apereo.cas.webauthn.web.flow.account.WebAuthnMultifactorDeviceProviderAction;
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
 import lombok.val;
@@ -74,8 +79,10 @@ class WebAuthnWebflowConfiguration {
         @ConditionalOnMissingBean(name = "webAuthnFlowRegistry")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FlowDefinitionRegistry webAuthnFlowRegistry(
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER) final FlowBuilder flowBuilder,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
+            final FlowBuilder flowBuilder,
             final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(FlowDefinitionRegistry.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
@@ -96,16 +103,19 @@ class WebAuthnWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer(
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices,
-            @Qualifier("webAuthnFlowRegistry") final FlowDefinitionRegistry webAuthnFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier("webAuthnFlowRegistry")
+            final FlowDefinitionRegistry webAuthnFlowRegistry,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val cfg = new WebAuthnMultifactorWebflowConfigurer(flowBuilderServices,
-                        loginFlowDefinitionRegistry, webAuthnFlowRegistry,
+                        flowDefinitionRegistry, webAuthnFlowRegistry,
                         applicationContext, casProperties,
                         MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext));
                     cfg.setOrder(WEBFLOW_CONFIGURER_ORDER);
@@ -124,7 +134,8 @@ class WebAuthnWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("casWebflowConfigurationContext") final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
+            @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
+            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             return BeanSupplier.of(CasWebflowEventResolver.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new FinalMultifactorAuthenticationTransactionWebflowEventResolver(casWebflowConfigurationContext))
@@ -142,7 +153,8 @@ class WebAuthnWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer webAuthnCasWebflowExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("webAuthnMultifactorWebflowConfigurer") final CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer) {
+            @Qualifier("webAuthnMultifactorWebflowConfigurer")
+            final CasWebflowConfigurer webAuthnMultifactorWebflowConfigurer) {
             return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerWebflowConfigurer(webAuthnMultifactorWebflowConfigurer))
@@ -164,18 +176,21 @@ class WebAuthnWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowConfigurer webAuthnMultifactorTrustWebflowConfigurer(
-            @Qualifier("webAuthnFlowRegistry") final FlowDefinitionRegistry webAuthnFlowRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices,
+            @Qualifier("webAuthnFlowRegistry")
+            final FlowDefinitionRegistry webAuthnFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(WebAuthnWebflowConfiguration.CONDITION.given(applicationContext.getEnvironment()))
                 .and(WebAuthnMultifactorTrustConfiguration.CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val cfg = new WebAuthnMultifactorTrustWebflowConfigurer(
+                    val cfg = new BasicMultifactorTrustedWebflowConfigurer(
                         flowBuilderServices,
-                        loginFlowDefinitionRegistry,
+                        flowDefinitionRegistry,
                         webAuthnFlowRegistry,
                         applicationContext,
                         casProperties,
@@ -191,7 +206,8 @@ class WebAuthnWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExecutionPlanConfigurer webAuthnMultifactorTrustCasWebflowExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("webAuthnMultifactorTrustWebflowConfigurer") final CasWebflowConfigurer webAuthnMultifactorTrustWebflowConfigurer) {
+            @Qualifier("webAuthnMultifactorTrustWebflowConfigurer")
+            final CasWebflowConfigurer webAuthnMultifactorTrustWebflowConfigurer) {
             return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
                 .when(WebAuthnWebflowConfiguration.CONDITION.given(applicationContext.getEnvironment()))
                 .and(WebAuthnMultifactorTrustConfiguration.CONDITION.given(applicationContext.getEnvironment()))
@@ -209,7 +225,8 @@ class WebAuthnWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnPopulateCsrfTokenAction(
-            @Qualifier("webAuthnCsrfTokenRepository") final CsrfTokenRepository webAuthnCsrfTokenRepository,
+            @Qualifier("webAuthnCsrfTokenRepository")
+            final CsrfTokenRepository webAuthnCsrfTokenRepository,
             final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
@@ -222,11 +239,20 @@ class WebAuthnWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnStartAuthenticationAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final RegistrationStorage webAuthnCredentialRepository) {
+            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
+            final RegistrationStorage webAuthnCredentialRepository) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new WebAuthnStartAuthenticationAction(webAuthnCredentialRepository))
+                .supply(() -> new WebAuthnStartAuthenticationAction(casProperties,
+                    ticketRegistry, ticketFactory, webAuthnCredentialRepository, tenantExtractor))
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
@@ -235,11 +261,13 @@ class WebAuthnWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnStartRegistrationAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new WebAuthnStartRegistrationAction(casProperties))
+                .supply(() -> new WebAuthnStartRegistrationAction(casProperties, tenantExtractor))
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
@@ -248,11 +276,14 @@ class WebAuthnWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnCheckAccountRegistrationAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final RegistrationStorage webAuthnCredentialRepository) {
+            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
+            final RegistrationStorage webAuthnCredentialRepository) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new WebAuthnAccountCheckRegistrationAction(webAuthnCredentialRepository))
+                .supply(() -> new WebAuthnAccountCheckRegistrationAction(webAuthnCredentialRepository, tenantExtractor))
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
@@ -261,12 +292,17 @@ class WebAuthnWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnSaveAccountRegistrationAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("webAuthnSessionManager") final SessionManager webAuthnSessionManager,
-            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final RegistrationStorage webAuthnCredentialRepository) {
+            @Qualifier(SessionManager.BEAN_NAME)
+            final SessionManager webAuthnSessionManager,
+            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
+            final RegistrationStorage webAuthnCredentialRepository) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new WebAuthnAccountSaveRegistrationAction(webAuthnCredentialRepository, webAuthnSessionManager))
+                .supply(() -> new WebAuthnAccountSaveRegistrationAction(
+                    webAuthnCredentialRepository, webAuthnSessionManager, tenantExtractor))
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
@@ -276,7 +312,8 @@ class WebAuthnWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnAuthenticationWebflowAction(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("webAuthnAuthenticationWebflowEventResolver") final CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver) {
+            @Qualifier("webAuthnAuthenticationWebflowEventResolver")
+            final CasWebflowEventResolver webAuthnAuthenticationWebflowEventResolver) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new WebAuthnAuthenticationWebflowAction(webAuthnAuthenticationWebflowEventResolver))
@@ -288,14 +325,19 @@ class WebAuthnWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnValidateSessionCredentialTokenAction(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("webAuthnSessionManager") final SessionManager webAuthnSessionManager,
-            @Qualifier("webAuthnPrincipalFactory") final PrincipalFactory webAuthnPrincipalFactory,
-            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final RegistrationStorage webAuthnCredentialRepository) {
+            @Qualifier(SessionManager.BEAN_NAME)
+            final SessionManager webAuthnSessionManager,
+            @Qualifier("webAuthnPrincipalFactory")
+            final PrincipalFactory webAuthnPrincipalFactory,
+            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
+            final RegistrationStorage webAuthnCredentialRepository) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new WebAuthnValidateSessionCredentialTokenAction(webAuthnCredentialRepository,
-                    webAuthnSessionManager, webAuthnPrincipalFactory))
+                    webAuthnSessionManager, webAuthnPrincipalFactory, tenantExtractor))
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
@@ -312,12 +354,14 @@ class WebAuthnWebflowConfiguration {
         public CasWebflowConfigurer webAuthnAccountProfileWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry accountProfileFlowRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices) {
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new WebAuthnMultifactorAccountProfileWebflowConfigurer(flowBuilderServices,
-                    accountProfileFlowRegistry, applicationContext, casProperties))
+                    flowDefinitionRegistry, applicationContext, casProperties))
                 .otherwiseProxy()
                 .get();
         }
@@ -333,13 +377,14 @@ class WebAuthnWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_MFA_DEVICE_PROVIDER)
+        @ConditionalOnMissingBean(name = "webAuthnDeviceProviderAction")
         public MultifactorAuthenticationDeviceProviderAction webAuthnDeviceProviderAction(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final RegistrationStorage webAuthnCredentialRepository) {
+            @Qualifier("webAuthnMultifactorAuthenticationDeviceManager")
+            final MultifactorAuthenticationDeviceManager webAuthnMultifactorAuthenticationDeviceManager) {
             return BeanSupplier.of(MultifactorAuthenticationDeviceProviderAction.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new WebAuthnMultifactorDeviceProviderAction(webAuthnCredentialRepository))
+                .supply(() -> new DefaultMultifactorAuthenticationDeviceProviderAction(webAuthnMultifactorAuthenticationDeviceManager))
                 .otherwiseProxy()
                 .get();
         }
@@ -348,21 +393,37 @@ class WebAuthnWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_MFA_PREPARE)
         public Action webAuthnAccountProfilePrepareAction(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("webAuthnMultifactorAuthenticationProvider")
             final MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider,
             final CasConfigurationProperties casProperties,
-            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final RegistrationStorage webAuthnCredentialRepository) {
-            return new WebAuthnMultifactorAccountProfilePrepareAction(webAuthnCredentialRepository,
-                webAuthnMultifactorAuthenticationProvider, casProperties);
+            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
+            final RegistrationStorage webAuthnCredentialRepository) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new WebAuthnMultifactorAccountProfilePrepareAction(webAuthnCredentialRepository,
+                            webAuthnMultifactorAuthenticationProvider, casProperties))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_MFA_PREPARE)
+                .build()
+                .get();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_REGISTRATION)
         public Action webAuthnAccountProfileRegistrationAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
             @Qualifier("webAuthnMultifactorAuthenticationProvider")
             final MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider) {
-            return new WebAuthnMultifactorAccountProfileRegistrationAction(webAuthnMultifactorAuthenticationProvider);
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new WebAuthnMultifactorAccountProfileRegistrationAction(webAuthnMultifactorAuthenticationProvider))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_REGISTRATION)
+                .build()
+                .get();
         }
 
     }

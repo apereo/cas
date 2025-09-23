@@ -3,9 +3,8 @@ package org.apereo.cas.support.saml.idp.metadata.generator;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
-
-import org.apache.commons.lang3.StringUtils;
-
+import org.apache.commons.lang3.Strings;
+import org.springframework.core.io.Resource;
 import java.util.Optional;
 
 /**
@@ -47,8 +46,8 @@ public interface SamlIdPMetadataGenerator {
      * @return the string
      */
     static String cleanCertificate(final String cert) {
-        var result = StringUtils.remove(cert, BEGIN_CERTIFICATE);
-        result = StringUtils.remove(result, END_CERTIFICATE).trim();
+        var result = Strings.CI.remove(cert, BEGIN_CERTIFICATE);
+        result = Strings.CI.remove(result, END_CERTIFICATE).trim();
         return result;
     }
 
@@ -60,5 +59,8 @@ public interface SamlIdPMetadataGenerator {
      */
     default String getAppliesToFor(final Optional<SamlRegisteredService> result) {
         return SamlIdPUtils.getSamlIdPMetadataOwner(result);
+    }
+
+    record CertificateAndKey(Resource certificate, Resource key) {
     }
 }

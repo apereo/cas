@@ -24,50 +24,50 @@ import static org.junit.jupiter.api.Assertions.*;
 class DateTimeUtilsTests {
 
     @Test
-    void verifyParsingDateAsLocalDateTime() throws Throwable {
+    void verifyParsingDateAsLocalDateTime() {
         assertNotNull(DateTimeUtils.localDateTimeOf(LocalDateTime.now(ZoneId.systemDefault()).toString()));
     }
 
     @Test
-    void verifyParsingDateAsLocalDate() throws Throwable {
+    void verifyParsingDateAsLocalDate() {
         assertNotNull(DateTimeUtils.localDateTimeOf(LocalDateTime.now(ZoneId.systemDefault()).toString()));
     }
 
     @Test
-    void verifyParsingDateAsLocalDateString1() throws Throwable {
+    void verifyParsingDateAsLocalDateString1() {
         assertNotNull(DateTimeUtils.localDateTimeOf("2017-10-15"));
     }
 
     @Test
-    void verifyParsingDateAsLocalDateString2() throws Throwable {
+    void verifyParsingDateAsLocalDateString2() {
         assertNotNull(DateTimeUtils.localDateTimeOf("09/19/2017"));
     }
 
     @Test
-    void verifyParsingDateAsLocalDateString3() throws Throwable {
+    void verifyParsingDateAsLocalDateString3() {
         assertNotNull(DateTimeUtils.localDateTimeOf("09/19/2017 4:30 pm"));
     }
 
     @Test
-    void verifyParsingDateAsLocalDateString4() throws Throwable {
+    void verifyParsingDateAsLocalDateString4() {
         assertNotNull(DateTimeUtils.localDateTimeOf("2017-10-12T07:00:00.000Z"));
     }
 
     @Test
-    void verifyParsingBadDateTime() throws Throwable {
+    void verifyParsingBadDateTime() {
         assertNull(DateTimeUtils.zonedDateTimeOf(UUID.randomUUID().toString()));
         assertNull(DateTimeUtils.localDateTimeOf(UUID.randomUUID().toString()));
     }
 
     @Test
-    void verifyParsingCalendar() throws Throwable {
+    void verifyParsingCalendar() {
         val calendar = Calendar.getInstance();
         assertNotNull(DateTimeUtils.zonedDateTimeOf(calendar));
     }
 
     @Test
     @SuppressWarnings({"PreferJavaTimeOverload", "JavaTimeDefaultTimeZone"})
-    void verifyConvert() throws Throwable {
+    void verifyConvert() {
         assertNotNull(DateTimeUtils.convertToZonedDateTime(LocalDateTime.now().toString()));
         assertNotNull(DateTimeUtils.convertToZonedDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString()));
         assertNotNull(DateTimeUtils.zonedDateTimeOf(System.currentTimeMillis()));
@@ -76,7 +76,7 @@ class DateTimeUtilsTests {
     }
 
     @Test
-    void verifyParsingChronoUnit() throws Throwable {
+    void verifyParsingChronoUnit() {
         assertEquals(ChronoUnit.DAYS, DateTimeUtils.toChronoUnit(TimeUnit.DAYS));
         assertEquals(ChronoUnit.HOURS, DateTimeUtils.toChronoUnit(TimeUnit.HOURS));
         assertEquals(ChronoUnit.MINUTES, DateTimeUtils.toChronoUnit(TimeUnit.MINUTES));
@@ -88,7 +88,7 @@ class DateTimeUtilsTests {
     }
 
     @Test
-    void verifyTimeUnit() throws Throwable {
+    void verifyTimeUnit() {
         assertNull(DateTimeUtils.toTimeUnit(null));
         assertEquals(TimeUnit.DAYS, DateTimeUtils.toTimeUnit(ChronoUnit.DAYS));
         assertEquals(TimeUnit.HOURS, DateTimeUtils.toTimeUnit(ChronoUnit.HOURS));

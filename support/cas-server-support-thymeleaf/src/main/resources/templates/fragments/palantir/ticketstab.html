@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <div class="attribute-tab w-100 d-none" id="attribute-tab-2">
+
+
+        <div class="jqueryui-tabs">
+            <ul>
+                <li><a id="ticketRegistryOps" href="#ticketRegistryOps-tab">Ticket Registry</a></li>
+                <li><a id="ticketCatalogOps" href="#ticketCatalogOps-tab">Ticket Catalog</a></li>
+                <li><a id="ticketExpirationPolicyOps"
+                       href="#ticketExpirationPolicyOps-tab">Ticket Expiration Policies</a></li>
+            </ul>
+
+            <div id="ticketRegistryOps-tab">
+                <form class="d-block" onsubmit="return false;">
+                    <section class="cas-field form-group my-3 mdc-input-group d-flex">
+                        <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                            <div id="ticketDefinitionsSelect"
+                                 class="mdc-select mdc-select--outlined mdc-select--required mdc-menu-surface--fullwidth pb-2">
+                                <div class="mdc-select__anchor"
+                                     role="button"
+                                     aria-required="true"
+                                     aria-haspopup="listbox"
+                                     aria-expanded="false">
+                                    <span class="mdc-line__ripple"></span>
+                                    <span class="mdc-notched-outline">
+                                        <span class="mdc-notched-outline__leading"></span>
+                                        <span class="mdc-notched-outline__notch">
+                                            <span id="outlined-select-label" class="mdc-floating-label">Type</span>
+                                        </span>
+                                        <span class="mdc-notched-outline__trailing"></span>
+                                    </span>
+                                    <span class="mdc-select__selected-text-container">
+                                        <span class="mdc-select__selected-text"/>
+                                    </span>
+                                    <span class="mdc-select__dropdown-icon">
+                                        <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5"
+                                             focusable="false">
+                                            <polygon class="mdc-select__dropdown-icon-inactive" stroke="none"
+                                                     fill-rule="evenodd" points="7 10 12 15 17 10">
+                                            </polygon>
+                                            <polygon class="mdc-select__dropdown-icon-active" stroke="none"
+                                                     fill-rule="evenodd" points="7 15 12 10 17 15">
+                                            </polygon>
+                                        </svg>
+                                    </span>
+                                    <span class="mdc-line-ripple"></span>
+                                </div>
+                                <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
+                                    <ul id="ticketDefinitions" class="mdc-list" role="listbox">
+                                    </ul>
+                                </div>
+                            </div>
+                            <label for="ticket"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Ticket</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="ticket" tabindex="0" id="ticket" size="50" autocomplete="off" required/>
+                            </label>
+                            <div class="pt-2">
+                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='decodeTicket', label='screen.checkbox.decode.title')}"/>
+                            </div>
+                        </div>
+                    </section>
+                    <div class="d-flex">
+                        <button type="button" id="searchTicketButton" class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-database-search"
+                                                               aria-hidden="true"></i>Search</span>
+                        </button>
+                        <button type="button" id="cleanTicketsButton" class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-broom" aria-hidden="true"></i>Clean</span>
+                        </button>
+                    </div>
+                </form>
+
+                <section class="my-3 d-flex h-350px">
+                      <pre class="ace-editor ace-relative w-100 h-100" id="ticketEditor"></pre>
+                </section>
+            </div>
+
+            <div id="ticketCatalogOps-tab">
+                <table id="ticketCatalogTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Type</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+             </div>
+
+            <div id="ticketExpirationPolicyOps-tab">
+                <table id="ticketExpirationPoliciesTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Type</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+             </div>
+
+        </div>
+    </div>
+</span>
+</body>
+</html>

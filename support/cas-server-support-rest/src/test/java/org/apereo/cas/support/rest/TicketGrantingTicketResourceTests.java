@@ -13,7 +13,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
 import org.apereo.cas.logout.DefaultLogoutManager;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutRequestExecutor;
@@ -21,6 +20,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.rest.authentication.DefaultRestAuthenticationService;
 import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.ticket.Ticket;
@@ -87,7 +87,7 @@ class TicketGrantingTicketResourceTests {
 
     @Mock
     private ServicesManager servicesManager;
-
+    
     @Mock
     private RequestedAuthenticationContextValidator requestedContextValidator;
 
@@ -97,7 +97,7 @@ class TicketGrantingTicketResourceTests {
     private MockMvc mockMvc;
 
     @BeforeEach
-    public void initialize() throws Throwable {
+    void initialize() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -125,7 +125,7 @@ class TicketGrantingTicketResourceTests {
         val authenticationSystemSupport = CoreAuthenticationTestUtils.getAuthenticationSystemSupport(manager, mock(ServicesManager.class));
         val api = new DefaultRestAuthenticationService(authenticationSystemSupport,
             httpRequestCredentialFactory,
-            new WebApplicationServiceFactory(),
+            RegisteredServiceTestUtils.getWebApplicationServiceFactory(),
             multifactorTriggerSelectionStrategy,
             servicesManager,
             requestedContextValidator,

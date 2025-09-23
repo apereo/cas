@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("ActuatorEndpoint")
-@TestPropertySource(properties = "management.endpoint.mfaSimple.enabled=true")
+@TestPropertySource(properties = "management.endpoint.mfaSimple.access=UNRESTRICTED")
 @Import({
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class
@@ -34,14 +34,14 @@ class CasSimpleMultifactorAuthenticationEndpointTests extends AbstractCasEndpoin
     private CasSimpleMultifactorAuthenticationEndpoint endpoint;
 
     @Test
-    void verifyGenerateToken() throws Throwable {
+    void verifyGenerateToken() {
         val authorization = EncodingUtils.encodeBase64("casuser:casuser");
         val results = endpoint.generateToken(RegisteredServiceTestUtils.CONST_TEST_URL, authorization);
         assertTrue(results.getStatusCode().is2xxSuccessful());
     }
 
     @Test
-    void verifyAuthFails() throws Throwable {
+    void verifyAuthFails() {
         val authorization = EncodingUtils.encodeBase64("casuser:unknown");
         val results = endpoint.generateToken(RegisteredServiceTestUtils.CONST_TEST_URL, authorization);
         assertTrue(results.getStatusCode().isError());

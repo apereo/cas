@@ -1,0 +1,21 @@
+{
+  "dependencies": "events-influxdb",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.events.core.track-geolocation=true",
+
+    "--cas.events.influx-db.database=CasEventsDatabase",
+    "--cas.events.influx-db.token=${#systemProperties['java.io.tmpdir']}/.influxdb-token",
+    "--cas.events.influx-db.url=http://localhost:8181",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=events",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "jvmArgs": "-Djava.net.preferIPv4Addresses=true",
+  "initScript": "${PWD}/ci/tests/influxdb/run-influxdb-server.sh"
+}

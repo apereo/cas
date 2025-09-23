@@ -5,15 +5,14 @@ import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfigur
 import org.apereo.cas.config.CasX509AuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasX509AuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasX509CertificateExtractorAutoConfiguration;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,9 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Import({
-    WebMvcAutoConfiguration.class,
-    ServletWebServerFactoryAutoConfiguration.class,
+@SpringBootTestAutoConfigurations
+@ImportAutoConfiguration({
     CasX509AuthenticationAutoConfiguration.class,
     CasX509CertificateExtractorAutoConfiguration.class,
     CasX509AuthenticationWebflowAutoConfiguration.class,
@@ -48,7 +46,7 @@ class X509TomcatServletWebServiceFactoryWebflowConfigurerTests extends BaseWebfl
     private CasWebflowConfigurer webflowConfigurer;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(webflowConfigurer);
     }
 

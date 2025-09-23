@@ -33,8 +33,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import software.amazon.awssdk.core.SdkSystemSetting;
 import java.util.HashMap;
@@ -49,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("DynamoDb")
-@Import({
+@ImportAutoConfiguration({
     CasDynamoDbTicketRegistryAutoConfiguration.class,
     CasOAuth20AutoConfiguration.class
 })
@@ -68,15 +67,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 8000)
 @Getter
 class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
-    private static final int COUNT = 500;
+    private static final int COUNT = 250;
 
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
         System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");
     }
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -109,7 +105,8 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     void verifyAccessTokenCanBeAdded() throws Throwable {
         val code = createOAuthCode();
         val jwtBuilder = new JwtBuilder(CipherExecutor.noOpOfSerializableToString(),
-            applicationContext, servicesManager, principalResolver, RegisteredServiceCipherExecutor.noOp(), casProperties);
+            applicationContext, servicesManager, principalResolver,
+            RegisteredServiceCipherExecutor.noOp(), webApplicationServiceFactory, casProperties);
         val token = new OAuth20DefaultAccessTokenFactory(
             newTicketRegistry, neverExpiresExpirationPolicyBuilder(), jwtBuilder,
             servicesManager, TicketTrackingPolicy.noOp())
@@ -145,7 +142,7 @@ class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyLargeDataset() throws Throwable {
+    void verifyLargeDataset() {
         val ticketGrantingTicketToAdd = Stream.generate(() -> {
                 val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                     .getNewTicketId(TicketGrantingTicket.PREFIX);

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class HttpRequestMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @Test
-    void verifyShouldProceed() throws Throwable {
+    void verifyShouldProceed() {
         val properties = new MultifactorAuthenticationProviderBypassProperties();
 
         val applicationContext = new StaticApplicationContext();

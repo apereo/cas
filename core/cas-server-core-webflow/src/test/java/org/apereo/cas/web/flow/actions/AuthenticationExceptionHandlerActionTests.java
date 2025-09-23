@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationPolicy;
-import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.util.CollectionUtils;
@@ -35,12 +34,9 @@ class AuthenticationExceptionHandlerActionTests {
 
 
     private static List<CasWebflowExceptionHandler> getExceptionHandlers(final CasWebflowExceptionCatalog errors) {
-        return List.of(new DefaultCasWebflowAuthenticationExceptionHandler(errors,
-                MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE),
-            new DefaultCasWebflowAbstractTicketExceptionHandler(errors,
-                MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE),
-            new GenericCasWebflowExceptionHandler(errors,
-                MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE));
+        return List.of(new DefaultCasWebflowAuthenticationExceptionHandler(errors),
+            new DefaultCasWebflowAbstractTicketExceptionHandler(errors),
+            new GenericCasWebflowExceptionHandler(errors));
     }
 
     @Test
@@ -64,7 +60,7 @@ class AuthenticationExceptionHandlerActionTests {
         val map = new HashMap<String, Throwable>();
         map.put("unknown", new GeneralSecurityException());
         val event = handler.handle(new AuthenticationException(map), req);
-        assertEquals(CasWebflowExceptionHandler.UNKNOWN, event.getId());
+        assertEquals(CasWebflowExceptionCatalog.UNKNOWN, event.getId());
     }
 
     @Test
@@ -75,7 +71,7 @@ class AuthenticationExceptionHandlerActionTests {
             new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, new GeneralSecurityException()));
         req.setCurrentEvent(event);
         val id = handler.execute(req);
-        assertEquals(CasWebflowExceptionHandler.UNKNOWN, id.getId());
+        assertEquals(CasWebflowExceptionCatalog.UNKNOWN, id.getId());
     }
 
     @Test
@@ -93,7 +89,7 @@ class AuthenticationExceptionHandlerActionTests {
         val handler = new AuthenticationExceptionHandlerAction(getExceptionHandlers(new DefaultCasWebflowExceptionCatalog()));
         val req = MockRequestContext.create();
         val event = handler.handle(new InvalidTicketException("TGT"), req);
-        assertEquals(CasWebflowExceptionHandler.UNKNOWN, event.getId());
+        assertEquals(CasWebflowExceptionCatalog.UNKNOWN, event.getId());
     }
 
     @Test

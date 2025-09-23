@@ -16,13 +16,13 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
+@Getter
 @NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class AccountRegistrationRequest implements Serializable {
     @Serial
     private static final long serialVersionUID = -7833843820128948428L;
 
-    @Getter
     private final Map<String, Object> properties = new LinkedHashMap<>();
 
     public AccountRegistrationRequest(final Map<String, Object> properties) {

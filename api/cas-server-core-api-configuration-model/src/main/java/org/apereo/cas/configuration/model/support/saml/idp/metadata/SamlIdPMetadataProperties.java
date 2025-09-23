@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SamlIdPMetadataProperties")
 public class SamlIdPMetadataProperties implements Serializable {
 
     @Serial
@@ -53,6 +51,12 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private MongoDbSamlMetadataProperties mongo = new MongoDbSamlMetadataProperties();
+
+    /**
+     * Properties pertaining to dynamo-db saml metadata resolvers.
+     */
+    @NestedConfigurationProperty
+    private DynamoDbSamlMetadataProperties dynamoDb = new DynamoDbSamlMetadataProperties();
 
     /**
      * Properties pertaining to redis saml metadata resolvers.

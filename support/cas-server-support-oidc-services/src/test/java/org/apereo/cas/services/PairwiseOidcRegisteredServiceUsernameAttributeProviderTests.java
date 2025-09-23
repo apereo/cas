@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("OIDC")
+@Tag("OIDCAttributes")
 class PairwiseOidcRegisteredServiceUsernameAttributeProviderTests {
     @Test
     void verifyNonCompatibleService() throws Throwable {

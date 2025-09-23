@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOpt
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +22,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("OAuthAccessTokenProperties")
 public class OAuthAccessTokenProperties implements Serializable {
 
     @Serial
@@ -46,6 +44,12 @@ public class OAuthAccessTokenProperties implements Serializable {
      * Create access token as JWTs.
      */
     private boolean createAsJwt;
+
+    /**
+     * Whether CAS should include extra CAS attributes as claims in the JWT access token.
+     * This setting is only relevant if the access token is a determined to be a JWT.
+     */
+    private boolean includeClaimsInJwt = true;
 
     /**
      * The storage object name used and created by CAS to hold OAuth access tokens

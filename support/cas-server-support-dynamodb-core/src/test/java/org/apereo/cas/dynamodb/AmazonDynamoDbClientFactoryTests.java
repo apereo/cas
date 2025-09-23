@@ -25,7 +25,7 @@ class AmazonDynamoDbClientFactoryTests {
     }
 
     @Test
-    void verifyClientCreation() throws Throwable {
+    void verifyClientCreation() {
         val factory = new AmazonDynamoDbClientFactory();
         val properties = new AuditDynamoDbProperties();
         properties.setRegion(Region.US_EAST_1.id());
@@ -34,7 +34,7 @@ class AmazonDynamoDbClientFactoryTests {
     }
 
     @Test
-    void verifyDax() throws Throwable {
+    void verifyDax() {
         val factory = new AmazonDynamoDbClientFactory();
         val properties = new AuditDynamoDbProperties();
         properties.setRegion(Region.US_EAST_1.id());

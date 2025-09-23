@@ -12,7 +12,7 @@ This strategy allows one to locate user records via a JSON resource, as such:
 ```json 
 {
   "@class" : "java.util.LinkedHashMap",
-  "casuser" : {
+  "casuser@\w+.com" : {
     "@class": "org.apereo.cas.api.PasswordlessUserAccount",
     "username": "casuser",
     "attributes": {
@@ -22,9 +22,14 @@ This strategy allows one to locate user records via a JSON resource, as such:
     "multifactorAuthenticationEligible": "TRUE",
     "delegatedAuthenticationEligible": "TRUE",
     "allowedDelegatedClients" : [ "java.util.ArrayList", [ "ClientName1" ] ],
-    "requestPassword": false
+    "requestPassword": false,
+    "allowSelectionMenu": false
   }
 }
 ```
+
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>
+Note that the key specified in the above block can be a regular expression pattern.
+</p></div>
 
 {% include_cached casproperties.html properties="cas.authn.passwordless.accounts.json" %}

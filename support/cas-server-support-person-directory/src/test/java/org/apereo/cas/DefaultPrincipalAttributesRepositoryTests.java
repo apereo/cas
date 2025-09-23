@@ -16,8 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Tag("Attributes")
+@Tag("AttributeRepository")
 @Import(CasPersonDirectoryTestConfiguration.class)
 class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -47,7 +47,7 @@ class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
     @Test
     void checkInitialAttributes() throws Throwable {
         val principal = PrincipalFactoryUtils.newPrincipalFactory()
-            .createPrincipal("uid", Collections.singletonMap("mail", List.of("final@example.com")));
+            .createPrincipal("uid", Map.of("mail", List.of("final@example.com")));
         val rep = new DefaultPrincipalAttributesRepository();
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .applicationContext(applicationContext)
@@ -61,7 +61,7 @@ class DefaultPrincipalAttributesRepositoryTests extends BaseCasCoreTests {
     @Test
     void checkAttributesWithRepository() throws Throwable {
         val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("uid",
-            Collections.singletonMap("mail", List.of("final@example.com")));
+            Map.of("mail", List.of("final@example.com")));
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .applicationContext(applicationContext)
             .principal(principal)

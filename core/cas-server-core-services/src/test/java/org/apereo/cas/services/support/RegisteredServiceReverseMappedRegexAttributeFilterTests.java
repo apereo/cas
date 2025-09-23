@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RegisteredService")
 class RegisteredServiceReverseMappedRegexAttributeFilterTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val filter = new RegisteredServiceReverseMappedRegexAttributeFilter();
         filter.setPatterns(Map.of("username", "^cas_user$"));
         val attrs = CollectionUtils.<String, List<Object>>wrap("username", List.of("cas-user"));
@@ -28,7 +28,7 @@ class RegisteredServiceReverseMappedRegexAttributeFilterTests {
     }
 
     @Test
-    void verifyMatch() throws Throwable {
+    void verifyMatch() {
         val filter = new RegisteredServiceReverseMappedRegexAttributeFilter();
         filter.setCompleteMatch(true);
         filter.setPatterns(Map.of("username", "^cas_user$"));

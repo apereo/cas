@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -12,12 +13,16 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -27,14 +32,17 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.report.AttributeDefinitionsEndpoint;
 import org.apereo.cas.web.report.AuditLogEndpoint;
+import org.apereo.cas.web.report.CasConfigurationEndpoint;
 import org.apereo.cas.web.report.CasFeaturesEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasProtocolValidationEndpoint;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasRuntimeModulesEndpoint;
-import org.apereo.cas.web.report.ConfigurationJasyptCipherEndpoint;
+import org.apereo.cas.web.report.MultifactorAuthenticationDevicesEndpoint;
+import org.apereo.cas.web.report.MultitenancyEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpoint;
 import org.apereo.cas.web.report.RegisteredServiceAccessEndpoint;
@@ -47,9 +55,12 @@ import org.apereo.cas.web.report.TicketExpirationPoliciesEndpoint;
 import org.apereo.cas.web.report.TicketRegistryEndpoint;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.val;
+import org.apereo.inspektr.common.spi.AuditActionDateProvider;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.actuate.autoconfigure.info.ConditionalOnEnabledInfoContributor;
+import org.springframework.boot.actuate.autoconfigure.info.InfoContributorFallback;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangesEndpoint;
@@ -79,6 +90,16 @@ public class CasReportsAutoConfiguration {
     @Configuration(value = "AttributesEndpointsConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class AttributesEndpointsConfiguration {
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AttributeDefinitionsEndpoint attributeDefinitionsEndpoint(
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore,
+            final CasConfigurationProperties casProperties) {
+            return new AttributeDefinitionsEndpoint(casProperties, attributeDefinitionStore);
+        }
+        
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -192,12 +213,12 @@ public class CasReportsAutoConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ConfigurationJasyptCipherEndpoint casConfigurationCipherEndpoint(
+        public CasConfigurationEndpoint casConfigurationEndpoint(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("casConfigurationCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_CAS_CONFIGURATION_CIPHER_EXECUTOR)
             final CipherExecutor<String, String> casConfigurationCipherExecutor) {
-            return new ConfigurationJasyptCipherEndpoint(casProperties, applicationContext, casConfigurationCipherExecutor);
+            return new CasConfigurationEndpoint(casProperties, applicationContext, casConfigurationCipherExecutor);
         }
 
 
@@ -230,10 +251,12 @@ public class CasReportsAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casInfoEndpointContributor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnEnabledInfoContributor(value = "cas", fallback = InfoContributorFallback.DISABLE)
         public InfoContributor casInfoEndpointContributor(
+            final CasConfigurationProperties casProperties,
             @Qualifier("casRuntimeModuleLoader")
             final CasRuntimeModuleLoader casRuntimeModuleLoader) {
-            return new CasInfoEndpointContributor(casRuntimeModuleLoader);
+            return new CasInfoEndpointContributor(casProperties, casRuntimeModuleLoader);
         }
     }
 
@@ -245,8 +268,8 @@ public class CasReportsAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RegisteredServicesEndpoint registeredServicesReportEndpoint(
             final ObjectProvider<ConfigurableApplicationContext> applicationContext,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
+            @Qualifier(ServicesManagerConfigurationContext.BEAN_NAME)
+            final ObjectProvider<ServicesManagerConfigurationContext> configurationContext,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ObjectProvider<ServicesManager> servicesManager,
             final CasConfigurationProperties casProperties) {
@@ -256,7 +279,7 @@ public class CasReportsAutoConfiguration {
                 new RegisteredServiceJsonSerializer(applicationContext.getObject()));
             return new RegisteredServicesEndpoint(casProperties,
                 servicesManager,
-                webApplicationServiceFactory,
+                configurationContext,
                 new DirectObjectProvider<>(serializers),
                 applicationContext);
         }
@@ -294,10 +317,14 @@ public class CasReportsAutoConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditLogEndpoint auditLogEndpoint(
+            @Qualifier("defaultAuditActionDateProvider")
+            final ObjectProvider<AuditActionDateProvider> defaultAuditActionDateProvider,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final ObjectProvider<AuditTrailExecutionPlan> auditTrailExecutionPlan,
             final CasConfigurationProperties casProperties) {
-            return new AuditLogEndpoint(auditTrailExecutionPlan, casProperties);
+            return new AuditLogEndpoint(auditTrailExecutionPlan,
+                applicationContext, defaultAuditActionDateProvider, casProperties);
         }
     }
 
@@ -332,14 +359,19 @@ public class CasReportsAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnAvailableEndpoint
         public TicketRegistryEndpoint ticketRegistryEndpoint(
+            @Qualifier(TicketCatalog.BEAN_NAME)
+            final ObjectProvider<TicketCatalog> ticketCatalog,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport,
             @Qualifier(TicketRegistry.BEAN_NAME)
-            final ObjectProvider<TicketRegistry> ticketRegistry) {
+            final ObjectProvider<TicketRegistry> ticketRegistry,
+            @Qualifier(TicketRegistryCleaner.BEAN_NAME)
+            final ObjectProvider<TicketRegistryCleaner> ticketRegistryCleaner) {
             return new TicketRegistryEndpoint(casProperties, applicationContext,
-                ticketRegistry, ticketRegistrySupport);
+                ticketRegistry, ticketRegistryCleaner, ticketRegistrySupport,
+                ticketCatalog);
         }
 
         @Bean
@@ -347,6 +379,35 @@ public class CasReportsAutoConfiguration {
         @ConditionalOnAvailableEndpoint(endpoint = HttpExchangesEndpoint.class)
         public HttpExchangeRepository exchangeRepository() {
             return new InMemoryHttpExchangeRepository();
+        }
+    }
+
+    @Configuration(value = "MultifactorDevicesEndpointsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class MultifactorDevicesEndpointsConfiguration {
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public MultifactorAuthenticationDevicesEndpoint multifactorAuthenticationDevicesEndpoint(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return new MultifactorAuthenticationDevicesEndpoint(casProperties, applicationContext);
+        }
+    }
+
+    @Configuration(value = "MultitenancyEndpointsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Multitenancy)
+    static class MultitenancyEndpointsConfiguration {
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public MultitenancyEndpoint multitenancyEndpoint(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final ObjectProvider<TenantExtractor> tenantExtractor,
+            final CasConfigurationProperties casProperties) {
+            return new MultitenancyEndpoint(casProperties, applicationContext, tenantExtractor);
         }
     }
 }

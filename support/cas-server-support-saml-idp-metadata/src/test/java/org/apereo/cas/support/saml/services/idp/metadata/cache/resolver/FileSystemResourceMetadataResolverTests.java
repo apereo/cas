@@ -21,6 +21,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,13 +42,13 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
 
     @BeforeAll
     public static void setup() throws Exception {
-        METADATA_FILE = File.createTempFile("sp-saml-metadata", ".xml");
+        METADATA_FILE = Files.createTempFile("sp-saml-metadata", ".xml").toFile();
         val content = IOUtils.toString(new ClassPathResource("sample-sp.xml").getInputStream(), StandardCharsets.UTF_8);
         FileUtils.writeStringToFile(METADATA_FILE, content, StandardCharsets.UTF_8);
     }
 
     @BeforeEach
-    public void beforeEach() throws Exception {
+    void beforeEach() throws Exception {
         val properties = new SamlIdPProperties();
         val path = new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath();
         properties.getMetadata().getFileSystem().setLocation(path);
@@ -88,6 +89,17 @@ class FileSystemResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         val resolver = resolvers.iterator().next();
         val criteria = getCriteriaFor(service.getServiceId());
         assertNotNull(resolver.resolve(criteria));
+    }
+
+
+    @Test
+    void verifyResolverWithExpiredMetadataCertificates() throws Throwable {
+        val service = new SamlRegisteredService();
+        service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
+        service.setMetadataLocation(METADATA_FILE.getCanonicalPath());
+        service.setValidateMetadataCertificates(true);
+        val resolvers = metadataResolver.resolve(service);
+        assertTrue(resolvers.isEmpty());
     }
 
     @Test

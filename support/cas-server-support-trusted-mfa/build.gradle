@@ -7,6 +7,8 @@ ext {
     ]
 }
 dependencies {
+    implementation libraries.jose4j
+    
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-cookie")
 
@@ -17,6 +19,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-multitenancy")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":core:cas-server-core-services-api")
@@ -39,9 +42,15 @@ dependencies {
     testImplementation project(":core:cas-server-core-logging")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-scripting")
 
+    testImplementation libraries.springboottomcat
+    
+    testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-validation")
+    testImplementation project(":support:cas-server-support-thymeleaf")
 
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
@@ -50,6 +59,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
 }

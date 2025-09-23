@@ -24,8 +24,10 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -112,14 +114,14 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
                 .auxData(this.auxData)
                 .build();
             val headers = new HashMap<String, String>();
-            headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             if (StringUtils.isNotBlank(token)) {
-                headers.put("Authorization", "Bearer " + SpringExpressionLanguageValueResolver.getInstance().resolve(this.token));
+                headers.put(HttpHeaders.AUTHORIZATION, "Bearer " + SpringExpressionLanguageValueResolver.getInstance().resolve(this.token));
             }
 
             val givenUrl = StringUtils.defaultIfBlank(SpringExpressionLanguageValueResolver.getInstance()
                 .resolve(this.apiUrl), "http://localhost:3592");
-            val url = StringUtils.removeEnd(givenUrl, "/") + "/api/check/resources";
+            val url = Strings.CI.removeEnd(givenUrl, "/") + "/api/check/resources";
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .url(url)
@@ -134,7 +136,7 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
                 LOGGER.trace("Received response from endpoint [{}] as [{}]", url, results);
                 val payload = MAPPER.readValue(results, CerboseResponse.class);
                 if (HttpStatus.resolve(response.getCode()).is2xxSuccessful()
-                    && StringUtils.equals(cerbosRequest.getRequestId(), payload.getRequestId())) {
+                    && Strings.CI.equals(cerbosRequest.getRequestId(), payload.getRequestId())) {
                     return payload.getResults().isEmpty() || payload.getResults().stream().allMatch(result -> actions.stream().allMatch(action -> {
                         val actionResult = result.getActions().get(action);
                         return actionResult != Actions.EFFECT_DENY;
@@ -162,7 +164,7 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
         private final boolean includeMeta = true;
 
         @JsonIgnore
-        public String toJson() {
+        String toJson() {
             return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(this));
         }
     }
@@ -231,10 +233,28 @@ public class CerbosRegisteredServiceAccessStrategy extends BaseRegisteredService
         private Map<String, Object> meta;
     }
 
+    /**
+     * Enum representing the possible authorization effect types returned by Cerbos API.
+     */
     private enum Actions {
+        /**
+         * Indicates that the effect is not specified or unknown.
+         */
         EFFECT_UNSPECIFIED,
+
+        /**
+         * Indicates that the action is allowed.
+         */
         EFFECT_ALLOW,
+
+        /**
+         * Indicates that the action is denied.
+         */
         EFFECT_DENY,
+
+        /**
+         * Indicates that no policy matched the request.
+         */
         EFFECT_NO_MATCH
     }
 }

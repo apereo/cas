@@ -1,16 +1,21 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.TenantAuthenticationHandlerBuilder;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.ArrayList;
@@ -34,26 +39,38 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 @Accessors(chain = true)
 public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEventExecutionPlan {
-    private final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>(0);
+    private final List<TenantAuthenticationHandlerBuilder> tenantAuthenticationHandlerBuilders = new ArrayList<>();
 
-    private final List<AuthenticationPostProcessor> authenticationPostProcessors = new ArrayList<>(0);
+    private final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>();
 
-    private final List<AuthenticationPreProcessor> authenticationPreProcessors = new ArrayList<>(0);
+    private final List<AuthenticationPostProcessor> authenticationPostProcessors = new ArrayList<>();
 
-    private final List<AuthenticationPolicy> authenticationPolicies = new ArrayList<>(0);
+    private final List<AuthenticationPreProcessor> authenticationPreProcessors = new ArrayList<>();
 
-    private final List<AuthenticationHandlerResolver> authenticationHandlerResolvers = new ArrayList<>(0);
+    private final List<AuthenticationPolicy> authenticationPolicies = new ArrayList<>();
 
-    private final List<AuthenticationPolicyResolver> authenticationPolicyResolvers = new ArrayList<>(0);
+    private final List<AuthenticationHandlerResolver> authenticationHandlerResolvers = new ArrayList<>();
+
+    private final List<AuthenticationPolicyResolver> authenticationPolicyResolvers = new ArrayList<>();
 
     private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
 
-    @Setter
-    private AuthenticationHandlerResolver defaultAuthenticationHandlerResolver = new DefaultAuthenticationHandlerResolver();
+    private final AuthenticationHandlerResolver defaultAuthenticationHandlerResolver;
+
+    @Getter
+    private final TenantExtractor tenantExtractor;
 
     @Override
     public boolean registerAuthenticationHandler(final AuthenticationHandler handler) {
         return registerAuthenticationHandlerWithPrincipalResolver(handler, null);
+    }
+
+    @Override
+    public void registerTenantAuthenticationHandlerBuilder(final TenantAuthenticationHandlerBuilder handler) {
+        if (BeanSupplier.isNotProxy(handler)) {
+            LOGGER.trace("Registering tenant authentication builder [{}] into the execution plan", handler);
+            tenantAuthenticationHandlerBuilders.add(handler);
+        }
     }
 
     @Override
@@ -154,13 +171,15 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
-    public @NonNull Set<AuthenticationHandler> getAuthenticationHandlers(final AuthenticationTransaction transaction) throws Throwable {
-        val handlers = getAuthenticationHandlers();
+    @NonNull
+    public Set<AuthenticationHandler> resolveAuthenticationHandlers(final AuthenticationTransaction transaction) throws Throwable {
+        val handlers = resolveAuthenticationHandlers();
         LOGGER.debug("Candidate/Registered authentication handlers for this transaction [{}] are [{}]", transaction, handlers);
         val handlerResolvers = getAuthenticationHandlerResolvers(transaction);
         LOGGER.debug("Authentication handler resolvers for this transaction are [{}]", handlerResolvers);
 
-        val resolvedHandlers = handlerResolvers.stream()
+        val resolvedHandlers = handlerResolvers
+            .stream()
             .filter(BeanSupplier::isNotProxy)
             .filter(Unchecked.predicate(r -> r.supports(handlers, transaction)))
             .map(Unchecked.function(r -> r.resolve(handlers, transaction)))
@@ -174,6 +193,16 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
             }
         }
 
+        val byCredential = new ByCredentialSourceAuthenticationHandlerResolver();
+        if (byCredential.supports(resolvedHandlers, transaction)) {
+            val credentialHandlers = byCredential.resolve(resolvedHandlers, transaction);
+            if (!credentialHandlers.isEmpty()) {
+                LOGGER.debug("Authentication handlers resolved by credential source are [{}]", credentialHandlers);
+                resolvedHandlers.removeIf(handler -> !(handler instanceof MultifactorAuthenticationHandler)
+                    && credentialHandlers.stream().noneMatch(credHandler -> Strings.CI.equals(credHandler.getName(), handler.getName())));
+            }
+        }
+
         if (resolvedHandlers.isEmpty()) {
             throw new AuthenticationException("No authentication handlers could be resolved to support the authentication transaction");
         }
@@ -182,10 +211,49 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
+    public Set<AuthenticationHandler> resolveAuthenticationHandlers() {
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        val handlers = authenticationHandlerPrincipalResolverMap
+            .keySet()
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .filter(handler -> {
+                if (clientInfo != null && StringUtils.isNotBlank(clientInfo.getTenant())) {
+                    val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(clientInfo.getTenant()).orElseThrow();
+                    val authenticationHandlers = tenantDefinition.getAuthenticationPolicy().getAuthenticationHandlers();
+                    return authenticationHandlers == null || authenticationHandlers.isEmpty() || authenticationHandlers.contains(handler.getName());
+                }
+                return true;
+            })
+            .collect(Collectors.toList());
+
+        if (clientInfo != null && StringUtils.isNotBlank(clientInfo.getTenant())) {
+            val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(clientInfo.getTenant()).orElseThrow();
+            if (!tenantDefinition.getProperties().isEmpty()) {
+                getTenantAuthenticationHandlerBuilders()
+                    .stream()
+                    .map(builder -> builder.build(tenantDefinition))
+                    .forEach(handlers::addAll);
+            }
+        }
+
+        AnnotationAwareOrderComparator.sort(handlers);
+        return Set.copyOf(handlers);
+    }
+
+    @Override
     public Set<AuthenticationHandler> getAuthenticationHandlers() {
         val handlers = authenticationHandlerPrincipalResolverMap.keySet().toArray(AuthenticationHandler[]::new);
         AnnotationAwareOrderComparator.sortIfNecessary(handlers);
         return new LinkedHashSet<>(CollectionUtils.wrapList(handlers));
+    }
+
+    
+    @Override
+    public Collection<TenantAuthenticationHandlerBuilder> getTenantAuthenticationHandlerBuilders() {
+        val list = new ArrayList<>(this.tenantAuthenticationHandlerBuilders);
+        AnnotationAwareOrderComparator.sort(list);
+        return list;
     }
 
     @Override

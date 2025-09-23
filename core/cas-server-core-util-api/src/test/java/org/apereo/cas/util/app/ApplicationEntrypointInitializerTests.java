@@ -12,9 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Simple")
-public class ApplicationEntrypointInitializerTests {
+class ApplicationEntrypointInitializerTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         ApplicationEntrypointInitializer.noOp().initialize(ArrayUtils.EMPTY_STRING_ARRAY);
         assertTrue(ApplicationEntrypointInitializer.noOp().getApplicationSources(ArrayUtils.EMPTY_STRING_ARRAY).isEmpty());
     }

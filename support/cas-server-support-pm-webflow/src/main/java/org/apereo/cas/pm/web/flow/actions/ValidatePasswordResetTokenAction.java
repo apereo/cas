@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -41,18 +40,18 @@ public class ValidatePasswordResetTokenAction extends BaseCasWebflowAction {
                 if (StringUtils.isBlank(username)) {
                     throw new IllegalArgumentException("Password reset token could not be verified to determine username");
                 }
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD);
+                return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD);
             }
             val doChange = requestContext.getRequestParameters()
                 .get(PasswordManagementService.PARAMETER_DO_CHANGE_PASSWORD);
             if (StringUtils.isNotBlank(doChange) && BooleanUtils.toBoolean(doChange)) {
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD);
+                return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_RESET_PASSWORD);
             }
 
             return null;
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_INVALID_PASSWORD_RESET_TOKEN);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_INVALID_PASSWORD_RESET_TOKEN);
         }
     }
 }

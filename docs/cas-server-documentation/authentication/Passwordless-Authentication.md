@@ -26,7 +26,9 @@ Similarly, CAS must be configured to manage issued tokens in order to execute fi
 validate, expire or save operations in appropriate data stores.
 
 Qualifying passwordless accounts may also directly be routed to selected [multifactor authentication](Passwordless-Authentication-MFA.html) providers
-or [delegated to external identity providers](Passwordless-Authentication-Delegation.html) for further verification.
+or [delegated to external identity providers](Passwordless-Authentication-Delegation.html) for further verification. Alternatively,
+the passwordless account may be instructed to allow the user to select from 
+a [menu of available authentication options](Passwordless-Authentication-UserSelectionMenu.html).
 
 ## Passwordless Variants
 
@@ -62,6 +64,47 @@ using CAS settings and are activated depending on the presence of configuration 
 | Duo Security | Please [see this guide](Passwordless-Authentication-Storage-DuoSecurity.html). |
       
 Note that Multiple passwordless account stores can be used simultaneously to verify and locate passwordless accounts.
+ 
+### Account Customization
+
+When a passwordless account is located from store, it may be customized and post-processed to modify
+various aspects of the account such as the requirement to activate MFA, password flows, etc. CAS allows
+for a Groovy script that is passed the retrieved passwordless account and script is responsible for adjustments
+and modifications.
+
+```groovy
+import org.apereo.cas.api.*
+
+def run(Object[] args) {
+    def (account,applicationContext,logger) = args
+
+    logger.info("Customizing $account")
+    
+    // Update the account...
+    
+    return account
+}
+```
+
+The following parameters are passed to the script:
+
+| Parameter            | Description                                                                  |
+|----------------------|------------------------------------------------------------------------------|
+| `account`            | The object representing the `PasswordlessUserAccount` that is to be updated. |
+| `applicationContext` | The object representing the Spring application context.                      |
+| `logger`             | The object responsible for issuing log messages such as `logger.info(...)`.  |
+                                                                              
+Alternatively, you may build your own implementation of `PasswordlessUserAccountCustomizer` and register it as a Spring bean.
+
+```java
+@Bean
+public PasswordlessUserAccountCustomizer myCustomizer() {
+    return new MyPasswordlessUserAccountCustomizer();
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn
+more about how to register configurations into the CAS runtime.
 
 ## Token Management
 
@@ -114,3 +157,13 @@ The following passwordless policy settings are supported:
 | Name      | Description                                                                        |
 |-----------|------------------------------------------------------------------------------------|
 | `enabled` | Boolean to define whether passwordless authentication is allowed for this service. |
+
+
+## reCAPTCHA Integration
+
+Passwordless authentication attempts can be protected and integrated
+with [Google reCAPTCHA](https://developers.google.com/recaptcha). This requires
+the presence of reCAPTCHA settings for the basic integration and instructing
+the password management flow to turn on and verify requests via reCAPTCHA.
+
+{% include_cached casproperties.html properties="cas.authn.passwordless.google-recaptcha" %}

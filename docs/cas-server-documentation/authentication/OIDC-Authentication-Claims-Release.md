@@ -124,6 +124,31 @@ and internally defined for the standard `email` scope.
 }
 ```
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+   
+It is also possible to mix scopes and free-form policies together using the following short-hand:
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "^https://.+",
+  "name": "Sample",
+  "id": 1,
+  "scopes" : [ "java.util.HashSet", [ "email", "profile", "openid" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.oidc.claims.OidcScopeFreeAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "system_type", "user_type" ] ]
+  }
+}
+```
+    
+The above application definition is instructed to process claims assigned to standard scopes `email`, `profile` and `openid`,
+and will also release `system_type` and `user_type` as claims regardless of the scopes requested by the relying party.
+
 {% endtab %}
 
 {% tab oidcclaimrelease Claim Filtering %}

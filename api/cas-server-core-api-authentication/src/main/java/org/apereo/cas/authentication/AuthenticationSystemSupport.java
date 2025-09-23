@@ -1,7 +1,10 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.multitenancy.TenantsManager;
 
 import java.util.Collection;
 
@@ -25,6 +28,27 @@ public interface AuthenticationSystemSupport {
      * Default impl bean name.
      */
     String BEAN_NAME = "defaultAuthenticationSystemSupport";
+
+    /**
+     * Gets principal factory.
+     *
+     * @return the principal factory
+     */
+    PrincipalFactory getPrincipalFactory();
+
+    /**
+     * Gets tenant manager.
+     *
+     * @return the tenant manager
+     */
+    TenantsManager getTenantsManager();
+
+    /**
+     * Gets tenant extractor.
+     *
+     * @return the tenant extractor
+     */
+    TenantExtractor getTenantExtractor();
 
     /**
      * Gets authentication transaction manager.

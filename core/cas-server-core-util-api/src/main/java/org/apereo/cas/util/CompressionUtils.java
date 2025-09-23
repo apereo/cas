@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.zip.Deflater;
@@ -75,11 +76,10 @@ public class CompressionUtils {
      */
     public static byte[] deflateToByteArray(final String data) {
         val bais = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
-        val baos = new ByteArrayOutputStream();
         var bytesRead = -1;
         val buf = new byte[BUFFER_LENGTH];
 
-        try (val iis = new DeflaterInputStream(bais)) {
+        try (val iis = new DeflaterInputStream(bais); val baos = new ByteArrayOutputStream()) {
             while ((bytesRead = iis.read(buf)) != -1) {
                 baos.write(buf, 0, bytesRead);
             }
@@ -147,11 +147,10 @@ public class CompressionUtils {
      */
     public static byte[] inflateToByteArray(final byte[] bytes) {
         val bais = new ByteArrayInputStream(bytes);
-        val baos = new ByteArrayOutputStream();
         var bytesRead = -1;
         val buf = new byte[BUFFER_LENGTH];
 
-        try (val iis = new InflaterInputStream(bais)) {
+        try (val iis = new InflaterInputStream(bais); val baos = new ByteArrayOutputStream()) {
             while ((bytesRead = iis.read(buf)) != -1) {
                 baos.write(buf, 0, bytesRead);
             }
@@ -205,8 +204,8 @@ public class CompressionUtils {
                                              final Function<Object, File> converter,
                                              final String prefix) {
         return Unchecked.supplier(() -> {
-            val date = LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm"));
-            val file = File.createTempFile(String.format("%s-%s", prefix, date), ".zip");
+            val date = LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm", Locale.ENGLISH));
+            val file = Files.createTempFile(String.format("%s-%s", prefix, date), ".zip").toFile();
             Files.deleteIfExists(file.toPath());
             val env = new HashMap<String, Object>();
             env.put("create", "true");

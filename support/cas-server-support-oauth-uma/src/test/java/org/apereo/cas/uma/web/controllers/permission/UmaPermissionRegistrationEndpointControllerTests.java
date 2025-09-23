@@ -39,7 +39,7 @@ class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEndpointCo
     }
 
     @Test
-    void verifyFailsAuthn() throws Throwable {
+    void verifyFailsAuthn() {
         val body = createUmaPermissionRegistrationRequest(100).toJson();
         val response = umaPermissionRegistrationEndpointController.handle(body,
             new MockHttpServletRequest(), new MockHttpServletResponse());

@@ -31,7 +31,7 @@ const assert = require("assert");
     payload = await getPayload(page, url1, "client1", "secret1", "profile email");
     assert(payload.id_token === undefined);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function getPayload(page, redirectUri, clientId, clientSecret, scopes = "openid profile email") {

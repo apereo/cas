@@ -12,5 +12,5 @@ const assert = require("assert");
     await cas.click(page, "div.header a");
     await page.waitForResponse((response) => response.status() === 200);
     await cas.sleep(2000);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

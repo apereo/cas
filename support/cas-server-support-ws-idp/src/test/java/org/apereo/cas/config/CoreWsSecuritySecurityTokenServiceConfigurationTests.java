@@ -38,12 +38,12 @@ class CoreWsSecuritySecurityTokenServiceConfigurationTests extends BaseCoreWsSec
     private CasWebSecurityConfigurer<Void> wsFederationProtocolEndpointConfigurer;
 
     @Test
-    void verifyEndpoints() throws Throwable {
+    void verifyEndpoints() {
         assertFalse(wsFederationProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(cxfServlet);
         assertNotNull(transportSTSProviderBean);
         assertNotNull(casRealm);

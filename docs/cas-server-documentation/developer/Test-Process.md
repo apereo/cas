@@ -133,11 +133,13 @@ All functional and browser test scenarios are executed by the [continuous integr
 To install Puppeteer once:
 
 ```bash
-npm i -g puppeteer
+cd ./ci/tests/puppeteer
+npm install
 ```
 
 <div class="alert alert-info">:information_source: <strong>Usage</strong><p>
-The above step is not strictly necessary. CAS will automatically attempt to install Puppeteer when necessary when you run test scenarios.</p></div>
+The above step is not strictly necessary. CAS will automatically attempt to install 
+Puppeteer when necessary when you run test scenarios. See the parameger list below for details. </p></div>
 
 To help simplify the testing process, you may use the following bash function in your `~/.profile`:
 
@@ -191,7 +193,7 @@ The following command-line options are supported for test execution:
 | `--native`, `--graalvm`, `--nb`           | Build the test scenario and produce a native-image as the final build artifact.          |
 | `--nr`, `--native-run`                    | Run the test scenario as a native-image. Requires a native build via `--nb`.             |
 | `--nbr`                                   | A combination of `--nb` and `--nr` flags.                                                |
-| `--no-lint`, `--nol`                      | Disable the linter that validates scenario scripts.                                      |
+| `--nl`, `--no-lint`, `--nol`              | Disable the linter that validates scenario scripts.                                      |
 | `--hol`                                   | A combination of `--headless` and `--offline` flags with linter disabled.                |
 
 For example, the `login-success` test scenario with a remote debugger may be run using: 
@@ -242,19 +244,28 @@ A basic modest outline of the test configuration may be:
   "environmentVariables": [
     "NAME=VALUE"
   ],
+  "systemProperties": [
+    "NAME=VALUE"
+  ],
   "requirements": {
     "graalvm": {
       "build": false
     },
     "docker": {
       "build": false
+    },
+    "node": {
+      "args": "" 
     }
   },
   "properties": [
     "--cas.server.something=something"
   ],
+  "healthcheck": {
+    "urls": ["https://localhost:8443/cas/actuator/health"]
+  },
   "jvmArgs": "...",
-  "server": "tomcat|jetty|undertow|...",
+  "server": "tomcat|jetty|undertow|external|starter...",
   "SPRING_APPLICATION_JSON": {},
   "bootstrapScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/bootstrap.sh",
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
@@ -266,7 +277,13 @@ A basic modest outline of the test configuration may be:
   },
   "instance2": {
     "properties": [ ]
-  }
+  },
+  "variations": [
+    {
+      "properties": [
+      ]
+    }
+  ]
 }
 ```
   

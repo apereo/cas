@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>Account Profile</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<span th:fragment="overview">
+        <div id="divOverview" class="profile-content p-1" style="display: none;">
+            <h2>
+                <i class="mdi mdi-human-greeting-variant fas fa-door-open" aria-hidden="true"></i>
+                <span>Hello,
+                    <span th:if="${authentication.principal.attributes['displayName'] != null}"
+                          th:text="${authentication.principal.attributes['displayName'][0]}" />
+                    <span th:if="${authentication.principal.attributes['displayName'] == null}"
+                          th:text="${authentication.principal.id}"></span>!
+                </span>
+            </h2>
+            <p th:utext="#{screen.account.success(${authentication.principal.id})}">You,
+                <strong>username</strong>, have successfully logged into the Central Authentication Service.</p>
+            <p th:utext="#{screen.account.security}">
+                When you are finished, for security reasons, please <a href="logout">log out</a> and exit your web browser.
+            </p>
+
+            <div id="infoMessages" class="banner banner-success banner-dismissible my-2" th:if="${flowRequestContext.messageContext.allMessages.length > 0}">
+                <button type="button" class="close" onclick="$(this).parent().hide();" th:aria-label="#{screen.pm.button.close}"><span class="mdi mdi-close-box" aria-hidden="true"></span></button>
+                <span th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="${message.text}">Message Text</span>
+                <script>autoHideElement("infoMessages");</script>
+            </div>
+        </div>
+
+    </span>
+</body>
+
+</html>

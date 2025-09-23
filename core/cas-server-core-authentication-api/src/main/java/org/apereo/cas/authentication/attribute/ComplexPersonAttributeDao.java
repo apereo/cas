@@ -69,7 +69,7 @@ public class ComplexPersonAttributeDao extends AbstractQueryPersonAttributeDao<S
             : getUsernameAttributeProvider().getUsernameAttribute();
 
         if (keyAttributeName.equals(dataAttribute)) {
-            return String.valueOf(queryValues.get(0));
+            return String.valueOf(queryValues.getFirst());
         }
 
         return null;

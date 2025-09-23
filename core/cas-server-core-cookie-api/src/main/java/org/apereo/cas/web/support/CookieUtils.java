@@ -10,11 +10,13 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
-
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.http.ResponseCookie;
+import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -24,6 +26,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * @since 5.1.0
  */
 @UtilityClass
+@Slf4j
 public class CookieUtils {
 
     /**
@@ -47,28 +50,8 @@ public class CookieUtils {
      * @return the cookie retrieving cookie generator
      */
     public static CookieRetrievingCookieGenerator buildCookieRetrievingGenerator(final CookieValueManager cookieValueManager,
-                                                                                  final CookieGenerationContext context) {
+                                                                                 final CookieGenerationContext context) {
         return new CookieRetrievingCookieGenerator(context, cookieValueManager);
-    }
-
-    /**
-     * Build cookie retrieving generator cookie.
-     *
-     * @param context the context
-     * @return the cookie retrieving cookie generator
-     */
-    public static CookieRetrievingCookieGenerator buildCookieRetrievingGenerator(final CookieGenerationContext context) {
-        return buildCookieRetrievingGenerator(CookieValueManager.noOp(), context);
-    }
-
-    /**
-     * Build cookie retrieving generator.
-     *
-     * @param cookie the cookie
-     * @return the cookie retrieving cookie generator
-     */
-    public static CasCookieBuilder buildCookieRetrievingGenerator(final CookieProperties cookie) {
-        return buildCookieRetrievingGenerator(cookie, CookieValueManager.noOp());
     }
 
     /**
@@ -109,21 +92,106 @@ public class CookieUtils {
      * @return the cookie generation context
      */
     public static CookieGenerationContext buildCookieGenerationContext(final TicketGrantingCookieProperties cookie) {
-        val rememberMeMaxAge = (int) Beans.newDuration(cookie.getRememberMeMaxAge()).getSeconds();
+        val rememberMeMaxAge = getCookieMaxAge(cookie.getRememberMeMaxAge());
         val builder = buildCookieGenerationContextBuilder(cookie);
         return builder.rememberMeMaxAge(rememberMeMaxAge).build();
     }
 
+    /**
+     * Gets cookie max age.
+     *
+     * @param maxAge the max age
+     * @return the cookie max age
+     */
+    public static int getCookieMaxAge(final String maxAge) {
+        if (NumberUtils.isCreatable(maxAge)) {
+            return Integer.parseInt(maxAge);
+        }
+        return (int) Beans.newDuration(maxAge).toSeconds();
+    }
+
     private static CookieGenerationContext.CookieGenerationContextBuilder buildCookieGenerationContextBuilder(
         final CookieProperties cookie) {
-        
+
         return CookieGenerationContext.builder()
             .name(cookie.getName())
             .path(cookie.getPath())
-            .maxAge(cookie.getMaxAge())
+            .maxAge(getCookieMaxAge(cookie.getMaxAge()))
             .secure(cookie.isSecure())
             .domain(cookie.getDomain())
             .sameSitePolicy(cookie.getSameSitePolicy())
             .httpOnly(cookie.isHttpOnly());
+    }
+
+    /**
+     * Configure cookie path.
+     *
+     * @param request       the request
+     * @param cookieBuilder the cookie builder
+     */
+    public static void configureCookiePath(final HttpServletRequest request, final CasCookieBuilder cookieBuilder) {
+        val contextPath = request.getContextPath();
+        val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
+
+        val path = cookieBuilder.getCookiePath();
+        if (StringUtils.isBlank(path)) {
+            LOGGER.debug("Setting cookie path for cookie [{}] to: [{}]", cookieBuilder.getCookieName(), cookiePath);
+            cookieBuilder.setCookiePath(cookiePath);
+        } else {
+            LOGGER.trace("Cookie domain is [{}] with path [{}] for cookie [{}]",
+                cookieBuilder.getCookieDomain(), path, cookieBuilder.getCookieName());
+        }
+    }
+
+    /**
+     * Configure cookie path.
+     *
+     * @param context       the context
+     * @param cookieBuilder the cookie builder
+     */
+    public static void configureCookiePath(final RequestContext context, final CasCookieBuilder cookieBuilder) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        configureCookiePath(request, cookieBuilder);
+    }
+
+    /**
+     * Create set cookie header string.
+     *
+     * @param cookieValue      the cookie value
+     * @param cookieProperties the cookie properties
+     * @return the cookie header string
+     */
+    public static String createSetCookieHeader(final String cookieValue,
+                                               final CookieProperties cookieProperties) {
+        return ResponseCookie.from(cookieProperties.getName(), StringUtils.trimToNull(cookieValue))
+            .domain(StringUtils.trimToNull(cookieProperties.getDomain()))
+            .httpOnly(cookieProperties.isHttpOnly())
+            .maxAge(CookieUtils.getCookieMaxAge(cookieProperties.getMaxAge()))
+            .path(cookieProperties.getPath())
+            .secure(cookieProperties.isSecure())
+            .sameSite(cookieProperties.getSameSitePolicy())
+            .build()
+            .toString();
+    }
+
+    /**
+     * Create set cookie header string.
+     *
+     * @param cookieValue             the cookie value
+     * @param cookieGenerationContext the cookie generation context
+     * @return the string
+     */
+    public static String createSetCookieHeader(
+        final String cookieValue,
+        final CookieGenerationContext cookieGenerationContext) {
+        return ResponseCookie.from(cookieGenerationContext.getName(), StringUtils.trimToNull(cookieValue))
+            .domain(StringUtils.trimToNull(cookieGenerationContext.getDomain()))
+            .httpOnly(cookieGenerationContext.isHttpOnly())
+            .maxAge(cookieGenerationContext.getMaxAge())
+            .path(cookieGenerationContext.getPath())
+            .secure(cookieGenerationContext.isSecure())
+            .sameSite(cookieGenerationContext.getSameSitePolicy())
+            .build()
+            .toString();
     }
 }

@@ -45,3 +45,18 @@ provided by Apache Syncope are collected by CAS:
 | `syncopeUserAttrs`            |
 
 Note that attributes are only collected if they contain a value.
+
+## Multitenancy
+
+Configuration settings for database authentication can be specified in a multitenant environment.
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.
+
+## Passwordless Authentication
+
+The integration with Apache Syncope can also act as an account store
+for [Passwordless Authentication](../authentication/Passwordless-Authentication-Storage-Syncope.html).
+
+## Password Management
+
+The integration with Apache Syncope can also support 
+[password management operations](../password_management/Password-Management-ApacheSyncope.html).

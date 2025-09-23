@@ -1,16 +1,15 @@
 package org.apereo.cas.qr.authentication;
 
 import org.apereo.cas.qr.BaseQRAuthenticationTokenValidatorServiceTests;
-
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.FileSystemResource;
-
 import java.nio.file.Files;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("FileSystem")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class JsonResourceQRAuthenticationDeviceRepositoryTests {
     @Test
     void verifyOperation() throws Throwable {

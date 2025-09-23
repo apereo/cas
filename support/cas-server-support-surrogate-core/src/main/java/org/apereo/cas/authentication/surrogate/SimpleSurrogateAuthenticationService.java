@@ -2,14 +2,18 @@ package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,9 +29,13 @@ import java.util.Optional;
 public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthenticationService {
     private final Map<String, List> eligibleAccounts;
 
-    public SimpleSurrogateAuthenticationService(final Map<String, List> eligibleAccounts, final ServicesManager servicesManager) {
-        super(servicesManager);
-        this.eligibleAccounts = eligibleAccounts;
+    public SimpleSurrogateAuthenticationService(final Map<String, List> eligibleAccounts,
+                                                final ServicesManager servicesManager,
+                                                final CasConfigurationProperties casProperties,
+                                                final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
+                                                final ConfigurableApplicationContext applicationContext) {
+        super(servicesManager, casProperties, principalAccessStrategyEnforcer, applicationContext);
+        this.eligibleAccounts = new HashMap<>(eligibleAccounts);
     }
 
     @Override
@@ -46,6 +54,6 @@ public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthentic
         if (this.eligibleAccounts.containsKey(username)) {
             return this.eligibleAccounts.get(username);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

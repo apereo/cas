@@ -24,7 +24,7 @@ The following endpoints are provided by CAS:
 
 ## Default
 
-{% assign providers = "DropBox,Facebook,FourSquare,Google,HiOrgServer,PayPal,Twitter,WindowsLive,Wordpress,Yahoo,CAS,LinkedIn,GitHub,OAuth20,Google-OpenID-Connect,SAML,Keycloak,Azure-AD,Apple,Generic-OpenID-Connect" | split: "," | sort %}
+{% assign providers = "DropBox,Facebook,FourSquare,Google,HiOrgServer,PayPal,Twitter,WindowsLive,Wordpress,Yahoo,CAS,LinkedIn,GitHub,OAuth20,Google-OpenID-Connect,SAML2,Keycloak,Azure-AD,Apple,Generic-OpenID-Connect,Custom" | split: "," | sort %}
 
 Identity providers for delegated authentication can be registered with CAS using settings. 
 
@@ -41,6 +41,41 @@ Identity providers for delegated authentication can be registered with CAS using
     {% endfor %}
   </tbody>
 </table>
+
+## JDBC
+
+Identity providers for delegated authentication can be provided to CAS using a SQL database. To active this feature, you need to start by
+including the following module in the overlay:
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-util" %}
+
+{% include_cached casproperties.html properties="cas.authn.pac4j.jdbc" %}
+
+{% include_cached featuretoggles.html features="DelegatedAuthentication.jdbc" %}
+
+The identity provider configuration is expected to be found in the following database table:
+
+```sql
+CREATE TABLE JdbcIdentityProviderEntity (
+    id INTEGER IDENTITY PRIMARY KEY,
+    type VARCHAR(250),
+    index INTEGER,
+    name VARCHAR(250),
+    value VARCHAR(250)
+);
+```
+
+For example, the following SQL script indicates the required configuration for an external CAS identity provider:
+
+```sql
+INSERT INTO JdbcIdentityProviderEntity (type, index, name, value) 
+    VALUES ('cas', 0, 'login-url', 'https://cas.example.org');
+INSERT INTO JdbcIdentityProviderEntity (type, index, name, value) 
+    VALUES ('cas', 0, 'protocol', 'CAS30');
+```
+  
+You'll note that the value in the `name` column is appended to the configuration prefix `cas.authn.pac4j`. The 
+following types are supported: `cas` ,`oidc`, `saml`, `oauth`.
 
 ## REST
 

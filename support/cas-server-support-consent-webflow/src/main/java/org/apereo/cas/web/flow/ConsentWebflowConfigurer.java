@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
-
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -24,10 +23,10 @@ public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private static final String ACTION_GEN_SERVICE_TICKET_AFTER_CONSENT = "generateServiceTicketAfterConsent";
 
     public ConsentWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                    final FlowDefinitionRegistry flowDefinitionRegistry,
                                     final ConfigurableApplicationContext applicationContext,
                                     final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         setOrder(casProperties.getConsent().getCore().getWebflow().getOrder());
     }
 

@@ -4,7 +4,6 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20ClientIdAwareProfileManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.HashMap;
@@ -32,11 +32,11 @@ class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
     protected OAuthRegisteredService registeredService;
 
     @BeforeEach
-    public void init() {
+    void init() {
         this.registeredService = addRegisteredService();
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        request.addHeader(HttpHeaders.USER_AGENT, "MSIE");
 
         val response = new MockHttpServletResponse();
         context = new JEEContext(request, response);
@@ -45,7 +45,7 @@ class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyGetProfiles() throws Throwable {
+    void verifyGetProfiles() {
         val profile = new CommonProfile();
         profile.setId(ID);
         profile.setClientName(registeredService.getClientId());
@@ -56,7 +56,7 @@ class OAuth20ClientIdAwareProfileManagerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyGetProfilesWithoutSavedClientId() throws Throwable {
+    void verifyGetProfilesWithoutSavedClientId() {
         val profile = new CommonProfile();
         profile.setId(ID);
         profile.setClientName(registeredService.getClientId());

@@ -49,6 +49,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-scim-core")
     testImplementation project(":support:cas-server-support-scim")
 
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-services")
@@ -60,6 +61,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-notifications")
     
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")

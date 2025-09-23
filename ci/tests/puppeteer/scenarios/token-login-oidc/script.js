@@ -59,5 +59,5 @@ const assert = require("assert");
     assert(body.registeredService !== undefined);
     assert(body.principal !== undefined);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

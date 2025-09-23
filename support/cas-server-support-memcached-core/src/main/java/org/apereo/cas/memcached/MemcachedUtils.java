@@ -28,17 +28,17 @@ import java.util.Collection;
 public class MemcachedUtils {
 
     /**
-     * New transcoder transcoder.
+     * New transcoder.
      *
      * @param memcachedProperties the memcached properties
      * @return the transcoder
      */
     public static Transcoder newTranscoder(final BaseMemcachedProperties memcachedProperties) {
-        return newTranscoder(memcachedProperties, new ArrayList<>(0));
+        return newTranscoder(memcachedProperties, new ArrayList<>());
     }
 
     /**
-     * New transcoder transcoder.
+     * New transcoder.
      *
      * @param memcachedProperties     the memcached properties
      * @param kryoSerializableClasses the kryo serializable classes

@@ -1,5 +1,6 @@
 import java.util.regex.Pattern
-import com.gradle.enterprise.gradleplugin.testselection.*
+import com.gradle.develocity.agent.gradle.test.*
+import com.gradle.develocity.agent.gradle.internal.test.*
 
 enum TestCategories {
     ActiveDirectory(false, true),
@@ -7,12 +8,15 @@ enum TestCategories {
     AmazonWebServices(true, true),
     AMQP(false, true),
     Attributes(true, true),
+    AttributeRelease(true, true),
+    AttributeRepository(true, true),
     Audits(true, true),
     Authentication(true, true),
     AuthenticationHandler(true, true),
     AuthenticationPolicy(true, true),
     AuthenticationMetadata(true, true),
     AuthenticationThrottling(false, true),
+    Authorization(true, true),
     Azure(false, true),
     CAS(true, true),
     CasConfiguration(true, true),
@@ -67,7 +71,11 @@ enum TestCategories {
     OAuth(true, true),
     OAuthToken(true, true),
     OAuthWeb(false, true),
-    OIDC(false, true),
+    OIDC(true, true),
+    OIDCWeb(true, true),
+    OIDCAttributes(true, true),
+    OIDCAuthentication(true, true),
+    OIDCServices(true, true),
     Oracle(false, true),
     PasswordOps(true, true),
     Postgres(false, true),
@@ -109,8 +117,8 @@ enum TestCategories {
     X509(true, true),
     ZooKeeper(true, true)
 
-    boolean parallelEnabled;
-    private ptsEnabled;
+    boolean parallelEnabled
+    private ptsEnabled
     
     TestCategories() {
         parallelEnabled = false
@@ -131,12 +139,12 @@ if (rootProject.tasks.findByName("testCategories") == null) {
     rootProject.tasks.register("testCategories") {
         description = "Display all available test categories"
         doLast {
-            def pattern = System.getenv().get("CATEGORY_REGEX") ?: ".*"
+            def pattern = System.getenv()["CATEGORY_REGEX"] ?: ".*"
             def categoryMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
             def result = TestCategories.values()
                     .findAll { it.name().find(categoryMatchPattern) }
                     .toSorted({ o1, o2 ->
-                        o1.name().compareTo(o2.name())
+                        (o1.name() <=> o2.name())
                     })
                     .collect { it.name().toLowerCase(Locale.ENGLISH) }
             println(groovy.json.JsonOutput.toJson(result))
@@ -154,7 +162,7 @@ if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
 
         doLast {
             def scenarios = []
-            def pattern = System.getenv().get("SCENARIO_REGEX") ?: ".*"
+            def pattern = System.getenv()["SCENARIO_REGEX"] ?: ".*"
             def scenarioMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
 
             scenariosDirectory.eachDirMatch(scenarioMatchPattern) {
@@ -184,7 +192,8 @@ TestCategories.values().each({ testCategory ->
             tasks.register(taskName, Test) {
                 description = "Run unit/integration tests to verify the test category: ${testCategory.name()}"
                 group = "CAS Tests"
-
+                testClassesDirs = sourceSets.test.output.classesDirs
+                classpath = sourceSets.test.runtimeClasspath
                 enabled = shouldWeTest
                 outputs.file(jacocoTestExecutionResultsFile)
 
@@ -192,14 +201,17 @@ TestCategories.values().each({ testCategory ->
                     includeTags testCategory.name()
                 }
 
-                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getenv("PTS_ENABLED") ?: "true") && !rootProject.publishReleases
-                predictiveSelection {
+                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getProperty("PTS_ENABLED") ?: "true") && !rootProject.publishReleases
+                develocity.predictiveTestSelection {
                     enabled = ptsEnabled
-                    mode = PredictiveTestSelectionMode.valueOf(System.getenv("PTS_MODE") ?: "RELEVANT_TESTS")
-                    profile = PredictiveTestSelectionProfile.valueOf(System.getenv("PTS_PROFILE") ?: "FAST")
+                    // Enable PTS with code coverage support
+                    this as PredictiveTestSelectionConfigurationInternal
+                    mergeCodeCoverage = true
                 }
                 logger.info "Predictive test selection for ${project.name} with task ${taskName} is ${ptsEnabled ? 'enabled' : 'disabled'}."
 
+                systemProperty("junit.platform.discovery.issue.severity.critical", "info")
+                
                 if (testCategory.parallelEnabled) {
                     systemProperty("junit.jupiter.execution.parallel.enabled", true)
                     systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
@@ -216,7 +228,7 @@ TestCategories.values().each({ testCategory ->
                         classDumpDir = layout.buildDirectory.dir('jacoco/classpathdumps').get().asFile
                     }
                 }
-
+                jvmArgs += "-javaagent:${configurations.jvmAgents.asPath}"
             }
         }
     }
@@ -234,8 +246,6 @@ tasks.withType(Test).configureEach {
     ignoreFailures = providers.systemProperty("ignoreTestFailures").present
     forkEvery = 2000
     maxParallelForks = 8
-    
-    systemProperty("spring.main.banner-mode", "off")
     
     failFast = true
 
@@ -267,6 +277,10 @@ tasks.withType(Test).configureEach {
     list.add("--add-opens")
     list.add("java.base/java.time=ALL-UNNAMED")
     list.add("--add-opens")
+    list.add("java.base/java.util.concurrent=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.util.concurrent.locks=ALL-UNNAMED")
+    list.add("--add-opens")
     list.add("java.base/java.net=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("java.base/java.nio=ALL-UNNAMED")
@@ -280,25 +294,27 @@ tasks.withType(Test).configureEach {
     list.add("java.base/sun.security.action=jdk.crypto.ec")
 
     list.add("-Xms512m")
-    list.add("-Xmx4g")
+    list.add("-Xmx6g")
 
     list.add("-XX:+EnableDynamicAgentLoading")
     jvmArgs = list
 
     testLogging {
-        events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
+        def testLoggingEvents = providers.systemProperty("testLoggingEvents")
+                .orElse("PASSED,SKIPPED,FAILED,STANDARD_OUT,STANDARD_ERROR").get().toUpperCase().split(",")
+        events testLoggingEvents
         exceptionFormat = "full"
 
         def verbose = providers.systemProperty("verbose").present
 
-        showStandardStreams = verbose
-        showExceptions = verbose
+        showStandardStreams = verbose && testLoggingEvents.contains("STANDARD_OUT")
+        showExceptions = verbose && testLoggingEvents.contains("FAILED")
         showCauses = verbose
     }
     
     def skipRetry = providers.systemProperty('skipTestRetry').present
     if (!skipRetry) {
-        retry {
+        develocity.testRetry {
             maxRetries = 3
             maxFailures = 5
             failOnPassedAfterRetry = false

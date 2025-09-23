@@ -277,12 +277,7 @@ public interface OAuth20Constants {
      * The callback authorize url.
      */
     String CALLBACK_AUTHORIZE_URL = "callbackAuthorize";
-
-    /**
-     * The callback authorize url definition.
-     */
-    String CALLBACK_AUTHORIZE_URL_DEFINITION = "callbackAuthorize.*";
-
+    
     /**
      * The access token url.
      */
@@ -449,6 +444,10 @@ public interface OAuth20Constants {
      * The sub claim.
      */
     String CLAIM_SUB = "sub";
+    /**
+     * The exp claim.
+     */
+    String CLAIM_EXP = "exp";
 
     /**
      * actor_token_type parameter.
@@ -464,4 +463,9 @@ public interface OAuth20Constants {
      * X509 certificate hash used and collected during TLS authentication.
      */
     String X509_CERTIFICATE_DIGEST = "x509_digest";
+
+    /**
+     * Stateless property.
+     */
+    String CAS_OAUTH_STATELESS_PROPERTY = "org.apereo.cas.oauth.property.stateless";
 }

@@ -14,7 +14,7 @@ MongoDb ticket registry integration is enabled by including the following depend
 
 This registry stores tickets in one or more [MongoDb](https://www.mongodb.com/) instances.
 Tickets are auto-converted and wrapped into document objects as JSON. Special indices are
-created to let MongoDb handle the expiration of each document and cleanup tasks. Note that CAS generally tries to  create the relevant collections automatically to manage different ticket types. 
+created to let MongoDb handle the expiration of each document and cleanup tasks. Note that CAS generally tries to create the relevant collections automatically to manage different ticket types. 
 
 ## Configuration
 

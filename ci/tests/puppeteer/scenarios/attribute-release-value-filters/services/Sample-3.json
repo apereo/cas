@@ -1,6 +1,6 @@
 {
   "@class": "org.apereo.cas.services.CasRegisteredService",
-  "serviceId": "https://localhost:9859/anything/3",
+  "serviceId": "^https://localhost:9859/anything/3",
   "name": "Sample",
   "id": 3,
   "attributeReleasePolicy": {

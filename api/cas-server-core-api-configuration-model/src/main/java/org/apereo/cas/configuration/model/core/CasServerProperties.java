@@ -1,15 +1,15 @@
 package org.apereo.cas.configuration.model.core;
 
+import org.apereo.cas.configuration.model.core.web.jetty.CasEmbeddedJettyProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serial;
 import java.io.Serializable;
@@ -24,7 +24,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("CasServerProperties")
 public class CasServerProperties implements Serializable {
 
     @Serial
@@ -59,8 +58,14 @@ public class CasServerProperties implements Serializable {
     @NestedConfigurationProperty
     private CasEmbeddedApacheTomcatProperties tomcat = new CasEmbeddedApacheTomcatProperties();
 
+    /**
+     * Configuration settings that control the embedded Jetty container.
+     */
+    @NestedConfigurationProperty
+    private CasEmbeddedJettyProperties jetty = new CasEmbeddedJettyProperties();
+
     public CasServerProperties() {
-        setPrefix(StringUtils.appendIfMissing(getName(), "/").concat("cas"));
+        setPrefix(Strings.CI.appendIfMissing(getName(), "/").concat("cas"));
     }
 
     @JsonIgnore

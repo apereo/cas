@@ -45,9 +45,9 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
+        registeredService.assignIdIfNecessary();
         invokeServiceRegistryListenerPreSave(registeredService);
         if (registeredService.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
-            registeredService.setId(System.currentTimeMillis());
             insert(registeredService);
         } else {
             update(registeredService);

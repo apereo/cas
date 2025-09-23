@@ -9,11 +9,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.config.client.PropertiesConstants;
+import org.pac4j.core.client.IndirectClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -33,29 +35,29 @@ class RestfulDelegatedIdentityProviderFactoryTests {
 
     private static Map<String, String> getProperties() {
         return Map.of(
-            PropertiesConstants.SAML_IDENTITY_PROVIDER_METADATA_PATH, "file:/path/to/idp.xml",
-            PropertiesConstants.SAML_KEYSTORE_PATH, "file:/path/to/keystore.jks",
-            PropertiesConstants.SAML_KEYSTORE_PASSWORD, "p@$$w0rd",
-            PropertiesConstants.SAML_PRIVATE_KEY_PASSWORD, "p@$$w0rd",
-            PropertiesConstants.SAML_SERVICE_PROVIDER_ENTITY_ID, "example-entity-id",
-            PropertiesConstants.SAML_SERVICE_PROVIDER_METADATA_PATH, "file:/path/to/sp.xml",
-
             PropertiesConstants.CAS_PROTOCOL + ".1", "CAS20",
             PropertiesConstants.CAS_LOGIN_URL + ".1", "https://example.com/cas/login",
+            PropertiesConstants.CAS_PROTOCOL + ".2", "CAS30",
+            PropertiesConstants.CAS_LOGIN_URL + ".2", "https://example.com/cas/login");
+    }
 
-            PropertiesConstants.GITHUB_ID, "id",
-            PropertiesConstants.GITHUB_SECRET, "secret");
+    @TestPropertySource(properties = "cas.custom.properties.delegation-test.enabled=false")
+    abstract static class BaseTests extends BaseDelegatedClientFactoryTests {
+        @Autowired
+        protected CasConfigurationProperties casProperties;
     }
 
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.pac4j.core.lazy-init=false",
-        "cas.authn.pac4j.rest.url=http://localhost:9212"
+        "cas.authn.pac4j.rest.url=http://localhost:${random.int[3000,9000]}"
     })
-    class InvalidStatusCodeTests extends BaseDelegatedClientFactoryTests {
+    class InvalidStatusCodeTests extends BaseTests {
         @Test
-        void verifyBadStatusCode() throws Throwable {
-            try (val webServer = new MockWebServer(9212, HttpStatus.EXPECTATION_FAILED)) {
+        void verifyBadStatusCode() {
+            val props = casProperties.getAuthn().getPac4j().getRest();
+            val port = URI.create(props.getUrl()).getPort();
+            try (val webServer = new MockWebServer(port, HttpStatus.EXPECTATION_FAILED)) {
                 webServer.start();
                 val clientsFound = delegatedIdentityProviderFactory.build();
                 assertNotNull(clientsFound);
@@ -67,9 +69,9 @@ class RestfulDelegatedIdentityProviderFactoryTests {
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.pac4j.core.lazy-init=true",
-        "cas.authn.pac4j.rest.url=http://localhost:9212"
+        "cas.authn.pac4j.rest.url=http://localhost:${random.int[3000,9000]}"
     })
-    class DefaultTests extends BaseDelegatedClientFactoryTests {
+    class DefaultTests extends BaseTests {
         @Test
         void verifyAction() throws Throwable {
             val clients = new HashMap<String, Object>();
@@ -77,20 +79,22 @@ class RestfulDelegatedIdentityProviderFactoryTests {
             clients.put("properties", getProperties());
 
             val entity = MAPPER.writeValueAsString(clients);
-            try (val webServer = new MockWebServer(9212,
+            val props = casProperties.getAuthn().getPac4j().getRest();
+            val port = URI.create(props.getUrl()).getPort();
+            try (val webServer = new MockWebServer(port,
                 new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
                 webServer.start();
 
                 var clientsFound = delegatedIdentityProviderFactory.build();
                 assertNotNull(clientsFound);
-                assertEquals(3, clientsFound.size());
+                assertEquals(2, clientsFound.size());
 
                 /*
                  * Try the cache once the list is retrieved...
                  */
                 clientsFound = delegatedIdentityProviderFactory.build();
                 assertNotNull(clientsFound);
-                assertEquals(3, clientsFound.size());
+                assertEquals(2, clientsFound.size());
             }
         }
     }
@@ -100,38 +104,35 @@ class RestfulDelegatedIdentityProviderFactoryTests {
         "cas.server.name=https://sso.example.org",
         "cas.server.prefix=${cas.server.name}/cas",
         "cas.authn.pac4j.core.lazy-init=false",
-        "cas.authn.pac4j.rest.url=http://localhost:9212",
+        "cas.authn.pac4j.rest.url=http://localhost:${random.int[3000,9000]}",
         "cas.authn.pac4j.rest.type=cas"
     })
-    class CasPropertiesTests extends BaseDelegatedClientFactoryTests {
-        @Autowired
-        private CasConfigurationProperties casProperties;
+    class CasPropertiesTests extends BaseTests {
 
         @Test
         void verifyAction() throws Throwable {
             val clients = new HashMap<String, Object>();
-            clients.put("cas.authn.pac4j.github.client-name", "name");
-            clients.put("cas.authn.pac4j.github.id", "id");
-            clients.put("cas.authn.pac4j.github.secret", "qazxsedc");
             clients.put("cas.authn.pac4j.cas[0].login-url", "https://localhost:8444/cas/login");
             clients.put("cas.authn.pac4j.cas[0].protocol", "CAS30");
 
             val entity = MAPPER.writeValueAsString(clients);
-            try (val webServer = new MockWebServer(9212,
+            val props = casProperties.getAuthn().getPac4j().getRest();
+            val port = URI.create(props.getUrl()).getPort();
+            try (val webServer = new MockWebServer(port,
                 new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
                 webServer.start();
 
                 var clientsFound = List.copyOf(delegatedIdentityProviderFactory.build());
                 assertNotNull(clientsFound);
-                assertEquals(2, clientsFound.size());
-                assertEquals(casProperties.getServer().getLoginUrl(), clientsFound.getFirst().getCallbackUrl());
+                assertEquals(1, clientsFound.size());
+                assertEquals(casProperties.getServer().getLoginUrl(), ((IndirectClient) clientsFound.getFirst()).getCallbackUrl());
 
                 /*
                  * Try the cache once the list is retrieved...
                  */
                 clientsFound = List.copyOf(delegatedIdentityProviderFactory.build());
                 assertNotNull(clientsFound);
-                assertEquals(2, clientsFound.size());
+                assertEquals(1, clientsFound.size());
             }
         }
     }

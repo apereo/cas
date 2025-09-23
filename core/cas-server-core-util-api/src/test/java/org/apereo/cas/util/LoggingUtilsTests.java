@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 class LoggingUtilsTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertDoesNotThrow(() -> {
             LoggingUtils.error(LOGGER, "error", new RuntimeException("error"));
             LoggingUtils.error(LOGGER, new RuntimeException("error"));
@@ -29,7 +29,7 @@ class LoggingUtilsTests {
     }
 
     @Test
-    void verifyGetNonNullMessage() throws Throwable {
+    void verifyGetNonNullMessage() {
         val exception = new UndeclaredThrowableException(new Exception("nested"));
         assertEquals("nested", LoggingUtils.getMessage(exception));
         val exception2 = new Exception("first", new Exception("second"));

@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.syncope;
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SyncopePrincipalAttributesProperties")
 public class SyncopePrincipalAttributesProperties extends BaseSyncopeSearchProperties {
 
     @Serial
@@ -42,4 +40,11 @@ public class SyncopePrincipalAttributesProperties extends BaseSyncopeSearchPrope
      * Whether attribute resolution based on this source is enabled.
      */
     private AttributeRepositoryStates state = AttributeRepositoryStates.ACTIVE;
+
+    /**
+     * Indicates whether user groups should be included in the attribute resolution.
+     * This results in a separate API call to Apache Syncope to fetch user groups
+     * after the user attributes have been resolved.
+     */
+    private boolean includeUserGroups;
 }

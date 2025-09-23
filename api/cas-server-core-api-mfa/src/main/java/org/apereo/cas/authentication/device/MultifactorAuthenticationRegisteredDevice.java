@@ -1,12 +1,14 @@
 package org.apereo.cas.authentication.device;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 
@@ -24,11 +26,13 @@ import java.util.Map;
 @SuperBuilder
 @Getter
 @ToString(of = {"name", "type", "id", "model"})
-@EqualsAndHashCode(of = {"name", "type", "id", "model"})
+@EqualsAndHashCode(of = {"name", "type", "id", "model", "source"})
 @Jacksonized
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Setter
 @NoArgsConstructor(force = true)
+@With
+@AllArgsConstructor
 public class MultifactorAuthenticationRegisteredDevice implements Serializable {
     @Serial
     private static final long serialVersionUID = 1040948239519297651L;

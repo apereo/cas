@@ -33,9 +33,9 @@ public class InweboCheckAuthenticationAction extends BaseCasWebflowAction {
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val login = authentication.getPrincipal().getId();
-        val otp = requestContext.getRequestParameters().get(WebflowConstants.OTP);
+        val otp = requestContext.getRequestParameters().get(InweboWebflowConstants.OTP);
         val flowScope = requestContext.getFlowScope();
-        val sessionId = (String) flowScope.get(WebflowConstants.INWEBO_SESSION_ID);
+        val sessionId = (String) flowScope.get(InweboWebflowConstants.INWEBO_SESSION_ID);
         if (StringUtils.isNotBlank(otp)) {
             val credential = new InweboCredential(login);
             credential.setOtp(otp);
@@ -57,7 +57,7 @@ public class InweboCheckAuthenticationAction extends BaseCasWebflowAction {
             }
             if (result == InweboResult.WAITING) {
                 LOGGER.trace("Waiting for user to validate on mobile/desktop");
-                return getEventFactorySupport().event(this, WebflowConstants.PENDING);
+                return getEventFactorySupport().event(this, InweboWebflowConstants.PENDING);
             }
             LOGGER.debug("Validation fails: [{}]", result);
             if (result == InweboResult.REFUSED || result == InweboResult.TIMEOUT) {

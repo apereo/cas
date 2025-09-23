@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryEncodeJdbcAuthenticationProperties;
 import org.apereo.cas.jpa.JpaPersistenceProviderContext;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import lombok.val;
@@ -85,7 +84,7 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     }
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         try (val connection = this.dataSource.getConnection()) {
             try (val statement = connection.createStatement()) {
                 connection.setAutoCommit(true);
@@ -111,7 +110,7 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     }
 
     @Test
-    void verifyAuthenticationFailsToFindUser() throws Throwable {
+    void verifyAuthenticationFailsToFindUser() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setSaltFieldName("salt").setDisabledFieldName("ops");
@@ -120,7 +119,7 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     }
 
     @Test
-    void verifyAuthenticationInvalidSql() throws Throwable {
+    void verifyAuthenticationInvalidSql() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql("makesNoSenseInSql")).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setSaltFieldName("salt").setDisabledFieldName("ops");
@@ -129,7 +128,7 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     }
 
     @Test
-    void verifyAuthenticationMultipleAccounts() throws Throwable {
+    void verifyAuthenticationMultipleAccounts() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setSaltFieldName("salt").setDisabledFieldName("ops");
@@ -154,7 +153,7 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     }
 
     @Test
-    void verifyAuthenticationWithExpiredField() throws Throwable {
+    void verifyAuthenticationWithExpiredField() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql())
             .setPasswordFieldName(PASSWORD_FIELD_NAME)
@@ -167,7 +166,7 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     }
 
     @Test
-    void verifyAuthenticationWithDisabledField() throws Throwable {
+    void verifyAuthenticationWithDisabledField() {
         val properties = new QueryEncodeJdbcAuthenticationProperties().setAlgorithmName(ALG_NAME)
             .setSql(buildSql()).setPasswordFieldName(PASSWORD_FIELD_NAME)
             .setDisabledFieldName(DISABLED_FIELD_NAME)
@@ -209,7 +208,7 @@ class QueryAndEncodeDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
 
     private QueryAndEncodeDatabaseAuthenticationHandler getAuthenticationHandler(final QueryEncodeJdbcAuthenticationProperties properties) {
         return (QueryAndEncodeDatabaseAuthenticationHandler) JdbcAuthenticationUtils.newAuthenticationHandler(properties, applicationContext,
-            PrincipalFactoryUtils.newPrincipalFactory(), mock(ServicesManager.class), new PasswordPolicyContext(), dataSource);
+            PrincipalFactoryUtils.newPrincipalFactory(), new PasswordPolicyContext(), dataSource);
     }
 
     @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)

@@ -14,6 +14,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.json.JsonUtil;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
@@ -77,21 +78,6 @@ public class EncodingUtils {
         try {
             val result = Hex.decodeHex(data);
             return new String(result, StandardCharsets.UTF_8);
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-            return null;
-        }
-    }
-
-    /**
-     * Hex decode to byte array.
-     *
-     * @param data the data
-     * @return the byte [ ]
-     */
-    public static byte[] hexDecodeToByteArray(final String data) {
-        try {
-            return Hex.decodeHex(data.toCharArray());
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
             return null;
@@ -424,23 +410,6 @@ public class EncodingUtils {
     }
 
     /**
-     * Sign jws hmac sha 256.
-     *
-     * @param key     the key
-     * @param value   the value
-     * @param headers the headers
-     * @return the byte [ ]
-     */
-    public static byte[] signJwsHMACSha256(final Key key, final byte[] value, final Map<String, Object> headers) {
-        return JsonWebTokenSigner.builder()
-            .key(key)
-            .headers(headers)
-            .algorithm(AlgorithmIdentifiers.HMAC_SHA256)
-            .build()
-            .sign(value);
-    }
-
-    /**
      * Sign jws.
      *
      * @param key     the key
@@ -468,7 +437,7 @@ public class EncodingUtils {
         return JsonWebTokenEncryptor.builder()
             .key(key)
             .algorithm(KeyManagementAlgorithmIdentifiers.DIRECT)
-            .encryptionMethod(EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM)
+            .encryptionMethod(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256)
             .build()
             .encrypt(value);
     }

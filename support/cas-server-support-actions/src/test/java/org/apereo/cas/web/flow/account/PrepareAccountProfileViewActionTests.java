@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
@@ -38,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "CasFeatureModule.AccountManagement.enabled=true",
     "cas.view.authorized-services-on-successful-login=true"
 })
-@Import({
-    PrepareAccountProfileViewActionTests.AuditTestConfiguration.class,
+@Import(PrepareAccountProfileViewActionTests.AuditTestConfiguration.class)
+@ImportAutoConfiguration({
     CasCoreWebflowAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class
 })

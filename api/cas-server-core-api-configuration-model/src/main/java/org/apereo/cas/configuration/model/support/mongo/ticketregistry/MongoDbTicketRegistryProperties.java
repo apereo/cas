@@ -51,7 +51,6 @@ public class MongoDbTicketRegistryProperties extends BaseMongoDbProperties {
      * Supported indexes are:
      * <ul>
      *     <li>{@code IDX_ID}: index created for ticket identifiers.</li>
-     *     <li>{@code IDX_JSON_TYPE_ID}: compound index for ticket body, type and id used for text queries.</li>
      *     <li>{@code IDX_PRINCIPAL}: index created for principal attached to the ticket.</li>
      *     <li>{@code IDX_EXPIRATION}: index created for ticket expiration date.</li>
      *</ul>

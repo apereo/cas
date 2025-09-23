@@ -1,7 +1,7 @@
 package org.apereo.cas.util.http;
 
 import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.web.HttpMessage;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -11,13 +11,12 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.FutureRequestExecutionService;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.springframework.beans.factory.DisposableBean;
-
+import org.springframework.http.HttpHeaders;
 import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
@@ -47,7 +46,7 @@ public record SimpleHttpClient(List<Integer> acceptableCodes, CloseableHttpClien
     public boolean sendMessageToEndPoint(final HttpMessage message) {
         try {
             val request = new HttpPost(message.getUrl().toURI());
-            request.addHeader("Content-Type", message.getContentType());
+            request.addHeader(HttpHeaders.CONTENT_TYPE, message.getContentType());
             val entity = new StringEntity(message.getMessage(), ContentType.create(message.getContentType()));
             request.setEntity(entity);
 
@@ -66,13 +65,13 @@ public record SimpleHttpClient(List<Integer> acceptableCodes, CloseableHttpClien
 
     @Override
     public HttpMessage sendMessageToEndPoint(final URL url) {
-        try (val response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
+        try (val response = wrappedHttpClient.execute(new HttpGet(url.toURI()), HttpRequestUtils.HTTP_CLIENT_RESPONSE_HANDLER)) {
             val responseCode = response.getCode();
 
             for (val acceptableCode : this.acceptableCodes) {
                 if (responseCode == acceptableCode) {
                     LOGGER.debug("Response code received from server matched [{}].", responseCode);
-                    val entity = ((HttpEntityContainer) response).getEntity();
+                    val entity = response.getEntity();
                     try {
                         val msg = new HttpMessage(url, IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
                         msg.setContentType(entity.getContentType());
@@ -108,7 +107,7 @@ public record SimpleHttpClient(List<Integer> acceptableCodes, CloseableHttpClien
 
     @Override
     public boolean isValidEndPoint(final URL url) {
-        try (val response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
+        try (val response = wrappedHttpClient.execute(new HttpGet(url.toURI()), HttpRequestUtils.HTTP_CLIENT_RESPONSE_HANDLER)) {
             val responseCode = response.getCode();
             val idx = Collections.binarySearch(this.acceptableCodes, responseCode);
             if (idx >= 0) {
@@ -117,13 +116,12 @@ public record SimpleHttpClient(List<Integer> acceptableCodes, CloseableHttpClien
             }
 
             LOGGER.debug("Response code did not match any of the acceptable response codes. Code returned was [{}]", responseCode);
-
             if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                 val value = response.getReasonPhrase();
                 LOGGER.error("There was an error contacting the endpoint: [{}]; The error was:\n[{}]", url.toExternalForm(), value);
             }
 
-            val entity = ((HttpEntityContainer) response).getEntity();
+            val entity = response.getEntity();
             try {
                 LOGGER.debug("Located entity with length [{}]", entity.getContentLength());
             } finally {

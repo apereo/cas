@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("PrincipalAttributesCoreProperties")
 public class PrincipalAttributesCoreProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -4525569588579072890L;
@@ -93,7 +91,7 @@ public class PrincipalAttributesCoreProperties implements Serializable {
      * and additionally allow other specific principal attributes for only some applications
      * per their attribute release policy.
      */
-    private Set<String> defaultAttributesToRelease = new HashSet<>(0);
+    private Set<String> defaultAttributesToRelease = new HashSet<>();
 
     /**
      * The aggregation strategy types.

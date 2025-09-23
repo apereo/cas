@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.token.JwtBuilder;
 import lombok.val;
@@ -37,7 +38,7 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
             .jwtId(UUID.randomUUID().toString())
             .subject("casuser")
             .issueDate(new Date())
-            .attributes(Map.of(OAuth20Constants.SCOPE, List.of("openid"),
+            .attributes(Map.of(OAuth20Constants.SCOPE, List.of(OidcConstants.StandardScopes.OPENID.getScope()),
                 OAuth20Constants.REDIRECT_URI, List.of("https://apereo.github.io"),
                 OAuth20Constants.RESPONSE_TYPE, List.of("code"),
                 OAuth20Constants.CLIENT_ID, List.of(registeredService.getClientId())))
@@ -52,6 +53,6 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
         val context = new JEEContext(request, response);
         val scope = oauthRequestParameterResolver.resolveRequestParameter(context, OAuth20Constants.SCOPE, String.class);
         assertFalse(scope.isEmpty());
-        assertTrue(scope.get().contains("openid"));
+        assertTrue(scope.get().contains(OidcConstants.StandardScopes.OPENID.getScope()));
     }
 }

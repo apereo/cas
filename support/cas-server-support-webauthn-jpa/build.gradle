@@ -8,7 +8,7 @@ ext {
 }
 
 dependencies {
-
+    implementation libraries.jose4j
     implementation libraries.webauthn
 
     implementation project(":support:cas-server-support-webauthn-core")
@@ -19,6 +19,7 @@ dependencies {
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-multitenancy")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":core:cas-server-core-util-api")
@@ -31,6 +32,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-configuration")
@@ -40,7 +42,9 @@ dependencies {
     testImplementation project(":support:cas-server-support-actions")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-trusted-mfa")
-
+    testImplementation project(":support:cas-server-support-webconfig")
+    testImplementation project(":support:cas-server-support-person-directory")
+    
     testImplementation project(path: ":support:cas-server-support-webauthn-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-webauthn", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")

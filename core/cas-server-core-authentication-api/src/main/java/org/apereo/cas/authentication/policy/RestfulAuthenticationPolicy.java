@@ -22,6 +22,7 @@ import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -88,7 +89,7 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
         val principal = authentication.getPrincipal();
         try {
             val entity = MAPPER.writeValueAsString(principal);
-            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
             val exec = HttpExecutionRequest.builder()
                 .url(properties.getUrl())

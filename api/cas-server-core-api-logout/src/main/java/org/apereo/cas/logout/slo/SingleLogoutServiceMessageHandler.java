@@ -1,9 +1,9 @@
 package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
-
+import org.apereo.cas.util.NamedObject;
+import org.apereo.cas.web.HttpMessage;
 import org.springframework.core.Ordered;
-
 import java.util.Collection;
 
 /**
@@ -13,7 +13,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface SingleLogoutServiceMessageHandler extends Ordered {
+public interface SingleLogoutServiceMessageHandler extends Ordered, NamedObject {
 
     /**
      * Handle logout for slo service.
@@ -26,14 +26,6 @@ public interface SingleLogoutServiceMessageHandler extends Ordered {
     Collection<SingleLogoutRequestContext> handle(WebApplicationService singleLogoutService,
                                                   String sessionIdentifier, SingleLogoutExecutionRequest context);
 
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return this.getClass().getSimpleName();
-    }
 
     /**
      * Supports handling the logout message.
@@ -62,6 +54,15 @@ public interface SingleLogoutServiceMessageHandler extends Ordered {
      * @throws Throwable the throwable
      */
     SingleLogoutMessage createSingleLogoutMessage(SingleLogoutRequestContext logoutRequest) throws Throwable;
+
+    /**
+     * Prepare and create logout http message to send.
+     *
+     * @param request       the request
+     * @param logoutMessage the logout message
+     * @return the http message
+     */
+    HttpMessage prepareLogoutHttpMessageToSend(SingleLogoutRequestContext request, SingleLogoutMessage logoutMessage);
 
     @Override
     default int getOrder() {

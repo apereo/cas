@@ -1,4 +1,12 @@
 description = "Apereo CAS SendGrid Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Email",
+            title: "SendGrid Email"
+    ]
+}
+
 dependencies {
     implementation libraries.sendgrid
     

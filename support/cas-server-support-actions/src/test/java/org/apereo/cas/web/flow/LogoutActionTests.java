@@ -105,7 +105,7 @@ class LogoutActionTests {
         void verifyLogoutCookie() throws Throwable {
             val requestContext = MockRequestContext.create(applicationContext);
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
-            requestContext.getHttpServletRequest().setCookies(cookie);
+            requestContext.setHttpRequestCookies(cookie);
             val event = logoutAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         }
@@ -114,7 +114,7 @@ class LogoutActionTests {
         void verifyLogoutRequestBack() throws Throwable {
             val requestContext = MockRequestContext.create(applicationContext);
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
-            requestContext.getHttpServletRequest().setCookies(cookie);
+            requestContext.setHttpRequestCookies(cookie);
             val logoutRequest = DefaultSingleLogoutRequestContext.builder()
                 .registeredService(RegisteredServiceTestUtils.getRegisteredService())
                 .executionRequest(SingleLogoutExecutionRequest.builder()
@@ -131,7 +131,7 @@ class LogoutActionTests {
         void verifyLogoutRequestFront() throws Throwable {
             val requestContext = MockRequestContext.create(applicationContext);
             val cookie = new Cookie(COOKIE_TGC_ID, "test");
-            requestContext.getHttpServletRequest().setCookies(cookie);
+            requestContext.setHttpRequestCookies(cookie);
             val logoutRequest = DefaultSingleLogoutRequestContext.builder()
                 .registeredService(RegisteredServiceTestUtils.getRegisteredService())
                 .executionRequest(SingleLogoutExecutionRequest.builder()

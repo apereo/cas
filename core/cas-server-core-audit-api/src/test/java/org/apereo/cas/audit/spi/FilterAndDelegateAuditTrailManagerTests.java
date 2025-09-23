@@ -8,7 +8,6 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.time.Clock;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class FilterAndDelegateAuditTrailManagerTests {
 
     @Test
-    void verifyExcludeOperationForAllActions() throws Throwable {
+    void verifyExcludeOperationForAllActions() {
         val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("*"), List.of("TES.+"));
@@ -41,7 +40,7 @@ class FilterAndDelegateAuditTrailManagerTests {
     }
 
     @Test
-    void verifyOperationForAllActions() throws Throwable {
+    void verifyOperationForAllActions() {
         val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("*"), List.of());
@@ -50,7 +49,7 @@ class FilterAndDelegateAuditTrailManagerTests {
     }
 
     @Test
-    void verifyOperationForAllSupportedActions() throws Throwable {
+    void verifyOperationForAllSupportedActions() {
         val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"), List.of());
@@ -59,7 +58,7 @@ class FilterAndDelegateAuditTrailManagerTests {
     }
 
     @Test
-    void verifyOperationForUnmatchedActions() throws Throwable {
+    void verifyOperationForUnmatchedActions() {
         val ctx = getAuditActionContext();
         val mock = new MockAuditTrailManager();
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("PASSED.*"), List.of());
@@ -68,7 +67,7 @@ class FilterAndDelegateAuditTrailManagerTests {
     }
 
     @Test
-    void verifyAuditRecordsSinceDate() throws Throwable {
+    void verifyAuditRecordsSinceDate() {
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS",
             LocalDateTime.now(ZoneOffset.UTC).plusDays(1),
@@ -77,7 +76,7 @@ class FilterAndDelegateAuditTrailManagerTests {
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"), List.of());
         mgr.record(ctx);
         assertFalse(mock.getAuditRecords().isEmpty());
-        val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(AuditTrailManager.WhereClauseFields.DATE, LocalDate.now(ZoneOffset.UTC));
+        val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(AuditTrailManager.WhereClauseFields.DATE, LocalDateTime.now(ZoneOffset.UTC));
         assertEquals(1, mgr.getAuditRecords(criteria).size());
         assertDoesNotThrow(mgr::removeAll);
     }

@@ -46,7 +46,7 @@ public class DynamoDbTicketRegistryProperties extends AbstractDynamoDbProperties
     private String proxyGrantingTicketsTableName = "proxyGrantingTicketsTable";
 
     /**
-     * The table name used and created by CAS to hold transient session ticket tickets in DynamoDb.
+     * The table name used and created by CAS to hold transient session tickets in DynamoDb.
      */
     private String transientSessionTicketsTableName = "transientSessionTicketsTable";
 

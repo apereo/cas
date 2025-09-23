@@ -10,7 +10,6 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
  */
 @Getter
 public class DefaultAuditTrailExecutionPlan implements AuditTrailExecutionPlan {
-    private final List<AuditTrailManager> auditTrailManagers = new ArrayList<>(0);
+    private final List<AuditTrailManager> auditTrailManagers = new ArrayList<>();
 
     @Override
     public void registerAuditTrailManager(final AuditTrailManager manager) {
@@ -36,12 +35,12 @@ public class DefaultAuditTrailExecutionPlan implements AuditTrailExecutionPlan {
     }
 
     @Override
-    public Set<AuditActionContext> getAuditRecords(final Map<AuditTrailManager.WhereClauseFields, Object> criteria) {
+    public List<AuditActionContext> getAuditRecords(final Map<AuditTrailManager.WhereClauseFields, Object> criteria) {
         return auditTrailManagers
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .map(manager -> manager.getAuditRecords(criteria))
-            .flatMap(Set::stream)
-            .collect(Collectors.toSet());
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
     }
 }

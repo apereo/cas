@@ -24,11 +24,13 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAsserti
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,7 +39,6 @@ import lombok.With;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jooq.lambda.Unchecked;
@@ -60,6 +61,8 @@ import org.opensaml.saml.saml2.core.impl.AuthnRequestBuilder;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.saml.saml2.metadata.SingleSignOnService;
+import org.springframework.beans.BeanUtils;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -88,7 +91,7 @@ import java.util.UUID;
  * @since 6.1.0
  */
 @Slf4j
-@Endpoint(id = "samlPostProfileResponse", enableByDefault = false)
+@Endpoint(id = "samlPostProfileResponse", defaultAccess = Access.NONE)
 public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ServicesManager servicesManager;
@@ -143,10 +146,10 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
     @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
     @Operation(summary = "Produce SAML2 response entity", parameters = {
-        @Parameter(name = "username", required = true),
-        @Parameter(name = "password", required = false),
-        @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true),
-        @Parameter(name = "encrypt")
+        @Parameter(name = "username", required = true, description = "The username to authenticate"),
+        @Parameter(name = "password", required = false, description = "The password to authenticate"),
+        @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true, description = "The entity id"),
+        @Parameter(name = "encrypt", schema = @Schema(type = "boolean"), description = "Whether to encrypt the response")
     })
     public ResponseEntity<Object> producePost(final HttpServletRequest request,
                                               final HttpServletResponse response,
@@ -166,7 +169,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
      */
     @PostMapping(value = "/logout/post", produces = MediaType.TEXT_HTML_VALUE)
     @Operation(summary = "Produce SAML2 logout request for the given SAML2 SP",
-               parameters = @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true))
+               parameters = @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true, description = "The entity id"))
     public ResponseEntity<Object> produceLogoutRequestPost(
         @RequestParam(SamlProtocolConstants.PARAMETER_ENTITY_ID) final String entityId,
         final HttpServletResponse response) throws Exception {
@@ -213,10 +216,15 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
         endpoint.setLocation(sloEndpointDestination);
         endpointContext.setEndpoint(endpoint);
 
+        val encodedRequest = EncodingUtils.encodeBase64(SamlUtils.transformSamlObject(
+            saml20ObjectBuilder.getOpenSamlConfigBean(), logoutRequest, true).toString());
+        response.setHeader("LogoutRequest", encodedRequest);
+        
         messageContext.setMessage(logoutRequest);
         encoder.setMessageContext(messageContext);
         encoder.initialize();
         encoder.encode();
+
         return ResponseEntity.ok().build();
     }
 
@@ -228,7 +236,8 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
             val registeredService = servicesManager.findServiceBy(selectedService, SamlRegisteredService.class);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
-            val loadedService = (SamlRegisteredService) BeanUtils.cloneBean(registeredService);
+            val loadedService = new SamlRegisteredService();
+            BeanUtils.copyProperties(registeredService, loadedService);
             loadedService.setEncryptAssertions(samlRequest.isEncrypt());
             loadedService.setEncryptAttributes(samlRequest.isEncrypt());
 

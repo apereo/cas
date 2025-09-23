@@ -25,11 +25,9 @@ public class DefaultThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
         val clientInfo = ClientInfoHolder.getClientInfo();
         val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle().getCore();
         var throttledKey = clientInfo.getClientIpAddress();
-        if (StringUtils.isNotBlank(throttle.getUsernameParameter())) {
-            val username = request.getParameter(throttle.getUsernameParameter());
-            if (StringUtils.isNotBlank(username)) {
-                throttledKey += ';' + username.toLowerCase(Locale.ENGLISH);
-            }
+        val username = getUsernameParameterFromRequest(request);
+        if (StringUtils.isNotBlank(username)) {
+            throttledKey += ';' + username.toLowerCase(Locale.ENGLISH);
         }
         if (StringUtils.isNotBlank(throttle.getHeaderName())) {
             val headerValue = request.getHeader(throttle.getHeaderName());

@@ -2,14 +2,14 @@ package org.apereo.cas.syncope;
 
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
-import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
-import org.apereo.cas.config.CasSyncopeAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,16 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfListeningOnPort(port = 18080)
-@SpringBootTest(classes = {
-    CasSyncopeAutoConfiguration.class,
-    CasAccountManagementWebflowAutoConfiguration.class,
-    BaseSyncopeTests.SharedTestConfiguration.class
-}, properties = {
+@SpringBootTest(classes = BaseSyncopeTests.SharedTestConfiguration.class, properties = {
     "cas.account-registration.provisioning.syncope.url=http://localhost:18080/syncope",
     "cas.account-registration.provisioning.syncope.basic-auth-username=admin",
     "cas.account-registration.provisioning.syncope.basic-auth-password=password"
 })
 @Tag("Syncope")
+@ExtendWith(CasTestExtension.class)
 class SyncopeAccountRegistrationProvisionerTests {
     @Autowired
     @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)

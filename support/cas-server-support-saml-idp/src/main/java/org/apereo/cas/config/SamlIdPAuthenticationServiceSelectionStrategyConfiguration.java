@@ -6,13 +6,14 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.authentication.SamlIdPServiceFactory;
 import org.apereo.cas.support.saml.services.SamlIdPEntityIdAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperCustomizer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
+import org.apereo.cas.web.UrlValidator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -77,8 +78,12 @@ class SamlIdPAuthenticationServiceSelectionStrategyConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPServiceFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ServiceFactory samlIdPServiceFactory() {
-            return new SamlIdPServiceFactory();
+        public ServiceFactory samlIdPServiceFactory(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
+            @Qualifier(UrlValidator.BEAN_NAME)
+            final UrlValidator urlValidator) {
+            return new SamlIdPServiceFactory(tenantExtractor, urlValidator);
         }
 
         @Bean

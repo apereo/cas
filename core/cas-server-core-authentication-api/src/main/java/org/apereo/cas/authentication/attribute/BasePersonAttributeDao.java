@@ -13,7 +13,6 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -56,20 +55,7 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
     public void setId(final String... id) {
         this.id = id;
     }
-
-
-    /**
-     * Put tag into this DAO and override/remove existing tags by name.
-     *
-     * @param name  the name
-     * @param value the value
-     * @return the base person attribute dao
-     */
-    public BasePersonAttributeDao putTag(final String name, final Object value) {
-        this.tags.put(name, value);
-        return this;
-    }
-
+    
     protected PersonAttributes getSinglePerson(final Set<PersonAttributes> people) {
         try {
             return DataAccessUtils.singleResult(people);
@@ -85,10 +71,10 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
         for (val seedEntry : seed.entrySet()) {
             val seedName = seedEntry.getKey();
             val seedValue = seedEntry.getValue();
-            if (seedValue instanceof List) {
-                multiSeed.put(seedName, (List<Object>) seedValue);
-            } else {
-                multiSeed.put(seedName, Collections.singletonList(seedValue));
+            if (seedValue instanceof final List list) {
+                multiSeed.put(seedName, list);
+            } else if (seedValue != null) {
+                multiSeed.put(seedName, List.of(seedValue));
             }
         }
         return multiSeed;
@@ -123,7 +109,7 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
      *                to attribute names or Sets of such names.
      * @return a Map from String to Set of Strings
      */
-    public static Map<String, Set<String>> parseAttributeToAttributeMapping(final Map<String, ? extends Object> mapping) {
+    public static Map<String, Set<String>> parseAttributeToAttributeMapping(final Map<String, ?> mapping) {
         val mappedAttributesBuilder = new LinkedCaseInsensitiveMap<Set<String>>();
         for (val mappingEntry : mapping.entrySet()) {
             val sourceAttrName = mappingEntry.getKey();
@@ -153,7 +139,7 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
         return new HashMap<>(mappedAttributesBuilder);
     }
 
-    protected <T> Collection<T> flattenCollection(final Collection<? extends Object> source) {
+    protected <T> Collection<T> flattenCollection(final Collection<?> source) {
         val result = new ArrayList<T>();
         for (val value : source) {
             if (value instanceof Collection) {
@@ -203,4 +189,5 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
 
         return Pattern.compile(queryBuilder.toString());
     }
+    
 }

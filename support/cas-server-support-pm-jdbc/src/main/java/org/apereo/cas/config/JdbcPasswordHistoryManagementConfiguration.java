@@ -2,8 +2,8 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.jpa.JpaConfigurationContext;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.impl.history.AmnesiacPasswordHistoryService;
 import org.apereo.cas.pm.jdbc.JdbcPasswordHistoryEntity;
@@ -13,7 +13,6 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.FactoryBean;
@@ -28,7 +27,6 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
@@ -80,7 +78,7 @@ class JdbcPasswordHistoryManagementConfiguration {
             @Qualifier("jdbcPasswordManagementDataSource")
             final DataSource jdbcPasswordManagementDataSource,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            final JpaBeanFactory jpaBeanFactory) {
             return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
@@ -105,7 +103,7 @@ class JdbcPasswordHistoryManagementConfiguration {
         public PlatformTransactionManager transactionManagerPasswordHistory(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("passwordHistoryEntityManagerFactory")
-            final FactoryBean<EntityManagerFactory> emf) throws Exception {
+            final FactoryBean<EntityManagerFactory> emf) {
             return BeanSupplier.of(PlatformTransactionManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {

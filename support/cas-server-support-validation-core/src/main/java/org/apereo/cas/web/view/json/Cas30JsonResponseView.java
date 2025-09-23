@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view.json;
 
+import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -130,11 +132,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         val principal = getPrincipal(model);
         success.setUser(principal.getId());
         success.setProxyGrantingTicket(getProxyGrantingTicketIou(model));
-        val chainedAuthentications = getChainedAuthentications(model);
-        if (chainedAuthentications != null && !chainedAuthentications.isEmpty()) {
-            val proxies = chainedAuthentications.stream().map(authn -> authn.getPrincipal().getId()).collect(Collectors.toList());
-            success.setProxies(proxies);
-        }
+        success.setProxies((List) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXIES));
         return success;
     }
 

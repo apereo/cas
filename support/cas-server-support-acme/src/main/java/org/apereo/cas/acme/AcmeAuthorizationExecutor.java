@@ -11,8 +11,10 @@ import java.util.Optional;
  *
  * @author Misagh Moayyed
  * @since 6.4.0
+ * @deprecated since 7.3.0
  */
 @FunctionalInterface
+@Deprecated(since = "7.3.0", forRemoval = true)
 public interface AcmeAuthorizationExecutor {
 
     /**

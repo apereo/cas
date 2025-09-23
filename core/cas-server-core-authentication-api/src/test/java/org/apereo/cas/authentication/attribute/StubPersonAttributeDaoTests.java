@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@Tag("Attributes")
-public class StubPersonAttributeDaoTests {
+@Tag("AttributeRepository")
+class StubPersonAttributeDaoTests {
 
     private StubPersonAttributeDao testInstance;
 
@@ -27,7 +27,7 @@ public class StubPersonAttributeDaoTests {
 
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         val map = new HashMap<String, List<Object>>();
         map.put("shirtColor", List.of("blue"));
         map.put("phone", List.of("777-7777"));

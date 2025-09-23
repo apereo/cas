@@ -119,7 +119,7 @@ class BasicTaskSet(TaskSet):
 
             user_data = ticket_response.text
             if "<cas:authenticationSuccess>" in user_data:
-                print("Succesful Run!")
+                print("Successful Run!")
             else:
                 print("CAS No Event Id field found on login form!")
                 self.interrupt()

@@ -51,7 +51,7 @@ class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
 
         context.setRemoteAddr("185.86.151.11");
         context.setLocalAddr("185.88.151.11");
-        context.addHeader("User-Agent", "agent");
+        context.withUserAgent();
         context.setClientInfo();
 
         val ticket = new MockTicketGrantingTicket("casuser");
@@ -59,7 +59,7 @@ class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
 
         val cookie = getTicketGrantingTicketCookieGenerator()
             .addCookie(context.getHttpServletRequest(), context.getHttpServletResponse(), ticket.getId());
-        context.getHttpServletRequest().setCookies(cookie);
+        context.setHttpRequestCookies(cookie);
         
         val result = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());

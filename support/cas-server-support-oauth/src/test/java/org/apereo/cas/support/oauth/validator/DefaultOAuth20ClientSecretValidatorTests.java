@@ -4,11 +4,14 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,9 +22,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("OAuth")
+@TestPropertySource(properties = "app.custom.secret=T0ps3cr3t#")
 class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
+
+    @BeforeEach
+    void setup() {
+        SpringExpressionLanguageValueResolver.getInstance().withApplicationContext(applicationContext);
+    }
+
     @Test
-    void verifyClientSecretCheck() throws Throwable {
+    void verifyClientSecretCheck() {
         val secret = RandomUtils.randomAlphanumeric(12);
         val encodedSecret = oauth20ClientSecretValidator.getCipherExecutor().encode(secret);
         val registeredService = new OAuthRegisteredService();
@@ -33,7 +43,7 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyClientSecretIsWrong() throws Throwable {
+    void verifyClientSecretIsWrong() {
         val secret = RandomUtils.randomAlphanumeric(12);
         val encodedSecret = oauth20ClientSecretValidator.getCipherExecutor().encode(secret);
         val registeredService = new OAuthRegisteredService();
@@ -44,7 +54,7 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyClientSecretCheckWithoutCipher() throws Throwable {
+    void verifyClientSecretCheckWithoutCipher() {
         val secret = RandomUtils.randomAlphanumeric(12);
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");
@@ -54,7 +64,17 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyClientSecretUndefined() throws Throwable {
+    void verifyClientSecretFromEnvironment() {
+        val secret = applicationContext.getEnvironment().getProperty("app.custom.secret");
+        val registeredService = new OAuthRegisteredService();
+        registeredService.setClientId("clientid");
+        registeredService.setClientSecret("${#applicationContext.get().environment.getProperty('app.custom.secret')}");
+        val result = oauth20ClientSecretValidator.validate(registeredService, secret);
+        assertTrue(result);
+    }
+
+    @Test
+    void verifyClientSecretUndefined() {
         val secret = RandomUtils.randomAlphanumeric(12);
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");
@@ -63,7 +83,7 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyClientSecretUrlEncoded() throws Throwable {
+    void verifyClientSecretUrlEncoded() {
         val secret = "!@#$%^&^&*()";
         val encodedSecret = EncodingUtils.urlEncode(secret);
         val registeredService = new OAuthRegisteredService();
@@ -74,7 +94,7 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyNullClientSecretUrlEncoded() throws Throwable {
+    void verifyNullClientSecretUrlEncoded() {
         val secret = "!@#$%^&^&*()";
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");

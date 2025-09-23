@@ -11,6 +11,7 @@ import com.okta.sdk.authc.credentials.TokenClientCredentials;
 import com.okta.sdk.client.AuthorizationMode;
 import com.okta.sdk.client.Client;
 import com.okta.sdk.client.Clients;
+import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
+@UtilityClass
 public class OktaConfigurationFactory {
 
     /**
@@ -37,12 +39,14 @@ public class OktaConfigurationFactory {
 
         FunctionUtils.doIfNotNull(properties.getApiToken(), token -> clientBuilder.setClientCredentials(new TokenClientCredentials(token)));
         FunctionUtils.doIfNotNull(properties.getPrivateKey().getLocation(), path -> {
-            val resource = IOUtils.toString(path.getInputStream(), StandardCharsets.UTF_8);
-            clientBuilder
-                .setAuthorizationMode(AuthorizationMode.PRIVATE_KEY)
-                .setPrivateKey(resource)
-                .setClientId(properties.getClientId())
-                .setScopes(CollectionUtils.wrapHashSet(properties.getScopes()));
+            try (val in = path.getInputStream()) {
+                val resource = IOUtils.toString(in, StandardCharsets.UTF_8);
+                clientBuilder
+                    .setAuthorizationMode(AuthorizationMode.PRIVATE_KEY)
+                    .setPrivateKey(resource)
+                    .setClientId(properties.getClientId())
+                    .setScopes(CollectionUtils.wrapHashSet(properties.getScopes()));
+            }
         });
 
         if (StringUtils.isNotBlank(properties.getProxyHost()) && properties.getProxyPort() > 0) {

@@ -14,7 +14,7 @@
     <main class="container mt-3 mb-3">
         <div th:fragment="loginsidebar" id="sidebar">
             <div class="sidebar-content">
-                <p th:utext="#{screen.welcome.security}">For security reasons, please <a href="logout">log out</a> and
+                <p id="securityNotice" th:utext="#{screen.welcome.security}">For security reasons, please <a href="logout">log out</a> and
                     exit your web browser when you are done accessing services that require authentication!</p>
             </div>
         </div>

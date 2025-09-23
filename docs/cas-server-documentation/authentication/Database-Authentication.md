@@ -15,9 +15,10 @@ To learn how to configure database drivers, [please see this guide](../installat
 
 The parameters that may be passed are as follows:
 
-| Option | Resource                                               |
-|--------|--------------------------------------------------------|
-| Bind   | See [this guide](Database-Authentication-Bind.html).   |
-| Search | See [this guide](Database-Authentication-Search.html). |
-| Query  | See [this guide](Database-Authentication-Query.html).  |
-| Encode | See [this guide](Database-Authentication-Encode.html). |
+| Option            | Resource                                                        |
+|-------------------|-----------------------------------------------------------------|
+| Bind              | See [this guide](Database-Authentication-Bind.html).            |
+| Search            | See [this guide](Database-Authentication-Search.html).          |
+| Query             | See [this guide](Database-Authentication-Query.html).           |
+| Encode            | See [this guide](Database-Authentication-Encode.html).          |
+| Stored Procedures | See [this guide](Database-Authentication-StoredProcedure.html). |

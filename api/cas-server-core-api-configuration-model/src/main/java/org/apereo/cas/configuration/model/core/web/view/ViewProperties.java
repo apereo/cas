@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.core.web.view;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -26,7 +25,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("ViewProperties")
 public class ViewProperties implements Serializable {
 
     @Serial
@@ -56,7 +54,7 @@ public class ViewProperties implements Serializable {
      * to carry additional metadata and tags.
      * Key is the name of the custom field.
      */
-    private Map<String, CustomLoginFieldViewProperties> customLoginFormFields = new LinkedHashMap<>(0);
+    private Map<String, CustomLoginFieldViewProperties> customLoginFormFields = new LinkedHashMap<>();
 
     /**
      * Comma separated paths to where CAS templates may be found.

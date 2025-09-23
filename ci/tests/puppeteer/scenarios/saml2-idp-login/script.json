@@ -1,5 +1,5 @@
 {
-  "dependencies": "saml-idp,reports,monitor",
+  "dependencies": "saml-idp,reports,monitor,sentry,scripting,metrics",
   "conditions": {
     "docker": "true"
   },
@@ -27,7 +27,6 @@
     "--cas.http-client.host-name-verifier=none",
 
     "--logging.level.PROTOCOL_MESSAGE=info",
-    "--logging.level.org.apereo.cas=info",
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
@@ -35,7 +34,7 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=health,samlIdPRegisteredServiceMetadataCache,metrics",
     "--management.endpoint.health.show-details=always",
-    "--management.endpoints.enabled-by-default=true"
+    "--management.endpoints.access.default=UNRESTRICTED"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"

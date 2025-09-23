@@ -10,8 +10,6 @@
 
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",
 
-    "--logging.level.org.apereo.cas=info",
-
     "--cas.authn.accept.users=duobypass::Mellon",
     "--cas.authn.mfa.duo[0].account-status-enabled=false",
 
@@ -24,7 +22,7 @@
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=duoAdmin",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
 
     "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
   ]

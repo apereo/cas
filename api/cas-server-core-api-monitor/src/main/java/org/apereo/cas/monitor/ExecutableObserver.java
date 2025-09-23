@@ -14,6 +14,7 @@ import java.util.function.Function;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@FunctionalInterface
 public interface ExecutableObserver {
     /**
      * Logger instance.
@@ -24,15 +25,15 @@ public interface ExecutableObserver {
      * Bean name.
      */
     String BEAN_NAME = "defaultExecutableObserver";
-    
+
     /**
      * Observe a task as a runnable.
      *
      * @param task     the task
      * @param runnable the runnable
-     * @throws Throwable the throwable
      */
-    default void run(final MonitorableTask task, final Runnable runnable) throws Throwable {}
+    default void run(final MonitorableTask task, final Runnable runnable) {
+    }
 
     /**
      * Observe a task as a supplier.
@@ -41,9 +42,19 @@ public interface ExecutableObserver {
      * @param task     the task
      * @param supplier the supplier
      * @return the t
-     * @throws Throwable the throwable
      */
-    <T> T supply(MonitorableTask task, CheckedSupplier<T> supplier) throws Throwable;
+    <T> T supply(MonitorableTask task, CheckedSupplier<T> supplier);
+
+    /**
+     * Observe.
+     *
+     * @param observerProvider the observer provider
+     * @param task             the task
+     */
+    static void observe(final ObjectProvider<ExecutableObserver> observerProvider, final MonitorableTask task) {
+        observerProvider.ifAvailable(observer -> observer.run(task, () -> {
+        }));
+    }
 
     /**
      * Observe invocation.
@@ -58,8 +69,7 @@ public interface ExecutableObserver {
                           final Function<MonitorableTask, MonitorableTask> taskCustomizer) throws Throwable {
         val observer = observerProvider.getIfAvailable();
         if (observer != null) {
-            val taskName = joinPoint.getSignature().getDeclaringTypeName() + '.' + joinPoint.getSignature().getName();
-            val task = taskCustomizer.apply(new MonitorableTask(taskName));
+            val task = taskCustomizer.apply(MonitorableTask.from(joinPoint));
             return observer.supply(task, () -> executeJoinPoint(joinPoint));
         }
         return executeJoinPoint(joinPoint);
@@ -83,4 +93,5 @@ public interface ExecutableObserver {
         LOGGER.trace("Executing [{}]", joinPoint.getStaticPart().toLongString());
         return joinPoint.proceed(args);
     }
+
 }

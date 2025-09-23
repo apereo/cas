@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.WatcherService;
 
@@ -15,13 +16,17 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,18 +42,23 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Tag("RegisteredService")
+@Tag("Grouper")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class GrouperRegisteredServiceAccessStrategyTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @BeforeAll
     public static void prepTests() throws Exception {
         FileUtils.cleanDirectory(RESOURCE.getFile());
     }
 
     @Test
-    void checkAccessStrategyJson() throws Exception {
+    void checkAccessStrategyJson() {
         val attributes = new HashMap<String, Set<String>>();
         val v1 = new HashSet<String>();
         v1.add("admin");
@@ -91,7 +101,7 @@ class GrouperRegisteredServiceAccessStrategyTests {
             }
         };
         val requiredAttributes = new HashMap<String, Set<String>>();
-        requiredAttributes.put(GrouperRegisteredServiceAccessStrategy.GROUPER_GROUPS_ATTRIBUTE_NAME, Collections.singleton("SampleGroup"));
+        requiredAttributes.put(GrouperRegisteredServiceAccessStrategy.GROUPER_GROUPS_ATTRIBUTE_NAME, Set.of("SampleGroup"));
         strategy.setRequiredAttributes(requiredAttributes);
         assertTrue(executeStrategy(strategy));
     }
@@ -119,7 +129,9 @@ class GrouperRegisteredServiceAccessStrategyTests {
         assertFalse(executeStrategy(strategy));
     }
 
-    private static boolean executeStrategy(final GrouperRegisteredServiceAccessStrategy strategy) {
-        return strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("banderson").build());
+    private boolean executeStrategy(final GrouperRegisteredServiceAccessStrategy strategy) {
+        return strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder()
+            .applicationContext(applicationContext)
+            .principalId("banderson").build());
     }
 }

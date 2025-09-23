@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Native")
-public class OidcJwksJpaRuntimeHintsTests {
+class OidcJwksJpaRuntimeHintsTests {
 
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new OidcJwksJpaRuntimeHints().registerHints(hints, getClass().getClassLoader());
         assertTrue(RuntimeHintsPredicates.reflection().onType(JpaPersistenceUnitProvider.class).test(hints));

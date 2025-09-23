@@ -7,7 +7,7 @@ const path = require("path");
 (async () => {
     await cas.doGet("https://localhost:8443/cas/actuator/resolveAttributes/casuser",
         async (res) => {
-            assert(res.data.uid !== undefined);
+            assert(res.data.username !== undefined);
             assert(res.data.attributes !== undefined);
             assert(Object.keys(res.data.attributes).length === 0);
         }, async (error) => {
@@ -16,19 +16,18 @@ const path = require("path");
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/cas";
     await cas.gotoLogin(page, service);
 
     await cas.loginWith(page);
     await cas.logPage(page);
     const ticket = await cas.assertTicketParameter(page);
-    let body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    await cas.log(body);
-    let json = JSON.parse(body).serviceResponse.authenticationSuccess.attributes;
-    assert(json.lastName[0] === "Johnson");
-    assert(json.employeeNumber[0] === "123456");
-    assert(json.firstName[0] !== undefined);
-    assert(json.displayName === undefined);
+    let json = await cas.validateTicket(service, ticket);
+    let attributes = json.serviceResponse.authenticationSuccess.attributes;
+    assert(attributes.lastName[0] === "Johnson");
+    assert(attributes.employeeNumber[0] === "123456");
+    assert(attributes.firstName[0] !== undefined);
+    assert(attributes.displayName === undefined);
     
     const newFirstName = (Math.random() + 1).toString(36).substring(4);
     await cas.log(`Generated new first name ${newFirstName}`);
@@ -39,11 +38,10 @@ const path = require("path");
     await cas.sleep(2000);
 
     await cas.log("Validating again to get attribute updates...");
-    body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    await cas.log(body);
-    json = JSON.parse(body).serviceResponse.authenticationSuccess.attributes;
-    assert(json.firstName[0] === newFirstName);
+    json = await cas.validateTicket(service, ticket);
+    attributes = json.serviceResponse.authenticationSuccess.attributes;
+    assert(attributes.firstName[0] === newFirstName);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
     await fs.unlinkSync(configFilePath);
 })();

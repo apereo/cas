@@ -3,7 +3,7 @@ package org.apereo.cas.support.oauth.services;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.services.BaseServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.query.BasicRegisteredServiceQueryIndex;
 import org.apereo.cas.services.query.RegisteredServiceQueryAttribute;
@@ -14,6 +14,8 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.Ordered;
 import java.util.List;
 
@@ -24,7 +26,7 @@ import java.util.List;
  * @since 6.3.0
  */
 @Slf4j
-public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServicesManagerRegisteredServiceLocator {
+public class OAuth20ServicesManagerRegisteredServiceLocator extends BaseServicesManagerRegisteredServiceLocator {
     protected final CasConfigurationProperties casProperties;
 
     public OAuth20ServicesManagerRegisteredServiceLocator(final CasConfigurationProperties casProperties) {
@@ -38,7 +40,7 @@ public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServi
         LOGGER.trace("Attempting to locate service [{}] via [{}]", service, registeredService);
         val clientIdAttribute = service.getAttributes().get(OAuth20Constants.CLIENT_ID);
         val clientId = CollectionUtils.firstElement(clientIdAttribute).map(Object::toString).orElse(StringUtils.EMPTY);
-        return StringUtils.isNotBlank(clientId) && StringUtils.equals(registeredService.getClientId(), clientId);
+        return StringUtils.isNotBlank(clientId) && Strings.CI.equals(registeredService.getClientId(), clientId);
     }
 
     @Override
@@ -51,13 +53,13 @@ public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServi
         val indexes = super.getRegisteredServiceIndexes();
         val registeredServiceIndexedType = getRegisteredServiceIndexedType();
         indexes.add(BasicRegisteredServiceQueryIndex.hashIndex(
-            new RegisteredServiceQueryAttribute(registeredServiceIndexedType, String.class, "clientId")));
+            new RegisteredServiceQueryAttribute(registeredServiceIndexedType.getValue(), String.class, "clientId")));
         return indexes;
     }
 
     @Override
-    protected Class<? extends RegisteredService> getRegisteredServiceIndexedType() {
-        return OAuthRegisteredService.class;
+    protected Pair<String, Class<? extends RegisteredService>> getRegisteredServiceIndexedType() {
+        return Pair.of(OAuthRegisteredService.OAUTH_REGISTERED_SERVICE_FRIENDLY_NAME, OAuthRegisteredService.class);
     }
 
     protected boolean supportsInternal(final RegisteredService registeredService, final Service givenService) {
@@ -68,7 +70,7 @@ public class OAuth20ServicesManagerRegisteredServiceLocator extends DefaultServi
                 .map(String.class::cast)
                 .orElse(StringUtils.EMPTY);
             val callbackService = OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix());
-            return StringUtils.isBlank(source) || StringUtils.startsWith(source, callbackService)
+            return StringUtils.isBlank(source) || Strings.CI.startsWith(source, callbackService)
                 || OAuth20Utils.checkCallbackValid(registeredService, source);
         }
         return false;

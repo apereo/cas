@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.oidc;
 
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,17 +19,22 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("OidcCibaProperties")
 public class OidcCibaProperties implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 313328615694269276L;
 
     /**
-     * Hard timeout to kill the id token and expire it.
+     * Hard timeout to kill the ID token and expire it.
      */
     @DurationCapable
     private String maxTimeToLiveInSeconds = "PT5M";
+
+    /**
+     * The storage object name used and created by CAS to hold CIBA requests
+     * in the backing ticket registry implementation.
+     */
+    private String storageName = "oidcCibaRequestsCache";
     
     /**
      * Control CIBA notification settings

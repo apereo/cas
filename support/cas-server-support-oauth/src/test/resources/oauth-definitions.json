@@ -1,12 +1,12 @@
 {
   "@class": "java.util.TreeMap",
   "groupMembership" : {
-    "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "@class" : "org.apereo.cas.support.oauth.profile.OAuth20AttributeDefinition",
     "key": "groupMembership",
     "singleValue": true
   },
   "countries" : {
-    "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "@class" : "org.apereo.cas.support.oauth.profile.OAuth20AttributeDefinition",
     "key": "countries",
     "singleValue": false
   }

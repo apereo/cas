@@ -42,7 +42,7 @@ public class CasRedisWebAuthnAutoConfiguration {
     public CasRedisTemplate<String, RedisWebAuthnCredentialRegistration> webAuthnRedisTemplate(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("webAuthnRedisConnectionFactory")
-        final RedisConnectionFactory webAuthnRedisConnectionFactory) throws Exception {
+        final RedisConnectionFactory webAuthnRedisConnectionFactory) {
         return BeanSupplier.of(CasRedisTemplate.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> RedisObjectFactory.newRedisTemplate(webAuthnRedisConnectionFactory))
@@ -57,7 +57,7 @@ public class CasRedisWebAuthnAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(RedisConnectionFactory.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(Unchecked.supplier(() -> {
@@ -76,7 +76,7 @@ public class CasRedisWebAuthnAutoConfiguration {
         @Qualifier("webAuthnRedisTemplate")
         final CasRedisTemplate<String, RedisWebAuthnCredentialRegistration> webAuthnRedisTemplate,
         @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
-        final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) throws Exception {
+        final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
         return BeanSupplier.of(WebAuthnCredentialRepository.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new RedisWebAuthnCredentialRepository(webAuthnRedisTemplate,

@@ -24,6 +24,7 @@ import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategyActivationCriteria;
 import org.apereo.cas.services.ChainingRegisteredServiceAttributeReleaseActivationCriteria;
 import org.apereo.cas.services.ChainingRegisteredServiceDelegatedAuthenticationPolicy;
+import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
@@ -35,6 +36,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy;
+import org.apereo.cas.services.DefaultRegisteredServiceSurrogatePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy;
@@ -56,6 +58,7 @@ import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
+import org.apereo.cas.services.RegisteredServicePasswordlessPolicy;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategy;
 import org.apereo.cas.services.RestfulRegisteredServiceAuthenticationPolicyCriteria;
@@ -79,6 +82,7 @@ import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilt
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import lombok.val;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.List;
 
@@ -98,9 +102,11 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             ServiceRegistry.class,
             ServiceRegistryExecutionPlanConfigurer.class));
 
-        registerSerializableSpringProxy(hints, ServiceRegistryInitializerEventListener.class);
+        registerSpringProxyHints(hints, ChainingServiceRegistry.class, ServiceRegistry.class);
+        registerSerializableSpringProxyHints(hints, ServiceRegistryInitializerEventListener.class);
 
-        registerSerializationHints(hints, BaseRegisteredService.class,
+        registerSerializationHints(hints,
+            BaseRegisteredService.class,
             BaseWebBasedRegisteredService.class,
             CasRegisteredService.class,
 
@@ -129,7 +135,6 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             RefuseRegisteredServiceProxyPolicy.class,
             DefaultRegisteredServiceAccessStrategy.class,
             ChainingRegisteredServiceAccessStrategy.class,
-            GroovyRegisteredServiceAccessStrategy.class,
             RemoteEndpointServiceAccessStrategy.class,
             TimeBasedRegisteredServiceAccessStrategy.class,
             DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy.class,
@@ -140,7 +145,6 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             AnonymousRegisteredServiceUsernameAttributeProvider.class,
             BaseRegisteredServiceUsernameAttributeProvider.class,
             StaticRegisteredServiceUsernameProvider.class,
-            GroovyRegisteredServiceUsernameProvider.class,
             DefaultRegisteredServiceUsernameProvider.class,
             DefaultRegisteredServiceWebflowInterruptPolicy.class,
             RegisteredServiceRegexAttributeFilter.class,
@@ -151,9 +155,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             AttributeBasedRegisteredServiceAccessStrategyActivationCriteria.class,
             AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria.class,
             AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy.class,
-            GroovyRegisteredServiceAttributeReleaseActivationCriteria.class,
-            GroovyRegisteredServiceAccessStrategyActivationCriteria.class,
-            GroovyRegisteredServiceSingleSignOnParticipationPolicy.class,
+            DefaultRegisteredServiceSurrogatePolicy.class,
 
             ChainingAttributeReleasePolicy.class,
             DenyAllAttributeReleasePolicy.class,
@@ -161,7 +163,6 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             ReturnAllAttributeReleasePolicy.class,
             ReturnStaticAttributeReleasePolicy.class,
             ReturnMappedAttributeReleasePolicy.class,
-            GroovyScriptAttributeReleasePolicy.class,
             ReturnRestfulAttributeReleasePolicy.class,
             PatternMatchingAttributeReleasePolicy.class,
             PatternMatchingAttributeReleasePolicy.Rule.class,
@@ -178,15 +179,30 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
 
             AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria.class,
             AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria.class,
-            GroovyRegisteredServiceAuthenticationPolicyCriteria.class,
             NotPreventedRegisteredServiceAuthenticationPolicyCriteria.class,
-            RestfulRegisteredServiceAuthenticationPolicyCriteria.class);
+            RestfulRegisteredServiceAuthenticationPolicyCriteria.class
+        );
 
+        if (isGroovyPresent(classLoader)) {
+            registerSerializationHints(hints, List.of(
+                GroovyRegisteredServiceAccessStrategy.class,
+                GroovyRegisteredServiceUsernameProvider.class,
+                GroovyRegisteredServiceAttributeReleaseActivationCriteria.class,
+                GroovyRegisteredServiceAccessStrategyActivationCriteria.class,
+                GroovyRegisteredServiceSingleSignOnParticipationPolicy.class,
+                GroovyScriptAttributeReleasePolicy.class,
+                GroovyRegisteredServiceAuthenticationPolicyCriteria.class
+            ));
+        }
         registerReflectionHintsForDeclaredAndPublicElements(hints, List.of(
             UnauthorizedServiceException.class,
             RegisteredServiceQuery.class,
             RegisteredServiceQueryIndex.class,
             CasRegisteredService.class
         ));
+
+        val classes = findSubclassesOf(RegisteredServicePasswordlessPolicy.class);
+        registerSerializationHints(hints, classes);
+        registerReflectionHints(hints, classes);
     }
 }

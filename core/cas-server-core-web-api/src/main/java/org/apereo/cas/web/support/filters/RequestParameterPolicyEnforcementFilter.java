@@ -201,14 +201,14 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
      */
     public static Set<String> parseParametersList(final String initParamValue, final boolean allowWildcard) {
         if (null == initParamValue) {
-            return new HashSet<>(0);
+            return new HashSet<>();
         }
         if (initParamValue.trim().isEmpty()) {
             throwException(new IllegalArgumentException('[' + initParamValue + "] had no tokens but should have had at least one token."));
         }
         val tokens = Splitter.onPattern("\\,\\s*").splitToList(initParamValue.trim());
         if (allowWildcard && 1 == tokens.size() && "*".equals(tokens.getFirst())) {
-            return new HashSet<>(0);
+            return new HashSet<>();
         }
         val parameterNames = new HashSet<String>();
         for (val parameterName : tokens) {
@@ -226,7 +226,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
      * If the String is "none" parse to empty set meaning block no characters.
      * If the String is empty throw, to avoid configurer accidentally configuring not to block any characters.
      * <p>
-     * Note that only the space charater should be used as a delimiter, not tabs or newlines.
+     * Note that only the space character should be used as a delimiter, not tabs or newlines.
      *
      * @param value value of the init param to parse
      * @return non-null Set of zero or more Characters to block

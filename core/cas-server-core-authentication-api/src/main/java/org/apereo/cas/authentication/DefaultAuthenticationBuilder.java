@@ -325,9 +325,9 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     @CanIgnoreReturnValue
-    public AuthenticationBuilder setAuthenticationDate(final ZonedDateTime d) {
-        if (d != null) {
-            this.authenticationDate = d;
+    public AuthenticationBuilder setAuthenticationDate(final ZonedDateTime dateTime) {
+        if (dateTime != null) {
+            this.authenticationDate = dateTime;
         }
         return this;
     }

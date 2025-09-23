@@ -1,5 +1,7 @@
 package org.apereo.cas.audit;
 
+import org.apereo.cas.util.NamedObject;
+
 /**
  * This is {@link AuditTrailExecutionPlanConfigurer}.
  *
@@ -7,7 +9,7 @@ package org.apereo.cas.audit;
  * @since 5.3.0
  */
 @FunctionalInterface
-public interface AuditTrailExecutionPlanConfigurer {
+public interface AuditTrailExecutionPlanConfigurer extends NamedObject {
 
     /**
      * Configure audit trail execution plan.
@@ -15,13 +17,4 @@ public interface AuditTrailExecutionPlanConfigurer {
      * @param plan the plan
      */
     void configureAuditTrailExecutionPlan(AuditTrailExecutionPlan plan);
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
 }

@@ -80,7 +80,7 @@ public class GrouperPersonAttributeDao extends BasePersonAttributeDao {
     public Set<PersonAttributes> getPeople(final Map<String, Object> query,
                                             final PersonAttributeDaoFilter filter,
                                             final Set<PersonAttributes> resultPeople) {
-        val queryAttributes = stuffAttributesIntoList(query, filter);
+        val queryAttributes = PersonAttributeDao.stuffAttributesIntoList(query);
         return getPeopleWithMultivaluedAttributes(queryAttributes, filter, resultPeople);
     }
 

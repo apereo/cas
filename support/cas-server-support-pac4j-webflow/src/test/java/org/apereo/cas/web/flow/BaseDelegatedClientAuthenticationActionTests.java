@@ -6,16 +6,18 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
+import org.apereo.cas.web.support.ThemeChangeInterceptor;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowVariable;
@@ -32,8 +33,6 @@ import org.springframework.webflow.engine.support.BeanFactoryVariableValueFactor
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseDelegatedClientAuthenticationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION)
@@ -73,26 +73,13 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
     @Autowired
     @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
     protected DelegatedIdentityProviders identityProviders;
-
-    protected String getLogoutResponse() {
-        return "<samlp:LogoutResponse xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
-            + "xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" "
-            + "ID=\"_6c3737282f007720e736f0f4028feed8cb9b40291c\" Version=\"2.0\" "
-            + "IssueInstant=\"" + ZonedDateTime.now(ZoneOffset.UTC) + "\" "
-            + "Destination=\"http://callback.example.org?client_name=SAML2Client\" "
-            + "InResponseTo=\"ONELOGIN_21df91a89767879fc0f7df6a1490c6000c81644d\">"
-            + "  <saml:Issuer>https://cas.example.org/idp</saml:Issuer>"
-            + "  <samlp:Status>"
-            + "    <samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\"/>"
-            + "  </samlp:Status>"
-            + "</samlp:LogoutResponse>";
-    }
+    
 
     protected void assertStartAuthentication(final Service service) throws Throwable {
-        val requestContext = MockRequestContext.create(applicationContext);
-        requestContext.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
+        val requestContext = MockRequestContext.create(applicationContext).withUserAgent().setClientInfo();
 
         val flow = new Flow("mockFlow");
+        flow.setApplicationContext(applicationContext);
         flow.addVariable(new FlowVariable("credential",
             new BeanFactoryVariableValueFactory(UsernamePasswordCredential.class, applicationContext.getAutowireCapableBeanFactory())));
         val locale = Locale.ENGLISH.getLanguage();
@@ -106,8 +93,8 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
             WebUtils.putServiceIntoFlowScope(requestContext, service);
         }
 
-        val client = identityProviders.findClient("SAML2Client").orElseThrow();
         val webContext = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
+        val client = identityProviders.findClient("CasClient", webContext).orElseThrow();
 
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, webContext, client);
         requestContext.setParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());

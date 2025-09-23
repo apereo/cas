@@ -19,7 +19,6 @@ import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.Audience;
 import org.opensaml.saml.saml2.core.AudienceRestriction;
 import org.opensaml.saml.saml2.core.AuthnContext;
-import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.EncryptedID;
@@ -39,12 +38,10 @@ import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
-import java.io.Serial;
 import java.net.InetAddress;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -60,8 +57,6 @@ import java.util.Optional;
  */
 @Slf4j
 public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder implements Saml20ObjectBuilder {
-    @Serial
-    private static final long serialVersionUID = -4325127376598205277L;
 
     protected AbstractSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
         super(configBean);
@@ -82,14 +77,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         }
     }
 
-    /**
-     * Gets name id.
-     *
-     * @param nameIdFormat the name id format
-     * @param nameIdValue  the name id value
-     * @return the name iD
-     */
-    public NameID getNameID(final String nameIdFormat, final String nameIdValue) {
+    @Override
+    public NameID newNameID(final String nameIdFormat, final String nameIdValue) {
         val nameId = newSamlObject(NameID.class);
         nameId.setFormat(nameIdFormat);
         nameId.setValue(nameIdValue);
@@ -137,13 +126,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         return samlResponse;
     }
 
-    /**
-     * Create a new SAML status object.
-     *
-     * @param codeValue     the code value
-     * @param statusMessage the status message
-     * @return the status
-     */
+    @Override
     public Status newStatus(final String codeValue, final String statusMessage) {
         LOGGER.trace("Creating new SAML Status for code value: [{}], status message: [{}]", codeValue, statusMessage);
         val status = newSamlObject(Status.class);
@@ -156,22 +139,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             status.setStatusMessage(message);
         }
         return status;
-    }
-
-    /**
-     * Create a new SAML2 Assertion object.
-     *
-     * @param authnStatement the authn statement
-     * @param issuer         the issuer
-     * @param issuedAt       the issued at
-     * @param id             the id
-     * @return the assertion
-     */
-    public Assertion newAssertion(final AuthnStatement authnStatement, final String issuer,
-                                  final ZonedDateTime issuedAt, final String id) {
-        val list = new ArrayList<Statement>(1);
-        list.add(authnStatement);
-        return newAssertion(list, issuer, issuedAt, id);
     }
 
     /**
@@ -194,16 +161,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         return assertion;
     }
 
-    /**
-     * New logout response.
-     *
-     * @param id          the id
-     * @param destination the destination
-     * @param issuer      the issuer
-     * @param status      the status
-     * @param recipient   the recipient
-     * @return the logout response
-     */
+    @Override
     public LogoutResponse newLogoutResponse(final String id, final String destination,
                                             final Issuer issuer, final Status status,
                                             final String recipient) {
@@ -217,18 +175,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         logoutResponse.setVersion(SAMLVersion.VERSION_20);
         return logoutResponse;
     }
-
-    /**
-     * New saml2 logout request.
-     *
-     * @param id           the id
-     * @param issueInstant the issue instant
-     * @param destination  the destination
-     * @param issuer       the issuer
-     * @param sessionIndex the session index
-     * @param nameId       the name id
-     * @return the logout request
-     */
+    
+    @Override
     public LogoutRequest newLogoutRequest(final String id, final ZonedDateTime issueInstant,
                                           final String destination, final Issuer issuer,
                                           final String sessionIndex, final NameID nameId) {
@@ -260,6 +208,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param issuerValue the issuer
      * @return the issuer
      */
+    @Override
     public Issuer newIssuer(final String issuerValue) {
         val issuer = newSamlObject(Issuer.class);
         issuer.setValue(issuerValue);
@@ -280,24 +229,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                                                    final List<XMLObject> attributeList) {
         addAttributeValuesToSamlAttribute(attributeName, attributeValue, valueType,
             attributeList, AttributeValue.DEFAULT_ELEMENT_NAME);
-    }
-
-    /**
-     * New authn statement.
-     *
-     * @param contextClassRef the context class ref such as {@link AuthnContext#PASSWORD_AUTHN_CTX}
-     * @param authnInstant    the authn instant
-     * @param sessionIndex    the session index
-     * @return the authn statement
-     */
-    public AuthnStatement newAuthnStatement(final String contextClassRef,
-                                            final ZonedDateTime authnInstant,
-                                            final String sessionIndex) {
-        val ctx = newSamlObject(AuthnContext.class);
-        val classRef = newSamlObject(AuthnContextClassRef.class);
-        classRef.setURI(contextClassRef);
-        ctx.setAuthnContextClassRef(classRef);
-        return newAuthnStatement(ctx, authnInstant, sessionIndex);
     }
 
     /**
@@ -368,20 +299,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         FunctionUtils.doIfNotNull(notBefore, __ -> data.setNotBefore(notBefore.toInstant()));
         confirmation.setSubjectConfirmationData(data);
         return confirmation;
-    }
-
-    /**
-     * New subject subject.
-     *
-     * @param nameIdFormat        the name id format
-     * @param nameIdValue         the name id value
-     * @param subjectConfirmation the subject confirmation
-     * @return the subject
-     */
-    public Subject newSubject(final String nameIdFormat, final String nameIdValue,
-                              final SubjectConfirmation subjectConfirmation) {
-        val nameID = getNameID(nameIdFormat, nameIdValue);
-        return newSubject(nameID, null, subjectConfirmation);
     }
 
     /**

@@ -36,8 +36,8 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 class OidcJwtAccessTokenEncoderTests extends AbstractOidcTests {
     private EncodableCipher<String, String> getAccessTokenEncodingCipher(final OAuth20AccessToken accessToken,
                                                                          final RegisteredService registeredService) {
-        return OAuth20JwtAccessTokenEncoder.toEncodableCipher(oidcAccessTokenJwtBuilder,
-            registeredService, accessToken, accessToken.getService(), casProperties, false);
+        return OAuth20JwtAccessTokenEncoder.toEncodableCipher(oidcConfigurationContext,
+            registeredService, accessToken, accessToken.getService(), false);
     }
 
     private DecodableCipher<String, String> getAccessTokenDecodingCipher(final RegisteredService registeredService) {

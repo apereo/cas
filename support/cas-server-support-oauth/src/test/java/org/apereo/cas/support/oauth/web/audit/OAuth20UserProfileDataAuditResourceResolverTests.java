@@ -25,11 +25,12 @@ import static org.mockito.Mockito.*;
 @Tag("OAuth")
 class OAuth20UserProfileDataAuditResourceResolverTests {
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val r = new OAuth20UserProfileDataAuditResourceResolver();
         val token = mock(OAuth20AccessToken.class);
         when(token.getId()).thenReturn("CODE");
-        when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService());
+        val webApplicationService = RegisteredServiceTestUtils.getService();
+        when(token.getService()).thenReturn(webApplicationService);
 
         val service = new OAuthRegisteredService();
         service.setClientId("CLIENTID");
@@ -49,11 +50,12 @@ class OAuth20UserProfileDataAuditResourceResolverTests {
     }
 
     @Test
-    void verifyActionFromToken() throws Throwable {
+    void verifyActionFromToken() {
         val r = new OAuth20UserProfileDataAuditResourceResolver();
         val token = mock(OAuth20AccessToken.class);
         when(token.getId()).thenReturn("CODE");
-        when(token.getService()).thenReturn(RegisteredServiceTestUtils.getService());
+        val webApplicationService = RegisteredServiceTestUtils.getService();
+        when(token.getService()).thenReturn(webApplicationService);
         when(token.getClientId()).thenReturn("CLIENTID");
 
         val jp = mock(JoinPoint.class);

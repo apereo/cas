@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.ObjectUtils;
-
 import java.io.Serial;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -21,6 +21,7 @@ import java.util.Set;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CasRegisteredService extends BaseWebBasedRegisteredService implements CasModelRegisteredService {
 
     /**
@@ -41,7 +42,7 @@ public class CasRegisteredService extends BaseWebBasedRegisteredService implemen
 
     private String redirectUrl;
 
-    private Set<CasProtocolVersions> supportedProtocols = new LinkedHashSet<>(0);
+    private Set<CasProtocolVersions> supportedProtocols = new LinkedHashSet<>();
 
     private String responseType;
 
@@ -54,6 +55,6 @@ public class CasRegisteredService extends BaseWebBasedRegisteredService implemen
     @Override
     public void initialize() {
         super.initialize();
-        this.proxyPolicy = ObjectUtils.defaultIfNull(this.proxyPolicy, new RefuseRegisteredServiceProxyPolicy());
+        this.proxyPolicy = ObjectUtils.getIfNull(this.proxyPolicy, new RefuseRegisteredServiceProxyPolicy());
     }
 }

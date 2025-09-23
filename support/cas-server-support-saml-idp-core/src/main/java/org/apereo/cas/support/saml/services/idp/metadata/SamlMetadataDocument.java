@@ -1,16 +1,14 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
 import org.apereo.cas.util.EncodingUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,7 +28,7 @@ import java.io.Serializable;
 @Table(name = "SamlMetadataDocument")
 @Getter
 @Setter
-@AllArgsConstructor
+@NoArgsConstructor
 @SuperBuilder
 public class SamlMetadataDocument implements Serializable {
 
@@ -57,10 +55,6 @@ public class SamlMetadataDocument implements Serializable {
     @Lob
     @Column(name = "signature", length = Integer.MAX_VALUE)
     private String signature;
-
-    public SamlMetadataDocument() {
-        setId(System.currentTimeMillis());
-    }
 
     /**
      * Gets base-64 decoded value if needed, or the value itself.

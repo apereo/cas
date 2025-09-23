@@ -16,6 +16,6 @@ async function execLogin(page, uid) {
     const page = await cas.newPage(browser);
     await execLogin(page, "casacct1");
     await execLogin(page, "casacct2");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

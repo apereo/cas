@@ -11,7 +11,6 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AuthenticationClientProvider;
 import org.apereo.cas.util.EncodingUtils;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,15 +30,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
-import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -48,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("OIDC")
+@Tag("OIDCAuthentication")
 @TestPropertySource(properties = {
     "cas.authn.oauth.code.time-to-kill-in-seconds=60",
     "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/private-jwks.jwks"
@@ -70,7 +67,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService();
         registeredService.setClientId(UUID.randomUUID().toString());
 
-        val file = File.createTempFile("jwks-service", ".jwks");
+        val file = Files.createTempFile("jwks-service", ".jwks").toFile();
         val core = casProperties.getAuthn().getOidc().getJwks().getCore();
         val jsonWebKey = OidcJsonWebKeyStoreUtils.generateJsonWebKey(
             core.getJwksType(), core.getJwksKeySize(), OidcJsonWebKeyUsage.SIGNING);
@@ -113,7 +110,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyBadCred() throws Throwable {
+    void verifyBadCred() {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();

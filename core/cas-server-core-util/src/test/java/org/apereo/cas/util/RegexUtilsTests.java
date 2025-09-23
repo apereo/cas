@@ -18,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class RegexUtilsTests {
 
     @Test
-    void verifyNotValidRegex() throws Throwable {
+    void verifyNotValidRegex() {
         val notValidRegex = "***";
         assertFalse(RegexUtils.isValidRegex(notValidRegex));
     }
 
     @Test
-    void verifyBlankValidRegex() throws Throwable {
+    void verifyBlankValidRegex() {
         var pattern = RegexUtils.createPattern(StringUtils.EMPTY);
         assertNotNull(pattern);
         assertSame(RegexUtils.MATCH_NOTHING_PATTERN, pattern);
@@ -34,12 +34,12 @@ class RegexUtilsTests {
     }
 
     @Test
-    void verifyNullRegex() throws Throwable {
+    void verifyNullRegex() {
         assertFalse(RegexUtils.isValidRegex(null));
     }
 
     @Test
-    void verifyPatternCollection() throws Throwable {
+    void verifyPatternCollection() {
         val patterns = List.of("^abc", "^\\d{3}\\w+");
         val result = RegexUtils.findFirst(patterns, List.of("hello", "world", "911/", "911Z")).get();
         assertEquals("911Z", result);

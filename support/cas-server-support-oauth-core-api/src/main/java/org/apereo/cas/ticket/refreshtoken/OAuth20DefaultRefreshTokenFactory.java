@@ -16,7 +16,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFactory {
 
-    protected final UniqueTicketIdGenerator refreshTokenIdGenerator;
+    @Getter
+    protected final UniqueTicketIdGenerator ticketIdGenerator;
 
     protected final TicketRegistry ticketRegistry;
 
@@ -52,7 +53,7 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
                                              final ServicesManager servicesManager,
                                              final TicketTrackingPolicy descendantTicketsTrackingPolicy,
                                              final CasConfigurationProperties casProperties) {
-        this(new DefaultUniqueTicketIdGenerator(), ticketRegistry, expirationPolicyBuilder,
+        this(new HostNameBasedUniqueTicketIdGenerator(), ticketRegistry, expirationPolicyBuilder,
             servicesManager, descendantTicketsTrackingPolicy, casProperties);
     }
 
@@ -77,11 +78,12 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
             }
             FunctionUtils.throwIf(limitReached, () -> new IllegalArgumentException("Refresh token limit for %s is reached".formatted(service.getId())));
         }
-        val codeId = refreshTokenIdGenerator.getNewTicketId(OAuth20RefreshToken.PREFIX);
+        val codeId = ticketIdGenerator.getNewTicketId(OAuth20RefreshToken.PREFIX);
         val expirationPolicyToUse = determineExpirationPolicyForService(registeredService);
         val refreshToken = new OAuth20DefaultRefreshToken(codeId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket,
             scopes, clientId, accessToken, requestClaims, responseType, grantType);
+        FunctionUtils.doIfNotNull(service, __ -> refreshToken.setTenantId(service.getTenant()));
         descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, refreshToken);
         return refreshToken;
     }

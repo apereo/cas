@@ -28,4 +28,5 @@ Fine Grained Authorization would allow you to build granular access control usin
 This strategy goes beyond controlling <i>entry access</i> to applications registered with CAS and allows you to define and
 develop detailed authorization rules to determine whether a given API request, resource or operation is allowed access. Such API
 requests are often proxied by an API gateway which would act as a PEP, routing requests to CAS that is then acting as a PDP.
-This capability is <i>not offered</i> by the CAS project at the moment and may be considered in future releases of the software.
+
+Read more about this topic [here](Heimdall-Authorization-Overview.html).

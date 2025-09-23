@@ -14,9 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -39,7 +37,7 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolutionConfigurationContext configurationContext;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext context) throws Exception {
+    protected Event doExecuteInternal(final RequestContext context) {
         val service = WebUtils.getService(context);
         val registeredService = WebUtils.getRegisteredService(context);
         val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);
@@ -49,22 +47,23 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
             .finalizeAllAuthenticationTransactions(authenticationResultBuilder, service));
         LOGGER.trace("Finalizing authentication event...");
         val authentication = buildFinalAuthentication(authenticationResult);
-        val ticketGrantingTicket = determineTicketGrantingTicketId(context);
-        LOGGER.debug("Creating ticket-granting ticket, potentially based on [{}]", ticketGrantingTicket);
-        val tgt = configurationContext.getSingleSignOnBuildingStrategy().buildTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
+        val ticketGrantingTicketId = determineTicketGrantingTicketId(context);
+        LOGGER.debug("Creating ticket-granting ticket, potentially based on [{}]", ticketGrantingTicketId);
+        val ticketGrantingTicket = configurationContext.getSingleSignOnBuildingStrategy()
+            .buildTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicketId);
 
         if (registeredService != null && registeredService.getAccessStrategy() != null) {
             WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
         }
-        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
         WebUtils.putAuthenticationResult(authenticationResult, context);
-        WebUtils.putAuthentication(tgt, context);
+        WebUtils.putAuthentication(ticketGrantingTicket, context);
 
         LOGGER.trace("Calculating authentication warning messages...");
         val warnings = calculateAuthenticationWarningMessages(context);
         if (!warnings.isEmpty()) {
             val attributes = new LocalAttributeMap<Object>(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, warnings);
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, attributes);
+            return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, attributes);
         }
         return success();
     }
@@ -106,11 +105,6 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
     }
 
     protected static void addMessageDescriptorToMessageContext(final MessageContext context, final MessageDescriptor warning) {
-        val builder = new MessageBuilder()
-            .warning()
-            .code(warning.getCode())
-            .defaultText(warning.getDefaultMessage())
-            .args((Object[]) warning.getParams());
-        context.addMessage(builder.build());
+        WebUtils.addWarningMessageToContext(context, warning);
     }
 }

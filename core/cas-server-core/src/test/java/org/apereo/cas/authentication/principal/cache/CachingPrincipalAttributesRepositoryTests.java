@@ -9,26 +9,27 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilte
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,8 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Tag("Attributes")
+@Tag("AttributeRepository")
+@ExtendWith(CasTestExtension.class)
 class CachingPrincipalAttributesRepositoryTests {
     private static final String MAIL = "mail";
 
@@ -66,7 +68,7 @@ class CachingPrincipalAttributesRepositoryTests {
 
         PRINCIPAL = FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory()
             .createPrincipal(UUID.randomUUID().toString(),
-                Collections.singletonMap(MAIL, CollectionUtils.wrapList("final@school.com"))));
+                Map.of(MAIL, CollectionUtils.wrapList("final@school.com"))));
 
     }
 
@@ -75,12 +77,12 @@ class CachingPrincipalAttributesRepositoryTests {
     }
 
     @Nested
+    @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        CachingPrincipalAttributesRepositoryTests.CacheTestConfiguration.class
+        AopAutoConfiguration.class,
+        CacheTestConfiguration.class
     })
-    public class MergingTests {
+    class MergingTests {
         private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -99,7 +101,7 @@ class CachingPrincipalAttributesRepositoryTests {
         }
 
         @Test
-        void verifyMergingStrategyWithNoncollidingAttributeAdder() throws Throwable {
+        void verifyMergingStrategyWithNoncollidingAttributeAdder() {
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .applicationContext(applicationContext)
                 .principal(PRINCIPAL)
@@ -107,7 +109,7 @@ class CachingPrincipalAttributesRepositoryTests {
                 .build();
             val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5);
             repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD);
-            repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
+            repository.setAttributeRepositoryIds(Set.of("Stub"));
             val repositoryAttributes = repository.getAttributes(context);
             assertTrue(repositoryAttributes.containsKey(MAIL));
             val emailValue = repositoryAttributes.get(MAIL).getFirst().toString();
@@ -115,7 +117,7 @@ class CachingPrincipalAttributesRepositoryTests {
         }
 
         @Test
-        void verifyMergingStrategyWithReplacingAttributeAdder() throws Throwable {
+        void verifyMergingStrategyWithReplacingAttributeAdder() {
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .applicationContext(applicationContext)
                 .principal(PRINCIPAL)
@@ -123,7 +125,7 @@ class CachingPrincipalAttributesRepositoryTests {
                 .build();
 
             val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5);
-            repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
+            repository.setAttributeRepositoryIds(Set.of("Stub"));
             repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
             val repositoryAttributes = repository.getAttributes(context);
             assertTrue(repositoryAttributes.containsKey(MAIL));
@@ -133,7 +135,7 @@ class CachingPrincipalAttributesRepositoryTests {
         }
 
         @Test
-        void verifyMergingStrategyWithMultivaluedAttributeMerger() throws Throwable {
+        void verifyMergingStrategyWithMultivaluedAttributeMerger() {
             val context = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .applicationContext(applicationContext)
                 .principal(PRINCIPAL)
@@ -141,7 +143,7 @@ class CachingPrincipalAttributesRepositoryTests {
                 .build();
 
             val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5);
-            repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
+            repository.setAttributeRepositoryIds(Set.of("Stub"));
             repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
             val repositoryAttributes = repository.getAttributes(context);
             val mailAttr = repositoryAttributes.get(MAIL);
@@ -151,7 +153,7 @@ class CachingPrincipalAttributesRepositoryTests {
 
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "CacheTestConfiguration", proxyBeanMethods = false)
     static class CacheTestConfiguration {
         @Bean
         public PersonAttributeDao attributeRepository() {

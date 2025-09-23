@@ -22,7 +22,7 @@ class ShortenedReturnValueAsStringAuditResourceResolverTests {
     private final ShortenedReturnValueAsStringAuditResourceResolver r = new ShortenedReturnValueAsStringAuditResourceResolver();
 
     @Test
-    void verifyActionPassed() throws Throwable {
+    void verifyActionPassed() {
         val jp = mock(JoinPoint.class);
         assertTrue(r.resolveFrom(jp, RandomUtils.randomAlphabetic(52)).length > 0);
     }

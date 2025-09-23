@@ -1,6 +1,7 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.NamedObject;
 
 import org.springframework.core.Ordered;
 
@@ -12,7 +13,7 @@ import org.springframework.core.Ordered;
  * @since 5.1.0
  */
 @FunctionalInterface
-public interface LogoutPostProcessor extends Ordered {
+public interface LogoutPostProcessor extends Ordered, NamedObject {
 
     @Override
     default int getOrder() {
@@ -25,13 +26,4 @@ public interface LogoutPostProcessor extends Ordered {
      * @param ticketGrantingTicket the ticket granting ticket
      */
     void handle(TicketGrantingTicket ticketGrantingTicket);
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return this.getClass().getSimpleName();
-    }
 }

@@ -14,7 +14,9 @@ import lombok.val;
 @RequiredArgsConstructor
 public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFactory {
 
-    private final UniqueTicketIdGenerator ticketUniqueTicketIdGenerator;
+    @Getter
+    private final UniqueTicketIdGenerator ticketIdGenerator;
+    
     @Getter
     private final ExpirationPolicyBuilder expirationPolicyBuilder;
 
@@ -22,7 +24,7 @@ public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFac
     public SecurityTokenTicket create(final TicketGrantingTicket ticket,
                                       final byte[] securityTokenSerialized) throws Throwable {
         val token = EncodingUtils.encodeBase64(securityTokenSerialized);
-        val id = ticketUniqueTicketIdGenerator.getNewTicketId(SecurityTokenTicket.PREFIX);
+        val id = ticketIdGenerator.getNewTicketId(SecurityTokenTicket.PREFIX);
         val stt = new DefaultSecurityTokenTicket(id, ticket, this.expirationPolicyBuilder.buildTicketExpirationPolicy(), token);
         ticket.getDescendantTickets().add(stt.getId());
         return stt;

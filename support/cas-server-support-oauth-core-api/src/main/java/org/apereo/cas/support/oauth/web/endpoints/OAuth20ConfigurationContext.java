@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
@@ -35,12 +36,12 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.RandomStringGenerator;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -52,8 +53,8 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.scheduling.TaskScheduler;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
@@ -69,12 +70,17 @@ import java.util.Optional;
 @Setter
 @SuperBuilder
 public class OAuth20ConfigurationContext {
+    /**
+     * Default bean name.
+     */
+    public static final String BEAN_NAME = "oauth20ConfigurationContext";
+
     private final ConfigurableApplicationContext applicationContext;
 
     private final ServicesManager servicesManager;
 
     private final TicketFactory ticketFactory;
-    
+
     private final TicketRegistry ticketRegistry;
 
     private final PrincipalFactory principalFactory;
@@ -154,6 +160,12 @@ public class OAuth20ConfigurationContext {
     private final CommunicationsManager communicationsManager;
 
     private final CipherExecutor<byte[], byte[]> webflowCipherExecutor;
+
+    private final HttpClient httpClient;
+
+    private final TenantExtractor tenantExtractor;
+
+    private final MessageSource messageSource;
     
     /**
      * Gets ticket granting ticket.
@@ -165,13 +177,16 @@ public class OAuth20ConfigurationContext {
         val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             getTicketGrantingTicketCookieGenerator(),
             getTicketRegistry(), context.getNativeRequest());
-        return Optional.ofNullable(ticketGrantingTicket)
-            .orElseGet(() -> {
-                val manager = new ProfileManager(context, getSessionStore());
-                return manager.getProfile()
-                    .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
-                    .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
-                    .orElse(null);
-            });
+        if (!ticketGrantingTicketCookieGenerator.containsCookie(context.getNativeRequest())) {
+            return Optional.ofNullable(ticketGrantingTicket)
+                .orElseGet(() -> {
+                    val manager = new ProfileManager(context, getSessionStore());
+                    return manager.getProfile()
+                        .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
+                        .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
+                        .orElse(null);
+                });
+        }
+        return ticketGrantingTicket;
     }
 }

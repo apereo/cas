@@ -41,9 +41,9 @@ public class SurrogatePasswordlessAuthenticationPreProcessor implements Password
                                                final Credential credential,
                                                final PasswordlessAuthenticationToken token) throws Throwable {
         LOGGER.debug("Evaluating passwordless authentication token [{}] issued for [{}]", token, passwordlessUserAccount);
-        if (token.getProperties().containsKey(SurrogatePasswordlessAuthenticationRequestParser.PROPORTY_SURROGATE_USERNAME)
+        if (token.getProperties().containsKey(SurrogatePasswordlessAuthenticationRequestParser.PROPERTY_SURROGATE_USERNAME)
             && credential instanceof final MutableCredential mutableCredential) {
-            val surrogateUsername = token.getProperties().get(SurrogatePasswordlessAuthenticationRequestParser.PROPORTY_SURROGATE_USERNAME);
+            val surrogateUsername = token.getProperties().get(SurrogatePasswordlessAuthenticationRequestParser.PROPERTY_SURROGATE_USERNAME);
             val principal = resultBuilder.getInitialAuthentication().map(Authentication::getPrincipal).orElseThrow();
             LOGGER.debug("Evaluating principal [{}] authorization to impersonate [{}]", principal, surrogateUsername);
             if (surrogateAuthenticationService.canImpersonate(surrogateUsername, principal, Optional.ofNullable(service))) {

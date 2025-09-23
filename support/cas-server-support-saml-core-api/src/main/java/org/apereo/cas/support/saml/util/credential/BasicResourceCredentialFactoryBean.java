@@ -126,7 +126,7 @@ public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCred
          */
         BINARY,
         /**
-         * Hexidecimal encoding.
+         * Hexadecimal encoding.
          */
         HEX,
         /**

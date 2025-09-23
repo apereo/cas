@@ -11,11 +11,11 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionResponseGenerator;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.idtoken.IdTokenGeneratorService;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.token.JwtBuilder;
@@ -51,9 +51,10 @@ import org.apereo.cas.uma.web.controllers.resource.UmaDeleteResourceSetRegistrat
 import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -145,6 +146,8 @@ public class CasOAuthUmaAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaConfigurationContext umaConfigurationContext(
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
+            final HttpClient httpClient,
             @Qualifier("umaTokenSigningAndEncryptionService")
             final OAuth20TokenSigningAndEncryptionService umaTokenSigningAndEncryptionService,
             final ConfigurableApplicationContext applicationContext,
@@ -158,7 +161,7 @@ public class CasOAuthUmaAutoConfiguration {
             final SessionStore oauthDistributedSessionStore,
             @Qualifier("oauthTokenGenerator")
             final OAuth20TokenGenerator oauthTokenGenerator,
-            @Qualifier("accessTokenJwtBuilder")
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
             final JwtBuilder accessTokenJwtBuilder,
             @Qualifier("umaRequestingPartyTokenGenerator")
             final IdTokenGeneratorService umaRequestingPartyTokenGenerator,
@@ -178,11 +181,12 @@ public class CasOAuthUmaAutoConfiguration {
             final TaskScheduler taskScheduler,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationManager,
-            @Qualifier("webflowCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
             final CipherExecutor webflowCipherExecutor) {
 
             return UmaConfigurationContext
                 .builder()
+                .httpClient(httpClient)
                 .communicationsManager(communicationManager)
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .applicationContext(applicationContext)
@@ -232,7 +236,7 @@ public class CasOAuthUmaAutoConfiguration {
             final SessionStore oauthDistributedSessionStore,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("accessTokenJwtBuilder")
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
             final JwtBuilder accessTokenJwtBuilder) {
             val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
             return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH", oauthDistributedSessionStore, casProperties);
@@ -246,7 +250,7 @@ public class CasOAuthUmaAutoConfiguration {
             final SessionStore oauthDistributedSessionStore,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("accessTokenJwtBuilder")
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
             final JwtBuilder accessTokenJwtBuilder) {
             val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
             return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH",
@@ -323,7 +327,7 @@ public class CasOAuthUmaAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UniqueTicketIdGenerator umaPermissionTicketIdGenerator() {
-            return new DefaultUniqueTicketIdGenerator();
+            return new HostNameBasedUniqueTicketIdGenerator();
         }
 
         @Bean
@@ -347,24 +351,20 @@ public class CasOAuthUmaAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oauthUmaTicketSerializationExecutionPlanConfigurer")
-        public TicketSerializationExecutionPlanConfigurer oauthUmaTicketSerializationExecutionPlanConfigurer() {
+        public TicketSerializationExecutionPlanConfigurer oauthUmaTicketSerializationExecutionPlanConfigurer(final ConfigurableApplicationContext applicationContext) {
             return plan -> {
-                plan.registerTicketSerializer(new UmaPermissionTicketStringSerializer());
-                plan.registerTicketSerializer(UmaPermissionTicket.class.getName(), new UmaPermissionTicketStringSerializer());
+                plan.registerTicketSerializer(new UmaPermissionTicketStringSerializer(applicationContext));
+                plan.registerTicketSerializer(UmaPermissionTicket.class.getName(), new UmaPermissionTicketStringSerializer(applicationContext));
+                plan.registerTicketSerializer(UmaPermissionTicket.PREFIX, new UmaPermissionTicketStringSerializer(applicationContext));
             };
         }
 
-        private static final class UmaPermissionTicketStringSerializer extends AbstractJacksonBackedStringSerializer<DefaultUmaPermissionTicket> {
+        private static final class UmaPermissionTicketStringSerializer extends BaseJacksonSerializer<DefaultUmaPermissionTicket> {
             @Serial
             private static final long serialVersionUID = -2198623586274810263L;
 
-            UmaPermissionTicketStringSerializer() {
-                super(MINIMAL_PRETTY_PRINTER);
-            }
-
-            @Override
-            public Class<DefaultUmaPermissionTicket> getTypeToSerialize() {
-                return DefaultUmaPermissionTicket.class;
+            UmaPermissionTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
+                super(MINIMAL_PRETTY_PRINTER, applicationContext, DefaultUmaPermissionTicket.class);
             }
         }
         

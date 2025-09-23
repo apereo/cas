@@ -43,7 +43,7 @@ public class CasHazelcastThrottlingAutoConfiguration {
         final HazelcastInstance casTicketRegistryHazelcastInstance,
         final CasConfigurationProperties casProperties) {
         val hz = casProperties.getAuthn().getThrottle().getHazelcast();
-        val timeout = Beans.newDuration(casProperties.getAuthn().getThrottle().getSchedule().getRepeatInterval()).getSeconds();
+        val timeout = Beans.newDuration(casProperties.getAuthn().getThrottle().getSchedule().getRepeatInterval()).toSeconds();
         LOGGER.debug("Creating [{}] to record failed logins for throttling with timeout set to [{}]", MAP_KEY, timeout);
         val ipMapConfig = HazelcastConfigurationFactory.buildMapConfig(hz, MAP_KEY, timeout);
         HazelcastConfigurationFactory.setConfigMap(ipMapConfig, casTicketRegistryHazelcastInstance.getConfig());

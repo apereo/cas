@@ -40,7 +40,7 @@ class OidcMultifactorAuthenticationTriggerTests {
     @TestPropertySource(properties = "cas.authn.oidc.discovery.acr-values-supported=unknown")
     class NoMultifactorProvidersTests extends AbstractOidcTests {
         @Test
-        void verifyAcrMissingMfa() throws Throwable {
+        void verifyAcrMissingMfa() {
             val service = RegisteredServiceTestUtils.getService();
             val request = new MockHttpServletRequest();
             request.addParameter(OAuth20Constants.ACR_VALUES, "unknown");

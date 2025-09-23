@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
 
     private final ConfigurableApplicationContext applicationContext;
 
-    private final List<MultifactorAuthenticationProviderBypassEvaluator> multifactorAuthenticationProviderBypassEvaluators = new ArrayList<>(0);
+    private final List<MultifactorAuthenticationProviderBypassEvaluator> multifactorAuthenticationProviderBypassEvaluators = new ArrayList<>();
 
     @Audit(action = AuditableActions.MULTIFACTOR_AUTHENTICATION_BYPASS,
         actionResolverName = AuditActionResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_ACTION_RESOLVER,
@@ -108,7 +109,7 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
      */
     @Override
     public void addMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassEvaluator bypass) {
-        if (!bypass.isEmpty()) {
+        if (BeanSupplier.isNotProxy(bypass) && !bypass.isEmpty()) {
             this.multifactorAuthenticationProviderBypassEvaluators.add(bypass);
         }
     }

@@ -1,6 +1,9 @@
 description = "Apereo CAS Remote Address Authentication Webflow Support"
 dependencies {
+    implementation libraries.jose4j
+    
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-multitenancy")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":core:cas-server-core-authentication-api")
@@ -18,6 +21,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-services-authentication")
@@ -31,7 +35,8 @@ dependencies {
 
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")
-
+    testImplementation project(":support:cas-server-support-person-directory")
+    
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

@@ -14,14 +14,14 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 import org.springframework.util.StringUtils;
-import java.io.File;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 
 
 /**
- * A re-usable collection of utility methods for object instantiations and configurations used cross various
+ * A reusable collection of utility methods for object instantiations and configurations used cross various
  * {@code @Bean} creation methods throughout CAS server.
  *
  * @author Dmitriy Kopylenko
@@ -95,7 +95,7 @@ public class Beans {
      * @return the temp file path
      */
     public static String getTempFilePath(final String prefix, final String suffix) {
-        return Unchecked.supplier(() -> File.createTempFile(prefix, suffix).getCanonicalPath()).get();
+        return Unchecked.supplier(() -> Files.createTempFile(prefix, suffix).toFile().getCanonicalPath()).get();
     }
 
     /**

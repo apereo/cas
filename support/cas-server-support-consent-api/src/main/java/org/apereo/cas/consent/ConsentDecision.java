@@ -1,5 +1,6 @@
 package org.apereo.cas.consent;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Getter;
@@ -31,6 +32,7 @@ import java.time.temporal.ChronoUnit;
 public class ConsentDecision implements Serializable {
     @Serial
     private static final long serialVersionUID = -3240292729509593433L;
+
     @Id
     @Transient
     @JsonSerialize(using = ToStringSerializer.class)
@@ -54,6 +56,10 @@ public class ConsentDecision implements Serializable {
     @Column(nullable = false)
     private ChronoUnit reminderTimeUnit = ChronoUnit.DAYS;
 
+    @Column
+    @JsonProperty("tenant")
+    private String tenant;
+    
     @Lob
     @Column(name = "attributes", length = Integer.MAX_VALUE)
     private String attributes;

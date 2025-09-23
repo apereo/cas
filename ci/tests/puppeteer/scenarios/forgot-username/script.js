@@ -19,6 +19,6 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextStartsWith(page, "#content h2", "Instructions Sent Successfully.");
     await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

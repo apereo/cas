@@ -19,7 +19,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.ObjectUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -46,7 +45,7 @@ import java.util.stream.Collectors;
 public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflowEventResolver
     implements CasDelegatingWebflowEventResolver {
 
-    private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>(0);
+    private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
 
     private final CasWebflowEventResolver selectiveResolver;
 
@@ -67,12 +66,17 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             if (credentials != null && !credentials.isEmpty()) {
                 val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(context);
                 val geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext(context);
-                val properties = CollectionUtils.<String, Serializable>wrap(CredentialMetadata.PROPERTY_USER_AGENT, agent,
+                val properties = CollectionUtils.<String, Serializable>wrap(
+                    CredentialMetadata.PROPERTY_USER_AGENT, agent,
                     CredentialMetadata.PROPERTY_GEO_LOCATION, geoLocation);
-                credentials.forEach(cred -> cred.getCredentialMetadata().putProperties(properties));
+                credentials.forEach(cred -> {
+                    cred.getCredentialMetadata().putProperties(properties);
+                    getConfigurationContext().getTenantExtractor().extract(context).ifPresent(tenant ->
+                        cred.getCredentialMetadata().setTenant(tenant.getId()));
+                });
                 val builder = getConfigurationContext().getAuthenticationSystemSupport()
-                    .handleInitialAuthenticationTransaction(service, credentials.toArray(new Credential[]{}));
-                builder.collect(credentials.toArray(new Credential[]{}));
+                    .handleInitialAuthenticationTransaction(service, credentials.toArray(Credential.EMPTY_CREDENTIALS_ARRAY));
+                builder.collect(credentials.toArray(Credential.EMPTY_CREDENTIALS_ARRAY));
 
                 builder.getInitialAuthentication().ifPresent(authn -> {
                     WebUtils.putAuthenticationResultBuilder(builder, context);
@@ -201,9 +205,18 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
     }
 
     protected Service locateServiceForRequest(final RequestContext context) throws Throwable {
-        val serviceFromRequest = WebUtils.getService(getConfigurationContext().getArgumentExtractors(), context);
+        val strategies = getConfigurationContext().getAuthenticationRequestServiceSelectionStrategies();
         val serviceFromFlow = WebUtils.getService(context);
-        val finalService = ObjectUtils.defaultIfNull(serviceFromRequest, serviceFromFlow);
-        return getConfigurationContext().getAuthenticationRequestServiceSelectionStrategies().resolveService(finalService);
+        val serviceFromRequest = WebUtils.getService(getConfigurationContext().getArgumentExtractors(), context);
+        if (serviceFromFlow == null) {
+            return strategies.resolveService(serviceFromRequest);
+        }
+        if (serviceFromRequest != null) {
+            val fragment = serviceFromRequest.getFragment();
+            if (fragment != null) {
+                serviceFromFlow.setFragment(fragment);
+            }
+        }
+        return strategies.resolveService(serviceFromFlow);
     }
 }

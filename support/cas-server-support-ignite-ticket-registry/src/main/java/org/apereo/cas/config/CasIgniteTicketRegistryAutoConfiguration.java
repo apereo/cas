@@ -32,12 +32,12 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.util.StringUtils;
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +79,7 @@ public class CasIgniteTicketRegistryAutoConfiguration {
                     .addQueryField("principal", String.class.getName(), null)
                     .addQueryField("attributes", Map.class.getName(), null)
                     .addQueryField("prefix", String.class.getName(), null);
-                queryEntity.setIndexes(Arrays.asList(new QueryIndex("id"), new QueryIndex("type", false),
+                queryEntity.setIndexes(List.of(new QueryIndex("id"), new QueryIndex("type", false),
                     new QueryIndex("principal", false), new QueryIndex("prefix", false),
                     new QueryIndex("attributes", false)));
                 ticketsCache.setQueryEntities(List.of(queryEntity));
@@ -179,13 +179,14 @@ public class CasIgniteTicketRegistryAutoConfiguration {
         final TicketCatalog ticketCatalog,
         @Qualifier(TicketSerializationManager.BEAN_NAME)
         final TicketSerializationManager ticketSerializationManager,
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("igniteConfiguration")
         final IgniteConfiguration igniteConfiguration) {
         val igniteProperties = casProperties.getTicket().getRegistry().getIgnite();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite");
         val registry = new IgniteTicketRegistry(cipher, ticketSerializationManager,
-            ticketCatalog, igniteConfiguration, igniteProperties);
+            ticketCatalog, applicationContext, igniteConfiguration, igniteProperties);
         registry.initialize();
         return registry;
     }

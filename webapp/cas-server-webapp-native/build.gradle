@@ -5,6 +5,7 @@ apply plugin: "org.springframework.boot"
 apply plugin: "org.graalvm.buildtools.native"
 
 ext {
+    publishable = true
     publishMetadata = true
     projectMetadata = [
         facets: ["web"],
@@ -14,7 +15,7 @@ ext {
     ]
 }
 
-["bootJar", "processAot", "nativeCompile"].each { name ->
+["processAot", "nativeCompile"].each { name ->
     tasks.named(name) { task ->
         task.notCompatibleWithConfigurationCache("${name} is not supported by the Gradle configuration cache")
     }
@@ -22,17 +23,24 @@ ext {
 
 configurations {
     configureEach {
+        withDependencies { deps ->
+            def hasLogback = deps.any { it.group == 'org.apereo.cas' && it.name == 'cas-server-support-logback' }
+            if (hasLogback) {
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-api")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-jakarta-web")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-web")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
+                it.exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j2-impl")
+                it.exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
+            }
+        }
         /*
-            Log4j does not support Graal VM and leads to com.oracle.svm.core.jdk.UnsupportedFeatureError:
-            Defining hidden classes at runtime is not supported. We use logback instead.
+         * Micrometer support for Java 21's virtual threads is disabled,
+         * because: java.lang.IllegalArgumentException:
+         *  jdk.management.VirtualThreadSchedulerMXBean is not a platform management interface
          */
-        exclude(group: "org.apache.logging.log4j", module: "log4j-api")
-        exclude(group: "org.apache.logging.log4j", module: "log4j-jakarta-web")
-        exclude(group: "org.apache.logging.log4j", module: "log4j-web")
-        exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
-        exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
-        exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j2-impl")
-        exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
+        exclude(group: "io.micrometer", module: "micrometer-java21")
         /*
             DevTools and Spring Cloud Bootstrap do not support native images.
          */
@@ -46,7 +54,7 @@ dependencies {
     processAotClasspath libraries.graalvmpolyglot
     processTestAotClasspath libraries.graalvmsdk
     processTestAotClasspath libraries.graalvmpolyglot
-
+    
     implementation project(":webapp:cas-server-webapp-init")
     implementation project(":webapp:cas-server-webapp-resources")
     implementation project(":webapp:cas-server-webapp-init-tomcat")
@@ -66,18 +74,20 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-validation")
     implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-logging")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-notifications")
+    implementation project(":core:cas-server-core-multitenancy")
 
     implementation project(":support:cas-server-support-native")
     implementation project(":support:cas-server-support-webconfig")
-    implementation project(":support:cas-server-support-logback")
     implementation project(":support:cas-server-support-person-directory")
     implementation project(":support:cas-server-support-themes")
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-thymeleaf")
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-metrics")
     implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-pm-webflow")
 
@@ -107,7 +117,7 @@ dependencies {
 graalvmNative {
     metadataRepository {
         enabled = true
-        version = "${graalVmMetadataRepositoryVersion}"
+        version = "${libs.versions.graalVmMetadataRepository.get()}"
     }
 
     /*
@@ -131,14 +141,22 @@ graalvmNative {
             buildArgs.add('-H:+ReportExceptionStackTraces')
             buildArgs.add('-H:+InlineBeforeAnalysis')
             buildArgs.add('-H:+TraceSecurityServices')
-            buildArgs.add('-H:+BuildReport')
+            buildArgs.add('-H:+PrintAnalysisCallTree')
             buildArgs.add('-H:+AddAllCharsets')
+            buildArgs.add('-H:+ReportUnsupportedElementsAtRuntime')
             buildArgs.add('-H:+UnlockExperimentalVMOptions')
             
-            buildArgs.add('-J-Xmx12G')
+            buildArgs.add('-J-Xmx14G')
             buildArgs.add('-J-Xms4G')
             buildArgs.add('--native-image-info')
-            buildArgs.add('--strict-image-heap')
+            buildArgs.add('--enable-sbom')
+            buildArgs.add('--emit build-report')
+
+            def os = org.gradle.internal.os.OperatingSystem.current()
+            if (!os.isMacOsX()) {
+                buildArgs.add('--gc=G1')
+            }
+            buildArgs.add('--enable-monitoring=heapdump,jfr')
 
             buildArgs.add('-march=native')
 //            buildArgs.add('--pgo-instrument')
@@ -147,17 +165,14 @@ graalvmNative {
 //                ansi.blue("Using data collected for profile-guided optimizations of AOT-compiled code")
 //                buildArgs.add("--pgo=${profileFile.path}")
 //            }
-            buildArgs.add('--trace-class-initialization=true')
-
             buildArgs.add('--initialize-at-build-time=java.beans')
             buildArgs.add('--initialize-at-build-time=com.sun.beans')
-            buildArgs.add('--initialize-at-build-time=com.sun.xml.stream.buffer.sax')
             buildArgs.add('--initialize-at-build-time=groovyjarjarantlr4.v4.runtime')
             buildArgs.add('--initialize-at-build-time=org.codehaus.groovy')
             buildArgs.add('--initialize-at-build-time=org.apache.groovy')
             buildArgs.add('--initialize-at-build-time=groovy.lang')
-            buildArgs.add('--initialize-at-build-time=groovyjarjarasm.asm.Type')
-            buildArgs.add('--initialize-at-build-time=groovyjarjarasm.asm.Handle')
+            buildArgs.add('--initialize-at-build-time=groovyjarjarasm.asm')
+            buildArgs.add('--initialize-at-build-time=com.sun.xml.stream.buffer.sax.DefaultWithLexicalHandler')
             buildArgs.add('--initialize-at-build-time=org.apache.xerces.jaxp.datatype')
 
             buildArgs.add('--initialize-at-run-time=com.sun.xml.ws')
@@ -168,28 +183,19 @@ graalvmNative {
             buildArgs.add('--features=org.apereo.cas.nativex.features.DefaultNativeImageFeature')
 
             buildArgs.add('--enable-url-protocols=jar,file,resource,http,https')
-        }
-    }
 
-    /*
-    agent {
-        defaultMode = "direct"
-        enabled = true
-        builtinCallerFilter = false
-        builtinHeuristicFilter = false
-        enableExperimentalPredefinedClasses = true
-        enableExperimentalUnsafeAllocationTracing = false
-        trackReflectionMetadata = false
-        modes {
-            standard {
-            }
-            direct {
-                options.add("config-output-dir={output_dir}")
-                options.add("experimental-configuration-with-origins")
-            }
+            runtimeArgs.add('--add-opens=java.base/java.util=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.base/java.lang=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.base/java.util.concurrent=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.base/java.time=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.base/java.net=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.base/java.nio=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.base/sun.nio.ch=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.management/sun.management=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED')
+            runtimeArgs.add('--add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED')
         }
     }
-     */
 }
 
 processAot {
@@ -201,6 +207,10 @@ processAot {
     list.add("java.base/java.lang=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("java.base/java.util=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.util.concurrent=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.util.concurrent.locks=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("java.base/java.time=ALL-UNNAMED")
     list.add("--add-opens")
@@ -215,6 +225,8 @@ processAot {
     list.add("java.management/sun.management=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.rmi/sun.rmi.transport=ALL-UNNAMED")
     list.add("-Xdebug")
     list.add("-Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n")
 

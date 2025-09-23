@@ -14,9 +14,16 @@
 # docker exec -it samba /bin/bash
 # The container also contains the ldap-utils package so users could be imported via LDIF files.
 
+GREEN="\e[32m"
+ENDCOLOR="\e[0m"
+
+function printgreen() {
+  printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
+}
+
 docker ps | grep samba > /dev/null
 if [[ $? -eq 0 ]]; then
-  echo "Samba already running, run docker rm -f samba to get clean directory"
+  echo "Samba docker container is already running, run docker rm -f samba to get clean directory"
   exit 0
 fi
 
@@ -27,11 +34,16 @@ EXTERNAL_LDAP_PORT=10390
 EXTERNAL_LDAPS_PORT=10636
 EXTERNAL_GC_PORT=13268  # Microsoft Global Catalog
 EXTERNAL_GCS_PORT=13269 # Microsoft Global Catalog with LDAP SSL
-TMPDIR=/tmp # set this to /c/tmp if you are in windows and running tests outside of msys2
+
 IMAGE_NAME=hdeadman/samba-domain
 DOMAINPASS=M3110nM3110n#1
 DEFAULT_TESTUSER_PASSWORD=P@ssw0rd # must be "complex"
 HOST_IP=127.0.0.1
+
+tmp="${TMPDIR}"
+if [[ -z "${tmp}" ]]; then
+  tmp="/tmp"
+fi
 
 # Using variables to turn off msys2 bash on windows behavior of messing with anything resembling a path
 export MSYS2_ARG_CONV_EXCL="*"
@@ -75,7 +87,7 @@ docker volume create samba_conf
 # Having complexity enabled could be used to test handling for password change errors
 # Currently allowing INSECURELDAP so JndiProvider can be tested until JDK-8217606 is fixed
 # This container only exposes LDAP related ports but container also does kerberos, etc
-docker run --detach \
+docker run --rm --detach \
     -e "DOMAIN=${ORG}.${DOMAIN}" \
     -e "DOMAINPASS=${DOMAINPASS}" \
     -e "DNSFORWARDER=NONE" \
@@ -90,6 +102,7 @@ docker run --detach \
     --mount "type=volume,source=samba_data,destination=/var/lib/samba" \
     --mount "type=volume,source=samba_conf,destination=/etc/samba/external" \
     --mount "type=volume,source=samba_tls,destination=/etc/samba/tls" \
+    -v "$PWD"/ci/tests/ldap/ad:/etc/samba/external/ad \
     --add-host localdc.${ORG}.${DOMAIN}:${HOST_IP} \
     -h localdc \
     --name samba \
@@ -107,7 +120,7 @@ docker exec samba bash -c "samba-tool domain passwordsettings set --min-pwd-age=
 
 # Create users that can be used by various tests (e.g. authentication tests, password change tests, etc.
 # If we aren't setting up brand new instance these will fail if they already exist but that is OK.
-echo Creating users for tests
+printgreen "Creating users for tests"
 
 docker exec samba bash -c "samba-tool user setpassword --filter=samAccountName=Administrator --newpassword=$DOMAINPASS"
 
@@ -138,7 +151,6 @@ docker exec samba bash -c "samba-tool user setpassword --filter=cn=mustchangepas
 docker exec samba bash -c "samba-tool user create casuserx509 $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn --mail-address=1234567890@college.edu"
 docker exec samba bash -c "samba-tool user setpassword --filter=cn=casuserx509 --newpassword=$DEFAULT_TESTUSER_PASSWORD"
 
-
 docker exec samba bash -c "samba-tool user setexpiry --days 0 expireduser"
 docker exec samba bash -c "samba-tool user disable disableduser"
 docker exec samba bash -c "samba-tool user list"
@@ -151,17 +163,21 @@ docker exec samba bash -c "samba-tool user setpassword --filter=cn=expirestomorr
 docker exec samba bash -c "samba-tool domain passwordsettings pso create expirepasswordsoon 10 --max-pwd-age=2"
 docker exec samba bash -c "samba-tool domain passwordsettings pso apply expirepasswordsoon expirestomorrow"
 
+printgreen "Updating schema for attributes"
+docker exec samba bash -c 'ldbmodify -H /var/lib/samba/private/sam.ldb /etc/samba/external/ad/description.ldif --option="dsdb:schema update allowed"=true'
+docker exec samba bash -c 'ldbmodify -H /var/lib/samba/private/sam.ldb /etc/samba/external/ad/webauthn.ldif --option="dsdb:schema update allowed"=true'
+docker exec samba bash -c 'ldbmodify -H /var/lib/samba/private/sam.ldb /etc/samba/external/ad/user.ldif --option="dsdb:schema update allowed"=true'
 
 # Copying certificate out of the container so it can be put in a Java certificate trust store.
 echo Putting cert in trust store for use by unit test
 docker cp samba:/etc/samba/tls/${ORG}.${DOMAIN}.crt ${ORG}.${DOMAIN}.crt
 
-unset  MSYS2_ARG_CONV_EXCL
-unset  MSYS_NO_PATHCONV
+unset MSYS2_ARG_CONV_EXCL
+unset MSYS_NO_PATHCONV
+printgreen "Creating truststore: ${TMPDIR}/adcacerts.jks"
 if [[ -f ${TMPDIR}/adcacerts.jks ]] ; then
     rm ${TMPDIR}/adcacerts.jks
 fi
-echo Creating truststore: ${TMPDIR}/adcacerts.jks
 keytool -import -noprompt -trustcacerts -file ${ORG}.${DOMAIN}.crt -alias AD_CERT -keystore ${TMPDIR}/adcacerts.jks -storepass changeit
 rm ${ORG}.${DOMAIN}.crt
 

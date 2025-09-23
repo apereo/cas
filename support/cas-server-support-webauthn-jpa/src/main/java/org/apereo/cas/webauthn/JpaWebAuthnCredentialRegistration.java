@@ -1,7 +1,9 @@
 package org.apereo.cas.webauthn;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
@@ -27,6 +29,8 @@ import java.io.Serializable;
 @SuperBuilder
 @Entity
 @Accessors(chain = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class JpaWebAuthnCredentialRegistration implements Serializable {
     /**
      * JPA entity name.
@@ -49,8 +53,4 @@ public class JpaWebAuthnCredentialRegistration implements Serializable {
     @Lob
     @Column(name = "records", length = Integer.MAX_VALUE)
     private String records;
-
-    public JpaWebAuthnCredentialRegistration() {
-        setId(System.nanoTime());
-    }
 }

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@TestPropertySource(properties = "management.endpoint.tokenAuth.enabled=true")
+@TestPropertySource(properties = "management.endpoint.tokenAuth.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
-@Import({
+@ImportAutoConfiguration({
     CasTokenAuthenticationAutoConfiguration.class,
     CasTokenAuthenticationWebflowAutoConfiguration.class
 })

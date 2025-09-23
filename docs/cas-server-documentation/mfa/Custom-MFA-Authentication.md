@@ -13,14 +13,14 @@ authentication flow into the CAS webflow engine under a unique identifier. Later
 your custom multifactor authentication provider [can be triggered](Configuring-Multifactor-Authentication-Triggers.html).
 
 <div class="alert alert-warning">:warning: <strong>Remember</strong><p>Designing a custom multifactor authentication provider
-can be a challenging task, specially if you're not familiar with the CAS programming model, APIs and the underlying frameworks
+can be a challenging task, especially if you're not familiar with the CAS programming model, APIs and the underlying frameworks
 and technologies that make this possible, such as Spring Webflow.</p></div>
 
 ## Provider ID
 
-Each multifactor provider is assigned a unique identifier that is typically mapped or made equal to the underlying webflow. The unique 
-identifier can be any arbitrary string of your choosing, provided it's kept distinct and sensible as it, depending on 
-use case, may be used in other systems and by other applications to act as a trigger.
+Each multifactor provider is assigned a unique identifier that is typically mapped or made equal to the underlying webflow. The unique
+identifier can be any arbitrary string of your choosing, provided it's kept distinct and sensible, as it may be used in other systems
+and by other applications to act as a trigger.
 
 For the purposes of this guide, let's choose `mfa-custom` as our provider id.
 

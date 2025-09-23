@@ -60,7 +60,7 @@ class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthen
     private DataSource dataSource;
 
     @BeforeEach
-    public void initialize() throws Exception {
+    void initialize() throws Exception {
         try (val c = this.dataSource.getConnection()) {
             c.setAutoCommit(true);
             try (val pstmt = c.prepareStatement("insert into caspgusers (username, password, locations) values(?,?,?);")) {
@@ -88,7 +88,7 @@ class QueryDatabaseAuthenticationHandlerPostgresTests extends BaseDatabaseAuthen
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
         properties.setName("DbHandler");
         properties.setPrincipalAttributeList(List.of("locations"));
-        val q = new QueryDatabaseAuthenticationHandler(properties, null,
+        val q = new QueryDatabaseAuthenticationHandler(properties,
             PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
         val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         val result = q.authenticate(credential, mock(Service.class));

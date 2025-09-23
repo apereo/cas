@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,8 +9,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.io.Serial;
 
 /**
@@ -55,7 +54,7 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
         }
         val oidcSvc = (OidcRegisteredService) context.getRegisteredService();
         if (StringUtils.isBlank(oidcSvc.getSubjectType())
-            || StringUtils.equalsIgnoreCase(OidcSubjectTypes.PUBLIC.getType(), oidcSvc.getSubjectType())) {
+            || Strings.CI.equals(OidcSubjectTypes.PUBLIC.getType(), oidcSvc.getSubjectType())) {
             LOGGER.warn("Service definition [{}] does not request a pairwise subject type", oidcSvc);
             return context.getPrincipal().getId();
         }

@@ -3,10 +3,14 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
-
+import org.apereo.cas.util.NamedObject;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
-
+import java.io.Serializable;
 import java.security.GeneralSecurityException;
+import java.util.Map;
 
 /**
  * An authentication handler authenticates a single credential. In many cases credentials are authenticated by
@@ -16,7 +20,7 @@ import java.security.GeneralSecurityException;
  * @since 4.0.0
  */
 @FunctionalInterface
-public interface AuthenticationHandler extends Ordered {
+public interface AuthenticationHandler extends Ordered, NamedObject {
 
     /**
      * Attribute name containing collection of handler names that successfully authenticated credential.
@@ -88,17 +92,6 @@ public interface AuthenticationHandler extends Ordered {
         return false;
     }
 
-    /**
-     * Gets a unique name for this authentication handler within the Spring context that contains it.
-     * For implementations that allow setting a unique name, deployers MUST take care to ensure that every
-     * handler instance has a unique name.
-     *
-     * @return Unique name within a Spring context.
-     */
-    default String getName() {
-        return this.getClass().getSimpleName();
-    }
-
     @Override
     default int getOrder() {
         return Integer.MAX_VALUE;
@@ -113,4 +106,33 @@ public interface AuthenticationHandler extends Ordered {
         return AuthenticationHandlerStates.ACTIVE;
     }
 
+    /**
+     * Gets properties.
+     *
+     * @return the properties
+     */
+    default Map<String, Serializable> getTags() {
+        return Map.of();
+    }
+
+    /**
+     * Is disposable handler?.
+     *
+     * @return true/false
+     */
+    default boolean isDisposable() {
+        return this instanceof DisposableBean
+            && BooleanUtils.isTrue((Boolean) getTags().getOrDefault(DisposableBean.class.getName(), Boolean.FALSE));
+    }
+
+    /**
+     * Mark disposable authentication handler.
+     *
+     * @return the authentication handler
+     */
+    @CanIgnoreReturnValue
+    default AuthenticationHandler markDisposable() {
+        getTags().put(DisposableBean.class.getName(), Boolean.TRUE);
+        return this;
+    }
 }

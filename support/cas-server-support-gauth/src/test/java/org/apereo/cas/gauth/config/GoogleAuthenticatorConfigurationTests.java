@@ -1,15 +1,15 @@
 package org.apereo.cas.gauth.config;
 
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
-
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,13 +21,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class)
 @Getter
 @Tag("MFAProvider")
+@ExtendWith(CasTestExtension.class)
 class GoogleAuthenticatorConfigurationTests {
     @Autowired
-    @Qualifier("googleAuthenticatorInstance")
-    private IGoogleAuthenticator googleAuthenticatorInstance;
+    @Qualifier(CasGoogleAuthenticator.BEAN_NAME)
+    private CasGoogleAuthenticator googleAuthenticatorInstance;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(googleAuthenticatorInstance);
     }
 }

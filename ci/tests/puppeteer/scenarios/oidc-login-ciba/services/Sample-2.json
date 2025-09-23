@@ -1,0 +1,17 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "clientping",
+  "clientSecret": "secret",
+  "serviceId": "^https://localhost:9859/anything/clientping",
+  "name": "Sample",
+  "description": "This application is registered with CAS for CIBA PING requests",
+  "id": 2,
+  "scopes" : [ "java.util.HashSet", [ "profile", "email", "openid" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "urn:openid:params:grant-type:ciba" ] ],
+  "backchannelTokenDeliveryMode": "ping",
+  "backchannelClientNotificationEndpoint": "https://localhost:9859/anything/cibaping",
+  "backchannelUserCodeParameterSupported": true,
+  "generateRefreshToken": true,
+  "informationUrl": "https://github.com/apereo/cas",
+  "privacyUrl": "https://github.com/apereo/cas"
+}

@@ -28,8 +28,9 @@ public interface RegisteredServiceDefinition extends Serializable {
      * indicate a branch new service definition.
      *
      * @param id the numeric identifier for the service.
+     * @return the id
      */
-    void setId(long id);
+    RegisteredServiceDefinition setId(long id);
 
     /**
      * Returns the name of the service.

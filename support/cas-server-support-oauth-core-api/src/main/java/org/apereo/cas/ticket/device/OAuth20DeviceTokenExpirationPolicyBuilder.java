@@ -33,6 +33,6 @@ public record OAuth20DeviceTokenExpirationPolicyBuilder(CasConfigurationProperti
      */
     public ExpirationPolicy toTicketExpirationPolicy() {
         val oauth = casProperties.getAuthn().getOauth().getDeviceToken();
-        return new OAuth20DeviceTokenExpirationPolicy(Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).getSeconds());
+        return new OAuth20DeviceTokenExpirationPolicy(Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).toSeconds());
     }
 }

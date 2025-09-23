@@ -5,30 +5,24 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMonitorAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.metrics.MetricsEndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.metrics.export.simple.SimpleMetricsExportAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,9 +37,9 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "management.metrics.export.simple.enabled=true",
 
-        "management.endpoint.metrics.enabled=true",
+        "management.endpoint.metrics.access=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*",
-        "management.endpoint.health.enabled=true",
+        "management.endpoint.health.access=UNRESTRICTED",
 
         "management.health.systemHealthIndicator.enabled=true",
         "management.health.memoryHealthIndicator.enabled=true",
@@ -72,39 +66,30 @@ class CasCoreMonitorAutoConfigurationTests {
     private HealthIndicator systemHealthIndicator;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(memoryHealthIndicator);
         assertNotNull(sessionHealthIndicator);
         assertNotNull(systemHealthIndicator);
     }
 
     @Test
-    void verifyObserabilitySupplier() throws Throwable {
+    void verifyObserabilitySupplier() {
         val result = defaultExecutableObserver.supply(new MonitorableTask("verifyObserabilitySupplier"), () -> "CAS");
         assertEquals("CAS", result);
     }
 
     @Test
-    void verifyObservabilityRunner() throws Throwable {
+    void verifyObservabilityRunner() {
         val result = new AtomicBoolean(false);
         defaultExecutableObserver.run(new MonitorableTask("verifyObservabilityRunner"), () -> result.set(true));
         assertTrue(result.get());
     }
-
+    @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
-        MetricsAutoConfiguration.class,
-        ObservationAutoConfiguration.class,
-        SimpleMetricsExportAutoConfiguration.class,
-        MetricsEndpointAutoConfiguration.class,
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
         CasCoreTicketsAutoConfiguration.class,
         CasCoreMonitorAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -112,6 +97,7 @@ class CasCoreMonitorAutoConfigurationTests {
         CasCoreAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

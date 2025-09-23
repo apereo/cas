@@ -78,6 +78,8 @@ def run(Object[] args) {
 }
 ```
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 The following parameters are passed to the script:
 
 | Parameter            | Description                                                                                                           |
@@ -113,7 +115,8 @@ whose path specified directly in the service definition as part of the authentic
 <div class="alert alert-info mt-3">:information_source: <strong>Usage</strong><p>
 If you wish, you may also use a <i>Groovy Inline</i> syntax using the <code>groovy {...}</code> construct.</p></div>
 
-The collection of parameters and the script body are identical to the *Identity Provider Groovy Selection* option above.
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html). The 
+collection of parameters and the script body are identical to the *Identity Provider Groovy Selection* option above.
 
 ## Identity Provider Custom Selection
 

@@ -15,7 +15,7 @@
     "--management.health.mongoHealthIndicator.enabled=true",
     "--management.endpoints.web.exposure.include=health,ticketRegistry,ssoSessions",
     "--management.endpoint.health.show-details=always",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
 
     "--cas.service-registry.mongo.database-name=service-registry",
     "--cas.service-registry.mongo.host=localhost",

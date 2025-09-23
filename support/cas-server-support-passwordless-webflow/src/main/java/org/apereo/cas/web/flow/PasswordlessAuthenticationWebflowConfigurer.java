@@ -5,9 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowConfigurer;
-
 import lombok.val;
-import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -15,7 +13,6 @@ import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-
 import java.util.Arrays;
 
 /**
@@ -26,10 +23,10 @@ import java.util.Arrays;
  */
 public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
     public PasswordlessAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                       final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                       final FlowDefinitionRegistry flowDefinitionRegistry,
                                                        final ConfigurableApplicationContext applicationContext,
                                                        final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         setOrder(casProperties.getAuthn().getPasswordless().getWebflow().getOrder());
     }
 
@@ -40,11 +37,27 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
             createStateInitialPasswordless(flow);
             createStateGetUserIdentifier(flow);
             createStateVerifyPasswordlessAccount(flow);
+            createStateDisplaySelectionMenu(flow);
             createStateDisplayPasswordless(flow);
             createStateDetermineDelegatedAuthenticationAction(flow);
             createStateDetermineMultifactorAuthenticationAction(flow);
             createStateAcceptPasswordless(flow);
         }
+    }
+
+    private void createStateDisplaySelectionMenu(final Flow flow) {
+        val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_DISPLAY_SELECTION_MENU, "passwordless/casPasswordlessSelectionMenuView");
+        viewState.getRenderActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_SELECTION_MENU));
+        createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
+        createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU);
+
+        val acceptState = createActionState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU,
+            CasWebflowConstants.ACTION_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU);
+        createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_PROMPT, getPromptTargetStateId(flow));
+        createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_DISPLAY, CasWebflowConstants.STATE_ID_PASSWORDLESS_DISPLAY);
+        createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_MFA, CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_MFA);
+        createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_DELEGATED_AUTHENTICATION_REDIRECT, CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN);
+        createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
     }
 
     protected void createStateInitialPasswordless(final Flow flow) {
@@ -80,6 +93,9 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR,
             CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
 
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SELECT,
+            CasWebflowConstants.STATE_ID_PASSWORDLESS_DISPLAY_SELECTION_MENU);
+
         if (applicationContext.containsBean(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)) {
             createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN);
@@ -88,9 +104,14 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
                 CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_MFA);
         }
 
+        val targetStateId = getPromptTargetStateId(flow);
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_PROMPT, targetStateId);
+    }
+
+    private String getPromptTargetStateId(final Flow flow) {
         val state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         val transition = state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_PROMPT, transition.getTargetStateId());
+        return transition.getTargetStateId();
     }
 
     protected void createStateDetermineDelegatedAuthenticationAction(final Flow flow) {
@@ -108,12 +129,12 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .sorted(AnnotationAwareOrderComparator.INSTANCE).toList();
-        val attrMapping1 = new DefaultMapping(createExpression("flowScope." + CasWebflowConstants.ATTRIBUTE_SERVICE), createExpression(CasWebflowConstants.ATTRIBUTE_SERVICE));
-        val attrMapping2 = new DefaultMapping(createExpression("flowScope." + DelegationWebflowUtils.FLOW_SCOPE_ATTR_DELEGATED_AUTHN_PROVIDER_PRIMARY),
-            createExpression(DelegationWebflowUtils.FLOW_SCOPE_ATTR_DELEGATED_AUTHN_PROVIDER_PRIMARY));
+        val attrMapping1 = createFlowMapping("flowScope." + CasWebflowConstants.ATTRIBUTE_SERVICE, CasWebflowConstants.ATTRIBUTE_SERVICE);
+        val attrMapping2 = createFlowMapping("flowScope." + DelegationWebflowUtils.FLOW_SCOPE_ATTR_DELEGATED_AUTHN_PROVIDER_PRIMARY,
+            DelegationWebflowUtils.FLOW_SCOPE_ATTR_DELEGATED_AUTHN_PROVIDER_PRIMARY);
         val attrMappings = CollectionUtils.wrapList(attrMapping1, attrMapping2);
         customizers.forEach(customizer -> customizer.getWebflowAttributeMappings()
-            .forEach(key -> attrMappings.add(new DefaultMapping(createExpression("flowScope." + key), createExpression(key)))));
+            .forEach(key -> attrMappings.add(createFlowMapping("flowScope." + key, key))));
         val attributeMapper = createFlowInputMapper(attrMappings);
         val subflowMapper = createSubflowAttributeMapper(attributeMapper, null);
         subflowState.setAttributeMapper(subflowMapper);

@@ -3,8 +3,10 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.support.interrupt.InterruptCookieProperties;
 import org.apereo.cas.interrupt.DefaultInterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.GroovyScriptInterruptInquirer;
+import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlanConfigurer;
 import org.apereo.cas.interrupt.InterruptTrackingCookieCipherExecutor;
@@ -13,9 +15,10 @@ import org.apereo.cas.interrupt.JsonResourceInterruptInquirer;
 import org.apereo.cas.interrupt.RegexAttributeInterruptInquirer;
 import org.apereo.cas.interrupt.RestEndpointInterruptInquirer;
 import org.apereo.cas.interrupt.SimpleInterruptTrackingEngine;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
+import org.apereo.cas.util.cipher.DefaultCipherExecutorResolver;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -26,6 +29,7 @@ import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
+import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -84,24 +88,37 @@ public class CasInterruptAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CookieValueManager interruptCookieValueManager(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(GeoLocationService.BEAN_NAME)
             final ObjectProvider<GeoLocationService> geoLocationService,
             final CasConfigurationProperties casProperties,
-            @Qualifier("interruptCookieCipherExecutor") final CipherExecutor cookieCipherExecutor) {
-
+            @Qualifier("interruptCookieCipherExecutor")
+            final CipherExecutor cookieCipherExecutor) {
             val props = casProperties.getInterrupt().getCookie();
-            return FunctionUtils.doIf(props.getCrypto().isEnabled(),
-                () -> new DefaultCasCookieValueManager(cookieCipherExecutor, geoLocationService,
-                    DefaultCookieSameSitePolicy.INSTANCE, props),
-                CookieValueManager::noOp).get();
+            if (props.getCrypto().isEnabled()) {
+
+                val cipherExecutorResolver = new DefaultCipherExecutorResolver(cookieCipherExecutor, tenantExtractor,
+                    InterruptCookieProperties.class, bindingContext -> {
+                    val properties = bindingContext.value();
+                    return CipherExecutorUtils.newStringCipherExecutor(properties.getInterrupt().getCookie().getCrypto(), InterruptTrackingCookieCipherExecutor.class);
+                });
+                
+                return new DefaultCasCookieValueManager(cipherExecutorResolver, tenantExtractor,
+                    geoLocationService, DefaultCookieSameSitePolicy.INSTANCE, props);
+            }
+            return new NoOpCookieValueManager(tenantExtractor);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "interruptCookieGenerator")
-        public CasCookieBuilder interruptCookieGenerator(final CasConfigurationProperties casProperties) {
+        public CasCookieBuilder interruptCookieGenerator(
+            @Qualifier("interruptCookieValueManager")
+            final CookieValueManager interruptCookieValueManager,
+            final CasConfigurationProperties casProperties) {
             val props = casProperties.getInterrupt().getCookie();
-            return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
+            return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props), interruptCookieValueManager);
         }
 
         @Bean
@@ -120,7 +137,7 @@ public class CasInterruptAutoConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasInterruptInquiryConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "interruptInquirer")
+        @ConditionalOnMissingBean(name = InterruptInquirer.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public InterruptInquiryExecutionPlan interruptInquirer(final ConfigurableApplicationContext applicationContext) {
             val configurers = new ArrayList<>(applicationContext.getBeansOfType(InterruptInquiryExecutionPlanConfigurer.class).values());

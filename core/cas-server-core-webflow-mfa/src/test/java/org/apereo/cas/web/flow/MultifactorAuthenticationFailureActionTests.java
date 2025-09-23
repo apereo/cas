@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticat
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowMfaActions")
 @Execution(ExecutionMode.SAME_THREAD)
+@SuppressWarnings("EffectivelyPrivate")
 class MultifactorAuthenticationFailureActionTests {
 
     @TestConfiguration(value = "MultifactorAuthenticationTestConfiguration", proxyBeanMethods = false)
@@ -79,9 +81,6 @@ class MultifactorAuthenticationFailureActionTests {
     }
 
     private static class BaseMultifactorActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
-        @Autowired
-        @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_FAILURE)
-        protected Action mfaFailureAction;
 
         @Autowired
         @Qualifier("dummyProviderOpen")
@@ -90,7 +89,7 @@ class MultifactorAuthenticationFailureActionTests {
         @Autowired
         @Qualifier("dummyProviderClosed")
         protected MultifactorAuthenticationProvider dummyProviderClosed;
-        
+
         @Autowired
         @Qualifier("dummyProviderNone")
         protected MultifactorAuthenticationProvider dummyProviderNone;
@@ -98,6 +97,10 @@ class MultifactorAuthenticationFailureActionTests {
         @Autowired
         @Qualifier("dummyProviderUndefined")
         protected MultifactorAuthenticationProvider dummyProviderUndefined;
+
+        @Autowired
+        @Qualifier(CasWebflowConstants.ACTION_ID_MFA_CHECK_FAILURE)
+        protected Action mfaFailureAction;
 
         protected void executeAction(final MultifactorAuthenticationProvider provider,
                                      final MultifactorAuthenticationProviderFailureModes serviceMode,
@@ -114,7 +117,7 @@ class MultifactorAuthenticationFailureActionTests {
             }
             servicesManager.save(service);
             WebUtils.putRegisteredService(context, service);
-            WebUtils.putMultifactorAuthenticationProvider(context, provider);
+            MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, provider);
             val event = mfaFailureAction.execute(context);
             assertEquals(transitionId, event.getId());
         }

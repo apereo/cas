@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -48,10 +47,10 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     private final Resource fileName;
 
-    public FileAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public FileAuthenticationHandler(final String name,
                                      final PrincipalFactory principalFactory,
                                      final Resource fileName, final String separator) {
-        super(name, servicesManager, principalFactory, null);
+        super(name, principalFactory, null);
         this.fileName = fileName;
         this.separator = separator;
     }
@@ -70,7 +69,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             }
             if (matches(originalPassword, passwordOnRecord)) {
                 val principal = this.principalFactory.createPrincipal(username);
-                return createHandlerResult(transformedCredential, principal, new ArrayList<>(0));
+                return createHandlerResult(transformedCredential, principal, new ArrayList<>());
             }
         } catch (final IOException e) {
             throw new PreventedException(e);

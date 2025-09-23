@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -27,7 +26,6 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("AbstractLdapProperties")
 public abstract class AbstractLdapProperties implements Serializable, CasFeatureModule {
 
     @Serial
@@ -286,7 +284,7 @@ public abstract class AbstractLdapProperties implements Serializable, CasFeature
      * Trust managers are responsible for managing the trust material that is used when making LDAP trust decisions,
      * and for deciding whether credentials presented by a peer should be accepted.
      * Accepted values are:
-     * * <ul>
+     * <ul>
      * <li>{@code DEFAULT}: Enable and force the default JVM trust managers.</li>
      * <li>{@code ANY}: Trust any client or server.</li>
      * </ul>

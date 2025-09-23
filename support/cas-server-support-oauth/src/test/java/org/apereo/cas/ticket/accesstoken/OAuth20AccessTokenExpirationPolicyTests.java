@@ -35,7 +35,7 @@ class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolic
     }
 
     @Test
-    void verifyAccessTokenExpiredAfterSystemTime() throws Throwable {
+    void verifyAccessTokenExpiredAfterSystemTime() {
         val ticket = mock(TicketGrantingTicketAwareTicket.class);
         when(ticket.getCreationTime()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).minusDays(10));
         val exp = new OAuth20AccessTokenExpirationPolicy(100, 100);
@@ -43,7 +43,7 @@ class OAuth20AccessTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolic
     }
 
     @Test
-    void verifyAccessTokenExpiredAfterTimeToKill() throws Throwable {
+    void verifyAccessTokenExpiredAfterTimeToKill() {
         val ticket = mock(TicketGrantingTicketAwareTicket.class);
         when(ticket.getCreationTime()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
         when(ticket.getLastTimeUsed()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC).minusDays(10));

@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.TestPropertySource;
 import java.util.Locale;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,9 +47,13 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
     }
 
     @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.attribute-repository.stub.attributes.eduPersonAffiliation=developer",
+        "cas.authn.attribute-repository.stub.attributes.groupMembership=adopters"
+    })
     class AttributeMappingTests extends BaseOAuth20AuthenticatorTests {
         @RetryingTest(2)
-        void verifyAuthenticationWithAttributesMapping() throws Throwable {
+        void verifyAuthenticationWithAttributesMapping() {
             val credentials = new UsernamePasswordCredentials(serviceWithAttributesMapping.getClientId(), "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -65,8 +70,12 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
     class DefaultPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
         @RetryingTest(3)
         void verifyAuthentication() throws Throwable {
+            val code = getCode();
+            ticketRegistry.addTicket(code);
+            
             val credentials = new UsernamePasswordCredentials("client", "secret");
             val request = new MockHttpServletRequest();
+            request.addParameter(OAuth20Constants.CODE, code.getId());
             val ctx = new JEEContext(request, new MockHttpServletResponse());
             oauthClientAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
             assertNotNull(credentials.getUserProfile());
@@ -74,7 +83,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
         }
 
         @Test
-        void verifyAuthenticationWithGrantTypePassword() throws Throwable {
+        void verifyAuthenticationWithGrantTypePassword() {
             val credentials = new UsernamePasswordCredentials("client", "secret");
             val request = new MockHttpServletRequest();
             val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -160,7 +169,7 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
     @Nested
     class NullPrincipalResolutionTests extends BaseOAuth20AuthenticatorTests {
         @Test
-        void verifyAuthenticationWithoutResolvedPrincipal() throws Throwable {
+        void verifyAuthenticationWithoutResolvedPrincipal() {
             val credentials = new UsernamePasswordCredentials("serviceWithAttributesMapping", "secret");
 
             val registeredService = new OAuthRegisteredService();

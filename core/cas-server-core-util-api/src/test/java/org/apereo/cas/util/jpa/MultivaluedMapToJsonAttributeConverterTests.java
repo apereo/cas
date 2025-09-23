@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("JDBC")
-public class MultivaluedMapToJsonAttributeConverterTests {
+class MultivaluedMapToJsonAttributeConverterTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val converter = new MultivaluedMapToJsonAttributeConverter();
         val map = new HashMap<String, List<Object>>();
         map.put("attribute1", CollectionUtils.wrapList("1", "2"));

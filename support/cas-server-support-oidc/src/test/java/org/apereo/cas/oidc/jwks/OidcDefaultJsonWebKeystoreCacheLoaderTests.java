@@ -3,7 +3,6 @@ package org.apereo.cas.oidc.jwks;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.util.ResourceUtils;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.jose4j.jwk.JsonWebKey;
@@ -16,13 +15,12 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -48,7 +46,7 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyNoWebKeys() throws Throwable {
+    void verifyNoWebKeys() {
         val jwks = new JsonWebKeySet();
         val loader = mock(OidcDefaultJsonWebKeystoreCacheLoader.class);
         when(loader.buildJsonWebKeySet(any(OidcJsonWebKeyCacheKey.class))).thenReturn(Optional.of(jwks));
@@ -77,7 +75,7 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val publicJsonWebKey1 = oidcDefaultJsonWebKeystoreCache.get(
             new OidcJsonWebKeyCacheKey("https://sso.example.org/cas/oidc", OidcJsonWebKeyUsage.SIGNING));
         assertNotNull(publicJsonWebKey1);
@@ -102,7 +100,7 @@ class OidcDefaultJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
         val loader = new OidcDefaultJsonWebKeystoreCacheLoader(gen);
         assertNull(loader.load(new OidcJsonWebKeyCacheKey("https://cas.example.org", OidcJsonWebKeyUsage.SIGNING)));
 
-        val file = File.createTempFile("keys", ".json");
+        val file = Files.createTempFile("keys", ".json").toFile();
         FileUtils.writeStringToFile(file, new JsonWebKeySet(List.of()).toJson(), StandardCharsets.UTF_8);
         when(gen.generate()).thenReturn(new FileSystemResource(file));
         assertNull(loader.load(new OidcJsonWebKeyCacheKey("https://cas.example.org", OidcJsonWebKeyUsage.SIGNING)));

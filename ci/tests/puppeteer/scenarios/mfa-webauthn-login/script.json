@@ -1,23 +1,35 @@
 {
-  "dependencies": "webauthn",
-
+  "dependencies": "session-ticket-registry,webauthn,reports,mongo-ticket-registry",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--logging.level.org.apereo.cas=info",
-    
+
+    "--cas.authn.mfa.web-authn.core.qr-code-authentication-enabled=true",
     "--cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
     "--cas.authn.mfa.web-authn.core.application-id=https://localhost:8443",
     "--cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
     "--cas.authn.mfa.web-authn.core.relying-party-id=cas.example.org",
+    "--cas.authn.mfa.web-authn.core.allow-primary-authentication=true",
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.mfa.web-authn.crypto.enabled=false",
     "--cas.authn.mfa.web-authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
 
+    "--cas.ticket.registry.mongo.database-name=ticket-registry",
+    "--cas.ticket.registry.mongo.authentication-database-name=admin",
+    "--cas.ticket.registry.mongo.host=localhost",
+    "--cas.ticket.registry.mongo.port=27017",
+    "--cas.ticket.registry.mongo.drop-collection=true",
+    "--cas.ticket.registry.mongo.user-id=root",
+    "--cas.ticket.registry.mongo.password=secret",
+
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=health,webAuthnDevices",
     "--management.endpoint.health.show-details=always",
-    "--management.endpoints.enabled-by-default=true"
-  ]
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "initScript": "${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
 }

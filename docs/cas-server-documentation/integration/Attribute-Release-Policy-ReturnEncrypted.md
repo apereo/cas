@@ -8,7 +8,7 @@ category: Attributes
 
 # Attribute Release Policy - Return Encrypted
 
-Encrypt and encode all all allowed attributes in base-64 using the assigned registered service public key.
+Encrypt and encode all allowed attributes in base-64 using the assigned registered service public key.
 
 ```json
 {

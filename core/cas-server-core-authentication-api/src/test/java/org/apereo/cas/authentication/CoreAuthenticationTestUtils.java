@@ -11,7 +11,11 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
+import org.apereo.cas.authentication.principal.merger.ReplacingAttributeAdder;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
+import org.apereo.cas.multitenancy.DefaultTenantsManager;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAuthenticationPolicy;
@@ -20,7 +24,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.support.StaticApplicationContext;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -94,9 +98,9 @@ public class CoreAuthenticationTestUtils {
 
     public static WebApplicationService getWebApplicationService(final String id) {
         val svc = mock(WebApplicationService.class);
-        when(svc.getId()).thenReturn(id);
-        when(svc.getOriginalUrl()).thenReturn(id);
-        when(svc.getSource()).thenReturn(CasProtocolConstants.PARAMETER_SERVICE);
+        lenient().when(svc.getId()).thenReturn(id);
+        lenient().when(svc.getOriginalUrl()).thenReturn(id);
+        lenient().when(svc.getSource()).thenReturn(CasProtocolConstants.PARAMETER_SERVICE);
         return svc;
     }
 
@@ -144,11 +148,11 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static Authentication getAuthentication(final String name, final ZonedDateTime authnDate) {
-        return getAuthentication(getPrincipal(name), new HashMap<>(0), authnDate);
+        return getAuthentication(getPrincipal(name), new HashMap<>(), authnDate);
     }
 
     public static Authentication getAuthentication(final Principal principal) {
-        return getAuthentication(principal, new HashMap<>(0));
+        return getAuthentication(principal, new HashMap<>());
     }
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes) {
@@ -177,20 +181,20 @@ public class CoreAuthenticationTestUtils {
 
     public static CasModelRegisteredService getRegisteredService(final String name, final String url) {
         val service = mock(CasModelRegisteredService.class);
-        when(service.getFriendlyName()).thenCallRealMethod();
-        when(service.getServiceId()).thenReturn(url);
-        when(service.getName()).thenReturn(name);
-        when(service.getId()).thenReturn(Long.MAX_VALUE);
-        when(service.getDescription()).thenReturn("service description");
+        lenient().when(service.getFriendlyName()).thenCallRealMethod();
+        lenient().when(service.getServiceId()).thenReturn(url);
+        lenient().when(service.getName()).thenReturn(name);
+        lenient().when(service.getId()).thenReturn(Long.MAX_VALUE);
+        lenient().when(service.getDescription()).thenReturn("service description");
 
         val access = mock(RegisteredServiceAccessStrategy.class);
-        when(access.isServiceAccessAllowed(any(), any())).thenReturn(true);
-        when(access.isServiceAccessAllowedForSso(any())).thenReturn(true);
-        when(service.getAccessStrategy()).thenReturn(access);
+        lenient().when(access.isServiceAccessAllowed(any(), any())).thenReturn(true);
+        lenient().when(access.isServiceAccessAllowedForSso(any())).thenReturn(true);
+        lenient().when(service.getAccessStrategy()).thenReturn(access);
 
         val authnPolicy = mock(RegisteredServiceAuthenticationPolicy.class);
-        when(authnPolicy.getRequiredAuthenticationHandlers()).thenReturn(Set.of());
-        when(service.getAuthenticationPolicy()).thenReturn(authnPolicy);
+        lenient().when(authnPolicy.getRequiredAuthenticationHandlers()).thenReturn(Set.of());
+        lenient().when(service.getAuthenticationPolicy()).thenReturn(authnPolicy);
         return service;
     }
 
@@ -203,12 +207,12 @@ public class CoreAuthenticationTestUtils {
         return getAuthenticationResult(support, service, getCredentialsWithSameUsernameAndPassword());
     }
 
-    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support) throws Throwable {
+    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support) {
         return getAuthenticationResult(support, getWebApplicationService(), getCredentialsWithSameUsernameAndPassword());
     }
 
     public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support,
-                                                               final Credential... credentials) throws Throwable {
+                                                               final Credential... credentials) {
         return getAuthenticationResult(support, getWebApplicationService(), credentials);
     }
 
@@ -217,11 +221,11 @@ public class CoreAuthenticationTestUtils {
         return FunctionUtils.doUnchecked(() -> support.finalizeAuthenticationTransaction(service, credentials));
     }
 
-    public static AuthenticationResult getAuthenticationResult() throws Throwable {
+    public static AuthenticationResult getAuthenticationResult() {
         return getAuthenticationResult(getWebApplicationService(), getAuthentication());
     }
 
-    public static AuthenticationResult getAuthenticationResult(final Service service) throws Throwable {
+    public static AuthenticationResult getAuthenticationResult(final Service service) {
         return getAuthenticationResult(service, getAuthentication());
     }
 
@@ -236,7 +240,7 @@ public class CoreAuthenticationTestUtils {
         return result;
     }
 
-    public static AuthenticationBuilder getAuthenticationBuilder() throws Throwable {
+    public static AuthenticationBuilder getAuthenticationBuilder() {
         return getAuthenticationBuilder(getPrincipal());
     }
 
@@ -259,22 +263,38 @@ public class CoreAuthenticationTestUtils {
         return builder;
     }
 
+    public static AuthenticationSystemSupport getAuthenticationSystemSupport(final AttributeMerger attributeMerger) {
+        return getAuthenticationSystemSupport(mock(AuthenticationManager.class), mock(ServicesManager.class), attributeMerger);
+    }
+    
     public static AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        val authSupport = mock(AuthenticationSystemSupport.class);
-        when(authSupport.getPrincipalElectionStrategy()).thenReturn(new DefaultPrincipalElectionStrategy());
-        return authSupport;
+        return getAuthenticationSystemSupport(mock(AuthenticationManager.class), mock(ServicesManager.class));
     }
 
     public static AuthenticationSystemSupport getAuthenticationSystemSupport(final AuthenticationManager authenticationManager,
                                                                              final ServicesManager servicesManager) {
-        val publisher = mock(ApplicationEventPublisher.class);
+        return getAuthenticationSystemSupport(authenticationManager, servicesManager, new ReplacingAttributeAdder());
+    }
+    
+    public static AuthenticationSystemSupport getAuthenticationSystemSupport(final AuthenticationManager authenticationManager,
+                                                                             final ServicesManager servicesManager,
+                                                                             final AttributeMerger attributeMerger) {
+        val staticApplicationContext = new StaticApplicationContext();
+        staticApplicationContext.refresh();
+        
+        val principalElectionStrategy = new DefaultPrincipalElectionStrategy();
+        principalElectionStrategy.setAttributeMerger(attributeMerger);
+        val tenantsManager = new DefaultTenantsManager();
         return new DefaultAuthenticationSystemSupport(
-            new DefaultAuthenticationTransactionManager(publisher, authenticationManager),
-            new DefaultPrincipalElectionStrategy(),
-            new DefaultAuthenticationResultBuilderFactory(),
+            new DefaultAuthenticationTransactionManager(staticApplicationContext, authenticationManager),
+            principalElectionStrategy,
+            new DefaultAuthenticationResultBuilderFactory(principalElectionStrategy),
             getAuthenticationTransactionFactory(servicesManager),
             servicesManager,
-            new EchoingPrincipalResolver());
+            new EchoingPrincipalResolver(),
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            mock(TenantExtractor.class),
+            tenantsManager);
     }
 
     public static AuthenticationTransactionFactory getAuthenticationTransactionFactory(final ServicesManager servicesManager) {

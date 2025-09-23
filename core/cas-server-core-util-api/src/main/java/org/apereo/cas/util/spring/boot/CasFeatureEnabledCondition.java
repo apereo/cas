@@ -4,12 +4,14 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,7 +55,7 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
             }
 
             val propertyValue = context.getEnvironment().getProperty(property);
-            if (StringUtils.equalsIgnoreCase(propertyValue, "false")) {
+            if (Strings.CI.equals(propertyValue, "false")) {
                 val message = "CAS feature " + property + " is set to false.";
                 LOGGER.trace(message);
                 return ConditionOutcome.noMatch(message);
@@ -69,7 +71,7 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
     private static ConditionOutcome verifySelectedFeatureModules(final CasFeatureModule.FeatureCatalog[] features,
                                                                  final String module, final String selectedModules) {
 
-        val selectedFeatures = Arrays.asList(selectedModules.split(","));
+        val selectedFeatures = List.of(selectedModules.split(","));
         var featureIsSelected = false;
         for (val feature : features) {
             val property = feature.toProperty(module);

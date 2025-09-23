@@ -228,8 +228,10 @@ public class LdapConnectionFactory implements Closeable {
                     operation.execute(new ModifyRequest(currentDn,
                         new AttributeModification(AttributeModification.Type.REPLACE, new UnicodePwdAttribute(new String(newPassword)))));
 
-                LOGGER.debug("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
-                return response.getResultCode() == ResultCode.SUCCESS;
+                val success = response.getResultCode() == ResultCode.SUCCESS;
+                val logLevel = success ? LOGGER.atDebug() : LOGGER.atError();
+                logLevel.log("Result code [{}], message: [{}]", response.getResultCode(), response.getDiagnosticMessage());
+                return success;
             }
 
             LOGGER.debug("Executing password modification op for generic LDAP");

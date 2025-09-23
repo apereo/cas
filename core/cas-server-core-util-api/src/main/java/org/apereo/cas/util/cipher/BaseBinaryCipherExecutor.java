@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 
@@ -26,6 +27,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import java.nio.charset.StandardCharsets;
 import java.security.spec.AlgorithmParameterSpec;
+import java.util.concurrent.Executors;
 
 /**
  * This is {@link BaseBinaryCipherExecutor}.
@@ -72,8 +74,12 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
                                        final int signingKeySize, final int encryptionKeySize,
                                        final String cipherName) {
         this.cipherName = cipherName;
-        ensureSigningKeyExists(signingSecretKey, signingKeySize);
-        ensureEncryptionKeyExists(encryptionSecretKey, encryptionKeySize);
+        try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            val signingCertTask = Unchecked.runnable(() -> ensureSigningKeyExists(signingSecretKey, signingKeySize));
+            val encryptionCertTask = Unchecked.runnable(() -> ensureEncryptionKeyExists(encryptionSecretKey, encryptionKeySize));
+            executor.execute(signingCertTask);
+            executor.execute(encryptionCertTask);
+        }
         this.encryptionKey = new SecretKeySpec(this.encryptionSecretKey, this.secretKeyAlgorithm);
         this.parameterSpec = buildParameterSpec(encryptionKeySize);
     }

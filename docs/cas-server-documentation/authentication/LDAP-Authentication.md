@@ -35,6 +35,11 @@ To learn how to enforce a password policy for LDAP, please [review this guide](.
               
 You may also be interested in synchronizing account passwords with one or more LDAP servers. To learn more, 
 please [review this guide](../password_management/Password-Synchronization.html).
+ 
+## Multitenancy
+
+Configuration settings for LDAP authentication can be specified in a multitenant environment.
+Please [review this guide](../multitenancy/Multitenancy-Overview.html) for more information.
 
 ## Troubleshooting
 

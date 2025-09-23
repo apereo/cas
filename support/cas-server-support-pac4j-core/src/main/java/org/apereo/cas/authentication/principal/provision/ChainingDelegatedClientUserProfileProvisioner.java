@@ -22,7 +22,7 @@ public class ChainingDelegatedClientUserProfileProvisioner extends BaseDelegated
 
     @Override
     public void execute(final Principal principal, final UserProfile profile,
-                        final BaseClient client, final Credential credential) throws Throwable {
+                        final BaseClient client, final Credential credential) {
         provisioners.forEach(Unchecked.consumer(provisioner -> provisioner.execute(principal, profile, client, credential)));
     }
 

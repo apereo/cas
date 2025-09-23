@@ -15,7 +15,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
@@ -44,7 +44,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
     private final CipherExecutor<String, String> cipherExecutor;
 
-    private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private final UniqueTicketIdGenerator ticketIdGenerator = new HostNameBasedUniqueTicketIdGenerator();
 
     private final ServicesManager servicesManager;
 
@@ -54,6 +54,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
         val expirationPolicyToUse = determineExpirationPolicyForService(service);
         val ticketId = produceTicketIdentifier(service, null, credentialsProvided);
         val result = new ServiceTicketImpl(ticketId, null, service, credentialsProvided, expirationPolicyToUse).setAuthentication(authentication);
+        result.setTenantId(service.getTenant());
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [%s] is of type %s when we were expecting %s".formatted(result, result.getClass(), clazz));
         }
@@ -93,7 +94,6 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
             expirationPolicyToUse,
             credentialProvided,
             serviceTicketSessionTrackingPolicy);
-
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [%s] is of type %s when we were expecting %s".formatted(result, result.getClass(), clazz));
         }
@@ -109,7 +109,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
             serviceTicketUniqueTicketIdGenerator = uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
         }
         if (serviceTicketUniqueTicketIdGenerator == null) {
-            serviceTicketUniqueTicketIdGenerator = defaultServiceTicketIdGenerator;
+            serviceTicketUniqueTicketIdGenerator = ticketIdGenerator;
             LOGGER.debug("Service ticket id generator not found for [{}]. Using the default generator.", uniqueTicketIdGenKey);
         }
 
@@ -124,7 +124,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
             val ttl = policy.getTimeToLive();
             if (count > 0 && StringUtils.isNotBlank(ttl)) {
                 return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
-                    count, Beans.newDuration(ttl).getSeconds());
+                    count, Beans.newDuration(ttl).toSeconds());
             }
         }
         return expirationPolicyBuilder.buildTicketExpirationPolicy();

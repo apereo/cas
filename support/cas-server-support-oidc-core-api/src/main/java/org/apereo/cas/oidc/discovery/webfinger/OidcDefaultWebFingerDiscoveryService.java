@@ -1,24 +1,24 @@
 package org.apereo.cas.oidc.discovery.webfinger;
 
+import org.apereo.cas.configuration.model.support.oidc.OidcWebFingerProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.util.CollectionUtils;
-
+import org.apereo.cas.util.RegexUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link OidcDefaultWebFingerDiscoveryService}.
@@ -30,19 +30,7 @@ import java.util.regex.Pattern;
 @Slf4j
 @Getter
 public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscoveryService {
-    private static final Pattern RESOURCE_NORMALIZED_PATTERN = Pattern.compile('^'
-                                                                               + "((https|acct|http|mailto|tel|device):(//)?)?"
-                                                                               + '('
-                                                                               + "(([^@]+)@)?"
-                                                                               + "(([^\\?#:/]+)"
-                                                                               + "(:(\\d*))?)"
-                                                                               + ')'
-                                                                               + "([^\\?#]+)?"
-                                                                               + "(\\?([^#]+))?"
-                                                                               + "(#(.*))?"
-                                                                               + '$'
-    );
-
+    
     private static final int PATTERN_GROUP_INDEX_SCHEME = 2;
 
     private static final int PATTERN_GROUP_INDEX_USERINFO = 6;
@@ -61,6 +49,8 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
 
     private final OidcServerDiscoverySettings discovery;
 
+    private final OidcWebFingerProperties properties;
+
     @Override
     public ResponseEntity<Map> handleRequest(final String resource, final String rel) throws Throwable {
         if (StringUtils.isNotBlank(rel) && !OidcConstants.WEBFINGER_REL.equalsIgnoreCase(rel)) {
@@ -68,7 +58,7 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
         }
 
         val issuer = discovery.getIssuer();
-        if (!StringUtils.equalsIgnoreCase(resource, issuer)) {
+        if (!Strings.CI.equals(resource, issuer)) {
             val resourceUri = normalize(resource);
             if (resourceUri == null) {
                 LOGGER.error("Unable to parse and normalize resource: [{}]", resource);
@@ -89,7 +79,7 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
                 return buildNotFoundResponseEntity("Unable to find resource");
             }
 
-            if (!StringUtils.equalsIgnoreCase(issuerUri.getHost(), resourceUri.getHost())) {
+            if (!Strings.CI.equals(issuerUri.getHost(), resourceUri.getHost())) {
                 LOGGER.info("Host mismatch for resource [{}]: expected [{}] and yet received [{}]", resource,
                     issuerUri.getHost(), resourceUri.getHost());
                 return buildNotFoundResponseEntity("Unable to match resource host");
@@ -99,7 +89,7 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
         val body = new LinkedHashMap<String, Object>();
         body.put("subject", resource);
 
-        val links = new ArrayList<>(0);
+        val links = new ArrayList<>();
         links.add(CollectionUtils.wrap("rel", OidcConstants.WEBFINGER_REL, "href", issuer));
         body.put("links", links);
 
@@ -113,7 +103,8 @@ public class OidcDefaultWebFingerDiscoveryService implements OidcWebFingerDiscov
     protected UriComponents normalize(final String resource) {
         val builder = UriComponentsBuilder.newInstance();
 
-        val matcher = RESOURCE_NORMALIZED_PATTERN.matcher(resource);
+        val resourcePattern = RegexUtils.createPattern(properties.getResourcePattern());
+        val matcher = resourcePattern.matcher(resource);
         if (!matcher.matches()) {
             LOGGER.error("Unable to match the resource [{}] against pattern [{}] for normalization", resource, matcher.pattern().pattern());
             return null;

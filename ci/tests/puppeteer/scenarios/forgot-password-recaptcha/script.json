@@ -12,7 +12,7 @@
     
     "--cas.authn.pm.reset.mail.from=cas@apereo.org",
     "--cas.authn.pm.reset.mail.text=To reset your password, please use ${url}",
-    "--cas.authn.pm.reset.mail.subject=Reset your password",
+    "--cas.authn.pm.reset.mail.subject=Reset",
     "--cas.authn.pm.reset.mail.attribute-name=mail",
 
     "--cas.authn.pm.google-recaptcha.enabled=true",

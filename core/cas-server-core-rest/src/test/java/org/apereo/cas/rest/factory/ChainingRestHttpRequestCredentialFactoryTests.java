@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class ChainingRestHttpRequestCredentialFactoryTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         val body = new LinkedMultiValueMap<String, String>();
         body.put("username", List.of("casuser"));
@@ -38,7 +38,7 @@ class ChainingRestHttpRequestCredentialFactoryTests {
     }
 
     @Test
-    void verifyDefaultImpl() throws Throwable {
+    void verifyDefaultImpl() {
         val request = new MockHttpServletRequest();
         val body = new LinkedMultiValueMap<String, String>();
         val factory = mock(RestHttpRequestCredentialFactory.class);

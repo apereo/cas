@@ -39,12 +39,12 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public void registerServiceManager(final ServicesManager manager) {
-        this.serviceManagers.add(manager);
+        serviceManagers.add(manager);
         AnnotationAwareOrderComparator.sortIfNecessary(serviceManagers);
     }
 
     @Override
-    public void save(final Stream<RegisteredService> toSave) {
+    public void save(final Stream<? extends RegisteredService> toSave) {
         serviceManagers.forEach(mgr -> {
             val filtered = toSave.filter(mgr::supports);
             mgr.save(filtered);
@@ -142,7 +142,7 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
     @Override
     public RegisteredService findServiceByName(final String name) {
         return serviceManagers.stream()
-            .map(s -> s.findServiceByName(name))
+            .map(manager -> manager.findServiceByName(name))
             .filter(Objects::nonNull)
             .findFirst()
             .orElse(null);
@@ -171,7 +171,8 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public Collection<RegisteredService> load() {
-        return serviceManagers.stream()
+        return serviceManagers
+            .stream()
             .flatMap(manager -> manager.load().stream())
             .collect(Collectors.toList());
     }
@@ -200,7 +201,8 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public Stream<String> getDomains() {
-        return serviceManagers.stream()
+        return serviceManagers
+            .stream()
             .flatMap(ServicesManager::getDomains);
     }
 

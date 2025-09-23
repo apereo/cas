@@ -66,7 +66,7 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
     }
 
     protected MutableCredential extractCredential(final HttpServletRequest request,
-                                                  final List<Credential> credentials) throws Exception {
+                                                  final List<Credential> credentials) {
         val credential = (MutableCredential) credentials.getFirst();
         if (credential != null) {
             var surrogateUsername = request.getHeader(REQUEST_HEADER_SURROGATE_PRINCIPAL);
@@ -77,9 +77,10 @@ public class SurrogateAuthenticationRestHttpRequestCredentialFactory extends Use
             }
 
             val username = credential.getId();
-            if (username.contains(properties.getSeparator())) {
-                surrogateUsername = username.substring(0, username.indexOf(properties.getSeparator()));
-                val realUsername = username.substring(username.indexOf(properties.getSeparator()) + properties.getSeparator().length());
+            val separator = properties.getCore().getSeparator();
+            if (username.contains(separator)) {
+                surrogateUsername = username.substring(0, username.indexOf(separator));
+                val realUsername = username.substring(username.indexOf(separator) + separator.length());
                 credential.setId(realUsername);
                 credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait(surrogateUsername));
                 return credential;

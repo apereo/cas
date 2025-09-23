@@ -80,6 +80,7 @@ public class DefaultConsentEngine implements ConsentEngine {
         val decision = supplier.get();
         decision.setOptions(options);
         decision.setReminder(reminder);
+        decision.setTenant(service.getTenant());
         decision.setReminderTimeUnit(reminderTimeUnit);
         return consentRepository.storeConsentDecision(decision);
     }

@@ -11,17 +11,17 @@ find ./ci/tests -type f -name "*.sh" -exec chmod +x {} \;
 dockerPlatform="unknown"
 docker ps &> /dev/null
 if [[ $? -ne 0 ]] ; then
-  echo "Docker engine is not available."
+  printf "\n🔥 ${RED}Docker engine is not available.${ENDCOLOR}\n"
 else
   dockerPlatform=$(docker version --format '{{json .Server.Os}}')
-  printf "Docker engine platform is ${GREEN}%s${ENDCOLOR}\n" "$dockerPlatform."
+  printf "\nDocker engine platform is ${GREEN}%s${ENDCOLOR}\n" "$dockerPlatform."
 fi
 
 function isDockerOnLinux() {
   if [[ $dockerPlatform =~ "linux" ]]; then
     return 0
   fi
-  printf "${RED}Docker engine is not available for the linux platform.%n${ENDCOLOR}"
+  printf "🔥 ${RED}Docker engine is not available for the linux platform.\n${ENDCOLOR}"
   return 1
 }
 
@@ -29,7 +29,7 @@ function isDockerOnWindows() {
   if [[ $dockerPlatform =~ "windows" ]]; then
     return 0
   fi
-  printf "${RED}Docker engine is not available for the windows platform.%n${ENDCOLOR}"
+  printf "🔥 ${RED}Docker engine is not available for the windows platform.\n${ENDCOLOR}"
   return 1
 }
 
@@ -45,7 +45,7 @@ parallel="--parallel "
 dryRun=""
 info=""
 gradleCmd="./gradlew"
-flags="-no-daemon --configure-on-demand --build-cache -x javadoc -x check -Dverbose=true "
+flags="--no-daemon --configure-on-demand --build-cache -x javadoc -x check -Dverbose=true"
 coverageTask=""
 
 while (( "$#" )); do
@@ -62,14 +62,23 @@ while (( "$#" )); do
         parallel="--no-parallel "
         shift
         ;;
+    --pts)
+        printf "Running tests with predictive test selection mode: ${GREEN}$2${ENDCOLOR}\n"
+        flags+=" -Dpts.mode=$2 "
+        shift 2
+        ;;
+    --no-pts)
+        flags+=" -DPTS_ENABLED=false "
+        shift
+        ;;
     --with-coverage)
         currentDir=`pwd`
         case "${currentDir}" in
             *api*|*core*|*support*|*webapp*)
-                coverageTask="jacocoTestReport"
+                coverageTask="jacocoTestReport --stacktrace"
                 ;;
             *)
-                coverageTask="jacocoRootReport"
+                coverageTask="jacocoRootReport --stacktrace"
                 ;;
         esac
         shift
@@ -95,6 +104,14 @@ while (( "$#" )); do
         parallel=""
         shift
         ;;
+    --events)
+        flags+=" -DtestLoggingEvents=$2 "
+        shift 2
+        ;;
+    --offline)
+        flags+=" --offline "
+        shift
+        ;;
     --no-watch)
         flags+=" --no-watch-fs "
         shift
@@ -109,6 +126,10 @@ while (( "$#" )); do
         ;;
     --ignore-failures)
         flags+=" -DignoreTestFailures=true "
+        shift
+        ;;
+    --no-config-cache)
+        flags+=" --no-configuration-cache "
         shift
         ;;
     --no-build-cache)
@@ -143,6 +164,10 @@ while (( "$#" )); do
             authnpolicy|authpolicy|authenticationpolicy)
                 task+="testAuthenticationPolicy "
                 ;;
+            authz|heimdall|authorization)
+                isDockerOnLinux && ./ci/tests/mysql/run-mysql-server.sh || exit 1
+                task+="testAuthorization "
+                ;;
             auth|authn|authentication)
                 task+="testAuthentication "
                 ;;
@@ -150,7 +175,7 @@ while (( "$#" )); do
                 task+="testTickets "
                 ;;
             syncope)
-                isDockerOnLinux && ./ci/tests/syncope/run-syncope-server.sh
+                isDockerOnLinux && ./ci/tests/syncope/run-syncope-server.sh || exit 1
                 task+="testSyncope "
                 ;;
             native|graal|graalvm)
@@ -163,7 +188,6 @@ while (( "$#" )); do
                 task+="testCookie "
                 ;;
             consent)
-                task+="testConsent "
                 task+="testConsent "
                 ;;
             duo|duosecurity)
@@ -185,19 +209,19 @@ while (( "$#" )); do
                 task+="testCipher "
                 ;;
             elastic)
-                isDockerOnLinux && ./ci/tests/elastic/run-elastic-apm.sh
+                isDockerOnLinux && ./ci/tests/elastic/run-elastic-apm.sh || exit 1
                 task+="testElastic "
                 ;;
             gcp|googlecloud|gcloud)
-                isDockerOnLinux && ./ci/tests/gcp/run-gcp-server.sh
+                isDockerOnLinux && ./ci/tests/gcp/run-gcp-server.sh || exit 1
                 task+="testGCP "
                 ;;
             web)
-                isDockerOnLinux && ./ci/tests/httpbin/run-httpbin-server.sh
+                isDockerOnLinux && ./ci/tests/httpbin/run-httpbin-server.sh || exit 1
                 task+="testWeb "
                 ;;
             scim)
-                isDockerOnLinux && ./ci/tests/scim/run-scim-server.sh
+                isDockerOnLinux && ./ci/tests/scim/run-scim-server.sh || exit 1
                 task+="testSCIM "
                 ;;
             logout|slo)
@@ -216,10 +240,17 @@ while (( "$#" )); do
                 task+="testActuatorEndpoint "
                 ;;
             utility|utils|util)
+                isDockerOnLinux && ./ci/tests/httpbin/run-httpbin-server.sh || exit 1
                 task+="testUtility "
                 ;;
             wsfed|wsfederation)
                 task+="testWSFederation "
+                ;;
+            attributerepository|attrrepo|attrsrepo|attr-repo|attribute-repository)
+                task+="testAttributeRepository "
+                ;;
+            attributerelease|attrrelease|attrsrelease|attr-release|attribute-release)
+                task+="testAttributeRelease "
                 ;;
             attrs|attr|attributes)
                 task+="testAttributes "
@@ -284,7 +315,24 @@ while (( "$#" )); do
             oauth)
                 task+="testOAuth "
                 ;;
+            oidcservices)
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh || exit 1
+                task+="testOIDCServices "
+                ;;
+            oidcauthentication|oidcauthn)
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh || exit 1
+                task+="testOIDCAuthentication "
+                ;;
+            oidcattributes|oidcclaims|oidcattrs)
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh || exit 1
+                task+="testOIDCAttributes "
+                ;;
+            oidcweb)
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh || exit 1
+                task+="testOIDCWeb "
+                ;;
             oidc)
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh || exit 1
                 task+="testOIDC "
                 ;;
             mfa)
@@ -308,7 +356,7 @@ while (( "$#" )); do
             saml1)
                 task+="testSAML1 "
                 ;;
-            saml2web)
+            saml2web|samlweb)
                 task+="testSAML2Web "
                 ;;
             saml2)
@@ -372,106 +420,103 @@ while (( "$#" )); do
                 task+="testSpnego "
                 ;;
             azure|cosmosdb)
-                isDockerOnLinux && ./ci/tests/cosmosdb/run-cosmosdb-server.sh
+                isDockerOnLinux && ./ci/tests/cosmosdb/run-cosmosdb-server.sh || exit 1
                 task+="testAzure "
                 ;;
-            simple|unit)
-                task+="testSimple "
-                ;;
             mssql|mssqlserver)
-                isDockerOnLinux && ./ci/tests/mssqlserver/run-mssql-server.sh
+                isDockerOnLinux && ./ci/tests/mssqlserver/run-mssql-server.sh || exit 1
                 task+="testMsSqlServer "
                 ;;
             influx|influxdb)
-                isDockerOnLinux && ./ci/tests/influxdb/run-influxdb-server.sh
+                isDockerOnLinux && ./ci/tests/influxdb/run-influxdb-server.sh || exit 1
                 task+="testInfluxDb "
                 ;;
             memcached|memcache|kryo)
-                isDockerOnLinux && ./ci/tests/memcached/run-memcached-server.sh
+                isDockerOnLinux && ./ci/tests/memcached/run-memcached-server.sh || exit 1
                 task+="testMemcached "
                 ;;
             activedirectory|ad)
-                isDockerOnLinux && ./ci/tests/ldap/run-ad-server.sh true
+                isDockerOnLinux && ./ci/tests/ldap/run-ad-server.sh || exit 1
                 task+="testActiveDirectory "
                 ;;
             ldapservices)
-                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh || exit 1
                 task+="testLdapServices "
                 ;;
             ldaprepository|ldaprepo)
-                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh || exit 1
                 task+="testLdapRepository "
                 ;;
             ldapauthentication|ldapauthn)
-                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh || exit 1
                 task+="testLdapAuthentication "
                 ;;
             ldapattributes|ldapattrs)
-                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh || exit 1
                 task+="testLdapAttributes "
                 ;;
             ldap)
-                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh
+                isDockerOnLinux && ./ci/tests/ldap/run-ldap-server.sh || exit 1
                 task+="testLdap "
                 ;;
             mongodbmfa)
-                isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh
+                isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh || exit 1
                 task+="testMongoDbMFA "
                 ;;
             mongo|mongodb)
-                isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh
+                isDockerOnLinux && ./ci/tests/mongodb/run-mongodb-server.sh || exit 1
                 task+="testMongoDb "
                 ;;
             mysql)
-                isDockerOnLinux && ./ci/tests/mysql/run-mysql-server.sh
+                isDockerOnLinux && ./ci/tests/mysql/run-mysql-server.sh || exit 1
                 task+="testMySQL "
                 ;;
             maria|mariadb)
-                isDockerOnLinux && ./ci/tests/mariadb/run-mariadb-server.sh
+                isDockerOnLinux && ./ci/tests/mariadb/run-mariadb-server.sh || exit 1
                 task+="testMariaDb "
                 ;;
             postgres|pg|postgresql)
-                isDockerOnLinux && ./ci/tests/postgres/run-postgres-server.sh
+                isDockerOnLinux && ./ci/tests/postgres/run-postgres-server.sh || exit 1
                 task+="testPostgres "
                 ;;
             cassandra)
-                isDockerOnLinux && ./ci/tests/cassandra/run-cassandra-server.sh
+                isDockerOnLinux && ./ci/tests/cassandra/run-cassandra-server.sh || exit 1
                 task+="testCassandra "
                 ;;
             kafka)
-                isDockerOnLinux && ./ci/tests/kafka/run-kafka-server.sh
+                isDockerOnLinux && ./ci/tests/kafka/run-kafka-server.sh || exit 1
                 task+="testKafka "
                 ;;
             aws|amz|amazonwebservices)
-                isDockerOnLinux && ./ci/tests/aws/run-aws-server.sh
+                isDockerOnLinux && ./ci/tests/aws/run-aws-server.sh || exit 1
                 task+="testAmazonWebServices "
                 ;;
             radius)
-                isDockerOnLinux && ./ci/tests/radius/run-radius-server.sh
+                isDockerOnLinux && ./ci/tests/radius/run-radius-server.sh || exit 1
                 task+="testRadius "
                 ;;
             mail|email)
-                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh || exit 1
                 task+="testMail "
                 ;;
             zoo|zookeeper)
-                isDockerOnLinux && ./ci/tests/zookeeper/run-zookeeper-server.sh
+                isDockerOnLinux && ./ci/tests/zookeeper/run-zookeeper-server.sh || exit 1
                 task+="testZooKeeper "
                 ;;
             dynamodb|dynamo)
-                isDockerOnLinux && ./ci/tests/dynamodb/run-dynamodb-server.sh
+                isDockerOnLinux && ./ci/tests/dynamodb/run-dynamodb-server.sh || exit 1
                 task+="testDynamoDb "
                 ;;
             oracle)
-                isDockerOnLinux && ./ci/tests/oracle/run-oracle-server.sh
+                isDockerOnLinux && ./ci/tests/oracle/run-oracle-server.sh || exit 1
                 task+="testOracle "
                 ;;
             redis)
-                isDockerOnLinux && ./ci/tests/redis/run-redis-server.sh
+                isDockerOnLinux && ./ci/tests/redis/run-redis-server.sh || exit 1
                 task+="testRedis "
                 ;;
             activemq|amq|jms|rabbitmq|artemis|amqp)
-                isDockerOnLinux && ./ci/tests/rabbitmq/run-rabbitmq-server.sh
+                isDockerOnLinux && ./ci/tests/rabbitmq/run-rabbitmq-server.sh || exit 1
                 task+="testAMQP "
                 ;;
             *)
@@ -502,19 +547,19 @@ if [[ -z "$task" ]] && [[ -z "$coverageTask" ]]; then
 fi
 
 cmd="$gradleCmd ${GREEN}$task $tests${ENDCOLOR}${flags}${debug}${dryRun}${info}${parallel}${GREEN}$coverageTask${ENDCOLOR}"
-printf "${cmd}\n"
-
+printf "${cmd} \n"
+echo
 cmd="$gradleCmd $task $tests $flags ${debug} ${parallel} ${dryRun} ${info} ${coverageTask}"
 eval "$cmd"
 retVal=$?
 echo -e "***************************************************************************************"
-printf "${CYAN}Gradle build finished at `date` with exit code $retVal ${ENDCOLOR}\n"
+printf "${CYAN}Gradle build finished at $(date) with exit code $retVal ${ENDCOLOR}\n"
 echo -e "***************************************************************************************"
 
 if [ $retVal == 0 ]; then
     printf "${GREEN}Gradle build finished successfully.${ENDCOLOR}\n"
     exit 0
 else
-    printf "${RED}Gradle build did NOT finish successfully.${ENDCOLOR}"
+    printf "${RED}Gradle build did NOT finish successfully.${ENDCOLOR}\n"
     exit $retVal
 fi

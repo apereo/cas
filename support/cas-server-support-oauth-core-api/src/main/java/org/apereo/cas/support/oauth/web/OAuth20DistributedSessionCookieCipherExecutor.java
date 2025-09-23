@@ -7,7 +7,9 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  *
  * @author Misagh Moayyed
  * @since 7.0.0
+ * @deprecated Since 7.3.0.
  */
+@Deprecated(since = "7.3.0", forRemoval = true)
 public class OAuth20DistributedSessionCookieCipherExecutor extends BaseStringCipherExecutor {
     public OAuth20DistributedSessionCookieCipherExecutor(final String secretKeyEncryption,
                                                          final String secretKeySigning,

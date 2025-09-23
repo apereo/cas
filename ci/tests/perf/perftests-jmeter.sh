@@ -7,13 +7,20 @@ YELLOW="\e[33m"
 ENDCOLOR="\e[0m"
 
 function printred() {
-  printf "${RED}$1${ENDCOLOR}\n"
+  printf "🔥 ${RED}$1${ENDCOLOR}\n"
 }
 function printgreen() {
-  printf "${GREEN}$1${ENDCOLOR}\n"
+  printf "☘️  ${GREEN}$1${ENDCOLOR}\n"
 }
 
-jmeterVersion=5.6.2
+tmp="${TMPDIR}"
+if [[ -z "${tmp}" ]]; then
+  tmp="/tmp"
+fi
+export TMPDIR=${tmp}
+echo "Using temp directory: ${TMPDIR}"
+
+jmeterVersion=5.6.3
 gradle="./gradlew "
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 --no-configuration-cache "
@@ -52,7 +59,7 @@ echo -e "**********************************************************"
 gradleBuild="$gradleBuild clean :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc --no-configuration-cache -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
 tasks="$gradle $gradleBuildOptions $gradleBuild"
 printgreen "$tasks"
-echo -e "***************************************************************************************"
+echo -e "\n***************************************************************************************\n"
 eval "$tasks"
 retVal=$?
 
@@ -75,7 +82,7 @@ if [ $retVal == 0 ]; then
   [ -f "${keystore}" ] && rm "${keystore}"
   keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
     -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
-  printgreen "Launching CAS web application ${webAppServerType} server with properties [${casProperties}]"
+  printgreen "Launching CAS web application ${webAppServerType} server with properties [${casProperties}] \n"
   casOutput="/tmp/cas.log"
 
   "${PWD}"/ci/tests/httpbin/run-httpbin-server.sh
@@ -88,15 +95,17 @@ if [ $retVal == 0 ]; then
       --cas.service-registry.core.init-from-json=true \
       --cas.server.name=https://localhost:8443 \
       --cas.server.prefix=https://localhost:8443/cas \
-      --cas.audit.engine.enabled=true \
+      --cas.audit.engine.enabled=false \
       --spring.profiles.active=none \
+      --cas.http-client.allow-local-urls=true \
       --cas.audit.slf4j.use-single-line=true \
       --cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS \
       --management.endpoints.web.exposure.include=* \
-      --management.endpoints.enabled-by-default=true \
+      --management.endpoints.access.default=UNRESTRICTED \
       --logging.level.org.apereo.cas=info ${casProperties} &
   pid=$!
   printgreen "Launched CAS with pid ${pid} with modules ${casModules}. Waiting for CAS server to come online..."
+  sleep 15
   until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
     echo -n '.'
     sleep 2
@@ -104,11 +113,10 @@ if [ $retVal == 0 ]; then
 #  curl -k -H "Content-Type:application/json" \
 #    -X POST "https://localhost:8443/cas/actuator/loggers/org.apereo.cas" \
 #    -d '{"configuredLevel": "DEBUG"}'
-  printgreen "\n\nReady!"
+  printgreen "\n\nReady!\n"
 
   case "$testCategory" in
     saml)
-      metadataDirectory=""
       cert=$(cat "${PWD}/ci/tests/perf/saml/md/idp-signing.crt" | sed 's/-----BEGIN CERTIFICATE-----//g' | sed 's/-----END CERTIFICATE-----//g')
       export IDP_SIGNING_CERTIFICATE=$cert
       echo -e "Using signing certificate:\n$IDP_SIGNING_CERTIFICATE"
@@ -136,7 +144,7 @@ if [ $retVal == 0 ]; then
   clear
   echo -e "***************************************************************************************"
   printgreen "Running JMeter tests via ${jmeterScript}..."
-  export HEAP="-Xms1g -Xmx4g -XX:MaxMetaspaceSize=512m"
+  export HEAP="-Xms1g -Xmx6g -XX:MaxMetaspaceSize=512m"
   /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter -l /tmp/jmeter-results.xml -n -t "${jmeterScript}" >results.log
   echo -n "JMeter results are written to " && ls /tmp/jmeter-results.xml
   echo -e "***************************************************************************************"

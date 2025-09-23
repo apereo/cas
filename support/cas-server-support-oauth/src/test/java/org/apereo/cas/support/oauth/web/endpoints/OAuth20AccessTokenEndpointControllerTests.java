@@ -4,7 +4,6 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -70,7 +69,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         private MockMvc mvc;
 
         @BeforeEach
-        public void setup() {
+        void setup() {
             mvc = MockMvcBuilders
                 .webAppContextSetup(applicationContext)
                 .defaultRequest(get("/")
@@ -271,7 +270,7 @@ class OAuth20AccessTokenEndpointControllerTests {
         }
 
         @BeforeEach
-        public void initialize() {
+        void initialize() {
             ticketRegistry.deleteAll();
         }
 
@@ -599,8 +598,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val expiringOAuthCodeFactory = new OAuth20DefaultOAuthCodeFactory(new DefaultUniqueTicketIdGenerator(),
                 alwaysExpiresExpirationPolicyBuilder(), servicesManager, CipherExecutor.noOpOfStringToString(),
                 descendantTicketsTrackingPolicy);
-            val factory = new WebApplicationServiceFactory();
-            val service = factory.createService(registeredService.getServiceId());
+            val service = serviceFactory.createService(registeredService.getServiceId());
             val code = expiringOAuthCodeFactory.create(service, authentication,
                 new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null,
                 null, registeredService.getClientId(), new HashMap<>(),
@@ -850,8 +848,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             val registeredService = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(),
                 randomServiceUrl());
             val authentication = getAuthentication(principal);
-            val factory = new WebApplicationServiceFactory();
-            val service = factory.createService(registeredService.getServiceId());
+            val service = serviceFactory.createService(registeredService.getServiceId());
             val expiringRefreshTokenFactory = new OAuth20DefaultRefreshTokenFactory(
                 alwaysExpiresExpirationPolicyBuilder(), ticketRegistry,
                 servicesManager, descendantTicketsTrackingPolicy, casProperties);
@@ -951,27 +948,30 @@ class OAuth20AccessTokenEndpointControllerTests {
 
         @Test
         void verifyRefreshTokenOK() throws Throwable {
-            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN),
+                UUID.randomUUID().toString(), randomServiceUrl());
             assertRefreshTokenOk(service);
         }
 
         @Test
-        void verifyRefreshTokenOKCustomizedWithNullAuthentication() throws Throwable {
-            val registeredService = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
+        void verifyRefreshTokenWithNoAuthentication() throws Throwable {
+            val registeredService = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN),
+                UUID.randomUUID().toString(), randomServiceUrl());
             val principal = createPrincipal();
-            val factory = new WebApplicationServiceFactory();
-            val service = factory.createService(registeredService.getServiceId());
-            val refreshToken = defaultRefreshTokenFactory.create(service, null,
-                new MockTicketGrantingTicket("casuser"),
-                new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),
+            val service = serviceFactory.createService(registeredService.getServiceId());
+            val ticketGrantingTicket = new MockTicketGrantingTicket("casuser");
+            ticketRegistry.addTicket(ticketGrantingTicket);
+            val refreshToken = defaultRefreshTokenFactory.create(service,
+                ticketGrantingTicket, registeredService.getClientId(),
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
-            this.ticketRegistry.addTicket(refreshToken);
+            ticketRegistry.addTicket(refreshToken);
             assertRefreshTokenOk(registeredService, refreshToken, principal);
         }
 
         @Test
         void verifyRefreshTokenOKWithRefreshToken() throws Throwable {
-            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN),
+                UUID.randomUUID().toString(), randomServiceUrl());
             service.setGenerateRefreshToken(true);
             service.setRenewRefreshToken(true);
             assertRefreshTokenOk(service);
@@ -979,13 +979,15 @@ class OAuth20AccessTokenEndpointControllerTests {
 
         @Test
         void verifyJsonRefreshTokenOK() throws Throwable {
-            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN),
+                UUID.randomUUID().toString(), randomServiceUrl());
             assertRefreshTokenOk(service);
         }
 
         @Test
         void verifyJsonRefreshTokenOKWithRefreshToken() throws Throwable {
-            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN),
+                UUID.randomUUID().toString(), randomServiceUrl());
             service.setGenerateRefreshToken(true);
             service.setRenewRefreshToken(true);
             assertRefreshTokenOk(service);
@@ -1084,8 +1086,7 @@ class OAuth20AccessTokenEndpointControllerTests {
             final Principal principal, final List<String> scopes,
             final OAuthRegisteredService registeredService) throws Throwable {
             val authentication = getAuthentication(principal);
-            val factory = new WebApplicationServiceFactory();
-            val service = factory.createService(registeredService.getServiceId());
+            val service = serviceFactory.createService(registeredService.getServiceId());
             val refreshToken = defaultRefreshTokenFactory.create(service, authentication,
                 new MockTicketGrantingTicket("casuser"),
                 scopes, registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),

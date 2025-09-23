@@ -1,16 +1,12 @@
 package org.apereo.cas.configuration.model.support.email;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,8 +23,7 @@ import java.util.stream.Stream;
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
-@JsonFilter("EmailProperties")
-public class EmailProperties implements Serializable {
+public class EmailProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 7367120636536230761L;
 
@@ -54,7 +49,7 @@ public class EmailProperties implements Serializable {
      * GString style expressions. The variable {@code out} is bound to
      * the writer that the template is being written to.
      * <p>
-     * If using plain text, the contents are processed for string subtitution candidates using named variables.
+     * If using plain text, the contents are processed for string substitution candidates using named variables.
      * For example, you may refer to an expected url variable in the email text via {@code ${url}},
      * or use {@code ${token}} to locate the token variable. In certain cases, additional parameters
      * are passed to the email body processor that might include authentication and/or principal attributes,
@@ -71,7 +66,7 @@ public class EmailProperties implements Serializable {
     /**
      * Email subject line.
      * <p>
-     * The subject can either be defined verbaitm, or it
+     * The subject can either be defined verbatim, or it
      * may point to a message key in the language bundle
      * using the syntax {@code #{subject-language-key}}.
      * This key should point to a valid message
@@ -102,37 +97,26 @@ public class EmailProperties implements Serializable {
     /**
      * Indicate whether the message body
      * should be evaluated as HTML text.
+     * The application of this setting depends on the email provider implementation
+     * and may not be fully supported everywhere. This is typically relevant for the default
+     * {@link org.springframework.mail.javamail.JavaMailSender}.
      */
     private boolean html;
 
     /**
      * Set whether to validate all addresses which get passed to this helper.
+     * The application of this setting depends on the email provider implementation
+     * and may not be fully supported everywhere. This is typically relevant for the default
+     * {@link org.springframework.mail.javamail.JavaMailSender}.
      */
     private boolean validateAddresses;
 
     /**
      * Set the priority ({@code X-Priority} header) of the message.
      * Values: {@code 1 (Highest)}, {@code 2 (High)}, {@code 3 (Normal)}, {@code 4 (Low)}, {@code 5 (Lowest)}.
+     * The application of this setting depends on the email provider implementation
+     * and may not be fully supported everywhere. This is typically relevant for the default
+     * {@link org.springframework.mail.javamail.JavaMailSender}.
      */
     private int priority = 1;
-
-    /**
-     * Indicate whether email settings are defined.
-     *
-     * @return true if undefined, false otherwise.
-     */
-    @JsonIgnore
-    public boolean isUndefined() {
-        return StringUtils.isBlank(text) || StringUtils.isBlank(from) || StringUtils.isBlank(subject);
-    }
-
-    /**
-     * Is text/from/subject defined.
-     *
-     * @return true/false
-     */
-    @JsonIgnore
-    public boolean isDefined() {
-        return !isUndefined();
-    }
 }

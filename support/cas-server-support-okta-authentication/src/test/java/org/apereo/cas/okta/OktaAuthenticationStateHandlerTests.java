@@ -5,9 +5,8 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.CasOktaAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import com.okta.authn.sdk.AuthenticationStateHandler;
 import com.okta.authn.sdk.client.AuthenticationClient;
 import com.okta.authn.sdk.resource.AuthenticationResponse;
@@ -15,6 +14,7 @@ import com.okta.authn.sdk.resource.User;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,7 +30,6 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     CasOktaAuthenticationAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
     BaseOktaTests.SharedTestConfiguration.class
 },
     properties = {
@@ -41,14 +40,11 @@ import static org.mockito.Mockito.*;
         "cas.authn.okta.organization-url=https://dev-159539.oktapreview.com"
     })
 @Tag("AuthenticationHandler")
+@ExtendWith(CasTestExtension.class)
 class OktaAuthenticationStateHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier(ServicesManager.BEAN_NAME)
-    private ServicesManager servicesManager;
-
+    
     @Autowired
     @Qualifier("oktaAuthenticationHandler")
     private AuthenticationHandler oktaAuthenticationHandler;
@@ -58,7 +54,7 @@ class OktaAuthenticationStateHandlerTests {
     private PrincipalFactory oktaPrincipalFactory;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
             "casuser@apereo.org", "a8BuQH@6B7z");
         assertThrows(FailedLoginException.class, () -> oktaAuthenticationHandler.authenticate(credential, mock(Service.class)));
@@ -82,7 +78,7 @@ class OktaAuthenticationStateHandlerTests {
                 adapter.handleSuccess(response);
                 return response;
             });
-        val handler = new OktaAuthenticationHandler(null, servicesManager,
+        val handler = new OktaAuthenticationHandler(null,
             oktaPrincipalFactory, casProperties.getAuthn().getOkta(), client);
         assertNotNull(handler.authenticate(credential, mock(Service.class)));
         assertNotNull(handler.getOktaAuthenticationClient());

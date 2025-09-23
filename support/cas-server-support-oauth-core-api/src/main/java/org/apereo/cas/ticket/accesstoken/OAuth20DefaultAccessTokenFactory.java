@@ -16,7 +16,7 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +54,7 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
         final JwtBuilder jwtBuilder,
         final ServicesManager servicesManager,
         final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
-        this(new DefaultUniqueTicketIdGenerator(), ticketRegistry, expirationPolicyBuilder,
+        this(new HostNameBasedUniqueTicketIdGenerator(), ticketRegistry, expirationPolicyBuilder,
             jwtBuilder, servicesManager, descendantTicketsTrackingPolicy);
     }
 
@@ -83,6 +83,7 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
         val accessToken = new OAuth20DefaultAccessToken(accessTokenId, service, authentication,
             expirationPolicyToUse, ticketGrantingTicket, exchangedToken, scopes,
             clientId, requestClaims, responseType, grantType);
+        FunctionUtils.doIfNotNull(service, __ -> accessToken.setTenantId(service.getTenant()));
         descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, accessToken);
         return accessToken;
     }
@@ -110,8 +111,8 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
             val ttl = policy.getTimeToKill();
             if (StringUtils.isNotBlank(maxTime) && StringUtils.isNotBlank(ttl)) {
                 return new OAuth20AccessTokenExpirationPolicy(
-                    Beans.newDuration(maxTime).getSeconds(),
-                    Beans.newDuration(ttl).getSeconds());
+                    Beans.newDuration(maxTime).toSeconds(),
+                    Beans.newDuration(ttl).toSeconds());
             }
         }
         return expirationPolicyBuilder.buildTicketExpirationPolicy();

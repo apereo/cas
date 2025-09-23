@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.response.introspection;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import java.util.LinkedHashMap;
@@ -29,7 +30,9 @@ public class OAuth20DefaultIntrospectionResponseGenerator implements OAuth20Intr
     protected OAuth20IntrospectionAccessTokenResponse collectIntrospectionDetails(final OAuth20IntrospectionAccessTokenResponse introspect,
                                                                                   final OAuth20Token accessToken) {
         introspect.setClientId(accessToken.getClientId());
-        introspect.setAud(accessToken.getService().getId());
+        if (accessToken instanceof final ServiceAwareTicket sat) {
+            introspect.setAud(sat.getService().getId());
+        }
 
         val authentication = accessToken.getAuthentication();
         val attributes = new LinkedHashMap<String, Object>(authentication.getAttributes());

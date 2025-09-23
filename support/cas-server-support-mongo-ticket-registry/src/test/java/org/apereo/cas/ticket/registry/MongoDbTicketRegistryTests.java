@@ -16,12 +16,13 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.*;
  * @since 5.1.0
  */
 @Tag("MongoDb")
-@Import(CasMongoDbTicketRegistryAutoConfiguration.class)
+@ImportAutoConfiguration(CasMongoDbTicketRegistryAutoConfiguration.class)
 @TestPropertySource(properties = {
     "cas.ticket.registry.mongo.database-name=ticket-registry",
     "cas.ticket.registry.mongo.authentication-database-name=admin",
@@ -61,9 +62,9 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("mongoDbTicketRegistryTemplate")
     private MongoOperations mongoDbTicketRegistryTemplate;
-
+    
     @BeforeEach
-    public void before() {
+    void before() {
         newTicketRegistry.deleteAll();
     }
 
@@ -77,7 +78,7 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyQuery() throws Throwable {
+    void verifyQuery() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
         val ticketGrantingTicketToAdd = Stream.generate(() -> {
                 val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
@@ -102,6 +103,20 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
         assertEquals(criteria2.getCount(), queryResults.size());
     }
 
+    @RepeatedTest(2)
+    void verifyCount() {
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val ticketGrantingTicketToAdd = Stream.generate(() -> {
+                val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                    .getNewTicketId(TicketGrantingTicket.PREFIX);
+                return new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            })
+            .limit(5);
+        getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd);
+        val count = getNewTicketRegistry().countTickets();
+        assertTrue(count > 0);
+    }
+    
     @RepeatedTest(1)
     void verifyBadTicketInCatalog() throws Throwable {
         val ticket = new MockTicketGrantingTicket("casuser");
@@ -110,7 +125,7 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
         when(catalog.find(any(Ticket.class))).thenReturn(null);
         val mgr = mock(TicketSerializationManager.class);
         when(mgr.serializeTicket(any())).thenReturn("{}");
-        val registry = new MongoDbTicketRegistry(CipherExecutor.noOp(), mgr, catalog, mongoDbTicketRegistryTemplate);
+        val registry = new MongoDbTicketRegistry(CipherExecutor.noOp(), mgr, catalog, applicationContext, mongoDbTicketRegistryTemplate);
         registry.addTicket(ticket);
         assertNull(registry.updateTicket(ticket));
 
@@ -126,5 +141,46 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
         when(catalog.find(anyString())).thenThrow(new RuntimeException());
         assertNull(registry.getTicket(ticket.getId()));
+    }
+
+    @RepeatedTest(2)
+    void verifyGetSessionsFor() {
+        val principalId = UUID.randomUUID().toString();
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
+        val ticketGrantingTicketToAdd = Stream.generate(() -> {
+                val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                    .getNewTicketId(TicketGrantingTicket.PREFIX);
+                return new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            })
+            .limit(5);
+        getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd);
+
+        val criteria1 = new TicketRegistryQueryCriteria()
+            .setCount(5L)
+            .setDecode(Boolean.FALSE)
+            .setType(TicketGrantingTicket.PREFIX);
+        val queryResults1 = getNewTicketRegistry().query(criteria1);
+        assertEquals(criteria1.getCount(), queryResults1.size());
+
+        assertEquals(5, getNewTicketRegistry().getSessionsFor(principalId).count());
+    }
+
+    @RepeatedTest(2)
+    void verifyDeleteSessionsFor() {
+        val principalId = UUID.randomUUID().toString();
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
+        val ticketGrantingTicketToAdd = Stream.generate(() -> {
+                val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                    .getNewTicketId(TicketGrantingTicket.PREFIX);
+                return new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            })
+            .limit(5);
+        getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd);
+
+        val tickets = getNewTicketRegistry().getSessionsFor(principalId).toList();
+        assertEquals(5, tickets.size());
+
+        tickets.forEach(Unchecked.consumer(ticket -> getNewTicketRegistry().deleteTicket(ticket)));
+        assertEquals(0, getNewTicketRegistry().getSessionsFor(principalId).count());
     }
 }

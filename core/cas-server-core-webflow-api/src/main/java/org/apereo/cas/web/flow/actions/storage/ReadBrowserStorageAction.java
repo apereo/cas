@@ -10,7 +10,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Map;
@@ -59,7 +58,7 @@ public class ReadBrowserStorageAction extends BaseBrowserStorageAction {
         }
         WebUtils.putBrowserStorage(requestContext, browserStorage);
         requestContext.getFlowScope().put(BROWSER_STORAGE_REQUEST_IN_PROGRESS, Boolean.TRUE);
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_READ_BROWSER_STORAGE);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_READ_BROWSER_STORAGE);
     }
 
 

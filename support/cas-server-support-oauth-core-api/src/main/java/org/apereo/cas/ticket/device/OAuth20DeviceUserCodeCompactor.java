@@ -42,7 +42,7 @@ public class OAuth20DeviceUserCodeCompactor implements TicketCompactor<OAuth20De
     }
 
     @Override
-    public Ticket expand(final String ticketId) throws Throwable {
+    public Ticket expand(final String ticketId) {
         val structure = parse(ticketId);
         val codeFactory = (OAuth20DeviceUserCodeFactory) ticketFactory.getObject().get(getTicketType());
         val service = serviceFactory.createService(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex()));

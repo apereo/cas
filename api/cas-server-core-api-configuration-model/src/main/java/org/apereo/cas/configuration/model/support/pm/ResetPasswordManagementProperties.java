@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -25,7 +24,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-pm-webflow")
 @Getter
 @Setter
-@JsonFilter("ResetPasswordManagementProperties")
+
 @Accessors(chain = true)
 public class ResetPasswordManagementProperties implements CasFeatureModule, Serializable {
 
@@ -43,6 +42,12 @@ public class ResetPasswordManagementProperties implements CasFeatureModule, Seri
      */
     @NestedConfigurationProperty
     private EmailProperties mail = new EmailProperties();
+
+    /**
+     * Email settings for password reset confirmations.
+     */
+    @NestedConfigurationProperty
+    private EmailProperties confirmationMail = new EmailProperties();
 
     /**
      * SMS settings for notifications.
@@ -82,14 +87,18 @@ public class ResetPasswordManagementProperties implements CasFeatureModule, Seri
 
     /**
      * How many times you can use the password reset link.
-     * Stricly lower than 1 means infinite.
+     * Strictly lower than 1 means infinite.
      */
     private int numberOfUses = -1;
 
     public ResetPasswordManagementProperties() {
         mail.setText("Reset your password via this link: ${url}");
+        confirmationMail.setText("Your password reset request has been confirmed");
         sms.setText("Reset your password via this link: ${url}");
+
         mail.setSubject("Password Reset");
+        confirmationMail.setSubject("Password Reset Confirmation");
+
         crypto.getEncryption().setKeySize(EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }

@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.pac4j.saml;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,11 +17,10 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiresModule(name = "cas-server-support-pac4j-webflow")
+@RequiresModule(name = "cas-server-support-pac4j-saml")
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("Pac4jSamlClientMetadataProperties")
 public class Pac4jSamlClientMetadataProperties implements Serializable {
 
     @Serial
@@ -35,6 +33,16 @@ public class Pac4jSamlClientMetadataProperties implements Serializable {
      */
     @RequiredProperty
     private String identityProviderMetadataPath;
+
+    /**
+     * Indicate whether the identity provider metadata is an aggregate
+     * and contains more than one IDP entity. Doing so will allow CAS
+     * to resolve and load the identity provider entities from the aggregate
+     * and register them individually with the runtime.
+     * The resolution process will attempt to use the {@code UIInfo} element
+     * for each identity provider entity to extract things like Display Name, etc.
+     */
+    private boolean identityProviderMetadataAggregate;
 
     /**
      * SAML2 service provider metadata settings.

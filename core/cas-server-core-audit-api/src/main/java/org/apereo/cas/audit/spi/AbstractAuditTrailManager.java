@@ -23,6 +23,11 @@ import java.util.concurrent.Executors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractAuditTrailManager implements AuditTrailManager, DisposableBean {
+    /**
+     * Default maximum number of audit records to fetch.
+     */
+    public static final long DEFAULT_MAX_AUDIT_RECORDS_TO_FETCH = 100;
+
     protected boolean asynchronous;
 
     private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();

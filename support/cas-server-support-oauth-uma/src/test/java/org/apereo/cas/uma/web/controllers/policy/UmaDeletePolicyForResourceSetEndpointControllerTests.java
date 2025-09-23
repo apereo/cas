@@ -45,7 +45,7 @@ class UmaDeletePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpoi
     }
 
     @Test
-    void verifyFailsOperation() throws Throwable {
+    void verifyFailsOperation() {
         val response = umaDeletePolicyForResourceSetEndpointController.deletePoliciesForResourceSet(1, 1,
             new MockHttpServletRequest(), new MockHttpServletResponse());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());

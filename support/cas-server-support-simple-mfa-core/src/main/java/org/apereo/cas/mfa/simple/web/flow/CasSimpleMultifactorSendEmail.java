@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
@@ -20,6 +22,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,11 +32,11 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@RequiredArgsConstructor(staticName = "of",
-                         access = AccessLevel.PROTECTED)
-class CasSimpleMultifactorSendEmail {
+@RequiredArgsConstructor(staticName = "of", access = AccessLevel.PROTECTED)
+public class CasSimpleMultifactorSendEmail {
     private final CommunicationsManager communicationsManager;
     private final CasSimpleMultifactorAuthenticationProperties properties;
+    private final TenantExtractor tenantExtractor;
 
     protected EmailCommunicationResults send(final Principal principal, final Ticket tokenTicket,
                                              final List<String> recipients, final RequestContext requestContext) {
@@ -61,8 +64,10 @@ class CasSimpleMultifactorSendEmail {
         return new EmailCommunicationResults(results);
     }
 
-    protected EmailCommunicationResult sendEmail(final RequestContext requestContext, final EmailMessageBodyBuilder body,
-                                               final Principal principal, final List<String> recipients) {
+    protected EmailCommunicationResult sendEmail(final RequestContext requestContext,
+                                                 final EmailMessageBodyBuilder body,
+                                                 final Principal principal,
+                                                 final List<String> recipients) {
         val emailRequest = prepareEmailMessageRequest(requestContext, body, principal, StringUtils.EMPTY).withTo(recipients);
         return communicationsManager.email(emailRequest);
     }
@@ -75,12 +80,13 @@ class CasSimpleMultifactorSendEmail {
         return communicationsManager.email(emailRequest);
     }
 
-    protected List<String> getEmailMessageRecipients(final Principal principal) {
+    protected List<String> getEmailMessageRecipients(final Principal principal, final RequestContext requestContext) {
         return properties.getMail().getAttributeName()
             .stream()
             .map(attribute -> EmailMessageRequest.builder()
                 .emailProperties(properties.getMail())
                 .principal(principal)
+                .tenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
                 .attribute(SpringExpressionLanguageValueResolver.getInstance().resolve(attribute))
                 .build()
                 .getRecipients())
@@ -90,7 +96,7 @@ class CasSimpleMultifactorSendEmail {
     }
 
     protected EmailMessageRequest prepareEmailMessageRequest(final RequestContext requestContext,
-                                                             final EmailMessageBodyBuilder body,
+                                                             final EmailMessageBodyBuilder bodyBuilder,
                                                              final Principal principal,
                                                              final String attribute) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -101,7 +107,9 @@ class CasSimpleMultifactorSendEmail {
             .locale(locale.orElseGet(Locale::getDefault))
             .principal(principal)
             .attribute(SpringExpressionLanguageValueResolver.getInstance().resolve(attribute))
-            .body(body.get())
+            .body(bodyBuilder.get())
+            .tenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
+            .context(bodyBuilder.getParameters())
             .build();
     }
 
@@ -111,11 +119,7 @@ class CasSimpleMultifactorSendEmail {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val locale = Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
             .map(resolver -> resolver.resolveLocale(request));
-        val parameters = CoreAuthenticationUtils.convertAttributeValuesToObjects(principal.getAttributes());
-        val token = tokenTicket.getId();
-        val tokenWithoutPrefix = token.substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
-        parameters.put("token", token);
-        parameters.put("tokenWithoutPrefix", tokenWithoutPrefix);
+        val parameters = buildEmailBodyParameters(principal, tokenTicket);
         return EmailMessageBodyBuilder.builder()
             .properties(properties.getMail())
             .locale(locale)
@@ -123,7 +127,16 @@ class CasSimpleMultifactorSendEmail {
             .build();
     }
 
-    record EmailCommunicationResults(List<EmailCommunicationResult> results) {
+    protected Map<String, Object> buildEmailBodyParameters(final Principal principal, final Ticket tokenTicket) {
+        val parameters = CoreAuthenticationUtils.convertAttributeValuesToObjects(principal.getAttributes());
+        val token = tokenTicket.getId();
+        val tokenWithoutPrefix = token.substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
+        parameters.put("token", token);
+        parameters.put("tokenWithoutPrefix", tokenWithoutPrefix);
+        return parameters;
+    }
+
+    public record EmailCommunicationResults(List<EmailCommunicationResult> results) {
         boolean isAnyEmailSent() {
             return results.stream().anyMatch(EmailCommunicationResult::isSuccess);
         }

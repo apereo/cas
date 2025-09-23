@@ -68,7 +68,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public void delete(final String username, final long deviceId) {
         try {
             val account = fetchSingleYubiKeyAccount(username);
-            if (account != null && account.getDevices().removeIf(d -> deviceId == d.getId())) {
+            if (account != null && account.getDevices().removeIf(device -> deviceId == device.getId())) {
                 entityManager.merge(account);
             }
         } catch (final NoResultException e) {
@@ -86,6 +86,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         val jpaAccount = JpaYubiKeyAccount.builder()
             .username(request.getUsername())
             .devices(CollectionUtils.wrapList(device))
+            .tenant(request.getTenant())
             .build();
         return this.entityManager.merge(jpaAccount);
     }
@@ -95,6 +96,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         val jpaAccount = JpaYubiKeyAccount.builder()
             .username(account.getUsername())
             .devices(account.getDevices())
+            .tenant(account.getTenant())
             .build();
         return this.entityManager.merge(jpaAccount);
     }

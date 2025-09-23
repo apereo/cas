@@ -100,14 +100,14 @@ session identifier maps to a servlet session that can subsequently be destroyed 
 
 ### Redirecting Logout to Service
 
-Logout requests may be optionally routed to an external URL bypassing the CAS logout screen. In order to to do you will need to specify the target destination typically in form of a `service` parameter to the CAS logout endpoint per the [CAS protocol specification](../protocol/CAS-Protocol-Specification.html).
+Logout requests may be optionally routed to an external URL bypassing the CAS logout screen. To do so, you will need to specify the target destination typically in form of a `service` parameter to the CAS logout endpoint per the [CAS protocol specification](../protocol/CAS-Protocol-Specification.html).
 
 ### Single Logout Per Service
 
 Registered applications with CAS have the option to control single logout behavior individually via
 the [Service Management](../services/Service-Management.html) component. Each registered service in the service registry will include configuration
-that describes how to the logout request should be submitted. This behavior is controlled via the `logoutType` property
-which allows to specify whether the logout request should be submitted via back/front channel or turned off for this application.
+that describes how the logout request should be submitted. This behavior is controlled via the `logoutType` property
+which allows one to specify whether the logout request should be submitted via back/front channel or turned off for this application.
 
 Sample configuration follows:
 

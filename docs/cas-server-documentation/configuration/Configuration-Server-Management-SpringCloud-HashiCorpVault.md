@@ -61,7 +61,7 @@ thirdPartyExactMatch="spring.cloud.vault.authentication"
 
 ## Kubernetes Authentication
 
-Kubernetes authentication mechanism allows to authenticate with Vault
+Kubernetes authentication mechanism allows CAS to authenticate with Vault
 using a Kubernetes Service Account Token. The authentication is role
 based and the role is bound to a service account name and a namespace.
 

@@ -9,7 +9,7 @@ category: User Interface
 # Themed Views - User Interface Customization
 
 CAS can also utilize a service's associated theme to selectively choose which set of UI views will be used to generate 
-the standard views (`login/casLoginView.html`, etc). This is specially useful in cases where the set of pages for a theme that are targeted 
+the standard views (`login/casLoginView.html`, etc). This is especially useful in cases where the set of pages for a theme that are targeted
 for a different type of audience are entirely different structurally that using a simple theme is not practical 
 to augment the default views. In such cases, new view pages may be required.
 

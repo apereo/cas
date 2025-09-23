@@ -45,7 +45,8 @@ deployments. Components for the following caching technologies are provided:
 
 * [Default](Default-Ticket-Registry.html)
 * [Hazelcast](Hazelcast-Ticket-Registry.html)
-* [Ignite](Ignite-Ticket-Registry.html)
+* [Apache Ignite](Ignite-Ticket-Registry.html)
+* [Apache Geode](Geode-Ticket-Registry.html)
 
 ### Stateless Ticket Registries
 
@@ -58,6 +59,7 @@ Components for the following caching technologies are provided:
 
 * [AMQP](Messaging-AMQP-Ticket-Registry.html)
 * [Google Cloud PubSub](GCP-PubSub-Ticket-Registry.html)
+* [Apache Kafka](Kafka-Ticket-Registry.html)
 
 ### RDBMS Ticket Registries
 

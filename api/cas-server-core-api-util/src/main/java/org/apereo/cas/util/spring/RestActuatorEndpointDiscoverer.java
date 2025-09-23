@@ -2,6 +2,7 @@ package org.apereo.cas.util.spring;
 
 import lombok.Getter;
 import lombok.val;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.EndpointFilter;
 import org.springframework.boot.actuate.endpoint.EndpointId;
 import org.springframework.boot.actuate.endpoint.Operation;
@@ -12,9 +13,8 @@ import org.springframework.boot.actuate.endpoint.annotation.EndpointDiscoverer;
 import org.springframework.boot.actuate.endpoint.invoke.OperationInvoker;
 import org.springframework.boot.actuate.endpoint.invoke.ParameterValueMapper;
 import org.springframework.boot.actuate.endpoint.web.PathMapper;
-import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpointsSupplier;
-import org.springframework.boot.actuate.endpoint.web.annotation.ExposableControllerEndpoint;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.MergedAnnotations;
 import java.util.Collection;
 import java.util.List;
@@ -25,14 +25,13 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-public class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<ExposableControllerEndpoint, Operation>
-    implements ControllerEndpointsSupplier {
+public class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<RestActuatorControllerEndpoint, Operation> {
     private final List<PathMapper> endpointPathMappers;
 
     public RestActuatorEndpointDiscoverer(final ApplicationContext applicationContext, final List<PathMapper> endpointPathMappers,
-                                          final Collection<EndpointFilter<ExposableControllerEndpoint>> filters) {
-        super(applicationContext, ParameterValueMapper.NONE, List.of(), filters);
-        this.endpointPathMappers = endpointPathMappers;
+                                          final Collection<EndpointFilter<RestActuatorControllerEndpoint>> filters) {
+        super(applicationContext, ParameterValueMapper.NONE, List.of(), filters, List.of());
+        this.endpointPathMappers = List.copyOf(endpointPathMappers);
     }
 
     @Override
@@ -41,38 +40,39 @@ public class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<Exposable
         return annotations.isPresent(RestActuatorEndpoint.class) && annotations.isPresent(Endpoint.class);
     }
 
+
     @Override
-    protected ExposableControllerEndpoint createEndpoint(final Object endpointBean,
-                                                         final EndpointId id,
-                                                         final boolean enabledByDefault,
-                                                         final Collection<Operation> operations) {
+    protected RestActuatorControllerEndpoint createEndpoint(final Object endpointBean, final EndpointId id,
+                                                            final Access defaultAccess, final Collection<Operation> operations) {
+
         val rootPath = PathMapper.getRootPath(this.endpointPathMappers, id);
-        return new DiscoveredRestActuatorEndpoint(this, endpointBean, id, rootPath, enabledByDefault);
+        return new DiscoveredRestActuatorEndpoint(this, endpointBean, id, rootPath, defaultAccess);
     }
 
     @Override
     protected Operation createOperation(final EndpointId endpointId, final DiscoveredOperationMethod operationMethod, final OperationInvoker invoker) {
-        throw new IllegalStateException("RestActuatorEndpoint must not declare operations");
+        throw new IllegalStateException("RestActuatorEndpoint %s must not declare operations".formatted(endpointId.toString()));
     }
 
     @Override
     protected EndpointDiscoverer.OperationKey createOperationKey(final Operation operation) {
-        throw new IllegalStateException("RestActuatorEndpoint must not declare operations");
+        throw new IllegalStateException("RestActuatorEndpoint must not declare operation: %s".formatted(operation.toString()));
+    }
+
+    @Override
+    protected boolean isInvocable(final RestActuatorControllerEndpoint endpoint) {
+        val annotation = AnnotationUtils.findAnnotation(endpoint.getEndpointBean().getClass(), RestActuatorEndpoint.class);
+        return annotation != null;
     }
 
     @Getter
-    private static class DiscoveredRestActuatorEndpoint extends AbstractDiscoveredEndpoint<Operation> implements ExposableControllerEndpoint {
+    private static class DiscoveredRestActuatorEndpoint extends AbstractDiscoveredEndpoint<Operation> implements RestActuatorControllerEndpoint {
         private final String rootPath;
 
         DiscoveredRestActuatorEndpoint(final EndpointDiscoverer<?, ?> discoverer, final Object endpointBean,
-                                       final EndpointId id, final String rootPath, final boolean enabledByDefault) {
-            super(discoverer, endpointBean, id, enabledByDefault, List.of());
+                                       final EndpointId id, final String rootPath, final Access defaultAccess) {
+            super(discoverer, endpointBean, id, defaultAccess, List.of());
             this.rootPath = rootPath;
-        }
-
-        @Override
-        public Object getController() {
-            return this.getEndpointBean();
         }
     }
 }

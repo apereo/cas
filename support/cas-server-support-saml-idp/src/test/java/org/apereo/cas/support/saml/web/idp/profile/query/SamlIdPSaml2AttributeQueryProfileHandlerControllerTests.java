@@ -82,7 +82,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
         private SamlRegisteredService samlRegisteredService;
 
         @BeforeEach
-        public void beforeEach() {
+        void beforeEach() {
             this.samlRegisteredService = getSamlRegisteredServiceFor(false, false,
                 false, "https://cassp.example.org");
             servicesManager.save(samlRegisteredService);

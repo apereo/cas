@@ -3,10 +3,11 @@ package org.apereo.cas.services;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
-
+import org.springframework.core.Ordered;
 import java.util.Collection;
 
 /**
@@ -24,6 +25,9 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
     private final ConfigurableApplicationContext applicationContext;
 
     private final Collection<ServiceRegistryListener> serviceRegistryListeners;
+
+    @Setter
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     /**
      * Publish event.

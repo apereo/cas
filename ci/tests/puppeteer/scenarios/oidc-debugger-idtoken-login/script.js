@@ -9,9 +9,8 @@ const assert = require("assert");
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
         `redirect_uri=${redirectUrl}&` +
-        "scope=openid%20email%20profile%20address%20phone&" +
+        `scope=${encodeURIComponent("openid email profile address phone")}&` +
         "response_type=id_token&" +
-        "response_mode=form_post&" +
         "state=abc1234567890&" +
         "nonce=vn4qulthnx";
     await cas.goto(page, url);
@@ -31,6 +30,6 @@ const assert = require("assert");
     assert(fragment.includes("nonce="));
     assert(fragment.includes("state="));
     assert(!fragment.includes("access_token="));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

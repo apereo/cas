@@ -2,7 +2,7 @@ package org.apereo.cas.support.oauth;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import java.util.Arrays;
 
 /**
@@ -50,7 +50,7 @@ public enum OAuth20ClientAuthenticationMethods {
      */
     public static OAuth20ClientAuthenticationMethods parse(final String type) {
         return Arrays.stream(OAuth20ClientAuthenticationMethods.values())
-            .filter(method -> StringUtils.equalsIgnoreCase(method.getType(), type))
+            .filter(method -> Strings.CI.equals(method.getType(), type))
             .findFirst()
             .orElseThrow();
     }

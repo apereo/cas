@@ -11,9 +11,7 @@
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" class="mdc-card p-4 m-auto w-lg-100">
         <script>
-            function jqueryReady() {
-                document.forms[0].elements[0].focus();
-            }
+            document.addEventListener("DOMContentLoaded", (event) => document.forms[0].elements[0].focus());
         </script>
 
         <h2 th:utext="#{cas.screen.acct.title}" />
@@ -75,13 +73,7 @@
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="submit"/>
             <div class="form-actions d-flex justify-content-center">
-                <button class="mdc-button mdc-button--raised me-2 btn btn-primary"
-                        name="submit"
-                        th:value="#{cas.screen.acct.button.submit}"
-                        id="submit"
-                        accesskey="s">
-                    <span class="mdc-button__label" th:value="#{cas.screen.acct.button.submit}">Submit</span>
-                </button>
+                <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='cas.screen.acct.button.submit', id='submit', name='submit')}"/>
                 &nbsp;
                 <button class="mdc-button mdc-button--outlined btn btn-secondary"
                         name="cancel"

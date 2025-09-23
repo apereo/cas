@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class DefaultAuthenticationServiceSelectionStrategyTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val strategy = new DefaultAuthenticationServiceSelectionStrategy();
         assertEquals(Ordered.LOWEST_PRECEDENCE, strategy.getOrder());
         assertTrue(strategy.supports(CoreAuthenticationTestUtils.getService()));

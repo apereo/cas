@@ -38,7 +38,7 @@ You can also tune the ABAC strategy to conditionally activate and enforce the po
 
 {% tabs accessstrategy %}
 
-{% tab accessstrategy Required Attributes %}
+{% tab accessstrategy Required Attributes <i class="fa fa-id-card px-1"></i> %}
 
 Control access using a `Map` of required principal attribute names along with the set of values for each attribute.
 
@@ -69,7 +69,7 @@ To access the service, the principal must have a `cn` attribute with the value o
 ```
 {% endtab %}
 
-{% tab accessstrategy Optional Attributes %}
+{% tab accessstrategy Optional Attributes <i class="fa fa-id-card px-1"></i> %}
 To access the service, the principal must have a `cn` attribute with the value of `admin` **OR** a
 `givenName` attribute with the value of `Administrator`:
 
@@ -139,7 +139,7 @@ To access the service, the principal must have a `cn` attribute whose value is e
 ```
 {% endtab %}
 
-{% tab accessstrategy Groovy %}
+{% tab accessstrategy <i class="fa fa-code px-1"></i>Groovy %}
 To access the service, the principal must have a `cn` attribute whose values must contain `admin`
 and the overall set of resolved principal attributes must already have found an attribute for `name`.
 
@@ -163,9 +163,12 @@ and the overall set of resolved principal attributes must already have found an 
   }
 }
 ```
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
-{% tab accessstrategy Rejected Attributes %}
+{% tab accessstrategy Rejected Attributes <i class="fa fa-ban px-1"></i> %}
 To access the service, the principal must have a `cn` attribute whose value
 is either `admin`, `Admin` or `TheAdmin`, OR the principal must have a `member` attribute
 whose value is either `admins`, `adminGroup` or `staff`. The principal also must not have an
@@ -197,7 +200,7 @@ attribute `role` whose value matches the pattern `deny.+`.
 
 <div class="alert alert-info">:information_source: <strong>Supported Syntax</strong><p>Rejected values for a given attribute support regular 
 expression patterns. For example, a <code>role</code> attribute could
-be designed with a value value pattern of <code>admin-.*</code>.</p></div>
+be designed with a value pattern of <code>admin-.*</code>.</p></div>
 {% endtab %}
 
 {% endtabs %}

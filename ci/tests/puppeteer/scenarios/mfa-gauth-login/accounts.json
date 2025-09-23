@@ -5,7 +5,7 @@
     "java.util.ArrayList",
     [
       {
-        "@class": "org.apereo.cas.authentication.OneTimeTokenAccount",
+        "@class": "org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount",
         "scratchCodes":
         [
           "java.util.ArrayList",
@@ -25,7 +25,7 @@
         "registrationDate": 1607843237.905141
       },
       {
-        "@class": "org.apereo.cas.authentication.OneTimeTokenAccount",
+        "@class": "org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount",
         "scratchCodes":
         [
           "java.util.ArrayList",

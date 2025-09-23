@@ -22,5 +22,10 @@
     "name": "nickname,common-name,alias",
     "attribute": "uid",
     "friendlyName": "nickname"
+  },
+  "authnContextClass": {
+    "@class": "org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlIdPAttributeDefinition",
+    "key": "authnContextClass",
+    "name": "http://schemas.microsoft.com/claims/authnmethodsreferences"
   }
 }

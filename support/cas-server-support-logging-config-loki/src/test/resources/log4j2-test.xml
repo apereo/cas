@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration shutdownHook="disable">
+    <Appenders>
+        <Loki name="LokiAppender">
+            <host>localhost</host>
+            <port>3100</port>
+
+            <PatternLayout>
+                <Pattern>%X{tid} [%t] %d{MM-dd HH:mm:ss.SSS} %5p %c{1} - %m%n%exception{full}</Pattern>
+            </PatternLayout>
+            <ThresholdFilter level="ALL"/>
+            <Label name="server" value="cas"/>
+        </Loki>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.apereo.cas" level="info" additivity="false">
+            <AppenderRef ref="LokiAppender"/>
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="LokiAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>

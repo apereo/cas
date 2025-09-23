@@ -35,14 +35,15 @@ public interface ServiceTicketGeneratorAuthority extends Ordered {
     }
 
     /**
-     * Determine if this auhority should allow for service ticket generation.
+     * Determine if this authority should allow for service ticket generation.
      * The authority must have already declared support for the request.
      *
      * @param authenticationResult the authentication result
      * @param service              the service
-     * @return true/false
+     * @return true /false
+     * @throws Throwable the throwable
      */
-    default boolean shouldGenerate(final AuthenticationResult authenticationResult, final Service service) {
+    default boolean shouldGenerate(final AuthenticationResult authenticationResult, final Service service) throws Throwable {
         return true;
     }
 

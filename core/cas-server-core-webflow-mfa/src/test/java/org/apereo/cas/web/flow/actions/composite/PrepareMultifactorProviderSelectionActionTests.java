@@ -11,12 +11,13 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.engine.Flow;
@@ -35,6 +36,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowMfaActions")
+@TestPropertySource(properties = {
+    "cas.authn.mfa.core.provider-selection.provider-selection-enabled=true",
+    "cas.authn.mfa.core.provider-selection.provider-selection-optional=true"
+})
 class PrepareMultifactorProviderSelectionActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("prepareMultifactorProviderSelectionAction")
@@ -42,7 +47,9 @@ class PrepareMultifactorProviderSelectionActionTests extends BaseCasWebflowMulti
 
     @Test
     void verifyOperation() throws Throwable {
-        val flowSession = new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN));
+        val flow = new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        flow.setApplicationContext(applicationContext);
+        val flowSession = new MockFlowSession(flow);
         flowSession.setState(new ViewState(flowSession.getDefinitionInternal(), "viewState", mock(ViewFactory.class)));
         val exec = new MockFlowExecutionContext(flowSession);
 
@@ -62,6 +69,7 @@ class PrepareMultifactorProviderSelectionActionTests extends BaseCasWebflowMulti
             attributes);
         context.setCurrentEvent(event);
         assertNull(action.execute(context));
-        assertNotNull(WebUtils.getSelectableMultifactorAuthenticationProviders(context));
+        assertNotNull(MultifactorAuthenticationWebflowUtils.getSelectableMultifactorAuthenticationProviders(context));
+        assertTrue(MultifactorAuthenticationWebflowUtils.isMultifactorAuthenticationOptional(context));
     }
 }

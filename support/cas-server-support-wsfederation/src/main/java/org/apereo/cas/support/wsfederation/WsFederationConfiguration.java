@@ -6,6 +6,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 
@@ -67,7 +68,8 @@ public class WsFederationConfiguration implements Serializable {
      * @return the authorization url
      */
     public String getAuthorizationUrl(final String relyingPartyIdentifier, final String wctx) {
-        return String.format(getIdentityProviderUrl() + QUERYSTRING, relyingPartyIdentifier, wctx);
+        val url = getIdentityProviderUrl() + QUERYSTRING;
+        return String.format(url, relyingPartyIdentifier, wctx);
     }
 
     public String getName() {

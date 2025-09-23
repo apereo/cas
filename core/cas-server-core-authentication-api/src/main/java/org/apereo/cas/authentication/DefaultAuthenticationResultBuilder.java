@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.principal.merger.AttributeMerger;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -14,7 +14,6 @@ import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,16 +30,18 @@ import java.util.Set;
  * @since 4.2.0
  */
 @Slf4j
-@NoArgsConstructor
 @Getter
+@RequiredArgsConstructor
 public class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
 
     @Serial
     private static final long serialVersionUID = 6180465589526463843L;
 
-    private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>(0));
+    private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
 
-    private final List<Credential> providedCredentials = new ArrayList<>(0);
+    private final List<Credential> providedCredentials = new ArrayList<>();
+
+    private final PrincipalElectionStrategy principalElectionStrategy;
 
     /**
      * Principal id is and must be enforced to be the same for all authentications.
@@ -69,7 +70,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         if (this.providedCredentials.isEmpty()) {
             LOGGER.warn("Provided credentials chain is empty as no credentials have been collected");
         }
-        return this.providedCredentials.stream().findFirst();
+        return providedCredentials.stream().findFirst();
     }
 
     @Override
@@ -89,26 +90,21 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     @Override
     @CanIgnoreReturnValue
     public AuthenticationResultBuilder collect(final Credential... credential) {
-        providedCredentials.addAll(Arrays.asList(credential));
+        providedCredentials.addAll(List.of(credential));
         return this;
     }
-
+    
     @Override
-    public AuthenticationResult build(final PrincipalElectionStrategy principalElectionStrategy) throws Throwable {
-        return build(principalElectionStrategy, null);
-    }
-
-    @Override
-    public AuthenticationResult build(final PrincipalElectionStrategy principalElectionStrategy, final Service service) throws Throwable {
+    public AuthenticationResult build(final Service service) throws Throwable {
         val authentication = buildAuthentication(principalElectionStrategy);
         if (authentication == null) {
-            LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning null");
+            LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain");
             return null;
         }
         LOGGER.trace("Building an authentication result for authentication [{}] and service [{}]", authentication, service);
-        val res = new DefaultAuthenticationResult(authentication, service);
-        res.setCredentialProvided(!this.providedCredentials.isEmpty());
-        return res;
+        val authenticationResult = new DefaultAuthenticationResult(authentication, service);
+        authenticationResult.setCredentialProvided(!this.providedCredentials.isEmpty());
+        return authenticationResult;
     }
 
     protected void mergeAuthenticationAttributes(final Map<String, List<Object>> authenticationAttributes,
@@ -175,8 +171,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
         authenticationBuilder.setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC));
 
-        val auth = authenticationBuilder.build();
-        LOGGER.trace("Authentication result commenced at [{}]", auth.getAuthenticationDate());
-        return auth;
+        val authentication = authenticationBuilder.build();
+        LOGGER.trace("Authentication result commenced at [{}]", authentication.getAuthenticationDate());
+        return authentication;
     }
 }

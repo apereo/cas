@@ -1,0 +1,22 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client2",
+  "clientSecret": "secret",
+  "serviceId" : "^http://localhost:9889/anything/app2.*",
+  "bypassApprovalPrompt": true,
+  "name" : "Sample",
+  "id" : 2,
+  "scopes" : [ "java.util.HashSet", [ "openid" ] ],
+  "jwtAccessToken": true,
+  "jwksKeyId": "EC",
+  "idTokenSigningAlg": "ES512",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "excludeDefaultAttributes": true,
+    "authorizedToReleaseAuthenticationAttributes": false,
+    "allowedAttributes" : [ "java.util.ArrayList", [ "email", "organization" ] ]
+  },
+  "generateRefreshToken": true,
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code", "refresh_token" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
+}

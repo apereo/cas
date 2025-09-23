@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.principal;
 
-
 import java.io.Serial;
 
 /**

@@ -11,15 +11,14 @@ import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Optional;
 import java.util.Set;
 
@@ -87,7 +86,7 @@ public class DefaultDelegatedClientIdentityProviderRedirectionStrategy implement
             if (cookieProps.isEnabled()) {
                 val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
                 val cookieValue = delegatedAuthenticationCookieBuilder.retrieveCookieValue(request);
-                if (StringUtils.equalsIgnoreCase(cookieValue, provider.getName())) {
+                if (Strings.CI.equals(cookieValue, provider.getName())) {
                     LOGGER.trace("Provider [{}] is chosen via cookie value preference as primary", provider);
                     provider.setAutoRedirectType(DelegationAutoRedirectTypes.SERVER);
                     return Optional.of(provider);

@@ -247,7 +247,7 @@ public interface OAuth20RequestParameterResolver {
      *
      * @param context the web context
      * @param name    the parameter name
-     * @return whether the paremeter name is on the query string
+     * @return whether the parameter name is on the query string
      */
     boolean isParameterOnQueryString(WebContext context, String name);
 }

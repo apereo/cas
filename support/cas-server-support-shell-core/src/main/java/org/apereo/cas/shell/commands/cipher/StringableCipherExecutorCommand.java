@@ -44,6 +44,8 @@ public class StringableCipherExecutorCommand {
         final String value,
         @ShellOption(value = { "encryption-key", "--encryption-key" }, defaultValue = ShellOption.NULL, help = "Encryption key")
         final String secretKeyEncryption,
+        @ShellOption(value = { "encryption-alg", "--encryption-alg" }, defaultValue = EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, help = "Encryption alg")
+        final String encryptionAlg,
         @ShellOption(value = { "signing-key", "--signing-key" }, defaultValue = ShellOption.NULL, help = "Signing key")
         final String secretKeySigning,
         @ShellOption(value = { "encryption-key-size", "--encryption-key-size" },
@@ -65,6 +67,7 @@ public class StringableCipherExecutorCommand {
         if (StringUtils.isNotBlank(toEncode)) {
             val cipher = new ShellStringCipherExecutor(secretKeyEncryption, secretKeySigning,
                 encryptionEnabled, signingEnabled, secretKeySigningSize, secretKeyEncryptionSize);
+            cipher.setContentEncryptionAlgorithmIdentifier(encryptionAlg);
             val encoded = cipher.encode(toEncode);
             LOGGER.info("Encoded value: [{}]", encoded);
             return encoded;
@@ -90,6 +93,8 @@ public class StringableCipherExecutorCommand {
         final String value,
         @ShellOption(value = { "encryption-key", "--encryption-key" }, defaultValue = ShellOption.NULL, help = "Encryption key")
         final String secretKeyEncryption,
+        @ShellOption(value = { "encryption-alg", "--encryption-alg" }, defaultValue = EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, help = "Encryption alg")
+        final String encryptionAlg,
         @ShellOption(value = { "signing-key", "--signing-key" }, defaultValue = ShellOption.NULL, help = "Signing key")
         final String secretKeySigning,
         @ShellOption(value = { "encryption-key-size", "--encryption-key-size" },
@@ -111,6 +116,7 @@ public class StringableCipherExecutorCommand {
         if (StringUtils.isNotBlank(toEncode)) {
             val cipher = new ShellStringCipherExecutor(secretKeyEncryption, secretKeySigning,
                 encryptionEnabled, signingEnabled, secretKeySigningSize, secretKeyEncryptionSize);
+            cipher.setContentEncryptionAlgorithmIdentifier(encryptionAlg);
             val decoded = cipher.decode(toEncode);
             LOGGER.info("Decoded value: [{}]", decoded);
             return decoded;
@@ -122,7 +128,8 @@ public class StringableCipherExecutorCommand {
         ShellStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                   final boolean encryptionEnabled, final boolean signingEnabled,
                                   final int signingKeySize, final int encryptionKeySize) {
-            super(secretKeyEncryption, secretKeySigning, encryptionEnabled, signingEnabled, signingKeySize, encryptionKeySize);
+            super(secretKeyEncryption, secretKeySigning, encryptionEnabled,
+                signingEnabled, signingKeySize, encryptionKeySize);
         }
     }
 }

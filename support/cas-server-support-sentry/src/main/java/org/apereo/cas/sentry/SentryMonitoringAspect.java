@@ -81,7 +81,7 @@ public class SentryMonitoringAspect implements Serializable {
 
     private static Object executeJoinpoint(final ProceedingJoinPoint joinPoint) {
         return FunctionUtils.doUnchecked(() -> {
-            var args = joinPoint.getArgs();
+            val args = joinPoint.getArgs();
             LOGGER.trace("Executing [{}]", joinPoint.getStaticPart().toLongString());
             return joinPoint.proceed(args);
         });
@@ -90,7 +90,10 @@ public class SentryMonitoringAspect implements Serializable {
     @Pointcut("within(org.apereo.cas..*) "
         + "&& !within(org.apereo.cas..*config..*) "
         + "&& !within(org.apereo.cas..*Configuration) "
-        + "&& !within(org.apereo.cas.authentication.credential..*)")
+        + "&& !within(org.apereo.cas.authentication.credential..*)"
+        + "&& !@within(org.apereo.cas.monitor.NotMonitorable)"
+        + "&& !@target(org.apereo.cas.monitor.NotMonitorable)"
+    )
     private void allSentryComponents() {
     }
 }

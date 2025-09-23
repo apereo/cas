@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.handler.TenantAuthenticationHandlerBuilder;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.multitenancy.TenantExtractor;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,6 +34,13 @@ public interface AuthenticationEventExecutionPlan {
      * @return true/false
      */
     boolean registerAuthenticationHandler(AuthenticationHandler handler);
+
+    /**
+     * Register tenant authentication handler builder.
+     *
+     * @param handler the handler
+     */
+    void registerTenantAuthenticationHandlerBuilder(TenantAuthenticationHandlerBuilder handler);
 
     /**
      * Register authentication handlers.
@@ -137,7 +146,14 @@ public interface AuthenticationEventExecutionPlan {
      * @return the authentication handlers for transaction
      * @throws Throwable the throwable
      */
-    Set<AuthenticationHandler> getAuthenticationHandlers(AuthenticationTransaction transaction) throws Throwable;
+    Set<AuthenticationHandler> resolveAuthenticationHandlers(AuthenticationTransaction transaction) throws Throwable;
+
+    /**
+     * Gets authentication handlers.
+     *
+     * @return the authentication handlers
+     */
+    Set<AuthenticationHandler> resolveAuthenticationHandlers();
 
     /**
      * Gets authentication handlers.
@@ -145,6 +161,13 @@ public interface AuthenticationEventExecutionPlan {
      * @return the authentication handlers
      */
     Set<AuthenticationHandler> getAuthenticationHandlers();
+    
+    /**
+     * Gets tenant authentication handler builders.
+     *
+     * @return the tenant authentication handler builders
+     */
+    Collection<TenantAuthenticationHandlerBuilder> getTenantAuthenticationHandlerBuilders();
 
     /**
      * Gets authentication handlers by a filter.
@@ -152,8 +175,8 @@ public interface AuthenticationEventExecutionPlan {
      * @param filter the filter
      * @return the authentication handlers by
      */
-    default Set<AuthenticationHandler> getAuthenticationHandlersBy(final Predicate<AuthenticationHandler> filter) {
-        return getAuthenticationHandlers().stream().filter(filter).collect(Collectors.toSet());
+    default Set<AuthenticationHandler> resolveAuthenticationHandlersBy(final Predicate<AuthenticationHandler> filter) {
+        return resolveAuthenticationHandlers().stream().filter(filter).collect(Collectors.toSet());
     }
 
     /**
@@ -227,4 +250,11 @@ public interface AuthenticationEventExecutionPlan {
      * @return the authentication handler resolvers
      */
     Collection<AuthenticationPolicyResolver> getAuthenticationPolicyResolvers(AuthenticationTransaction transaction);
+
+    /**
+     * Gets tenant extractor.
+     *
+     * @return the tenant extractor
+     */
+    TenantExtractor getTenantExtractor();
 }

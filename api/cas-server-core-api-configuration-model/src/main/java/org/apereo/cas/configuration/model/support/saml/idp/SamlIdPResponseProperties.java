@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.saml.idp;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,7 +27,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SamlIdPResponseProperties")
 public class SamlIdPResponseProperties implements Serializable {
 
     @Serial
@@ -61,7 +59,7 @@ public class SamlIdPResponseProperties implements Serializable {
      * Each individual attribute can be mapped to a particular name-format.
      * Example: {@code attributeName->basic|uri|unspecified|custom-format-etc,...}.
      */
-    private List<String> attributeNameFormats = new ArrayList<>(0);
+    private List<String> attributeNameFormats = new ArrayList<>();
 
     /**
      * Configure attribute name formats and build a map.
@@ -70,7 +68,7 @@ public class SamlIdPResponseProperties implements Serializable {
      */
     public Map<String, String> configureAttributeNameFormats() {
         if (this.attributeNameFormats.isEmpty()) {
-            return new HashMap<>(0);
+            return new HashMap<>();
         }
         val nameFormats = new HashMap<String, String>();
         this.attributeNameFormats

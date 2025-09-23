@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.ldap;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,7 +21,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("AbstractLdapSearchProperties")
 public abstract class AbstractLdapSearchProperties extends AbstractLdapProperties {
     @Serial
     private static final long serialVersionUID = 3009946735155362639L;
@@ -65,5 +63,5 @@ public abstract class AbstractLdapSearchProperties extends AbstractLdapPropertie
     /**
      * Search handlers.
      */
-    private List<LdapSearchEntryHandlersProperties> searchEntryHandlers = new ArrayList<>(0);
+    private List<LdapSearchEntryHandlersProperties> searchEntryHandlers = new ArrayList<>();
 }

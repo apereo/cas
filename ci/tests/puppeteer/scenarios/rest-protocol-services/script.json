@@ -1,12 +1,14 @@
 {
   "dependencies": "rest,rest-services",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.rest.services.attribute-name=mail",
     "--cas.rest.services.attribute-value=.*@example.org",
-
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

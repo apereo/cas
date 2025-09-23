@@ -2,19 +2,20 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasServicesStreamingAutoConfiguration;
 import org.apereo.cas.config.CasServicesStreamingKafkaAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.Map;
 import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,9 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Kafka")
+@ExtendWith(CasTestExtension.class)
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     CasServicesStreamingKafkaAutoConfiguration.class,
     CasServicesStreamingAutoConfiguration.class
 }, properties = {
@@ -44,7 +45,7 @@ class RegisteredServiceKafkaDistributedCacheManagerTests {
         registeredServiceDistributedCacheManager;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         assertFalse(registeredServiceDistributedCacheManager.contains(service));
         assertTrue(registeredServiceDistributedCacheManager.getAll().isEmpty());
@@ -62,7 +63,7 @@ class RegisteredServiceKafkaDistributedCacheManagerTests {
 
 
     @BeforeEach
-    public void tearDown() {
+    void tearDown() {
         registeredServiceDistributedCacheManager.clear();
     }
 

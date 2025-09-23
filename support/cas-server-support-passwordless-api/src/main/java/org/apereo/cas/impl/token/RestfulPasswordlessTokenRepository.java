@@ -46,6 +46,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
                 .url(restProperties.getUrl())
+                .headers(restProperties.getHeaders())
                 .parameters(parameters)
                 .build();
 
@@ -76,6 +77,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
                 .url(restProperties.getUrl())
+                .headers(restProperties.getHeaders())
                 .parameters(parameters)
                 .build();
             response = HttpUtils.execute(exec);
@@ -96,6 +98,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
                 .url(restProperties.getUrl())
+                .headers(restProperties.getHeaders())
                 .parameters(parameters)
                 .build();
             response = HttpUtils.execute(exec);
@@ -117,6 +120,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
+                .headers(restProperties.getHeaders())
                 .url(restProperties.getUrl())
                 .parameters(parameters)
                 .build();
@@ -136,6 +140,7 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
                 .url(restProperties.getUrl())
+                .headers(restProperties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
         } finally {

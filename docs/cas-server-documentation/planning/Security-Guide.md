@@ -236,8 +236,6 @@ These settings are presently on by default.
 
 {% include_cached casproperties.html properties="cas.http-web-request.header" %}
 
-To review and learn more about these options, please visit [this guide][cas-sec-filter].
-
 ### Spring Webflow Sessions
 
 The CAS project uses Spring Webflow to manage and orchestrate the authentication process. The conversational state of the

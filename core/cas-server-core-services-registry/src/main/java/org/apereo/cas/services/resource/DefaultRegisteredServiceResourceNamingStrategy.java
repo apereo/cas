@@ -1,8 +1,7 @@
 package org.apereo.cas.services.resource;
 
 import org.apereo.cas.services.RegisteredService;
-
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * This is {@link DefaultRegisteredServiceResourceNamingStrategy}. This class provides the default
@@ -22,6 +21,6 @@ public class DefaultRegisteredServiceResourceNamingStrategy implements Registere
      */
     @Override
     public String build(final RegisteredService service, final String extension) {
-        return StringUtils.remove(service.getName(), ' ') + '-' + service.getId() + '.' + extension;
+        return Strings.CI.remove(service.getName(), " ") + '-' + service.getId() + '.' + extension;
     }
 }

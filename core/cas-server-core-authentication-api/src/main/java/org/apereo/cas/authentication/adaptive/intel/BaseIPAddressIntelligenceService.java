@@ -1,13 +1,12 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
-
+import org.apereo.cas.multitenancy.TenantExtractor;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.regex.Pattern;
 
 /**
@@ -18,9 +17,7 @@ import java.util.regex.Pattern;
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseIPAddressIntelligenceService implements IPAddressIntelligenceService {
-    /**
-     * Adaptive authentication settings.
-     */
+    protected final TenantExtractor tenantExtractor;
     protected final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties;
 
     private static void trackResponseInRequestContext(final RequestContext context, final IPAddressIntelligenceResponse response) {
@@ -39,19 +36,11 @@ public abstract class BaseIPAddressIntelligenceService implements IPAddressIntel
         return response;
     }
 
-    /**
-     * Examine internally and build intelligence response.
-     *
-     * @param context         the context
-     * @param clientIpAddress the client ip address
-     * @return the ip address intelligence response
-     * @throws Throwable the throwable
-     */
-    public abstract IPAddressIntelligenceResponse examineInternal(RequestContext context, String clientIpAddress) throws Throwable;
+    protected abstract IPAddressIntelligenceResponse examineInternal(RequestContext context, String clientIpAddress) throws Throwable;
 
     private boolean isClientIpAddressRejected(final String clientIp) {
-        val rejectIpAddresses = this.adaptiveAuthenticationProperties.getPolicy().getRejectIpAddresses();
+        val rejectIpAddresses = adaptiveAuthenticationProperties.getPolicy().getRejectIpAddresses();
         return StringUtils.isNotBlank(rejectIpAddresses)
-               && Pattern.compile(rejectIpAddresses).matcher(clientIp).find();
+            && Pattern.compile(rejectIpAddresses).matcher(clientIp).find();
     }
 }

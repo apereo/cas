@@ -19,7 +19,7 @@ const express = require("express");
         await cas.assertCookie(page);
         server.close(() => {
             cas.log("Exiting server...");
-            browser.close();
+            cas.closeBrowser(browser);
         });
     });
 

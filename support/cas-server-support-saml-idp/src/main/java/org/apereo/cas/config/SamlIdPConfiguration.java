@@ -56,6 +56,7 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicyBuild
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -77,6 +78,7 @@ import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.soap.soap11.Envelope;
 import org.pac4j.core.context.session.SessionStore;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -251,7 +253,8 @@ class SamlIdPConfiguration {
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("samlObjectEncrypter")
             final SamlIdPObjectEncrypter samlObjectEncrypter) {
-            return new SamlProfileSamlNameIdBuilder(openSamlConfigBean, shibbolethCompatiblePersistentIdGenerator,
+            return new SamlProfileSamlNameIdBuilder(openSamlConfigBean,
+                shibbolethCompatiblePersistentIdGenerator,
                 casSamlIdPMetadataResolver, samlObjectEncrypter);
         }
 
@@ -269,13 +272,15 @@ class SamlIdPConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlProfileObjectBuilder<AuthnContext> defaultAuthnContextClassRefBuilder(
+            @Qualifier(ScriptResourceCacheManager.BEAN_NAME)
+            final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager,
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
             final CasConfigurationProperties casProperties) {
             return new SamlProfileAuthnContextClassRefBuilder(openSamlConfigBean,
-                casSamlIdPMetadataResolver, casProperties);
+                casSamlIdPMetadataResolver, casProperties, scriptResourceCacheManager);
         }
 
         @ConditionalOnMissingBean(name = "samlProfileSamlAssertionBuilder")
@@ -332,7 +337,7 @@ class SamlIdPConfiguration {
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver) {
             return new SamlProfileSamlAttributeStatementBuilder(openSamlConfigBean,
-                casProperties.getAuthn().getSamlIdp(), samlObjectEncrypter,
+                casProperties, samlObjectEncrypter,
                 attributeDefinitionStore, samlIdPServiceFactory,
                 samlProfileSamlNameIdBuilder, casSamlIdPMetadataResolver);
         }
@@ -478,7 +483,7 @@ class SamlIdPConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPObjectEncrypter samlObjectEncrypter(
-            @Qualifier("samlIdPMetadataLocator")
+            @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
             final CasConfigurationProperties casProperties) {
             return new SamlIdPObjectEncrypter(casProperties.getAuthn().getSamlIdp(), samlIdPMetadataLocator);
@@ -491,7 +496,7 @@ class SamlIdPConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver,
-            @Qualifier("samlIdPMetadataLocator")
+            @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)
             final SamlIdPMetadataLocator samlIdPMetadataLocator) {
             return new DefaultSamlIdPObjectSigner(casSamlIdPMetadataResolver, casProperties, samlIdPMetadataLocator);
         }

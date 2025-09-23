@@ -4,9 +4,16 @@ const cas = require("../../cas.js");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
-    const page = await cas.newPage(browser);
-    const service = "https://apereo.github.io";
+    const context = await browser.createBrowserContext();
+    const page = await cas.newPage(context);
+    await cas.gotoLogout(page);
+
+    const azureLogoutUrl = `https://login.microsoftonline.com/${process.env.AZURE_AD_TENANT}/oauth2/logout`;
+    await cas.goto(page, azureLogoutUrl);
+    await cas.sleep(1000);
     
+    await cas.log("Starting delegated login with CAS RP OIDC Azure AD...");
+    const service = "https://localhost:9859/anything/cas";
     const url = `https://localhost:8443/cas/login?service=${service}`;
     await cas.goto(page, url);
 
@@ -33,12 +40,11 @@ const cas = require("../../cas.js");
     await cas.log(result.searchParams.toString());
     assert(result.searchParams.has("ticket") === true);
     const ticket = result.searchParams.get("ticket");
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    await cas.log(body);
-    const json = JSON.parse(body);
+    const json = await cas.validateTicket(service, ticket);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.attributes.name[0] === "CAS Test");
     assert(authenticationSuccess.attributes.preferred_username[0] === username);
 
-    await browser.close();
+    await context.close();
+    await cas.closeBrowser(browser);
 })();

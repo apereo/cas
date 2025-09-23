@@ -17,7 +17,7 @@ const cas = require("../../cas.js");
     await submitLogin(page);
     await cas.gotoLogin(page, "https://credtype.userpswd.example.com");
     await assertFailure(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function submitLogin(page) {

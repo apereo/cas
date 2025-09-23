@@ -2,6 +2,7 @@ package org.apereo.cas.notifications.sms;
 
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
@@ -9,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringSubstitutor;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,8 +38,10 @@ public class SmsBodyBuilder implements Supplier<String> {
         }
         try {
             val templateFile = ResourceUtils.getResourceFrom(properties.getText());
-            val contents = IOUtils.toString(templateFile.getInputStream(), StandardCharsets.UTF_8);
-            return formatSmsBody(contents);
+            try (val is = templateFile.getInputStream()) {
+                val contents = IOUtils.toString(is, StandardCharsets.UTF_8);
+                return formatSmsBody(contents);
+            }
         } catch (final Throwable e) {
             LOGGER.trace(e.getMessage(), e);
         }
@@ -47,7 +49,6 @@ public class SmsBodyBuilder implements Supplier<String> {
     }
 
     protected String formatSmsBody(final String contents) {
-        val sub = new StringSubstitutor(this.parameters, "${", "}");
-        return sub.replace(contents);
+        return SpringExpressionLanguageValueResolver.getInstance().format(contents, parameters);
     }
 }

@@ -14,23 +14,25 @@ import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,12 +44,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     AuthenticationAttributeReleasePolicyTests.CasCoreAuthenticationSupportTestConfiguration.class,
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    ObservationAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
@@ -65,6 +65,7 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Authentication")
+@ExtendWith(CasTestExtension.class)
 @AutoConfigureObservability
 class AuthenticationAttributeReleasePolicyTests {
     @Autowired
@@ -87,13 +88,19 @@ class AuthenticationAttributeReleasePolicyTests {
     @Qualifier("groovyAuthenticationProcessorExecutionPlanConfigurer")
     private AuthenticationEventExecutionPlanConfigurer groovyAuthenticationProcessorExecutionPlanConfigurer;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() throws Throwable{
+        val context = MockRequestContext.create(applicationContext);
+        context.setRemoteAddr("185.86.151.11").setLocalAddr("185.86.151.11").setClientInfo();
+        
         assertNotNull(groovyAuthenticationHandlerResolver);
         assertNotNull(globalPrincipalAttributeRepository);
         assertNotNull(authenticationManager);
         assertNotNull(groovyAuthenticationProcessorExecutionPlanConfigurer);
-
+        
         val attributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
             CoreAuthenticationTestUtils.getAuthentication(), mock(Assertion.class),
             Map.of(), CoreAuthenticationTestUtils.getRegisteredService());

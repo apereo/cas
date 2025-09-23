@@ -2,8 +2,9 @@ package org.apereo.cas.web.support.mgmr;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutorResolver;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.cookie.CookieSameSitePolicy;
 import org.apereo.cas.web.support.InvalidCookieException;
@@ -16,7 +17,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.ObjectProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -44,11 +44,12 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
 
     private final ObjectProvider<GeoLocationService> geoLocationService;
 
-    public DefaultCasCookieValueManager(final CipherExecutor<Serializable, Serializable> cipherExecutor,
+    public DefaultCasCookieValueManager(final CipherExecutorResolver cipherExecutorResolver,
+                                        final TenantExtractor tenantExtractor,
                                         final ObjectProvider<GeoLocationService> geoLocationService,
                                         final CookieSameSitePolicy cookieSameSitePolicy,
                                         final PinnableCookieProperties cookieProperties) {
-        super(cipherExecutor, cookieSameSitePolicy);
+        super(cipherExecutorResolver, tenantExtractor, cookieSameSitePolicy);
         this.geoLocationService = geoLocationService;
         this.cookieProperties = cookieProperties;
     }

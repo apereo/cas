@@ -17,6 +17,7 @@ import org.jose4j.jwt.JwtClaims;
 
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -37,7 +38,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
         return FunctionUtils.doUnchecked(() -> {
             val jsonWebKey = getJsonWebKeySigningKey(registeredService);
             FunctionUtils.throwIf(jsonWebKey.getPublicKey() == null,
-                () -> new IllegalArgumentException("JSON web key to validate the id token signature has no public key"));
+                () -> new IllegalArgumentException("JSON web key to validate the ID token signature has no public key"));
             val jwt = Objects.requireNonNull(verifySignature(token, jsonWebKey),
                 "Unable to verify signature of the token using the JSON web key public key");
             val result = new String(jwt, StandardCharsets.UTF_8);
@@ -68,8 +69,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
         val iss = resolveIssuer(service);
         Objects.requireNonNull(iss, "Issuer cannot be null or undefined");
         FunctionUtils.throwIf(!claims.getIssuer().equalsIgnoreCase(iss),
-            () -> new IllegalArgumentException("Issuer assigned to claims "
-                + claims.getIssuer() + " does not match " + iss));
+            () -> new IllegalArgumentException("Issuer assigned to JWT claim " + claims.getIssuer() + " does not match " + iss));
     }
 
     protected String signToken(final OAuthRegisteredService registeredService,
@@ -86,6 +86,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
             .algorithm(getJsonWebKeySigningAlgorithm(registeredService, jsonWebKey))
             .allowedAlgorithms(new LinkedHashSet<>(getAllowedSigningAlgorithms(registeredService)))
             .mediaType(getSigningMediaType())
+            .headers(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()))
             .build()
             .sign(claims);
     }

@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         servicesManager.deleteAll();
         defaultSamlRegisteredServiceCachingMetadataResolver.invalidate();
     }

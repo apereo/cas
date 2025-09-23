@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import({
+@ImportAutoConfiguration({
     CasCoreAutoConfiguration.class,
     CasCoreSamlAutoConfiguration.class,
     CasWsSecuritySecurityTokenAutoConfiguration.class,
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.wsfed-idp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
     "cas.authn.wsfed-idp.idp.realm-name=CAS",
-    
+
     "cas.authn.wsfed-idp.sts.signing-keystore-file=classpath:ststrust.jks",
     "cas.authn.wsfed-idp.sts.signing-keystore-password=storepass",
 
@@ -53,11 +53,11 @@ class WSFederationIdentityProviderWebflowConfigurerTests extends BaseWebflowConf
     @Autowired
     @Qualifier("wsFederationProtocolEndpointConfigurer")
     private CasWebSecurityConfigurer wsFederationProtocolEndpointConfigurer;
-    
+
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         assertFalse(wsFederationProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }

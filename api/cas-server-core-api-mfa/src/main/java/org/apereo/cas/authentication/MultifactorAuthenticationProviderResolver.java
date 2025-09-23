@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.NamedObject;
 
 import lombok.val;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ import java.util.function.BiPredicate;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public interface MultifactorAuthenticationProviderResolver {
+public interface MultifactorAuthenticationProviderResolver extends NamedObject {
     /**
      * Default bean name.
      */
@@ -32,15 +33,7 @@ public interface MultifactorAuthenticationProviderResolver {
      * Logger instance.
      */
     Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationProviderResolver.class);
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getName();
-    }
+    
 
     /**
      * Resolve event via authentication attribute set.

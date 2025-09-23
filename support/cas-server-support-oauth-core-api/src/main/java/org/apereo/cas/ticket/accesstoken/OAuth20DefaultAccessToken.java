@@ -55,7 +55,8 @@ public class OAuth20DefaultAccessToken extends BaseOAuth20Token implements OAuth
         this.token = token;
     }
 
-    public OAuth20DefaultAccessToken(final String id, final Service service,
+    public OAuth20DefaultAccessToken(final String id,
+                                     final Service service,
                                      final Authentication authentication,
                                      final ExpirationPolicy expirationPolicy,
                                      final Ticket ticketGrantingTicket,

@@ -1,0 +1,26 @@
+{
+  "dependencies": "reports,metrics,monitor",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.authn.accept.name=STATIC",
+    "--cas.tgc.pin-to-session=false",
+
+    "--logging.level.org.springframework.security=info",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ROLE",
+    "--cas.monitor.endpoints.endpoint.defaults.requiredRoles=ADMIN",
+
+    "--spring.security.user.name=casadmin",
+    "--spring.security.user.password=pa$$w0rd",
+    "--spring.security.user.roles=ADMIN"
+  ]
+}

@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("WebApp")
-public class CasSpringBootAdminServerInitializerTests {
+class CasSpringBootAdminServerInitializerTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val initializers = ApplicationUtils.getApplicationEntrypointInitializers();
         assertFalse(initializers.isEmpty());
         val initializer = (CasSpringBootAdminServerInitializer) initializers.getFirst();

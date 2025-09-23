@@ -4,15 +4,14 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoPropertie
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.core.io.Resource;
 import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("YubiKeyMultifactorProperties")
 public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**
@@ -64,7 +62,8 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
     /**
      * Keep device registration records inside a static JSON resource.
      */
-    private transient Resource jsonFile;
+    @ExpressionLanguageCapable
+    private YubiKeyJsonMultifactorProperties json = new YubiKeyJsonMultifactorProperties();
 
     /**
      * Collection of allowed devices allowed per user.
@@ -76,7 +75,7 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
     /**
      * YubiKey API urls to contact for verification of credentials.
      */
-    private List<String> apiUrls = new ArrayList<>(0);
+    private List<String> apiUrls = new ArrayList<>();
 
     /**
      * Indicates whether this provider should support trusted devices.

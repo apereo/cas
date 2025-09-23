@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +36,13 @@ public abstract class AbstractServicesManagerTests{
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
-    
+
+    @Autowired
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+    protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setServiceId("https://app.example.org/cas");
@@ -50,7 +55,7 @@ public abstract class AbstractServicesManagerTests{
     }
 
     @Test
-    void verifySaveAndGet() throws Throwable {
+    void verifySaveAndGet() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(UUID.randomUUID().toString());
@@ -68,7 +73,7 @@ public abstract class AbstractServicesManagerTests{
     }
 
     @Test
-    void verifySaveInRegistryAndGetById() throws Throwable {
+    void verifySaveInRegistryAndGetById() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(UUID.randomUUID().toString());
@@ -81,7 +86,7 @@ public abstract class AbstractServicesManagerTests{
     }
 
     @Test
-    void verifySaveInRegistryAndGetByServiceId() throws Throwable {
+    void verifySaveInRegistryAndGetByServiceId() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(UUID.randomUUID().toString());
@@ -89,13 +94,13 @@ public abstract class AbstractServicesManagerTests{
         assertFalse(isServiceInCache(registeredService.getName(), 0));
         serviceRegistry.save(registeredService);
         assertNotNull(serviceRegistry.findServiceByExactServiceId(registeredService.getName()));
-        val svc = new WebApplicationServiceFactory().createService(registeredService.getName());
+        val svc = webApplicationServiceFactory.createService(registeredService.getName());
         assertNotNull(servicesManager.findServiceBy(svc, CasRegisteredService.class));
         assertTrue(isServiceInCache(registeredService.getName(), 0));
     }
 
     @Test
-    void verifyDelete() throws Throwable {
+    void verifyDelete() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(UUID.randomUUID().toString());
@@ -109,7 +114,7 @@ public abstract class AbstractServicesManagerTests{
     }
 
     @Test
-    void verifyExpiredNotify() throws Throwable {
+    void verifyExpiredNotify() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(UUID.randomUUID().toString());
@@ -123,7 +128,7 @@ public abstract class AbstractServicesManagerTests{
     }
 
     @Test
-    void verifyExpiredNotifyAndDelete() throws Throwable {
+    void verifyExpiredNotifyAndDelete() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(UUID.randomUUID().toString());

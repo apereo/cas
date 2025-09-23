@@ -7,9 +7,10 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--management.endpoints.enabled-by-default=true",
+    "--spring.mvc.problemdetails.enabled=false",
+    
+    "--management.endpoints.access.default=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=*",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS"
   ]
 }
-

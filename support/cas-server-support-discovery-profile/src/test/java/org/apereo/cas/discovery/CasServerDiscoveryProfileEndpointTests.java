@@ -1,14 +1,15 @@
 package org.apereo.cas.discovery;
 
 import org.apereo.cas.config.CasDiscoveryProfileAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
-import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.http.MediaType;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link CasServerDiscoveryProfileEndpointTests}.
@@ -22,18 +23,19 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "management.endpoints.web.exposure.include=*",
-        "management.endpoint.discoveryProfile.enabled=true"
+        "management.endpoint.discoveryProfile.access=UNRESTRICTED"
     })
+
 @Tag("ActuatorEndpoint")
+@ExtendWith(CasTestExtension.class)
 class CasServerDiscoveryProfileEndpointTests extends AbstractCasEndpointTests {
-    @Autowired
-    @Qualifier("discoveryProfileEndpoint")
-    private CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint;
 
     @Test
-    void verifyOperation() throws Throwable {
-        val discovery = discoveryProfileEndpoint.discovery();
-        assertNotNull(discovery);
-        assertFalse(discovery.isEmpty());
+    void verifyOperation() throws Exception {
+        mockMvc.perform(get("/actuator/discoveryProfile")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk());
     }
 }

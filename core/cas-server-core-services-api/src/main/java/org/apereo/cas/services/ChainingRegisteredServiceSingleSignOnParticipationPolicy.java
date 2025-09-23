@@ -34,7 +34,7 @@ public class ChainingRegisteredServiceSingleSignOnParticipationPolicy implements
     @Serial
     private static final long serialVersionUID = -2923946898337761319L;
 
-    private List<RegisteredServiceSingleSignOnParticipationPolicy> policies = new ArrayList<>(0);
+    private List<RegisteredServiceSingleSignOnParticipationPolicy> policies = new ArrayList<>();
 
     /**
      * Add provider.

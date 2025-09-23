@@ -7,14 +7,16 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -47,8 +49,8 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
 
     private static Map<String, String> getRequestHeaders(final RestfulServiceRegistryProperties properties) {
         val headers = new HashMap<String, String>();
-        headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-        headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+        headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
         headers.putAll(properties.getHeaders());
         return headers;
     }
@@ -57,13 +59,14 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
     public RegisteredService save(final RegisteredService registeredService) {
         HttpResponse response = null;
         try {
+            registeredService.assignIdIfNecessary();
             invokeServiceRegistryListenerPreSave(registeredService);
-            val entity = this.serializer.toString(registeredService);
+            val entity = serializer.toString(registeredService);
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
-                .url(properties.getUrl())
+                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                 .headers(getRequestHeaders(properties))
                 .entity(entity)
                 .build();
@@ -86,7 +89,8 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
     public boolean delete(final RegisteredService registeredService) {
         HttpResponse response = null;
         try {
-            val completeUrl = StringUtils.appendIfMissing(properties.getUrl(), "/")
+            val completeUrl = Strings.CI.appendIfMissing(
+                    SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/")
                 .concat(Long.toString(registeredService.getId()));
             invokeServiceRegistryListenerPreSave(registeredService);
             val exec = HttpExecutionRequest.builder()
@@ -114,7 +118,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
-                .url(properties.getUrl())
+                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                 .headers(getRequestHeaders(properties))
                 .build();
             response = HttpUtils.execute(exec);
@@ -132,7 +136,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
-                .url(properties.getUrl())
+                .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                 .headers(getRequestHeaders(properties))
                 .build();
             response = HttpUtils.execute(exec);
@@ -141,10 +145,10 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                     val result = IOUtils.toString(content, StandardCharsets.UTF_8);
                     val services = this.serializer.fromList(result);
                     services
-                            .stream()
-                            .map(this::invokeServiceRegistryListenerPostLoad)
-                            .filter(Objects::nonNull)
-                            .forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo)));
+                        .stream()
+                        .map(this::invokeServiceRegistryListenerPostLoad)
+                        .filter(Objects::nonNull)
+                        .forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo)));
                     return services;
                 }
             }
@@ -153,14 +157,15 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
         } finally {
             HttpUtils.close(response);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override
     public RegisteredService findServiceById(final long id) {
         HttpResponse response = null;
         try {
-            val completeUrl = StringUtils.appendIfMissing(properties.getUrl(), "/").concat(Long.toString(id));
+            val completeUrl = Strings.CI.appendIfMissing(
+                SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/").concat(Long.toString(id));
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())

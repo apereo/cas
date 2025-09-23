@@ -14,11 +14,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -56,8 +56,8 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         this.location = location;
         readTrustedRecordsFromResource();
         if (ResourceUtils.isFile(location)) {
-            val callback = Unchecked.<File>consumer(__ -> readTrustedRecordsFromResource());
-            this.watcherService = new FileWatcherService(Unchecked.supplier(location::getFile).get(), callback);
+            this.watcherService = new FileWatcherService(Unchecked.supplier(location::getFile).get(),
+                __ -> readTrustedRecordsFromResource());
             this.watcherService.start(getClass().getSimpleName());
         }
     }
@@ -106,6 +106,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         return storage
             .values()
             .stream()
+            .filter(entry -> StringUtils.isNotBlank(entry.getRecordKey()))
             .filter(entry -> entry.getId() == id)
             .sorted()
             .findFirst()
@@ -118,6 +119,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         return storage
             .values()
             .stream()
+            .filter(entry -> StringUtils.isNotBlank(entry.getRecordKey()))
             .filter(entry -> entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate))
             .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -130,6 +132,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
             .values()
             .stream()
             .filter(entry -> entry.getPrincipal().equalsIgnoreCase(principal))
+            .filter(entry -> StringUtils.isNotBlank(entry.getRecordKey()))
             .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }

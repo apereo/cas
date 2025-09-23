@@ -1,6 +1,5 @@
 description = "Apereo CAS Cassandra Service Registry"
 ext {
-    terminateCompilerOnWarning=false
     publishMetadata = true
     projectMetadata = [
             category: "Service Registries",
@@ -32,7 +31,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-notifications")
-
+    testImplementation project(":core:cas-server-core-scripting")
 
     testImplementation project(":support:cas-server-support-oauth-core-api")
     testImplementation project(":support:cas-server-support-oauth-services")

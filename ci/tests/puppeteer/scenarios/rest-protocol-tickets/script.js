@@ -19,9 +19,9 @@ const querystring = require("querystring");
     assert(st !== undefined);
 
     await executeRequest(`https://localhost:8443/cas/v1/tickets/${st}`, "GET", 200);
-    await executeRequest(`https://localhost:8443/cas/v1/tickets/${st}`, "DELETE", 200, "application/json");
+    await cas.doDelete(`https://localhost:8443/cas/v1/tickets/${st}`);
     await cas.sleep(2000);
-    await executeRequest(`https://localhost:8443/cas/v1/tickets/${tgt}`, "DELETE", 200, "application/json");
+    await cas.doDelete(`https://localhost:8443/cas/v1/tickets/${tgt}`);
     await executeRequest(`https://localhost:8443/cas/v1/tickets/${tgt}`, "GET", 404);
 })();
 
@@ -29,7 +29,7 @@ async function executeRequest(url, method, statusCode, contentType = "applicatio
     return cas.doRequest(url, method,
         {
             "Accept": "application/json",
-            "Content-Length": requestBody !== undefined ? Buffer.byteLength(requestBody) : 0,
+            "Content-Length": requestBody === undefined ? 0 : Buffer.byteLength(requestBody),
             "Content-Type": contentType
         },
         statusCode, requestBody);

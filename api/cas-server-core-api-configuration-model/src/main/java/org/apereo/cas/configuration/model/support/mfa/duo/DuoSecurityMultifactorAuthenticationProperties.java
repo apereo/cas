@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.model.support.mfa.duo;
 
+import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +25,7 @@ import java.io.Serial;
 @Setter
 @Accessors(chain = true)
 @EqualsAndHashCode(of = {"duoApiHost", "duoIntegrationKey", "duoSecretKey"}, callSuper = true)
-@JsonFilter("DuoSecurityMultifactorProperties")
+
 public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**
@@ -116,6 +116,23 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
      * from Duo Security and collected as CAS attributes.
      */
     private boolean collectDuoAttributes = true;
+
+    /**
+     * The principal attribute that would be used to resolve
+     * the username sent to Duo Security, and one that would
+     * also be used to verify the Duo Security response and exchange.
+     * If undefined or not found, the default principal id would be used.
+     */
+    private String principalAttribute;
+
+    /**
+     * Indicates whether session data,
+     * collected as part of Duo flows and requests
+     * that are kept by the local storage, or should be replicated
+     * across the cluster using the ticket registry.
+     * Note that {@link SessionStorageTypes#HTTP} is not applicable here.
+     */
+    private SessionStorageTypes sessionStorageType = SessionStorageTypes.BROWSER_STORAGE;
     
     public DuoSecurityMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);

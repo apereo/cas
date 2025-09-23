@@ -4,7 +4,7 @@ import org.apereo.cas.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.pac4j.client.GroovyDelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -32,8 +32,11 @@ class GroovyDelegatedClientIdentityProviderRedirectionStrategyTests extends Base
             .build();
         val service = RegisteredServiceTestUtils.getService();
         val resource = new ClassPathResource("GroovyClientRedirectStrategy.groovy");
+
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        val watchableScript = scriptFactory.fromResource(resource);
         val strategy = new GroovyDelegatedClientIdentityProviderRedirectionStrategy(servicesManager,
-            new WatchableGroovyScriptResource(resource), applicationContext);
+            watchableScript, applicationContext);
         assertFalse(strategy.select(context, service, Set.of(provider)).isEmpty());
         assertEquals(0, strategy.getOrder());
     }

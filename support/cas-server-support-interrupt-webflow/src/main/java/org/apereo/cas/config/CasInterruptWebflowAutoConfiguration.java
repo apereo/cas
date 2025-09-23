@@ -3,14 +3,17 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.InterruptTrackingEngine;
 import org.apereo.cas.interrupt.webflow.InterruptSingleSignOnParticipationStrategy;
 import org.apereo.cas.interrupt.webflow.InterruptWebflowConfigurer;
 import org.apereo.cas.interrupt.webflow.actions.FinalizeInterruptFlowAction;
 import org.apereo.cas.interrupt.webflow.actions.InquireInterruptAction;
+import org.apereo.cas.interrupt.webflow.actions.InterruptLogoutAction;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -19,6 +22,7 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -48,11 +52,11 @@ public class CasInterruptWebflowAutoConfiguration {
     public CasWebflowConfigurer interruptWebflowConfigurer(
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
-        return new InterruptWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        return new InterruptWebflowConfigurer(flowBuilderServices, flowDefinitionRegistry,
             applicationContext, casProperties);
     }
 
@@ -62,14 +66,17 @@ public class CasInterruptWebflowAutoConfiguration {
     public Action inquireInterruptAction(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
+        @Qualifier(ScriptResourceCacheManager.BEAN_NAME)
+        final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager,
         @Qualifier(InterruptTrackingEngine.BEAN_NAME)
         final InterruptTrackingEngine interruptTrackingEngine,
-        @Qualifier("interruptInquirer")
+        @Qualifier(InterruptInquirer.BEAN_NAME)
         final InterruptInquiryExecutionPlan interruptInquirer) {
         return WebflowActionBeanSupplier.builder()
             .withApplicationContext(applicationContext)
             .withProperties(casProperties)
-            .withAction(() -> new InquireInterruptAction(interruptInquirer.getInterruptInquirers(), casProperties, interruptTrackingEngine))
+            .withAction(() -> new InquireInterruptAction(interruptInquirer.getInterruptInquirers(),
+                casProperties, interruptTrackingEngine, scriptResourceCacheManager))
             .withId(CasWebflowConstants.ACTION_ID_INQUIRE_INTERRUPT)
             .build()
             .get();
@@ -85,6 +92,23 @@ public class CasInterruptWebflowAutoConfiguration {
             .withProperties(casProperties)
             .withAction(() -> ConsumerExecutionAction.NONE)
             .withId(CasWebflowConstants.ACTION_ID_PREPARE_INTERRUPT_VIEW)
+            .build()
+            .get();
+    }
+
+
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_INTERRUPT_LOGOUT)
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public Action interruptLogoutAction(final ConfigurableApplicationContext applicationContext,
+                                        final CasConfigurationProperties casProperties,
+                                        @Qualifier(InterruptTrackingEngine.BEAN_NAME)
+                                        final InterruptTrackingEngine interruptTrackingEngine) {
+        return WebflowActionBeanSupplier.builder()
+            .withApplicationContext(applicationContext)
+            .withProperties(casProperties)
+            .withAction(() -> new InterruptLogoutAction(interruptTrackingEngine))
+            .withId(CasWebflowConstants.ACTION_ID_INTERRUPT_LOGOUT)
             .build()
             .get();
     }
@@ -105,6 +129,7 @@ public class CasInterruptWebflowAutoConfiguration {
             .build()
             .get();
     }
+
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategy")
@@ -118,7 +143,7 @@ public class CasInterruptWebflowAutoConfiguration {
         return new InterruptSingleSignOnParticipationStrategy(servicesManager,
             ticketRegistrySupport, authenticationServiceSelectionPlan);
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "interruptSingleSignOnParticipationStrategyConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -60,5 +60,5 @@ public interface CasWebSecurityConfigurer<T> extends Ordered, DisposableBean {
     }
 
     @Override
-    default void destroy() throws Exception {}
+    default void destroy() {}
 }

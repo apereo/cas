@@ -1,10 +1,10 @@
 package org.apereo.cas.ticket.accesstoken;
 
 
+import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.expiration.AbstractCasExpirationPolicy;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,11 +14,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 
 /**
  * This is {@link OAuth20AccessTokenExpirationPolicy}.
@@ -31,7 +29,7 @@ import java.time.temporal.ChronoUnit;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPolicy {
+public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPolicy implements IdleExpirationPolicy {
 
     @Serial
     private static final long serialVersionUID = -8383186650682727360L;
@@ -76,14 +74,14 @@ public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPol
     @Override
     public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
         val creationTime = ticketState.getCreationTime();
-        return creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
+        return creationTime.plusSeconds(this.maxTimeToLiveInSeconds);
     }
 
     @JsonIgnore
     @Override
     public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
         val lastTimeUsed = ticketState.getLastTimeUsed();
-        return lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        return lastTimeUsed.plusSeconds(this.timeToKillInSeconds);
     }
 
     @JsonIgnore

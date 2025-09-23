@@ -15,14 +15,13 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                 resources {
                     srcDirs new File("/etc/cas/templates/"),
                             new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
-                            new File("${project(":support").getProjectDir()}/cas-server-support-palantir/src/main/resources/static"),
-                            new File("${project(":support").getProjectDir()}/cas-server-support-palantir/src/main/resources/templates"),
                             new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/"),
                             new File("${project(":support").getProjectDir()}/cas-server-support-themes-collection/src/main/resources/")
                 }
             }
         }
     }
+
 
     springBoot {
         mainClassName = project.ext.mainClassName
@@ -36,19 +35,20 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
     }
 
     if (plugins.hasPlugin("war")) {
-
-        tasks.named("processBootRunResources") {
-            dependsOn(project(":support:cas-server-support-palantir").tasks.named("build-ui"))
-            duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-        }
-        
         tasks.named('javadoc') {
-            enabled false
+            enabled = false
         }
 
         tasks.named('bootWar') {
+            def propertiesFile = project.layout.buildDirectory.file("resources/main/git.properties").get().asFile
+            def properties = new Properties()
+            if (propertiesFile.exists()) {
+                propertiesFile.withInputStream { stream ->
+                    properties.load(stream)
+                }
+            }
+            def projectSpecVersion = properties.getProperty('git.commit.id', 'N/A')
 
-            def gitCommitId = project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'
             mainClass.set(project.ext.mainClassName)
             manifest {
                 attributes(
@@ -61,11 +61,13 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                 }
 
                 attributes(
-                        "Specification-Version": "${-> gitCommitId}",
+                        "Specification-Version": "${-> projectSpecVersion}",
                         "Implementation-Version": project.version)
             }
             from "${project.layout.buildDirectory.getAsFile().get().path}/resources/main", { into "WEB-INF/classes" }
-            launchScript()
+            if (!rootProject.skipBootifulLaunchScript) {
+                launchScript()
+            }
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
 
@@ -76,7 +78,9 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                 archiveFileName = project.ext.archiveFileName
             }
             from "${project.layout.buildDirectory.getAsFile().get().path}/resources/main", { into "WEB-INF/classes" }
-            launchScript()
+            if (!rootProject.skipBootifulLaunchScript) {
+                launchScript()
+            }
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
 
@@ -100,6 +104,10 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         }
     }
 
+    tasks.named("processBootRunResources") {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+    
     tasks.named('bootRun') {
         mainClass.set(project.ext.mainClassName)
 
@@ -123,6 +131,10 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         list.add("java.base/jdk.internal.ref=ALL-UNNAMED")
         list.add("--add-opens")
         list.add("java.base/java.lang=ALL-UNNAMED")
+        list.add("--add-opens")
+        list.add("java.base/java.util.concurrent=ALL-UNNAMED")
+        list.add("--add-opens")
+        list.add("java.base/java.util.concurrent.locks=ALL-UNNAMED")
         list.add("--add-opens")
         list.add("java.base/java.util=ALL-UNNAMED")
         list.add("--add-opens")

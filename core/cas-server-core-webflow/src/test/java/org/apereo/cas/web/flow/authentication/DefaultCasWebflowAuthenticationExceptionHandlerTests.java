@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
-import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -35,7 +34,7 @@ class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     private RequestContext context;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         val errors = new LinkedHashSet<Class<? extends Throwable>>();
         errors.add(UnauthorizedServiceForPrincipalException.class);
         errors.add(UnauthorizedAuthenticationException.class);
@@ -43,8 +42,7 @@ class DefaultCasWebflowAuthenticationExceptionHandlerTests {
         catalog.registerExceptions(errors);
 
         this.context = MockRequestContext.create();
-        this.handler = new DefaultCasWebflowAuthenticationExceptionHandler(catalog,
-            MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+        this.handler = new DefaultCasWebflowAuthenticationExceptionHandler(catalog);
     }
 
     @Test
@@ -64,14 +62,18 @@ class DefaultCasWebflowAuthenticationExceptionHandlerTests {
         val ex = new AuthenticationException(new InvalidLoginLocationException("failure"));
         val event = handler.handle(ex, context);
         assertNotNull(event);
-        assertEquals(CasWebflowExceptionHandler.UNKNOWN, event.getId());
+        assertEquals(CasWebflowExceptionCatalog.UNKNOWN, event.getId());
     }
 
     @Test
     void verifyAuthUnauthz() throws Throwable {
-        val ex = new AuthenticationException(new UnauthorizedAuthenticationException("failure"));
-        val event = handler.handle(ex, context);
-        assertNotNull(event);
-        assertEquals(UnauthorizedAuthenticationException.class.getSimpleName(), event.getId());
+        for (var i = 0; i < 3; i++) {
+            val ex = new AuthenticationException(new UnauthorizedAuthenticationException("failure"));
+            val event = handler.handle(ex, context);
+            assertNotNull(event);
+            assertEquals(UnauthorizedAuthenticationException.class.getSimpleName(), event.getId());
+        }
+        val count = WebUtils.countFailedAuthenticationAttempts(context);
+        assertEquals(3, count);
     }
 }

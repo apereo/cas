@@ -55,7 +55,8 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         val documents = this.entityManager.createQuery(SELECT_QUERY, SamlMetadataDocument.class).getResultList();
-        return documents.stream()
+        return documents
+            .stream()
             .map(doc -> buildMetadataResolverFrom(service, doc))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());

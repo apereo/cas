@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.support;
 
+import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -9,11 +11,10 @@ import org.jasypt.registry.AlgorithmRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.env.Environment;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,12 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    AopAutoConfiguration.class
-})
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = AopAutoConfiguration.class)
 @Tag("Cipher")
+@ExtendWith(CasTestExtension.class)
 @Slf4j
 class CasConfigurationJasyptCipherExecutorTests {
     static {
@@ -42,12 +41,12 @@ class CasConfigurationJasyptCipherExecutorTests {
     private CasConfigurationJasyptCipherExecutor jasypt;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         this.jasypt = new CasConfigurationJasyptCipherExecutor(this.environment);
     }
 
     @Test
-    void verifyDecryptionEncryption() throws Throwable {
+    void verifyDecryptionEncryption() {
         val result = jasypt.encryptValue(getClass().getSimpleName());
         assertNotNull(result);
         val plain = jasypt.decryptValue(result);
@@ -55,14 +54,14 @@ class CasConfigurationJasyptCipherExecutorTests {
     }
 
     @Test
-    void verifyEncodeOps() throws Throwable {
+    void verifyEncodeOps() {
         assertNotNull(jasypt.getName());
         val result = jasypt.encode(getClass().getSimpleName());
         assertNotNull(result);
     }
 
     @Test
-    void verifyDecryptionEncryptionPairNotNeeded() throws Throwable {
+    void verifyDecryptionEncryptionPairNotNeeded() {
         val result = jasypt.decryptValue("keyValue");
         assertNotNull(result);
         assertEquals("keyValue", result);
@@ -70,14 +69,14 @@ class CasConfigurationJasyptCipherExecutorTests {
     }
 
     @Test
-    void verifyDecryptionEncryptionPairFails() throws Throwable {
+    void verifyDecryptionEncryptionPairFails() {
         val encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
         val result = jasypt.decode(encVal, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNull(result);
     }
 
     @Test
-    void verifyDecryptionEncryptionPairSuccess() throws Throwable {
+    void verifyDecryptionEncryptionPairSuccess() {
         val value = jasypt.encryptValue("Testing");
         val result = jasypt.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNotNull(result);
@@ -89,16 +88,17 @@ class CasConfigurationJasyptCipherExecutorTests {
      * Password encrypted with 6.4.0 and password of "P@$$w0rd".
      */
     @Test
-    void verifyEncryptedPassword() throws Throwable {
+    void verifyEncryptedPassword() {
         val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
         jasyptTest.setProviderName("BC");
         jasyptTest.setAlgorithm("PBEWITHSHAAND256BITAES-CBC-BC");
         jasyptTest.setIvGenerator(new RandomIvGenerator());
-        assertEquals("testing", jasyptTest.decode("{cas-cipher}88HKpXCD888/ZP7hMAg7VdxljZD3fho5r5V7c15kPXovYCk4cBdpcxfd5vgcxTit"));
+        jasyptTest.setPassword("P@$$w0rd");
+        assertEquals("testing", jasyptTest.decode("{cas-cipher}BvHnbgPin/9TaT4fgctwmtrZzwdRQWGUolr3dS1peGETCWFJOVYgu/Fkg+lxm6QX"));
     }
 
     @Test
-    void verifyAlgorithms() throws Throwable {
+    void verifyAlgorithms() {
         val algorithms = AlgorithmRegistry.getAllPBEAlgorithms();
         for (val algorithm : algorithms) {
             assertTrue(isAlgorithmFunctional(algorithm.toString()));

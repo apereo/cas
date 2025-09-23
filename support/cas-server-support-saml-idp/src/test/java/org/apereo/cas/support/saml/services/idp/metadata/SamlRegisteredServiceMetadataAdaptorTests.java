@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 class SamlRegisteredServiceMetadataAdaptorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    void verifyResolver() throws Throwable {
+    void verifyResolver() {
         val service = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(service);
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,

@@ -88,3 +88,5 @@ The following parameters are provided to the script:
 | `requestContext`     | The object representing the Spring Webflow `RequestContext`.                                  |
 | `applicationContext` | The object representing the Spring `ApplicationContext`.                                      |
 | `logger`             | The object responsible for issuing log messages such as `logger.info(...)`.                   |
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

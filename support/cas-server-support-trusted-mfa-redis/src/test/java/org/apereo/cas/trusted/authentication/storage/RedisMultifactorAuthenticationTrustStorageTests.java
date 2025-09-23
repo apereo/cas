@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Redis")
-@Import(CasRedisMultifactorAuthenticationTrustAutoConfiguration.class)
+@ImportAutoConfiguration(CasRedisMultifactorAuthenticationTrustAutoConfiguration.class)
 @TestPropertySource(
     properties = {
         "cas.authn.mfa.trusted.redis.host=localhost",
@@ -45,7 +45,7 @@ class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMultifacto
     private CasRedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisMfaTrustedAuthnTemplate;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         val key = RedisMultifactorAuthenticationTrustStorage.CAS_PREFIX + '*';
         try (val keys = redisMfaTrustedAuthnTemplate.scan(key, 0L)) {
             redisMfaTrustedAuthnTemplate.delete(keys.collect(Collectors.toSet()));
@@ -53,7 +53,7 @@ class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMultifacto
     }
 
     @Test
-    void verifySetAnExpireByKey() throws Throwable {
+    void verifySetAnExpireByKey() {
         val user = UUID.randomUUID().toString();
         var record = MultifactorAuthenticationTrustRecord.newInstance(user, "geography", "fingerprint");
         record = getMfaTrustEngine().save(record);
@@ -66,7 +66,7 @@ class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMultifacto
     }
 
     @Test
-    void verifyMultipleDevicesPerUser() throws Throwable {
+    void verifyMultipleDevicesPerUser() {
         val user = UUID.randomUUID().toString();
         getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance(user, "geography", "fingerprint"));
         getMfaTrustEngine().save(MultifactorAuthenticationTrustRecord.newInstance(user, "geography bis", "fingerprint bis"));
@@ -77,18 +77,18 @@ class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMultifacto
 
 
     @Test
-    void verifyExpireByDate() throws Throwable {
+    void verifyExpireByDate() {
         val user = UUID.randomUUID().toString();
-        val r = MultifactorAuthenticationTrustRecord.newInstance(user, "geography", "fingerprint");
+        val record = MultifactorAuthenticationTrustRecord.newInstance(user, "geography", "fingerprint");
         val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
-        r.setRecordDate(now.minusDays(2));
-        getMfaTrustEngine().save(r);
+        record.setRecordDate(now.minusDays(2));
+        getMfaTrustEngine().save(record);
         assertEquals(1, getMfaTrustEngine().get(now.minusDays(30)).size());
         assertEquals(0, getMfaTrustEngine().get(now.minusDays(1)).size());
     }
 
     @BeforeEach
-    public void emptyTrustEngine() {
+    void emptyTrustEngine() {
         getMfaTrustEngine().getAll().forEach(r -> getMfaTrustEngine().remove(r.getRecordKey()));
     }
 }

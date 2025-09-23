@@ -26,6 +26,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-throttle")
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-multitenancy")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":core:cas-server-core-webflow-mfa-api")
@@ -49,15 +50,16 @@ dependencies {
     compileOnly project(":support:cas-server-support-jpa-util")
     compileOnly project(":support:cas-server-support-consent-api")
     compileOnly project(":support:cas-server-support-pac4j-webflow")
-
-
+    
     implementation libraries.pac4jcore
     implementation libraries.shibutiljavasupport
+    implementation libraries.jose4j
+    compileOnly libraries.pac4jsaml
 
-    
     testImplementation libraries.pac4joidcoauth
     testImplementation libraries.pac4jsaml
-
+    testImplementation libraries.springboottomcat
+    
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
@@ -78,6 +80,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-pac4j-webflow")
     testImplementation project(":support:cas-server-support-consent-core")
     testImplementation project(":support:cas-server-support-throttle")
+    testImplementation project(":support:cas-server-support-webconfig")
     
     testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(":core:cas-server-core-util")
@@ -92,5 +95,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-tickets")
-    
+    testImplementation project(":core:cas-server-core-scripting")
+
 }

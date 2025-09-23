@@ -33,7 +33,7 @@ public class LdapDelegatedClientAuthenticationCredentialResolver extends BaseDel
     }
 
     @Override
-    public List<DelegatedAuthenticationCandidateProfile> resolve(final RequestContext context, final ClientCredential credentials) throws Throwable {
+    public List<DelegatedAuthenticationCandidateProfile> resolve(final RequestContext context, final ClientCredential credentials) {
         val profile = resolveUserProfile(context, credentials).orElseThrow();
         val ldapServers = configContext.getCasProperties().getAuthn().getPac4j().getProfileSelection().getLdap();
         return ldapServers

@@ -22,9 +22,14 @@ class SimplePrincipalFactoryTests {
         map.put("a1", List.of("v1"));
         map.put("a2", List.of("v3"));
 
-        val p = fact.createPrincipal("user", map);
-        assertInstanceOf(SimplePrincipal.class, p);
-        assertEquals(p.getAttributes(), map);
+        val principal = fact.createPrincipal("user", map);
+        assertInstanceOf(SimplePrincipal.class, principal);
+        assertEquals(principal.getAttributes(), map);
+        assertTrue(principal.containsAttribute("a1"));
+        assertTrue(principal.containsAttribute("a2"));
+        assertEquals("v3", principal.getSingleValuedAttribute("a2"));
+        assertThrows(ClassCastException.class, () -> principal.getSingleValuedAttribute("a2", Long.class));
+        assertNull(principal.getSingleValuedAttribute("unknown"));
     }
 
     @Test

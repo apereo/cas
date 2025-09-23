@@ -9,6 +9,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -25,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Scott Battaglia
  * @since 3.3.5
  */
-@Endpoint(id = "statistics", enableByDefault = false)
+@Endpoint(id = "statistics", defaultAccess = Access.NONE)
 public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
     private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
@@ -44,11 +45,11 @@ public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     @Operation(summary = "Get a report of CAS statistics on tickets. Expired tickets will be removed")
-    public Map<String, Object> handle() {
+    public Map<String, Object> statistics() {
         val model = new HashMap<String, Object>();
 
         val diff = Duration.between(upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
-        model.put("upTime", diff.getSeconds());
+        model.put("upTime", diff.toSeconds());
 
         val runtime = Runtime.getRuntime();
         model.put("totalMemory", FileUtils.byteCountToDisplaySize(runtime.totalMemory()));

@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.core.ticket.registry;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -20,7 +19,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
 @Getter
 @Setter
-@JsonFilter("InMemoryTicketRegistryProperties")
+
 public class InMemoryTicketRegistryProperties implements Serializable {
 
     @Serial

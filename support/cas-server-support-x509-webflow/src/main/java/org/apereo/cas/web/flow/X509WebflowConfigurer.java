@@ -35,10 +35,10 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public X509WebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                 final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                 final FlowDefinitionRegistry flowDefinitionRegistry,
                                  final ConfigurableApplicationContext applicationContext,
                                  final CasConfigurationProperties casProperties) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
         setOrder(casProperties.getAuthn().getX509().getWebflow().getOrder());
     }
 
@@ -82,6 +82,6 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
         }
 
         LOGGER.debug("Attaching X509 flow to regular login flow");
-        return new ImmutablePair<>(CasWebflowConstants.STATE_ID_AFTER_INIT_LOGIN_FORM, CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        return Pair.of(CasWebflowConstants.STATE_ID_AFTER_INIT_LOGIN_FORM, CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 }

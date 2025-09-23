@@ -58,6 +58,13 @@ public abstract class BaseTicketEntity implements Serializable {
     @Column(nullable = false, length = 512)
     private ZonedDateTime creationTime;
 
+    @Column(nullable = false, length = 512)
+    private ZonedDateTime expirationTime;
+
+    @Column(nullable = true, length = 512)
+    private ZonedDateTime lastUsedTime;
+
+    
     /**
      * Sets attributes.
      *

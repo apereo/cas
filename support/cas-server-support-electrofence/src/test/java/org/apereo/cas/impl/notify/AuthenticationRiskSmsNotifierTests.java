@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SMS")
 class AuthenticationRiskSmsNotifierTests extends BaseAuthenticationRequestRiskCalculatorTests {
     @BeforeEach
-    public void onSetUp() {
+    void onSetUp() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("223.456.789.100");
         request.setLocalAddr("223.456.789.200");
@@ -48,7 +48,7 @@ class AuthenticationRiskSmsNotifierTests extends BaseAuthenticationRequestRiskCa
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         authenticationRiskSmsNotifier.setClientInfo(ClientInfoHolder.getClientInfo());
         authenticationRiskSmsNotifier.setRegisteredService(CoreAuthenticationTestUtils.getRegisteredService());
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("phone", List.of("3487244312")));

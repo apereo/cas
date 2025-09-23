@@ -34,6 +34,7 @@ import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -137,7 +138,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
                 }
 
                 response = fetchMetadata(service, metadataLocation, criteriaSet, backupFile);
-                val status = HttpStatus.valueOf(response.getCode());
+                val status = response != null ? HttpStatus.valueOf(response.getCode()) : HttpStatus.BAD_REQUEST;
+                LOGGER.debug("Received metadata response status code [{}]", status);
                 if (shouldHttpResponseStatusBeProcessed(status)) {
                     val metadataProvider = getMetadataResolverFromResponse(response, backupFile);
                     configureAndInitializeSingleMetadataResolver(metadataProvider, service);
@@ -163,7 +165,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
                 .stream()
                 .anyMatch(metadataLocation ->
                     StringUtils.isNotBlank(metadataLocation)
-                        && StringUtils.startsWith(metadataLocation, "http")
+                        && Strings.CI.startsWith(metadataLocation, "http")
                         && !SamlUtils.isDynamicMetadataQueryConfigured(metadataLocation));
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
@@ -221,6 +223,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             .url(metadataLocation)
             .proxyUrl(service.getMetadataProxyLocation())
             .httpClient(httpClient)
+            .maximumRetryAttempts(samlIdPProperties.getMetadata().getCore().getMaximumRetryAttempts())
             .build();
         return HttpUtils.execute(exec);
     }

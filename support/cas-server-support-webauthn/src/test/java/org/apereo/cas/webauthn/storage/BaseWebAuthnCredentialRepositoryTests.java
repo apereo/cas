@@ -2,10 +2,10 @@ package org.apereo.cas.webauthn.storage;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAttestationTrustSourceFidoProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.webauthn.web.flow.BaseWebAuthnWebflowTests;
-
 import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.AssertionResult;
 import com.yubico.webauthn.RegisteredCredential;
@@ -13,15 +13,14 @@ import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.UserIdentity;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Locale;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,6 +38,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.web-authn.core.relying-party-name=CAS WebAuthn Demo",
         "cas.authn.mfa.web-authn.core.relying-party-id=example.org"
     })
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseWebAuthnCredentialRepositoryTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
@@ -84,7 +84,7 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
         assertFalse(webAuthnCredentialRepository.getUsernameForUserHandle(ba).isEmpty());
         assertFalse(webAuthnCredentialRepository.lookup(ba, ba).isEmpty());
         assertFalse(webAuthnCredentialRepository.lookupAll(ba).isEmpty());
-        assertTrue(webAuthnCredentialRepository.stream().count() > 0);
+        assertTrue(webAuthnCredentialRepository.stream().findAny().isPresent());
 
         val credential = RegisteredCredential.builder()
             .credentialId(ba)

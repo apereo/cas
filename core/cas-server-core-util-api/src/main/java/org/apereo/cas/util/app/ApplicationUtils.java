@@ -3,11 +3,11 @@ package org.apereo.cas.util.app;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.boot.context.metrics.buffering.BufferingApplicationStartup;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.metrics.ApplicationStartup;
 import org.springframework.core.metrics.jfr.FlightRecorderApplicationStartup;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.ServiceLoader;
@@ -44,10 +44,10 @@ public class ApplicationUtils {
      */
     public static ApplicationStartup getApplicationStartup() {
         val type = StringUtils.defaultIfBlank(System.getProperty("CAS_APP_STARTUP"), "default");
-        if (StringUtils.equalsIgnoreCase("jfr", type)) {
+        if (Strings.CI.equals("jfr", type)) {
             return new FlightRecorderApplicationStartup();
         }
-        if (StringUtils.equalsIgnoreCase("buffering", type)) {
+        if (Strings.CI.equals("buffering", type)) {
             return new BufferingApplicationStartup(APPLICATION_EVENTS_CAPACITY);
         }
         return ApplicationStartup.DEFAULT;

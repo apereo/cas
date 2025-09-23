@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -19,8 +18,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -46,8 +45,6 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     private final ServicesManager servicesManager;
-
-    private final PrincipalElectionStrategy principalElectionStrategy;
 
     private final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities;
 
@@ -98,8 +95,9 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
             }
 
             val credentials = casWebflowCredentialProvider.extract(context);
-            val builder = authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credentials.toArray(new Credential[]{}));
-            val authenticationResult = builder.build(principalElectionStrategy, service);
+            val builder = authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication,
+                credentials.toArray(Credential.EMPTY_CREDENTIALS_ARRAY));
+            val authenticationResult = builder.build(service);
 
             LOGGER.trace("Built the final authentication result [{}] to grant service ticket to [{}]", authenticationResult, service);
             grantServiceTicket(authenticationResult, service, context);
@@ -127,7 +125,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .filter(auth -> auth.supports(authenticationResult, service))
             .findFirst()
-            .ifPresent(auth -> {
+            .ifPresent(Unchecked.consumer(auth -> {
                 if (auth.shouldGenerate(authenticationResult, service)) {
                     FunctionUtils.doUnchecked(__ -> {
                         val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(requestContext);
@@ -136,7 +134,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
                         LOGGER.debug("Granted service ticket [{}] and added it to the request scope", serviceTicketId);
                     });
                 }
-            });
+            }));
     }
 
     protected boolean isGatewayPresent(final RequestContext context) {
@@ -144,6 +142,6 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
     }
 
     private Event newEvent(final String id, final Throwable error) {
-        return new EventFactorySupport().event(this, id, new LocalAttributeMap<>("error", error));
+        return eventFactory.event(this, id, new LocalAttributeMap<>("error", error));
     }
 }

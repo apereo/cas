@@ -9,7 +9,7 @@ category: Protocols
 # WS Federation Protocol
 
 CAS can act as a standalone identity provider, presenting support for 
-the [WS-Federation Passive Requestor Profile](http://docs.oasis-open.org/wsfed/federation/v1.2/os/ws-federation-1.2-spec-os.html#_Toc223175002). 
+the [WS-Federation Passive Requester Profile](http://docs.oasis-open.org/wsfed/federation/v1.2/os/ws-federation-1.2-spec-os.html#_Toc223175002). 
 The core functionality is built on top of [Apache Fediz](http://cxf.apache.org/fediz.html) 
 whose architecture is described [here](http://cxf.apache.org/fediz-architecture.html).
 
@@ -37,7 +37,7 @@ attaches the returned security token to the outgoing SOAP message to the service
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-ws-sts" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-ws-sts" bundled="true" %}
 
 <div class="alert alert-info">:information_source: <strong>YAGNI</strong><p>You do not need to explicitly include this component
 in your configuration and overlays. This is just to teach you that it exists. The security token service will be pulled 

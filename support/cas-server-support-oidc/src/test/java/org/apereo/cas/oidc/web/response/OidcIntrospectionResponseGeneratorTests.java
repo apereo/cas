@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("OIDC")
-public class OidcIntrospectionResponseGeneratorTests extends AbstractOidcTests {
+class OidcIntrospectionResponseGeneratorTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcIntrospectionResponseGenerator")
     private OAuth20IntrospectionResponseGenerator oidcIntrospectionResponseGenerator;

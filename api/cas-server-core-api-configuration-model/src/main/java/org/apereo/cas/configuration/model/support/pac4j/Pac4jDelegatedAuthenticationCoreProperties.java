@@ -1,14 +1,15 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.configuration.model.support.replication.SessionReplicationProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
@@ -24,7 +25,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("Pac4jDelegatedAuthenticationCoreProperties")
 public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -3561947621312270068L;
@@ -79,8 +79,10 @@ public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable 
 
     /**
      * Control settings for session replication.
+     * @deprecated Since 7.3.0.
      */
     @NestedConfigurationProperty
+    @Deprecated(since = "7.3.0", forRemoval = true)
     private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
 
     /**
@@ -111,4 +113,10 @@ public class Pac4jDelegatedAuthenticationCoreProperties implements Serializable 
     @NestedConfigurationProperty
     private Pac4jDelegatedAuthenticationDiscoverySelectionProperties discoverySelection = new Pac4jDelegatedAuthenticationDiscoverySelectionProperties();
 
+    public Pac4jDelegatedAuthenticationCoreProperties() {
+        if (StringUtils.isBlank(getSessionReplication().getCookie().getName())) {
+            getSessionReplication().getCookie()
+                .setName("%s%s".formatted(CookieSessionReplicationProperties.DEFAULT_COOKIE_NAME, "AuthnDelegation"));
+        }
+    }
 }

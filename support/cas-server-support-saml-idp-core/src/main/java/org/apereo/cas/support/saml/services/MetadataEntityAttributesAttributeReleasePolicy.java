@@ -39,7 +39,7 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
 
     private String entityAttributeFormat;
 
-    private Set<String> entityAttributeValues = new LinkedHashSet<>(0);
+    private Set<String> entityAttributeValues = new LinkedHashSet<>();
 
     @Override
     protected Map<String, List<Object>> getAttributesForSamlRegisteredService(
@@ -47,7 +47,7 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
-        final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
+        final RegisteredServiceAttributeReleasePolicyContext context) {
 
         LOGGER.trace("Loading entity attribute predicate filter for candidate [{}] with values [{}]",
             getEntityAttribute(), getEntityAttributeValues());
@@ -60,6 +60,6 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
         }
         LOGGER.debug("Unable to authorize attribute release for entity attribute category [{}] and value(s) [{}] to entity id [{}]",
             getEntityAttribute(), getEntityAttributeValues(), entityDescriptor.getEntityID());
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 }

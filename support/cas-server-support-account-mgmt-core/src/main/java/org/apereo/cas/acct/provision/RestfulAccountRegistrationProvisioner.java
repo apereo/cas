@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -79,8 +80,8 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
 
     protected HttpResponse executeRequest(final AccountRegistrationRequest request) throws Exception {
         val headers = new HashMap<String, String>();
-        headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-        headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+        headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
         headers.putAll(properties.getHeaders());
 
         val exec = HttpExecutionRequest.builder()

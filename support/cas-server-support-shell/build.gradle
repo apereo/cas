@@ -3,11 +3,12 @@ ext {
     mainClassName = "org.apereo.cas.CasCommandLineShellApplication"
     publishMetadata = true
     projectMetadata = [
-            category: "Developer",
-            title: "Command-line Shell",
-            aliases: ["shell"],
-            selectable: false
+        category: "Developer",
+        title: "Command-line Shell",
+        aliases: ["shell"],
+        selectable: false
     ]
+    publishable = false
 }
 
 apply from: rootProject.file("gradle/springboot.gradle")
@@ -23,8 +24,8 @@ dependencies {
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-logging-api")
-    implementation project(":core:cas-server-core-configuration-metadata-repository")
 
+    implementation project(":support:cas-server-support-configuration-metadata-repository")
     implementation project(":support:cas-server-support-shell-core")
     implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-jpa-hibernate")
@@ -53,6 +54,8 @@ dependencies {
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
+    testImplementation project(":core:cas-server-core-scripting")
+    
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

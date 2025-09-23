@@ -63,7 +63,7 @@ public interface RestHttpRequestCredentialFactory extends Ordered {
                                                 final MultiValueMap<String, String> requestBody,
                                                 final Authentication authentication,
                                                 final MultifactorAuthenticationProvider provider) {
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     /**

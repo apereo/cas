@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <div class="attribute-tab w-100 d-none" id="attribute-tab-10">
+        <h3>Attribute Consent</h3>
+        <table id="consentTable" class="mdc-data-table__table table table-striped noborder">
+            <thead>
+            <tr class="mdc-data-table__header-row">
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Principal</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attributes</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Date</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Options</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Reminder</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+            </tr>
+            </thead>
+            <tbody class="mdc-data-table__content">
+            </tbody>
+        </table>
+
+        <div width="10%">
+            <div class="mdc-touch-target-wrapper">
+                <button name="exportAllConsent" id="exportAllConsent" class="mdc-button mdc-button--raised"
+                        aria-label="Export All">
+                     <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-export" aria-hidden="true"></i>Export</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="mdc-dialog modal" id="consentAttributes-dialog" role="alertdialog"
+                     aria-modal="true" aria-labelledby="consentAttributes-dialog-title" aria-describedby="consentAttributes-dialog-content">
+            <div class="mdc-dialog__container w-75 modal-dialog">
+                <div class="mdc-dialog__surface mw-75 modal-content">
+                    <h1 class="mdc-dialog__title modal-header mt-lg-2"
+                        id="consentAttributes-dialog-title">Consent Attributes</h1>
+                    <div class="mdc-dialog__content modal-body" id="consentAttributes-dialog-content">
+                          <table id="consentAttributesTable" class="mdc-data-table__table table table-striped noborder">
+                            <thead>
+                                <tr class="mdc-data-table__header-row">
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="mdc-data-table__content">
+                            </tbody>
+                         </table>
+                    </div>
+                </div>
+            </div>
+            <div class="mdc-dialog__scrim"></div>
+        </div>
+    </div>
+</span>
+</body>
+</html>

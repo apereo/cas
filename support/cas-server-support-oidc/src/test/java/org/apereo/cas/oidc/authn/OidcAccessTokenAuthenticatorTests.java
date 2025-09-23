@@ -1,6 +1,8 @@
 package org.apereo.cas.oidc.authn;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -24,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("OIDC")
+@Tag("OIDCAuthentication")
 class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oauthAccessTokenAuthenticator")
@@ -51,10 +53,10 @@ class OidcAccessTokenAuthenticatorTests extends AbstractOidcTests {
         assertNotNull(userProfile);
         assertEquals("casuser", userProfile.getId());
         assertTrue(userProfile.containsAttribute("client_id"));
-        assertTrue(userProfile.containsAttribute("sub"));
-        assertTrue(userProfile.containsAttribute("iss"));
-        assertTrue(userProfile.containsAttribute("exp"));
-        assertTrue(userProfile.containsAttribute("aud"));
+        assertTrue(userProfile.containsAttribute(OAuth20Constants.CLAIM_SUB));
+        assertTrue(userProfile.containsAttribute(OidcConstants.ISS));
+        assertTrue(userProfile.containsAttribute(OAuth20Constants.CLAIM_EXP));
+        assertTrue(userProfile.containsAttribute(OidcConstants.AUD));
         assertTrue(userProfile.containsAttribute("email"));
     }
 

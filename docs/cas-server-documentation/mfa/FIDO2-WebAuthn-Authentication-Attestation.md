@@ -15,7 +15,7 @@ Attestation trust metadata can be taught to CAS using the following strategies.
 
 {% tabs fidotrustmd %}
 
-{% tab fidotrustmd JSON %}
+{% tab fidotrustmd <i class="fa fa-code px-1"></i> JSON %}
            
 WebAuthn attestation trust metadata can be loaded from a JSON file and CAS by default ships with 
 and has enabled metadata offered by Yubico, for a series of devices that are also primarily offered by Yubico. 

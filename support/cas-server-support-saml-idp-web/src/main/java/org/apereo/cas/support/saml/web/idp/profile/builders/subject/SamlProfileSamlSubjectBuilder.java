@@ -20,7 +20,6 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.Subject;
 
-import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -32,14 +31,11 @@ import java.time.ZonedDateTime;
  */
 @Slf4j
 public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Subject> {
-    @Serial
-    private static final long serialVersionUID = 4782621942035583007L;
-
     private final SamlProfileObjectBuilder<SAMLObject> ssoPostProfileSamlNameIdBuilder;
 
     private final CasConfigurationProperties casProperties;
 
-    private final transient SamlIdPObjectEncrypter samlObjectEncrypter;
+    private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
     public SamlProfileSamlSubjectBuilder(
         final OpenSamlConfigBean configBean,
@@ -105,9 +101,9 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
     private SAMLObject encryptNameIdIfNecessary(final SAMLObject subjectNameId,
                                                 final SamlProfileBuilderContext context) {
         if (!(subjectNameId instanceof EncryptedID)
-            && subjectNameId instanceof NameID
-            && NameIDType.ENCRYPTED.equalsIgnoreCase(((NameIDType) subjectNameId).getFormat())) {
-            return samlObjectEncrypter.encode((NameID) subjectNameId, context.getRegisteredService(), context.getAdaptor());
+            && subjectNameId instanceof final NameID nameId
+            && NameIDType.ENCRYPTED.equalsIgnoreCase(nameId.getFormat())) {
+            return samlObjectEncrypter.encode(nameId, context.getRegisteredService(), context.getAdaptor());
         }
         return subjectNameId;
     }

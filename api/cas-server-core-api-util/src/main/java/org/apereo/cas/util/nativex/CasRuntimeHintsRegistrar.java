@@ -15,6 +15,7 @@ import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.aot.hint.TypeReference;
 import org.springframework.core.DecoratingProxy;
+import org.springframework.util.ClassUtils;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -54,7 +55,6 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      */
     String SYSTEM_PROPERTY_SPRING_AOT_PROCESSING = "spring.aot.processing";
 
-
     /**
      * Register spring proxies.
      *
@@ -63,7 +63,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * @return the cas runtime hints registrar
      */
     @CanIgnoreReturnValue
-    default CasRuntimeHintsRegistrar registerSerializableSpringProxy(final RuntimeHints hints, final Class... clazz) {
+    default CasRuntimeHintsRegistrar registerSerializableSpringProxyHints(final RuntimeHints hints, final Class... clazz) {
         val proxies = Arrays.stream(clazz).collect(Collectors.toList());
         proxies.add(Serializable.class);
         addSpringProxyInterfaces(proxies);
@@ -81,7 +81,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * @return the cas runtime hints registrar
      */
     @CanIgnoreReturnValue
-    default CasRuntimeHintsRegistrar registerSpringProxy(final RuntimeHints hints, final Class... clazz) {
+    default CasRuntimeHintsRegistrar registerSpringProxyHints(final RuntimeHints hints, final Class... clazz) {
         val proxies = Arrays.stream(clazz).collect(Collectors.toList());
         addSpringProxyInterfaces(proxies);
         hints.proxies()
@@ -116,7 +116,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * @param hints               the hints
      * @param subclassesInPackage the subclasses in package
      */
-    default void registerProxyHints(final RuntimeHints hints, final Collection<Class> subclassesInPackage) {
+    default void registerProxyHints(final RuntimeHints hints, final Collection<? extends Class> subclassesInPackage) {
         subclassesInPackage.forEach(clazz -> hints.proxies().registerJdkProxy(clazz));
     }
 
@@ -148,7 +148,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     }
 
     /**
-     * Register declared method as invokable.
+     * Register declared method as invocable.
      *
      * @param hints the hints
      * @param clazz the clazz
@@ -203,7 +203,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
             }
         });
     }
-    
+
     /**
      * Register reflection hints.
      *
@@ -343,7 +343,17 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
         registerReflectionHints(hints, entries, memberCategories);
         return this;
     }
-    
+
+    /**
+     * Find subclasses of class.
+     *
+     * @param superClass the super class
+     * @return the collection
+     */
+    default Collection<Class> findSubclassesOf(final Class superClass) {
+        return findSubclassesInPackage(superClass, "org.apereo.cas");
+    }
+
     /**
      * Find subclasses in packages and exclude tests.
      *
@@ -369,6 +379,27 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
             .collect(Collectors.toList());
         filteredResults.add(superClass);
         return filteredResults;
+    }
+
+    /**
+     * Is type present?
+     *
+     * @param classLoader the class loader
+     * @param typeName    the type name
+     * @return true/false
+     */
+    default boolean isTypePresent(final ClassLoader classLoader, final String typeName) {
+        return ClassUtils.isPresent(typeName, classLoader);
+    }
+
+    /**
+     * Is groovy present?
+     *
+     * @param classLoader the class loader
+     * @return true/false
+     */
+    default boolean isGroovyPresent(final ClassLoader classLoader) {
+        return isTypePresent(classLoader, "groovy.lang.GroovyObject");
     }
 
     /**
@@ -416,4 +447,14 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
         proxies.add(DecoratingProxy.class);
     }
 
+    /**
+     * Log messages via System output stream.
+     *
+     * @param message the message
+     */
+    default void log(final String message) {
+        //CHECKSTYLE:OFF
+        System.out.println(message);
+        //CHECKSTYLE:ON
+    }
 }

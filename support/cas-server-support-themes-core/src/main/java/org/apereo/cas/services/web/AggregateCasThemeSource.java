@@ -2,15 +2,13 @@ package org.apereo.cas.services.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ResourceUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.StaticMessageSource;
 import org.springframework.ui.context.support.ResourceBundleThemeSource;
-
 import jakarta.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Locale;
@@ -36,7 +34,7 @@ public class AggregateCasThemeSource extends ResourceBundleThemeSource {
         source.setParentMessageSource(super.createMessageSource(basename));
         casProperties.getView().getTemplatePrefixes()
             .stream()
-            .map(prefix -> StringUtils.appendIfMissing(prefix, "/").concat(basename).concat(".properties"))
+            .map(prefix -> Strings.CI.appendIfMissing(prefix, "/").concat(basename).concat(".properties"))
             .filter(ResourceUtils::doesResourceExist)
             .forEach(path -> {
                 try (val is = ResourceUtils.getRawResourceFrom(path).getInputStream()) {

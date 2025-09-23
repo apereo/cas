@@ -3,8 +3,6 @@ package org.apereo.cas.support.events;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
-import org.apereo.cas.config.CasCoreEventsAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
@@ -13,23 +11,25 @@ import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.ResourceAccessMode;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -54,13 +54,13 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasAuthenticationEventListenerTests.EventTestConfiguration.class,
-    CasCoreEventsAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    RefreshAutoConfiguration.class
+    AbstractCasEventRepositoryTests.SharedTestConfiguration.class
 })
 @Tag("Events")
+@ExtendWith(CasTestExtension.class)
 @ResourceLock(value = "casEventRepository", mode = ResourceAccessMode.READ_WRITE)
 class CasAuthenticationEventListenerTests {
     private static final String REMOTE_ADDR_IP = "123.456.789.010";
@@ -79,18 +79,17 @@ class CasAuthenticationEventListenerTests {
     private MockHttpServletRequest request;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         request = new MockHttpServletRequest();
         request.setRemoteAddr(REMOTE_ADDR_IP);
         request.setLocalAddr(LOCAL_ADDR_IP);
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        request.addHeader(HttpHeaders.USER_AGENT, "test");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 
     @Test
-    void verifyCasAuthenticationWithNoClientInfo() throws Throwable {
+    void verifyCasAuthenticationWithNoClientInfo() {
         assertRepositoryIsEmpty();
-        ClientInfoHolder.setClientInfo(null);
         val event = new CasAuthenticationTransactionFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
@@ -99,7 +98,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyCasAuthenticationWithGeo() throws Throwable {
+    void verifyCasAuthenticationWithGeo() {
         request.addHeader("geolocation", "34,45,1,12345");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
@@ -114,7 +113,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyCasAuthenticationTransactionFailureEvent() throws Throwable {
+    void verifyCasAuthenticationTransactionFailureEvent() {
         val event = new CasAuthenticationTransactionFailureEvent(this,
             CollectionUtils.wrap("error", new FailedLoginException()),
             CollectionUtils.wrap(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()), null);
@@ -126,7 +125,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyTicketGrantingTicketCreated() throws Throwable {
+    void verifyTicketGrantingTicketCreated() {
         assertRepositoryIsEmpty();
         val tgt = new MockTicketGrantingTicket("casuser");
         val event = new CasTicketGrantingTicketCreatedEvent(this, tgt, ClientInfoHolder.getClientInfo());
@@ -135,7 +134,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyCasAuthenticationPolicyFailureEvent() throws Throwable {
+    void verifyCasAuthenticationPolicyFailureEvent() {
         assertRepositoryIsEmpty();
 
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
@@ -150,7 +149,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyCasRiskyAuthenticationDetectedEvent() throws Throwable {
+    void verifyCasRiskyAuthenticationDetectedEvent() {
         assertRepositoryIsEmpty();
         val event = new CasRiskyAuthenticationDetectedEvent(this,
             CoreAuthenticationTestUtils.getAuthentication(),
@@ -161,7 +160,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyCasTicketGrantingTicketDestroyed() throws Throwable {
+    void verifyCasTicketGrantingTicketDestroyed() {
         assertRepositoryIsEmpty();
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
             new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
@@ -171,7 +170,7 @@ class CasAuthenticationEventListenerTests {
 
 
     @Test
-    void verifyEventRepositoryHasOneEventOnly() throws Throwable {
+    void verifyEventRepositoryHasOneEventOnly() {
         assertRepositoryIsEmpty();
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
             new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
@@ -182,7 +181,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @Test
-    void verifyCasTicketGrantingTicketDestroyedHasClientInfo() throws Throwable {
+    void verifyCasTicketGrantingTicketDestroyedHasClientInfo() {
         assertRepositoryIsEmpty();
         val event = new CasTicketGrantingTicketDestroyedEvent(this,
             new MockTicketGrantingTicket("casuser"), ClientInfoHolder.getClientInfo());
@@ -198,34 +197,36 @@ class CasAuthenticationEventListenerTests {
     void verifyCasTicketGrantingTicketDestroyedHasClientInfoWithMultipleThreads() throws Throwable {
         assertRepositoryIsEmpty();
         var currentCount = casEventRepository.load().count();
-        val threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-        val futureList = new ArrayList<Future<Integer>>();
-        var expectedNumOfIp1 = 0;
-        for (var x = 0; x < NUM_OF_REQUESTS; x++) {
-            if (shouldUseIp1(x)) {
-                expectedNumOfIp1++;
-            }
-            futureList.add(threadPool.submit(new HttpServletRequestSimulation(x, shouldUseIp1(x), applicationContext)));
-        }
-        var maxThread = -1;
-        for (val future : futureList) {
-            var currentThread = future.get();
-            if (currentThread > maxThread) {
-                maxThread = currentThread;
-            }
-        }
+        try (val threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE)) {
 
-        waitForSpringEventToProcess(currentCount + maxThread + 1);
-        assertNotNull(casEventRepository.load());
-        val list = casEventRepository.load().toList();
-        assertFalse(list.isEmpty());
-        val eventSize = list.size();
-        val numOfIp1s = (int) list.stream().filter(e -> HttpServletRequestSimulation.IP1.equals(e.getClientIpAddress())).count();
-        assertEquals(maxThread + 1, eventSize);
-        assertEquals(expectedNumOfIp1, numOfIp1s);
+            val futureList = new ArrayList<Future<Integer>>();
+            var expectedNumOfIp1 = 0;
+            for (var x = 0; x < NUM_OF_REQUESTS; x++) {
+                if (shouldUseIp1(x)) {
+                    expectedNumOfIp1++;
+                }
+                futureList.add(threadPool.submit(new HttpServletRequestSimulation(x, shouldUseIp1(x), applicationContext)));
+            }
+            var maxThread = -1;
+            for (val future : futureList) {
+                var currentThread = future.get();
+                if (currentThread > maxThread) {
+                    maxThread = currentThread;
+                }
+            }
+
+            waitForSpringEventToProcess(currentCount + maxThread + 1);
+            assertNotNull(casEventRepository.load());
+            val list = casEventRepository.load().toList();
+            assertFalse(list.isEmpty());
+            val eventSize = list.size();
+            val numOfIp1s = (int) list.stream().filter(e -> HttpServletRequestSimulation.IP1.equals(e.getClientIpAddress())).count();
+            assertEquals(maxThread + 1, eventSize);
+            assertEquals(expectedNumOfIp1, numOfIp1s);
+        }
     }
 
-    private boolean shouldUseIp1(final int x) {
+    private static boolean shouldUseIp1(final int x) {
         return x % NUM_TO_USE_IP1 == 0;
     }
 
@@ -266,7 +267,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @TestConfiguration(value = "EventTestConfiguration", proxyBeanMethods = false)
-    @EnableAsync
+    @EnableAsync(proxyTargetClass = false)
     static class EventTestConfiguration implements AsyncConfigurer {
         @Bean
         public CasEventRepository casEventRepository() {

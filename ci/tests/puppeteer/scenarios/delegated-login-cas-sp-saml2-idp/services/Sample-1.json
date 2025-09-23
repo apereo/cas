@@ -1,0 +1,12 @@
+{
+  "@class":"org.apereo.cas.services.CasRegisteredService",
+  "id":605,
+  "serviceId": "^https://localhost:9859/anything/cas",
+  "name":"Sample",
+  "evaluationOrder":605,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "authorizedToReleaseAuthenticationAttributes": false,
+    "allowedAttributes" : [ "java.util.ArrayList", [ "email", "name", "department" ] ]
+  }
+}

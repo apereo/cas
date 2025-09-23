@@ -20,7 +20,6 @@ import org.springframework.test.context.TestPropertySource;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -102,7 +101,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verifyRetryableOpWithFailure() throws Throwable {
+    void verifyRetryableOpWithFailure() {
         val criteriaSet = getCriteriaFor("urn:app.e2ma.net");
 
         val service = new SamlRegisteredService();
@@ -137,7 +136,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verfifyAggregatedCacheLoading() throws Exception {
+    void verifyAggregatedCacheLoading() throws Exception {
         val resolver = getResolver("PT5M");
 
         val service1 = getSamlRegisteredService(1, ".*", "classpath:aggregate-md.xml");
@@ -146,7 +145,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         assertNotNull(resolver.resolve(service1, getCriteriaFor("https://gitlab.com")));
         assertEquals(1, resolver.getCacheStatistics().loadSuccessCount());
 
-        for (int i = 0; i < 5; i++) {
+        for (var i = 0; i < 5; i++) {
             val resource = new ClassPathResource("placeholder-sp.xml");
             val data = FileUtils.readFileToString(resource.getFile(), StandardCharsets.UTF_8)
                 .replace("%ENTITY_ID%", "https://gitlab.com");
@@ -161,11 +160,11 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verifyMissingMetadataInMDQ() throws Throwable {
+    void verifyMissingMetadataInMDQ() {
         val criteriaSet1 = getCriteriaFor("https://shib-sp-test-preprod.dartmouth.edu/shibboleth");
         val service = getSamlRegisteredService(1, ".*", "https://mdq.incommon.org/entities/{0}");
         val resolver = getResolver("PT5M");
-        assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> resolver.resolve(service, criteriaSet1));
+        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet1));
     }
 
     @Test

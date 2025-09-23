@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 
@@ -23,6 +24,10 @@ import org.springframework.context.annotation.Import;
     CasWebflowAccountProfileConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasWebflowMonitoringConfiguration.class
+})
+@ImportAutoConfiguration({
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class
 })
 public class CasCoreWebflowAutoConfiguration {
 }

@@ -30,13 +30,13 @@ public interface AuthenticationAttributeReleasePolicy {
             public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
                                                                                    final Assertion assertion, final Map<String, Object> model,
                                                                                    final RegisteredService service) {
-                return new HashMap<>(0);
+                return new HashMap<>();
             }
 
             @Override
             public Map<String, List<Object>> getAuthenticationAttributesForRelease(final Authentication authentication,
                                                                                    final RegisteredService service) {
-                return new HashMap<>(0);
+                return new HashMap<>();
             }
         };
     }

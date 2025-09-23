@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +22,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-redis-core")
-@JsonFilter("RedisPoolProperties")
+
 public class RedisPoolProperties implements CasFeatureModule, Serializable {
 
     @Serial
@@ -57,6 +56,17 @@ public class RedisPoolProperties implements CasFeatureModule, Serializable {
      * be evicted from the pool due to idle time alone.
      */
     private long minEvictableIdleTimeMillis;
+
+    /**
+     * Sets the amount of time (in milliseconds) between runs of the idle object
+     * evictor thread. When non-positive, no idle object evictor thread will be run.
+     * If positive, the idle object evictor thread will run at least once every
+     * timeBetweenEvictionRunsMillis milliseconds, and will attempt to evict
+     * objects from the pool that are idle longer than
+     * getMinEvictableIdleTimeMillis() (if positive) or
+     * getSoftMinEvictableIdleTimeMillis() (if positive).
+     */
+    private long timeBetweenEvictionRunsMillis = -1;
 
     /**
      * Returns whether the pool has LIFO (last in, first out) behaviour with respect

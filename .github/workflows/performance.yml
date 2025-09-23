@@ -5,24 +5,23 @@ env:
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   TERM: xterm-256color
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GRADLE_BUILDCACHE_USER: ci
-  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
-  GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
+  DEVELOCITY_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
-  PYTHON_VERSION: 3.11
+  PYTHON_VERSION: '3.13.4'
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
 
 ##########################################################################
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "0 22 * * *"
 
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
-  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
+  cancel-in-progress: true
 
 ##########################################################################
 
@@ -30,14 +29,15 @@ jobs:
   initialize:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v5
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
@@ -56,17 +56,18 @@ jobs:
           - undertow
     name: locust - ${{ matrix.category }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v5
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Locust Performance Tests
@@ -91,16 +92,17 @@ jobs:
           - saml
     name: jmeter - ${{ matrix.category }} - ${{ matrix.protocols }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v5
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: JMeter Performance Tests ${{ matrix.protocols }} / ${{ matrix.category }}
         uses: nick-fields/retry@v3
         with:
@@ -111,3 +113,44 @@ jobs:
           command: |
             export RUNNER_OS=${{ runner.os }}
             ./ci/tests/perf/perftests-jmeter.sh ${{ matrix.category }} ${{ matrix.protocols }}
+
+  ##########################################################################
+
+  tests-performance-artillery:
+    runs-on: ubuntu-latest
+    needs: [initialize]
+    continue-on-error: false
+    strategy:
+      fail-fast: false
+      matrix:
+        category:
+          - tomcat
+          - jetty
+          - undertow
+        protocols:
+          - cas
+          - saml
+          - oidc
+    name: artillery - ${{ matrix.category }} - ${{ matrix.protocols }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Artillery Performance Tests ${{ matrix.protocols }} / ${{ matrix.category }}
+        uses: nick-fields/retry@v3
+        with:
+          max_attempts: 2
+          timeout_minutes: 15
+          retry_on: error
+          shell: bash
+          command: |
+            export RUNNER_OS=${{ runner.os }}
+            ./ci/tests/perf/perftests-artillery.sh ${{ matrix.category }} ${{ matrix.protocols }}

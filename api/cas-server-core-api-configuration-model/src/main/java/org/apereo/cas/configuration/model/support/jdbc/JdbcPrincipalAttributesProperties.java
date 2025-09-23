@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.core.authentication.AttributeRepositor
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,7 +23,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("JdbcPrincipalAttributesProperties")
 public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
 
     @Serial
@@ -90,12 +88,12 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * Then a column mapping must be specified to teach CAS to use {@code attr_name}
      * and {@code attr_value} for attribute names and values.
      */
-    private Map<String, String> columnMappings = new HashMap<>(0);
+    private Map<String, String> columnMappings = new HashMap<>();
 
     /**
      * Username attribute(s) to use when running the SQL query.
      */
-    private List<String> username = new ArrayList<>(0);
+    private List<String> username = new ArrayList<>();
 
     /**
      * The order of this attribute repository in the chain of repositories.
@@ -120,7 +118,7 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * attribute map is the original attribute,
      * and the value should be the virtually-renamed attribute.
      */
-    private Map<String, String> attributes = new HashMap<>(0);
+    private Map<String, String> attributes = new HashMap<>();
 
     /**
      * Collection of attributes, used to build the SQL query, that should go through
@@ -133,14 +131,14 @@ public class JdbcPrincipalAttributesProperties extends AbstractJpaProperties {
      * case canonicalization override such as {@code username, attribute2}
      * in which case {@link #caseCanonicalization} will dictate the final outcome.
      */
-    private List<String> caseInsensitiveQueryAttributes = new ArrayList<>(0);
+    private List<String> caseInsensitiveQueryAttributes = new ArrayList<>();
 
     /**
      * Define a {@code Map} of query attribute names to data-layer attribute names to use when building the query.
      * The key is always the name of the query attribute that is defined by CAS and passed internally,
      * and the value is the database column that should map.
      */
-    private Map<String, String> queryAttributes = new HashMap<>(0);
+    private Map<String, String> queryAttributes = new HashMap<>();
 
     /**
      * Whether attribute resolution based on this source is enabled.

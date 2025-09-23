@@ -54,6 +54,9 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     @Setter
     private String id;
 
+    @Setter
+    private String tenantId;
+
     private final Authentication authentication;
 
     private final Map<String, Service> services = new HashMap<>();
@@ -152,7 +155,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     @Override
     public List<Authentication> getChainedAuthentications() {
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override
@@ -196,8 +199,9 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     @Override
-    public void update() {
+    public Ticket update() {
         usageCount++;
+        return this;
     }
 
     @Override

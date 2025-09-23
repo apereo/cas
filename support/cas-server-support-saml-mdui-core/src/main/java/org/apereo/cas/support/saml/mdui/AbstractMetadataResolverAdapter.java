@@ -55,7 +55,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     private ChainingMetadataResolver metadataResolver;
 
     protected AbstractMetadataResolverAdapter() {
-        this(new HashMap<>(0));
+        this(new HashMap<>());
     }
 
     protected AbstractMetadataResolverAdapter(final Map<Resource, MetadataFilterChain> metadataResources) {
@@ -126,7 +126,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, "Could not retrieve input stream from resource. Moving on...", e);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     /**

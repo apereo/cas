@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
@@ -8,6 +10,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -16,6 +19,7 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -45,26 +49,25 @@ import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.Serial;
@@ -72,9 +75,9 @@ import java.time.Clock;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -94,6 +97,8 @@ import static org.junit.jupiter.api.Assumptions.*;
         "cas.ticket.tgt.core.only-track-most-recent-session=false",
         "cas.ticket.registry.cleaner.schedule.enabled=false"
     })
+@ExtendWith(CasTestExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public abstract class BaseTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 1;
@@ -119,9 +124,15 @@ public abstract class BaseTicketRegistryTests {
     @Qualifier(TicketSerializationManager.BEAN_NAME)
     protected TicketSerializationManager ticketSerializationManager;
 
+    @Autowired
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+    protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+    
     protected boolean useEncryption;
-
-
+    
     private TicketRegistry ticketRegistry;
 
     protected static ExpirationPolicyBuilder neverExpiresExpirationPolicyBuilder() {
@@ -137,7 +148,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @BeforeEach
-    public void initialize(final TestInfo info, final RepetitionInfo repetitionInfo) {
+    void initialize(final TestInfo info, final RepetitionInfo repetitionInfo) {
         if (info.getTags().contains("TicketRegistryTestWithEncryption")) {
             useEncryption = true;
         } else if (info.getTags().contains("TicketRegistryTestWithoutEncryption")) {
@@ -147,7 +158,9 @@ public abstract class BaseTicketRegistryTests {
         }
         ticketRegistry = this.getNewTicketRegistry();
         if (ticketRegistry != null) {
-            ticketRegistry.deleteAll();
+            if (!info.getTags().contains("SkipClearingTicketRegistry")) {
+                ticketRegistry.deleteAll();
+            }
             setUpEncryption();
         }
     }
@@ -159,7 +172,7 @@ public abstract class BaseTicketRegistryTests {
         val authn = CoreAuthenticationTestUtils.getAuthentication(
             Map.of("cn", List.of("cn1", "cn2"), "givenName", List.of("g1", "g2"),
                 "authn-context", List.of("mfa-example")));
-        val tgt1 = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(), 
+        val tgt1 = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
             authn, NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(tgt1);
 
@@ -175,7 +188,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyAddTicketWithStream() throws Throwable {
+    void verifyAddTicketWithStream() {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
             originalAuthn, NeverExpiresExpirationPolicy.INSTANCE);
@@ -187,7 +200,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyUnableToAddExpiredTicket() throws Throwable {
+    void verifyUnableToAddExpiredTicket() {
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
         val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
         val s1 = Stream.of(new TicketGrantingTicketImpl(ticketGrantingTicketId,
@@ -237,13 +250,13 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyGetNullTicket() throws Throwable {
+    void verifyGetNullTicket() {
         assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket(null, TicketGrantingTicket.class),
             () -> TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption + ']');
     }
 
     @RepeatedTest(2)
-    void verifyGetNonExistingTicket() throws Throwable {
+    void verifyGetNonExistingTicket() {
         assertThrows(InvalidTicketException.class, () -> ticketRegistry.getTicket("unknown-ticket", TicketGrantingTicket.class),
             () -> TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption + ']');
     }
@@ -273,9 +286,10 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    @Transactional
+    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
     void verifyGetSsoSessionsPerUser() throws Throwable {
-        assumeTrue(canTicketRegistryIterate());
+        val assumption = "Ticket registry %s does not support iteration".formatted(getClass().getName());
+        assumeTrue(canTicketRegistryIterate(), assumption);
         val id = UUID.randomUUID().toString();
         for (var i = 0; i < 5; i++) {
             val tgtId = TICKET_GRANTING_TICKET_ID_GENERATOR
@@ -305,12 +319,12 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyGetNullTicketWithoutClass() throws Throwable {
+    void verifyGetNullTicketWithoutClass() {
         assertNull(ticketRegistry.getTicket(null), () -> TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption + ']');
     }
 
     @RepeatedTest(2)
-    void verifyGetNonExistingTicketWithoutClass() throws Throwable {
+    void verifyGetNonExistingTicketWithoutClass() {
         assertNull(ticketRegistry.getTicket("FALALALALALAL"), () -> TICKET_SHOULD_BE_NULL_USE_ENCRYPTION + useEncryption + ']');
     }
 
@@ -345,7 +359,8 @@ public abstract class BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     void verifyAddAndUpdateTicket() throws Throwable {
-        val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
+        val generatedTickets = TestTicketIdentifiers.generate();
+        val ticketGrantingTicketId = generatedTickets.ticketGrantingTicketId();
         val tgt = new TicketGrantingTicketImpl(
             ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(),
@@ -362,7 +377,9 @@ public abstract class BaseTicketRegistryTests {
         assertTrue(services.isEmpty(), () -> "Ticket services should be empty. useEncryption[" + useEncryption + ']');
 
         val service = RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST");
-        val serviceTicket = tgt.grantServiceTicket("ST-1", service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+        val serviceTicketId = generatedTickets.serviceTicketId();
+        val serviceTicket = tgt.grantServiceTicket(serviceTicketId, service,
+            NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
         assertNotNull(serviceTicket);
 
         val updatedTgt = ticketRegistry.updateTicket(tgt);
@@ -371,7 +388,7 @@ public abstract class BaseTicketRegistryTests {
             : ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
         assertInstanceOf(TicketGrantingTicket.class, tgtResult);
         services = tgtResult.getServices();
-        assertEquals(Collections.singleton("ST-1"), services.keySet());
+        assertEquals(Set.of(serviceTicketId), services.keySet());
     }
 
     @RepeatedTest(2)
@@ -457,7 +474,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    void verifyGetTicketsIsZero() throws Throwable {
+    void verifyGetTicketsIsZero() {
         ticketRegistry.deleteAll();
         assertEquals(0, ticketRegistry.getTickets().size(), "The size of the empty registry is not zero.");
     }
@@ -483,7 +500,6 @@ public abstract class BaseTicketRegistryTests {
         val ticketRegistryTickets = ticketRegistry.getTickets();
         assertEquals(tickets.size(), ticketRegistryTickets.size(), "The size of the registry is not the same as the collection.");
 
-
         tickets.stream().filter(ticket -> !ticketRegistryTickets.contains(ticket))
             .forEach(ticket -> {
                 throw new AssertionError("Ticket " + ticket + " was not found in retrieval of collection of all tickets.");
@@ -494,10 +510,11 @@ public abstract class BaseTicketRegistryTests {
     @Tag("DisableTicketRegistryTestWithEncryption")
     void verifyTicketCountsEqualToTicketsAdded() throws Throwable {
         assumeTrue(canTicketRegistryIterate());
-        val tgts = new ArrayList<Ticket>();
-        val sts = new ArrayList<Ticket>();
-
+        val ticketGrantingTickets = new ArrayList<Ticket>();
+        val serviceTickets = new ArrayList<Ticket>();
         FunctionUtils.doAndRetry(callback -> {
+            ticketGrantingTickets.clear();
+            serviceTickets.clear();
             for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
                 val auth = CoreAuthenticationTestUtils.getAuthentication();
                 val service = RegisteredServiceTestUtils.getService();
@@ -505,8 +522,8 @@ public abstract class BaseTicketRegistryTests {
                     auth, NeverExpiresExpirationPolicy.INSTANCE);
                 val st = ticketGrantingTicket.grantServiceTicket("ST-" + i,
                     service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
-                tgts.add(ticketGrantingTicket);
-                sts.add(st);
+                ticketGrantingTickets.add(ticketGrantingTicket);
+                serviceTickets.add(st);
                 val addedTicket = ticketRegistry.addTicket(ticketGrantingTicket);
                 await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedTicket.getId())));
                 val addedServiceTicket = ticketRegistry.addTicket(st);
@@ -514,16 +531,15 @@ public abstract class BaseTicketRegistryTests {
             }
             await().untilAsserted(() -> {
                 val sessionCount = ticketRegistry.sessionCount();
-                assertEquals(tgts.size(), ticketRegistry.sessionCount(),
-                    () -> "The sessionCount " + sessionCount + " is not the same as the collection " + tgts.size());
+                assertEquals(ticketGrantingTickets.size(), sessionCount,
+                    () -> "The sessionCount " + sessionCount + " is not the same as the collection " + ticketGrantingTickets.size());
             });
 
             await().untilAsserted(() -> {
-                val ticketCount = this.ticketRegistry.serviceTicketCount();
-                assertEquals(sts.size(), ticketCount,
-                    () -> "The serviceTicketCount " + ticketCount + " is not the same as the collection " + sts.size());
+                val ticketCount = ticketRegistry.serviceTicketCount();
+                assertEquals(serviceTickets.size(), ticketCount,
+                    () -> "The serviceTicketCount " + ticketCount + " is not the same as the collection " + serviceTickets.size());
             });
-
             return null;
         });
     }
@@ -702,18 +718,10 @@ public abstract class BaseTicketRegistryTests {
             registry.setCipherExecutor(CipherExecutor.noOp());
         }
     }
-
     @ImportAutoConfiguration({
-        ObservationAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        RefreshAutoConfiguration.class,
-        IntegrationAutoConfiguration.class,
-        MailSenderAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
         CasCoreTicketsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -726,6 +734,8 @@ public abstract class BaseTicketRegistryTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @SpringBootTestAutoConfigurations
     public static class SharedTestConfiguration {
     }
 

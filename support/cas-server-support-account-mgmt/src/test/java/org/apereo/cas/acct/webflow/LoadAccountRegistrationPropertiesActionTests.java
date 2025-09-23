@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("WebflowAccountActions")
-@Import(CasAccountManagementWebflowAutoConfiguration.class)
+@ImportAutoConfiguration(CasAccountManagementWebflowAutoConfiguration.class)
 class LoadAccountRegistrationPropertiesActionTests extends BaseWebflowConfigurerTests {
 
     @Autowired
@@ -29,7 +29,7 @@ class LoadAccountRegistrationPropertiesActionTests extends BaseWebflowConfigurer
 
     @Test
     void verifyOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         assertNull(loadAccountRegistrationPropertiesAction.execute(context));
         assertTrue(context.getFlowScope().contains("registrationProperties"));
     }

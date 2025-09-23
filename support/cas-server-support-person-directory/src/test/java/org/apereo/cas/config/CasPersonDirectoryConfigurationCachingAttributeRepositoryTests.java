@@ -2,9 +2,11 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.core.expiration-time=30",
     "cas.authn.attribute-repository.core.expiration-time-unit=seconds"
 })
-@Tag("Attributes")
+@Tag("AttributeRepository")
+@ExtendWith(CasTestExtension.class)
 class CasPersonDirectoryConfigurationCachingAttributeRepositoryTests {
     @Autowired
     @Qualifier("cachingAttributeRepository")
@@ -34,7 +37,7 @@ class CasPersonDirectoryConfigurationCachingAttributeRepositoryTests {
      * for each user while also maintaining a unique cache key for each.
      */
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val p1 = cachingAttributeRepository.getPerson("tensada");
         assertEquals("tensada", p1.getName());
         assertEquals("Tens", p1.getAttributeValue("oldName"));

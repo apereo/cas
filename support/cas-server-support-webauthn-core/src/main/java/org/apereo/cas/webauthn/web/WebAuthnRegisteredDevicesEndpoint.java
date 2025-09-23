@@ -16,6 +16,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
@@ -31,8 +32,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -42,7 +43,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Endpoint(id = "webAuthnDevices", enableByDefault = false)
+@Endpoint(id = "webAuthnDevices", defaultAccess = Access.NONE)
 @Slf4j
 public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<WebAuthnCredentialRepository> registrationStorage;
@@ -60,11 +61,10 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
      * @param username the username
      * @return the collection
      */
-    @Operation(summary = "Fetch registered devices for username", parameters = @Parameter(name = "username", required = true))
+    @Operation(summary = "Fetch registered devices for username", parameters = @Parameter(name = "username", required = true, description = "The username to look up"))
     @GetMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<? extends CredentialRegistration> fetch(
-        @PathVariable
-        final String username) {
+        @PathVariable final String username) {
         return registrationStorage.getObject().getRegistrationsByUsername(username);
     }
 
@@ -78,12 +78,11 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
      */
     @PostMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Add device registration for username",
-        parameters = {@Parameter(name = "username", required = true), @Parameter(name = "record", required = true)})
+        parameters = {@Parameter(name = "username", required = true, description = "The username to look up"),
+            @Parameter(name = "record", required = true, description = "The device registration record")})
     public boolean write(
-        @PathVariable
-        final String username,
-        @RequestParam
-        final String record) throws Exception {
+        @PathVariable final String username,
+        @RequestParam final String record) throws Exception {
         val json = EncodingUtils.decodeBase64ToString(record);
         val registration = WebAuthnUtils.getObjectMapper().readValue(json, CredentialRegistration.class);
         return registrationStorage.getObject().addRegistrationByUsername(username, registration);
@@ -94,11 +93,9 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
      *
      * @param username the username
      */
-    @Operation(summary = "Remove device registrations for username", parameters = @Parameter(name = "username", required = true))
+    @Operation(summary = "Remove device registrations for username", parameters = @Parameter(name = "username", required = true, description = "The username to delete"))
     @DeleteMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(
-        @PathVariable
-        final String username) {
+    public void delete(@PathVariable final String username) {
         registrationStorage.getObject().removeAllRegistrations(username);
     }
 
@@ -110,13 +107,10 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
      * @throws Exception the exception
      */
     @Operation(summary = "Remove device registration for username and credential id",
-        parameters = {@Parameter(name = "username", required = true), @Parameter(name = "credentialId", required = true)})
+        parameters = {@Parameter(name = "username", required = true, description = "The username to lookup"),
+            @Parameter(name = "credentialId", required = true, description = "The credential id")})
     @DeleteMapping(path = "{username}/{credentialId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(
-        @PathVariable
-        final String username,
-        @PathVariable
-        final String credentialId) throws Exception {
+    public void delete(@PathVariable final String username, @PathVariable final String credentialId) throws Exception {
         val ba = ByteArray.fromBase64Url(credentialId);
         registrationStorage.getObject().getRegistrationByUsernameAndCredentialId(username, ba)
             .ifPresent(registration -> registrationStorage.getObject().removeRegistrationByUsername(username, registration));
@@ -136,7 +130,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
                 val acct = (CredentialRegistration) entry;
                 val ba = acct.getCredential().getCredentialId().getBase64Url();
                 val fileName = String.format("%s-%s", acct.getUsername(), ba);
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 WebAuthnUtils.getObjectMapper().writeValue(sourceFile, acct);
                 return sourceFile;
             }), "webauthnbaccts");
@@ -156,13 +150,15 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
     @Operation(summary = "Import a device registration as a JSON document")
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
-        val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
-        LOGGER.trace("Submitted account: [{}]", requestBody);
-        val account = WebAuthnUtils.getObjectMapper()
-            .readValue(requestBody, new TypeReference<CredentialRegistration>() {
-            });
-        LOGGER.trace("Storing account: [{}]", account);
-        registrationStorage.getObject().addRegistrationByUsername(account.getUsername(), account);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        try (val is = request.getInputStream()) {
+            val requestBody = IOUtils.toString(is, StandardCharsets.UTF_8);
+            LOGGER.trace("Submitted account: [{}]", requestBody);
+            val account = WebAuthnUtils.getObjectMapper()
+                .readValue(requestBody, new TypeReference<CredentialRegistration>() {
+                });
+            LOGGER.trace("Storing account: [{}]", account);
+            registrationStorage.getObject().addRegistrationByUsername(account.getUsername(), account);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
     }
 }

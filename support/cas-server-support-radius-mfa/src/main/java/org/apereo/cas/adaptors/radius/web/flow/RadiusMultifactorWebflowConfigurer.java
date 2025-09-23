@@ -6,14 +6,11 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
-
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -30,12 +27,12 @@ public class RadiusMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
     public static final String MFA_RADIUS_EVENT_ID = "mfa-radius";
 
     public RadiusMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                              final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                              final FlowDefinitionRegistry flowDefinitionRegistry,
                                               final FlowDefinitionRegistry radiusFlowRegistry,
                                               final ConfigurableApplicationContext applicationContext,
                                               final CasConfigurationProperties casProperties,
                                               final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext,
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext,
             casProperties, Optional.of(radiusFlowRegistry), mfaFlowCustomizers);
     }
 
@@ -48,7 +45,7 @@ public class RadiusMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
             createEndState(flow, CasWebflowConstants.STATE_ID_SUCCESS);
             createEndState(flow, CasWebflowConstants.STATE_ID_CANCEL);
-            
+
             val initLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM,
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
             createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
@@ -68,7 +65,7 @@ public class RadiusMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
             val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
             viewLoginFormState.getEntryActionList().addAll(setPrincipalAction);
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
-                CasWebflowConstants.STATE_ID_REAL_SUBMIT, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
+                CasWebflowConstants.STATE_ID_REAL_SUBMIT, createTransitionAttributes(true, true));
         });
 
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_RADIUS_EVENT_ID,

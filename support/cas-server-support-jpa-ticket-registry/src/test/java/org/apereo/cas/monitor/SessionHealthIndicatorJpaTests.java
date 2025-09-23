@@ -3,6 +3,7 @@ package org.apereo.cas.monitor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -17,6 +18,7 @@ import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.Status;
@@ -40,11 +42,12 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.ticket.registry.jpa.password=mypass",
     "cas.ticket.registry.jpa.driver-class=org.mariadb.jdbc.Driver",
     "cas.ticket.registry.jpa.url=jdbc:mariadb://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "cas.ticket.registry.jpa.dialect=org.hibernate.dialect.MariaDB106Dialect"
+    "cas.ticket.registry.jpa.dialect=org.hibernate.dialect.MariaDBDialect"
 })
 @EnableConfigurationProperties({IntegrationProperties.class, CasConfigurationProperties.class})
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MariaDb")
+@ExtendWith(CasTestExtension.class)
 class SessionHealthIndicatorJpaTests {
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);
 

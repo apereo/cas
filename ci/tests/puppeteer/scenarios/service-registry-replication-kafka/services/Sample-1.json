@@ -1,6 +1,6 @@
 {
   "@class": "org.apereo.cas.services.CasRegisteredService",
-  "serviceId": "https://.+github.io.*",
+  "serviceId": "^https://.+github.io.*",
   "name": "Sample",
   "id": 1,
   "description": "eu0ajrsp"

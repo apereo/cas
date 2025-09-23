@@ -36,7 +36,7 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
         return toResources(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
     }
 
-    private String[] toResources(final Object[] args) {
+    protected String[] toResources(final Object[] args) {
         val object = args[0];
         if (object instanceof final AuthenticationTransaction transaction) {
             return new String[]{tranactionToResourceString(transaction)};
@@ -48,7 +48,9 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
         val payload = CollectionUtils.wrap("credential", transaction.getCredentials());
         if (transaction instanceof final RegisteredServiceAwareAuthenticationTransaction rsat) {
             FunctionUtils.doIfNotNull(rsat.getRegisteredService(), registeredService -> {
-                payload.put("registeredServiceId", registeredService.getServiceId());
+                payload.put("registeredServiceUrl", registeredService.getServiceId());
+                payload.put("registeredServiceId", registeredService.getId());
+                payload.put("registeredServiceFriendlyName", registeredService.getFriendlyName());
                 payload.put("registeredServiceName", registeredService.getName());
                 payload.put("service", getServiceId(transaction.getService()));
             });

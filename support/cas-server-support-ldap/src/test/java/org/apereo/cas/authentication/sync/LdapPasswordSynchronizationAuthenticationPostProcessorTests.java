@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.LdapPasswordSynchronizationAuthenticationPostProcessor;
+import org.apereo.cas.util.LdapConnectionFactory;
+import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -27,7 +29,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     @Nested
     class DefaultTests extends BaseLdapPasswordSynchronizationTests {
         @Test
-        void verifySyncFindsNoUser() throws Throwable {
+        void verifySyncFindsNoUser() {
             assertThrows(AuthenticationException.class, () -> {
                 val sync = ldapPasswordSynchronizers.first();
                 val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("unknown123456", "password");
@@ -38,9 +40,11 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
         }
 
         @Test
-        void verifyBadCredential() throws Throwable {
+        void verifyBadCredential() {
             assertThrows(AuthenticationException.class, () -> {
-                val sync = new LdapPasswordSynchronizationAuthenticationPostProcessor(casProperties.getAuthn().getPasswordSync().getLdap().getFirst());
+                val properties = casProperties.getAuthn().getPasswordSync().getLdap().getFirst();
+                val sync = new LdapPasswordSynchronizationAuthenticationPostProcessor(
+                    new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(properties)), properties);
                 val credentials = mock(Credential.class);
                 assertFalse(sync.supports(credentials));
                 sync.process(CoreAuthenticationTestUtils.getAuthenticationBuilder(),
@@ -57,7 +61,7 @@ class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
     })
     class UnicodeAttributeTests extends BaseLdapPasswordSynchronizationTests {
         @Test
-        void verifySyncFailsWithUnicodePswd() throws Throwable {
+        void verifySyncFailsWithUnicodePswd() {
             assertDoesNotThrow(() -> {
                 val sync = ldapPasswordSynchronizers.first();
                 val credentials = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casTest", "password");

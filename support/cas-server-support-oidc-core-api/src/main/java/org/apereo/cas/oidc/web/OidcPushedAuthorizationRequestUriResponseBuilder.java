@@ -73,7 +73,7 @@ public class OidcPushedAuthorizationRequestUriResponseBuilder extends BaseOAuth2
             return Optional.empty();
         }
 
-        val authzRequestBuilder = super.toAuthorizationRequest(context, authentication, service, registeredService).get();
+        val authzRequestBuilder = super.toAuthorizationRequest(context, authentication, service, registeredService).orElseThrow();
         return requestUri
             .map(Unchecked.function(uri -> {
                 val factory = (OidcPushedAuthorizationRequestFactory) configurationContext.getTicketFactory().get(OidcPushedAuthorizationRequest.class);

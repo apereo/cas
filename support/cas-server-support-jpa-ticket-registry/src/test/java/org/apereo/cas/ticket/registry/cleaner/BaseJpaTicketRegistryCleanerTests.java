@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
@@ -38,6 +39,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,6 +48,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -64,6 +67,7 @@ import static org.mockito.Mockito.*;
         "cas.ticket.registry.jpa.ddl-auto=create-drop"
     })
 @EnableConfigurationProperties({IntegrationProperties.class, CasConfigurationProperties.class})
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseJpaTicketRegistryCleanerTests {
 
     @Autowired
@@ -87,11 +91,11 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     private TicketRegistry ticketRegistry;
 
     @Autowired
-    @Qualifier("ticketRegistryCleaner")
+    @Qualifier(TicketRegistryCleaner.BEAN_NAME)
     private TicketRegistryCleaner ticketRegistryCleaner;
 
     @BeforeEach
-    public void cleanup() {
+    void cleanup() {
         ticketRegistry.deleteAll();
     }
 
@@ -99,7 +103,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     void verifyOperation() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
-            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
+            RegisteredServiceTestUtils.getService());
         ticketRegistry.addTicket(tgt);
 
         val stFactory = (ServiceTicketFactory) ticketFactory.get(ServiceTicket.class);
@@ -127,7 +131,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     void verifyTransientTicketCleaning() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
-            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
+            RegisteredServiceTestUtils.getService());
         ticketRegistry.addTicket(tgt);
 
         val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
@@ -151,13 +155,13 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     void verifyOauthOperation() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
-            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
+            RegisteredServiceTestUtils.getService());
         ticketRegistry.addTicket(tgt);
 
         val code = createOAuthCode();
         val at = accessTokenFactory.create(RegisteredServiceTestUtils.getService(),
             RegisteredServiceTestUtils.getAuthentication(), tgt,
-            Collections.singleton("scope1"), code.getId(), "client1", Collections.emptyMap(),
+            Set.of("scope1"), code.getId(), "client1", Collections.emptyMap(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
 
         ticketRegistry.addTicket(at);
@@ -181,7 +185,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     void verifyDeviceCodeAndUserCleaning() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
-            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
+            RegisteredServiceTestUtils.getService());
         ticketRegistry.addTicket(tgt);
 
         val deviceCodeFactory = (OAuth20DeviceTokenFactory) ticketFactory.get(OAuth20DeviceToken.class);
@@ -212,7 +216,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
         val registryTask = new TimerTask() {
             @Override
             public void run() {
-                for (int i = 0; i < 5; i++) {
+                for (var i = 0; i < 5; i++) {
                     FunctionUtils.doUnchecked(__ -> {
                         val tgt = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + RandomUtils.randomAlphabetic(16),
                             CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()),
@@ -238,7 +242,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
                 ticketRegistryCleaner.clean();
             }
         };
-        val cleanerTimer = new Timer("TicketRegistryCleaner");
+        val cleanerTimer = new Timer("TicketRegistryCleanerTimer");
         cleanerTimer.scheduleAtFixedRate(cleanerTask, 10, 5);
 
         Thread.sleep(1000 * 15);

@@ -4,10 +4,11 @@ import org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryPro
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.binding.message.MessageBuilder;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -25,19 +26,20 @@ public class DelegatedClientAuthenticationDynamicDiscoveryExecutionAction extend
     private final DelegatedAuthenticationDynamicDiscoveryProviderLocator selector;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val userid = requestContext.getRequestParameters().get("username");
-        val request = DelegatedAuthenticationDynamicDiscoveryProviderLocator.DynamicDiscoveryProviderRequest
+        val discoveryRequest = DelegatedAuthenticationDynamicDiscoveryProviderLocator.DynamicDiscoveryProviderRequest
             .builder()
             .userId(userid)
             .build();
-        val client = FunctionUtils.doUnchecked(() -> selector.locate(request));
+
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        val webContext = new JEEContext(request, response);
+        
+        val client = FunctionUtils.doUnchecked(() -> selector.locate(discoveryRequest, webContext));
         if (client.isEmpty()) {
-            val msg = new MessageBuilder()
-                .error()
-                .code("screen.pac4j.discovery.unknownclient")
-                .build();
-            requestContext.getMessageContext().addMessage(msg);
+            WebUtils.addErrorMessageToContext(requestContext, "screen.pac4j.discovery.unknownclient");
             requestContext.getRequestScope().put("username", userid);
             return error();
         }

@@ -6,6 +6,8 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jooq.lambda.Unchecked;
+import org.jooq.lambda.fi.util.function.CheckedSupplier;
 
 import jakarta.annotation.Nonnull;
 
@@ -147,6 +149,14 @@ public interface BeanSupplier<T> extends Supplier<T> {
     BeanSupplier<T> supply(Supplier<T> beanSupplier);
 
     /**
+     * Provide bean supplier.
+     *
+     * @param beanSupplier the bean supplier
+     * @return the bean supplier
+     */
+    BeanSupplier<T> supplyUnchecked(CheckedSupplier<T> beanSupplier);
+
+    /**
      * Create the proxy bean via a given supplier when the condition fails.
      *
      * @param beanSupplier the bean supplier
@@ -159,7 +169,18 @@ public interface BeanSupplier<T> extends Supplier<T> {
      *
      * @return the bean supplier
      */
-    BeanSupplier<T> otherwiseProxy();
+    default BeanSupplier<T> otherwiseProxy() {
+        return otherwiseProxy(null);
+    }
+
+    /**
+     * Otherwise proxy bean supplier.
+     *
+     * @param beforeCallback the callback to execute before proxy is created
+     * @return the bean supplier
+     */
+    BeanSupplier<T> otherwiseProxy(Consumer<T> beforeCallback);
+    
     /**
      * Create a null bean.
      *
@@ -187,11 +208,6 @@ public interface BeanSupplier<T> extends Supplier<T> {
         }
 
         @Override
-        public BeanSupplier<T> alwaysMatch() {
-            return BeanSupplier.super.alwaysMatch();
-        }
-
-        @Override
         @CanIgnoreReturnValue
         public BeanSupplier<T> when(final Supplier<Boolean> conditionSupplier) {
             this.conditionSuppliers.add(conditionSupplier);
@@ -206,6 +222,12 @@ public interface BeanSupplier<T> extends Supplier<T> {
         }
 
         @Override
+        public BeanSupplier<T> supplyUnchecked(final CheckedSupplier<T> beanSupplier) {
+            this.beanSupplier = Unchecked.supplier(beanSupplier);
+            return this;
+        }
+
+        @Override
         @CanIgnoreReturnValue
         public BeanSupplier<T> otherwise(final Supplier<T> beanSupplier) {
             this.otherwiseSupplier = beanSupplier;
@@ -214,7 +236,10 @@ public interface BeanSupplier<T> extends Supplier<T> {
 
         @Override
         @CanIgnoreReturnValue
-        public BeanSupplier<T> otherwiseProxy() {
+        public BeanSupplier<T> otherwiseProxy(final Consumer<T> beforeCallback) {
+            if (beforeCallback != null) {
+                beforeCallback.accept(null);
+            }
             return otherwise(new ProxiedBeanSupplier<>(this.clazz));
         }
 
@@ -258,8 +283,8 @@ public interface BeanSupplier<T> extends Supplier<T> {
 
             TYPES_AND_VALUES.put(Optional.class, Optional.empty());
 
-            TYPES_AND_VALUES.put(double.class, 0D);
-            TYPES_AND_VALUES.put(Double.class, 0D);
+            TYPES_AND_VALUES.put(double.class, 0.0D);
+            TYPES_AND_VALUES.put(Double.class, 0.0D);
             TYPES_AND_VALUES.put(long.class, 0L);
             TYPES_AND_VALUES.put(Long.class, 0L);
             TYPES_AND_VALUES.put(int.class, 0);

@@ -52,7 +52,7 @@ public class CasOneTimeTokenAuthenticationAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oneTimeTokenAuthenticationWebflowEventResolver")
         public CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver(
-            @Qualifier("casWebflowConfigurationContext")
+            @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             return new FinalMultifactorAuthenticationTransactionWebflowEventResolver(casWebflowConfigurationContext);
         }
@@ -85,7 +85,7 @@ public class CasOneTimeTokenAuthenticationAutoConfiguration {
     @Configuration(value = "OneTimeTokenAuthenticationRepositoryConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class OneTimeTokenAuthenticationRepositoryConfiguration {
-        @ConditionalOnMissingBean(name = "oneTimeTokenAuthenticatorTokenRepository")
+        @ConditionalOnMissingBean(name = OneTimeTokenRepository.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {

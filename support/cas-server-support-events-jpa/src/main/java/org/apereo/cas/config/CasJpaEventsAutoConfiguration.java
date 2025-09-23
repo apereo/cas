@@ -2,9 +2,9 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.jpa.JpaConfigurationContext;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.jpa.JpaCasEvent;
@@ -128,6 +128,7 @@ public class CasJpaEventsAutoConfiguration {
     static class JpaEventsTransactionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "jpaTransactionManagerEvents")
         public PlatformTransactionManager transactionManagerEvents(
             @Qualifier("eventsEntityManagerFactory")
             final EntityManagerFactory emf) {
@@ -154,7 +155,7 @@ public class CasJpaEventsAutoConfiguration {
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory,
             final CasConfigurationProperties casProperties,
-            @Qualifier("transactionManagerEvents")
+            @Qualifier(CasEventRepository.TRANSACTION_MANAGER_EVENTS)
             final PlatformTransactionManager transactionManager,
             @Qualifier("jpaEventRepositoryFilter")
             final CasEventRepositoryFilter jpaEventRepositoryFilter) {

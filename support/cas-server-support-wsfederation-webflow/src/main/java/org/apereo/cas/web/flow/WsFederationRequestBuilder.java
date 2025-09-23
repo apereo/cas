@@ -31,6 +31,8 @@ import java.util.UUID;
  */
 @RequiredArgsConstructor
 public class WsFederationRequestBuilder {
+    private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
+    
     private final Collection<WsFederationConfiguration> configurations;
 
     private final WsFederationHelper wsFederationHelper;
@@ -51,7 +53,7 @@ public class WsFederationRequestBuilder {
     }
 
     /**
-     * Build authentication request event event.
+     * Build authentication request event.
      *
      * @param context the context
      * @return the event
@@ -77,6 +79,6 @@ public class WsFederationRequestBuilder {
             }
         }));
         WebUtils.putWsFederationDelegatedClients(context, clients);
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
+        return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
     }
 }

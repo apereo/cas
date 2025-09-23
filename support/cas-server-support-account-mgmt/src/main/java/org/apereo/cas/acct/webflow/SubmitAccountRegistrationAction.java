@@ -5,6 +5,8 @@ import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
@@ -19,7 +21,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,7 +29,6 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
@@ -54,25 +54,19 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
 
     private final TicketRegistry ticketRegistry;
 
+    private final TenantExtractor tenantExtractor;
+
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
-            val properties = accountRegistrationService.getAccountRegistrationPropertyLoader().load().values();
-            val registrationRequest = new AccountRegistrationRequest();
-            properties.forEach(entry -> {
-                var value = entry.isRequired()
-                    ? requestContext.getRequestParameters().getRequired(entry.getName())
-                    : requestContext.getRequestParameters().get(entry.getName());
-                registrationRequest.putProperty(entry.getName(), value);
-            });
-
+            val registrationRequest = buildRegistrationRequest(requestContext);
             val username = accountRegistrationService.getAccountRegistrationUsernameBuilder().build(registrationRequest);
             AccountRegistrationUtils.putAccountRegistrationRequest(requestContext, registrationRequest);
             AccountRegistrationUtils.putAccountRegistrationRequestUsername(requestContext, username);
 
             val url = createAccountRegistrationActivationUrl(registrationRequest);
             val sendEmail = sendAccountRegistrationActivationEmail(registrationRequest, url, requestContext);
-            val sendSms = sendAccountRegistrationActivationSms(registrationRequest, url);
+            val sendSms = sendAccountRegistrationActivationSms(requestContext, registrationRequest, url);
             if (sendEmail.isSuccess() || sendSms) {
                 return success(url);
             }
@@ -83,27 +77,38 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
         return error();
     }
 
-    protected boolean sendAccountRegistrationActivationSms(final AccountRegistrationRequest registrationRequest,
-                                                           final String url) throws Throwable {
+    protected AccountRegistrationRequest buildRegistrationRequest(final RequestContext requestContext) {
+        val properties = accountRegistrationService.getAccountRegistrationPropertyLoader().load().values();
+        val registrationRequest = new AccountRegistrationRequest();
+        properties.forEach(entry -> {
+            var value = entry.isRequired()
+                ? requestContext.getRequestParameters().getRequired(entry.getName())
+                : requestContext.getRequestParameters().get(entry.getName());
+            registrationRequest.putProperty(entry.getName(), value);
+        });
+        accountRegistrationService.getAccountRegistrationRequestValidator().validate(registrationRequest);
+        return registrationRequest;
+    }
+
+    protected boolean sendAccountRegistrationActivationSms(
+        final RequestContext requestContext, final AccountRegistrationRequest registrationRequest,
+        final String url) throws Throwable {
         if (StringUtils.isNotBlank(registrationRequest.getPhone())) {
             val smsProps = casProperties.getAccountRegistration().getSms();
             val message = SmsBodyBuilder.builder().properties(smsProps).parameters(Map.of("url", url)).build().get();
-            val smsRequest = SmsRequest.builder().from(smsProps.getFrom())
-                .to(registrationRequest.getPhone()).text(message).build();
+            val smsRequest = SmsRequest.builder()
+                .from(smsProps.getFrom())
+                .to(List.of(registrationRequest.getPhone()))
+                .tenant(tenantExtractor.extract(requestContext)
+                    .map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
+                .text(message)
+                .build();
             return communicationsManager.sms(smsRequest);
         }
         return false;
     }
 
 
-    /**
-     * Send account registration activation email.
-     *
-     * @param registrationRequest the registration request
-     * @param url                 the url
-     * @param requestContext      the request context
-     * @return true/false
-     */
     protected EmailCommunicationResult sendAccountRegistrationActivationEmail(final AccountRegistrationRequest registrationRequest,
                                                                               final String url,
                                                                               final RequestContext requestContext) {
@@ -119,9 +124,11 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
                 .locale(locale)
                 .build()
                 .get();
-            val emailRequest = EmailMessageRequest.builder().emailProperties(emailProps)
+            val emailRequest = EmailMessageRequest.builder()
+                .emailProperties(emailProps)
                 .locale(locale.orElseGet(Locale::getDefault))
                 .to(List.of(registrationRequest.getEmail()))
+                .tenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
                 .body(text).build();
             return communicationsManager.email(emailRequest);
         }

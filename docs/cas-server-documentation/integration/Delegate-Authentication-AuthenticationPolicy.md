@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Delegate Authentication Authentication Policy
+title: CAS - Delegate Authentication Policy
 category: Authentication
 ---
 
@@ -42,6 +42,8 @@ The following fields are supported for the authentication policy:
 ## Configuration
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.core" %}
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 ## Auto Redirection
 

@@ -29,14 +29,7 @@ const assert = require("assert");
     await cas.log(authData);
     const initialAuthData = authData.AuthnInstant;
     await cas.logg(`Initial authentication instant: ${initialAuthData}`);
-    const allCookies = await page.cookies();
-    for (const cookie of allCookies) {
-        await cas.log(`Deleting cookie ${cookie.name}`);
-        await page.deleteCookie({
-            name : cookie.name,
-            domain : cookie.domain
-        });
-    }
+    await cas.deleteCookies(page);
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await cas.sleep(4000);
@@ -48,6 +41,6 @@ const assert = require("assert");
     assert(nextAuthData !== initialAuthData);
 
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

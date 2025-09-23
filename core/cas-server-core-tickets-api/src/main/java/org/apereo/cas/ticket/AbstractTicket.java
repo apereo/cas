@@ -1,12 +1,10 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.Authentication;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -61,6 +58,9 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     @Getter
     private String id;
 
+    @Getter
+    private String tenantId;
+
     /**
      * The last time this ticket was used.
      */
@@ -93,7 +93,7 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     private Boolean stateless = Boolean.FALSE;
 
     @Getter
-    private Map<String, Object> properties = new HashMap<>(0);
+    private Map<String, Object> properties = new HashMap<>();
     
     protected AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {
         this.id = id;
@@ -118,16 +118,15 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     }
 
     @Override
-    @CanIgnoreReturnValue
-    public Ticket markTicketStateless() {
+    public void markTicketStateless() {
         this.stateless = Boolean.TRUE;
-        return this;
     }
 
     @Override
-    public void update() {
+    public Ticket update() {
         updateTicketState();
         updateTicketGrantingTicketState();
+        return this;
     }
 
     @Override
@@ -149,11 +148,6 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
             .orElse(null);
     }
 
-    @Override
-    public Ticket getTicketGrantingTicket() {
-        return null;
-    }
-
     /**
      * Update ticket granting ticket state.
      */
@@ -172,7 +166,7 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
         LOGGER.trace("Before updating ticket [{}]\n\tPrevious time used: [{}]\n\tLast time used: [{}]\n\tUsage count: [{}]",
             getId(), this.previousTimeUsed, this.lastTimeUsed, this.countOfUses);
 
-        this.previousTimeUsed = ZonedDateTime.from(this.lastTimeUsed);
+        this.previousTimeUsed = this.lastTimeUsed;
         this.lastTimeUsed = ZonedDateTime.now(this.expirationPolicy.getClock());
         this.countOfUses++;
 

@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 class YamlServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
 
     @Override
-    public ResourceBasedServiceRegistry getNewServiceRegistry() throws Exception {
+    public ResourceBasedServiceRegistry getNewServiceRegistry() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         newServiceRegistry = new YamlServiceRegistry(RESOURCE,

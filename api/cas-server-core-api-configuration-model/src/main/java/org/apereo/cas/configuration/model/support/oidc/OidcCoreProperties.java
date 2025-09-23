@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -27,7 +26,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("OidcCoreProperties")
 public class OidcCoreProperties implements Serializable {
 
     @Serial
@@ -72,7 +70,7 @@ public class OidcCoreProperties implements Serializable {
      * User-defined scopes as well as any and all custom claims that are mapped to the scope
      * must also be defined as scopes and claims supported by CAS in OpenID Connect discovery.
      */
-    private Map<String, String> userDefinedScopes = new HashMap<>(0);
+    private Map<String, String> userDefinedScopes = new HashMap<>();
 
     /**
      * Map fixed claims to CAS attributes.
@@ -86,7 +84,7 @@ public class OidcCoreProperties implements Serializable {
      * resolution configuration and all other CAS-enabled applications.
      * If mapping is not defined, by default CAS attributes are expected to match claim names.
      */
-    private Map<String, String> claimsMap = new HashMap<>(0);
+    private Map<String, String> claimsMap = new HashMap<>();
 
     /**
      * A mapping of authentication context refs (ACR) values.
@@ -99,7 +97,7 @@ public class OidcCoreProperties implements Serializable {
      * Support for authentication context class references is implemented in form of {@code acr_values} as part of the original
      * authorization request, which is mostly taken into account by
      * the multifactor authentication features of CAS.
-     * Once successful, {@code acr} and {@code amr} values are passed back to the relying party as part of the id token.
+     * Once successful, {@code acr} and {@code amr} values are passed back to the relying party as part of the ID token.
      */
-    private List<String> authenticationContextReferenceMappings = new ArrayList<>(0);
+    private List<String> authenticationContextReferenceMappings = new ArrayList<>();
 }

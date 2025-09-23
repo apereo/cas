@@ -1,0 +1,40 @@
+{
+  "dependencies": "saml-idp,pac4j-webflow,pac4j-saml,json-service-registry",
+  "conditions": {
+  },
+  "properties": [
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh",
+  "instances": 2,
+  "instance1": {
+    "properties": [
+      "--cas.server.name=https://localhost:8443",
+      "--cas.server.prefix=https://localhost:8443/cas",
+      "--cas.host.name=idp-8443",
+      "--cas.tgc.name=TGC1",
+      "--cas.service-registry.core.init-from-json=true",
+      "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+      "--cas.authn.saml-idp.core.entity-id=https://localhost:8443/cas/idp",
+      "--cas.authn.saml-idp.metadata.file-system.location=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
+      "--cas.http-web-request.header.content-security-policy=''",
+      "--cas.slo.logout-propagation-type=IFRAME"
+    ]
+  },
+  "instance2": {
+    "properties": [
+      "--cas.server.name=https://localhost:8444",
+      "--cas.server.prefix=https://localhost:8444/cas",
+      "--cas.host.name=client-8444",
+      "--cas.tgc.name=TGC2",
+      "--cas.authn.accept.users=",
+      "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
+      "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",
+      "--cas.authn.pac4j.saml[0].service-provider-entity-id=https://localhost:8444/cas/login?client_name=SAML",
+      "--cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/sp-metadata.xml",
+      "--cas.authn.pac4j.saml[0].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/samlKeystore.jks",
+      "--cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/idp-metadata.xml",
+      "--cas.authn.pac4j.saml[0].client-name=SAML"
+    ]
+  }
+}

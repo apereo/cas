@@ -4,11 +4,10 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.webflow.execution.Event;
@@ -34,8 +33,8 @@ public class WsFederationClientRedirectAction extends BaseCasWebflowAction {
             .filter(client -> client.getAutoRedirectType() == DelegationAutoRedirectTypes.SERVER)
             .findFirst()
             .ifPresent(Unchecked.consumer(client -> {
-                val url = StringUtils.prependIfMissing(serverProperties.getServlet().getContextPath(), "/")
-                          + StringUtils.prependIfMissing(client.getRedirectUrl(), "/");
+                val url = Strings.CI.prependIfMissing(serverProperties.getServlet().getContextPath(), "/")
+                          + Strings.CI.prependIfMissing(client.getRedirectUrl(), "/");
                 LOGGER.debug("Redirecting to [{}] for WS client [{}]", url, client.getName());
                 response.sendRedirect(url);
             }));

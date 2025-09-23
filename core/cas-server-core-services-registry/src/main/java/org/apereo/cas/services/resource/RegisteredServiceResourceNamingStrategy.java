@@ -18,6 +18,11 @@ import java.util.regex.Pattern;
 public interface RegisteredServiceResourceNamingStrategy {
 
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "registeredServiceResourceNamingStrategy";
+
+    /**
      * Method will be called to provide a name for a resource to store a service.
      *
      * @param service   - The Service to be saved.

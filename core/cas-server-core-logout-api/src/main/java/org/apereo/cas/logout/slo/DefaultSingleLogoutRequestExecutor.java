@@ -1,6 +1,7 @@
 package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -41,21 +42,26 @@ public class DefaultSingleLogoutRequestExecutor implements SingleLogoutRequestEx
             val clientInfo = ClientInfoHolder.getClientInfo();
             val logoutRequests = new ArrayList<SingleLogoutRequestContext>();
             if (ticket instanceof final TicketGrantingTicket tgt) {
-                logoutRequests.addAll(logoutManager.performLogout(
+                val results = logoutManager.performLogout(
                     SingleLogoutExecutionRequest.builder()
                         .ticketGrantingTicket(tgt)
                         .httpServletRequest(Optional.of(request))
                         .httpServletResponse(Optional.of(response))
-                        .build()));
-                applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, clientInfo));
+                        .build());
+                results.stream().filter(r -> r.getStatus() == LogoutRequestStatus.FAILURE)
+                    .forEach(r -> LOGGER.warn("Logout request for [{}] and [{}] has failed", r.getTicketId(), r.getLogoutUrl()));
+                logoutRequests.addAll(results);
             }
             LOGGER.trace("Removing ticket [{}] from registry...", ticketId);
             ticketRegistry.deleteTicket(ticketId);
+            if (ticket instanceof final TicketGrantingTicket tgt) {
+                applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, clientInfo));
+            }
             return logoutRequests;
         } catch (final Exception e) {
             val msg = String.format("Ticket-granting ticket [%s] cannot be found in the ticket registry.", ticketId);
             LOGGER.debug(msg, e);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

@@ -13,12 +13,7 @@ public interface SpnegoConstants {
      * The header authenticate.
      */
     String HEADER_AUTHENTICATE = "WWW-Authenticate";
-
-    /**
-     * The header authorization.
-     */
-    String HEADER_AUTHORIZATION = "Authorization";
-
+    
     /**
      * The negotiate.
      */

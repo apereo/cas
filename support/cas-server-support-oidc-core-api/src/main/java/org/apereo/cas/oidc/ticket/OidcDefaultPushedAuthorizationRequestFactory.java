@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
 import lombok.Getter;
@@ -26,7 +27,8 @@ public class OidcDefaultPushedAuthorizationRequestFactory implements OidcPushedA
     /**
      * Default instance for the ticket id generator.
      */
-    protected final UniqueTicketIdGenerator idGenerator;
+    @Getter
+    protected final UniqueTicketIdGenerator ticketIdGenerator;
 
     @Getter
     protected final ExpirationPolicyBuilder<OAuth20AccessToken> expirationPolicyBuilder;
@@ -39,11 +41,14 @@ public class OidcDefaultPushedAuthorizationRequestFactory implements OidcPushedA
     @Override
     public OidcPushedAuthorizationRequest create(final AccessTokenRequestContext holder) throws Throwable {
         val request = SerializationUtils.serialize(holder);
-        val id = idGenerator.getNewTicketId(OidcPushedAuthorizationRequest.PREFIX);
+        val id = ticketIdGenerator.getNewTicketId(OidcPushedAuthorizationRequest.PREFIX);
         val expirationPolicy = determineExpirationPolicyForService(holder.getRegisteredService());
-        return new OidcDefaultPushedAuthorizationRequest(id, expirationPolicy,
+        val par = new OidcDefaultPushedAuthorizationRequest(id, expirationPolicy,
             holder.getAuthentication(), holder.getService(), holder.getRegisteredService(),
             EncodingUtils.encodeBase64(request));
+        par.setTenantId(holder.getService().getTenant());
+        FunctionUtils.doIfNotNull(holder.getService(), __ -> par.setTenantId(holder.getService().getTenant()));
+        return par;
     }
 
     @Override
@@ -53,12 +58,6 @@ public class OidcDefaultPushedAuthorizationRequestFactory implements OidcPushedA
             CipherExecutor.noOp(), AccessTokenRequestContext.class);
     }
 
-    /**
-     * Determine the expiration policy for the registered service.
-     *
-     * @param registeredService the registered service
-     * @return the expiration policy
-     */
     protected ExpirationPolicy determineExpirationPolicyForService(final OAuthRegisteredService registeredService) {
         return this.expirationPolicyBuilder.buildTicketExpirationPolicy();
     }

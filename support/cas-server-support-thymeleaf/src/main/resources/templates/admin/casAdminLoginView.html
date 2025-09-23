@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title th:text="#{cas.login.pagetitle}">CAS Admin Login View</title>
-    <span th:remove="tag" th:each="file : ${#strings.arraySplit(#themes.code('cas.standard.css.file'), ',')}">
+    <span th:remove="tag" th:each="file : ${#strings.setSplit(#cas.theme('cas.standard.css.file'), ',')}">
         <link rel="stylesheet" type="text/css" href="../static/css/cas.css" th:href="@{${file}}" />
     </span>
 </head>
@@ -15,11 +15,7 @@
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" style="box-shadow: none;">
         <section class="col-lg-6 offset-lg-3 col-xs-12">
-            <div class="card">
-                <div class="card-header text-center d-flex justify-content-center mb-4">
-                    <h2 th:text="#{cas.login.pagetitle}" class="me-2">Login</h2>
-                    <i class="mdi mdi-shield-lock-outline fas fa-shield-alt" aria-hidden="true"></i>
-                </div>
+            <div class="card mdc-card px-3 py-3">
                 <form name="fm1" th:action="@{/adminlogin}" method="post">
                     <h3 th:utext="#{screen.welcome.instructions}">Enter your Username and Password</h3>
                     <div th:if="${param.error}" id="errorPanel" role="alert" class="banner banner-danger alert alert-danger banner-dismissible">Invalid credentials.</div>
@@ -81,13 +77,7 @@
                         </div>
                     </section>
 
-
-                    <button class="mdc-button mdc-button--raised"
-                            accesskey="l"
-                            th:value="#{screen.welcome.button.login}"
-                            value="Login">
-                        <span class="mdc-button__label" th:value="#{screen.welcome.button.login}">Login</span>
-                    </button>
+                    <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')}"/>
                 </form>
             </div>
         </section>

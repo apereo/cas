@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -25,27 +26,25 @@ import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -59,6 +58,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,14 +69,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    AopAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    WebEndpointAutoConfiguration.class,
-    EndpointAutoConfiguration.class,
-    SecurityAutoConfiguration.class,
-    
     CasCoreWebflowAutoConfiguration.class,
     CasThemesAutoConfiguration.class,
     CasThymeleafAutoConfiguration.class,
@@ -97,16 +91,21 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAuditAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
-    CasCoreMultifactorAuthenticationAutoConfiguration.class
-}, properties = "spring.main.allow-bean-definition-overriding=true")
+    CasCoreMultifactorAuthenticationAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseCasWebflowSessionContextConfigurationTests {
 
     @Autowired
     @Qualifier(CasWebflowExecutionPlan.BEAN_NAME)
     protected CasWebflowExecutionPlan casWebflowExecutionPlan;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @BeforeEach
     void setup() {
         casWebflowExecutionPlan.execute();
@@ -119,7 +118,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
 
     @Test
     void verifyFlowExecutorByClient() throws Throwable {
-        val context = MockRequestContext.create().withLocale(Locale.ENGLISH);
+        val context = MockRequestContext.create(applicationContext).withLocale(Locale.ENGLISH);
         val map = new LocalAttributeMap<>();
         getFlowExecutor().launchExecution("login", map, context.getExternalContext());
     }
@@ -148,7 +147,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                     flowScope.put("test", TEST);
                     flowScope.put("test0", Collections.singleton(TEST));
                     flowScope.put("test1", List.of(TEST));
-                    flowScope.put("test2", Collections.singletonMap(TEST, TEST));
+                    flowScope.put("test2", Map.of(TEST, TEST));
                     flowScope.put("test3", Arrays.asList(TEST, TEST));
                     flowScope.put("test4", new ConcurrentSkipListSet());
                     flowScope.put("test5", List.of("test1"));
@@ -166,11 +165,11 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
 
                     return FunctionUtils.doUnchecked(() -> {
                         val authentication = CoreAuthenticationTestUtils.getAuthentication();
-                        val authenticationResultBuilder = new DefaultAuthenticationResultBuilder();
+                        val authenticationResultBuilder = new DefaultAuthenticationResultBuilder(principalElectionStrategy.getObject());
                         val principal = CoreAuthenticationTestUtils.getPrincipal();
                         authenticationResultBuilder.collect(authentication);
                         authenticationResultBuilder.collect(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-                        val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getObject(), service);
+                        val authenticationResult = authenticationResultBuilder.build(service);
 
                         WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
                         WebUtils.putAuthenticationResult(authenticationResult, requestContext);

@@ -24,7 +24,8 @@ public class CasConsentRestAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public ConsentRepository consentRepository(final CasConfigurationProperties casProperties) {
+    public ConsentRepository consentRepository(
+        final CasConfigurationProperties casProperties) {
         return new RestfulConsentRepository(casProperties.getConsent().getRest());
     }
 }

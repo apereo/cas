@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -40,8 +39,8 @@ class OAuth20AuthorizationCodeAuthorizationResponseBuilderTests extends Abstract
         servicesManager.save(registeredService);
 
         val attributes = new HashMap<String, List<Object>>();
-        attributes.put(OAuth20Constants.STATE, Collections.singletonList(STATE));
-        attributes.put(OAuth20Constants.NONCE, Collections.singletonList(NONCE));
+        attributes.put(OAuth20Constants.STATE, List.of(STATE));
+        attributes.put(OAuth20Constants.NONCE, List.of(NONCE));
         val authentication = RegisteredServiceTestUtils.getAuthentication(
             RegisteredServiceTestUtils.getPrincipal("casuser"), attributes);
         val holder = AccessTokenRequestContext.builder()

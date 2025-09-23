@@ -21,7 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowMfaActions")
-@TestPropertySource(properties = "cas.authn.mfa.core.provider-selection.provider-selection-enabled=true")
+@TestPropertySource(properties = {
+    "cas.authn.mfa.core.provider-selection.provider-selection-enabled=true",
+    "cas.authn.mfa.core.provider-selection.provider-selection-optional=true"
+})
 class MultifactorProviderSelectedActionTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_MULTIFACTOR_PROVIDER_SELECTED)
@@ -42,13 +45,21 @@ class MultifactorProviderSelectedActionTests extends BaseCasWebflowMultifactorAu
     @Test
     void verifyOperationByRequestContext() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getFlashScope().put(MultifactorProviderSelectedAction.PARAMETER_SELECTED_MFA_PROVIDER, new TestMultifactorAuthenticationProvider());
+        context.getFlashScope().put(MultifactorProviderSelectedAction.PARAMETER_SELECTED_MFA_PROVIDER,
+            new TestMultifactorAuthenticationProvider());
         val result = action.execute(context);
         assertEquals(TestMultifactorAuthenticationProvider.ID, result.getId());
-
         context.setRequestCookiesFromResponse();
         val cookie = multifactorAuthenticationProviderSelectionCookieGenerator.retrieveCookieValue(context.getHttpServletRequest());
         assertNotNull(cookie);
         assertEquals(TestMultifactorAuthenticationProvider.ID, cookie);
+    }
+
+    @Test
+    void verifyOperationOptional() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.setParameter(MultifactorProviderSelectedAction.PARAMETER_SELECTED_MFA_PROVIDER, "none");
+        val result = action.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SKIP, result.getId());
     }
 }

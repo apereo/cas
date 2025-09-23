@@ -5,18 +5,14 @@ const assert = require("assert");
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
 
     await cas.loginWith(page);
-    await page.url();
     await cas.logPage(page);
     await cas.assertTicketParameter(page);
 
     await cas.gotoLogin(page);
-    const sessionCookie = (await page.cookies()).filter((value) => {
-        cas.log(`Checking cookie ${value.name}`);
-        return value.name === "SESSION";
-    })[0];
+    const sessionCookie = await cas.containsCookie(page, "SESSION");
     await cas.log(`Found session cookie ${sessionCookie.name}`);
     const cookieValue = await cas.base64Decode(sessionCookie.value);
     await cas.log(`Session cookie value ${cookieValue}`);
@@ -31,5 +27,5 @@ const assert = require("assert");
             throw error;
         }, { "Content-Type": "application/json" });
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

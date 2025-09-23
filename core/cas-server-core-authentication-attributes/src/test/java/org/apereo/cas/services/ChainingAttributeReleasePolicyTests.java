@@ -2,21 +2,23 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ChainingPrincipalAttributesRepository;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,11 +29,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Attributes")
+@Tag("AttributeRelease")
+@ExtendWith(CasTestExtension.class)
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class
 })
 class ChainingAttributeReleasePolicyTests {
     @Autowired
@@ -39,19 +42,19 @@ class ChainingAttributeReleasePolicyTests {
 
     @Autowired
     @Qualifier("scriptResourceCacheManager")
-    private ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager;
+    private ScriptResourceCacheManager<String, ExecutableCompiledScript> scriptResourceCacheManager;
 
     private ChainingAttributeReleasePolicy chain;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             scriptResourceCacheManager, ScriptResourceCacheManager.BEAN_NAME);
         configureChainingReleasePolicy(0, 0);
     }
 
     @Test
-    void verifyOperationWithReplaceAndOrder() throws Throwable {
+    void verifyOperationWithReplaceAndOrder() {
         configureChainingReleasePolicy(10, 1);
         val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
@@ -71,7 +74,7 @@ class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyOperationWithReplace() throws Throwable {
+    void verifyOperationWithReplace() {
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
         val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
@@ -95,7 +98,7 @@ class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyOperationWithAdd() throws Throwable {
+    void verifyOperationWithAdd() {
         val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD);
@@ -113,7 +116,7 @@ class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyOperationWithMultivalued() throws Throwable {
+    void verifyOperationWithMultivalued() {
         val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
@@ -132,7 +135,7 @@ class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    void verifyConsentableAttrs() throws Throwable {
+    void verifyConsentableAttrs() {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())

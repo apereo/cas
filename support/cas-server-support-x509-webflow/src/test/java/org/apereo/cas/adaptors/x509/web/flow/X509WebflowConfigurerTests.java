@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import({
+@ImportAutoConfiguration({
     CasX509AuthenticationAutoConfiguration.class,
     CasX509CertificateExtractorAutoConfiguration.class,
     CasX509AuthenticationWebflowAutoConfiguration.class,
@@ -39,10 +39,10 @@ class X509WebflowConfigurerTests extends BaseWebflowConfigurerTests {
     private CasMultifactorWebflowCustomizer x509CasMultifactorWebflowCustomizer;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
 
-        val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
 
         val state = (TransitionableState) flow.getState(CasWebflowConstants.STATE_ID_X509_START);

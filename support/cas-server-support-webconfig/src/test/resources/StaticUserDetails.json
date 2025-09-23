@@ -1,0 +1,20 @@
+[
+  {
+    "username": "casadmin",
+    "password": "{sha512}b6c65a606e039ebc9100656491fb6954bf063c8c84265e82b3268d20be0f13fc999afd0c3fed253e9954a3a93a89e82f2d4ddd46c5aa23b212c748db09ca4cad",
+    "authorities": [
+      "ROLE_ADMIN"
+    ]
+  },
+  {
+    "username": "casuser",
+    "password": "{sha512}b6c65a606e039ebc9100656491fb6954bf063c8c84265e82b3268d20be0f13fc999afd0c3fed253e9954a3a93a89e82f2d4ddd46c5aa23b212c748db09ca4cad",
+    "authorities": [
+      "ROLE_USER"
+    ]
+  },
+  {
+    "username": "casnone",
+    "password": "{noop}pa$$w0rd"
+  }
+]

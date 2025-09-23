@@ -2,11 +2,11 @@ package org.apereo.cas.support.geo.ip;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
-import io.ipgeolocation.api.GeolocationParams;
-import io.ipgeolocation.api.IPGeolocationAPI;
+import io.ipgeolocation.sdk.api.IPGeolocationAPI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import java.net.InetAddress;
 
 /**
@@ -21,28 +21,25 @@ public class IPGeoLocationService extends AbstractGeoLocationService {
     private final IPGeolocationAPI api;
 
     @Override
-    public GeoLocationResponse locate(final InetAddress address) {
-        val geoParams = GeolocationParams.builder()
-            .withIPAddress(address.getHostAddress())
-            .withLang("en")
-            .withFields("geo")
-            .build();
-        LOGGER.debug("Fetching geolocation results for [{}]", geoParams.getIPAddress());
-        val geolocation = api.getGeolocation(geoParams);
-        LOGGER.debug("Geolocation results for [{}] are [{}]", geoParams.getIPAddress(), geolocation);
-        if (geolocation != null) {
+    public GeoLocationResponse locate(final InetAddress address) throws Throwable {
+        val geolocation = api.getIPGeolocation()
+            .lang("en")
+            .ip(address.getHostAddress())
+            .execute();
+        LOGGER.debug("Geolocation results for [{}] are [{}]", address.getHostAddress(), geolocation);
+        if (geolocation != null && geolocation.getLocation() != null) {
             val location = new GeoLocationResponse();
+            val geoLocation = geolocation.getLocation();
             return location
-                .setLatitude(geolocation.getLatitude().doubleValue())
-                .setLongitude(geolocation.getLongitude().doubleValue())
-                .addAddress(geolocation.getCity())
-                .addAddress(geolocation.getStateProvince())
-                .addAddress(geolocation.getStateProvince())
-                .addAddress(geolocation.getCountryName())
-                .addAddress(geolocation.getCountryCode3())
-                .addAddress(geolocation.getZipCode());
+                .setLatitude(Double.parseDouble(StringUtils.defaultIfBlank(geoLocation.getLatitude(), "0.0")))
+                .setLongitude(Double.parseDouble(StringUtils.defaultIfBlank(geoLocation.getLongitude(), "0.0")))
+                .addAddress(geoLocation.getCity())
+                .addAddress(geoLocation.getStateProv())
+                .addAddress(geoLocation.getCountryName())
+                .addAddress(geoLocation.getCountryCode3())
+                .addAddress(geoLocation.getZipcode());
         }
-        LOGGER.warn("Unable to determine geolocation results for [{}]", geoParams.getIPAddress());
+        LOGGER.warn("Unable to determine geolocation results for [{}]", address.getHostAddress());
         return null;
     }
 

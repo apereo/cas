@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryEncodeJdbcAuthenticationProperties;
 import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.services.ServicesManager;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,11 +41,11 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     private final DatabasePasswordEncoder databasePasswordEncoder;
 
     public QueryAndEncodeDatabaseAuthenticationHandler(final QueryEncodeJdbcAuthenticationProperties properties,
-                                                       final ServicesManager servicesManager,
+
                                                        final PrincipalFactory principalFactory,
                                                        final DataSource dataSource,
                                                        final DatabasePasswordEncoder databasePasswordEncoder) {
-        super(properties, servicesManager, principalFactory, dataSource);
+        super(properties, principalFactory, dataSource);
         this.databasePasswordEncoder = databasePasswordEncoder;
     }
 
@@ -75,7 +74,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             }
             val attributes = collectPrincipalAttributes(sqlQueryResults);
             val principal = principalFactory.createPrincipal(username, attributes);
-            return createHandlerResult(transformedCredential, principal, new ArrayList<>(0));
+            return createHandlerResult(transformedCredential, principal, new ArrayList<>());
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {
                 throw new AccountNotFoundException(username + " not found with SQL query");

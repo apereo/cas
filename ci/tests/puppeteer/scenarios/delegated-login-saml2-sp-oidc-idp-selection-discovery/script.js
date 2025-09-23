@@ -8,7 +8,7 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
     await startWithSamlSp(page);
     await startWithCasSp(page);
-    await browser.close();
+    await cas.closeBrowser(browser);
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
 })();
 
@@ -27,8 +27,7 @@ async function startWithCasSp(page) {
     await cas.loginWith(page);
     await cas.sleep(7000);
     const ticket = await cas.assertTicketParameter(page);
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
-    await cas.log(body);
+    const body = await cas.validateTicket(service, ticket, "XML");
     assert(body.includes("<cas:user>casuser</cas:user>"));
 }
 

@@ -5,7 +5,6 @@ category: Authentication
 ---
 {% include variables.html %}
 
-
 # Proxy Authentication
 
 Proxy authentication support for CAS v1+ protocols is enabled by default, thus it is entirely a matter of CAS

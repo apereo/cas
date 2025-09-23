@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serializable;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -209,7 +208,12 @@ public interface RegisteredServiceProperty extends Serializable {
         TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY("jwtAsServiceTicketEncryptionKey", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.JWT_SERVICE_TICKETS, RegisteredServicePropertyTypes.STRING,
             "Produce an encrypted JWT as a response when generating service tickets using the provided encryption key."),
-
+        /**
+         * Encryption algorithm when generating service tickets using the provided encryption key.
+         **/
+        TOKEN_AS_SERVICE_TICKET_ENCRYPTION_ALG("jwtAsServiceTicketEncryptionAlg", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.JWT_SERVICE_TICKETS, RegisteredServicePropertyTypes.STRING,
+            "Encryption algorithm when generating service tickets using the provided encryption key."),
         /**
          * Whether signing operations should be enabled when producing JWTs.
          **/
@@ -246,18 +250,18 @@ public interface RegisteredServiceProperty extends Serializable {
             "Indicate the cipher strategy for JWTs for OIDC responses, to determine order of signing/encryption operations."),
 
         /**
-         * Enable signing JWTs as a response when generating resonse mode JWTs using the provided signing key.
+         * Enable signing JWTs as a response when generating response mode JWTs using the provided signing key.
          **/
         OIDC_RESPONSE_MODE_JWT_CIPHER_SIGNING_ENABLED("oidcResponseModeAsJwtCipherSigningEnabled", "true",
             RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS, RegisteredServicePropertyTypes.BOOLEAN,
-            "Enable signing JWTs as a response when generating resonse mode JWTs using the provided signing key."),
+            "Enable signing JWTs as a response when generating response mode JWTs using the provided signing key."),
 
         /**
-         * Enable encrypted JWTs as a response when generating resonse mode JWTs using the provided signing key.
+         * Enable encrypted JWTs as a response when generating response mode JWTs using the provided signing key.
          **/
         OIDC_RESPONSE_MODE_JWT_CIPHER_ENCRYPTION_ENABLED("oidcResponseModeAsJwtCipherEncryptionEnabled", "true",
             RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS, RegisteredServicePropertyTypes.BOOLEAN,
-            "Enable encrypted JWTs as a response when generating resonse mode JWTs using the provided encryption key."),
+            "Enable encrypted JWTs as a response when generating response mode JWTs using the provided encryption key."),
 
         /**
          * Produce a signed JWT as a response when generating access tokens using the provided signing key.
@@ -289,6 +293,12 @@ public interface RegisteredServiceProperty extends Serializable {
         ACCESS_TOKEN_AS_JWT_ENCRYPTION_KEY("accessTokenAsJwtEncryptionKey", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS, RegisteredServicePropertyTypes.STRING,
             "Produce an encrypted JWT as a response when generating access tokens using the provided encryption key."),
+        /**
+         * Encryption algorithm to use when generating access tokens using the provided encryption key.
+         */
+        ACCESS_TOKEN_AS_JWT_ENCRYPTION_ALG("accessTokenAsJwtEncryptionAlg", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS, RegisteredServicePropertyTypes.STRING,
+            "Encryption algorithm to use when generating access tokens using the provided encryption key."),
         /**
          * Jwt signing secret defined for a given service.
          **/
@@ -331,6 +341,12 @@ public interface RegisteredServiceProperty extends Serializable {
         WILDCARDED_SERVICE_DEFINITION("wildcardedServiceDefinition", "false",
             RegisteredServicePropertyGroups.REGISTERED_SERVICES, RegisteredServicePropertyTypes.BOOLEAN,
             "Whether this service definition is one that is tagged as wildcarded (catch-all) entry."),
+        /**
+         * Whether this service definition is one that is tagged for internal CAS functions.
+         **/
+        INTERNAL_SERVICE_DEFINITION("internalServiceDefinition", "false",
+            RegisteredServicePropertyGroups.REGISTERED_SERVICES, RegisteredServicePropertyTypes.BOOLEAN,
+            "Whether this service definition is an internal system-level entry used by CAS itself."),
         /**
          * Whether this service should skip qualification for required-service pattern checks.
          **/
@@ -422,15 +438,15 @@ public interface RegisteredServiceProperty extends Serializable {
         CORS_ALLOWED_HEADERS("corsAllowedHeaders", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.CORS, RegisteredServicePropertyTypes.STRING,
             "Define exposed headers in the response for CORS requests. Set the list of headers that a pre-flight "
-            + "request can list as allowed for use during an actual request. The special value "
-            + "`*` allows actual requests to send any header."),
+                + "request can list as allowed for use during an actual request. The special value "
+                + "`*` allows actual requests to send any header."),
         /**
          * Define exposed headers in the response for CORS requests.
          */
         CORS_EXPOSED_HEADERS("corsExposedHeaders", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.CORS, RegisteredServicePropertyTypes.STRING,
             "List of response headers that a response might have and can be exposed. "
-            + "The special value `*` allows all headers to be exposed for non-credentialed requests."),
+                + "The special value `*` allows all headers to be exposed for non-credentialed requests."),
         /**
          * Indicate binding type, when using delegated authentication to saml2 identity providers.
          */
@@ -622,7 +638,7 @@ public interface RegisteredServiceProperty extends Serializable {
                     .entrySet()
                     .stream()
                     .filter(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
-                                     && StringUtils.isNotBlank(entry.getValue().value()))
+                        && StringUtils.isNotBlank(entry.getValue().value()))
                     .distinct()
                     .findFirst();
                 if (property.isPresent()) {
@@ -761,8 +777,8 @@ public interface RegisteredServiceProperty extends Serializable {
             return service != null && service.getProperties().entrySet()
                 .stream()
                 .anyMatch(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
-                                   && StringUtils.isNotBlank(entry.getValue().value())
-                                   && valueFilter.test(entry.getValue().value()));
+                    && StringUtils.isNotBlank(entry.getValue().value())
+                    && valueFilter.test(entry.getValue().value()));
         }
 
         /**
@@ -779,6 +795,34 @@ public interface RegisteredServiceProperty extends Serializable {
                 case BOOLEAN -> getPropertyBooleanValue(registeredService);
                 default -> getPropertyValue(registeredService).value();
             };
+        }
+
+
+        /**
+         * Is not assigned to boolean.
+         *
+         * @param service the service
+         * @return true or false
+         */
+        @JsonIgnore
+        public boolean isNotAssignedTo(final RegisteredService service) {
+            return isNotAssignedTo(service, BooleanUtils::toBoolean);
+        }
+
+        /**
+         * Is not assigned to boolean.
+         *
+         * @param service     the service
+         * @param valueFilter the value filter
+         * @return true or false
+         */
+        @JsonIgnore
+        public boolean isNotAssignedTo(final RegisteredService service, final Predicate<String> valueFilter) {
+            if (service == null || !service.getProperties().containsKey(getPropertyName())) {
+                return true;
+            }
+            val property = service.getProperties().get(getPropertyName());
+            return property == null || property.getValues().isEmpty() || property.getValues().stream().noneMatch(valueFilter);
         }
     }
 }

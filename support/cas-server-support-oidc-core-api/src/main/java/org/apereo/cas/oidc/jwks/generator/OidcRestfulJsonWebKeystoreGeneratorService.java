@@ -16,6 +16,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,6 +47,7 @@ public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKe
             .basicAuthPassword(rest.getBasicAuthPassword())
             .basicAuthUsername(rest.getBasicAuthUsername())
             .method(HttpMethod.GET)
+            .headers(rest.getHeaders())
             .url(rest.getUrl())
             .build();
         val response = HttpUtils.execute(exec);
@@ -62,9 +64,9 @@ public class OidcRestfulJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     }
 
     @Override
-    public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) throws Exception {
+    public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) {
         val rest = oidcProperties.getJwks().getRest();
-        val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+        val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         headers.putAll(rest.getHeaders());
         val exec = HttpExecutionRequest.builder()
             .basicAuthPassword(rest.getBasicAuthPassword())

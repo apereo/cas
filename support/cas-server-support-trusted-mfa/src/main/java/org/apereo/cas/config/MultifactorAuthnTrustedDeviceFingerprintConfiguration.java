@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.trusted.util.cipher.CookieDeviceFingerprintComponentCipherExecutor;
 import org.apereo.cas.trusted.web.flow.fingerprint.BrowserDeviceFingerprintExtractor;
 import org.apereo.cas.trusted.web.flow.fingerprint.ClientIpDeviceFingerprintExtractor;
@@ -14,6 +15,7 @@ import org.apereo.cas.trusted.web.flow.fingerprint.GeoLocationDeviceFingerprintE
 import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintExtractor;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutorResolver;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -149,7 +151,7 @@ class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
                                                                    final CasConfigurationProperties casProperties) {
             val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint();
             val activeExtractors = extractors.stream().filter(BeanSupplier::isNotProxy).collect(Collectors.toList());
-            return new DefaultDeviceFingerprintStrategy(activeExtractors, properties.getComponentSeparator());
+            return new DefaultDeviceFingerprintStrategy(activeExtractors, properties.getCore().getComponentSeparator());
         }
 
     }
@@ -188,10 +190,13 @@ class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
         @ConditionalOnMissingBean(name = "deviceFingerprintCookieValueManager")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CookieValueManager deviceFingerprintCookieValueManager(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier("deviceFingerprintCookieCipherExecutor")
             final CipherExecutor deviceFingerprintCookieCipherExecutor) {
-            return new EncryptedCookieValueManager(deviceFingerprintCookieCipherExecutor,
-                DefaultCookieSameSitePolicy.INSTANCE);
+            return new EncryptedCookieValueManager(
+                CipherExecutorResolver.with(deviceFingerprintCookieCipherExecutor),
+                tenantExtractor, DefaultCookieSameSitePolicy.INSTANCE);
         }
 
         @ConditionalOnMissingBean(name = "deviceFingerprintCookieCipherExecutor")

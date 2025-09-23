@@ -35,7 +35,7 @@ class JaasAuthenticationHandlerSystemConfigurationTests {
     private JaasAuthenticationHandler handler;
 
     @BeforeEach
-        public void initialize() throws Exception {
+    void initialize() throws Exception {
         val resource = new ClassPathResource("jaas-system.conf");
         val fileName = new File(FileUtils.getTempDirectoryPath(), "jaas-system.conf");
         try (val writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {
@@ -44,14 +44,14 @@ class JaasAuthenticationHandlerSystemConfigurationTests {
         }
         if (fileName.exists()) {
             System.setProperty("java.security.auth.login.config", '=' + fileName.getCanonicalPath());
-            handler = new JaasAuthenticationHandler(StringUtils.EMPTY, null, null, null);
+            handler = new JaasAuthenticationHandler(StringUtils.EMPTY, null, null);
             handler.setKerberosKdcSystemProperty("P1");
             handler.setKerberosRealmSystemProperty("P2");
         }
     }
 
     @Test
-    void verifyWithAlternativeRealm() throws Throwable {
+    void verifyWithAlternativeRealm() {
         handler.setRealm("TEST");
         assertThrows(LoginException.class,
             () -> handler.authenticate(
@@ -72,7 +72,7 @@ class JaasAuthenticationHandlerSystemConfigurationTests {
     }
 
     @Test
-    void verifyWithInvalidCredentials() throws Throwable {
+    void verifyWithInvalidCredentials() {
         assertThrows(LoginException.class,
             () -> handler.authenticate(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"), mock(Service.class)));

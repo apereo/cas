@@ -48,6 +48,8 @@ public class SamlProfileBuilderContext {
     @Builder.Default
     private final MessageContext messageContext = new MessageContext();
 
+    private final String sessionIndex;
+
     /**
      * Transfer to a new context.
      *

@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
 import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
@@ -19,7 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
@@ -27,7 +26,6 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.http.HttpMethod;
 import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -47,10 +45,10 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     private final String syncopeDomain;
 
     public SyncopeAuthenticationHandler(final SyncopeAuthenticationProperties properties,
-                                        final ServicesManager servicesManager,
+
                                         final PrincipalFactory principalFactory,
                                         final String syncopeDomain) {
-        super(properties.getName(), servicesManager, principalFactory, properties.getOrder());
+        super(properties.getName(), principalFactory, properties.getOrder());
         this.properties = properties;
         this.syncopeDomain = syncopeDomain;
     }
@@ -63,14 +61,18 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
             val user = result.get();
             LOGGER.debug("Received user object as [{}]", user);
             if (user.has("suspended") && user.get("suspended").asBoolean()) {
-                throw new AccountDisabledException("Could not authenticate forbidden account for " + credential.getUsername());
+                throw new AccountDisabledException(
+                    "Could not authenticate forbidden account for " + credential.getUsername());
             }
             if (user.has("mustChangePassword") && user.get("mustChangePassword").asBoolean()) {
-                throw new AccountPasswordMustChangeException("Account password must change for " + credential.getUsername());
+                throw new AccountPasswordMustChangeException(
+                    "Account password must change for " + credential.getUsername());
             }
-            val principal = principalFactory.createPrincipal(user.get("username").asText(),
-                SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings()));
-            return createHandlerResult(credential, principal, new ArrayList<>(0));
+            val principalAttributes = SyncopeUtils.convertFromUserEntity(user, properties.getAttributeMappings());
+            val name = properties.getAttributeMappings().getOrDefault("domain", "syncopeDomain");
+            principalAttributes.put(name, CollectionUtils.wrapList(syncopeDomain));
+            val principal = principalFactory.createPrincipal(user.get("username").asText(), principalAttributes);
+            return createHandlerResult(credential, principal, new ArrayList<>());
         }
         throw new FailedLoginException("Could not authenticate account for " + credential.getUsername());
     }
@@ -78,18 +80,40 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     protected Optional<JsonNode> authenticateSyncopeUser(final UsernamePasswordCredential credential) {
         HttpResponse response = null;
         try {
-            val syncopeRestUrl = StringUtils.appendIfMissing(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()), "/rest/users/self");
+            val syncopeRestUrl = Strings.CI.appendIfMissing(
+                SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()),
+                "/rest/users/self");
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .url(syncopeRestUrl)
                 .basicAuthUsername(credential.getUsername())
                 .basicAuthPassword(credential.toPassword())
-                .headers(CollectionUtils.wrap("X-Syncope-Domain", syncopeDomain))
+                .headers(CollectionUtils.wrap(SyncopeUtils.SYNCOPE_HEADER_DOMAIN, syncopeDomain))
+                .maximumRetryAttempts(properties.getMaxRetryAttempts())
                 .build();
-            response = Objects.requireNonNull(HttpUtils.execute(exec));
-            LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
-            if (response.getCode() == HttpStatus.SC_OK) {
-                return parseResponseResults((HttpEntityContainer) response);
+            response = HttpUtils.execute(exec);
+            if (response != null) {
+                LOGGER.debug("Received http response status as [{}]", response.getCode());
+                if (response.containsHeader("X-Application-Error-Info")
+                    && (response.getCode() == HttpStatus.SC_FORBIDDEN || response.getCode() == HttpStatus.SC_UNAUTHORIZED)) {
+                    val appInfoHeader = response.getFirstHeader("X-Application-Error-Info").getValue();
+                    if (Strings.CI.equals("Please change your password first", appInfoHeader)) {
+                        val user = MAPPER.createObjectNode();
+                        user.put("username", credential.getUsername());
+                        user.put("mustChangePassword", true);
+                        return Optional.of(user);
+                    } else {
+                        val expectedHeader = "User " + credential.getUsername() + " is suspended";
+                        if (Strings.CI.equals(expectedHeader, appInfoHeader)) {
+                            val user = MAPPER.createObjectNode();
+                            user.put("username", credential.getUsername());
+                            user.put("suspended", true);
+                            return Optional.of(user);
+                        }
+                    }
+                } else if (response.getCode() == HttpStatus.SC_OK) {
+                    return parseResponseResults((HttpEntityContainer) response);
+                }
             }
         } finally {
             HttpUtils.close(response);

@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +41,7 @@ class RegisteredServiceMutantRegexAttributeFilterTests {
     private Map<String, List<Object>> givenAttributesMap;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         this.filter = new RegisteredServiceMutantRegexAttributeFilter();
         this.givenAttributesMap = new HashMap<>();
         this.givenAttributesMap.put("employeeId", List.of("E1234"));
@@ -50,15 +49,15 @@ class RegisteredServiceMutantRegexAttributeFilterTests {
     }
 
     @Test
-    void verifyPatternFilter() throws Throwable {
-        this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
+    void verifyPatternFilter() {
+        this.filter.setPatterns(Map.of("memberOf", "^m"));
         val attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(attrs.size(), this.givenAttributesMap.size());
         assertEquals(2, CollectionUtils.toCollection(attrs.get("memberOf")).size());
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val data = SerializationUtils.serialize(this.filter);
         val secondFilter =
             SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
@@ -67,7 +66,7 @@ class RegisteredServiceMutantRegexAttributeFilterTests {
 
     @Test
     void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
-        this.filter.setPatterns(Collections.singletonMap("memberOf", CollectionUtils.wrapList("^mar(.+)", "^mat(.+)", "prefix$1")));
+        this.filter.setPatterns(Map.of("memberOf", CollectionUtils.wrapList("^mar(.+)", "^mat(.+)", "prefix$1")));
         this.filter.setExcludeUnmappedAttributes(true);
         this.filter.setCaseInsensitive(true);
         MAPPER.writeValue(JSON_FILE, this.filter);
@@ -76,8 +75,8 @@ class RegisteredServiceMutantRegexAttributeFilterTests {
     }
 
     @Test
-    void verifyMutantPatternValues() throws Throwable {
-        this.filter.setPatterns(Collections.singletonMap("memberOf",
+    void verifyMutantPatternValues() {
+        this.filter.setPatterns(Map.of("memberOf",
             CollectionUtils.wrapList("^mar(.+)(101) -> prefix$1$2",
                 "^mat(.+)(101) -> postfix$1$2")));
         this.filter.setCaseInsensitive(false);

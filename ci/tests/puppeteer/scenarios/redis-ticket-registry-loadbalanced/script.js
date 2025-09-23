@@ -9,8 +9,7 @@ async function ensureNoSsoSessionsExistAfterLogout(page, port) {
     const content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
     await cas.log(payload);
-    assert(payload.totalTicketGrantingTickets === 0);
-    assert(payload.totalTickets === 0);
+    assert(payload.totalSsoSessions === 0);
 }
 
 async function testBasicLoginLogout(browser) {
@@ -23,9 +22,7 @@ async function testBasicLoginLogout(browser) {
     await cas.sleep(8000);
     await cas.screenshot(page);
     const ticket = await cas.assertTicketParameter(page);
-    await page.goto(`https://localhost:8444/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    const content = await cas.textContent(page, "body");
-    const payload = JSON.parse(content);
+    const payload = await cas.validateTicket(service, ticket);
     const authenticationSuccess = payload.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
     await logoutEverywhere(page);
@@ -34,7 +31,7 @@ async function testBasicLoginLogout(browser) {
 }
 
 async function logoutEverywhere(page) {
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await cas.goto(page, "https://localhost:8444/cas/logout");
 }
 
@@ -50,16 +47,12 @@ async function checkTicketValidationAcrossNodes(browser) {
     const ticket = await cas.assertTicketParameter(page);
 
     await cas.log("Validating ticket on second node");
-    await page.goto(`https://localhost:8444/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    let content = await cas.textContent(page, "body");
-    let payload = JSON.parse(content);
+    let payload = await cas.validateTicket(service, ticket);
     const authenticationSuccess = payload.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
 
     await cas.log(`Validating ticket ${ticket} again on original node`);
-    await page.goto(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    content = await cas.textContent(page, "body");
-    payload = JSON.parse(content);
+    payload = await cas.validateTicket(service, ticket);
     const authenticationFailure = payload.serviceResponse.authenticationFailure;
     assert(authenticationFailure.code === "INVALID_TICKET");
 
@@ -75,8 +68,7 @@ async function ensureSessionsRecorded(page, port, conditions) {
     const payload = JSON.parse(content);
     console.dir(payload, {depth: null, colors: true});
 
-    assert(payload.totalTicketGrantingTickets === 1);
-    assert(payload.totalTickets === 1);
+    assert(payload.totalSsoSessions === 1);
 
     for (const ticket in conditions) {
         await cas.log(`Checking for issued ticket ${ticket}`);
@@ -129,7 +121,7 @@ async function checkSessionsAreSynced(browser) {
         await checkSessionsAreSynced(browser);
         await testBasicLoginLogout(browser);
         await checkTicketValidationAcrossNodes(browser);
-        await browser.close();
+        await cas.closeBrowser(browser);
     } catch (e) {
         failed = true;
         throw e;

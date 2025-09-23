@@ -1,5 +1,7 @@
 package org.apereo.cas.validation;
 
+import org.apereo.cas.util.NamedObject;
+
 /**
  * This is {@link ServiceTicketValidationAuthorizerConfigurer}.
  *
@@ -7,7 +9,7 @@ package org.apereo.cas.validation;
  * @since 5.2.0
  */
 @FunctionalInterface
-public interface ServiceTicketValidationAuthorizerConfigurer {
+public interface ServiceTicketValidationAuthorizerConfigurer extends NamedObject {
 
     /**
      * Configure authorizer execution plan.
@@ -15,13 +17,4 @@ public interface ServiceTicketValidationAuthorizerConfigurer {
      * @param plan the plan
      */
     void configureAuthorizersExecutionPlan(ServiceTicketValidationAuthorizersExecutionPlan plan);
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
 }

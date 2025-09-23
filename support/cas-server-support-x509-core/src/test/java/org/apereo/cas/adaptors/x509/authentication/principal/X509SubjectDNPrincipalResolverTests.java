@@ -12,11 +12,13 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("X509")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class X509SubjectDNPrincipalResolverTests {
     private static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
@@ -55,12 +58,12 @@ class X509SubjectDNPrincipalResolverTests {
     private ConfigurableApplicationContext applicationContext;
     
     @BeforeEach
-    public void before() throws Exception {
+    void before() throws Exception {
         MockitoAnnotations.openMocks(this).close();
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         val context = PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)
             .attributeDefinitionStore(attributeDefinitionStore)
@@ -104,13 +107,13 @@ class X509SubjectDNPrincipalResolverTests {
 
 
     @Test
-    void verifySupport() throws Throwable {
-        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
-        assertTrue(this.resolver.supports(c));
+    void verifySupport() {
+        val credential = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        assertTrue(this.resolver.supports(credential));
     }
 
     @Test
-    void verifySupportFalse() throws Throwable {
+    void verifySupportFalse() {
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
 }

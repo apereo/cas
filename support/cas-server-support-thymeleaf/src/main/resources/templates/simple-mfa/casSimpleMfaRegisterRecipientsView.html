@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.mfa.simple.pagetitle}">CAS Multifactor Authentication View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+
+<main class="container mt-3 mb-3">
+    <div id="content" layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
+        <h2 th:utext="#{cas.mfa.simple.registration.title}">Register Account</h2>
+        <p th:utext="#{cas.mfa.simple.registration.description}">Your account is not registered.</p>
+        
+        <form th:if="${allowRegisterEmail}" method="post" id="fmRegister" class="fm-v clearfix" th:action="@{/login}">
+            <div id="errorPanel" class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+                <h3>Error</h3>
+                <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
+                   th:utext="${message.text}">Message Text</p>
+            </div>
+            
+            <section class="cas-field form-group my-3 mdc-input-group">
+                <div class="d-flex">
+                    <div class="mdc-input-group-field mdc-input-group-field-append">
+                        <label for="email" class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon">
+                            <span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                    <span class="mdc-floating-label" th:utext="#{screen.welcome.label.email}">Email</span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
+                            <input class="mdc-text-field__input form-control pwd"
+                                   type="email"
+                                   name="email"
+                                   id="email"
+                                   size="100"
+                                   required />
+                        </label>
+                    </div>
+                </div>
+            </section>
+            <button class="mdc-button mdc-button--raised btn btn-primary" accesskey="s">
+                <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
+            </button>
+            <input type="hidden" name="_eventId" value="register"/>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+        </form>
+    </div>
+</main>
+</body>
+
+</html>

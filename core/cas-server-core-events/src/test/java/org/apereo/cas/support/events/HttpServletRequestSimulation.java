@@ -3,11 +3,11 @@ package org.apereo.cas.support.events;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.concurrent.Callable;
@@ -40,9 +40,8 @@ public class HttpServletRequestSimulation implements Callable<Integer> {
     private final Integer threadNum;
     private final boolean useIP1;
 
-    private ConfigurableApplicationContext applicationContext;
-
-
+    private final ConfigurableApplicationContext applicationContext;
+    
     /**
      * Create an instance of the HttpServletRequestSimulation callable object.
      *
@@ -57,7 +56,7 @@ public class HttpServletRequestSimulation implements Callable<Integer> {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer call() {
         postTGTCreatedEvent();
         return threadNum;
     }
@@ -76,7 +75,7 @@ public class HttpServletRequestSimulation implements Callable<Integer> {
             request.setRemoteAddr(IP2);
             request.setLocalAddr(IP2);
         }
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        request.addHeader(HttpHeaders.USER_AGENT, "test");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         val tgt = new MockTicketGrantingTicket("casuser");
         val event = new CasTicketGrantingTicketCreatedEvent(this, tgt, ClientInfoHolder.getClientInfo());

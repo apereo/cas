@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("MongoDb")
-@Import(CasAcceptableUsagePolicyMongoDbAutoConfiguration.class)
+@ImportAutoConfiguration(CasAcceptableUsagePolicyMongoDbAutoConfiguration.class)
 @EnabledIfListeningOnPort(port = 27017)
 @TestPropertySource(properties = {
     "cas.acceptable-usage-policy.mongo.host=localhost",

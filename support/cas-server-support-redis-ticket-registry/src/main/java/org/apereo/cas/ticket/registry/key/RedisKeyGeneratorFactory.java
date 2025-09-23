@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * This is {@link RedisKeyGeneratorFactory}.
@@ -19,22 +18,21 @@ public class RedisKeyGeneratorFactory {
     /**
      * Gets redis key generator.
      *
-     * @param key the key
+     * @param prefix the key
      * @return the redis key generator
      */
-    public Optional<RedisKeyGenerator> getRedisKeyGenerator(final String key) {
-        return Optional.ofNullable(keyGeneratorMap.get(key));
+    public Optional<RedisKeyGenerator> getRedisKeyGenerator(final String prefix) {
+        return Optional.ofNullable(keyGeneratorMap.get(prefix));
     }
 
     /**
      * Register redis key generator.
      *
-     * @param key       the key
      * @param generator the generator
      * @return the redis key generator factory
      */
-    public RedisKeyGeneratorFactory registerRedisKeyGenerator(final String key, final RedisKeyGenerator generator) {
-        keyGeneratorMap.put(key, generator);
+    public RedisKeyGeneratorFactory registerRedisKeyGenerator(final RedisKeyGenerator generator) {
+        keyGeneratorMap.put(generator.getPrefix(), generator);
         return this;
     }
 
@@ -45,14 +43,5 @@ public class RedisKeyGeneratorFactory {
      */
     public List<RedisKeyGenerator> getRedisKeyGenerators() {
         return new ArrayList<>(keyGeneratorMap.values());
-    }
-
-    /**
-     * Register redis key generators.
-     *
-     * @param keyGenerators the key generators
-     */
-    public void registerRedisKeyGenerators(final RedisKeyGenerator... keyGenerators) {
-        Stream.of(keyGenerators).forEach(gen -> registerRedisKeyGenerator(gen.getType(), gen));
     }
 }

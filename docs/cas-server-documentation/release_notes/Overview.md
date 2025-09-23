@@ -4,11 +4,24 @@ title: CAS - Release Notes
 category: Planning
 ---
 
+{% include variables.html %}
+
 # Release Notes
 
-- [RC1](RC1.html)
-- [RC2](RC2.html)
-- [RC3](RC3.html)
-- [RC4](RC4.html)
-- [RC5](RC5.html)
-- [RC6](RC6.html)
+<table class="cas-datatable">
+  <thead>
+    <tr><th>Release</th><th>Reference</th></tr>
+  </thead>
+  <tbody>
+
+    {% for i in (1..4) %}
+        <tr>
+            <td>RC{{ i }}</td>
+            <td><a href="RC{{ i }}.html">See this guide</a>.</td>
+        </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+To understand the release timeline better, please see [CAS releases](https://github.com/apereo/cas/releases).

@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -35,31 +36,30 @@ class HardTimeoutExpirationPolicyTests {
 
     private HardTimeoutExpirationPolicy expirationPolicy;
 
-    private TicketGrantingTicketImpl ticket;
+    private TicketGrantingTicket ticket;
 
     @BeforeEach
-    public void initialize() {
-        this.expirationPolicy = new HardTimeoutExpirationPolicy(TIMEOUT);
-        this.ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils
-            .getAuthentication(), this.expirationPolicy);
+    void initialize() {
+        expirationPolicy = new HardTimeoutExpirationPolicy(TIMEOUT);
+        ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils
+            .getAuthentication(), expirationPolicy);
     }
 
     @Test
-    void verifyTicketIsNull() throws Throwable {
-        assertTrue(this.expirationPolicy.isExpired(null));
+    void verifyTicketIsNull() {
+        assertTrue(expirationPolicy.isExpired(null));
     }
 
     @Test
-    void verifyTicketIsNotExpired() throws Throwable {
-        this.expirationPolicy.setClock(Clock.fixed(this.ticket.getCreationTime().toInstant().plusSeconds(TIMEOUT).minusNanos(1), ZoneOffset.UTC));
-        assertFalse(this.ticket.isExpired());
+    void verifyTicketIsNotExpired() {
+        expirationPolicy.setClock(Clock.fixed(ticket.getCreationTime().toInstant().plusSeconds(TIMEOUT).minusNanos(1), ZoneOffset.UTC));
+        assertFalse(ticket.isExpired());
     }
 
     @Test
-    void verifyTicketIsExpired() throws Throwable {
-        this.expirationPolicy.setClock(Clock.fixed(this.ticket.getCreationTime().toInstant().plusSeconds(TIMEOUT).plusNanos(1), ZoneOffset.UTC));
-        assertTrue(this.ticket.isExpired());
-        assertEquals(0, this.expirationPolicy.getTimeToIdle());
+    void verifyTicketIsExpired() {
+        expirationPolicy.setClock(Clock.fixed(ticket.getCreationTime().toInstant().plusSeconds(TIMEOUT).plusNanos(1), ZoneOffset.UTC));
+        assertTrue(ticket.isExpired());
     }
 
     @Test
@@ -72,7 +72,7 @@ class HardTimeoutExpirationPolicyTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val policyWritten = new HardTimeoutExpirationPolicy();
         val result = SerializationUtils.serialize(policyWritten);
         val policyRead = SerializationUtils.deserialize(result, HardTimeoutExpirationPolicy.class);

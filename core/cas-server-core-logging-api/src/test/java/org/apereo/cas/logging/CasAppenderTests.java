@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class CasAppenderTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val context = LoggerContext.getContext(false);
         val logger = context.getLogger(CasAppender.class.getName());
         val appender = (CasAppender) logger.getAppenders().get("CasAppender");
@@ -29,7 +29,7 @@ class CasAppenderTests {
         assertDoesNotThrow(() -> {
             new CasAppender("CasAppender2", mock(Configuration.class),
                 AppenderRef.createAppenderRef("ref", Level.INFO, appender.getFilter()),
-                appender.getFilter());
+                appender.getFilter(), 10);
             logger.info("Testing CasAppender...");
         });
     }

@@ -2,12 +2,9 @@ package org.apereo.cas.configuration.model.support.saml;
 
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -21,7 +18,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SamlCoreProperties")
 public class SamlCoreProperties implements Serializable {
 
     @Serial
@@ -58,4 +54,12 @@ public class SamlCoreProperties implements Serializable {
      * Qualified name of the security manager class used for creating a SAML parser pool.
      */
     private String securityManager = "org.apache.xerces.util.SecurityManager";
+
+    /**
+     * Salt used to generate persistent or transient ids
+     * in particular when generating SAML2 responses or logout requests, etc.
+     * When left undefined, CAS will generate a random salt. For production use,
+     * it is recommended to define a salt value particularly when multiple CAS nodes are involved.
+     */
+    private String persistentIdSalt;
 }

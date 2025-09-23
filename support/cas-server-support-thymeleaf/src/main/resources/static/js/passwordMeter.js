@@ -1,4 +1,4 @@
-function jqueryReady() {
+document.addEventListener("DOMContentLoaded", (event) => {
     let strength = passwordStrengthI18n;
 
     $.fn.zxcvbnProgressBar = function (options) {
@@ -13,10 +13,8 @@ function jqueryReady() {
             progressBarClass4: 'progress-bar-success'
         }, options);
 
-        $(settings.passwordInput).keyup(event => {
-            UpdateProgressBar();
-        });
-        
+        $(settings.passwordInput).keyup(event => UpdateProgressBar());
+
         return this.each(function () {
             settings.progressBar = this;
             UpdateProgressBar();
@@ -78,23 +76,23 @@ function jqueryReady() {
     let policyPatternRegex = new RegExp(policyPattern);
     let password = document.getElementById('password');
     let confirmed = document.getElementById('confirmedPassword');
+    let current = document.getElementById('currentPassword');
     let barElement = document.getElementById('strengthProgressBar');
     let bar;
 
     if (barElement !== null && barElement !== undefined) {
-        if (typeof mdc !== 'undefined') {
-            bar = new mdc.linearProgress.MDCLinearProgress(barElement);
-        } else {
-            bar = $(barElement);
-        }
+        bar = $(barElement);
     }
 
     if (password !== null && password !== undefined) {
-        password.addEventListener('keyup', event => {
-            validate();
-        });
+        password.addEventListener('keyup', event => validate());
         password.addEventListener('input', validate);
         confirmed.addEventListener('input', validate);
+
+        if (current !== undefined && current !== null) {
+            current.addEventListener('keyup', event => validate());
+            current.addEventListener('input', validate);
+        }
     }
 
     let alertSettings = {
@@ -108,6 +106,7 @@ function jqueryReady() {
     function validate() {
         let val = password.value;
         let cnf = confirmed.value;
+        let crt = current !== null ? current.value : null;
 
         $('#password-strength-msg').hide();
         $('#password-policy-violation-msg').hide();
@@ -117,7 +116,8 @@ function jqueryReady() {
         let passwordMismatch = val !== '' && val !== cnf;
         let result = zxcvbn(val);
         let passwordTooWeak = passwordMinimumStrength > result.score;
-        let disableSubmit = passwordPolicyViolated || passwordMismatch || passwordTooWeak;
+        let currentPasswordEmpty = crt !== null && crt === '';
+        let disableSubmit = passwordPolicyViolated || passwordMismatch || passwordTooWeak || currentPasswordEmpty;
         $('#submit').prop('disabled', disableSubmit);
 
         $('#strengthProgressBar').zxcvbnProgressBar({ passwordInput: 'password', bar: bar });
@@ -168,4 +168,4 @@ function jqueryReady() {
             $('#password-policy-violation-msg').show();
         }
     }
-}
+});

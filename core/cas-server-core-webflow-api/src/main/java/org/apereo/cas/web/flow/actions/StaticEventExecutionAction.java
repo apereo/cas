@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.actions;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -33,7 +32,7 @@ public class StaticEventExecutionAction extends BaseCasWebflowAction {
     @Override
     protected Event doExecuteInternal(final RequestContext context) {
         return Optional.ofNullable(eventId)
-            .map(id -> new EventFactorySupport().event(this, id))
+            .map(id -> eventFactory.event(this, id))
             .orElse(null);
     }
 }

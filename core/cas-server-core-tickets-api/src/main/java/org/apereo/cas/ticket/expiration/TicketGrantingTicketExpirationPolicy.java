@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.expiration;
 
 
+import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
@@ -18,7 +19,6 @@ import org.springframework.util.Assert;
 
 import java.io.Serial;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 
 /**
  * Provides the Ticket Granting Ticket expiration policy.  Ticket Granting Tickets
@@ -33,7 +33,7 @@ import java.time.temporal.ChronoUnit;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Builder
-public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy {
+public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy implements IdleExpirationPolicy {
 
     @Serial
     private static final long serialVersionUID = 7670537200691354820L;
@@ -90,13 +90,13 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
     @Override
     public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
         val creationTime = ticketState.getCreationTime();
-        return creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
+        return creationTime.plusSeconds(this.maxTimeToLiveInSeconds);
     }
 
     @JsonIgnore
     @Override
     public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
         val lastTimeUsed = ticketState.getLastTimeUsed();
-        return lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        return lastTimeUsed.plusSeconds(this.timeToKillInSeconds);
     }
 }

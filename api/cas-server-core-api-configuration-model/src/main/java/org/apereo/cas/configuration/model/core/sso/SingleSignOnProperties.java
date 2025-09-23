@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.core.sso;
 
+import org.apereo.cas.configuration.model.support.email.EmailProperties;
+import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +22,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SingleSignOnProperties")
 public class SingleSignOnProperties implements Serializable {
 
     @Serial
@@ -55,4 +55,10 @@ public class SingleSignOnProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SingleSignOnServicesProperties services = new SingleSignOnServicesProperties();
+
+    @NestedConfigurationProperty
+    private EmailProperties mail = new EmailProperties();
+
+    @NestedConfigurationProperty
+    private SmsProperties sms = new SmsProperties();
 }

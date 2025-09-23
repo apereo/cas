@@ -15,6 +15,8 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.springframework.context.ApplicationContext;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -38,9 +40,10 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     public AbstractMapBasedTicketRegistry(final CipherExecutor cipherExecutor,
                                           final TicketSerializationManager ticketSerializationManager,
                                           final TicketCatalog ticketCatalog,
+                                          final ApplicationContext applicationContext,
                                           final QueueableTicketRegistryMessagePublisher ticketPublisher,
                                           final PublisherIdentifier publisherIdentifier) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.ticketPublisher = ticketPublisher;
         this.publisherIdentifier = publisherIdentifier;
     }
@@ -144,12 +147,13 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
         return getMapInstance()
             .values()
-            .stream()
-            .filter(ticket -> criteria.getType().equals(ticket.getPrefix()))
+            .parallelStream()
+            .filter(ticket -> criteria.getType().equals(ticket.getPrefix())
+                && (StringUtils.isBlank(criteria.getId()) || digestIdentifier(criteria.getId()).equals(ticket.getId())))
             .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
             .filter(ticket -> StringUtils.isBlank(criteria.getPrincipal())
                 || (ticket instanceof final AuthenticationAwareTicket aat
-                    && StringUtils.equalsIgnoreCase(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
+                    && Strings.CI.equals(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
             .limit(criteria.getCount() > 0 ? criteria.getCount() : Long.MAX_VALUE)
             .collect(Collectors.toList());
     }

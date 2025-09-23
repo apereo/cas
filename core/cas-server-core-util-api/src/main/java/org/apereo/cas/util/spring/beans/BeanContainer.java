@@ -31,6 +31,7 @@ public interface BeanContainer<T> extends DisposableBean {
      * @param entries the entries
      * @return the container bean
      */
+    @SafeVarargs
     static <T> BeanContainer<T> of(final T... entries) {
         return new ListBeanContainer<>(Arrays.stream(entries).collect(Collectors.toList()));
     }
@@ -75,7 +76,7 @@ public interface BeanContainer<T> extends DisposableBean {
     List<T> toList();
 
     /**
-     * To set set.
+     * To set.
      *
      * @return the set
      */
@@ -173,7 +174,7 @@ public interface BeanContainer<T> extends DisposableBean {
         }
 
         @Override
-        public void destroy() throws Exception {
+        public void destroy() {
             items.forEach(Unchecked.consumer(entry -> {
                 if (entry instanceof final DisposableBean disposable) {
                     disposable.destroy();

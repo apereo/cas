@@ -1,14 +1,14 @@
 package org.apereo.cas.authentication;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.util.NamedObject;
 import org.springframework.core.Ordered;
 
 /**
  * This is {@link AuthenticationEventExecutionPlanConfigurer}.
- * Passes on an authentication execution plan to implementors
+ * Passes on an authentication execution plan to implementers
  * to register authentication handlers, etc.
  * <p>
- * Since this interface conforms to a functional interface requirement, typical implementors
+ * Since this interface conforms to a functional interface requirement, typical implementers
  * are {@code @Conditional} beans expressed as compact lambda expressions inside of various CAS modules that
  * contribute to the overall CAS authentication subsystem.
  * <p>
@@ -21,7 +21,7 @@ import org.springframework.core.Ordered;
  * @since 5.1.0
  */
 @FunctionalInterface
-public interface AuthenticationEventExecutionPlanConfigurer extends Ordered {
+public interface AuthenticationEventExecutionPlanConfigurer extends Ordered, NamedObject {
 
     /**
      * configure the plan.
@@ -30,14 +30,6 @@ public interface AuthenticationEventExecutionPlanConfigurer extends Ordered {
      */
     void configureAuthenticationExecutionPlan(AuthenticationEventExecutionPlan plan) throws Exception;
 
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return StringUtils.defaultIfBlank(this.getClass().getSimpleName(), "Default");
-    }
 
     @Override
     default int getOrder() {

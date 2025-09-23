@@ -21,7 +21,7 @@ cas.standard.js.file=/js/cas.js
    
 Please note that,
 
-- Multiple CSS or Javascript files can be defined and separated by a comma.
+- Multiple CSS or JavaScript files can be defined and separated by a comma.
 - The order of the files is important. The files are loaded in the order they are defined.
 - CAS will always load a `/css/custom.css` and `/js/custom.js` by default to allow for overrides and customizations.
 
@@ -31,11 +31,11 @@ CSS media queries bring responsive design features to CAS which would allow the 
 on one theme for all appropriate devices and platforms. These queries are defined in the 
 same `cas.css` file. They follow the Twitter Bootstrap breakpoints and grid.
 
-# Javascript
+# JavaScript
 
-If you need to add some JavaScript, feel free to append `src/main/resources/static/js/cas.js`.
+If you need to add some JavaScript, feel free to append to `src/main/resources/static/js/cas.js`.
 
-You can also create your own custom javascript file, for example, and call it from within `scripts.html` like so:
+You can also create your own custom JavaScript file and include it in `scripts.html` like so:
 
 ```html
 <script type="text/javascript" src="/js/my.js"></script>
@@ -44,23 +44,11 @@ You can also create your own custom javascript file, for example, and call it fr
 If you are developing themes per service, each theme also has the ability 
 to specify a custom `cas.js` file under the `cas.standard.js.file` setting.
 
-Most importantly, the following Javascript libraries are utilized by CAS automatically:
+Most importantly, the following JavaScript libraries are utilized by CAS automatically:
 
 * [JQuery](https://jquery.com/)
 * [Bootstrap for grid / flex utilities](https://getbootstrap.com/docs/4.5/getting-started/contents/#css-files)
 * [Material.io](https://material.io/)
-
-## Script Loading
-
-CAS provides a callback function that allows adopters to be notified when script 
-loading has completed and this would be a safe time to execute/load other Javascript-related 
-functions that depend on JQuery inside the actual page.
-
-```javascript
-function jqueryReady() {
-    // Custom Javascript tasks can be carried out now via JQuery...
-}
-```
 
 ## Checking CAPSLOCK
 
@@ -80,7 +68,7 @@ want a CAS-authenticated application to be able to use anchors/fragments when bo
 is configured by default to preserve anchor fragments where and when specified. There is 
 nothing further for you to do.
 
-### WebJARs for Javascript/CSS Libraries
+## WebJARs for JavaScript/CSS Libraries
 
 The CAS application packages third party static resources inside the CAS webapp rather 
 than referencing CDN links so that CAS may be deployed on 
@@ -89,13 +77,12 @@ networks with limited internet access.
 The Third party static resources are packaged in "WebJAR" jar files and served up via the servlet `3.0` feature 
 that merges any folders under `META-INF/resources` in web application jars with the application's web root.
 
-#### Building WebJARs
+### Building WebJARs
 
-You can search for webjars at http://webjars.org. There are three flavors of WebJARs that you 
+You can search for webjars at https://webjars.org. There are three flavors of WebJARs that you 
 can read about but the NPM and Bower types can be created automatically for any version 
 (if they don't already exist) as long as there exists an NPM or Bower package for the 
 web resources you want to use. Click the "Add a webjar" button and follow 
 the instructions. If customizing the UI in an overlay, the deployer can add webjars as 
-dependencies to their overlay project and reference the URLs of the resource either directly 
-in an html file or via adding an entry to a `common_messages.properties` file 
-in the overlay project's `src\main\resources` folder.
+dependencies to their overlay project and reference the URLs of the resource directly 
+in an html file.

@@ -32,7 +32,7 @@ class JcifsConfigTests {
     }
 
     @Test
-    void verifyJcifsConfig() throws Throwable {
+    void verifyJcifsConfig() {
         assertDoesNotThrow(() -> {
             val settings = new JcifsConfig.JcifsSettings();
             settings.setJcifsDomain("DOMAIN");

@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.login;
 
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.monitor.Monitorable;
+import org.apereo.cas.support.events.sso.CasSingleSignOnSessionCreatedEvent;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -16,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationContext;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -40,8 +41,6 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
     private final CasCookieBuilder ticketGrantingCookieBuilder;
 
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
-
-    private final ApplicationContext applicationContext;
 
     @Override
     protected Event doExecuteInternal(final RequestContext context) throws Throwable {
@@ -78,12 +77,12 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
     }
 
     protected boolean shouldCreateSingleSignOnCookie(final SingleSignOnParticipationRequest ssoRequest,
-                                                   final String ticketGrantingTicketId) throws Throwable {
+                                                     final String ticketGrantingTicketId) throws Throwable {
         return singleSignOnParticipationStrategy.isCreateCookieOnRenewedAuthentication(ssoRequest) == TriStateBoolean.TRUE
             || singleSignOnParticipationStrategy.isParticipating(ssoRequest);
     }
 
-    protected Event createSingleSignOnCookie(final RequestContext requestContext, final String ticketGrantingTicketId) throws Exception {
+    protected Event createSingleSignOnCookie(final RequestContext requestContext, final String ticketGrantingTicketId) {
         val ticketGrantingTicket = ticketRegistry.getTicket(ticketGrantingTicketId);
         if (ticketGrantingTicket.isStateless()) {
             return result(CasWebflowConstants.TRANSITION_ID_WRITE_BROWSER_STORAGE,
@@ -93,6 +92,11 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val rememberMeAuthentication = CookieRetrievingCookieGenerator.isRememberMeAuthentication(requestContext);
         ticketGrantingCookieBuilder.addCookie(request, response, rememberMeAuthentication, ticketGrantingTicketId);
+
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        applicationContext.publishEvent(new CasSingleSignOnSessionCreatedEvent(this, ticketGrantingTicket, clientInfo));
+
         return success();
     }
 }

@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.passwordless;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,7 +21,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("PasswordlessAuthenticationCoreProperties")
 public class PasswordlessAuthenticationCoreProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 6726382874579042117L;
@@ -65,5 +63,12 @@ public class PasswordlessAuthenticationCoreProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SpringResourceProperties delegatedAuthenticationSelectorScript = new SpringResourceProperties();
+
+    /**
+     * Provide the ability to customize and augment the passwordless user account
+     * once it's been fetched from the actual store.
+     */
+    @NestedConfigurationProperty
+    private SpringResourceProperties passwordlessAccountCustomizerScript = new SpringResourceProperties();
 
 }

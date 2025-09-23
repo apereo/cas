@@ -1,6 +1,7 @@
 package org.apereo.cas.audit.spi.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
@@ -26,6 +27,7 @@ import java.util.Locale;
 @Accessors(chain = true)
 @Getter
 @Setter
+@NoArgsConstructor
 public class AuditTrailEntity {
 
     @org.springframework.data.annotation.Id
@@ -33,7 +35,7 @@ public class AuditTrailEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "AUD_USER")
+    @Column(name = "AUD_USER", length = 512)
     private String user;
 
     @Column(name = "AUD_CLIENT_IP")
@@ -42,11 +44,14 @@ public class AuditTrailEntity {
     @Column(name = "AUD_SERVER_IP")
     private String serverIp;
 
-    @Column(name = "AUD_RESOURCE")
+    @Column(name = "AUD_RESOURCE", length = 512)
     private String resource;
 
     @Column(name = "AUD_ACTION")
     private String action;
+
+    @Column(name = "AUD_TENANT", length = 512)
+    private String tenant;
 
     @Column(name = "APPLIC_CD")
     private String applicationCode;
@@ -68,8 +73,4 @@ public class AuditTrailEntity {
 
     @Column(name = "AUD_EXTRA_INFO", columnDefinition = "longvarchar")
     private String extraInfo;
-
-    public AuditTrailEntity() {
-        this.id = System.currentTimeMillis();
-    }
 }

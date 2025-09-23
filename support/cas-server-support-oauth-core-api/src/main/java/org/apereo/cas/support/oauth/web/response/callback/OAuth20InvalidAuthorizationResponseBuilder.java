@@ -46,7 +46,7 @@ public class OAuth20InvalidAuthorizationResponseBuilder {
         }
 
         val error = context.getRequestAttribute(OAuth20Constants.ERROR)
-            .get()
+            .orElseThrow()
             .toString();
         val errorDescription = context.getRequestAttribute(OAuth20Constants.ERROR_DESCRIPTION)
             .orElse(StringUtils.EMPTY)

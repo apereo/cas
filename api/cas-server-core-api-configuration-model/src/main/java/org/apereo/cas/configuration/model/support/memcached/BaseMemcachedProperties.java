@@ -150,7 +150,7 @@ public class BaseMemcachedProperties implements Serializable {
          */
         KRYO,
         /**
-         * Kryp native transcoder that serializes and compresses objects.
+         * Kryo native transcoder that serializes and compresses objects.
          */
         SERIAL,
         /**

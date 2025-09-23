@@ -1,0 +1,36 @@
+{
+  "dependencies": "saml-idp,saml-idp-metadata-aws-s3",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
+
+    "--cas.authn.saml-idp.metadata.amazon-s3.idp-metadata-bucket-name=thebucket",
+    "--cas.authn.saml-idp.metadata.amazon-s3.endpoint=http://127.0.0.1:4566",
+    "--cas.authn.saml-idp.metadata.amazon-s3.region=us-east-1",
+    "--cas.authn.saml-idp.metadata.amazon-s3.credential-access-key=test",
+    "--cas.authn.saml-idp.metadata.amazon-s3.credential-secret-key=test",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.server.scope=example.net",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.authn.saml-idp.metadata.amazon-s3.crypto.enabled=true",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
+}
+

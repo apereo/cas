@@ -2,7 +2,6 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -42,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("JDBC")
 class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
     @BeforeEach
-    public void initialize() throws SQLException {
+    void initialize() throws SQLException {
         try (val connection = this.acceptableUsagePolicyDataSource.getConnection()) {
             try (val s = connection.createStatement()) {
                 connection.setAutoCommit(true);
@@ -78,7 +77,7 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
 
     @Test
     void verifyRepositoryPolicyText() throws Throwable {
-        val service = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
+        val service = RegisteredServiceTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceAcceptableUsagePolicy();
         policy.setMessageCode("aup.code");
         policy.setText("aup text here");
@@ -133,8 +132,7 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
             acceptableUsagePolicyDataSource,
             jdbcAcceptableUsagePolicyTransactionTemplate);
 
-        val context = MockRequestContext.create();
-
+        val context = MockRequestContext.create(applicationContext);
         val credentials = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
         val principal = CoreAuthenticationTestUtils.getPrincipal(credentials.getId(), profileAttributes);
         val auth = CoreAuthenticationTestUtils.getAuthentication(principal);

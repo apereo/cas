@@ -41,7 +41,7 @@ Although the scripts support different login methodologies, they do share some c
 
 ## Scripts
 
-The scripts can be downloaded from [here](https://github.com/apereo/cas/raw/master/etc/loadtests/).
+The scripts can be downloaded from [here](https://github.com/apereo/cas/raw/master/etc/loadtests/jmeter).
    
 ### CAS Protocol
 

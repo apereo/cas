@@ -33,7 +33,6 @@ import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -48,8 +47,6 @@ import java.util.Optional;
  */
 @Slf4j
 public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponseBuilder<Response> {
-    @Serial
-    private static final long serialVersionUID = 1488837627964481272L;
 
     public SamlProfileSaml2ResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext configurationContext) {
         super(configurationContext);
@@ -88,8 +85,6 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
             storeAttributeQueryTicketInRegistry(assertion, context);
         }
 
-        val customizers = configurationContext.getApplicationContext()
-            .getBeansOfType(SamlIdPResponseCustomizer.class).values();
         val finalAssertion = encryptAssertion(assertion, context);
         if (finalAssertion.isPresent()) {
             val result = finalAssertion.get();
@@ -97,15 +92,15 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                 LOGGER.trace("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
                 samlResponse.getEncryptedAssertions().add(encrypted);
             } else if (result instanceof final Assertion nonEncryptedAssertion) {
-                customizers.stream()
-                    .sorted(AnnotationAwareOrderComparator.INSTANCE)
-                    .forEach(customizer -> customizer.customizeAssertion(context, this, nonEncryptedAssertion));
-
                 LOGGER.trace("Built assertion is not encrypted, so the response will add it to the assertions collection");
                 samlResponse.getAssertions().add(nonEncryptedAssertion);
             }
         }
+
         samlResponse.setStatus(determineResponseStatus(context));
+
+        val customizers = configurationContext.getApplicationContext()
+            .getBeansOfType(SamlIdPResponseCustomizer.class).values();
         customizers.stream()
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .forEach(customizer -> customizer.customizeResponse(context, this, samlResponse));
@@ -126,7 +121,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
 
     protected boolean signSamlResponseFor(final SamlProfileBuilderContext context) {
         return context.getRegisteredService().getSignResponses().isTrue()
-            || SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().entityDescriptor(),
+            || SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().getEntityDescriptor(),
             List.of(MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_SIGN_RESPONSES.getName(),
                 Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
     }
@@ -149,7 +144,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     @Override
     protected Response encode(final SamlProfileBuilderContext context,
                               final Response samlResponse,
-                              final String relayState) throws Exception {
+                              final String relayState) {
         LOGGER.trace("Constructing encoder based on binding [{}] for [{}]", context.getBinding(), context.getAdaptor().getEntityId());
         if (context.getBinding().equalsIgnoreCase(SAMLConstants.SAML2_ARTIFACT_BINDING_URI)) {
             val encoder = new SamlResponseArtifactEncoder(

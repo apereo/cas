@@ -16,15 +16,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("OIDC")
+@Tag("OIDCServices")
 @TestPropertySource(properties = {
     "cas.authn.oidc.services.defaults.jwksKeyId=12345",
     "cas.authn.oidc.services.defaults.idTokenSigningAlg=SHA512"
 })
-public class OidcRegisteredServiceInjectablesTests extends AbstractOidcTests {
+class OidcRegisteredServiceInjectablesTests extends AbstractOidcTests {
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         assertNull(registeredService.getJwksKeyId());
         assertNull(registeredService.getIdTokenSigningAlg());

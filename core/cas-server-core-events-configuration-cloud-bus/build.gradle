@@ -1,9 +1,12 @@
 description = "Apereo CAS Core Events - Spring Cloud Configuration Bus Events"
 dependencies {
+    implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-events")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-util-api")
 
     implementation libraries.springintegrationamqp
     implementation libraries.springcloudbus
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

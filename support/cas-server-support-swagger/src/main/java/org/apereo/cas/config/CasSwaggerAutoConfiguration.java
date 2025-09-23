@@ -41,8 +41,7 @@ public class CasSwaggerAutoConfiguration {
             @Override
             public List<String> getIgnoredEndpoints() {
                 val apiDocs = StringUtils.defaultIfBlank(springDocConfigProperties.getApiDocs().getPath(), "/v3/api-docs");
-                val swaggerUI = StringUtils.defaultIfBlank(swaggerUiConfigProperties.getPath(), "/swagger-ui");
-                return List.of(apiDocs, swaggerUI);
+                return List.of(apiDocs, "/swagger-ui/", "/swagger-ui.html");
             }
         };
     }

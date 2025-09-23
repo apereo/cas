@@ -12,7 +12,7 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
     
-    "--logging.level.org.apereo.cas=info",
+
     "--logging.level.PROTOCOL_MESSAGE=info",
     
     "--cas.service-registry.core.init-from-json=true",

@@ -1,13 +1,18 @@
 package com.yubico.core;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apereo.cas.util.RandomUtils;
 import com.yubico.webauthn.data.ByteArray;
 import lombok.NonNull;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 public interface SessionManager {
+    /**
+     * The bean name.
+     */
+    String BEAN_NAME = "webAuthnSessionManager";
+
     static ByteArray generateRandom(final int length) {
         var random = RandomUtils.getNativeInstance();
         var bytes = new byte[length];
@@ -15,20 +20,23 @@ public interface SessionManager {
         return new ByteArray(bytes);
     }
 
-    ByteArray createSession(@NonNull final ByteArray paramByteArray) throws ExecutionException;
+    ByteArray createSession(HttpServletRequest request, @NonNull final ByteArray userHandle);
 
-    Optional<ByteArray> getSession(@NonNull final ByteArray paramByteArray);
+    Optional<ByteArray> getSession(HttpServletRequest request, @NonNull final ByteArray sessionId);
+    
     default boolean isSessionForUser(
+        final HttpServletRequest request,
         @NonNull final ByteArray claimedUserHandle,
         @NonNull final ByteArray token) {
         Objects.requireNonNull(claimedUserHandle);
-        return getSession(token).map(claimedUserHandle::equals).orElse(false);
+        return getSession(request, token).map(claimedUserHandle::equals).orElse(false);
     }
 
     default boolean isSessionForUser(
+        final HttpServletRequest request,
         @NonNull final ByteArray claimedUserHandle,
         @NonNull final Optional<ByteArray> token) {
-        return token.map(givenToken -> isSessionForUser(claimedUserHandle, givenToken)).orElse(false);
+        return token.map(givenToken -> isSessionForUser(request, claimedUserHandle, givenToken)).orElse(false);
     }
 }
 

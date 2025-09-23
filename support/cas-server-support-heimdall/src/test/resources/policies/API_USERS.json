@@ -1,0 +1,28 @@
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources",
+  "resources": [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 984536250,
+        "pattern": "/api/users",
+        "method": "POST",
+        "properties": {
+            "@class": "java.util.HashMap",
+            "property1" : [ "java.util.HashSet", [ "tag1" ] ]
+        },
+        "policies": [ "java.util.ArrayList", [
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAttributesAuthorizationPolicy",
+            "attributes" : {
+              "@class" : "java.util.HashMap",
+              "memberOf" : [ "java.util.HashSet", [ ".*admin.*" ] ]
+            }
+          }
+        ]]
+      }
+    ]
+  ],
+  "namespace": "API_USERS"
+}

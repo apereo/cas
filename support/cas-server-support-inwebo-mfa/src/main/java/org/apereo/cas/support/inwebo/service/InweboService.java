@@ -8,20 +8,20 @@ import org.apereo.cas.support.inwebo.service.response.InweboPushAuthenticateResp
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import java.net.HttpURLConnection;
 import java.net.URI;
-
-import static org.apereo.cas.support.inwebo.web.flow.actions.WebflowConstants.*;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.BROWSER_AUTHENTICATION_STATUS;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.PUSH_AND_BROWSER_AUTHENTICATION_STATUS;
 
 /**
  * The Inwebo service.
@@ -30,9 +30,15 @@ import static org.apereo.cas.support.inwebo.web.flow.actions.WebflowConstants.*;
  * @since 6.4.0
  */
 @Slf4j
-public record InweboService(CasConfigurationProperties casProperties, InweboConsoleAdmin consoleAdmin, SSLContext context) {
+@RequiredArgsConstructor
+@Getter
+public class InweboService {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
+
+    private final CasConfigurationProperties casProperties;
+    private final InweboConsoleAdmin consoleAdmin;
+    private final SSLContext context;
 
     /**
      * Retrieve device name.
@@ -95,7 +101,7 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
     public InweboPushAuthenticateResponse pushAuthenticate(final String login) {
         return FunctionUtils.doUnchecked(() -> {
             val inwebo = casProperties.getAuthn().getMfa().getInwebo();
-            val url = UriComponentsBuilder.fromHttpUrl(inwebo.getServiceApiUrl())
+            val url = UriComponentsBuilder.fromUriString(inwebo.getServiceApiUrl())
                 .queryParam("action", "pushAuthenticate")
                 .queryParam("serviceId", inwebo.getServiceId())
                 .queryParam("userId", login)
@@ -103,6 +109,7 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
                 .toUriString();
 
             val json = call(url);
+            LOGGER.debug("Push authenticate response from [{}]: [{}]", url, json.toPrettyString());
             val err = json.get("err").asText("OK");
             val response = (InweboPushAuthenticateResponse) buildResponse(
                 new InweboPushAuthenticateResponse(), "pushAuthenticate(" + login + ')', err);
@@ -126,7 +133,7 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
     public InweboDeviceNameResponse checkPushResult(final String login, final String sessionId) {
         return FunctionUtils.doUnchecked(() -> {
             val inwebo = casProperties.getAuthn().getMfa().getInwebo();
-            val url = UriComponentsBuilder.fromHttpUrl(inwebo.getServiceApiUrl())
+            val url = UriComponentsBuilder.fromUriString(inwebo.getServiceApiUrl())
                 .queryParam("action", "checkPushResult")
                 .queryParam("serviceId", inwebo.getServiceId())
                 .queryParam("userId", login)
@@ -153,7 +160,7 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
     public InweboDeviceNameResponse authenticateExtended(final String login, final String token) {
         return FunctionUtils.doUnchecked(() -> {
             val inwebo = casProperties.getAuthn().getMfa().getInwebo();
-            val url = UriComponentsBuilder.fromHttpUrl(inwebo.getServiceApiUrl())
+            val url = UriComponentsBuilder.fromUriString(inwebo.getServiceApiUrl())
                 .queryParam("action", "authenticateExtended")
                 .queryParam("serviceId", inwebo.getServiceId())
                 .queryParam("userId", login)
@@ -183,7 +190,9 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
             urlConnection.setSSLSocketFactory(this.context.getSocketFactory());
         }
         conn.setRequestMethod(HttpMethod.GET.name());
-        return MAPPER.readTree(conn.getInputStream());
+        try (var input = conn.getInputStream()) {
+            return MAPPER.readTree(input);
+        }
     }
 
     /**
@@ -200,26 +209,19 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
         } else {
             LOGGER.trace("Inwebo call: [{}] returned error: [{}]", operation, err);
 
-            if ("NOK:NOPUSH".equals(err)) {
-                response.setResult(InweboResult.NOPUSH);
-            } else if ("NOK:NOMA".equals(err)) {
-                response.setResult(InweboResult.NOMA);
-            } else if ("NOK:NOLOGIN".equals(err)) {
-                response.setResult(InweboResult.NOLOGIN);
-            } else if ("NOK:SN".equals(err)) {
-                response.setResult(InweboResult.SN);
-            } else if ("NOK:srv unknown".equals(err)) {
-                response.setResult(InweboResult.UNKNOWN_SERVICE);
-            } else if ("NOK:WAITING".equals(err)) {
-                response.setResult(InweboResult.WAITING);
-            } else if ("NOK:REFUSED".equals(err)) {
-                response.setResult(InweboResult.REFUSED);
-            } else if ("NOK:TIMEOUT".equals(err)) {
-                response.setResult(InweboResult.TIMEOUT);
-            } else {
-                response.setResult(InweboResult.NOK);
+            switch (err) {
+                case "NOK:NOPUSH" -> response.setResult(InweboResult.NOPUSH);
+                case "NOK:NOMA" -> response.setResult(InweboResult.NOMA);
+                case "NOK:NOLOGIN" -> response.setResult(InweboResult.NOLOGIN);
+                case "NOK:SN" -> response.setResult(InweboResult.SN);
+                case "NOK:srv unknown" -> response.setResult(InweboResult.UNKNOWN_SERVICE);
+                case "NOK:WAITING" -> response.setResult(InweboResult.WAITING);
+                case "NOK:REFUSED" -> response.setResult(InweboResult.REFUSED);
+                case "NOK:TIMEOUT" -> response.setResult(InweboResult.TIMEOUT);
+                case null, default -> response.setResult(InweboResult.NOK);
             }
         }
         return response;
     }
+
 }

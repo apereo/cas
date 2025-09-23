@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
 class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
     
     @Test
-    void verifyTestWhenNoAuthnEventsFoundForUser() throws Throwable {
+    void verifyTestWhenNoAuthnEventsFoundForUser() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication("geoperson");
         val service = RegisteredServiceTestUtils.getRegisteredService("test");
         val request = new MockHttpServletRequest();
@@ -61,7 +61,7 @@ class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthentica
     }
 
     @Test
-    void verifyTestWhenAuthnEventsFoundForUser() throws Throwable {
+    void verifyTestWhenAuthnEventsFoundForUser() {
         HttpsURLConnection.setDefaultHostnameVerifier(CasSSLContext.disabled().getHostnameVerifier());
         HttpsURLConnection.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
 

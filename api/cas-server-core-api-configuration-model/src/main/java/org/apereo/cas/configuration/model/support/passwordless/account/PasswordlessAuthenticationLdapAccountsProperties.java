@@ -2,8 +2,8 @@ package org.apereo.cas.configuration.model.support.passwordless.account;
 
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,7 +19,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("PasswordlessAuthenticationLdapAccountsProperties")
 public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLdapSearchProperties {
     @Serial
     private static final long serialVersionUID = -1102345678378393382L;
@@ -28,12 +27,14 @@ public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLd
      * Name of the LDAP attribute that
      * indicates the user's email address.
      */
+    @RequiredProperty
     private String emailAttribute = "mail";
 
     /**
      * Name of the LDAP attribute that
      * indicates the user's phone.
      */
+    @RequiredProperty
     private String phoneAttribute = "phoneNumber";
 
     /**
@@ -54,7 +55,7 @@ public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLd
     /**
      * Name of the LDAP attribute that
      * is the passwordless flow to request a password prompt from user.
-     * The attribute value must be a boolean. Acceoted values
+     * The attribute value must be a boolean. Accepted values
      * are {@code true}, {@code false}, {@code on}, {@code off}, {@code yes}, {@code no},
      * {@code Y}, {@code T}, {@code F}, {@code N}, etc.
      * Comparisons are not case sensitive.

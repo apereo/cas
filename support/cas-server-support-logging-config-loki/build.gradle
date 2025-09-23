@@ -1,0 +1,27 @@
+description = "Apereo CAS Core Logging Loki Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Logging",
+            title: "Loki"
+    ]
+}
+dependencies {
+    api project(":api:cas-server-core-api-ticket")
+
+    implementation libraries.loki
+    implementation libraries.log4j
+
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-logging-api")
+
+    annotationProcessor libraries.log4j
+}
+
+compileJava {
+    options.compilerArgs << "-Alog4j.graalvm.groupId=${project.group}"
+    options.compilerArgs << "-Alog4j.graalvm.artifactId=${project.name}"
+}
+
+

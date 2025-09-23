@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.entity.SamlIdentityProviderEntity;
+import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.entity.SamlIdentityProviderEntityParser;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.DefaultSamlIdentityProviderDiscoveryFeedService;
@@ -19,9 +19,8 @@ import org.apereo.cas.web.flow.DelegatedClientIdentityProviderAuthorizer;
 import org.apereo.cas.web.flow.SamlIdentityProviderDiscoveryWebflowConfigurer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.saml.client.SAML2Client;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -35,6 +34,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -56,7 +56,7 @@ public class CasSamlIdentityProviderDiscoveryAutoConfiguration {
         return new CasWebSecurityConfigurer<>() {
             @Override
             public List<String> getIgnoredEndpoints() {
-                return List.of(StringUtils.prependIfMissing(SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY, "/"));
+                return List.of(Strings.CI.prependIfMissing(SamlIdentityProviderDiscoveryFeedController.BASE_ENDPOINT_IDP_DISCOVERY, "/"));
             }
         };
     }
@@ -66,12 +66,12 @@ public class CasSamlIdentityProviderDiscoveryAutoConfiguration {
     @Bean
     public CasWebflowConfigurer identityProviderDiscoveryWebflowConfigurer(
         final CasConfigurationProperties casProperties, final ConfigurableApplicationContext applicationContext,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices) {
         return new SamlIdentityProviderDiscoveryWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
@@ -127,21 +127,11 @@ public class CasSamlIdentityProviderDiscoveryAutoConfiguration {
         val resource = casProperties.getAuthn().getPac4j().getSamlDiscovery().getResource();
         resource
             .stream()
-            .filter(res -> res.getLocation() != null)
-            .forEach(Unchecked.consumer(res -> parsers.add(new SamlIdentityProviderEntityParser(res.getLocation()))));
-
-        identityProviders
-            .findAllClients()
-            .stream()
-            .filter(SAML2Client.class::isInstance)
-            .map(SAML2Client.class::cast)
-            .forEach(c -> {
-                c.init(c.getIdentityProviderMetadataResolver() == null);
-                val entity = new SamlIdentityProviderEntity();
-                c.getIdentityProviderMetadataResolver().resolve();
-                entity.setEntityID(c.getIdentityProviderResolvedEntityId());
-                parsers.add(new SamlIdentityProviderEntityParser(entity));
-            });
+            .map(SpringResourceProperties::getLocation)
+            .filter(Objects::nonNull)
+            .forEach(Unchecked.consumer(res -> parsers.add(new SamlIdentityProviderEntityParser(res))));
+        
+        parsers.add(new SamlIdentityProviderEntityParser(identityProviders));
         return BeanContainer.of(parsers);
     }
 }

@@ -71,7 +71,7 @@ public class ClosedYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public Collection<? extends YubiKeyAccount> getAccountsInternal() {
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
 

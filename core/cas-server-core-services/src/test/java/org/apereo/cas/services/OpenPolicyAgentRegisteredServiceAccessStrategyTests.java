@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.RandomUtils;
@@ -9,6 +10,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
@@ -29,10 +35,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("RegisteredService")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifySerializeToJson() throws IOException {
         val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
@@ -48,7 +59,7 @@ class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
     @Test
     void verifyOperation() throws Throwable {
         val strategy = new OpenPolicyAgentRegisteredServiceAccessStrategy();
-        strategy.setApiUrl("http://localhost:8755");
+        strategy.setApiUrl("http://localhost:8756");
         strategy.setDecision("example/authz/allow");
         strategy.setToken(UUID.randomUUID().toString());
         strategy.setContext(Map.of("Param1", List.of("Value1")));
@@ -60,12 +71,13 @@ class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
             .service(RegisteredServiceTestUtils.getService())
             .principalId(principal.getId())
             .attributes(principal.getAttributes())
+            .applicationContext(applicationContext)
             .build();
         assertFalse(strategy.authorizeRequest(request));
 
         val mapper = JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
         val data = mapper.writeValueAsString(CollectionUtils.wrap("result", true));
-        try (val webServer = new MockWebServer(8755,
+        try (val webServer = new MockWebServer(8756,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertTrue(strategy.authorizeRequest(request));

@@ -1,0 +1,47 @@
+{
+  "dependencies": "ldap,generic,reports,multitenancy,pac4j-cas,pac4j-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "healthcheck": {
+    "urls": ["https://localhost:8443/cas/actuator/health"]
+  },
+  "properties": [
+    "--cas.authn.accept.name=STATIC",
+
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.json.name=JSON",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+    
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--spring.thymeleaf.cache=false",
+    
+    "--cas.multitenancy.core.enabled=true",
+    "--cas.multitenancy.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/tenants.json",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.gender=female",
+    "--cas.authn.attribute-repository.stub.attributes.preferred_username=casuser",
+
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[0].protocol=CAS30",
+    "--cas.authn.pac4j.cas[0].client-name=CasClient1",
+
+    "--cas.authn.pac4j.cas[1].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[1].protocol=CAS20",
+    "--cas.authn.pac4j.cas[1].client-name=CasClient2",
+
+    "--cas.http-client.host-name-verifier=none"
+  ],
+  "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle",
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/cas/run-cas-server.sh,${PWD}/ci/tests/ldap/run-ldap-server.sh"
+}

@@ -14,6 +14,6 @@ import org.springframework.aot.hint.RuntimeHints;
 public class CasCoreRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        registerSerializableSpringProxy(hints, CentralAuthenticationService.class);
+        registerSerializableSpringProxyHints(hints, CentralAuthenticationService.class);
     }
 }

@@ -2,24 +2,21 @@ package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.sms.SmsRequest;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
@@ -33,18 +30,12 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    MailSenderValidatorAutoConfiguration.class
-},
-    properties = {
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+@SpringBootTest(classes = BaseNotificationTests.SharedTestConfiguration.class, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000"
+})
 @Tag("Mail")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 25000)
 class DefaultCommunicationsManagerTests {
     @Autowired
@@ -52,7 +43,7 @@ class DefaultCommunicationsManagerTests {
     private CommunicationsManager communicationsManager;
 
     @Test
-    void verifyMailSender() throws Throwable {
+    void verifyMailSender() {
         assertTrue(communicationsManager.isMailSenderDefined());
 
         var props = new EmailProperties();
@@ -75,7 +66,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifyEmailWithLocalizedSubject() throws Throwable {
+    void verifyEmailWithLocalizedSubject() {
         val props = new EmailProperties();
         props.setText("Hello World");
         props.setSubject("#{my.subject}");
@@ -107,7 +98,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifyMailNoAtr() throws Throwable {
+    void verifyMailNoAtr() {
         assertTrue(communicationsManager.isMailSenderDefined());
         val emailRequest = EmailMessageRequest.builder()
             .principal(mock(Principal.class))
@@ -118,7 +109,7 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifySmsNoAtr() throws Throwable {
+    void verifySmsNoAtr() {
         assertFalse(communicationsManager.isSmsSenderDefined());
         val smsRequest = SmsRequest.builder()
             .principal(mock(Principal.class))
@@ -129,13 +120,13 @@ class DefaultCommunicationsManagerTests {
     }
 
     @Test
-    void verifyNoSmsSender() throws Throwable {
+    void verifyNoSmsSender() {
         assertFalse(communicationsManager.isSmsSenderDefined());
         assertFalse(communicationsManager.sms(SmsRequest.builder().build()));
     }
 
     @Test
-    void verifyValidate() throws Throwable {
+    void verifyValidate() {
         assertTrue(communicationsManager.validate());
     }
 }

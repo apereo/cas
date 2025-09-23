@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <div class="attribute-tab w-100 mdc-data-table table-responsive noborder" id="attribute-tab-0">
+
+        <div class="jqueryui-tabs">
+              <ul>
+                <li><a id="applications" href="#applications-tab">Applications</a></li>
+                <li><a id="saml2metadataproviders" href="#saml2metadataproviders-tab" class="hide">SAML2 Metadata Sources</a></li>
+              </ul>
+
+            <div id="applications-tab">
+
+                <table id="applicationsTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">URL</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+
+                <div width="10%">
+                    <div class="mdc-touch-target-wrapper">
+                        <button name="newService" id="newService" class="mdc-button mdc-button--raised"
+                                aria-label="Create">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus"
+                                                               aria-hidden="true"></i>New</span>
+                        </button>
+                        <input type="file" id="serviceFileInput" style="display: none;">
+                        <button name="importService" id="importService" class="mdc-button mdc-button--raised"
+                                aria-label="Import">
+                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-import"
+                                                                aria-hidden="true"></i>Import</span>
+                        </button>
+                        <button name="exportAll" id="exportAll" class="mdc-button mdc-button--raised"
+                                aria-label="Export All">
+                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-export"
+                                                                aria-hidden="true"></i>Export</span>
+                        </button>
+                        <button name="reloadAll" id="reloadAll" class="mdc-button mdc-button--raised"
+                                aria-label="Reload"
+                                onclick="fetchServices();">
+                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh"
+                                                                aria-hidden="true"></i>Reload</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="mw-20">
+                  <canvas id="servicesChart"></canvas>
+                </div>
+                <div class="mdc-dialog modal" id="editServiceDialog" role="alertdialog"
+                     aria-modal="true" aria-labelledby="edit-service-dialog-title" aria-describedby="dialog-content">
+                    <div class="mdc-dialog__container w-100 modal-dialog">
+                        <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
+                            <div class="mdc-dialog__content modal-body" id="edit-service-dialog-content">
+
+                                <section class="d-flex h-750px" id="serviceEditorContainer">
+                                    <div id="serviceTemplatesContainer" class="w-25 py-3 mr-2 jqueryui-accordion">
+
+                                    </div>
+                                    <pre class="ace-editor ace-relative w-100 h-100" id="serviceEditor"></pre>
+                                </section>
+                            </div>
+
+                            <footer class="mdc-dialog__actions modal-footer pr-4">
+                                <button id="saveService" name="saveService" type="button"
+                                        class="mdc-button mdc-button--raised btn mdc-button--lg">
+                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-save"
+                                                                       aria-hidden="true"></i>Save</span>
+                                </button>
+                            </footer>
+                        </div>
+                    </div>
+                    <div class="mdc-dialog__scrim"></div>
+                </div>
+
+                <div class="mdc-dialog modal" id="viewEntityHistoryDialog" role="alertdialog"
+                     aria-modal="true" aria-labelledby="view-entity-history-title" aria-describedby="dialog-content">
+                    <div class="mdc-dialog__container w-100 modal-dialog">
+                        <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
+                            <div class="mdc-dialog__content modal-body" id="view-entity-history-content">
+                                <h3>History</h3>
+                                <table id="entityHistoryTable"
+                                       class="mdc-data-table__table table table-striped noborder">
+                                    <thead>
+                                    <tr class="mdc-data-table__header-row">
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader"
+                                            scope="col">Date</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="mdc-data-table__content">
+                                    </tbody>
+                                </table>
+
+                                <section class="d-flex h-450px">
+                                    <pre class="ace-editor ace-relative w-100 h-100" id="entityHistoryEditor"></pre>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mdc-dialog__scrim"></div>
+                </div>
+
+                <div class="mdc-dialog modal" id="viewEntityChangelogDialog" role="alertdialog"
+                     aria-modal="true" aria-labelledby="view-entity-changelog-title" aria-describedby="dialog-content">
+                    <div class="mdc-dialog__container w-100 modal-dialog">
+                        <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
+                            <div class="mdc-dialog__content modal-body" id="view-entity-changelog-content">
+                                <h3>Changelog</h3>
+                                <p>The following changes are recorded for this service definition:</p>
+                                <section class="d-flex h-750px">
+                                    <pre class="ace-editor ace-relative w-100 h-100" id="entityChangelogEditor"></pre>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mdc-dialog__scrim"></div>
+                </div>
+
+            </div>
+
+
+            <div id="saml2metadataproviders-tab">
+                <table id="saml2MetadataProvidersTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">URL</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</span>
+</body>
+</html>

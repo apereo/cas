@@ -5,7 +5,7 @@ const assert = require("assert");
 
 (async () => {
     await cas.log("Removing previous consent decisions for casuser");
-    await cas.doRequest("https://localhost:8443/cas/actuator/attributeConsent/casuser", "DELETE");
+    await cas.doDelete("https://localhost:8443/cas/actuator/attributeConsent/casuser");
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -23,13 +23,13 @@ const assert = require("assert");
     await cas.sleep(6000);
     await cas.logPage(page);
     await cas.screenshot(page);
-    assert(await page.url().startsWith("https://localhost:9859/post"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:9859/post");
     const content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
     await cas.log(payload);
     assert(payload.form.RelayState !== undefined);
     assert(payload.form.SAMLResponse !== undefined);
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

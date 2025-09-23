@@ -8,20 +8,21 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
-
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,16 +50,16 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
 
         LOGGER.debug("Initialized context with request parameters [{}]", webContext.getRequestParameters());
 
-        val clients = configurationContext.getObject().getIdentityProviders();
-        val allClients = clients.findAllClients();
+        val allClients = findAllClients(service, webContext);
         val providers = allClients
-            .stream()
+            .parallelStream()
             .filter(client -> client instanceof IndirectClient
-                              && isDelegatedClientAuthorizedForService(client, service, context))
+                && isDelegatedClientAuthorizedForService(client, service, context))
             .map(IndirectClient.class::cast)
             .map(Unchecked.function(client -> produce(context, client)))
             .filter(Optional::isPresent)
             .map(Optional::get)
+            .sorted(Comparator.comparing(DelegatedClientIdentityProviderConfiguration::getName))
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
         val delegatedClientIdentityProviderRedirectionStrategy = configurationContext.getObject().getDelegatedClientIdentityProviderRedirectionStrategy();
@@ -80,24 +81,22 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             }
 
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
-            LOGGER.warn("No delegated authentication providers could be determined based on the provided configuration. "
-                        + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers");
+            LOGGER.info("No delegated authentication providers could be determined based on the provided configuration. "
+                + "Either no identity providers are configured, or the current access strategy rules prohibit CAS from using authentication providers");
         }
         return providers;
     }
 
     @Override
     public Optional<DelegatedClientIdentityProviderConfiguration> produce(final RequestContext requestContext,
-                                                                          final IndirectClient client) throws Throwable {
+                                                                          final IndirectClient client) {
         return FunctionUtils.doAndHandle(() -> {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             val webContext = new JEEContext(request, response);
 
             val currentService = WebUtils.getService(requestContext);
-            LOGGER.debug("Initializing client [{}] with request parameters [{}] and service [{}]",
-                client, requestContext.getRequestParameters(), currentService);
-            initializeClientIdentityProvider(client);
+            initializeClientIdentityProvider(client, requestContext);
 
             val customizers = configurationContext.getObject().getDelegatedClientAuthenticationRequestCustomizers();
             if (customizers.isEmpty() || customizers.stream()
@@ -115,8 +114,13 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
         }, throwable -> Optional.<DelegatedClientIdentityProviderConfiguration>empty()).get();
     }
 
-    protected void initializeClientIdentityProvider(final IndirectClient client) throws Throwable {
-        client.init();
+    protected void initializeClientIdentityProvider(final IndirectClient client, final RequestContext context) throws Throwable {
+        if (!client.isInitialized()) {
+            val currentService = WebUtils.getService(context);
+            LOGGER.trace("Initializing client [{}] with request parameters [{}] and service [{}]",
+                client, context.getRequestParameters(), currentService);
+            client.init();
+        }
         FunctionUtils.throwIf(!client.isInitialized(), DelegatedAuthenticationFailureException::new);
     }
 
@@ -126,5 +130,10 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
         return configurationContext.getObject().getDelegatedClientIdentityProviderAuthorizers()
             .stream()
             .allMatch(Unchecked.predicate(authz -> authz.isDelegatedClientAuthorizedForService(client, service, context)));
+    }
+
+    protected List<? extends Client> findAllClients(final WebApplicationService service, final WebContext webContext) {
+        val clients = configurationContext.getObject().getIdentityProviders();
+        return clients.findAllClients(service, webContext);
     }
 }

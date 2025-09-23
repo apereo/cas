@@ -2,8 +2,7 @@ package org.apereo.cas.acct.provision;
 
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.acct.AccountRegistrationResponse;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,7 +17,7 @@ import org.springframework.context.ApplicationContext;
 @Slf4j
 @RequiredArgsConstructor
 public class GroovyAccountRegistrationProvisioner implements AccountRegistrationProvisioner {
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     private final ApplicationContext applicationContext;
 

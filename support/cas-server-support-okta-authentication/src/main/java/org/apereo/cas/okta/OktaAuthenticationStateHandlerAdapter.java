@@ -40,13 +40,13 @@ public class OktaAuthenticationStateHandlerAdapter extends AuthenticationStateHa
 
     private final PasswordPolicyContext passwordPolicyConfiguration;
 
-    private final Map<String, List<Object>> userAttributes = new HashMap<>(0);
+    private final Map<String, List<Object>> userAttributes = new HashMap<>();
 
     private String username;
 
     private Exception failureException;
 
-    private List<MessageDescriptor> warnings = new ArrayList<>(0);
+    private List<MessageDescriptor> warnings = new ArrayList<>();
 
     @Override
     public void handleUnknown(final AuthenticationResponse authenticationResponse) {

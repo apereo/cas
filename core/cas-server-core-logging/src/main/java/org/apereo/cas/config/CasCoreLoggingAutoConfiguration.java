@@ -20,12 +20,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
-import org.springframework.core.env.Environment;
-import org.springframework.core.io.ResourceLoader;
 
 /**
  * This is {@link CasCoreLoggingAutoConfiguration}.
@@ -52,9 +51,10 @@ public class CasCoreLoggingAutoConfiguration {
                 ticketGrantingTicketCookieGenerator, casProperties);
             val bean = new FilterRegistrationBean<ThreadContextMDCServletFilter>();
             bean.setFilter(filter);
+            bean.setAsyncSupported(true);
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setName("threadContextMDCServletFilter");
-            bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+            bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 2);
             bean.setEnabled(casProperties.getLogging().getMdc().isEnabled());
             return bean;
         }
@@ -71,9 +71,8 @@ public class CasCoreLoggingAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LoggingConfigurationEndpoint loggingConfigurationEndpoint(
             final CasConfigurationProperties casProperties,
-            final Environment environment,
-            final ResourceLoader resourceLoader) {
-            return new LoggingConfigurationEndpoint(casProperties, resourceLoader, environment);
+            final ConfigurableApplicationContext applicationContext) {
+            return new LoggingConfigurationEndpoint(casProperties, applicationContext);
         }
 
         @Bean

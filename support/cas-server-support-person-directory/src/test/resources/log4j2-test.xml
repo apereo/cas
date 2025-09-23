@@ -9,6 +9,7 @@
         <Logger name="org.apereo.cas" level="error" />
         <Logger name="org.ldaptive" level="warn" />
         <Logger name="org.apereo.services.persondir" level="error" />
+        <Logger name="org.springframework.web" level="warn" />
         <Root level="error">
             <AppenderRef ref="console"/>
         </Root>

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)
-@Import({
+@ImportAutoConfiguration({
     CasCoreTicketsAutoConfiguration.class,
     CasAccountManagementWebflowAutoConfiguration.class
 })
@@ -56,7 +56,7 @@ class SubmitAccountRegistrationActionTests extends BaseWebflowConfigurerTests {
 
     @Test
     void verifyFailingOperation() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val results = submitAccountRegistrationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, results.getId());
     }

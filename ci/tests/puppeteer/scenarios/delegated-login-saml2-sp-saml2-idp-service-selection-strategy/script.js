@@ -34,7 +34,7 @@ async function cleanUp() {
     assert(authData["saml:sp:AuthnContext"] === "https://refeds.org/profile/mfa");
     assert(authData["Attributes"]["casuser"][0] === "user1@example.com");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
     await cleanUp();
 })();
 

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UmaCreateResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
 
     @Test
-    void verifyFailsNoAuth() throws Throwable {
+    void verifyFailsNoAuth() {
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body,
             new MockHttpServletRequest(), new MockHttpServletResponse());

@@ -1,20 +1,19 @@
 package org.apereo.cas.otp.repository.token;
 
 import org.apereo.cas.authentication.OneTimeToken;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
-
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.ResourceAccessMode;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,15 +25,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseOneTimeTokenRepositoryTests.SharedTestConfiguration.class)
 @Getter
 @Tag("MFA")
+@ExtendWith(CasTestExtension.class)
 @ResourceLock(value = "repository", mode = ResourceAccessMode.READ_WRITE)
 class CachingOneTimeTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
 
     @Autowired
-    @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
+    @Qualifier(OneTimeTokenRepository.BEAN_NAME)
     private OneTimeTokenRepository repository;
 
     @Test
-    void verifyTokenSave() throws Throwable {
+    void verifyTokenSave() {
         val casuser = UUID.randomUUID().toString();
         val token = new OneTimeToken(1234, casuser);
         repository.store(token);

@@ -23,9 +23,10 @@ import static org.mockito.Mockito.*;
 @Tag("Audits")
 class MessageBundleAwareResourceResolverTests {
     @Test
-    void verifyOperationByExceptionMessage() throws Throwable {
+    void verifyOperationByExceptionMessage() {
         val jp = mock(JoinPoint.class);
-        when(jp.getArgs()).thenReturn(new Object[]{"something", RegisteredServiceTestUtils.getService()});
+        val args = new Object[]{"something", RegisteredServiceTestUtils.getService()};
+        when(jp.getArgs()).thenReturn(args);
         val context = mock(ApplicationContext.class);
         when(context.getMessage(eq("something"), any(),
             eq("RUNTIME_EXCEPTION"), any(Locale.class))).thenReturn("HelloWorld");

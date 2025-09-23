@@ -10,9 +10,12 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculator;
+import org.apereo.cas.impl.calcs.DeviceFingerprintAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculator;
@@ -23,6 +26,7 @@ import org.apereo.cas.impl.notify.AuthenticationRiskSmsNotifier;
 import org.apereo.cas.impl.plans.BaseAuthenticationRiskContingencyPlan;
 import org.apereo.cas.impl.plans.BlockAuthenticationContingencyPlan;
 import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlan;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -157,10 +161,14 @@ class ElectronicFenceConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationRiskNotifier authenticationRiskEmailNotifier(
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver principalResolver,
-            @Qualifier("cookieCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_TGC_CIPHER_EXECUTOR)
             final CipherExecutor cookieCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -168,17 +176,22 @@ class ElectronicFenceConfiguration {
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
             return new AuthenticationRiskEmailNotifier(casProperties, applicationContext, communicationsManager,
-                servicesManager, principalResolver, cookieCipherExecutor);
+                servicesManager, principalResolver, cookieCipherExecutor,
+                webApplicationServiceFactory, tenantExtractor);
         }
 
         @ConditionalOnMissingBean(name = "authenticationRiskSmsNotifier")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationRiskNotifier authenticationRiskSmsNotifier(
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier("cookieCipherExecutor")
+            @Qualifier(CipherExecutor.BEAN_NAME_TGC_CIPHER_EXECUTOR)
             final CipherExecutor cookieCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
@@ -186,9 +199,9 @@ class ElectronicFenceConfiguration {
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
             return new AuthenticationRiskSmsNotifier(casProperties, applicationContext, communicationsManager,
-                servicesManager, defaultPrincipalResolver, cookieCipherExecutor);
+                servicesManager, defaultPrincipalResolver, cookieCipherExecutor,
+                webApplicationServiceFactory, tenantExtractor);
         }
-
     }
 
     @Configuration(value = "ElectronicFenceCalculatorConfiguration", proxyBeanMethods = false)
@@ -202,7 +215,7 @@ class ElectronicFenceConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(CasEventRepository.BEAN_NAME)
-            final CasEventRepository casEventRepository) throws Exception {
+            final CasEventRepository casEventRepository) {
             return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
                 .when(BeanCondition.on("cas.authn.adaptive.risk.ip.enabled").isTrue().given(applicationContext.getEnvironment()))
                 .supply(() -> new IpAddressAuthenticationRequestRiskCalculator(casEventRepository, casProperties))
@@ -217,7 +230,7 @@ class ElectronicFenceConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(CasEventRepository.BEAN_NAME)
-            final CasEventRepository casEventRepository) throws Exception {
+            final CasEventRepository casEventRepository) {
             return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
                 .when(BeanCondition.on("cas.authn.adaptive.risk.agent.enabled").isTrue().given(applicationContext.getEnvironment()))
                 .supply(() -> new UserAgentAuthenticationRequestRiskCalculator(casEventRepository, casProperties))
@@ -232,10 +245,25 @@ class ElectronicFenceConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(CasEventRepository.BEAN_NAME)
-            final CasEventRepository casEventRepository) throws Exception {
+            final CasEventRepository casEventRepository) {
             return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
                 .when(BeanCondition.on("cas.authn.adaptive.risk.date-time.enabled").isTrue().given(applicationContext.getEnvironment()))
                 .supply(() -> new DateTimeAuthenticationRequestRiskCalculator(casEventRepository, casProperties))
+                .otherwiseProxy()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = "deviceFingerprintAuthenticationRequestRiskCalculator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationRequestRiskCalculator deviceFingerprintAuthenticationRequestRiskCalculator(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository casEventRepository) {
+            return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
+                .when(BeanCondition.on("cas.authn.adaptive.risk.device-fingerprint.enabled").isTrue().given(applicationContext.getEnvironment()))
+                .supply(() -> new DeviceFingerprintAuthenticationRequestRiskCalculator(casEventRepository, casProperties))
                 .otherwiseProxy()
                 .get();
         }
@@ -254,7 +282,7 @@ class ElectronicFenceConfiguration {
             @Qualifier(GeoLocationService.BEAN_NAME)
             final GeoLocationService geoLocationService,
             @Qualifier(CasEventRepository.BEAN_NAME)
-            final CasEventRepository casEventRepository) throws Exception {
+            final CasEventRepository casEventRepository) {
             return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
                 .when(BeanCondition.on("cas.authn.adaptive.risk.geo-location.enabled").isTrue().given(applicationContext.getEnvironment()))
                 .supply(() -> new GeoLocationAuthenticationRequestRiskCalculator(casEventRepository, casProperties, geoLocationService))

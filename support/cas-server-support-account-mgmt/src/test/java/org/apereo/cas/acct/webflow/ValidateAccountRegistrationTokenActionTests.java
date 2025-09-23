@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)
-@Import({
+@ImportAutoConfiguration({
     CasCoreTicketsAutoConfiguration.class,
     CasAccountManagementWebflowAutoConfiguration.class
 })
@@ -50,13 +50,13 @@ class ValidateAccountRegistrationTokenActionTests extends BaseWebflowConfigurerT
 
     @Test
     void verifyOperationFails() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, validateAction.execute(context).getId());
     }
 
     @Test
     void verifyPassRegistrationRequest() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         context.setRemoteAddr("127.0.0.1");
         context.setLocalAddr("127.0.0.1");

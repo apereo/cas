@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration;
 
+import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -8,6 +10,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
@@ -16,10 +19,8 @@ import org.springframework.boot.context.properties.source.InvalidConfigurationPr
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-
 import java.io.IOException;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,8 +28,10 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @since 6.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = AopAutoConfiguration.class)
 @Tag("CasConfiguration")
+@ExtendWith(CasTestExtension.class)
 class AdditionalMetadataVerificationTests {
 
     @Autowired
@@ -48,8 +51,7 @@ class AdditionalMetadataVerificationTests {
 
     /**
      * Make sure the property names are canonical (not camel case) otherwise app won't start.
-     * Spring boot {@link org.springframework.boot.context.properties.migrator.PropertiesMigrationListener}
-     * will prevent startup if property names aren't valid.
+     * Spring boot will prevent startup if property names aren't valid.
      * It may be that some replacement properties need array syntax but none should contain [0].
      *
      * @throws IOException if additional property file is missing

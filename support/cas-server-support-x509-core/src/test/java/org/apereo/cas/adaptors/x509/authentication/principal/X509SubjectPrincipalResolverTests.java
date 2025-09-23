@@ -10,10 +10,13 @@ import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionCont
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -31,7 +34,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**
  * Unit test for {@link X509SubjectPrincipalResolver}.
@@ -41,6 +44,7 @@ import static org.junit.jupiter.params.provider.Arguments.*;
  */
 @Tag("X509")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class X509SubjectPrincipalResolverTests {
 
@@ -57,7 +61,7 @@ class X509SubjectPrincipalResolverTests {
     private ConfigurableApplicationContext applicationContext;
 
     @BeforeEach
-    public void before() throws Exception {
+    void before() throws Exception {
         MockitoAnnotations.openMocks(this).close();
     }
 
@@ -139,8 +143,11 @@ class X509SubjectPrincipalResolverTests {
         val resolver = new X509SubjectPrincipalResolver(context);
         resolver.setPrincipalDescriptor(descriptor);
         resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());
-        val certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
-            new FileInputStream(certPath));
+        val certificate = (X509Certificate) FunctionUtils.doUnchecked(() -> {
+            try (val in = new FileInputStream(certPath)) {
+                return CertificateFactory.getInstance("X509").generateCertificate(in);
+            }
+        });
 
         assertEquals(expectedResult, resolver.resolvePrincipalInternal(certificate));
     }

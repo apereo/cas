@@ -76,6 +76,7 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             .id(System.currentTimeMillis())
             .username(request.getUsername())
             .devices(Arrays.stream(device).collect(Collectors.toList()))
+            .tenant(request.getTenant())
             .build();
         return mongoTemplate.save(result, this.collectionName);
     }
@@ -86,6 +87,7 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             .id(System.currentTimeMillis())
             .username(account.getUsername())
             .devices(account.getDevices())
+            .tenant(account.getTenant())
             .build();
         return mongoTemplate.save(result, this.collectionName);
     }

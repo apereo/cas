@@ -21,6 +21,6 @@ const assert = require("assert");
     assert(payload.form.code !== undefined);
     assert(payload.form.nonce === "vn4qulthnx");
     assert(payload.form.state === "1001");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

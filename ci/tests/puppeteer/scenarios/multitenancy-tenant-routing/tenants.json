@@ -1,0 +1,32 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "shire",
+      "description": "This is the Shire tenant definition",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.host.name": "foo.example.com",
+        
+        "cas.tgc.crypto.alg": "A128CBC-HS256",
+        "cas.tgc.crypto.encryption.key": "u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
+        "cas.tgc.crypto.signing.key": "zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
+
+        "cas.authn.attribute-repository.stub.attributes.name": "CAS",
+        "cas.authn.attribute-repository.stub.attributes.department": "SSO"
+      }
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "london",
+      "description": "This is the London tenant definition",
+      "properties": {
+        "@class": "java.util.LinkedHashMap",
+        "cas.host.name": "london.example.com",
+        "cas.authn.attribute-repository.stub.attributes.city": "London",
+        "cas.authn.attribute-repository.stub.attributes.country": "UK"
+      }
+    }
+  ]
+]

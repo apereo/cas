@@ -24,13 +24,13 @@ const fs = require("fs");
     const response = payload.form.response;
     await cas.log(`Reading keystore from ${process.env.OIDC_KEYSTORE}`);
     const keyContent = JSON.parse(fs.readFileSync(process.env.OIDC_KEYSTORE, "utf8"));
-    cas.decryptJwtWithJwk(response, keyContent.keys[1], "RS256").then((verified) => {
+    cas.decryptJwtWithJwk(response, keyContent.keys[1], "RSA-OAEP-256").then((verified) => {
         assert(verified.payload.aud === "client");
         assert(verified.payload.iss === "https://localhost:8443/cas/oidc");
         assert(verified.payload.state === "1001");
         assert(verified.payload.nonce === "vn4qulthnx");
         assert(verified.payload.code !== undefined);
     });
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

@@ -14,7 +14,7 @@ import java.io.Serializable;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceOidcIdTokenExpirationPolicy extends Serializable {
     /**
-     * Time to kill for this id token.
+     * Time to kill for this ID token.
      *
      * @return time to kill.
      */

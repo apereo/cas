@@ -17,15 +17,14 @@ import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.domain.Limit;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.TextCriteria;
-import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
 import java.io.Serializable;
 import java.time.Instant;
@@ -48,13 +47,15 @@ import java.util.stream.Stream;
 @Slf4j
 @Monitorable
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
-    private static final int PAGE_SIZE = 500;
 
     private final MongoOperations mongoTemplate;
 
-    public MongoDbTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
-                                 final TicketCatalog ticketCatalog, final MongoOperations mongoTemplate) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+    public MongoDbTicketRegistry(final CipherExecutor cipherExecutor,
+                                 final TicketSerializationManager ticketSerializationManager,
+                                 final TicketCatalog ticketCatalog,
+                                 final ConfigurableApplicationContext applicationContext,
+                                 final MongoOperations mongoTemplate) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.mongoTemplate = mongoTemplate;
     }
 
@@ -98,7 +99,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
-            LOGGER.debug("Locating ticket ticketId [{}]", ticketId);
+            LOGGER.debug("Locating ticket [{}]", ticketId);
             val encTicketId = digestIdentifier(ticketId);
             if (encTicketId == null) {
                 LOGGER.debug("Ticket id [{}] could not be found", ticketId);
@@ -180,12 +181,14 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Stream<Ticket> stream() {
+    public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
         return ticketCatalog
             .findAll()
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(map -> mongoTemplate.stream(new Query(), MongoDbTicketDocument.class, map))
+            .skip(criteria.getFrom())
+            .limit(criteria.getCount())
             .map(ticket -> decodeTicket(deserializeTicket(ticket.getJson(), ticket.getType())));
     }
 
@@ -200,6 +203,16 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public long countTickets() {
+        return ticketCatalog
+            .findAll()
+            .stream()
+            .map(this::getTicketCollectionInstanceByMetadata)
+            .mapToLong(map -> mongoTemplate.count(new Query(), map))
+            .sum();
+    }
+
+    @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         val ticketDefinitions = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class);
         return ticketDefinitions
@@ -208,7 +221,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .flatMap(map -> {
                 val query = isCipherExecutorEnabled()
                     ? new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_PRINCIPAL).is(digestIdentifier(principalId)))
-                    : TextQuery.queryText(TextCriteria.forDefaultLanguage().matchingAny(principalId)).sortByScore().with(PageRequest.of(0, PAGE_SIZE));
+                    : new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_PRINCIPAL).regex(principalId, "i"));
                 return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
             })
             .map(ticket -> decodeTicket(deserializeTicket(ticket.getJson(), ticket.getType())))
@@ -271,11 +284,13 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(map -> {
                 val limit = criteria.getCount() > 0 ? Limit.of(Long.valueOf(criteria.getCount()).intValue()) : Limit.unlimited();
-                val query = new Query().limit(limit);
-                return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
+                val query = StringUtils.isNotBlank(criteria.getId())
+                    ? new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).is(digestIdentifier(criteria.getId())))
+                    : new Query();
+                return mongoTemplate.stream(query.limit(limit), MongoDbTicketDocument.class, map);
             })
             .filter(document -> StringUtils.isBlank(criteria.getPrincipal())
-                || StringUtils.equalsIgnoreCase(criteria.getPrincipal(), document.getPrincipal()))
+                || Strings.CI.equals(criteria.getPrincipal(), document.getPrincipal()))
             .map(document -> {
                 if (criteria.isDecode()) {
                     val ticket = decodeTicket(deserializeTicket(document.getJson(), document.getType()));
@@ -286,7 +301,6 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
-
 
     @Override
     public long countTicketsFor(final Service service) {
@@ -320,8 +334,10 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         val json = serializeTicket(encTicket);
         FunctionUtils.throwIf(StringUtils.isBlank(json),
             () -> new IllegalArgumentException("Ticket " + ticket.getId() + " cannot be serialized to JSON"));
-        LOGGER.trace("Serialized ticket into a JSON document as\n [{}]",
-            JsonValue.readJSON(json).toString(Stringify.FORMATTED));
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Serialized ticket into a JSON document as\n [{}]",
+                JsonValue.readJSON(json).toString(Stringify.FORMATTED));
+        }
 
         val expireAt = getExpireAt(ticket);
         LOGGER.trace("Calculated expiration date for ticket ttl as [{}]", expireAt);

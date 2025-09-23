@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -60,7 +59,7 @@ public class CasStatelessTicketRegistryAutoConfiguration {
     public TicketRegistryCleaner ticketRegistryCleaner() {
         return NoOpTicketRegistryCleaner.getInstance();
     }
-    
+
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "statelessTicketRegistryCipherExecutor")
@@ -73,17 +72,16 @@ public class CasStatelessTicketRegistryAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "statelessTicketRegistry")
     public TicketRegistry ticketRegistry(
+        @Qualifier("statelessTicketRegistryCipherExecutor")
+        final CipherExecutor statelessTicketRegistryCipherExecutor,
         final List<TicketCompactor<? extends Ticket>> ticketCompactors,
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
         @Qualifier(TicketSerializationManager.BEAN_NAME)
         final TicketSerializationManager ticketSerializationManager,
-        @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
-        final ObjectProvider<LogoutManager> logoutManager,
-        final CasConfigurationProperties casProperties) {
-        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
-            casProperties.getTicket().getRegistry().getStateless().getCrypto(), "stateless");
-        return new StatelessTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, ticketCompactors);
+        final ConfigurableApplicationContext applicationContext) {
+        return new StatelessTicketRegistry(statelessTicketRegistryCipherExecutor, ticketSerializationManager, ticketCatalog,
+            applicationContext, ticketCompactors);
     }
 
     @Bean
@@ -99,16 +97,14 @@ public class CasStatelessTicketRegistryAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowConfigurer statelessTicketRegistryWebflowConfigurer(
-        @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
-        final ObjectProvider<FlowDefinitionRegistry> accountProfileFlowRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
         final FlowBuilderServices flowBuilderServices,
-        @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        final FlowDefinitionRegistry flowDefinitionRegistry,
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
         return new StatelessTicketRegistryWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, accountProfileFlowRegistry, applicationContext, casProperties);
+            flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "ticketGrantingTicketCompactor")
@@ -173,7 +169,8 @@ public class CasStatelessTicketRegistryAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ServiceMatchingStrategy serviceMatchingStrategy(
-        @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ServicesManager servicesManager) {
         return new ShortenedServiceMatchingStrategy(servicesManager);
     }
 }

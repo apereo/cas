@@ -2,21 +2,22 @@ package org.apereo.cas.authentication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.data.annotation.Id;
-
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Comparator;
 
 /**
  * This is {@link OneTimeToken}.
@@ -30,6 +31,7 @@ import java.time.ZoneId;
 @Getter
 @Setter
 @EqualsAndHashCode
+@NoArgsConstructor
 public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
 
     @Serial
@@ -49,23 +51,31 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
     @Column(nullable = false)
     private LocalDateTime issuedDateTime = LocalDateTime.now(ZoneId.systemDefault());
 
-    public OneTimeToken() {
-        setId(System.currentTimeMillis());
-    }
-
     public OneTimeToken(final Integer token, final String userId) {
-        this();
         this.token = token;
         this.userId = userId;
     }
 
     @Override
-    public int compareTo(final OneTimeToken o) {
-        return new CompareToBuilder()
-            .append(token, o.getToken())
-            .append(userId, o.getUserId())
-            .append(issuedDateTime, o.getIssuedDateTime())
-            .append(id, o.id)
-            .build();
+    public int compareTo(@Nonnull final OneTimeToken token) {
+        return Comparator
+            .comparing(OneTimeToken::getToken)
+            .thenComparing(OneTimeToken::getUserId)
+            .thenComparing(OneTimeToken::getIssuedDateTime)
+            .thenComparingLong(OneTimeToken::getId)
+            .compare(this, token);
+    }
+
+    /**
+     * Assign id if undefined.
+     *
+     * @return the registered service
+     */
+    @CanIgnoreReturnValue
+    public OneTimeToken assignIdIfNecessary() {
+        if (getId() <= 0) {
+            setId(System.currentTimeMillis());
+        }
+        return this;
     }
 }

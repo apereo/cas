@@ -84,8 +84,7 @@ public class CasRedisMultifactorAuthenticationTrustAutoConfiguration {
         return BeanSupplier.of(MultifactorAuthenticationTrustStorage.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new RedisMultifactorAuthenticationTrustStorage(casProperties.getAuthn().getMfa().getTrusted(),
-                mfaTrustCipherExecutor, redisMfaTrustedAuthnTemplate, keyGenerationStrategy,
-                casProperties.getAuthn().getMfa().getTrusted().getRedis().getScanCount()))
+                mfaTrustCipherExecutor, redisMfaTrustedAuthnTemplate, keyGenerationStrategy))
             .otherwiseProxy()
             .get();
     }

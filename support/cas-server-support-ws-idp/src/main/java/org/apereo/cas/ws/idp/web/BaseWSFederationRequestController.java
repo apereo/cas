@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.SecurityTokenTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.web.AbstractController;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
@@ -14,10 +15,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.hc.core5.net.URIBuilder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,11 +32,10 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Controller
 @Slf4j
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class BaseWSFederationRequestController {
+public abstract class BaseWSFederationRequestController extends AbstractController {
     private final WSFederationRequestConfigurationContext configContext;
 
     protected String constructServiceUrl(final HttpServletRequest request,
@@ -127,12 +127,12 @@ public abstract class BaseWSFederationRequestController {
     protected WSFederationRegisteredService findAndValidateFederationRequestForRegisteredService(final Service targetService,
                                                                                                  final WSFederationRequest fedRequest) {
         val svc = getWsFederationRegisteredService(targetService);
-        if (StringUtils.isBlank(fedRequest.wtrealm()) || !StringUtils.equals(fedRequest.wtrealm(), svc.getRealm())) {
+        if (StringUtils.isBlank(fedRequest.wtrealm()) || !Strings.CI.equals(fedRequest.wtrealm(), svc.getRealm())) {
             LOGGER.warn("Realm [{}] is not authorized for matching service [{}]", fedRequest.wtrealm(), svc);
             throw UnauthorizedServiceException.denied("Rejected: %s".formatted(svc.getRealm()));
         }
         val idp = configContext.getCasProperties().getAuthn().getWsfedIdp().getIdp();
-        if (!StringUtils.equals(idp.getRealm(), svc.getRealm())) {
+        if (!Strings.CI.equals(idp.getRealm(), svc.getRealm())) {
             LOGGER.warn("Realm [{}] is not authorized for the identity provider realm [{}]", fedRequest.wtrealm(), idp.getRealm());
             throw UnauthorizedServiceException.denied("Rejected: %s".formatted(svc.getRealm()));
         }

@@ -8,12 +8,12 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -40,13 +40,13 @@ import java.util.Map;
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler<QueryJdbcAuthenticationProperties> {
 
     public QueryDatabaseAuthenticationHandler(final QueryJdbcAuthenticationProperties properties,
-                                              final ServicesManager servicesManager,
+
                                               final PrincipalFactory principalFactory,
                                               final DataSource dataSource) {
-        super(properties, servicesManager, principalFactory, dataSource);
+        super(properties, principalFactory, dataSource);
         if (StringUtils.isBlank(properties.getFieldPassword())) {
             LOGGER.warn("When the password field is left undefined, CAS will skip comparing database and user passwords for equality "
-                + ", (specially if the query results do not contain the password field),"
+                + ", (especially if the query results do not contain the password field),"
                 + "and will instead only rely on a successful query execution with returned results in order to verify credentials");
         }
     }
@@ -62,7 +62,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                 val dbPassword = (String) dbFields.get(properties.getFieldPassword());
 
                 val originalPasswordMatchFails = StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword);
-                val originalPasswordEquals = StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword);
+                val originalPasswordEquals = StringUtils.isBlank(originalPassword) && !Strings.CI.equals(password, dbPassword);
                 if (originalPasswordMatchFails || originalPasswordEquals) {
                     throw new FailedLoginException("Password does not match value on record.");
                 }
@@ -99,7 +99,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
 
             val attributes = collectPrincipalAttributes(dbFields);
             val principal = this.principalFactory.createPrincipal(username, attributes);
-            return createHandlerResult(credential, principal, new ArrayList<>(0));
+            return createHandlerResult(credential, principal, new ArrayList<>());
 
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {

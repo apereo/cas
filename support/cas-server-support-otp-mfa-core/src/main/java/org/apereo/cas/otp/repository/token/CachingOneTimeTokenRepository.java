@@ -35,7 +35,8 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<On
     }
 
     @Override
-    public void store(final OneTimeToken token) {
+    public OneTimeToken store(final OneTimeToken token) {
+        token.assignIdIfNecessary();
         if (exists(token.getUserId(), token.getToken())) {
             val tokens = storage.getIfPresent(token.getUserId());
             Objects.requireNonNull(tokens).add(token);
@@ -47,6 +48,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<On
             LOGGER.debug("Storing new token [{}] for user [{}]", token, token.getUserId());
             storage.put(token.getUserId(), tokens);
         }
+        return token;
     }
 
     @Override

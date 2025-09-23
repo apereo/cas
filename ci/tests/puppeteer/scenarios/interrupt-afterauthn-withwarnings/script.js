@@ -13,5 +13,5 @@ const cas = require("../../cas.js");
     await cas.submitForm(page, "#form");
     await cas.assertCookie(page);
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

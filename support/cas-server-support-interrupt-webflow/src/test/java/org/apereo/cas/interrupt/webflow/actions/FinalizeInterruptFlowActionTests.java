@@ -8,12 +8,14 @@ import org.apereo.cas.interrupt.webflow.InterruptUtils;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
 import java.net.URI;
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("WebflowActions")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseInterruptFlowActionTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class FinalizeInterruptFlowActionTests {
@@ -41,6 +45,25 @@ class FinalizeInterruptFlowActionTests {
     @Qualifier(CasWebflowConstants.ACTION_ID_FINALIZE_INTERRUPT)
     private Action action;
 
+    @Test
+    void verifyFinalizedInterruptBlockedExternalRedirect() throws Throwable {
+        val context = MockRequestContext.create(applicationContext).withUserAgent();
+        context.setParameter("link", "https://google.com");
+
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
+        WebUtils.putRegisteredService(context, CoreAuthenticationTestUtils.getRegisteredService());
+
+        val interrupt = InterruptResponse.interrupt();
+        interrupt.setBlock(true);
+        InterruptUtils.putInterruptIn(context, interrupt);
+        assertThrows(UnauthorizedServiceException.class, () -> action.execute(context));
+
+        interrupt.setLinks(Map.of("link1", "https://google.com"));
+        InterruptUtils.putInterruptIn(context, interrupt);
+        val event = action.execute(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+    }
+    
     @Test
     void verifyFinalizedInterruptBlocked() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
@@ -76,8 +99,7 @@ class FinalizeInterruptFlowActionTests {
 
     @Test
     void verifyFinalizedInterruptNonBlocked() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-
+        val context = MockRequestContext.create(applicationContext).withUserAgent();
         val interrupt = InterruptResponse.interrupt();
 
         InterruptUtils.putInterruptIn(context, interrupt);

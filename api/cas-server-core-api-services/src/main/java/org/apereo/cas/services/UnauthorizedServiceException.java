@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.RootCasException;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -13,7 +14,7 @@ import java.io.Serial;
  */
 @Getter
 @ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Unauthorized Service Usage")
-public class UnauthorizedServiceException extends RuntimeException {
+public class UnauthorizedServiceException extends RootCasException {
 
     /**
      * Error code that indicates the service is unauthorized for use.
@@ -29,25 +30,20 @@ public class UnauthorizedServiceException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 3905807495715960369L;
 
-    private final String code;
-
     protected UnauthorizedServiceException(final String message) {
         this(null, message);
     }
 
     protected UnauthorizedServiceException(final String code, final String message) {
-        super(message);
-        this.code = code;
+        super(code, message);
     }
 
     protected UnauthorizedServiceException(final Throwable cause, final String code, final String message) {
-        super(message, cause);
-        this.code = code;
+        super(code, message, cause);
     }
 
     protected UnauthorizedServiceException(final String message, final Throwable cause) {
         super(message, cause);
-        this.code = null;
     }
     
     /**

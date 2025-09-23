@@ -6,28 +6,18 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasCoreAutoConfiguration;
-import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
-import org.apereo.cas.config.CasRestAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -49,23 +39,11 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SpringBootTest(classes = {
-    CasRestAuthenticationAutoConfiguration.class,
-    AopAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreAuthenticationAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasPersonDirectoryAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreLogoutAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    CasCoreAutoConfiguration.class
-},
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = BaseRestAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.rest[0].uri=http://localhost:${random.int[3000,9000]}/authn")
 @Tag("RestfulApiAuthentication")
+@ExtendWith(CasTestExtension.class)
 class RestAuthenticationHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -100,14 +78,17 @@ class RestAuthenticationHandlerTests {
 
             val res = getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class));
             assertEquals("casuser", res.getPrincipal().getId());
+            assertEquals(1, webServer.getRequestCount());
 
             webServer.responseBody("{}");
             assertThrows(FailedLoginException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
+            assertEquals(2, webServer.getRequestCount());
 
             webServer.responseStatus(HttpStatus.FORBIDDEN);
             assertThrows(AccountDisabledException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
+            assertEquals(3, webServer.getRequestCount());
 
 
             webServer.responseStatus(HttpStatus.UNAUTHORIZED);

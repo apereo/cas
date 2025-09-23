@@ -20,7 +20,20 @@ async function verifyImpersonationWithMfa(page) {
     await cas.click(page, "#submit");
     await cas.waitForNavigation(page);
     await cas.screenshot(page);
-    await cas.assertTicketParameter(page);
+    const ticket = await cas.assertTicketParameter(page);
+
+    const json = await cas.validateTicket(service, ticket);
+    const authenticationSuccess = json.serviceResponse.authenticationSuccess;
+    assert(authenticationSuccess.user === "user3");
+    assert(authenticationSuccess.attributes.surrogateEnabled[0] === true);
+    assert(authenticationSuccess.attributes.surrogateUser[0] === "user3");
+    assert(authenticationSuccess.attributes.surrogatePrincipal[0] === "duobypass");
+    assert(authenticationSuccess.attributes.authnContextClass[0] === "mfa-duo");
+    assert(authenticationSuccess.attributes.mail[0] === "user3@example.org");
+    assert(authenticationSuccess.attributes.lastname[0] === "Three");
+    assert(authenticationSuccess.attributes.uid[0] === "user3");
+    assert(authenticationSuccess.attributes.phone[0] === "13477464500");
+
     await cas.gotoLogin(page);
     await cas.sleep(1000);
     await cas.assertCookie(page);
@@ -41,16 +54,14 @@ async function verifyNoImpersonationWithMfa(page) {
     await cas.logPage(page);
     await cas.screenshot(page);
     const ticket = await cas.assertTicketParameter(page);
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    await cas.logg(body);
-    const json = JSON.parse(body.toString());
+    const json = await cas.validateTicket(service, ticket);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "duocode");
     assert(authenticationSuccess.attributes.lastname[0] === "User");
     assert(authenticationSuccess.attributes.firstname[0] === "CAS");
     assert(authenticationSuccess.attributes.mail[0] === "casuser@example.org");
     assert(authenticationSuccess.attributes.authnContextClass[0] === "mfa-duo");
-    assert(authenticationSuccess.attributes.uid[0] === "duobypass");
+    assert(authenticationSuccess.attributes.uid[0] === "duocode");
     assert(authenticationSuccess.attributes.username[0] === "duocode");
     assert(authenticationSuccess.attributes.phone[0] === "13477464523");
     assert(authenticationSuccess.attributes.credentialType[0] === "DuoSecurityUniversalPromptCredential");
@@ -71,5 +82,5 @@ async function verifyNoImpersonationWithMfa(page) {
     await verifyImpersonationWithMfa(page);
     await verifyNoImpersonationWithMfa(page);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

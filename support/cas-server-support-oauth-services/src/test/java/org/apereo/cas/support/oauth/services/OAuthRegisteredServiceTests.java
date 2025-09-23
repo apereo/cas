@@ -32,7 +32,7 @@ class OAuthRegisteredServiceTests {
     private ServiceRegistry dao;
 
     @BeforeEach
-    void setup() throws Exception {
+    void setup() {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         this.dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
@@ -66,7 +66,7 @@ class OAuthRegisteredServiceTests {
     }
 
     @Test
-    void verifySerializeOAuthRegisteredServiceToJson() throws Throwable {
+    void verifySerializeOAuthRegisteredServiceToJson() {
         val serviceWritten = new OAuthRegisteredService();
         serviceWritten.setName("checkSaveMethod");
         serviceWritten.setServiceId("testId");

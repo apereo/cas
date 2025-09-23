@@ -2,15 +2,16 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,13 +19,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class ReturnRestfulAttributeReleasePolicyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -57,10 +57,10 @@ class ReturnRestfulAttributeReleasePolicyTests {
     @Test
     void verifyPolicy() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER", "familyName", "CAS"));
-        try (val webServer = new MockWebServer(9299,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+        try (val webServer = new MockWebServer(new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val policyWritten = new ReturnRestfulAttributeReleasePolicy().setEndpoint("http://localhost:9299");
+            val policyWritten = new ReturnRestfulAttributeReleasePolicy()
+                .setEndpoint("http://localhost:%s".formatted(webServer.getPort()));
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
@@ -75,11 +75,11 @@ class ReturnRestfulAttributeReleasePolicyTests {
     @Test
     void verifyPolicyWithMappedAttributes() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER"));
-        try (val webServer = new MockWebServer(9299,
+        try (val webServer = new MockWebServer(
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val policyWritten = new ReturnRestfulAttributeReleasePolicy()
-                .setEndpoint("http://localhost:9299")
+                .setEndpoint("http://localhost:%s".formatted(webServer.getPort()))
                 .setAllowedAttributes(Map.of("givenName", List.of("givenName1", "givenName2")));
 
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
@@ -97,11 +97,12 @@ class ReturnRestfulAttributeReleasePolicyTests {
 
     @Test
     void verifyBadPolicy() throws Throwable {
-        try (val webServer = new MockWebServer(9298,
+        try (val webServer = new MockWebServer(
             new ByteArrayResource("---".getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val policy = new ReturnRestfulAttributeReleasePolicy().setEndpoint("http://localhost:9298");
+            val policy = new ReturnRestfulAttributeReleasePolicy()
+                .setEndpoint("http://localhost:%s".formatted(webServer.getPort()));
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())

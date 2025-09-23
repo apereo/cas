@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @Tag("ExpirationPolicy")
 class SamlAttributeQueryTicketExpirationPolicyBuilderTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val properties = new CasConfigurationProperties();
         properties.getAuthn().getSamlIdp().getTicket().getAttributeQuery().setTimeToKillInSeconds(15);
         val builder = new SamlAttributeQueryTicketExpirationPolicyBuilder(properties);
@@ -36,7 +36,7 @@ class SamlAttributeQueryTicketExpirationPolicyBuilderTests {
     }
 
     @Test
-    void verifyNeverExpiresOperation() throws Throwable {
+    void verifyNeverExpiresOperation() {
         val properties = new CasConfigurationProperties();
         properties.getAuthn().getSamlIdp().getTicket().getAttributeQuery().setTimeToKillInSeconds(0);
         val builder = new SamlAttributeQueryTicketExpirationPolicyBuilder(properties);

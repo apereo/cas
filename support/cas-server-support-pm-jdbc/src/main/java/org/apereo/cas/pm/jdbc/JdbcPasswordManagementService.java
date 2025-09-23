@@ -1,7 +1,7 @@
 package org.apereo.cas.pm.jdbc;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
@@ -42,15 +42,12 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     private final PasswordEncoder passwordEncoder;
 
     public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-                                         final String issuer,
-                                         final PasswordManagementProperties passwordManagementProperties,
-                                         @NonNull
-                                         final DataSource dataSource,
-                                         @NonNull
-                                         final TransactionOperations transactionTemplate,
+                                         final CasConfigurationProperties casProperties,
+                                         @NonNull final DataSource dataSource,
+                                         @NonNull final TransactionOperations transactionTemplate,
                                          final PasswordHistoryService passwordHistoryService,
                                          final PasswordEncoder passwordEncoder) {
-        super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
+        super(casProperties, cipherExecutor, passwordHistoryService);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.transactionTemplate = transactionTemplate;
         this.passwordEncoder = passwordEncoder;
@@ -60,7 +57,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     public boolean changeInternal(final PasswordChangeRequest bean) {
         var result = this.transactionTemplate.execute(action -> {
             val password = passwordEncoder.encode(bean.toPassword());
-            val count = this.jdbcTemplate.update(properties.getJdbc().getSqlChangePassword(), password, bean.getUsername());
+            val count = this.jdbcTemplate.update(casProperties.getAuthn().getPm().getJdbc().getSqlChangePassword(), password, bean.getUsername());
             return count > 0;
         });
         return BooleanUtils.toBoolean(result);
@@ -68,7 +65,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findEmail(final PasswordManagementQuery query) {
-        val queryFindEmail = properties.getJdbc().getSqlFindEmail();
+        val queryFindEmail = casProperties.getAuthn().getPm().getJdbc().getSqlFindEmail();
         if (StringUtils.isBlank(queryFindEmail)) {
             LOGGER.debug("No SQL query is defined to retrieve email addresses");
             return null;
@@ -91,7 +88,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findPhone(final PasswordManagementQuery query) {
-        val findPhone = properties.getJdbc().getSqlFindPhone();
+        val findPhone = casProperties.getAuthn().getPm().getJdbc().getSqlFindPhone();
         if (StringUtils.isBlank(findPhone)) {
             LOGGER.debug("No SQL query is defined to retrieve phone numbers");
             return null;
@@ -115,7 +112,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     public String findUsername(final PasswordManagementQuery query) {
         try {
             return transactionTemplate.execute(action ->
-                jdbcTemplate.queryForObject(properties.getJdbc().getSqlFindUser(), String.class, query.getEmail()));
+                jdbcTemplate.queryForObject(casProperties.getAuthn().getPm().getJdbc().getSqlFindUser(), String.class, query.getEmail()));
         } catch (final EmptyResultDataAccessException e) {
             LOGGER.debug("Email [{}] not found when searching for user", query.getEmail());
             return null;
@@ -125,7 +122,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     @Override
     public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
         return this.transactionTemplate.execute(action -> {
-            val sqlSecurityQuestions = properties.getJdbc().getSqlGetSecurityQuestions();
+            val sqlSecurityQuestions = casProperties.getAuthn().getPm().getJdbc().getSqlGetSecurityQuestions();
             val map = new HashMap<String, String>();
             val results = jdbcTemplate.queryForList(sqlSecurityQuestions, query.getUsername());
             results.forEach(row -> {
@@ -140,14 +137,14 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public void updateSecurityQuestions(final PasswordManagementQuery query) {
-        jdbcTemplate.update(properties.getJdbc().getSqlDeleteSecurityQuestions(), query.getUsername());
+        jdbcTemplate.update(casProperties.getAuthn().getPm().getJdbc().getSqlDeleteSecurityQuestions(), query.getUsername());
         query.getSecurityQuestions().forEach((question, values) -> values.forEach(answer ->
-            jdbcTemplate.update(properties.getJdbc().getSqlUpdateSecurityQuestions(),
+            jdbcTemplate.update(casProperties.getAuthn().getPm().getJdbc().getSqlUpdateSecurityQuestions(),
                 query.getUsername(), question, answer)));
     }
 
     @Override
     public boolean unlockAccount(final Credential credential) {
-        return jdbcTemplate.update(properties.getJdbc().getSqlUnlockAccount(), Boolean.TRUE, credential.getId()) > 0;
+        return jdbcTemplate.update(casProperties.getAuthn().getPm().getJdbc().getSqlUnlockAccount(), Boolean.TRUE, credential.getId()) > 0;
     }
 }

@@ -156,8 +156,7 @@ and pushing changes, (That's what email filters, etc are for), so do not ever wo
 contributors and/or project members with the frequency of your progress notifications. Continue working on
 the use case as often as you like and be sure to keep asking for feedback as you make progress.
 
-<div class="alert alert-success">
-:sunny: <strong>Inactivity</strong><br/>Note that contributions and pull requests that remain inactive for a 
+<div class="alert alert-success">:sunny: <strong>Inactivity</strong><br/>Note that contributions and pull requests that remain inactive for a 
 certain period get tagged as <i>Pending</i> and will be eventually closed automatically. Staleness 
 is only allowed to a certain degree, but worry not. Any stale closed pull request can always be reopened and progress resumed without data loss.
 </div>
@@ -168,8 +167,7 @@ Yes, absolutely. Provided the change fits the scope of the maintenance branch an
 the branch is still under care, you are more than welcome to move changes across the codebase's various branches as
 much as needed to remove pain and improve.
 
-<div class="alert alert-success">
-:sunny: <strong>Port Forward</strong><br/>Remember that changes applied to previous branches that target CAS versions in 
+<div class="alert alert-success">:sunny: <strong>Port Forward</strong><br/>Remember that changes applied to previous branches that target CAS versions in 
 maintenance mode <b>MUST</b> be ported forward to the master branch as well, via a separate pull request.
 </div>
 
@@ -220,7 +218,7 @@ No. There are no plans.
 CAS project development activity is largely based on **volunteer time and contributions**. Officially,
 there are no contracts, commitments, timelines, schedules, or funding to plan for changes. Planning for
 future changes and roadmap discussions in the absence of a time commitment, solid funding or sponsorship
-seems unnecessary and can only feel like ceremonial, premature busywork specially as due dates for such
+seems unnecessary and can only feel like ceremonial, premature busywork especially as due dates for such
 plans inevitably and almost always get pushed back and continue to eat dust given the absence of tooling
 and resources. CAS open-source development is never done in vacuums. Generally speaking, work items are
 done when contributors propose, discuss and **show up with pull requests** or when **funding and sponsorship**
@@ -291,7 +289,7 @@ and the target CAS version that would ship with your changes in place. When in d
 
 If the enhancement is rather substantial or provides an integration with an external system or product, a best course of action would be to:
 
-- Build the enhancement as **external CAS module** outside the codebase in  public as open-source software with a CAS-compatible license.
+- Build the enhancement as **external CAS module** outside the codebase in public as open-source software with a CAS-compatible license.
 - Invite others to collaborate with you to define, refine, test, build and deploy the changeset into production.
 - Give yourself, your team and the collaborators time to verify the changes, show commitment and build support. Time allows you to demonstrate activity and community interest beyond words and on-paper intentions so the overall community can see your extension, changeset or idea is useful, in-demand and appealing to others. You may need a week, a month, three years, or more.
 
@@ -316,8 +314,7 @@ than *usual* to be merged, it's possible that the proposed changeset violates on
 - The patch introduces too many (i.e. formatting) changes that are not related to the proposal's objective.
 - The patch violates the general design principles of the codebase or introduces inconsistent/contradictory concepts that are difficult to maintain.
 
-<div class="alert alert-success">
-:sunny: <strong>Remember</strong><br/>If you need help, please ask and seek clarification as often 
+<div class="alert alert-success">:sunny: <strong>Remember</strong><br/>If you need help, please ask and seek clarification as often 
 as you prefer. The shared objective of a pull request is not to judge or point fingers but to 
 collaborate and make progress. Remain positive, optimistic with a healthy attitude towards comments and constructive feedback.
 </div>
@@ -334,8 +331,8 @@ Before you do anything else, make sure you have a [functional build](Build-Proce
 To successfully finish this exercise you need:
 
 1. [Git](https://git-scm.com/downloads)
-2. [IntelliJ IDEA](https://www.jetbrains.com/idea/download/), Eclipse or NetBeans (Depending on the change, `vim` may be perfectly fine too)
-3. [Java (JDK)](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+2. [IntelliJ IDEA](https://www.jetbrains.com/idea/download/)
+3. [Java (JDK)](https://openjdk.org/)
 
 ### Fork the repository
 
@@ -376,8 +373,7 @@ commit anything to the `master` branch. The workflow more or less is the followi
 3. Commit changes to branch.
 4. Go back to #2 until you are satisfied.
 
-<div class="alert alert-success">
-:sunny: <strong>Functional Build</strong><br/>You may want to ensure the codebase can be 
+<div class="alert alert-success">:sunny: <strong>Functional Build</strong><br/>You may want to ensure the codebase can be 
 built locally from source. <a href="https://apereo.github.io/cas/developer/Build-Process.html">Follow this guide</a> to learn more.
 </div>
 
@@ -424,8 +420,7 @@ mode until the release is declared EOL and form the basis of follow-up patch rel
 maintenance cycles. When you are preparing a pull request, please be sure to select the appropriate
 target branch for the patch to ensure your change can be included in the coming maintenance release as scheduled.
 
-<div class="alert alert-success">
-:sunny: <strong>Port Forward</strong><br/>Once more, please remember that changes applied to 
+<div class="alert alert-success">:sunny: <strong>Port Forward</strong><br/>Once more, please remember that changes applied to 
 previous branches that target CAS versions in maintenance mode <b>MUST</b> be ported 
 forward to the master branch as well, via a separate pull request.
 </div>

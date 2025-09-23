@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DeleteTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         ticketRegistry.deleteAll();
     }
 
@@ -34,7 +34,8 @@ class DeleteTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCom
         val ticket = new TicketGrantingTicketImpl("TGT-665500",
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(ticket);
-        val cmd = new DeleteTicketMessageQueueCommand(new PublisherIdentifier(), ticket.getId()).withId(new PublisherIdentifier());
+        val cmd = new DeleteTicketMessageQueueCommand(new PublisherIdentifier(), ticket.getId())
+            .withPublisherIdentifier(new PublisherIdentifier());
         cmd.execute(ticketRegistry);
         assertNull(ticketRegistry.getTicket(ticket.getId()));
     }

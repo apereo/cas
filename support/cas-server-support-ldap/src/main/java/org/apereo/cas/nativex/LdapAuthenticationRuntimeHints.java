@@ -12,6 +12,5 @@ import org.springframework.aot.hint.RuntimeHints;
 public class LdapAuthenticationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-
     }
 }

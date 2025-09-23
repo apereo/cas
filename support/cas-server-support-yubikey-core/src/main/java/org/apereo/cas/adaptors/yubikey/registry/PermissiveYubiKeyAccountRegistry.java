@@ -6,6 +6,8 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
 import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.AccessLevel;
+import lombok.Setter;
 import lombok.val;
 
 import java.util.ArrayList;
@@ -19,11 +21,9 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Setter(AccessLevel.PROTECTED)
 public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
-    /**
-     * Device registrations.
-     */
-    protected final Map<String, YubiKeyAccount> devices;
+    protected Map<String, YubiKeyAccount> devices;
 
     public PermissiveYubiKeyAccountRegistry(final Map<String, YubiKeyAccount> devices,
                                             final YubiKeyAccountValidator validator) {

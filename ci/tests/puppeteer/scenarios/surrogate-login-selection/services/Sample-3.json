@@ -1,0 +1,17 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/disabled.*",
+  "id": 3,
+  "name": "Sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+    "authorizedToReleaseAuthenticationAttributes": true
+  },
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy",
+    "surrogateRequiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "firstname" : [ "java.util.HashSet", [ "DoesNotExist" ] ]
+    }
+  }
+}

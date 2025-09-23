@@ -12,11 +12,13 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
@@ -85,6 +87,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
 
         val ticketGrantingTicketId = configureWebflowForTicketGrantingTicket(context);
         configureWebflowForSsoParticipation(context, ticketGrantingTicketId);
+        
         return success();
     }
 
@@ -181,10 +184,11 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         }
         context.getFlowScope().put("httpRequestSecure", request.isSecure());
         context.getFlowScope().put("httpRequestMethod", request.getMethod());
+        context.getFlowScope().put("httpRequestHeaders", HttpRequestUtils.getRequestHeaders(request));
     }
 
     protected List<String> determineAuthenticationHandlersForSourceSelection(final RequestContext context) {
-        val availableHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
+        val availableHandlers = authenticationEventExecutionPlan.resolveAuthenticationHandlers()
             .stream()
             .filter(handler -> handler.supports(UsernamePasswordCredential.class))
             .map(handler -> StringUtils.capitalize(handler.getName().trim()))
@@ -202,27 +206,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
     }
 
     protected void configureCookieGenerators(final RequestContext context) {
-        val contextPath = context.getExternalContext().getContextPath();
-        val cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
-
-        if (casProperties.getWarningCookie().isAutoConfigureCookiePath()) {
-            val path = warnCookieGenerator.getCookiePath();
-            if (StringUtils.isBlank(path)) {
-                LOGGER.debug("Setting path for cookies for warn cookie generator to: [{}]", cookiePath);
-                warnCookieGenerator.setCookiePath(cookiePath);
-            } else {
-                LOGGER.trace("Warning cookie is set to [{}] with path [{}]", warnCookieGenerator.getCookieDomain(), path);
-            }
-        }
-
-        if (casProperties.getTgc().isAutoConfigureCookiePath()) {
-            val path = ticketGrantingTicketCookieGenerator.getCookiePath();
-            if (StringUtils.isBlank(path)) {
-                LOGGER.debug("Setting path for cookies for TGC cookie generator to: [{}]", cookiePath);
-                ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
-            } else {
-                LOGGER.trace("Ticket-granting cookie domain is [{}] with path [{}]", ticketGrantingTicketCookieGenerator.getCookieDomain(), path);
-            }
-        }
+        CookieUtils.configureCookiePath(context, warnCookieGenerator);
+        CookieUtils.configureCookiePath(context, ticketGrantingTicketCookieGenerator);
     }
 }

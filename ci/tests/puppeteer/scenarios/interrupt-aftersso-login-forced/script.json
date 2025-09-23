@@ -12,9 +12,9 @@
     "--cas.interrupt.core.trigger-mode=AFTER_SSO",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-    "--management.endpoint.springWebflow.enabled=true",
+    "--management.endpoint.springWebflow.access=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoints.enabled-by-default=true"
+    "--management.endpoints.access.default=UNRESTRICTED"
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

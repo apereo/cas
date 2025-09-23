@@ -29,10 +29,10 @@ public class UmaAuthorizationNeedInfoResponse implements Serializable {
     private String ticket;
 
     @JsonProperty("required_claims")
-    private Collection<String> requiredClaims = new LinkedHashSet<>(0);
+    private Collection<String> requiredClaims = new LinkedHashSet<>();
 
     @JsonProperty("required_scopes")
-    private Collection<String> requiredScopes = new LinkedHashSet<>(0);
+    private Collection<String> requiredScopes = new LinkedHashSet<>();
 
     /**
      * As json string.

@@ -50,3 +50,5 @@ The following parameters are passed to the script:
 | `principal`         | The object representing the authenticated principal.                          |
 | `service`           | The object representing the corresponding service definition in the registry. |
 
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

@@ -2,7 +2,8 @@ package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.model.support.surrogate.SurrogateRestfulAuthenticationProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -16,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import java.nio.charset.StandardCharsets;
@@ -36,17 +38,17 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final SurrogateRestfulAuthenticationProperties properties;
-
-    public SurrogateRestAuthenticationService(final SurrogateRestfulAuthenticationProperties properties,
-                                              final ServicesManager servicesManager) {
-        super(servicesManager);
-        this.properties = properties;
+    public SurrogateRestAuthenticationService(final ServicesManager servicesManager,
+                                              final CasConfigurationProperties casProperties,
+                                              final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
+                                              final ConfigurableApplicationContext applicationContext) {
+        super(servicesManager, casProperties, principalAccessStrategyEnforcer, applicationContext);
     }
 
     @Override
     public boolean canImpersonateInternal(final String surrogate, final Principal principal,
                                           final Optional<? extends Service> service) {
+        val properties = casProperties.getAuthn().getSurrogate().getRest();
         HttpResponse response = null;
         try {
             val exec = HttpExecutionRequest.builder()
@@ -54,6 +56,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(properties.getUrl())
+                .headers(properties.getHeaders())
                 .parameters(CollectionUtils.wrap("surrogate", surrogate, "principal", principal.getId()))
                 .build();
             response = HttpUtils.execute(exec);
@@ -66,6 +69,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
 
     @Override
     public Collection<String> getImpersonationAccounts(final String username, final Optional<? extends Service> service) {
+        val properties = casProperties.getAuthn().getSurrogate().getRest();
         HttpResponse response = null;
         try {
             val exec = HttpExecutionRequest.builder()
@@ -74,6 +78,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
                 .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(properties.getUrl())
                 .parameters(CollectionUtils.wrap("principal", username))
+                .headers(properties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
             try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
@@ -86,6 +91,6 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
         } finally {
             HttpUtils.close(response);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

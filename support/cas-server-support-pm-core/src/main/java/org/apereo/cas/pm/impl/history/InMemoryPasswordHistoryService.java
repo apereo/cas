@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * @since 6.1.0
  */
 public class InMemoryPasswordHistoryService extends BasePasswordHistoryService {
-    private final List<PasswordHistoryEntity> history = new ArrayList<>(0);
+    private final List<PasswordHistoryEntity> history = new ArrayList<>();
 
     @Override
     public boolean exists(final PasswordChangeRequest changeRequest) {

@@ -2,9 +2,9 @@ package org.apereo.cas.configuration.model.support.oidc;
 
 import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,7 +22,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("OidcWebFingerProperties")
 public class OidcWebFingerProperties implements Serializable {
 
     @Serial
@@ -33,6 +32,22 @@ public class OidcWebFingerProperties implements Serializable {
      */
     private boolean enabled = true;
 
+    /**
+     * The regular expression pattern to use to match against the resource URL.
+     */
+    @RegularExpressionCapable
+    private String resourcePattern = '^'
+        + "((https|acct|http|mailto|tel|device):(//)?)?"
+        + '('
+        + "(([^@]+)@)?"
+        + "(([^\\?#:/]+)"
+        + "(:(\\d*))?)"
+        + ')'
+        + "([^\\?#]*)?"
+        + "(\\?([^#]*))?"
+        + "(#(.*))?"
+        + '$';
+    
     /**
      * Manage settings related to user-info repositories
      * locating resources and accounts.

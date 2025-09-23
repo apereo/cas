@@ -30,17 +30,15 @@ public interface OidcJsonWebKeystoreRotationService {
      * </ul>
      *
      * @return the json web key set
-     * @throws Throwable the throwable
      */
-    JsonWebKeySet rotate() throws Throwable;
+    JsonWebKeySet rotate();
 
     /**
      * Removes keys in the keystore that marked as {@link JsonWebKeyLifecycleStates#PREVIOUS}.
      *
      * @return the json web key set
-     * @throws Throwable the throwable
      */
-    JsonWebKeySet revoke() throws Throwable;
+    JsonWebKeySet revoke();
 
     @RequiredArgsConstructor
     @Getter

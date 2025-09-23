@@ -41,7 +41,7 @@ public interface AuthenticationPostProcessor extends Ordered, DisposableBean {
     }
 
     @Override
-    default void destroy() throws Exception {
+    default void destroy() {
     }
 
     /**

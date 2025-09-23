@@ -19,15 +19,15 @@ import static org.mockito.Mockito.*;
  * @since 7.1.0
  */
 @Tag("Webflow")
-public class CasFlowHandlerAdapterTests {
+class CasFlowHandlerAdapterTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         val plan = mock(CasWebflowExecutionPlan.class);
         when(plan.isInitialized()).thenReturn(false);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, plan, CasWebflowExecutionPlan.BEAN_NAME);
-        val adapter = new CasFlowHandlerAdapter("login");
+        val adapter = new CasFlowHandlerAdapter("login", plan);
         adapter.setApplicationContext(applicationContext);
         val request = new MockHttpServletRequest();
         request.setMethod(HttpMethod.GET.name());

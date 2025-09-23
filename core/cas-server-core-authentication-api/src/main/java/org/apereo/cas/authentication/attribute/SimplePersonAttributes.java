@@ -1,6 +1,9 @@
 package org.apereo.cas.authentication.attribute;
 
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -8,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import java.io.Serial;
 import java.sql.Array;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -33,11 +37,16 @@ public class SimplePersonAttributes implements PersonAttributes {
 
     private final String name;
 
-    public SimplePersonAttributes(final String name, final Map<String, List<Object>> attributes) {
+    @JsonCreator
+    public SimplePersonAttributes(
+        @JsonProperty("name")
+        final String name,
+        @JsonProperty("attributes")
+        final Map<String, List<Object>> attributes) {
         this.attributes = buildImmutableAttributeMap(attributes);
         this.name = name;
     }
-
+    
     public SimplePersonAttributes(final Map<String, List<Object>> attributes) {
         this.attributes = buildImmutableAttributeMap(attributes);
         this.name = attributes.containsKey("username")
@@ -92,8 +101,8 @@ public class SimplePersonAttributes implements PersonAttributes {
                     LOGGER.trace("Converting SQL array values [{}] using pattern [{}]", values, arrayPattern.pattern());
                     val matcher = arrayPattern.matcher(values);
                     if (matcher.matches()) {
-                        val groups = matcher.group(1).split(",");
-                        value = List.of((Object[]) groups);
+                        val groups = Arrays.stream(matcher.group(1).split(",")).toList();
+                        value = List.copyOf(groups);
                         LOGGER.trace("Converted SQL array values [{}]", values);
                     }
                 }
@@ -105,6 +114,7 @@ public class SimplePersonAttributes implements PersonAttributes {
     }
 
     @Override
+    @JsonIgnore
     public Object getAttributeValue(final String name) {
         val values = this.attributes.get(name);
         if (values == null || values.isEmpty()) {
@@ -114,6 +124,7 @@ public class SimplePersonAttributes implements PersonAttributes {
     }
 
     @Override
+    @JsonIgnore
     public List<Object> getAttributeValues(final String name) {
         return this.attributes.get(name);
     }

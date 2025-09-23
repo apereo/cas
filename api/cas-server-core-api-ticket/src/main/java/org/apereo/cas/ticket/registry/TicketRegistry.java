@@ -1,12 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.jooq.lambda.Unchecked;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,10 +45,9 @@ public interface TicketRegistry {
      * Save.
      *
      * @param toSave the to save
-     * @throws Exception the exception
      */
-    default List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) throws Exception {
-        return toSave.map(Unchecked.function(this::addTicket)).filter(Objects::nonNull).collect(Collectors.toList());
+    default List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) {
+        return toSave.parallel().map(Unchecked.function(this::addTicket)).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     /**
@@ -163,8 +160,17 @@ public interface TicketRegistry {
      *
      * @return the tickets stream
      */
+    default Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
+        return getTickets().parallelStream();
+    }
+
+    /**
+     * Stream stream.
+     *
+     * @return the stream
+     */
     default Stream<? extends Ticket> stream() {
-        return getTickets().stream();
+        return stream(TicketRegistryStreamCriteria.builder().build());
     }
 
     /**
@@ -184,9 +190,9 @@ public interface TicketRegistry {
      * @return the sessions for
      */
     default Stream<? extends Ticket> getSessionsFor(final String principalId) {
-        return getTickets(ticket -> ticket instanceof TicketGrantingTicket
-                                    && !ticket.isExpired()
-                                    && ((AuthenticationAwareTicket) ticket).getAuthentication().getPrincipal().getId().equals(principalId));
+        return getTickets(ticket -> ticket instanceof final TicketGrantingTicket ticketGrantingTicket
+            && !ticket.isExpired()
+            && ticketGrantingTicket.getAuthentication().getPrincipal().getId().equals(principalId));
     }
 
     /**
@@ -210,6 +216,7 @@ public interface TicketRegistry {
      * This operations allows one to interact with the registry
      * in raw form without a lot of post-processing of the ticket objects.
      * Registry implementations are to decide which criteria options they wish to support.
+     *
      * @param criteria the criteria
      * @return the results
      */
@@ -227,4 +234,20 @@ public interface TicketRegistry {
     default long countTicketsFor(final Service service) {
         return 0;
     }
+
+    /**
+     * Count all tickets.
+     *
+     * @return the total count.
+     */
+    default long countTickets() {
+        return stream().count();
+    }
+
+    /**
+     * Gets cipher executor.
+     *
+     * @return the cipher executor
+     */
+    CipherExecutor getCipherExecutor();
 }

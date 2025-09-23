@@ -43,3 +43,5 @@ The parameters passed are as follows:
 
 The outcome of the script can be `null` to skip delegated authentication for 
 the user, or it could a selection from the available identity providers passed into the script.
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

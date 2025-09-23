@@ -72,7 +72,7 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
      * is always added to calculate and resolve metadata globally as the last step,
      * in case an override is not available.
      *
-     * @param criteria criteria set
+     * @param criteria the criteria set
      * @return list of optional service definitions
      */
     private static List<Optional<SamlRegisteredService>> determineFilteringCriteria(final CriteriaSet criteria) {
@@ -103,7 +103,7 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
                 return entities;
             }
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     private String getMetadataCacheKey(final Optional<SamlRegisteredService> serviceResult,

@@ -87,7 +87,7 @@ public class CasGoogleCloudPubSubTicketRegistryAutoConfiguration {
 
         LOGGER.info("Preparing Google Cloud Pub/Sub topics and subscriptions...");
         val allTopics = pubSubAdmin.listTopics();
-        val allSubcriptions = pubSubAdmin.listSubscriptions();
+        val subscriptions = pubSubAdmin.listSubscriptions();
 
         val topicName = GoogleCloudTicketRegistryQueuePublisher.QUEUE_TOPIC;
         val subscriptionName = topicName.concat("Subscription");
@@ -96,7 +96,7 @@ public class CasGoogleCloudPubSubTicketRegistryAutoConfiguration {
             .orElseGet(() -> pubSubAdmin.createTopic(GoogleCloudTicketRegistryQueuePublisher.DEAD_LETTER_TOPIC));
         val topic = findTopicByName(allTopics, topicName)
             .orElseGet(() -> Objects.requireNonNull(pubSubAdmin.createTopic(topicName)));
-        val subscription = getOrCreateSubscription(pubSubAdmin, allSubcriptions, subscriptionName, topic, deadLetterTopic);
+        val subscription = getOrCreateSubscription(pubSubAdmin, subscriptions, subscriptionName, topic, deadLetterTopic);
         LOGGER.debug("Created subscription [{}] for topic [{}]", subscription.getName(), topic.getName());
         val subscriber = subscribeToTopic(messageQueueTicketRegistryReceiver, pubSubTemplate, topic, subscription, pubSubMessageConverter);
         val context = new GoogleCloudPubSubMessageContext(topic, subscription, subscriber);

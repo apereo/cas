@@ -30,3 +30,5 @@ The parameters passed are as follows:
 | `configuration`      | The LDAP password policy configuration carrying the account state handler defined.  |
 | `logger`             | The object responsible for issuing log messages such as `logger.info(...)`.         |
 | `applicationContext` | The Spring `ApplicationContext` that allows one to interact with the runtime.       |
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide]({{ baseUrl }}/integration/Apache-Groovy-Scripting.html).

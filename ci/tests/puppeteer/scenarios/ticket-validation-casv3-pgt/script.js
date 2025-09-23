@@ -32,5 +32,5 @@ async function validateTicket(service, ticket, format = "JSON") {
     assert(body.includes("<cas:authenticationMethod>STATIC</cas:authenticationMethod>"));
     assert(body.includes("<cas:credentialType>UsernamePasswordCredential</cas:credentialType>"));
     assert(body.includes("<cas:user>casuser</cas:user>"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -32,7 +32,7 @@ public class OidcResponseModeFormPostJwtBuilder extends BaseOAuth20JwtResponseMo
     @Override
     public ModelAndView build(final RegisteredService registeredService,
                               final String redirectUrl,
-                              final Map<String, String> parameters) throws Exception {
+                              final Map<String, String> parameters) {
         return configurationContext
             .stream()
             .map(Unchecked.function(ctx -> {

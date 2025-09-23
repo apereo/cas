@@ -1,0 +1,38 @@
+{
+  "dependencies": "reports,kafka-ticket-registry",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.tgc.crypto.alg=A128CBC-HS256",
+    "--cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
+    "--cas.tgc.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
+
+    "--cas.webflow.crypto.signing.key=I4PtzUbGUaI1eEkK4tyJip0ZpC4phd7EqijBxw950NCGxyMoBD_wdLcZgb1M0edAITTQXjjZJ7_kcG85SWVySQ",
+    "--cas.webflow.crypto.encryption.key=lnmOqbbuafWCHhWaKjomZQ",
+    
+    "--cas.ticket.registry.kafka.bootstrap-address=localhost:9092",
+    
+    "--cas.ticket.registry.in-memory.crypto.signing.key=CYPAXgmLzDnPjWEdCMeP360LorQjurUFtUgJGvBLdctpGgUDK1NjTnfjEmHJpnQHwQ52KYWpmQ4GlAmsxlDjiQ",
+    "--cas.ticket.registry.in-memory.crypto.encryption.key=7CITiW3O2dOpUYOwHJX3-w",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "bootstrapScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "instances": 2,
+  "instance1": {
+    "properties": [
+      "--cas.ticket.registry.core.queue-identifier=cas-queue-1"
+    ]
+  },
+  "instance2": {
+    "properties": [
+      "--cas.ticket.registry.core.queue-identifier=cas-queue-2"
+    ]
+  }
+}

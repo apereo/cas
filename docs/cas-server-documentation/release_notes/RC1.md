@@ -4,7 +4,9 @@ title: CAS - Release Notes
 category: Planning
 ---
 
-# 7.1.0-RC1 Release Notes
+{% include variables.html %}
+
+# 7.3.0-RC1 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
 you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note 
@@ -41,104 +43,88 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release. 
 
-### Spring Boot 3.3
+### Spring Boot 3.5
 
-The migration of the entire codebase to Spring Boot `3.3` is ongoing, and at the 
-moment is waiting for the wider ecosystem of supporting frameworks and libraries to catch up to 
-changes. We anticipate the work to finalize in the next few release candidates and certainly prior to the final release.
+The migration of the entire codebase to Spring Boot `3.5` is ongoing, and at the moment is waiting for the wider ecosystem 
+of supporting frameworks and libraries to catch up to changes. We anticipate the work to finalize in the next few 
+release candidates and certainly prior to the final release.
+   
+### Apache Tomcat 11
 
-### OpenRewrite Upgrade Recipes
+CAS is now able to run on and requires Apache Tomcat `11.x` and the codebase has been updated to support the latest
+version of Apache Tomcat. You can technically still run the CAS server on Apache Tomcat `10.x` but that
+is not recommended at all and could very likely break CAS core functionality or cause unexpected behavior.
 
-A carry-over item from the previous release and while not exactly new, CAS has started to produce 
-and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations 
+### OpenRewrite Recipes
+
+CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
 in place from one version to the next. [See this guide](../installation/OpenRewrite-Upgrade-Recipes.html) to learn more.
 
 ### Graal VM Native Images
 
-A CAS server installation and deployment process can be tuned to build and run
-as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html).
+A CAS server installation and deployment process can be tuned to build and run 
+as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html). We continue to polish native runtime hints.
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
 to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
 
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `473` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `512` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
-are now configured to run with parallelism enabled.
-
-### Attribute Release Activation Criteria
-
-Attribute release policies can now be [activated conditionally](../integration/Attribute-Release-Policy-Activation.html). 
-This feature allows one to define conditions that must be met before the policy is chosen and activated to start processing attribute release rules.
-
-### Deprecations & Removals
-
-- Dedicated GoogleApps support, deprecated since CAS `6.2.x`, is now removed from the CAS codebase.
-- The `RegexRegisteredService` service type, deprecated since CAS `6.6.x`, is now removed from the CAS codebase.
-
-### Cerbos Access Strategy
-
-Application access requests and authorization decisions can now be submitted to [Cerbos](../services/Service-Access-Strategy-Cerbos.html) for evaluation.
-         
-### Stateless Ticket Registry
-
-A new [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html) option is now available that 
-does not track or store tickets in a persistent manner via a backend storage technology. 
+are now configured to run with parallelism enabled.      
   
-### Gradle & Develocity 
+### Java 24
 
-Throughout a series of experiments and while working with the Develocity team, several changes are now made to the CAS Gradle build 
-to allow more efficient caching of configuration and build artifacts and reduce overall build times. The Gradle remote build cache
-that was previously set up and run on Heroku is now retired and replaced with a dedicated Develocity server and is now publicly available.
-
-You can see the [build scan results here](https://develocity.apereo.org/). 
+As described earlier, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. CAS is however
+able to compile and run with Java `24` as well with an updated version of the Gradle build tool. Again, remember that 
+the baseline requirement will remain unchanged and this is just a preparatory step to ensure CAS is ready for the next version of Java.
  
-### OAuth & OpenID Connect
-     
-A number of notable changes are listed here:
+### Apple Notifications
 
-- CAS may not generate and track access tokens if the expiration policy of tokens is set to be `0`. This is useful in scenarios where the relying party does only care about ID tokens (in the case of OpenID Connect) and has no need for access tokens.
-- CAS will not create and track an access token for `id_token` grant types.
-- CAS will not generate an ID token for OpenID connect authentication request that do not specify the `openid` scope.
-- CAS will not create access and refresh tokens if the total number of current access/refresh tokens issued for a service exceeds the limit specified in the application's expiration policy. This limit at the moment is exercised for authorization code flows and will eventually cover other grant types.
-- Initial basic support for [OAuth Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html) protocol is now available.
+You can now use APN for sending notifications to [Apple devices](../notifications/Notifications-Configuration-APN.html).
+   
+### Apache Geode Ticket Registry
+
+CAS now supports [Apache Geode](../ticketing/Geode-Ticket-Registry.html) as a ticket registry.
+
+### Multitenancy
+
+CAS can now be configured to run in a [multitenant mode](../multitenancy/Multitenancy-Overview.html).
+Each registered tenant with CAS may define its own various policies, allowing the server to compose and combine
+multiple configuration options in one single deployment.
+
+### Google Authenticator Multifactor Authentication
+
+Deleting a registered device during Google Authenticator multifactor authentication flows will require the device
+removal to be verified with a multifactor authentication challenge. Likewise, registering additional devices
+and accounts will also require the user to verify the action with a multifactor authentication challenge.
+
+### SAML2 Delegated Authentication
+
+[SAML2 Delegated Authentication](../integration/Delegate-Authentication-SAML2-Metadata-Aggregate.html) flows 
+are modified to support identity provider metadata aggregates, removing the need to register individual identity
+providers and simplifying the configuration process.
+
+### Twilio Multifactor Provider
+
+Twilio [can now be used](../mfa/Twilio-Multifactor-Authentication.html) as a standalone multifactor authentication provider.
+        
+### Amazon Firehose Audits
+
+[AWS Firehose](../audits/Audits-AWS-Firehose.html) can be used to send audit events to Amazon Firehose.
+     
+### Azure Monitor Application Insights
+
+[Azure Monitor](../monitoring/Configuring-Monitoring-AzureInsights.html) can be used to 
+send monitoring events to Azure Monitor Application Insights.
 
 ## Other Stuff
-
-- Internal cleanup and refactoring efforts to remove duplicate code, when it comes to grouping `@AutoConfiguration` components.
-- Internal cleanup and refactoring efforts to remove duplicate code for [Puppeteer integration tests](../../developer/Test-Process.html).
-- Proxy ticket validation should now correctly resolve and determine the authenticated principal id.
-- Cleaning of [throttled authentication attempts](../authentication/Configuring-Authentication-Throttling.html) should now take submission expirations dates into account.
-- CAS user interface is now instructed to remove the ["Forgot Your Username?"](../password_management/Password-Management-ForgotUsername.html) feature when the feature is disabled.
-- [External/delegated authentication](../integration/Delegate-Authentication.html) flows are improved to better handle throttled authentication requests.
-- A new `serviceAccess` [actuator endpoint](../services/Configuring-Service-Access-Strategy.html), allowing one to check CAS authorization decisions for a given service and user.
-- [JDBC](../integration/Attribute-Resolution-JDBC.html) and [LDAP](../integration/Attribute-Resolution-LDAP.html) attribute repositories are relocated to their own respective modules and moved away from the person directory module. 
-- JSON [attribute definitions](../integration/Attribute-Definitions.html) defined externally are now able to override definitions that might ship with CAS.
-- The `Content-Security-Policy` header, previously left undefined by default, is now updated to a more sensible default value.
-
-## Library Upgrades
-
-- Spring Framework
-- Gradle
-- ErrorProne
-- Spring Security
-- Spring Boot
-- Spring Data
-- Spring Session
-- Spring Cloud
-- Twilio
-- Pac4j
-- Grouper
-- Micrometer
-- Apache Tomcat
-- Sentry
-- InfluxDb
-- Slack
-- Ldaptive
-- Node
-- Slf4j
-- Amazon SDK
-- Jetty
-- Apache Groovy
-
+              
+- Support for SignalFX metrics has been removed, given its deprecation status in Micrometer.
+- Apache Kafka integration tests have switched to testing against Apache Kafka `4.0.0`.
+- [CAS command-line shell](../installation/Configuring-Commandline-Shell.html) can now run in interactive mode. Furthermore, `exit` and `quit` command functionality is also restored.
+- Connection mode for [CosmosDb Service Registry](../services/CosmosDb-Service-Management.html) can now be configured to either `GATEWAY` or `DIRECT`.
+- [Duo Security Multifactor Authentication](../mfa/DuoSecurity-Authentication.html) is given the option to track session data in browser storage or ticket registry.
+- [CAS Initializr](../installation/WAR-Overlay-Initializr.html) now presents the ability to switch themes to assist with accessibility. Files presented in preview mode can now individually be copied or downloaded. 
+- [Password Reset](../password_management/Password-Management-Reset.html) operations will now send a confirmation email to the user when the password is successfully changed.

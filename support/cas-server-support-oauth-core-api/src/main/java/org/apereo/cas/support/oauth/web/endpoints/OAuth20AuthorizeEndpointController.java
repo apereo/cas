@@ -7,6 +7,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.events.OAuth20AuthorizationRequestEvent;
+import org.apereo.cas.support.oauth.events.OAuth20AuthorizationResponseEvent;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
@@ -15,9 +17,12 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationRe
 import org.apereo.cas.util.JsonUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -43,6 +48,7 @@ import java.util.Optional;
  * @since 3.5.0
  */
 @Slf4j
+@Tag(name = "OAuth")
 public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationContext> extends BaseOAuth20Controller<T> {
     public OAuth20AuthorizeEndpointController(final T oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
@@ -65,6 +71,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
      * @throws Throwable the throwable
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
+    @Operation(summary = "Handle OAuth authorization request")
     public ModelAndView handleRequest(final HttpServletRequest request,
                                       final HttpServletResponse response) throws Throwable {
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
@@ -100,9 +107,11 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             val responseType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.RESPONSE_TYPE).orElse(StringUtils.EMPTY);
             val scopes = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.SCOPE).orElse(StringUtils.EMPTY);
             val state = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.STATE).orElse(StringUtils.EMPTY);
-            LoggingUtils.protocolMessage("OAuth/OpenID Connect Authorization Request",
-                Map.of("Registered Service", registeredService.getName(), "Client ID", clientId, "State", state,
-                    "Redirect URI", redirectUri, "Response Type", responseType, "Scopes", scopes));
+            val protocolContext = Map.of("Registered Service", registeredService.getName(), "Client ID", clientId, "State", state,
+                "Redirect URI", redirectUri, "Response Type", responseType, "Scopes", scopes);
+            LoggingUtils.protocolMessage("OAuth/OpenID Connect Authorization Request", protocolContext);
+            configurationContext.getApplicationContext().publishEvent(
+                new OAuth20AuthorizationRequestEvent(this, ClientInfoHolder.getClientInfo(), protocolContext));
         }
 
         if (isRequestAuthenticated(manager, context, registeredService)) {
@@ -125,10 +134,10 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
      * @throws Throwable the throwable
      */
     @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
+    @Operation(summary = "Handle OAuth authorization request")
     public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         return handleRequest(request, response);
     }
-
 
     protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
                                                          final OAuthRegisteredService registeredService,
@@ -196,7 +205,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .filter(Optional::isPresent)
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Unable to build authorization request"))
-            .get()
+            .orElseThrow()
             .build();
 
         val payload = Optional.ofNullable(authzRequest.getAccessTokenRequest())
@@ -222,11 +231,14 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .orElseGet(() -> OAuth20Utils.produceErrorView(new PreventedException("Could not build the callback response")));
 
         if (LoggingUtils.isProtocolMessageLoggerEnabled()) {
+            val protocolContext = Map.<String, Object>of("Service", service.getId(), "Client ID", payload.getClientId(),
+                "Response Mode", payload.getResponseMode(), "Response Type", payload.getResponseType(),
+                "Redirect URI", payload.getRedirectUri());
             LoggingUtils.protocolMessage("OAuth/OpenID Connect Authorization Response",
-                Map.of("Service", service.getId(), "Client ID", payload.getClientId(),
-                    "Response Mode", payload.getResponseMode(), "Response Type", payload.getResponseType(),
-                    "Redirect URI", payload.getRedirectUri()),
+                protocolContext,
                 result.getModel().isEmpty() ? StringUtils.EMPTY : JsonUtils.render(result.getModel()));
+            configurationContext.getApplicationContext().publishEvent(
+                new OAuth20AuthorizationResponseEvent(this, ClientInfoHolder.getClientInfo(), protocolContext));
         }
         return result;
     }

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.UUID;
@@ -39,7 +40,7 @@ class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
     private OAuthRegisteredService supportingService;
 
     @BeforeEach
-    public void before() throws Throwable {
+    void before() throws Throwable {
         servicesManager.deleteAll();
         supportingService = RequestValidatorTestUtils.getService(
             RegisteredServiceTestUtils.CONST_TEST_URL,
@@ -84,12 +85,12 @@ class OAuth20RevocationRequestValidatorTests extends AbstractOAuth20Tests {
         request.setParameter(OAuth20Constants.TOKEN, SUPPORTING_SERVICE_TICKET);
         assertTrue(validator.validate(new JEEContext(request, response)));
 
-        request.removeHeader("Authorization");
+        request.removeHeader(HttpHeaders.AUTHORIZATION);
         request.removeAllParameters();
         HttpUtils.createBasicAuthHeaders(supportingService.getClientId(), RequestValidatorTestUtils.SHARED_SECRET).forEach(request::addHeader);
         assertFalse(validator.supports(new JEEContext(request, response)));
 
-        request.removeHeader("Authorization");
+        request.removeHeader(HttpHeaders.AUTHORIZATION);
         request.removeAllParameters();
         HttpUtils.createBasicAuthHeaders("unknown", RequestValidatorTestUtils.SHARED_SECRET).forEach(request::addHeader);
         request.setParameter(OAuth20Constants.TOKEN, SUPPORTING_SERVICE_TICKET);

@@ -3,6 +3,7 @@ package org.apereo.cas.azure.ad.authentication;
 import org.apereo.cas.authentication.attribute.BasePersonAttributeDao;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.attribute.SimpleUsernameAttributeProvider;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.UsernameAttributeProvider;
@@ -15,6 +16,7 @@ import lombok.val;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.util.ReflectionUtils;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -82,7 +84,7 @@ public class MicrosoftGraphPersonAttributeDao extends BasePersonAttributeDao {
             val token = getToken();
             val client = new OkHttpClient.Builder()
                 .addInterceptor(chain -> {
-                    val request = chain.request().newBuilder().header("Authorization", "Bearer " + token).build();
+                    val request = chain.request().newBuilder().header(HttpHeaders.AUTHORIZATION, "Bearer " + token).build();
                     return chain.proceed(request);
                 })
                 .addInterceptor(loggingInterceptor)
@@ -103,7 +105,7 @@ public class MicrosoftGraphPersonAttributeDao extends BasePersonAttributeDao {
             if (userCallResult.isSuccessful()) {
                 val response = userCallResult.body();
                 val attributes = response.buildAttributes();
-                return new SimplePersonAttributes(uid, stuffAttributesIntoList(attributes, filter));
+                return new SimplePersonAttributes(uid, PersonAttributeDao.stuffAttributesIntoList(attributes));
             }
             try (val errorBody = userCallResult.errorBody()) {
                 throw new RuntimeException("error requesting token (" + userCallResult.code() + "): " + errorBody);
@@ -115,7 +117,7 @@ public class MicrosoftGraphPersonAttributeDao extends BasePersonAttributeDao {
     public Set<PersonAttributes> getPeople(final Map<String, Object> query,
                                             final PersonAttributeDaoFilter filter,
                                             final Set<PersonAttributes> resultPeople) {
-        return getPeopleWithMultivaluedAttributes(stuffAttributesIntoList(query, filter), filter, resultPeople);
+        return getPeopleWithMultivaluedAttributes(PersonAttributeDao.stuffAttributesIntoList(query), filter, resultPeople);
     }
 
     @Override
@@ -213,11 +215,11 @@ public class MicrosoftGraphPersonAttributeDao extends BasePersonAttributeDao {
 
         private String preferredName;
 
-        private List<String> businessPhones = new ArrayList<>(0);
+        private List<String> businessPhones = new ArrayList<>();
 
-        private List<String> schools = new ArrayList<>(0);
+        private List<String> schools = new ArrayList<>();
 
-        private List<String> skills = new ArrayList<>(0);
+        private List<String> skills = new ArrayList<>();
 
         private String postalCode;
 
@@ -256,7 +258,7 @@ public class MicrosoftGraphPersonAttributeDao extends BasePersonAttributeDao {
         static List<String> getDefaultFieldQuery() {
             return List.of("businessPhones,displayName,givenName,id,"
                 + "jobTitle,mail,givenName,employeeId,"
-                + "mobilePhone,officeLocation,accountEnabled"
+                + "mobilePhone,officeLocation,accountEnabled,"
                 + "preferredLanguage,surname,userPrincipalName");
         }
 
@@ -265,7 +267,7 @@ public class MicrosoftGraphPersonAttributeDao extends BasePersonAttributeDao {
             val fields = new HashMap<String, Object>();
             ReflectionUtils.doWithFields(getClass(), field -> {
                 field.setAccessible(true);
-                fields.put(field.getName(), field.get(User.this));
+                fields.put(field.getName(), field.get(this));
             });
             return fields;
         }

@@ -9,13 +9,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.val;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Immutable authentication event whose attributes may not change after creation.
@@ -102,14 +102,26 @@ public class DefaultAuthentication implements Authentication {
     }
 
     @Override
-    public boolean isEqualTo(final Authentication auth2) {
-        if (auth2 == null) {
-            return false;
+    public boolean isEqualTo(final Authentication authn) {
+        if (this == authn) {
+            return true;
         }
-        val builder = new EqualsBuilder();
-        builder.append(getPrincipal(), auth2.getPrincipal());
-        builder.append(getCredentials(), auth2.getCredentials());
-        builder.append(getSuccesses(), auth2.getSuccesses());
-        return builder.isEquals();
+        return Objects.equals(getPrincipal(), authn.getPrincipal())
+            && Objects.equals(getCredentials(), authn.getCredentials())
+            && Objects.equals(getSuccesses(), authn.getSuccesses());
+    }
+
+    @Override
+    public <T> T getSingleValuedAttribute(final String name, final Class<T> expectedType) {
+        if (containsAttribute(name)) {
+            val values = getAttributes().get(name);
+            return values
+                .stream()
+                .filter(Objects::nonNull)
+                .findFirst()
+                .map(expectedType::cast)
+                .orElse(null);
+        }
+        return null;
     }
 }

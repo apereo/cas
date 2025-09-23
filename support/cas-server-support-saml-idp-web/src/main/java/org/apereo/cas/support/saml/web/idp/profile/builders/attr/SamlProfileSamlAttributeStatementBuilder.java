@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.attribute.AttributeDefinition;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -16,17 +16,15 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDType;
-
-import java.io.Serial;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -41,10 +39,8 @@ import java.util.Optional;
  */
 @Slf4j
 public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AttributeStatement> {
-    @Serial
-    private static final long serialVersionUID = 1815697787562189088L;
 
-    private final SamlIdPProperties samlIdPProperties;
+    private final CasConfigurationProperties casProperties;
 
     private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
@@ -57,14 +53,14 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
     private final MetadataResolver samlIdPMetadataResolver;
 
     public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean,
-                                                    final SamlIdPProperties samlIdPProperties,
+                                                    final CasConfigurationProperties casProperties,
                                                     final SamlIdPObjectEncrypter samlObjectEncrypter,
                                                     final AttributeDefinitionStore attributeDefinitionStore,
                                                     final ServiceFactory<WebApplicationService> serviceFactory,
                                                     final SamlProfileObjectBuilder<SAMLObject> samlNameIdBuilder,
                                                     final MetadataResolver samlIdPMetadataResolver) {
         super(configBean);
-        this.samlIdPProperties = samlIdPProperties;
+        this.casProperties = casProperties;
         this.samlObjectEncrypter = samlObjectEncrypter;
         this.attributeDefinitionStore = attributeDefinitionStore;
         this.serviceFactory = serviceFactory;
@@ -74,7 +70,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
 
     @Override
     public AttributeStatement build(final SamlProfileBuilderContext context) throws Exception {
-        val attributes = new HashMap<>(context.getAuthenticatedAssertion().get().getAttributes());
+        val attributes = new HashMap<>(context.getAuthenticatedAssertion().orElseThrow().getAttributes());
         val webApplicationService = serviceFactory.createService(context.getAdaptor().getEntityId(), WebApplicationService.class);
         val encodedAttrs = ProtocolAttributeEncoder.decodeAttributes(attributes, context.getRegisteredService(), webApplicationService);
 
@@ -88,16 +84,16 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
             return context.getRegisteredService().getAttributeFriendlyNames().get(name);
         }
         return attributeDefinitionStore.getAttributeDefinitionsBy(SamlIdPAttributeDefinition.class)
-            .filter(defn -> StringUtils.equalsIgnoreCase(name, defn.getKey())
-                            || StringUtils.equalsIgnoreCase(name, defn.getName())
-                            || StringUtils.equalsIgnoreCase(name, defn.getUrn()))
+            .filter(defn -> Strings.CI.equals(name, defn.getKey())
+                            || Strings.CI.equals(name, defn.getName())
+                            || Strings.CI.equals(name, defn.getUrn()))
             .findFirst()
             .map(SamlIdPAttributeDefinition::getFriendlyName)
             .filter(StringUtils::isNotBlank)
             .stream()
             .findFirst()
             .or(() -> {
-                val globalFriendlyNames = samlIdPProperties.getCore().getAttributeFriendlyNames();
+                val globalFriendlyNames = casProperties.getAuthn().getSamlIdp().getCore().getAttributeFriendlyNames();
                 val friendlyNames = new HashMap<>(CollectionUtils.convertDirectedListToMap(globalFriendlyNames));
                 return Optional.ofNullable(friendlyNames.get(name));
             })
@@ -118,7 +114,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                                                     final Saml20AttributeBuilder builder) throws Exception {
         val attrStatement = SamlUtils.newSamlObject(AttributeStatement.class);
 
-        val resp = samlIdPProperties.getResponse();
+        val resp = casProperties.getAuthn().getSamlIdp().getResponse();
         val nameFormats = new HashMap<>(resp.configureAttributeNameFormats());
         nameFormats.putAll(context.getRegisteredService().getAttributeNameFormats());
 
@@ -136,17 +132,23 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         LOGGER.debug("Attributes to process for SAML2 attribute statement are [{}]", attributes);
         for (val entry : attributes.entrySet()) {
             var attributeValue = entry.getValue();
-            if (attributeValue instanceof Collection<?> && ((Collection<?>) attributeValue).isEmpty()) {
-                LOGGER.info("Skipping attribute [{}] because it does not have any values.", entry.getKey());
+            var attributeName = entry.getKey();
+            
+            if (attributeName.equalsIgnoreCase(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute())) {
+                attributeValue = buildAuthenticationContextClassAttribute(context).orElse(null);
+            }
+            if (attributeValue == null || (attributeValue instanceof final Collection col && col.isEmpty())) {
+                LOGGER.info("Skipping attribute [{}] because it does not have any values.", attributeName);
                 continue;
             }
-            val friendlyName = getAttributeFriendlyName(context, entry.getKey());
-            val attributeNames = urns.containsKey(entry.getKey())
-                ? List.of(urns.get(entry.getKey()))
-                : getMappedAttributeNamesFromAttributeDefinitionStore(entry);
+            
+            val friendlyName = getAttributeFriendlyName(context, attributeName);
+            val attributeNames = urns.containsKey(attributeName)
+                ? List.of(urns.get(attributeName))
+                : getMappedAttributeNamesFromAttributeDefinitionStore(attributeName);
 
             for (val name : attributeNames) {
-                LOGGER.trace("Processing SAML attribute [{}] with value [{}], friendlyName [{}]", name, attributeValue, friendlyName);
+                LOGGER.trace("Processing SAML2 attribute [{}] with value [{}], friendlyName [{}]", name, attributeValue, friendlyName);
                 val valueType = context.getRegisteredService().getAttributeValueTypes().get(name);
 
                 if (NameIDType.class.getSimpleName().equalsIgnoreCase(valueType)) {
@@ -172,31 +174,36 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                     attributeValue = nameID;
                 }
 
-                LOGGER.debug("Creating SAML attribute [{}] with value [{}], friendlyName [{}]", name, attributeValue, friendlyName);
+                LOGGER.debug("Creating SAML2 attribute [{}] with value [{}], friendlyName [{}]", name, attributeValue, friendlyName);
                 val attribute = newAttribute(friendlyName, name, attributeValue,
                     nameFormats,
                     resp.getDefaultAttributeNameFormat(),
                     context.getRegisteredService().getAttributeValueTypes());
 
-                LOGGER.trace("Created SAML attribute [{}] with NameID format [{}]", attribute.getName(), attribute.getNameFormat());
+                LOGGER.trace("Created SAML2 attribute [{}] with NameID format [{}]", attribute.getName(), attribute.getNameFormat());
                 builder.build(attrStatement, attribute);
             }
         }
-
         return attrStatement;
     }
 
-    /**
-     * Gets mapped attribute names from attribute definition store.
-     *
-     * @param entry the entry
-     * @return the mapped attribute names from attribute definition store
-     */
-    protected Collection<String> getMappedAttributeNamesFromAttributeDefinitionStore(final Map.Entry<String, Object> entry) {
+    protected Collection<String> getMappedAttributeNamesFromAttributeDefinitionStore(final String entry) {
         return org.springframework.util.StringUtils.commaDelimitedListToSet(
-            attributeDefinitionStore.locateAttributeDefinition(entry.getKey())
+            attributeDefinitionStore.locateAttributeDefinition(entry)
                 .map(AttributeDefinition::getName)
                 .filter(StringUtils::isNotBlank)
-                .orElseGet(entry::getKey));
+                .orElse(entry));
+    }
+
+    protected Optional<String> buildAuthenticationContextClassAttribute(final SamlProfileBuilderContext context) {
+        val contextValues = CollectionUtils.toCollection(context.getAuthenticatedAssertion()
+            .orElseThrow().getAttributes().get(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute()));
+        val definedContexts = CollectionUtils.convertDirectedListToMap(
+            casProperties.getAuthn().getSamlIdp().getCore().getContext().getAuthenticationContextClassMappings());
+        return definedContexts.entrySet()
+            .stream()
+            .filter(entry -> contextValues.contains(entry.getValue()))
+            .map(Map.Entry::getKey)
+            .findFirst();
     }
 }

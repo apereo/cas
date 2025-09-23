@@ -42,9 +42,7 @@ public class GoogleCloudFirestoreServiceRegistry extends AbstractServiceRegistry
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         return FunctionUtils.doUnchecked(() -> {
-            if (registeredService.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
-                registeredService.setId(registeredService.hashCode());
-            }
+            registeredService.assignIdIfNecessary();
             invokeServiceRegistryListenerPreSave(registeredService);
             LOGGER.debug("Saved registered service: [{}]", registeredService);
             val writeResult = firestore.collection(collectionName)

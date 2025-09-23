@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * @since 6.4.0
  */
 @Slf4j
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "groovy")
 @ConditionalOnMissingGraalVMNativeImage
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "CasPersonDirectoryGroovyConfiguration", proxyBeanMethods = false)
@@ -60,8 +60,7 @@ class CasPersonDirectoryGroovyConfiguration {
                             val dao = new GroovyPersonAttributeDao(new InternalGroovyScriptDao(applicationContext, casProperties, groovy));
                             dao.setOrder(groovy.getOrder());
                             dao.setEnabled(groovy.getState() != AttributeRepositoryStates.DISABLED);
-                            dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
-                                groovy.getState() == AttributeRepositoryStates.ACTIVE);
+                            dao.putTag("state", groovy.getState());
                             FunctionUtils.doIfNotNull(groovy.getId(), id -> dao.setId(id));
                             LOGGER.debug("Configured Groovy attribute sources from [{}]", groovy.getLocation());
                             list.add(dao);

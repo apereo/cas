@@ -4,7 +4,6 @@ import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -26,7 +25,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
     private final String name;
 
-    private final Set<String> values = new LinkedHashSet<>(0);
+    private final Set<String> values = new LinkedHashSet<>();
 
     public RelaxedPropertyNames(final String name) {
         this.name = StringUtils.defaultString(name);
@@ -41,8 +40,8 @@ public class RelaxedPropertyNames implements Iterable<String> {
      */
     public static RelaxedPropertyNames forCamelCase(final String name) {
         val result = new StringBuilder();
-        for (int i = 0; i < name.length(); i++) {
-            char c = name.charAt(i);
+        for (var i = 0; i < name.length(); i++) {
+            val c = name.charAt(i);
             result.append(Character.isUpperCase(c) && !result.isEmpty()
                           && result.charAt(result.length() - 1) != '-'
                 ? "-" + Character.toLowerCase(c) : c);
@@ -75,14 +74,19 @@ public class RelaxedPropertyNames implements Iterable<String> {
      */
     private enum Variation {
 
+        /**
+         * The None.
+         */
         NONE {
             @Override
             public String apply(final String value) {
                 return value;
             }
-
         },
 
+        /**
+         * The Lowercase.
+         */
         LOWERCASE {
             @Override
             public String apply(final String value) {
@@ -91,6 +95,9 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
         },
 
+        /**
+         * The Uppercase.
+         */
         UPPERCASE {
             @Override
             public String apply(final String value) {
@@ -99,7 +106,13 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
         };
 
-        public abstract String apply(String value);
+        /**
+         * Apply variation.
+         *
+         * @param value the value
+         * @return the string
+         */
+        abstract String apply(String value);
 
     }
 
@@ -249,12 +262,12 @@ public class RelaxedPropertyNames implements Iterable<String> {
                 return value;
             }
             var builder = new StringBuilder();
-            for (final var field : Splitter.on(SEPARATED_TO_CAMEL_CASE_PATTERN).split(value)) {
+            for (val field : Splitter.on(SEPARATED_TO_CAMEL_CASE_PATTERN).split(value)) {
                 var fieldCased = caseInsensitive ? field.toLowerCase(Locale.ENGLISH) : field;
                 builder.append(builder.isEmpty() ? field : StringUtils.capitalize(fieldCased));
             }
             var lastChar = value.charAt(value.length() - 1);
-            for (final var suffix : SUFFIXES) {
+            for (val suffix : SUFFIXES) {
                 if (lastChar == suffix) {
                     builder.append(suffix);
                     break;

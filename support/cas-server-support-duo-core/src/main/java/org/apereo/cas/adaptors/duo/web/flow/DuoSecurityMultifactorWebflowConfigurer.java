@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.duo.web.flow;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.trusted.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
@@ -13,7 +14,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.model.FlowModelFlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -40,14 +40,14 @@ import java.util.Optional;
 @Slf4j
 public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
-    private static final String VIEW_ID_REDIRECT_TO_DUO_REGISTRATION = "redirectToDuoRegistration";
+    protected static final String VIEW_ID_REDIRECT_TO_DUO_REGISTRATION = "redirectToDuoRegistration";
 
     public DuoSecurityMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                   final FlowDefinitionRegistry flowDefinitionRegistry,
                                                    final ConfigurableApplicationContext applicationContext,
                                                    final CasConfigurationProperties casProperties,
                                                    final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry,
+        super(flowBuilderServices, flowDefinitionRegistry,
             applicationContext, casProperties, Optional.empty(), mfaFlowCustomizers);
     }
 
@@ -58,13 +58,15 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         if (passwordlessEnabled) {
             val flow = getLoginFlow();
             val verifyAccountState = getState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT);
-            val originalTargetState = verifyAccountState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
-            createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_DUO_PASSWORDLESS_VERIFY, true);
-            val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DUO_PASSWORDLESS_VERIFY, CasWebflowConstants.ACTION_ID_DUO_PASSWORDLESS_VERIFY);
-            val acceptedState = getState(flow, CasWebflowConstants.STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION)
-                .getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
-            createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, acceptedState);
-            createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_ERROR, originalTargetState);
+            FunctionUtils.doIfNotNull(verifyAccountState, __ -> {
+                val originalTargetState = verifyAccountState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+                createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_DUO_PASSWORDLESS_VERIFY, true);
+                val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DUO_PASSWORDLESS_VERIFY, CasWebflowConstants.ACTION_ID_DUO_PASSWORDLESS_VERIFY);
+                val acceptedState = getState(flow, CasWebflowConstants.STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION)
+                    .getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+                createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, acceptedState);
+                createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_ERROR, originalTargetState);
+            });
         }
     }
 
@@ -78,7 +80,8 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
                 val duoFlowRegistryInstance = ApplicationContextProvider.registerBeanIntoApplicationContext(
                     applicationContext, duoFlowRegistry, duo.getId());
                 return Pair.of(duo.getId(), duoFlowRegistryInstance);
-            }).toList();
+            })
+            .toList();
         val flowRegistries = flowRegistryBeans.stream().map(Pair::getValue).toList();
         getMultifactorAuthenticationFlowDefinitionRegistries().addAll(flowRegistries);
         flowRegistryBeans.forEach(duo -> registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), duo.getKey(), duo.getKey()));
@@ -97,13 +100,14 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
 
     private FlowDefinitionRegistry buildDuoFlowRegistry(final DuoSecurityMultifactorAuthenticationProperties properties) {
         val modelBuilder = new DynamicFlowModelBuilder();
-        createDuoFlowStartActions(modelBuilder);
-        createDuoFlowStates(modelBuilder);
-        createDuoFlowUniversalPromptActions(getLoginFlow());
+        createDuoFlowStartActions(properties, modelBuilder);
+        createDuoFlowStates(properties, modelBuilder);
+        createDuoFlowUniversalPromptActions(properties);
         return createDuoFlowDefinitionRegistry(properties, modelBuilder);
     }
 
-    private void createDuoFlowUniversalPromptActions(final Flow flow) {
+    private void createDuoFlowUniversalPromptActions(final DuoSecurityMultifactorAuthenticationProperties properties) {
+        val flow = getLoginFlow();
         val actionState = createActionState(flow,
             CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN,
             CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
@@ -113,11 +117,12 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccess);
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SKIP, getStartState(flow).getId());
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
-        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_RESTORE, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
-        
-        val viewState = getState(flow, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ, ViewState.class);
-        insertTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SWITCH, CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
 
+        if (!properties.getSessionStorageType().isTicketRegistry()) {
+            createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_RESTORE, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
+            val viewState = getState(flow, CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ, ViewState.class);
+            insertTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SWITCH, CasWebflowConstants.STATE_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN);
+        }
         setStartState(flow, actionState);
     }
 
@@ -130,7 +135,8 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         return builder.build();
     }
 
-    private static void createDuoFlowStates(final DynamicFlowModelBuilder modelBuilder) {
+    protected void createDuoFlowStates(final DuoSecurityMultifactorAuthenticationProperties properties,
+                                       final DynamicFlowModelBuilder modelBuilder) {
         val states = new ArrayList<AbstractStateModel>();
 
         createDuoInitializeLoginAction(states);
@@ -138,49 +144,64 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         createDuoDetermineRequestAction(states);
         createDuoDoNonWebAuthenticationAction(states);
         createDuoFinalizeAuthenticationAction(states);
-        createDuoUniversalPromptLoginViewState(states);
+        createDuoUniversalPromptLoginViewState(states, properties);
         createDuoAuthenticationWebflowAction(states);
         createDuoRedirectToRegistrationAction(states);
         createDuoSuccessEndState(states);
-        createSessionStorageStates(states);
+        createSessionStorageStates(states, properties);
 
         modelBuilder.setStates(states);
     }
 
-    private static void createDuoUniversalPromptLoginViewState(final List<AbstractStateModel> states) {
-        val actionState = new ActionStateModel(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM_DUO);
-        val actions = new LinkedList<AbstractActionModel>();
-        val action = new EvaluateModel(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN);
-        actions.add(action);
-        actionState.setActions(actions);
-        val trans = new LinkedList<TransitionModel>();
-        val transModel = new TransitionModel();
-        transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        transModel.setTo(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
-        trans.add(transModel);
-        actionState.setTransitions(trans);
-        states.add(actionState);
+    protected void createDuoUniversalPromptLoginViewState(final List<AbstractStateModel> states,
+                                                          final DuoSecurityMultifactorAuthenticationProperties properties) {
+
+        if (properties.getSessionStorageType().isTicketRegistry()) {
+            val viewState = new ViewStateModel(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM_DUO);
+            val actions = new LinkedList<AbstractActionModel>();
+            val action = new EvaluateModel(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN);
+            actions.add(action);
+            viewState.setOnEntryActions(actions);
+            viewState.setView("externalRedirect:#{flowScope.duoUniversalPromptLoginUrl}");
+            states.add(viewState);
+        } else {
+            val actionState = new ActionStateModel(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM_DUO);
+            val actions = new LinkedList<AbstractActionModel>();
+            val action = new EvaluateModel(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN);
+            actions.add(action);
+            actionState.setActions(actions);
+            val trans = new LinkedList<TransitionModel>();
+            val transModel = new TransitionModel();
+            transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+            transModel.setTo(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
+            trans.add(transModel);
+            actionState.setTransitions(trans);
+            states.add(actionState);
+        }
     }
 
-    private static void createSessionStorageStates(final List<AbstractStateModel> states) {
-        val writeState = new ViewStateModel(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
-        writeState.setView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_WRITE);
-        states.add(writeState);
+    protected void createSessionStorageStates(final List<AbstractStateModel> states,
+                                              final DuoSecurityMultifactorAuthenticationProperties properties) {
+        if (!properties.getSessionStorageType().isTicketRegistry()) {
+            val writeState = new ViewStateModel(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
+            writeState.setView(CasWebflowConstants.VIEW_ID_BROWSER_STORAGE_WRITE);
+            states.add(writeState);
+        }
     }
 
-    private static void createDuoSuccessEndState(final List<AbstractStateModel> states) {
+    protected void createDuoSuccessEndState(final List<AbstractStateModel> states) {
         states.add(new EndStateModel(CasWebflowConstants.STATE_ID_SUCCESS));
         states.add(new EndStateModel(CasWebflowConstants.STATE_ID_MFA_DENIED));
         states.add(new EndStateModel(CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE));
     }
 
-    private static void createDuoRedirectToRegistrationAction(final List<AbstractStateModel> states) {
+    protected void createDuoRedirectToRegistrationAction(final List<AbstractStateModel> states) {
         val endModel = new ViewStateModel(VIEW_ID_REDIRECT_TO_DUO_REGISTRATION);
         endModel.setView("externalRedirect:#{flowScope.duoRegistrationUrl}?");
         states.add(endModel);
     }
 
-    private static void createDuoAuthenticationWebflowAction(final List<AbstractStateModel> states) {
+    protected void createDuoAuthenticationWebflowAction(final List<AbstractStateModel> states) {
         val actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         val actions = new LinkedList<AbstractActionModel>();
         actions.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_DUO_AUTHENTICATION_WEBFLOW));
@@ -212,7 +233,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         states.add(actModel);
     }
 
-    private static void createDuoFinalizeAuthenticationAction(final List<AbstractStateModel> states) {
+    protected void createDuoFinalizeAuthenticationAction(final List<AbstractStateModel> states) {
         val actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_FINALIZE_AUTHENTICATION);
         val actions = new LinkedList<AbstractActionModel>();
         actions.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_DUO_AUTHENTICATION_WEBFLOW));
@@ -228,7 +249,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         states.add(actModel);
     }
 
-    private static void createDuoDoNonWebAuthenticationAction(final List<AbstractStateModel> states) {
+    protected void createDuoDoNonWebAuthenticationAction(final List<AbstractStateModel> states) {
         val actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_DUO_NON_WEB_AUTHENTICATION);
         val actions = new LinkedList<AbstractActionModel>();
         actions.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_DUO_NON_WEB_AUTHENTICATION));
@@ -245,7 +266,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         states.add(actModel);
     }
 
-    private static void createDuoDetermineRequestAction(final List<AbstractStateModel> states) {
+    protected void createDuoDetermineRequestAction(final List<AbstractStateModel> states) {
         val actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_DETERMINE_DUO_REQUEST);
         val actions = new LinkedList<AbstractActionModel>();
         actions.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_CHECK_WEB_AUTHENTICATION_REQUEST));
@@ -267,7 +288,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         states.add(actModel);
     }
 
-    private static void createDuoDetermineUserAccountAction(final List<AbstractStateModel> states) {
+    protected void createDuoDetermineUserAccountAction(final List<AbstractStateModel> states) {
         val actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_MFA_PRE_AUTH);
         val actions = new LinkedList<AbstractActionModel>();
         actions.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_DETERMINE_DUO_USER_ACCOUNT));
@@ -308,7 +329,7 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         states.add(actModel);
     }
 
-    private static List<AbstractActionModel> createDuoInitializeLoginAction(final List<AbstractStateModel> states) {
+    protected List<AbstractActionModel> createDuoInitializeLoginAction(final List<AbstractStateModel> states) {
         val actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         val actions = new LinkedList<AbstractActionModel>();
         actions.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
@@ -325,7 +346,8 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         return actions;
     }
 
-    private static void createDuoFlowStartActions(final DynamicFlowModelBuilder modelBuilder) {
+    protected void createDuoFlowStartActions(final DuoSecurityMultifactorAuthenticationProperties properties,
+                                             final DynamicFlowModelBuilder modelBuilder) {
         val starts = new ArrayList<AbstractActionModel>(1);
         starts.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
         modelBuilder.setOnStartActions(starts);

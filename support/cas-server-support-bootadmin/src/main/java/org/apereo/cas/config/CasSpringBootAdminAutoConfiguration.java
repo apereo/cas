@@ -19,7 +19,7 @@ import de.codecentric.boot.admin.server.web.client.InstanceWebClientCustomizer;
 import io.netty.handler.ssl.SslContextBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,9 +33,10 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
@@ -47,6 +48,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SpringBootAdmin)
 @AutoConfiguration
+@EnableAsync(proxyTargetClass = false)
 public class CasSpringBootAdminAutoConfiguration {
 
     @Configuration(value = "SpringBootAdminClientConfiguration", proxyBeanMethods = false)
@@ -62,8 +64,8 @@ public class CasSpringBootAdminAutoConfiguration {
             objectMapper.findAndRegisterModules()
                 .registerModule(new AdminServerModule(new String[]{".*password$"}));
             var builder = new RestTemplateBuilder()
-                .setConnectTimeout(client.getConnectTimeout())
-                .setReadTimeout(client.getReadTimeout())
+                .connectTimeout(client.getConnectTimeout())
+                .readTimeout(client.getReadTimeout())
                 .customizers(template -> {
                     val requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient.wrappedHttpClient());
                     template.setRequestFactory(requestFactory);
@@ -111,16 +113,16 @@ public class CasSpringBootAdminAutoConfiguration {
 
                 @Override
                 public CasWebSecurityConfigurer<HttpSecurity> finish(final HttpSecurity http) throws Exception {
-                    val adminContextPath = StringUtils.prependIfMissing(properties.getContextPath(), "/");
+                    val adminContextPath = Strings.CI.prependIfMissing(properties.getContextPath(), "/");
                     val successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
                     successHandler.setTargetUrlParameter("redirectTo");
                     successHandler.setDefaultTargetUrl(adminContextPath);
                     http.authorizeHttpRequests(customizer -> customizer
                             .requestMatchers(
-                                new AntPathRequestMatcher(adminContextPath + "/assets/**"),
-                                new AntPathRequestMatcher(adminContextPath + "/login")).permitAll()
+                                PathPatternRequestMatcher.withDefaults().matcher(adminContextPath + "/assets/**"),
+                                PathPatternRequestMatcher.withDefaults().matcher(adminContextPath + "/login")).permitAll()
                             .requestMatchers(
-                                new AntPathRequestMatcher(adminContextPath + "/**")).authenticated()
+                                PathPatternRequestMatcher.withDefaults().matcher(adminContextPath + "/**")).authenticated()
                         )
                         .formLogin(customizer -> customizer.loginPage(adminContextPath + "/login").successHandler(successHandler))
                         .logout(customizer -> customizer.logoutUrl(adminContextPath + "/logout"));

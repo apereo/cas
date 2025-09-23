@@ -20,13 +20,13 @@ class RandomStringGeneratorTests {
     private final RandomStringGenerator randomStringGenerator = new Base64RandomStringGenerator(LENGTH);
 
     @Test
-    void verifyDefaultLength() throws Throwable {
+    void verifyDefaultLength() {
         assertEquals(LENGTH, this.randomStringGenerator.getDefaultLength());
         assertEquals(LENGTH, new Base64RandomStringGenerator().getDefaultLength());
     }
 
     @Test
-    void verifyRandomString() throws Throwable {
+    void verifyRandomString() {
         val s1 = this.randomStringGenerator.getNewString();
         val s2 = this.randomStringGenerator.getNewString();
         assertNotSame(s1, s2);

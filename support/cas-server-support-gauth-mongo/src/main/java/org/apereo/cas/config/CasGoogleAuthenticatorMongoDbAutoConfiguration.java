@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.gauth.credential.MongoDbGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorMongoDbTokenRepository;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
@@ -10,10 +11,10 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -57,9 +58,10 @@ public class CasGoogleAuthenticatorMongoDbAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "mongoDbGoogleAuthenticatorAccountRegistry")
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
-        @Qualifier("googleAuthenticatorInstance")
-        final IGoogleAuthenticator googleAuthenticatorInstance,
+        @Qualifier(CasGoogleAuthenticator.BEAN_NAME)
+        final CasGoogleAuthenticator googleAuthenticatorInstance,
         @Qualifier("googleAuthenticatorAccountCipherExecutor")
         final CipherExecutor googleAuthenticatorAccountCipherExecutor,
         @Qualifier("googleAuthenticatorScratchCodesCipherExecutor")
@@ -68,7 +70,8 @@ public class CasGoogleAuthenticatorMongoDbAutoConfiguration {
         @Qualifier("mongoDbGoogleAuthenticatorTemplate")
         final MongoOperations mongoDbGoogleAuthenticatorTemplate) {
         val mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
-        return new MongoDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance, mongoDbGoogleAuthenticatorTemplate, mongo.getCollection(),
+        return new MongoDbGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,
+            mongoDbGoogleAuthenticatorTemplate, mongo.getCollection(),
             googleAuthenticatorAccountCipherExecutor, googleAuthenticatorScratchCodesCipherExecutor);
     }
 

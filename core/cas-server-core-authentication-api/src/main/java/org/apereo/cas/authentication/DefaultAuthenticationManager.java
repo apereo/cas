@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -69,13 +70,13 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             LOGGER.warn("An authentication pre-processor could not successfully process the authentication transaction");
             throw new AuthenticationException("Authentication pre-processor has failed to process transaction");
         }
-        val builder = authenticateInternal(transaction);
-        val authentication = builder.build();
-        addAuthenticationMethodAttribute(builder, authentication);
-        populateAuthenticationMetadataAttributes(builder, transaction);
-        invokeAuthenticationPostProcessors(builder, transaction);
+        val authenticationBuilder = authenticateInternal(transaction);
+        val authentication = authenticationBuilder.build();
+        addAuthenticationMethodAttribute(authenticationBuilder, authentication);
+        populateAuthenticationMetadataAttributes(authenticationBuilder, transaction);
+        invokeAuthenticationPostProcessors(authenticationBuilder, transaction);
 
-        val auth = builder.build();
+        val auth = authenticationBuilder.build();
         val principal = auth.getPrincipal();
         if (principal instanceof NullPrincipal) {
             throw new UnresolvedPrincipalException(auth);
@@ -151,41 +152,50 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         return processed;
     }
 
-    protected void authenticateAndResolvePrincipal(final AuthenticationBuilder builder,
+    protected void authenticateAndResolvePrincipal(final AuthenticationBuilder authenticationBuilder,
                                                    final Credential credential,
-                                                   final PrincipalResolver resolver,
+                                                   final PrincipalResolver principalResolver,
                                                    final AuthenticationHandler handler,
                                                    final Service service) throws Throwable {
         val clientInfo = ClientInfoHolder.getClientInfo();
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential, clientInfo));
 
-        val result = handler.authenticate(credential, service);
-        val authenticationHandlerName = handler.getName();
-        builder.addSuccess(authenticationHandlerName, result);
-        LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", authenticationHandlerName, credential);
-
-        publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential, clientInfo));
-        var principal = result.getPrincipal();
-
-        if (resolver != null) {
-            principal = resolvePrincipal(handler, resolver, credential, principal, service);
-        }
-
-        if (principal == null) {
-            val resolverName = resolver == null ? authenticationHandlerName : resolver.getName();
-            if (this.principalResolutionFailureFatal) {
-                LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
-                    + "CAS is configured to treat principal resolution failures as fatal.", resolverName, credential);
-                throw new UnresolvedPrincipalException();
+        try {
+            AuthenticationHolder.setCurrentAuthentication(authenticationBuilder.build());
+            val handlerExecutionResult = handler.authenticate(credential, service);
+            val authenticationHandlerName = handler.getName();
+            authenticationBuilder.addSuccess(authenticationHandlerName, handlerExecutionResult);
+            LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", authenticationHandlerName, credential);
+            publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential, clientInfo));
+            var principal = principalResolver != null
+                ? resolvePrincipal(handler, principalResolver, credential, handlerExecutionResult.getPrincipal(), service)
+                : handlerExecutionResult.getPrincipal();
+            if (principal == null) {
+                val resolverName = principalResolver == null ? authenticationHandlerName : principalResolver.getName();
+                if (this.principalResolutionFailureFatal) {
+                    LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
+                        + "CAS is configured to treat principal resolution failures as fatal.", resolverName, credential);
+                    throw new UnresolvedPrincipalException();
+                }
+                LOGGER.warn("Principal resolution handled by [{}] produced a null principal. "
+                    + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
+                    + "produced by the authentication handler, if any.", resolverName);
+            } else {
+                val currentPrincipal = authenticationBuilder.getPrincipal();
+                if (!(currentPrincipal instanceof NullPrincipal)) {
+                    val merger = authenticationSystemSupport.getObject().getPrincipalElectionStrategy().getAttributeMerger();
+                    LOGGER.trace("Merging attributes from [{}] into principal [{}]", principal, currentPrincipal);
+                    val mergedAttributes = CoreAuthenticationUtils.mergeAttributes(currentPrincipal.getAttributes(), principal.getAttributes(), merger);
+                    principal = principal.withAttributes(mergedAttributes);
+                    LOGGER.debug("Merged attributes into principal [{}]", principal);
+                }
+                authenticationBuilder.setPrincipal(principal);
             }
-            LOGGER.warn("Principal resolution handled by [{}] produced a null principal. "
-                + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
-                + "produced by the authentication handler, if any.", resolverName);
-        } else {
-            builder.setPrincipal(principal);
+            LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);
+            publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal, clientInfo));
+        } finally {
+            AuthenticationHolder.clear();
         }
-        LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);
-        publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal, clientInfo));
     }
 
     protected PrincipalResolver getPrincipalResolverLinkedToHandlerIfAny(final AuthenticationHandler handler,
@@ -195,7 +205,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
     protected Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulatorsForTransaction(
         final AuthenticationTransaction transaction) {
-        return this.authenticationEventExecutionPlan.getAuthenticationMetadataPopulators(transaction);
+        return authenticationEventExecutionPlan.getAuthenticationMetadataPopulators(transaction);
     }
 
     protected void publishEvent(final ApplicationEvent event) {
@@ -213,48 +223,56 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             throw new AuthenticationException("Resolved credentials for this transaction are empty");
         }
 
-        val builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
-        credentials.forEach(builder::addCredential);
+        val authenticationBuilder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
+        credentials.forEach(authenticationBuilder::addCredential);
 
-        val handlerSet = authenticationEventExecutionPlan.getAuthenticationHandlers(transaction);
+        val handlerSet = authenticationEventExecutionPlan.resolveAuthenticationHandlers(transaction);
         LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
 
-        for (val credential : credentials) {
-            LOGGER.debug("Attempting to authenticate credential [{}]", credential);
+        try {
+            for (val credential : credentials) {
+                LOGGER.debug("Attempting to authenticate credential [{}]", credential);
 
-            val itHandlers = handlerSet.iterator();
-            var proceedWithNextHandler = true;
-            while (proceedWithNextHandler && itHandlers.hasNext()) {
-                val handler = itHandlers.next();
-                if (handler.supports(credential)) {
-                    try {
-                        val resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
-                        LOGGER.debug("Attempting authentication of [{}] using [{}]", credential.getId(), handler.getName());
-                        authenticateAndResolvePrincipal(builder, credential, resolver, handler, transaction.getService());
+                val itHandlers = handlerSet.iterator();
+                var proceedWithNextHandler = true;
+                while (proceedWithNextHandler && itHandlers.hasNext()) {
+                    val handler = itHandlers.next();
+                    if (handler.supports(credential)) {
+                        try {
+                            val resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
+                            LOGGER.debug("Attempting authentication of [{}] using [{}]", credential.getId(), handler.getName());
+                            authenticateAndResolvePrincipal(authenticationBuilder, credential, resolver, handler, transaction.getService());
 
-                        val authnResult = builder.build();
-                        val executionResult = evaluateAuthenticationPolicies(authnResult, transaction, handlerSet);
-                        proceedWithNextHandler = !executionResult.isSuccess();
-                    } catch (final GeneralSecurityException e) {
-                        handleAuthenticationException(e, handler.getName(), builder);
-                        proceedWithNextHandler = shouldAuthenticationChainProceedOnFailure(transaction, e);
-                    } catch (final Exception e) {
-                        LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
-                            + "find authentication handler that supports [{}] of type [{}]. Examine the configuration to "
-                            + "ensure a method of authentication is defined and analyze CAS logs at DEBUG level to trace "
-                            + "the authentication event.", credential, credential.getClass().getSimpleName());
+                            val authnResult = authenticationBuilder.build();
+                            val executionResult = evaluateAuthenticationPolicies(authnResult, transaction, handlerSet);
+                            proceedWithNextHandler = !executionResult.isSuccess();
+                        } catch (final GeneralSecurityException e) {
+                            handleAuthenticationException(e, handler.getName(), authenticationBuilder);
+                            proceedWithNextHandler = shouldAuthenticationChainProceedOnFailure(transaction, e);
+                        } catch (final Exception e) {
+                            LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
+                                + "find authentication handler that supports [{}] of type [{}]. Examine the configuration to "
+                                + "ensure a method of authentication is defined and analyze CAS logs at DEBUG level to trace "
+                                + "the authentication event.", credential, credential.getClass().getSimpleName());
 
-                        handleAuthenticationException(e, handler.getName(), builder);
-                        proceedWithNextHandler = shouldAuthenticationChainProceedOnFailure(transaction, e);
+                            handleAuthenticationException(e, handler.getName(), authenticationBuilder);
+                            proceedWithNextHandler = shouldAuthenticationChainProceedOnFailure(transaction, e);
+                        }
+                    } else {
+                        LOGGER.debug("Authentication handler [{}] does not support the credential type [{}].",
+                            handler.getName(), credential);
                     }
-                } else {
-                    LOGGER.debug("Authentication handler [{}] does not support the credential type [{}].",
-                        handler.getName(), credential);
+                }
+            }
+            evaluateFinalAuthentication(authenticationBuilder, transaction, handlerSet);
+            return authenticationBuilder;
+        } finally {
+            for (val handler : handlerSet) {
+                if (handler.isDisposable() && handler instanceof final DisposableBean db) {
+                    db.destroy();
                 }
             }
         }
-        evaluateFinalAuthentication(builder, transaction, handlerSet);
-        return builder;
     }
 
     protected void evaluateFinalAuthentication(final AuthenticationBuilder builder,
@@ -268,7 +286,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                     + "examined are: [{}]", authenticationHandlers.stream().map(AuthenticationHandler::getName).collect(Collectors.joining(", ")));
             }
             publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(), transaction.getCredentials(), clientInfo));
-            throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
+            throw createAuthenticationException(builder);
         }
 
         val authentication = builder.build();
@@ -276,8 +294,18 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         if (!executionResult.isSuccess()) {
             publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication, clientInfo));
             executionResult.getFailures().forEach(e -> handleAuthenticationException(e, e.getClass().getSimpleName(), builder));
-            throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
+            throw createAuthenticationException(builder);
         }
+    }
+
+    private static AuthenticationException createAuthenticationException(
+        final AuthenticationBuilder builder) {
+        val exception = new AuthenticationException(builder.getFailures(), builder.getSuccesses());
+        if (!builder.getFailures().isEmpty()) {
+            val firstCause = builder.getFailures().values().iterator().next();
+            exception.initCause(firstCause);
+        }
+        return exception;
     }
 
     protected ChainingAuthenticationPolicyExecutionResult evaluateAuthenticationPolicies(final Authentication authentication,
@@ -286,12 +314,11 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         val policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
         val executionResult = new ChainingAuthenticationPolicyExecutionResult();
 
-        val resultBuilder = new DefaultAuthenticationResultBuilder();
+        val resultBuilder = authenticationSystemSupport.getObject().getAuthenticationResultBuilderFactory().newBuilder();
         resultBuilder.collect(transaction.getAuthentications());
         resultBuilder.collect(authentication);
 
-        val principalElectionStrategy = authenticationSystemSupport.getObject().getPrincipalElectionStrategy();
-        val resultAuthentication = resultBuilder.build(principalElectionStrategy).getAuthentication();
+        val resultAuthentication = resultBuilder.build().getAuthentication();
         LOGGER.trace("Final authentication used for authentication policy evaluation is [{}]", resultAuthentication);
 
         policies.forEach(policy -> {
@@ -340,7 +367,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     }
 
     @Getter
-    private static final class ChainingAuthenticationPolicyExecutionResult {
+    public static final class ChainingAuthenticationPolicyExecutionResult {
         private final List<AuthenticationPolicyExecutionResult> results = new ArrayList<>();
 
         private final Set<Throwable> failures = new HashSet<>();
@@ -350,7 +377,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
          *
          * @return true/false
          */
-        public boolean isSuccess() {
+        boolean isSuccess() {
             return failures.isEmpty();
         }
     }

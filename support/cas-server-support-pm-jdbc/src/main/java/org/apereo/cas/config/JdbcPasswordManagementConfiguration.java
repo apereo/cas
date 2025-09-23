@@ -59,7 +59,7 @@ class JdbcPasswordManagementConfiguration {
             val encoder = PasswordEncoderUtils.newPasswordEncoder(
                 casProperties.getAuthn().getPm().getJdbc().getPasswordEncoder(), applicationContext);
             return new JdbcPasswordManagementService(passwordManagementCipherExecutor,
-                casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm(), jdbcPasswordManagementDataSource,
+                casProperties, jdbcPasswordManagementDataSource,
                 jdbcPasswordManagementTransactionTemplate, passwordHistoryService, encoder);
         }
     }

@@ -20,9 +20,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 class HCaptchaValidatorTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val props = new GoogleRecaptchaProperties()
-            .setScore(.1)
+            .setScore(0.1)
             .setSecret(UUID.randomUUID().toString())
             .setVerifyUrl("http://localhost:8812");
         val validator = new HCaptchaValidator(props);

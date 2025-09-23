@@ -17,7 +17,10 @@ public class GoogleAuthenticatorTokenRepositoryCleaner extends OneTimeTokenRepos
         super(tokenRepository);
     }
 
-    @Scheduled(initialDelayString = "${cas.authn.mfa.gauth.cleaner.schedule.start-delay:PT30S}",
+    @Scheduled(
+        cron = "${cas.authn.mfa.gauth.cleaner.schedule.cron-expression:}",
+        zone = "${cas.authn.mfa.gauth.cleaner.schedule.cron-time-zone:}",
+        initialDelayString = "${cas.authn.mfa.gauth.cleaner.schedule.start-delay:PT30S}",
         fixedDelayString = "${cas.authn.mfa.gauth.cleaner.schedule.repeat-interval:PT35S}")
     @Override
     public void clean() {

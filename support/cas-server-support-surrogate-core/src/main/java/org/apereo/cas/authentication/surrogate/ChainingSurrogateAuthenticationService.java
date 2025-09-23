@@ -2,9 +2,11 @@ package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredServiceSurrogatePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.WebBasedRegisteredService;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.jooq.lambda.Unchecked;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,20 +26,20 @@ public class ChainingSurrogateAuthenticationService implements SurrogateAuthenti
     private final ServicesManager servicesManager;
 
     @Override
-    public boolean canImpersonate(final String surrogate, final Principal principal, final Optional<? extends Service> givenService) throws Throwable {
+    public boolean canImpersonate(final String surrogate, final Principal principal, final Optional<? extends Service> givenService) {
         return isImpersonationAllowedFor(givenService)
             && surrogateServices.stream().anyMatch(Unchecked.predicate(impl -> impl.canImpersonate(surrogate, principal, givenService)));
     }
 
     @Override
-    public Collection<String> getImpersonationAccounts(final String username, final Optional<? extends Service> givenService) throws Throwable {
+    public Collection<String> getImpersonationAccounts(final String username, final Optional<? extends Service> givenService) {
         return isImpersonationAllowedFor(givenService)
             ? surrogateServices.stream().map(Unchecked.function(impl -> impl.getImpersonationAccounts(username, givenService))).flatMap(Collection::stream).toList()
             : new ArrayList<>();
     }
 
     @Override
-    public boolean isWildcardedAccount(final String surrogate, final Principal principal, final Optional<? extends Service> givenService) throws Throwable {
+    public boolean isWildcardedAccount(final String surrogate, final Principal principal, final Optional<? extends Service> givenService) {
         return isImpersonationAllowedFor(givenService)
             && surrogateServices.stream().anyMatch(Unchecked.predicate(impl -> impl.isWildcardedAccount(surrogate, principal, givenService)));
     }
@@ -49,14 +51,16 @@ public class ChainingSurrogateAuthenticationService implements SurrogateAuthenti
     }
 
     protected boolean isImpersonationAllowedFor(final Optional<? extends Service> givenService) {
-        return givenService
+        val surrogatePolicyResult = givenService
             .map(servicesManager::findServiceBy)
             .filter(WebBasedRegisteredService.class::isInstance)
             .map(WebBasedRegisteredService.class::cast)
             .filter(service -> Objects.nonNull(service.getSurrogatePolicy()))
-            .map(service -> service.getSurrogatePolicy().isEnabled())
+            .map(WebBasedRegisteredService::getSurrogatePolicy)
             .stream()
-            .findFirst()
+            .findFirst();
+        return surrogatePolicyResult
+            .map(RegisteredServiceSurrogatePolicy::isEnabled)
             .orElse(Boolean.TRUE);
     }
 }

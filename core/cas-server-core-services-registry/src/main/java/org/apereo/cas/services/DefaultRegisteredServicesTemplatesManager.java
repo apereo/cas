@@ -4,9 +4,8 @@ import org.apereo.cas.configuration.model.core.services.ServiceRegistryPropertie
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.serialization.StringSerializer;
-
-import groovy.text.GStringTemplateEngine;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -14,7 +13,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,7 +41,7 @@ public class DefaultRegisteredServicesTemplatesManager implements RegisteredServ
         this.registeredServiceSerializer = registeredServiceSerializer;
 
         val location = properties.getTemplates().getDirectory().getLocation();
-        LOGGER.debug("Attrmpting to locate service template definitions from [{}]", location);
+        LOGGER.debug("Attempting to locate service template definitions from [{}]", location);
         templateDefinitionFiles = FunctionUtils.doUnchecked(() -> ResourceUtils.doesResourceExist(location)
             ? FileUtils.listFiles(location.getFile(), new String[]{"json"}, true)
             : new ArrayList<>());
@@ -78,14 +76,13 @@ public class DefaultRegisteredServicesTemplatesManager implements RegisteredServ
 
     private Optional<RegisteredService> locateTemplateServiceDefinition(final RegisteredService registeredService,
                                                                         final String templateName) {
-
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
         return templateDefinitionFiles
             .stream()
             .filter(__ -> CasRuntimeHintsRegistrar.notInNativeImage())
             .filter(registeredServiceSerializer::supports)
             .filter(file -> FilenameUtils.getBaseName(file.getAbsolutePath()).equalsIgnoreCase(templateName))
             .map(file -> FunctionUtils.doUnchecked(() -> {
-                val engine = new GStringTemplateEngine();
                 val templateParams = registeredService.getProperties()
                     .entrySet()
                     .stream()
@@ -95,8 +92,9 @@ public class DefaultRegisteredServicesTemplatesManager implements RegisteredServ
                         return Pair.of(entry.getKey(), values);
                     })
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-                val template = engine.createTemplate(file).make(templateParams);
-                return registeredServiceSerializer.from(template.toString());
+
+                val template = scriptFactory.createTemplate(file, templateParams);
+                return registeredServiceSerializer.from(template);
             }))
             .sorted(Comparator.comparingInt(RegisteredService::getEvaluationOrder))
             .filter(templateService -> templateService.getClass().equals(registeredService.getClass())

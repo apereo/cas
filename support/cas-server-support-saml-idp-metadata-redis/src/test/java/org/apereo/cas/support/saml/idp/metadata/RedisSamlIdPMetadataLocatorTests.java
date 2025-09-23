@@ -39,7 +39,7 @@ class RedisSamlIdPMetadataLocatorTests extends BaseRedisSamlMetadataTests {
     protected CasRedisTemplate<String, SamlIdPMetadataDocument> redisSamlIdPMetadataTemplate;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         val key = RedisSamlIdPMetadataLocator.CAS_PREFIX + '*';
         try (val keys = redisSamlIdPMetadataTemplate.scan(key, 0L)) {
             redisSamlIdPMetadataTemplate.delete(keys.collect(Collectors.toSet()));

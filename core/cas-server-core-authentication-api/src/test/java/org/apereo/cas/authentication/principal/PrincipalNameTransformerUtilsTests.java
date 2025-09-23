@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class PrincipalNameTransformerUtilsTests {
     @Test
-    void verifyBlockingAction() throws Throwable {
+    void verifyBlockingAction() {
         val properties = new PrincipalTransformationProperties();
         properties.setBlockingPattern(".+@.+\\.com");
-        val t = PrincipalNameTransformerUtils.newPrincipalNameTransformer(properties);
-        assertThrows(PreventedException.class, () -> t.transform("hello@cas.com"));
+        val transformer = PrincipalNameTransformerUtils.newPrincipalNameTransformer(properties);
+        assertThrows(PreventedException.class, () -> transformer.transform("hello@cas.com"));
     }
 
     @Test
@@ -32,22 +32,22 @@ class PrincipalNameTransformerUtilsTests {
         properties.setPrefix("prefix-");
         properties.setSuffix("-suffix");
         properties.setCaseConversion(PrincipalTransformationProperties.CaseConversion.UPPERCASE);
-        val t = PrincipalNameTransformerUtils.newPrincipalNameTransformer(properties);
-        val result = t.transform("userid");
+        val transformer = PrincipalNameTransformerUtils.newPrincipalNameTransformer(properties);
+        val result = transformer.transform("userid");
         assertEquals("PREFIX-USERID-SUFFIX", result);
     }
 
     @Test
-    void verifyGroovyAction() throws Throwable {
+    void verifyGroovyAction() {
         val properties = new PrincipalTransformationProperties();
         properties.getGroovy().setLocation(new ClassPathResource("SomeGroovyScript.groovy"));
         properties.setCaseConversion(PrincipalTransformationProperties.CaseConversion.LOWERCASE);
-        val t = PrincipalNameTransformerUtils.newPrincipalNameTransformer(properties);
-        assertNotNull(t);
+        val transformer = PrincipalNameTransformerUtils.newPrincipalNameTransformer(properties);
+        assertNotNull(transformer);
     }
 
     @Test
-    void verifyRegexAction() throws Throwable {
+    void verifyRegexAction() {
         val properties = new PrincipalTransformationProperties();
         properties.setPattern("test.+");
         val t = PrincipalNameTransformerUtils.newPrincipalNameTransformer(properties);

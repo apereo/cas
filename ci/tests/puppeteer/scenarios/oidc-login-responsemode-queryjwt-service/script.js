@@ -15,20 +15,20 @@ const path = require("path");
 
     await cas.click(page, "#allow");
     await cas.waitForNavigation(page);
-    await cas.log(`Page url: ${await page.url()}\n`);
+    await cas.logPage(page);
     const response = await cas.assertParameter(page, "response");
 
     const configFilePath = path.join(__dirname, "services/Sample-1.jwks");
     await cas.log(`Reading keystore from ${configFilePath}`);
     const keyContent = JSON.parse(fs.readFileSync(configFilePath, "utf8"));
 
-    cas.decryptJwtWithJwk(response, keyContent.keys[1], "RS256").then((verified) => {
+    cas.decryptJwtWithJwk(response, keyContent.keys[1], "RSA-OAEP-256").then((verified) => {
         assert(verified.payload.aud === "client");
         assert(verified.payload.iss === "https://localhost:8443/cas/oidc");
         assert(verified.payload.state === "1001");
         assert(verified.payload.nonce === "vn4qulthnx");
         assert(verified.payload.code !== undefined);
     });
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

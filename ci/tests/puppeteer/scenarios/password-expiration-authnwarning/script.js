@@ -5,7 +5,6 @@ const cas = require("../../cas.js");
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
-
     await cas.loginWith(page);
 
     await cas.sleep(1000);
@@ -46,10 +45,11 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertCookie(page);
     await cas.sleep(2000);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function typePassword(page, pswd, confirm) {
+    await cas.type(page,"#currentPassword", "Mellon");
     await cas.type(page,"#password", pswd);
     await cas.type(page,"#confirmedPassword", confirm);
 }

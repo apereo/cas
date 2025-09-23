@@ -74,7 +74,7 @@ Metadata location can use the [Spring Expression Language](../configuration/Conf
 
 {% tabs metadata %}
 
-{% tab metadata URL %}
+{% tab metadata <i class="fa fa-globe px-1"></i> URL %}
 
 ```json
 {
@@ -102,7 +102,7 @@ verify the XML signature of the metadata. It is not sufficient to request the me
 
 {% endtab %}
 
-{% tab metadata File %}
+{% tab metadata <i class="fa fa-file px-1"></i>File %}
     
 Metadata files for SAML2 service providers can be found on the file system directly: 
 
@@ -120,7 +120,7 @@ Multiple locations may be comma-separated.
 
 {% endtab %}
 
-{% tab metadata Directory %}
+{% tab metadata <i class="fa fa-folder px-1"></i>Directory %}
 
 This option fetches metadata from a local directory source as needed. You are responsible 
 for populating the directory with metadata files, which may be done while CAS is running. 
@@ -200,3 +200,4 @@ Service provider metadata can also be managed using any one of the following str
 | JPA                     | [See this guide](Configuring-SAML2-DynamicMetadata-JPA.html).      |
 | Groovy                  | [See this guide](Configuring-SAML2-DynamicMetadata-Groovy.html).   |
 | Amazon S3               | [See this guide](Configuring-SAML2-DynamicMetadata-AmazonS3.html). |
+| DynamoDb                | [See this guide](Configuring-SAML2-DynamicMetadata-DynamoDb.html). |

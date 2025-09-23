@@ -6,7 +6,7 @@ import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchOperation;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -66,7 +66,7 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
                 .getStringValues()
                 .stream()
                 .map(entry -> entry.toUpperCase(Locale.ENGLISH))
-                .map(role -> StringUtils.prependIfMissing(role, groupPrefix))
+                .map(role -> Strings.CI.prependIfMissing(role, groupPrefix))
                 .collect(Collectors.toList()))
             .flatMap(List::stream)
             .map(SimpleGrantedAuthority::new)

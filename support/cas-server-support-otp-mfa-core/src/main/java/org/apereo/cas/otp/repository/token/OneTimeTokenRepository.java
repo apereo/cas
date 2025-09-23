@@ -11,6 +11,11 @@ import org.apereo.cas.authentication.OneTimeToken;
 public interface OneTimeTokenRepository<T extends OneTimeToken> {
 
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "oneTimeTokenAuthenticatorTokenRepository";
+
+    /**
      * Clean expired/invalid tokens from the repository.
      * Clean up is likely run via a scheduler.
      */
@@ -20,8 +25,9 @@ public interface OneTimeTokenRepository<T extends OneTimeToken> {
      * Store token/code in the repository, marking it as invalid to be reused again.
      *
      * @param token the token
+     * @return the t
      */
-    void store(T token);
+    T store(T token);
 
     /**
      * Determine if the otp for user exists in repository.

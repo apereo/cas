@@ -4,7 +4,7 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -23,7 +23,7 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.time.Clock;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
@@ -50,11 +50,13 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
 
     private final GeoLocationService geoLocationService;
 
+    private final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
+
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
-        val tgt = WebUtils.getTicketGrantingTicketId(requestContext);
+    protected Event doExecuteInternal(final RequestContext requestContext) {
+        val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(requestContext);
         val ticketGrantingTicket = FunctionUtils.doAndHandle(
-            () -> Optional.of(ticketRegistry.getTicket(tgt, TicketGrantingTicket.class)),
+            () -> Optional.of(ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class)),
             throwable -> Optional.<TicketGrantingTicket>empty()).get();
 
         ticketGrantingTicket.ifPresent(ticket -> {
@@ -90,8 +92,14 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
         val authorizedServices = servicesManager.getAllServices()
             .stream()
             .filter(registeredService -> FunctionUtils.doAndHandle(
-                () -> RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                    registeredService, ticket.getAuthentication().getPrincipal().getId(), authzAttributes),
+                () -> principalAccessStrategyEnforcer.authorize(
+                    RegisteredServicePrincipalAccessStrategyEnforcer.PrincipalAccessStrategyContext.builder()
+                        .registeredService(registeredService)
+                        .principalId(ticket.getAuthentication().getPrincipal().getId())
+                        .principalAttributes(authzAttributes)
+                        .service(service)
+                        .applicationContext(requestContext.getActiveFlow().getApplicationContext())
+                        .build()),
                 throwable -> false).get())
             .sorted()
             .collect(Collectors.toList());
@@ -99,7 +107,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     }
 
     protected void buildAuditLogRecords(final RequestContext requestContext, final TicketGrantingTicket ticket) {
-        val sinceDate = LocalDate.now(Clock.systemUTC()).minusMonths(2);
+        val sinceDate = LocalDateTime.now(Clock.systemUTC()).minusMonths(2);
         val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(
             AuditTrailManager.WhereClauseFields.DATE, sinceDate,
             AuditTrailManager.WhereClauseFields.PRINCIPAL, ticket.getAuthentication().getPrincipal().getId());

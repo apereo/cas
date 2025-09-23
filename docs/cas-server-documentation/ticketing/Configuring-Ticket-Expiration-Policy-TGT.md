@@ -42,7 +42,7 @@ This policy provides a hard-time out as well as a sliding window.
 
 {% endtab %}
 
-{% tab exppolicies Per Principal %}
+{% tab exppolicies <i class="fa fa-person px-1"></i>Per Principal %}
 
 This ticket expiration policy is conditionally activated if and when the authenticated principal contains a `authenticationSessionTimeout` attribute.
 This attribute is expected to be a single-valued attribute whose value, measured in seconds, would allow CAS to build a hard timeout
@@ -63,21 +63,29 @@ whose ticket granting ticket expiration policy is to deviate from the default co
     "id" : 10,
     "ticketGrantingTicketExpirationPolicy": {
       "@class": "org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy",
-      "maxTimeToLiveInSeconds": 5
+      "maxTimeToLiveInSeconds": 5,
+      "userAgents": {
+        "@class": "java.util.LinkedHashMap",
+        ".+Firefox.+": 30
+      },
+      "ipAddresses": {
+        "@class": "java.util.LinkedHashMap",
+        ".+123.456.+": 60
+      }
     }
 }
 ```
 
 Remember that applications are responsible to manage their own session. CAS will not and cannot manage the application session
 and generally has no control over the application's timeout policies, logout practices, etc. The expiration policy
-of the ticket-granting ticket per application allows to CAS to use that policy as an override and separate from the global defaults,
+of the ticket-granting ticket per application allows CAS to use that policy as an override and separate from the global defaults,
 at the time the ticket is constructed and only if the incoming service request matches
 that given registered service definition. Once created, the policy remains global and affects all other applications and
 it has nothing to do with how the application manages its own sessions.
 
 {% endtab %}
 
-{% tab exppolicies Timeout %}
+{% tab exppolicies Timeout <i class="fa fa-hourglass px-1"></i> %}
 
 The expiration policy applied to TGTs provides for most-recently-used expiration policy, similar to a Web server session timeout.
 For example, a 2-hour time span with this policy in effect would require a `TGT` to be used every 2 hours or less, otherwise
@@ -87,7 +95,7 @@ it would be marked as expired.
 
 {% endtab %}
 
-{% tab exppolicies Hard Timeout %}
+{% tab exppolicies Hard Timeout <i class="fa fa-clock px-1"></i> %}
 
 The hard timeout policy provides for finite ticket lifetime as measured from the time of creation. For example, a 4-hour time span
 for this policy means that a ticket created at 1PM may be used up until 5PM; subsequent attempts to use it will mark it expired
@@ -97,7 +105,7 @@ and the user will be forced to re-authenticate.
 
 {% endtab %}
 
-{% tab exppolicies Throttled %}
+{% tab exppolicies <i class="fa fa-lock px-1"></i> Throttled %}
 
 The throttled timeout policy extends the TimeoutExpirationPolicy with the concept of throttling where a ticket may be used at
 most every `N` seconds. This policy was designed to thwart denial of service conditions where a rogue or misconfigured client
@@ -107,7 +115,7 @@ attempts to consume CAS server resources by requesting high volumes of service t
 
 {% endtab %}
 
-{% tab exppolicies Never %}
+{% tab exppolicies Never <i class="fa fa-ban px-1"></i> %}
 
 The never expires policy allows tickets to exist indefinitely. This policy is activated when the primary ticket expiration
 policy is configured with negative timeout values.

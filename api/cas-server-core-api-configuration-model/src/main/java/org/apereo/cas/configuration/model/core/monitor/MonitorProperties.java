@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.core.monitor;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +22,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("MonitorProperties")
 public class MonitorProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -7047060071480971606L;
@@ -41,7 +39,7 @@ public class MonitorProperties implements Serializable {
     private TicketGrantingTicketMonitorProperties tgt = new TicketGrantingTicketMonitorProperties();
 
     /**
-     * Options for monitoring the status a nd production of STs.
+     * Options for monitoring the status a and production of STs.
      */
     @NestedConfigurationProperty
     private ServiceTicketMonitorProperties st = new ServiceTicketMonitorProperties();
@@ -71,13 +69,21 @@ public class MonitorProperties implements Serializable {
     /**
      * Options for monitoring LDAP resources.
      */
-    private List<LdapMonitorProperties> ldap = new ArrayList<>(0);
+    private List<LdapMonitorProperties> ldap = new ArrayList<>();
 
     /**
      * Options for monitoring Memcached resources.
+     * @deprecated Since 7.0.0
      */
     @NestedConfigurationProperty
+    @Deprecated
     private MemcachedMonitorProperties memcached = new MemcachedMonitorProperties();
+
+    /**
+     * Configuration properties for monitoring Jaeger tracing.
+     */
+    @NestedConfigurationProperty
+    private JaegerMonitorProperties jaeger = new JaegerMonitorProperties();
 
     /**
      * Options for monitoring MongoDb resources.

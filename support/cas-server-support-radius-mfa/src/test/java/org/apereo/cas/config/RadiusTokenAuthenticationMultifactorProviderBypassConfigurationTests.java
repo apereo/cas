@@ -2,13 +2,13 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.radius.web.flow.BaseRadiusMultifactorAuthenticationTests;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
-
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,13 +32,14 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.radius.bypass.rest.url=http://localhost:8080/bypass"
     })
 @Tag("Radius")
+@ExtendWith(CasTestExtension.class)
 class RadiusTokenAuthenticationMultifactorProviderBypassConfigurationTests {
     @Autowired
     @Qualifier("radiusBypassEvaluator")
     private MultifactorAuthenticationProviderBypassEvaluator radiusBypassEvaluator;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(radiusBypassEvaluator);
         assertEquals(8, radiusBypassEvaluator.size());
     }

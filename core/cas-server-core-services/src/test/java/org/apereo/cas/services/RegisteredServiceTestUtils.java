@@ -4,9 +4,12 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -14,14 +17,19 @@ import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.merger.MultivaluedAttributeMerger;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.SimpleUrlValidator;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import lombok.experimental.UtilityClass;
@@ -37,6 +45,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceTestUtils}.
@@ -90,7 +99,16 @@ public class RegisteredServiceTestUtils {
     public static AbstractWebApplicationService getService(final String name) {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
-        return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
+        return (AbstractWebApplicationService) getWebApplicationServiceFactory().createService(request);
+    }
+
+    /**
+     * Gets web application service factory.
+     *
+     * @return the web application service factory
+     */
+    public static ServiceFactory<WebApplicationService> getWebApplicationServiceFactory() {
+        return new WebApplicationServiceFactory(mock(TenantExtractor.class), SimpleUrlValidator.getInstance());
     }
 
     public static Service getService2() {
@@ -160,10 +178,10 @@ public class RegisteredServiceTestUtils {
         baseRegisteredService.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
         baseRegisteredService.setLogoutUrl("https://sys.example.org/logout.png");
 
-        if (baseRegisteredService instanceof CasRegisteredService) {
+        if (baseRegisteredService instanceof final CasRegisteredService casRegisteredService) {
             val policy = new RegexMatchingRegisteredServiceProxyPolicy();
             policy.setPattern("^http.+");
-            ((CasRegisteredService) baseRegisteredService).setProxyPolicy(policy);
+            casRegisteredService.setProxyPolicy(policy);
         }
         baseRegisteredService.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
 
@@ -197,16 +215,16 @@ public class RegisteredServiceTestUtils {
         return Unchecked.supplier(() -> getRegisteredService(id, CasRegisteredService.class, true, requiredAttributes)).get();
     }
 
-    public static Principal getPrincipal(final Map<String, List<Object>> attributes) throws Throwable {
+    public static Principal getPrincipal(final Map<String, List<Object>> attributes) {
         return getPrincipal(CONST_USERNAME, attributes);
     }
 
-    public static Principal getPrincipal() throws Throwable {
+    public static Principal getPrincipal() {
         return getPrincipal(CONST_USERNAME);
     }
 
     public static Principal getPrincipal(final String name) {
-        return getPrincipal(name, new HashMap<>(0));
+        return getPrincipal(name, new HashMap<>());
     }
 
     public static Principal getPrincipal(final String name, final Map<String, List<Object>> attributes) {
@@ -226,7 +244,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static Authentication getAuthentication(final Principal principal) {
-        return getAuthentication(principal, new HashMap<>(0));
+        return getAuthentication(principal, new HashMap<>());
     }
 
     public static Authentication getAuthentication(final Principal principal, final Map<String, List<Object>> attributes) {
@@ -239,6 +257,10 @@ public class RegisteredServiceTestUtils {
             .build();
     }
 
+    public static Authentication getAuthentication(final Credential credential) {
+        return new DefaultAuthenticationBuilder(getPrincipal(credential.getId())).addCredential(credential).build();
+    }
+    
     public static Authentication getAuthentication(final String principal, final AuthenticationHandler handler,
                                                    final Credential credential, final Map<String, List<Object>> attributes) {
         return new DefaultAuthenticationBuilder(getPrincipal(principal))
@@ -439,5 +461,20 @@ public class RegisteredServiceTestUtils {
         list.add(svc25);
 
         return list;
+    }
+
+    /**
+     * Gets authentication result.
+     *
+     * @return the authentication result
+     */
+    public static AuthenticationResult getAuthenticationResult(final String username) {
+        return FunctionUtils.doUnchecked(() -> {
+            val authentication = getAuthentication(username);
+            val strategy = mock(PrincipalElectionStrategy.class);
+            when(strategy.getAttributeMerger()).thenReturn(new MultivaluedAttributeMerger());
+            when(strategy.nominate(anyCollection(), anyMap())).thenReturn(authentication.getPrincipal());
+            return new DefaultAuthenticationResultBuilder(strategy).collect(authentication).build();
+        });
     }
 }

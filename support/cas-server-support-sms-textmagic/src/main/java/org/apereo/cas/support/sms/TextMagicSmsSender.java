@@ -36,15 +36,13 @@ public class TextMagicSmsSender implements SmsSender {
         FunctionUtils.doIfNotBlank(properties.getToken(), __ -> client.setAccessToken(properties.getToken()));
         client.setDebugging(properties.isDebugging());
         client.setVerifyingSsl(properties.isVerifyingSsl());
-
-
+        
         FunctionUtils.doIfNotBlank(properties.getPassword(), __ -> client.setPassword(properties.getPassword()));
 
         client.setReadTimeout(properties.getReadTimeout());
         client.setConnectTimeout(properties.getConnectTimeout());
         client.setWriteTimeout(properties.getWriteTimeout());
-
-
+        
         FunctionUtils.doIfNotBlank(properties.getUserAgent(), __ -> client.setUserAgent(properties.getUserAgent()));
 
         if (StringUtils.isNotBlank(properties.getApiKey())) {
@@ -52,9 +50,9 @@ public class TextMagicSmsSender implements SmsSender {
             client.setApiKeyPrefix(properties.getApiKeyPrefix());
         }
 
-        httpClient.ifPresent(c -> {
+        httpClient.ifPresent(givenClient -> {
             val okHttpClient = new OkHttpClient();
-            val httpClientFactory = c.httpClientFactory();
+            val httpClientFactory = givenClient.httpClientFactory();
             okHttpClient.setSslSocketFactory(httpClientFactory.getSslContext().getSocketFactory());
             okHttpClient.setHostnameVerifier(httpClientFactory.getHostnameVerifier());
             okHttpClient.setConnectTimeout(httpClientFactory.getConnectionTimeout(), TimeUnit.SECONDS);

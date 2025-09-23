@@ -40,7 +40,7 @@ public class DefaultBucketConsumer implements BucketConsumer {
 
             val canProceed = FunctionUtils.doAndHandle(() -> {
                 if (properties.isBlocking()) {
-                    LOGGER.trace("Attempting to consume a token for the authentication attempt");
+                    LOGGER.debug("Attempting to consume a token for the authentication attempt");
                     return bucket.tryConsume(1, MAX_WAIT_NANOS, BlockingStrategy.PARKING);
                 }
                 return bucket.tryConsume(1);

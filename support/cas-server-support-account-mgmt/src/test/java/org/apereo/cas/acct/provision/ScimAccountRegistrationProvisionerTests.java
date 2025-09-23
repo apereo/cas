@@ -3,18 +3,14 @@ package org.apereo.cas.acct.provision;
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.config.CasScimAutoConfiguration;
-import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,8 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(
     classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
         CasAccountManagementWebflowAutoConfiguration.class,
         BaseWebflowConfigurerTests.SharedTestConfiguration.class,
         CasScimAutoConfiguration.class
@@ -46,11 +40,6 @@ class ScimAccountRegistrationProvisionerTests {
     @Autowired
     @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
-
-    @BeforeEach
-    public void setup() throws Exception {
-        MockRequestContext.create();
-    }
 
     @Test
     void verifyOperation() throws Throwable {

@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("CoreSamlMetadataProperties")
 public class CoreSamlMetadataProperties implements Serializable {
 
     @Serial
@@ -96,6 +94,14 @@ public class CoreSamlMetadataProperties implements Serializable {
      * This setting is only relevant when artifacts needs to be generated.
      */
     private int keySize = 4096;
+
+    /**
+     * When attempting to resolve metadata from sources, particularly URLs,
+     * this setting controls the number of retry attempts that CAS should execute
+     * when metadata resolution fails. Setting this value to a zero or negative value
+     * will disable the retry policy.
+     */
+    private int maximumRetryAttempts = 3;
 
     /**
      * The algorithm type/name that is used when generating certificates

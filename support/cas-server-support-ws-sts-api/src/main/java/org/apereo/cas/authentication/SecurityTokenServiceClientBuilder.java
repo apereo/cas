@@ -59,7 +59,7 @@ public class SecurityTokenServiceClientBuilder {
         sts.setEndpointQName(new QName(namespace, service.getWsdlEndpoint()));
         sts.setEnableAppliesTo(StringUtils.isNotBlank(service.getAppliesTo()));
         sts.setKeyType(WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512_BEARER);
-        sts.getProperties().putAll(new HashMap<>(0));
+        sts.getProperties().putAll(new HashMap<>());
         sts.setTokenType(StringUtils.defaultIfBlank(service.getTokenType(), WSS4JConstants.WSS_SAML2_TOKEN_TYPE));
 
         FunctionUtils.doIfNotBlank(service.getPolicyNamespace(), __ -> sts.setWspNamespace(service.getPolicyNamespace()));

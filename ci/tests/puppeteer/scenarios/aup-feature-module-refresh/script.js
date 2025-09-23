@@ -1,18 +1,17 @@
 
 const cas = require("../../cas.js");
-const YAML = require("yaml");
+
 const fs = require("fs");
 const path = require("path");
-const assert = require("assert");
 
 (async () => {
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/cas";
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
     await cas.log("Starting out with acceptable usage policy feature disabled...");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     await cas.sleep(3000);
@@ -22,14 +21,14 @@ const assert = require("assert");
     await cas.log("Updating configuration and waiting for changes to reload...");
     const configFilePath = path.join(__dirname, "config.yml");
     const file = fs.readFileSync(configFilePath, "utf8");
-    const configFile = YAML.parse(file);
+    const configFile = await cas.parseYAML(file);
     await updateConfig(configFile, configFilePath, true);
     await cas.sleep(5000);
 
     await cas.refreshContext();
 
     await cas.log("Starting out with acceptable usage policy feature enabled...");
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     await cas.assertTextContent(page, "#main-content #login #fm1 h3", "Acceptable Usage Policy");
@@ -38,10 +37,10 @@ const assert = require("assert");
     await cas.waitForNavigation(page);
     await cas.sleep(3000);
     await cas.assertTicketParameter(page);
-    const result = new URL(page.url());
-    assert(result.host === "apereo.github.io");
+    await cas.log(page);
+    await cas.assertPageUrlHost(page, "localhost:9859");
     await updateConfig(configFile, configFilePath, false);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function updateConfig(configFile, configFilePath, data) {
@@ -54,7 +53,7 @@ async function updateConfig(configFile, configFilePath, data) {
             }
         }
     };
-    const newConfig = YAML.stringify(config);
+    const newConfig = await cas.toYAML(config);
     await cas.log(`Updated configuration:\n${newConfig}`);
     await fs.writeFileSync(configFilePath, newConfig);
     await cas.log(`Wrote changes to ${configFilePath}`);

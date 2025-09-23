@@ -22,7 +22,7 @@ public class ConfigurationMetadataClassSourceLocator {
 
     private static ConfigurationMetadataClassSourceLocator INSTANCE;
 
-    private final Map<String, Class> cachedPropertiesClasses = new HashMap<>(0);
+    private final Map<String, Class> cachedPropertiesClasses = new HashMap<>();
 
     /**
      * Gets instance.
@@ -65,7 +65,7 @@ public class ConfigurationMetadataClassSourceLocator {
             typeName = matcher.group(1);
         }
 
-        val error = new IllegalArgumentException("Cant locate class for " + typeName);
+        val error = new IllegalArgumentException("Can't locate class for " + typeName);
         val clz = findClassBySimpleNameInPackage(typeName, "org.apereo.cas").orElseThrow(() -> error);
         cachedPropertiesClasses.put(typeName, clz);
         return clz;

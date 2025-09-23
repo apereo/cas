@@ -28,7 +28,7 @@ specific attributes from LDAP for each profile and the ability to specify the at
 
 {% endtab %}
 
-{% tab delegatedauthnprofileselection Groovy %}
+{% tab delegatedauthnprofileselection <i class="fa fa-file-code px-1"></i>Groovy %}
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.profile-selection.groovy" %}
 
@@ -60,9 +60,11 @@ The following parameters are passed to the script:
 | `userProfile`       | Points to the *resolved* user profile from the identity provider in exchange for the credential. |
 | `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.                      |
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
-{% tab delegatedauthnprofileselection Custom %}
+{% tab delegatedauthnprofileselection <i class="fa fa-code px-1"></i> Custom %}
 
 If you wish to create your own profile resolution and selection strategy, you will need to
 design a component and register it with CAS to handle the rendering of the user profile:

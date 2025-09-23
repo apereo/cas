@@ -14,9 +14,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -64,7 +65,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public boolean update(final YubiKeyAccount account) {
         HttpResponse response = null;
         try {
-            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(restProperties.getHeaders());
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
@@ -88,13 +89,14 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public void delete(final String username, final long deviceId) {
         HttpResponse response = null;
         try {
-            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/")
+            val url = Strings.CI.appendIfMissing(restProperties.getUrl(), "/")
                 .concat(username).concat("/").concat(String.valueOf(deviceId));
 
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
+                .headers(restProperties.getHeaders())
                 .url(url)
                 .build();
 
@@ -108,11 +110,12 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public void delete(final String username) {
         HttpResponse response = null;
         try {
-            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(username);
+            val url = Strings.CI.appendIfMissing(restProperties.getUrl(), "/").concat(username);
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
+                .headers(restProperties.getHeaders())
                 .url(url)
                 .build();
             response = HttpUtils.execute(exec);
@@ -130,6 +133,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
                 .url(restProperties.getUrl())
+                .headers(restProperties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
         } finally {
@@ -141,12 +145,13 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     protected YubiKeyAccount getAccountInternal(final String username) {
         HttpResponse response = null;
         try {
-            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(username);
+            val url = Strings.CI.appendIfMissing(restProperties.getUrl(), "/").concat(username);
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
                 .url(url)
+                .headers(restProperties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null) {
@@ -175,6 +180,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.GET)
                 .url(restProperties.getUrl())
+                .headers(restProperties.getHeaders())
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null) {
@@ -192,6 +198,6 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         } finally {
             HttpUtils.close(response);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

@@ -1,0 +1,14 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "^https://localhost:9859/.*",
+  "bypassApprovalPrompt": true,
+  "name" : "Sample",
+  "id" : 1,
+  "scopes" : [ "java.util.HashSet", [ "email", "profile" ] ],
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy"
+  },
+  "jwtAccessToken": true
+}

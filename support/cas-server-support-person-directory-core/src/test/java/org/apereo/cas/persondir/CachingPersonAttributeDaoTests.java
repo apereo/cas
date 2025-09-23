@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,14 +24,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@Tag("Attributes")
-public class CachingPersonAttributeDaoTests {
+@Tag("AttributeRepository")
+class CachingPersonAttributeDaoTests {
     private static final String DEFAULT_ATTR = "uid";
 
     private ComplexPersonAttributeDao stubDao;
 
     @BeforeEach
-    protected void setUp() throws Exception {
+    protected void setUp() {
         stubDao = new ComplexPersonAttributeDao();
         val daoBackingMap = new HashMap<String, Map<String, List<Object>>>();
 
@@ -67,7 +66,7 @@ public class CachingPersonAttributeDaoTests {
     }
 
     @Test
-    void testCacheStats() throws Exception {
+    void testCacheStats() {
         var dao = new CachingPersonAttributeDaoImpl();
         dao.setCachedPersonAttributesDao(stubDao);
         dao.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider(DEFAULT_ATTR));
@@ -114,7 +113,7 @@ public class CachingPersonAttributeDaoTests {
     }
 
     @Test
-    void testCaching() throws Exception {
+    void testCaching() {
         val cacheMap = new HashMap<Serializable, Set<PersonAttributes>>();
 
         var dao = new CachingPersonAttributeDaoImpl();
@@ -169,7 +168,7 @@ public class CachingPersonAttributeDaoTests {
 
 
     @Test
-    void testMultipleAttributeKeys() throws Exception {
+    void testMultipleAttributeKeys() {
         val cacheMap = new HashMap<Serializable, Set<PersonAttributes>>();
 
         val keyAttrs = new HashSet<String>();
@@ -224,7 +223,7 @@ public class CachingPersonAttributeDaoTests {
     }
 
     @Test
-    void testEmptyCacheKeyWithDefaultAttr() throws Exception {
+    void testEmptyCacheKeyWithDefaultAttr() {
         val cacheMap = new HashMap<Serializable, Set<PersonAttributes>>();
 
         var dao = new CachingPersonAttributeDaoImpl();
@@ -235,20 +234,20 @@ public class CachingPersonAttributeDaoTests {
 
         assertEquals(0, cacheMap.size());
 
-        var resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("edalquist")));
+        var resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("edalquist")));
         validateUser1(resultsSet.iterator().next().getAttributes());
         assertEquals(0, cacheMap.size());
 
-        resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("edalquist")));
+        resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("edalquist")));
         assertEquals(1, resultsSet.size());
         validateUser1(resultsSet.iterator().next().getAttributes());
         assertEquals(0, cacheMap.size());
 
-        resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("nobody")));
+        resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("nobody")));
         assertNull(resultsSet);
         assertEquals(0, cacheMap.size());
 
-        resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("edalquist")));
+        resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("edalquist")));
         assertEquals(1, resultsSet.size());
         validateUser1(resultsSet.iterator().next().getAttributes());
         assertEquals(0, cacheMap.size());
@@ -265,14 +264,14 @@ public class CachingPersonAttributeDaoTests {
     }
 
     @Test
-    void testEmptyCacheKeyWithKeyAttrs() throws Exception {
+    void testEmptyCacheKeyWithKeyAttrs() {
         val cacheMap = new HashMap<Serializable, Set<PersonAttributes>>();
 
         var dao = new CachingPersonAttributeDaoImpl();
         dao.setCachedPersonAttributesDao(stubDao);
         dao.setUsernameAttributeProvider(new SimpleUsernameAttributeProvider("UNUSED_ATTR_NAME"));
         var cacheKeyGenerator = new AttributeBasedCacheKeyGenerator();
-        cacheKeyGenerator.setCacheKeyAttributes(Collections.singleton("UNUSED_ATTR_NAME"));
+        cacheKeyGenerator.setCacheKeyAttributes(Set.of("UNUSED_ATTR_NAME"));
         dao.setCacheKeyGenerator(cacheKeyGenerator);
         dao.setUserInfoCache(cacheMap);
         dao.afterPropertiesSet();
@@ -280,21 +279,21 @@ public class CachingPersonAttributeDaoTests {
 
         assertEquals(0, cacheMap.size());
 
-        var resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("edalquist")));
+        var resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("edalquist")));
         assertEquals(1, resultsSet.size());
         validateUser1(resultsSet.iterator().next().getAttributes());
         assertEquals(0, cacheMap.size());
 
-        resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("edalquist")));
+        resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("edalquist")));
         assertEquals(1, resultsSet.size());
         validateUser1(resultsSet.iterator().next().getAttributes());
         assertEquals(0, cacheMap.size());
 
-        resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("nobody")));
+        resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("nobody")));
         assertNull(resultsSet);
         assertEquals(0, cacheMap.size());
 
-        resultsSet = dao.getPeopleWithMultivaluedAttributes(Collections.singletonMap(DEFAULT_ATTR, List.of("edalquist")));
+        resultsSet = dao.getPeopleWithMultivaluedAttributes(Map.of(DEFAULT_ATTR, List.of("edalquist")));
         assertEquals(1, resultsSet.size());
         validateUser1(resultsSet.iterator().next().getAttributes());
         assertEquals(0, cacheMap.size());

@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.cassandra.core.cql.BeanPropertyRowMapper;
 
 import java.util.ArrayList;
@@ -53,9 +54,10 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     public CassandraTicketRegistry(final CipherExecutor cipherExecutor,
                                    final TicketSerializationManager ticketSerializationManager,
                                    final TicketCatalog ticketCatalog,
+                                   final ConfigurableApplicationContext applicationContext,
                                    final CassandraSessionFactory cassandraSessionFactory,
                                    final CassandraTicketRegistryProperties properties) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.cassandraSessionFactory = cassandraSessionFactory;
         this.properties = properties;
     }
@@ -165,10 +167,13 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public Stream<? extends Ticket> stream() {
-        return ticketCatalog.findAll()
+    public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
+        return ticketCatalog
+            .findAll()
             .stream()
             .flatMap(this::streamCassandraTicketBy)
+            .skip(criteria.getFrom())
+            .limit(criteria.getCount())
             .map(holder -> {
                 val result = deserializeTicket(holder.getData(), holder.getType());
                 return decodeTicket(result);
@@ -292,7 +297,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
             .entrySet()
             .stream()
             .map(entry -> {
-                val entryValues = (List) entry.getValue();
+                val entryValues = entry.getValue();
                 val valueList = entryValues.stream().map(Object::toString).collect(Collectors.joining(","));
                 return Pair.of(entry.getKey(), valueList);
             })

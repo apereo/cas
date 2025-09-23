@@ -1,0 +1,71 @@
+description = "Apereo CAS Delegated Authentication CAS Support Using Pac4J"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Delegated Authentication",
+            title: "CAS Delegated (Proxy) Authentication",
+            aliases: ["pac4jcas", "casexternal"]
+    ]
+}
+dependencies {
+    api project(":api:cas-server-core-api")
+
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-logout-api")
+    implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-services-api")
+
+    implementation project(":support:cas-server-support-pac4j-api")
+    implementation project(":support:cas-server-support-pac4j-core-clients")
+    implementation project(":support:cas-server-support-pac4j-core")
+    implementation project(":support:cas-server-support-pac4j-webflow")
+
+    implementation libraries.jose4j
+    implementation libraries.pac4jcas
+
+    runtimeOnly libraries.casclient
+
+    testImplementation libraries.casclient
+    
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-logging")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
+    testImplementation project(":core:cas-server-core-scripting")
+
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-reports")
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-pac4j-oidc")
+    testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":support:cas-server-support-webconfig")
+
+    testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-pac4j-webflow", configuration: "tests")
+
+    testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+}

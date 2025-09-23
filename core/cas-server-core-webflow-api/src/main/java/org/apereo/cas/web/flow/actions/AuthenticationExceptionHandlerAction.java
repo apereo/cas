@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ public class AuthenticationExceptionHandlerAction extends BaseCasWebflowAction {
      *
      * @param exception      Authentication error to handle.
      * @param requestContext the spring  context
-     * @return Name of next flow state to transition to or {@value CasWebflowExceptionHandler#UNKNOWN}
+     * @return Name of next flow state to transition to or {@value CasWebflowExceptionCatalog#UNKNOWN}
      */
     protected Event handle(final Exception exception, final RequestContext requestContext) {
         val handlers = webflowExceptionHandlers

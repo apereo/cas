@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.attribute-repository.jdbc[0].attributes.uid=uid",
     "cas.authn.attribute-repository.jdbc[0].attributes.locations=locations",
-    "cas.authn.attribute-repository.jdbc[0].singleRow=true",
-    "cas.authn.attribute-repository.jdbc[0].requireAllAttributes=true",
+    "cas.authn.attribute-repository.jdbc[0].single-row=true",
+    "cas.authn.attribute-repository.jdbc[0].require-all-attributes=true",
     "cas.authn.attribute-repository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
     "cas.authn.attribute-repository.jdbc[0].username=uid",
     "cas.authn.attribute-repository.jdbc[0].user=postgres",
@@ -39,7 +39,7 @@ class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRowAttribu
 
     @Override
     @Test
-    void verifySingleRowAttributeRepository() throws Throwable {
+    void verifySingleRowAttributeRepository() {
         assertNotNull(attributeRepository);
         val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
@@ -51,7 +51,7 @@ class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRowAttribu
 
     @Override
     @Test
-    void verifyPeopleSingleRowAttributeRepository() throws Throwable {
+    void verifyPeopleSingleRowAttributeRepository() {
         assertNotNull(attributeRepository);
         val people = attributeRepository.getPeople(Map.of("username", List.of("casuser")));
         val person = people.iterator().next();

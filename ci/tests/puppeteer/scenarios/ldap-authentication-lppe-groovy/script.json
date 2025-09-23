@@ -1,5 +1,5 @@
 {
-  "dependencies": "ldap",
+  "dependencies": "ldap,scripting",
   "conditions": {
     "docker": "true"
   },

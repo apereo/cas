@@ -5,6 +5,8 @@ import org.apereo.cas.audit.AuditPrincipalResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -18,6 +20,7 @@ import org.apereo.cas.pm.impl.DefaultPasswordValidationService;
 import org.apereo.cas.pm.impl.GroovyResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.JsonResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
+import org.apereo.cas.pm.impl.RestfulPasswordSynchronizationAuthenticationPostProcessor;
 import org.apereo.cas.pm.impl.history.AmnesiacPasswordHistoryService;
 import org.apereo.cas.pm.impl.history.GroovyPasswordHistoryService;
 import org.apereo.cas.pm.impl.history.InMemoryPasswordHistoryService;
@@ -26,6 +29,9 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.spring.CasApplicationReadyListener;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,12 +41,13 @@ import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.FirstParameterAuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.SpringWebflowActionExecutionAuditablePrincipalResolver;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -168,39 +175,74 @@ public class CasPasswordManagementAutoConfiguration {
                 if (location != null) {
                     LOGGER.debug("Configuring password management based on JSON resource [{}]", location);
                     return new JsonResourcePasswordManagementService(passwordManagementCipherExecutor,
-                        casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm(), location,
-                        passwordHistoryService);
+                        casProperties, location, passwordHistoryService);
                 }
                 val groovyScript = pm.getGroovy().getLocation();
                 if (groovyScript != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
                     LOGGER.debug("Configuring password management based on Groovy resource [{}]", groovyScript);
                     return new GroovyResourcePasswordManagementService(passwordManagementCipherExecutor,
-                        casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm(),
-                        groovyScript,
-                        passwordHistoryService);
+                        casProperties, groovyScript, passwordHistoryService);
                 }
                 LOGGER.warn("No storage service is configured to handle the account update and password service operations. "
-                            + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
-                            + "To explicitly disable the password management, add 'cas.authn.pm.core.enabled=false' to the CAS configuration");
+                    + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
+                    + "To explicitly disable the password management, add 'cas.authn.pm.core.enabled=false' to the CAS configuration");
             } else {
                 LOGGER.debug("Password management is disabled. To enable the password management functionality, "
-                             + "add 'cas.authn.pm.core.enabled=true' to the CAS configuration and then configure storage options for account updates");
+                    + "add 'cas.authn.pm.core.enabled=true' to the CAS configuration and then configure storage options for account updates");
             }
-            return new NoOpPasswordManagementService(passwordManagementCipherExecutor,
-                casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm());
+            return new NoOpPasswordManagementService(passwordManagementCipherExecutor, casProperties);
         }
 
         @Bean
         @Lazy(false)
-        public InitializingBean passwordManagementInitialization(final CasConfigurationProperties casProperties,
-                                                                 @Qualifier(CommunicationsManager.BEAN_NAME)
-                                                                 final CommunicationsManager communicationsManager) {
-            return () -> {
+        public CasApplicationReadyListener passwordManagementApplicationReady(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final ObjectProvider<CommunicationsManager> communicationsManager) {
+            return event -> {
                 val pm = casProperties.getAuthn().getPm();
                 if (pm.getCore().isEnabled()) {
-                    communicationsManager.validate();
+                    communicationsManager.getObject().validate();
                 }
             };
+        }
+    }
+
+    @Configuration(value = "PasswordManagementSyncConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PasswordManagement, module = "password-sync")
+    static class PasswordManagementSyncConfiguration {
+        private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.password-sync.enabled")
+            .isTrue().evenIfMissing().and("cas.authn.password-sync.rest.url").isUrl();
+
+        @ConditionalOnMissingBean(name = "restfulPasswordSynchronizationAuthenticationPostProcessor")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationPostProcessor restfulPasswordSynchronizationAuthenticationPostProcessor(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return BeanSupplier.of(AuthenticationPostProcessor.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val properties = casProperties.getAuthn().getPasswordSync().getRest();
+                    return new RestfulPasswordSynchronizationAuthenticationPostProcessor(properties);
+                })
+                .otherwise(AuthenticationPostProcessor::none)
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = "restfulPasswordSynchronizationAuthenticationPostProcessorExecutionPlanConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationEventExecutionPlanConfigurer restfulPasswordSynchronizationAuthenticationPostProcessorExecutionPlanConfigurer(
+            @Qualifier("restfulPasswordSynchronizationAuthenticationPostProcessor")
+            final AuthenticationPostProcessor restfulPasswordSynchronizationAuthenticationPostProcessor,
+            final ConfigurableApplicationContext applicationContext) {
+            return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
+                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .supply(() -> plan -> plan.registerAuthenticationPostProcessor(restfulPasswordSynchronizationAuthenticationPostProcessor))
+                .otherwiseProxy()
+                .get();
         }
     }
 }

@@ -3,13 +3,20 @@
   "serviceId": "^(https|imaps)://.*",
   "name": "HTTPS and IMAPS",
   "id": 10000001,
-  "description": "This service definition authorizes all application urls that support HTTPS and IMAPS protocols.",
-  "evaluationOrder": 10000,
+  "description":
+  '''
+  This service definition authorizes all application urls that support HTTPS and IMAPS protocols.
+  This definition ships with CAS automatically and is auto-configured to be the last in the evaluation chain.
+  You most likely should <strong>remove (or disable)</strong> this definition from the CAS service registry.
+  ''',
+  "evaluationOrder": 90000,
   "properties" : {
     "@class" : "java.util.HashMap",
     "wildcardedServiceDefinition" : {
       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "true" ] ]
     }
-  }
+  },
+  "informationUrl": "https://apereo.org/cas",
+  "privacyUrl": "https://www.apereo.org/content/apereo-privacy-policy"
 }

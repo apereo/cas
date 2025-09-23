@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <nav class="sidebar-navigation">
+            <ul>
+                <li id="applicationsTabButton" class="active" data-tab-index="0">
+                    <i class="mdi mdi-apps" aria-hidden="true"></i>
+                    <span class="tooltip">Services and Applications</span>
+                </li>
+                <li id="systemTabButton" data-tab-index="1">
+                    <i class="mdi mdi-laptop" aria-hidden="true"></i>
+                    <span class="tooltip">System</span>
+                </li>
+                <li id="ticketsTabButton" data-tab-index="2">
+                    <i class="mdi mdi-database" aria-hidden="true"></i>
+                    <span class="tooltip">Tickets and Ticket Registry</span>
+                </li>
+                <li id="tasksTabButton" data-tab-index="3">
+                    <i class="mdi mdi-tire" aria-hidden="true"></i>
+                    <span class="tooltip">Tasks and Background Jobs</span>
+                </li>
+                <li id="accessStrategyTabButton" data-tab-index="4">
+                    <i class="mdi mdi-shield-check" aria-hidden="true"></i>
+                    <span class="tooltip">Access Strategy and Authorization</span>
+                </li>
+                <li id="loggingTabButton" data-tab-index="5">
+                    <i class="mdi mdi-text" aria-hidden="true"></i>
+                    <span class="tooltip">Logging, Log Events and Audit Records</span>
+                </li>
+                <li id="ssoSessionsTabButton" data-tab-index="6">
+                    <i class="mdi mdi-account-multiple" aria-hidden="true"></i>
+                    <span class="tooltip">SSO Sessions</span>
+                </li>
+                <li id="configurationTabButton" data-tab-index="7">
+                    <i class="mdi mdi-wrench" aria-hidden="true"></i>
+                    <span class="tooltip">CAS Configuration and Properties</span>
+                </li>
+                <li id="personDirectoryTabButton" data-tab-index="8">
+                    <i class="mdi mdi-card-account-details" aria-hidden="true"></i>
+                    <span class="tooltip">Person Directory and Attribute Resolution</span>
+                </li>
+                <li id="authenticationTabButton" data-tab-index="9">
+                    <i class="mdi mdi-account-check" aria-hidden="true"></i>
+                    <span class="tooltip">Authentication Sources, Handlers and Policies</span>
+                </li>
+                <li id="consentTabButton" data-tab-index="10">
+                    <i class="mdi mdi-checkerboard" aria-hidden="true"></i>
+                    <span class="tooltip">Attribute Consent Decisions and Records</span>
+                </li>
+                <li id="protocolsTabButton" data-tab-index="11">
+                    <i class="mdi mdi-protocol" aria-hidden="true"></i>
+                    <span class="tooltip">Authentication Protocols (CAS, SAML2, OpenID Connect, etc)</span>
+                </li>
+                <li id="throttlesTabButton" data-tab-index="12">
+                    <i class="mdi mdi-account-lock" aria-hidden="true"></i>
+                    <span class="tooltip">Throttled Authentication Records & Locked Accounts</span>
+                </li>
+                <li id="mfaTabButton" data-tab-index="13">
+                    <i class="mdi mdi-two-factor-authentication" aria-hidden="true"></i>
+                    <span class="tooltip">Multifactor Authentication & User Devices</span>
+                </li>
+                <li id="tenantsTabButton" data-tab-index="14">
+                    <i class="mdi mdi-home-circle" aria-hidden="true"></i>
+                    <span class="tooltip">Multitenancy & Tenants</span>
+                </li>
+            </ul>
+        </nav>
+</span>
+</body>
+</html>

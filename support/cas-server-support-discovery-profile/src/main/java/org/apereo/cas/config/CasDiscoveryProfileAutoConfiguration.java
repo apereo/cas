@@ -63,8 +63,10 @@ public class CasDiscoveryProfileAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint(
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasServerProfileRegistrar.BEAN_NAME) final ObjectProvider<CasServerProfileRegistrar> casServerProfileRegistrar) {
-            return new CasServerDiscoveryProfileEndpoint(casProperties, casServerProfileRegistrar);
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasServerProfileRegistrar.BEAN_NAME)
+            final ObjectProvider<CasServerProfileRegistrar> casServerProfileRegistrar) {
+            return new CasServerDiscoveryProfileEndpoint(casProperties, applicationContext, casServerProfileRegistrar);
         }
     }
 
@@ -84,7 +86,7 @@ public class CasDiscoveryProfileAutoConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final ObjectProvider<PersonAttributeDao> attributeRepository) {
 
-            val attributes = new LinkedHashSet<String>(0);
+            val attributes = new LinkedHashSet<String>();
             attributeRepository.ifAvailable(repository -> {
                 val possibleUserAttributeNames = repository.getPossibleUserAttributeNames(PersonAttributeDaoFilter.alwaysChoose());
                 if (possibleUserAttributeNames != null) {

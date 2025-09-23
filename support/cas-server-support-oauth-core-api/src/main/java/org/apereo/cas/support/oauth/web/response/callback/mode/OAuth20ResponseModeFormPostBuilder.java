@@ -28,13 +28,13 @@ import java.util.Map;
 public class OAuth20ResponseModeFormPostBuilder implements OAuth20ResponseModeBuilder {
     @Override
     public ModelAndView build(final RegisteredService registeredService,
-                              final String redirectUrl, final Map<String, String> parameters) throws Exception {
+                              final String redirectUrl, final Map<String, String> parameters) {
         val model = new LinkedHashMap<String, Object>();
         model.put("originalUrl", redirectUrl);
         model.put("parameters", parameters);
         val mv = new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE, model);
         mv.setStatus(HttpStatusCode.valueOf(HttpStatus.OK.value()));
-        LOGGER.debug("Redirecting to [{}] with model [{}]", mv.getViewName(), mv.getModel());
+        LOGGER.debug("POSTing to [{}] with model [{}]", mv.getViewName(), mv.getModel());
         return mv;
     }
 

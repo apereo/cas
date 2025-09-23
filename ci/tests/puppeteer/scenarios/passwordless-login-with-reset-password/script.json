@@ -18,7 +18,7 @@
 
     "--cas.authn.pm.reset.mail.from=cas@apereo.org",
     "--cas.authn.pm.reset.mail.text=${url}",
-    "--cas.authn.pm.reset.mail.subject=Reset your password",
+    "--cas.authn.pm.reset.mail.subject=Reset",
     "--cas.authn.pm.reset.mail.attribute-name=mail",
     "--cas.authn.pm.reset.security-questions-enabled=false",
 

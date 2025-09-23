@@ -15,5 +15,7 @@ public interface TicketGrantingTicketAwareTicket extends AuthenticationAwareTick
      *
      * @return the ticket or null if it has no parent
      */
-    Ticket getTicketGrantingTicket();
+    default Ticket getTicketGrantingTicket() {
+        return null;
+    }
 }

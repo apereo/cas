@@ -3,14 +3,12 @@ package org.apereo.cas.support.oauth.services;
 import org.apereo.cas.configuration.model.support.oauth.OAuthCoreProperties;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
-
 import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +25,10 @@ import java.util.Set;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
+    /**
+     * Friendly name for this OAuth service.
+     */
+    public static final String OAUTH_REGISTERED_SERVICE_FRIENDLY_NAME = "OAuth2 Client";
 
     @Serial
     private static final long serialVersionUID = 5318897374067731021L;
@@ -42,6 +44,8 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
     private boolean renewRefreshToken;
 
     private boolean jwtAccessToken;
+    
+    private boolean jwtRefreshToken;
 
     private String jwtAccessTokenSigningAlg;
 
@@ -57,13 +61,13 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
 
     private RegisteredServiceOAuthTokenExchangePolicy tokenExchangePolicy;
 
-    private Set<String> supportedGrantTypes = new HashSet<>(0);
+    private Set<String> supportedGrantTypes = new HashSet<>();
 
-    private Set<String> supportedResponseTypes = new HashSet<>(0);
+    private Set<String> supportedResponseTypes = new HashSet<>();
 
     private OAuthCoreProperties.UserProfileViewTypes userProfileViewType;
 
-    private Set<String> scopes = new HashSet<>(0);
+    private Set<String> scopes = new HashSet<>();
 
     private String responseMode;
 
@@ -88,7 +92,7 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
     @JsonIgnore
     @Override
     public String getFriendlyName() {
-        return "OAuth2 Client";
+        return OAUTH_REGISTERED_SERVICE_FRIENDLY_NAME;
     }
 
     @JsonIgnore
@@ -104,7 +108,7 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
      */
     public Set<String> getScopes() {
         if (this.scopes == null) {
-            this.scopes = new HashSet<>(0);
+            this.scopes = new HashSet<>();
         }
         return scopes;
     }
@@ -122,7 +126,7 @@ public class OAuthRegisteredService extends BaseWebBasedRegisteredService {
     @Override
     public void initialize() {
         super.initialize();
-        this.scopes = ObjectUtils.defaultIfNull(this.scopes, new HashSet<>(0));
-        this.audience = ObjectUtils.defaultIfNull(this.audience, new HashSet<>(0));
+        this.scopes = ObjectUtils.getIfNull(this.scopes, new HashSet<>());
+        this.audience = ObjectUtils.getIfNull(this.audience, new HashSet<>());
     }
 }

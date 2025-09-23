@@ -1,13 +1,29 @@
 apply plugin: "com.github.ben-manes.versions"
 
 def isNonStable = { String version ->
-    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase(Locale.ENGLISH).contains(it) }
+    def keywords = ['RELEASE', 'FINAL', 'GA']
+    def stableKeyword = keywords.any { it -> version.toUpperCase(Locale.ENGLISH).contains(it) }
     def regex = /^[0-9,.v-]+(-r)?$/
-    return !stableKeyword && !(version ==~ regex)
+    !stableKeyword && !(version ==~ regex)
+}
+
+def isCommonsCollectionsRejected = { candidate ->
+    candidate.version == "20040616" && candidate.group == "commons-collections" && candidate.name == "commons-collections"
+}
+
+def isH2DatabaseRejected = { candidate ->
+    candidate.group == "com.h2database" && candidate.name == "h2"
+}
+
+def isAwsSDKRejected = { candidate ->
+    candidate.group == "software.amazon.awssdk" && !candidate.version.endsWith("0")
 }
 
 tasks.named('dependencyUpdates') {
     rejectVersionIf {
-        isNonStable(it.candidate.version)
+            isNonStable(it.candidate.version)
+            || isCommonsCollectionsRejected(it.candidate)
+            || isH2DatabaseRejected(it.candidate)
+            || isAwsSDKRejected(it.candidate)
     }
 }

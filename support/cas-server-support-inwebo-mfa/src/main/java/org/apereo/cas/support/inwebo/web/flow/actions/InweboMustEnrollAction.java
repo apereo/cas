@@ -20,7 +20,7 @@ public class InweboMustEnrollAction extends BaseCasWebflowAction {
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val flowScope = requestContext.getFlowScope();
-        flowScope.put(WebflowConstants.MUST_ENROLL, true);
+        flowScope.put(InweboWebflowConstants.MUST_ENROLL, true);
         WebUtils.addErrorMessageToContext(requestContext, "cas.inwebo.error.usernotregistered");
         return success();
     }

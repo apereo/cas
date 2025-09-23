@@ -91,7 +91,7 @@ class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    void verifyValidateSignatureBadInput() throws Throwable {
+    void verifyValidateSignatureBadInput() {
         assertFalse(wsFederationHelper.validateSignature(null));
         assertFalse(wsFederationHelper.validateSignature(Pair.of(null, null)));
         val config = wsFederationConfigurations.toList().getFirst();

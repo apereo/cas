@@ -1,7 +1,7 @@
 package org.apereo.cas.util;
 
-import org.apereo.cas.util.http.HttpRequestUtils;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -11,6 +11,7 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -21,10 +22,14 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.execution.RequestContextHolder;
+import org.springframework.webflow.execution.View;
 import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestControlContext;
+import jakarta.servlet.http.Cookie;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 import static org.mockito.Mockito.*;
@@ -35,7 +40,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
+@Getter
 public class MockRequestContext extends MockRequestControlContext {
+    private View viewRendered;
+
     public MockRequestContext(final MessageContext messageContext) throws Exception {
         setMessageContext(messageContext);
     }
@@ -51,8 +59,7 @@ public class MockRequestContext extends MockRequestControlContext {
     public MockHttpServletResponse getHttpServletResponse() {
         return (MockHttpServletResponse) getExternalContext().getNativeResponse();
     }
-
-
+    
     public MockRequestContext setParameter(final String name, final String value) {
         getHttpServletRequest().setParameter(name, value);
         putRequestParameter(name, value);
@@ -64,9 +71,24 @@ public class MockRequestContext extends MockRequestControlContext {
         putRequestParameter(name, value);
         return this;
     }
+    
+    public MockRequestContext setContent(final Object value) {
+        getHttpServletRequest().setContent(value.toString().getBytes(StandardCharsets.UTF_8));
+        return this;
+    }
+
+    public MockRequestContext setPreferredLocales(final Locale... values) {
+        getHttpServletRequest().setPreferredLocales(Arrays.stream(values).toList());
+        return this;
+    }
 
     public MockRequestContext setActiveFlow(final Flow flow) {
         setFlowExecutionContext(new MockFlowExecutionContext(flow));
+        return this;
+    }
+
+    public MockRequestContext setHttpRequestCookies(final Cookie... cookies) {
+        getHttpServletRequest().setCookies(cookies);
         return this;
     }
 
@@ -86,9 +108,9 @@ public class MockRequestContext extends MockRequestControlContext {
         return this;
     }
 
-    public MockRequestContext setContextPath(final String constContextPath) {
-        getHttpServletRequest().setContextPath(constContextPath);
-        getMockExternalContext().setContextPath(constContextPath);
+    public MockRequestContext setContextPath(final String contextPath) {
+        getHttpServletRequest().setContextPath(contextPath);
+        getMockExternalContext().setContextPath(contextPath);
         return this;
     }
 
@@ -99,6 +121,16 @@ public class MockRequestContext extends MockRequestControlContext {
 
     public MockRequestContext setRemoteAddr(final String remoteAddr) {
         getHttpServletRequest().setRemoteAddr(remoteAddr);
+        return this;
+    }
+
+    public MockRequestContext setServerName(final String host) {
+        getHttpServletRequest().setServerName(host);
+        return this;
+    }
+    
+    public MockRequestContext setServletPath(final String path) {
+        getHttpServletRequest().setServletPath(path);
         return this;
     }
 
@@ -115,8 +147,7 @@ public class MockRequestContext extends MockRequestControlContext {
     public Object getSessionAttribute(final String name) {
         return Objects.requireNonNull(getHttpServletRequest().getSession(true)).getAttribute(name);
     }
-
-
+    
     public MockRequestContext setContentType(final String type) {
         getHttpServletRequest().setContentType(type);
         return this;
@@ -127,14 +158,24 @@ public class MockRequestContext extends MockRequestControlContext {
         return this;
     }
 
+    public MockRequestContext setRequestURI(final String uri) {
+        getHttpServletRequest().setRequestURI(uri);
+        return this;
+    }
+
     public MockRequestContext setRequestCookiesFromResponse() {
         getHttpServletRequest().setCookies(getHttpServletResponse().getCookies());
         return this;
     }
 
+    public MockRequestContext withUserAgent() {
+        withUserAgent("Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        return this;
+    }
+
     @CanIgnoreReturnValue
     public MockRequestContext withUserAgent(final String s) {
-        addHeader(HttpRequestUtils.USER_AGENT_HEADER, s);
+        addHeader(HttpHeaders.USER_AGENT, s);
         return this;
     }
 
@@ -193,6 +234,7 @@ public class MockRequestContext extends MockRequestControlContext {
         return this;
     }
 
+
     public MockRequestContext setMessageContext(final MessageContext messageContext) throws Exception {
         val field = ReflectionUtils.findField(getClass(), "messageContext");
         Objects.requireNonNull(field).trySetAccessible();
@@ -203,5 +245,10 @@ public class MockRequestContext extends MockRequestControlContext {
     public MockRequestContext withDefaultMessageContext() throws Exception {
         setMessageContext(new DefaultMessageContext());
         return this;
+    }
+
+    @Override
+    public void viewRendered(final View view) {
+        this.viewRendered = view;
     }
 }

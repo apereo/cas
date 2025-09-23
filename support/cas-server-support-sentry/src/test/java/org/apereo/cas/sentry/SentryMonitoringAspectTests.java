@@ -2,21 +2,20 @@ package org.apereo.cas.sentry;
 
 import org.apereo.cas.config.CasSentryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.monitor.Monitorable;
+import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import io.sentry.spring.boot.jakarta.SentryAutoConfiguration;
+import io.sentry.spring.jakarta.opentelemetry.SentryOpenTelemetryAgentWithoutAutoInitConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,17 +24,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    AopAutoConfiguration.class,
-    SentryAutoConfiguration.class,
+    SentryOpenTelemetryAgentWithoutAutoInitConfiguration.class,
     CasSentryAutoConfiguration.class,
     SentryMonitoringAspectTests.SentryMonitoringTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy
 @Tag("Simple")
+@ExtendWith(CasTestExtension.class)
 @AutoConfigureObservability
 class SentryMonitoringAspectTests {
 
@@ -43,28 +41,42 @@ class SentryMonitoringAspectTests {
     @Qualifier("greeter")
     private Greeter greeter;
 
+    @Autowired
+    @Qualifier("reporter")
+    private Reporter reporter;
+
+    @Autowired
+    @Qualifier("realReporter")
+    private Reporter realReporter;
+
     @Test
-    void verifyOperation() throws Throwable {
-        assertNotNull(greeter.greet(false));
+    void verifyOperation() {
         assertThrows(IllegalArgumentException.class, () -> greeter.greet(true));
+        assertEquals("Hello", greeter.greet(false));
+        assertEquals("Reporter", reporter.report());
+        assertEquals("RealReporter", realReporter.report());
     }
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "SentryMonitoringTestConfiguration", proxyBeanMethods = false)
     static class SentryMonitoringTestConfiguration {
         @Bean
         public Greeter greeter() {
-            return fail -> {
-                if (fail) {
-                    throw new IllegalArgumentException("Failed");
+            return Greeter.defaultInstance();
+        }
+
+        @Bean
+        public Reporter reporter() {
+            return new Reporter() {
+                @Override
+                public Object report() {
+                    return "Reporter";
                 }
-                return "Hello, World!";
             };
         }
-    }
 
-    @FunctionalInterface
-    @Monitorable(type = "Greeting")
-    private interface Greeter {
-        String greet(boolean fail);
+        @Bean
+        public Reporter realReporter() {
+            return new RealReporter();
+        }
     }
 }

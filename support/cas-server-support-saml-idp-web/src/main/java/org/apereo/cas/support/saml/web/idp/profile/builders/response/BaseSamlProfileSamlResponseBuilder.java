@@ -22,7 +22,6 @@ import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameIDType;
-import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,8 +38,6 @@ import java.util.Optional;
 @Getter
 public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> extends AbstractSaml20ObjectBuilder
     implements SamlProfileObjectBuilder<T> {
-    @Serial
-    private static final long serialVersionUID = -1891703354216174875L;
 
     protected final SamlProfileSamlResponseBuilderConfigurationContext configurationContext;
 
@@ -114,7 +111,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
 
     protected boolean encryptAssertionFor(final SamlProfileBuilderContext context) {
         return context.getRegisteredService().isEncryptAssertions()
-            || SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().entityDescriptor(),
+            || SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().getEntityDescriptor(),
             List.of(MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_ENCRYPT_ASSERTIONS.getName(),
                 Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
     }

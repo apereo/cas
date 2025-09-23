@@ -46,32 +46,31 @@ class MultiTimeUseOrTimeoutExpirationPolicyTests extends BaseTicketFactoryTests 
 
     
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         expirationPolicy = new MultiTimeUseOrTimeoutExpirationPolicy(NUMBER_OF_USES, TIMEOUT_SECONDS);
         ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(), expirationPolicy);
     }
 
     @Test
-    void verifyTicketIsNull() throws Throwable {
+    void verifyTicketIsNull() {
         assertTrue(expirationPolicy.isExpired(null));
         assertNotNull(expirationPolicy.toMaximumExpirationTime(ticket));
     }
 
     @Test
-    void verifyTicketIsNotExpired() throws Throwable {
+    void verifyTicketIsNotExpired() {
         expirationPolicy.setClock(Clock.fixed(ticket.getCreationTime().toInstant().plusSeconds(TIMEOUT_SECONDS).minusNanos(1), ZoneOffset.UTC));
         assertFalse(ticket.isExpired());
-        assertEquals(0, expirationPolicy.getTimeToIdle());
     }
 
     @Test
-    void verifyTicketIsExpiredByTime() throws Throwable {
+    void verifyTicketIsExpiredByTime() {
         expirationPolicy.setClock(Clock.fixed(ticket.getCreationTime().toInstant().plusSeconds(TIMEOUT_SECONDS).plusNanos(1), ZoneOffset.UTC));
         assertTrue(ticket.isExpired());
     }
 
     @Test
-    void verifyTicketIsExpiredByCount() throws Throwable {
+    void verifyTicketIsExpiredByCount() {
         IntStream.range(0, NUMBER_OF_USES)
             .forEach(i -> ticket.grantServiceTicket("test", RegisteredServiceTestUtils.getService(),
                 NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy));
@@ -87,7 +86,7 @@ class MultiTimeUseOrTimeoutExpirationPolicyTests extends BaseTicketFactoryTests 
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val result = SerializationUtils.serialize(expirationPolicy);
         val policyRead = SerializationUtils.deserialize(result, MultiTimeUseOrTimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);

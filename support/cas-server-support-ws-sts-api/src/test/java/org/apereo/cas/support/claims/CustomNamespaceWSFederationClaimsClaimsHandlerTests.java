@@ -6,7 +6,6 @@ import lombok.val;
 import org.apache.cxf.rt.security.claims.Claim;
 import org.apache.cxf.rt.security.claims.ClaimCollection;
 import org.apache.cxf.sts.claims.ClaimsParameters;
-import org.apache.cxf.sts.claims.ProcessedClaim;
 import org.apache.cxf.sts.request.TokenRequirements;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -38,7 +37,7 @@ class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
     }
 
     @Test
-    void verifySAML2Type() throws Throwable {
+    void verifySAML2Type() {
         val handler = new CustomNamespaceWSFederationClaimsClaimsHandler("CAS", "https://apereo.org/cas",
             List.of("https://apereo.org/cas/givenName", "https://apereo.org/cas/email"));
 
@@ -55,13 +54,13 @@ class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
         parameters.setPrincipal(mock(Principal.class));
         val values = handler.retrieveClaimValues(claims, parameters);
         assertFalse(values.isEmpty());
-        val processed = (ProcessedClaim) values.getFirst();
+        val processed = values.getFirst();
         assertEquals("givenName", processed.getClaimType());
         assertEquals(handler.getIssuer(), processed.getIssuer());
     }
 
     @Test
-    void verifySAML1Type() throws Throwable {
+    void verifySAML1Type() {
         val handler = new CustomNamespaceWSFederationClaimsClaimsHandler("CAS", "https://apereo.org/cas",
             List.of("https://apereo.org/cas/givenName", "https://apereo.org/cas/email"));
 
@@ -78,7 +77,7 @@ class CustomNamespaceWSFederationClaimsClaimsHandlerTests {
         parameters.setPrincipal(mock(Principal.class));
         val values = handler.retrieveClaimValues(claims, parameters);
         assertFalse(values.isEmpty());
-        val processed = (ProcessedClaim) values.getFirst();
+        val processed = values.getFirst();
         assertEquals("https://apereo.org/cas/givenName", processed.getClaimType());
         assertEquals(handler.getIssuer(), processed.getIssuer());
     }

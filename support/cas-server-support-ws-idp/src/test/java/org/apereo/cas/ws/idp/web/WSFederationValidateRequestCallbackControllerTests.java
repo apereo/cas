@@ -102,7 +102,7 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
         ticketRegistry.addTicket(st);
 
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
-        ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
+        ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
 
         mv = federationValidateRequestCallbackController.handleFederationRequest(response, request);
@@ -130,7 +130,7 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
 
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
 
-        ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
+        ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
 
         val mv = federationValidateRequestCallbackController.handleFederationRequest(response, request);

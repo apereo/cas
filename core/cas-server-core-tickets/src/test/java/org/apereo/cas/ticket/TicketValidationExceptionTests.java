@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TicketValidationExceptionTests {
     @Test
     @SuppressWarnings("DeadException")
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertDoesNotThrow(() -> {
             new AbstractTicketValidationException(RegisteredServiceTestUtils.getService()) {
                 @Serial

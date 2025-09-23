@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.authn;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -25,8 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("OIDC")
+@Tag("OIDCAuthentication")
 @TestPropertySource(properties = {
+    "cas.authn.attribute-repository.stub.attributes.uid=casuser",
+    
     "cas.authn.oidc.core.user-defined-scopes.MyScope=uid",
     "cas.authn.oidc.discovery.scopes=openid,profile,email,MyScope",
     "cas.authn.oidc.discovery.claims=sub,name,family_name,given_name,uid"
@@ -38,14 +41,14 @@ class OidcClientIdClientSecretAuthenticatorTests extends AbstractOidcTests {
     private Authenticator authenticator;
 
     @Test
-    void verifyWithoutRequestingScopes() throws Throwable {
-        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
+    void verifyWithoutRequestingScopes() {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), regexServiceUrl());
         servicesManager.save(registeredService);
         val credentials = new UsernamePasswordCredentials(registeredService.getClientId(), registeredService.getClientSecret());
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
-        request.addParameter(OAuth20Constants.SCOPE, "openid");
+        request.addParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
@@ -54,15 +57,15 @@ class OidcClientIdClientSecretAuthenticatorTests extends AbstractOidcTests {
     }
 
     @Test
-    void verifyWithRequestingScopes() throws Throwable {
+    void verifyWithRequestingScopes() {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
-        registeredService.setScopes(Set.of("openid", "MyScope"));
+        registeredService.setScopes(Set.of(OidcConstants.StandardScopes.OPENID.getScope(), "MyScope"));
         servicesManager.save(registeredService);
         val credentials = new UsernamePasswordCredentials(registeredService.getClientId(), registeredService.getClientSecret());
         val request = new MockHttpServletRequest();
         request.addParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
         request.addParameter(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret());
-        request.addParameter(OAuth20Constants.SCOPE, "openid MyScope");
+        request.addParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope() + " MyScope");
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());

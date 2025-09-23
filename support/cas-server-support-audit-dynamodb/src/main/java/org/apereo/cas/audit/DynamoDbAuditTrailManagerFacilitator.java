@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.configuration.model.support.dynamodb.AuditDynamoDbProperties;
 import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
@@ -22,12 +23,11 @@ import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -37,7 +37,12 @@ import java.util.stream.Collectors;
  * @since 6.1.0
  */
 @Slf4j
-public record DynamoDbAuditTrailManagerFacilitator(AuditDynamoDbProperties dynamoDbProperties, DynamoDbClient amazonDynamoDBClient) {
+@RequiredArgsConstructor
+public class DynamoDbAuditTrailManagerFacilitator {
+
+    private final AuditDynamoDbProperties dynamoDbProperties;
+    private final DynamoDbClient amazonDynamoDBClient;
+
     /**
      * Build table attribute values map.
      *
@@ -54,6 +59,8 @@ public record DynamoDbAuditTrailManagerFacilitator(AuditDynamoDbProperties dynam
         values.put(ColumnNames.ACTION_PERFORMED.getColumnName(), AttributeValue.builder().s(record.getActionPerformed()).build());
         values.put(ColumnNames.USER_AGENT.getColumnName(), AttributeValue.builder().s(StringUtils.defaultIfBlank(record.getClientInfo().getUserAgent(), "N/A")).build());
         values.put(ColumnNames.GEO_LOCATION.getColumnName(), AttributeValue.builder().s(StringUtils.defaultIfBlank(record.getClientInfo().getGeoLocation(), "N/A")).build());
+        values.put(ColumnNames.TENANT.getColumnName(), AttributeValue.builder().s(StringUtils.defaultIfBlank(record.getClientInfo().getTenant(), "N/A")).build());
+
         val time = record.getWhenActionWasPerformed().toEpochSecond(ZoneOffset.UTC);
         values.put(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName(), AttributeValue.builder().s(String.valueOf(time)).build());
         LOGGER.debug("Created attribute values [{}] based on [{}]", values, record);
@@ -107,8 +114,8 @@ public record DynamoDbAuditTrailManagerFacilitator(AuditDynamoDbProperties dynam
      * @param whereClause the where clause
      * @return the audit records
      */
-    public Set<? extends AuditActionContext> getAuditRecords(final Map<AuditTrailManager.WhereClauseFields, Object> whereClause) {
-        val localDate = (LocalDate) whereClause.get(AuditTrailManager.WhereClauseFields.DATE);
+    public List<? extends AuditActionContext> getAuditRecords(final Map<AuditTrailManager.WhereClauseFields, Object> whereClause) {
+        val localDate = (LocalDateTime) whereClause.get(AuditTrailManager.WhereClauseFields.DATE);
         val time = DateTimeUtils.dateOf(localDate).getTime();
         val queryKeys = CollectionUtils.<DynamoDbQueryBuilder>wrap(DynamoDbQueryBuilder.builder()
             .key(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName())
@@ -122,8 +129,13 @@ public record DynamoDbAuditTrailManagerFacilitator(AuditDynamoDbProperties dynam
                 .operator(ComparisonOperator.EQ)
                 .build());
         }
+        val count = whereClause.containsKey(AuditTrailManager.WhereClauseFields.COUNT)
+            ? (long) whereClause.get(AuditTrailManager.WhereClauseFields.COUNT)
+            : AbstractAuditTrailManager.DEFAULT_MAX_AUDIT_RECORDS_TO_FETCH;
         return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient,
-                dynamoDbProperties.getTableName(), queryKeys,
+                dynamoDbProperties.getTableName(),
+                count,
+                queryKeys,
                 item -> {
                     val principal = item.get(ColumnNames.PRINCIPAL.getColumnName()).s();
                     val actionPerformed = item.get(ColumnNames.ACTION_PERFORMED.getColumnName()).s();
@@ -133,13 +145,15 @@ public record DynamoDbAuditTrailManagerFacilitator(AuditDynamoDbProperties dynam
                     val resource = item.get(ColumnNames.RESOURCE_OPERATED_UPON.getColumnName()).s();
                     val userAgent = item.get(ColumnNames.USER_AGENT.getColumnName()).s();
                     val geoLocation = item.get(ColumnNames.GEO_LOCATION.getColumnName()).s();
+                    val tenant = item.get(ColumnNames.TENANT.getColumnName()).s();
                     val auditTime = Long.parseLong(item.get(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName()).s());
-                    val clientInfo = new ClientInfo(clientIp, serverIp, userAgent, geoLocation);
+                    val clientInfo = new ClientInfo(clientIp, serverIp, userAgent, geoLocation).setTenant(tenant);
                     return new AuditActionContext(principal, resource, actionPerformed, appCode,
                         DateTimeUtils.localDateTimeOf(auditTime), clientInfo);
                 })
-            .collect(Collectors.toSet());
+            .collect(Collectors.toList());
     }
+
 
     /**
      * Column names for tables holding records.
@@ -179,6 +193,10 @@ public record DynamoDbAuditTrailManagerFacilitator(AuditDynamoDbProperties dynam
          * Geolocation column.
          */
         GEO_LOCATION("geoLocation"),
+        /**
+         * Tenant column.
+         */
+        TENANT("tenant"),
         /**
          * applicationCode column.
          */

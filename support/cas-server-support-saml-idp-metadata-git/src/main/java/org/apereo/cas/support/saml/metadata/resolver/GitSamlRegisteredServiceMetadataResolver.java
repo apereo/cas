@@ -26,7 +26,6 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -96,7 +95,7 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
             .map(object -> parseGitObjectContentIntoSamlMetadataDocument(object, signatureFiles))
             .map(doc -> buildMetadataResolverFrom(service, doc))
             .filter(Objects::nonNull)
-            .collect(Collectors.toCollection(ArrayList::new));
+            .collect(Collectors.toList());
     }
 
     @Override

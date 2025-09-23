@@ -11,8 +11,6 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.idp.DefaultSamlIdPCasEventListener;
-import org.apereo.cas.support.saml.idp.SamlIdPCasEventListener;
 import org.apereo.cas.support.saml.idp.metadata.SamlIdPMetadataResolver;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
@@ -45,9 +43,12 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerEndpoint;
 import org.apereo.cas.support.saml.web.idp.web.SamlIdPErrorController;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.CasApplicationReadyListener;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
@@ -109,10 +110,10 @@ class SamlIdPMetadataConfiguration {
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
             @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
-            @Qualifier("samlIdPMetadataLocator")
+            @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) throws Exception {
+            final ServicesManager servicesManager) {
             return new SamlIdPMetadataController(samlIdPMetadataGenerator,
                 samlIdPMetadataLocator, servicesManager, webApplicationServiceFactory);
         }
@@ -289,7 +290,7 @@ class SamlIdPMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MetadataResolver casSamlIdPMetadataResolver(
             final CasConfigurationProperties casProperties,
-            @Qualifier("samlIdPMetadataLocator")
+            @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
             @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator,
@@ -313,7 +314,7 @@ class SamlIdPMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
             @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
-            final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) throws Exception {
+            final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) {
             return new FileSystemSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext);
         }
 
@@ -343,7 +344,7 @@ class SamlIdPMetadataConfiguration {
     @Configuration(value = "SamlIdPMetadataLocatorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class SamlIdPMetadataLocatorConfiguration {
-        @ConditionalOnMissingBean(name = "samlIdPMetadataLocator")
+        @ConditionalOnMissingBean(name = SamlIdPMetadataLocator.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPMetadataLocator samlIdPMetadataLocator(
@@ -418,7 +419,7 @@ class SamlIdPMetadataConfiguration {
         public SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("samlIdPMetadataLocator")
+            @Qualifier(SamlIdPMetadataLocator.BEAN_NAME)
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
             @Qualifier("samlSelfSignedCertificateWriter")
             final SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter,
@@ -427,7 +428,7 @@ class SamlIdPMetadataConfiguration {
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("velocityEngineFactoryBean")
-            final VelocityEngine velocityEngineFactoryBean) throws Exception {
+            final VelocityEngine velocityEngineFactoryBean) {
             return SamlIdPMetadataGeneratorConfigurationContext.builder()
                 .samlIdPMetadataLocator(samlIdPMetadataLocator)
                 .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter)
@@ -447,10 +448,19 @@ class SamlIdPMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         @ConditionalOnMissingBean(name = "samlIdPCasEventListener")
-        public SamlIdPCasEventListener samlIdPCasEventListener(
+        public CasApplicationReadyListener samlIdPCasEventListener(
             @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator) {
-            return new DefaultSamlIdPCasEventListener(samlIdPMetadataGenerator);
+            return event -> {
+                val document = FunctionUtils.doAndHandle(() -> {
+                    LOGGER.debug("Attempting to generate/fetch SAML IdP metadata...");
+                    return samlIdPMetadataGenerator.generate(Optional.empty());
+                }, e -> {
+                    LoggingUtils.error(LOGGER, e);
+                    return null;
+                }).get();
+                LOGGER.trace("Generated SAML IdP metadata document is [{}]", document);
+            };
         }
     }
 }

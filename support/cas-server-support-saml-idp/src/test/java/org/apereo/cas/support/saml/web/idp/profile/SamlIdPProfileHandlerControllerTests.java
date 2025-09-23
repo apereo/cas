@@ -41,7 +41,7 @@ class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests
     private SSOSamlIdPPostProfileHandlerController controller;
 
     @Test
-    void verifyNoMetadataForRequest() throws Throwable {
+    void verifyNoMetadataForRequest() {
         val service = new SamlRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());
         service.setName("SAML2Service");
@@ -56,7 +56,7 @@ class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    void verifyNoSignAuthnRequest() throws Throwable {
+    void verifyNoSignAuthnRequest() {
         val service = new SamlRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());
         service.setName("SAML2Service");
@@ -75,7 +75,7 @@ class SamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests
 
 
     @Test
-    void verifyException() throws Throwable {
+    void verifyException() {
         val request = new MockHttpServletRequest();
         request.addParameter("username", "casuser");
         val results = controller.handleUnauthorizedServiceException(request, new IllegalStateException());

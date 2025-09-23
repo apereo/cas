@@ -40,6 +40,6 @@ const assert = require("assert");
     } finally {
         await cas.screenshot(page);
     }
-    await browser.close();
+    await cas.closeBrowser(browser);
 
 })();

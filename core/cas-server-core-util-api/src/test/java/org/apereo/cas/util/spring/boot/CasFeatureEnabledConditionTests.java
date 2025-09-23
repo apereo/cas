@@ -2,17 +2,18 @@ package org.apereo.cas.util.spring.boot;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.TestPropertySource;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Simple")
+@ExtendWith(CasTestExtension.class)
 @Execution(ExecutionMode.SAME_THREAD)
 class CasFeatureEnabledConditionTests {
     @ConditionalOnFeaturesEnabled({
@@ -77,9 +79,9 @@ class CasFeatureEnabledConditionTests {
 
     @Nested
     @TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=true")
+    @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
+        AopAutoConfiguration.class,
         CasFeatureModuleFeature1TestConfiguration.class
     })
     class Feature1EnabledTests {
@@ -87,16 +89,16 @@ class CasFeatureEnabledConditionTests {
         private ConfigurableApplicationContext applicationContext;
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             assertTrue(applicationContext.containsBean("bean1"));
         }
     }
 
     @Nested
     @TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=false")
+    @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
+        AopAutoConfiguration.class,
         CasFeatureModuleFeature1TestConfiguration.class
     })
     class Feature1DisabledTests {
@@ -104,15 +106,15 @@ class CasFeatureEnabledConditionTests {
         private ConfigurableApplicationContext applicationContext;
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             assertFalse(applicationContext.containsBean("bean1"));
         }
     }
 
     @Nested
+    @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
+        AopAutoConfiguration.class,
         CasFeatureModuleFeature1TestConfiguration.class
     })
     class Feature1EnabledUndefinedTests {
@@ -120,15 +122,15 @@ class CasFeatureEnabledConditionTests {
         private ConfigurableApplicationContext applicationContext;
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             assertTrue(applicationContext.containsBean("bean1"));
         }
     }
 
     @Nested
+    @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
+        AopAutoConfiguration.class,
         CasFeatureModuleDisabledByDefaultTestConfiguration.class
     })
     class Feature3DisabledByDefaultTests {
@@ -136,15 +138,15 @@ class CasFeatureEnabledConditionTests {
         private ConfigurableApplicationContext applicationContext;
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             assertFalse(applicationContext.containsBean("bean1"));
         }
     }
 
     @Nested
+    @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
+        AopAutoConfiguration.class,
         CasFeatureModuleMultipleConditionsTestConfiguration.class
     })
     @TestPropertySource(properties = {
@@ -156,25 +158,26 @@ class CasFeatureEnabledConditionTests {
         private ConfigurableApplicationContext applicationContext;
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             assertTrue(applicationContext.containsBean("beanMultiple"));
         }
     }
 
     @Nested
+    @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
+        AopAutoConfiguration.class,
         CasFeatureModuleFeatureSelectedTestConfiguration.class
-    }, properties = CasFeatureEnabledCondition.PROPERTY_SELECTED_FEATURE_MODULES
-        + "=CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=true,"
-        + "CasFeatureModule.SAMLIdentityProvider.enabled=true")
+    },
+        properties = CasFeatureEnabledCondition.PROPERTY_SELECTED_FEATURE_MODULES
+            + "=CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=true,"
+            + "CasFeatureModule.SAMLIdentityProvider.enabled=true")
     class SelectedFeatureConditionsTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             assertTrue(applicationContext.containsBean("selectedBean"));
             assertEquals(3, CasFeatureModule.FeatureCatalog.getRegisteredFeatures().size());
         }

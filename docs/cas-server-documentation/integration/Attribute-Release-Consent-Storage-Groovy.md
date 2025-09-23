@@ -41,3 +41,5 @@ def deletePrincipal(Object[] args) {
 
 {% include_cached casproperties.html properties="cas.consent.groovy" %}
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+

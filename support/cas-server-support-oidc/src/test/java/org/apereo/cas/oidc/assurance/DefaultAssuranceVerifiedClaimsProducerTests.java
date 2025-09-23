@@ -17,11 +17,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("OIDC")
-public class DefaultAssuranceVerifiedClaimsProducerTests {
+@Tag("OIDCAttributes")
+class DefaultAssuranceVerifiedClaimsProducerTests {
 
     @TestPropertySource(properties = "cas.authn.oidc.identity-assurance.verification-source.location=classpath:assurance/id-1.json")
-    abstract class BaseTests extends AbstractOidcTests {
+    abstract static class BaseTests extends AbstractOidcTests {
         @Autowired
         @Qualifier(AssuranceVerifiedClaimsProducer.BEAN_NAME)
         protected AssuranceVerifiedClaimsProducer assuranceVerifiedClaimsProducer;
@@ -31,7 +31,7 @@ public class DefaultAssuranceVerifiedClaimsProducerTests {
     @TestPropertySource(properties = "cas.authn.oidc.discovery.verified-claims-supported=false")
     class NoVerification extends BaseTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() {
             val results = assuranceVerifiedClaimsProducer.produce(new JwtClaims(), "name", "eidas");
             assertTrue(results.isEmpty());
         }
@@ -44,7 +44,7 @@ public class DefaultAssuranceVerifiedClaimsProducerTests {
     })
     class NoTrustFramework extends BaseTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() {
             val results = assuranceVerifiedClaimsProducer.produce(new JwtClaims(), "name", "eidas");
             assertTrue(results.isEmpty());
         }
@@ -60,7 +60,7 @@ public class DefaultAssuranceVerifiedClaimsProducerTests {
     })
     class NoEvidence extends BaseTests {
         @Test
-        void verifyOperation() throws Exception {
+        void verifyOperation() {
             val results = assuranceVerifiedClaimsProducer.produce(new JwtClaims(), "name", "it_spid");
             assertTrue(results.containsKey(DefaultAssuranceVerifiedClaimsProducer.CLAIM_NAME_VERIFIED_CLAIMS));
         }

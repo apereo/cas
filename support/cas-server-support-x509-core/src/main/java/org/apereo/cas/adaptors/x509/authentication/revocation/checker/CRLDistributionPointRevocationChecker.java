@@ -7,7 +7,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -17,7 +16,6 @@ import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.cryptacular.x509.ExtensionReader;
 import org.springframework.core.io.ByteArrayResource;
-
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -107,16 +105,6 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         }
     }
 
-    /**
-     * Adds the url to the list.
-     * Build URI by components to facilitate proper encoding of querystring.
-     * e.g. {@code http://example.com:8085/ca?action=crl&issuer=CN=CAS} Test User CA
-     * <p>If {@code uriString} is encoded, it will be decoded with {@code UTF-8}
-     * first before it's added to the list.</p>
-     *
-     * @param list      the list
-     * @param uriString the uri string
-     */
     private static void addURL(final List<URI> list, final String uriString) {
         try {
             try {

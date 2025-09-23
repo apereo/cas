@@ -3,16 +3,14 @@ package org.apereo.cas.pm.impl;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
-import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.pm.InvalidPasswordException;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +20,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -37,24 +34,20 @@ import java.util.UUID;
 @Getter
 public abstract class BasePasswordManagementService implements PasswordManagementService {
 
-    /**
-     * Password management settings.
-     */
-    protected final PasswordManagementProperties properties;
+    protected final CasConfigurationProperties casProperties;
 
-    private final CipherExecutor<Serializable, String> cipherExecutor;
+    protected final CipherExecutor<Serializable, String> cipherExecutor;
 
-    private final String issuer;
-
-    private final PasswordHistoryService passwordHistoryService;
+    protected final PasswordHistoryService passwordHistoryService;
 
     @Override
     public String parseToken(final String token) {
         try {
             val json = this.cipherExecutor.decode(token);
             val claims = JwtClaims.parse(json);
-            val resetProperties = properties.getReset();
-
+            val resetProperties = casProperties.getAuthn().getPm().getReset();
+            val issuer = casProperties.getServer().getPrefix();
+            
             if (!claims.getIssuer().equals(issuer)) {
                 LOGGER.error("Token issuer does not match CAS");
                 return null;
@@ -93,9 +86,11 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
     @Override
     public String createToken(final PasswordManagementQuery query) {
         try {
+            val issuer = casProperties.getServer().getPrefix();
+            
             val token = UUID.randomUUID().toString();
             val claims = new JwtClaims();
-            val resetProperties = properties.getReset();
+            val resetProperties = casProperties.getAuthn().getPm().getReset();
             claims.setJwtId(token);
             claims.setIssuer(issuer);
             claims.setAudience(issuer);
@@ -144,12 +139,5 @@ public abstract class BasePasswordManagementService implements PasswordManagemen
         return false;
     }
 
-    /**
-     * Change password internally, by the impl.
-     *
-     * @param bean the bean
-     * @return true/false
-     * @throws InvalidPasswordException if new password fails downstream validation
-     */
-    public abstract boolean changeInternal(PasswordChangeRequest bean) throws Throwable;
+    protected abstract boolean changeInternal(PasswordChangeRequest bean) throws Throwable;
 }

@@ -2,12 +2,14 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.rest[0].basic-auth-username=username"
     })
 @Tag("RestfulApi")
+@ExtendWith(CasTestExtension.class)
 class RestfulPersonAttributeDaoTests {
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
@@ -40,12 +43,14 @@ class RestfulPersonAttributeDaoTests {
     private MockWebServer webServer;
 
     @BeforeEach
-    public void initialize() {
-        val data = '{'
-            + "   \"name\" :\"casuser\","
-            + "\"age\" : 29,"
-            + "\"messages\": [\"msg 1\", \"msg 2\", \"msg 3\"]      "
-            + '}';
+    void initialize() {
+        val data = """
+            {
+               "name": "casuser",
+               "age": 29,
+               "messages": ["msg 1", "msg 2", "msg 3"]
+            }
+            """.stripIndent();
         this.webServer = new MockWebServer(8085,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
@@ -58,7 +63,7 @@ class RestfulPersonAttributeDaoTests {
     }
 
     @Test
-    void verifyGetPerson() throws Throwable {
+    void verifyGetPerson() {
         assertNotNull(attributeRepository);
         val person = attributeRepository.getPerson("casuser");
         assertNotNull(person);
@@ -70,7 +75,7 @@ class RestfulPersonAttributeDaoTests {
     }
 
     @Test
-    void verifyGetPeople() throws Throwable {
+    void verifyGetPeople() {
         val person = attributeRepository.getPeople(Map.of("cn", "casuser"))
             .iterator().next();
         assertNotNull(person);

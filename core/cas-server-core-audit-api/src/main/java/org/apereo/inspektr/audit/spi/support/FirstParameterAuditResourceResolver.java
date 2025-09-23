@@ -5,7 +5,7 @@ import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import lombok.Setter;
 import org.apereo.cas.util.AopUtils;
 import org.aspectj.lang.JoinPoint;
-import java.util.Collections;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -47,7 +47,7 @@ public class FirstParameterAuditResourceResolver implements AuditResourceResolve
             return AuditTrailManager.toJson(arg);
         }
         return resourceString != null
-            ? this.resourceString + Collections.singletonList(arg)
+            ? this.resourceString + List.of(arg)
             : arg.toString();
     }
 
@@ -61,7 +61,7 @@ public class FirstParameterAuditResourceResolver implements AuditResourceResolve
      * @param args the args
      * @return the string[]
      */
-    private String[] toResources(final Object[] args) {
+    protected String[] toResources(final Object[] args) {
         return this.resourcePostProcessor.apply(new String[]{toResourceString(args[0])});
     }
 }

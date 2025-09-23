@@ -29,7 +29,7 @@ public class InweboPushAuthenticateAction extends BaseCasWebflowAction {
             response = service.pushAuthenticate(login);
         }
         if (response.isOk()) {
-            requestContext.getFlowScope().put(WebflowConstants.INWEBO_SESSION_ID, response.getSessionId());
+            requestContext.getFlowScope().put(InweboWebflowConstants.INWEBO_SESSION_ID, response.getSessionId());
             return success();
         }
         return error();

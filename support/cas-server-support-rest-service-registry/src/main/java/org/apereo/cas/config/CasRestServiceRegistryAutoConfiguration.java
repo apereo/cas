@@ -46,7 +46,7 @@ public class CasRestServiceRegistryAutoConfiguration {
         final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
         final ConfigurableApplicationContext applicationContext) {
         return BeanSupplier.of(ServiceRegistry.class)
-            .when(CONDITION.given(applicationContext.getEnvironment()))
+            .when(CONDITION.given(applicationContext))
             .supply(() -> {
                 val registry = casProperties.getServiceRegistry().getRest();
                 LOGGER.debug("Creating REST-based service registry using endpoint [{}]", registry.getUrl());

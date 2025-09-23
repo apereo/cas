@@ -1,0 +1,29 @@
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources",
+  "resources": [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 6453625,
+        "pattern": "/api/groovy",
+        "method": "POST",
+        "policies": [ "java.util.ArrayList", [
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.GroovyAuthorizationPolicy",
+            "script" :
+              '''
+                groovy {
+                    logger.info("Executing Groovy policy for resource: ${resource} and request: ${request}"),
+                    logger.info("Principal: ${request.principal}")
+                    logger.info("Context: ${request.context}")
+                    return AuthorizationResult.granted("OK")
+                }
+              '''
+          }
+        ]]
+      }
+    ]
+  ],
+  "namespace": "API_GROOVY"
+}

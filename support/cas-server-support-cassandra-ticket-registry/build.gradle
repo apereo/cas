@@ -1,6 +1,5 @@
 description = "Apereo CAS Cassandra Ticket Registry"
 ext {
-    terminateCompilerOnWarning=false
     publishMetadata = true
     projectMetadata = [
             category: "Ticket Registries",
@@ -31,6 +30,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-webflow-mfa")

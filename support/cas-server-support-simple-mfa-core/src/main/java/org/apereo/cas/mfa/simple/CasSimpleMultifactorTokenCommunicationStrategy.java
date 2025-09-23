@@ -14,6 +14,11 @@ import java.util.EnumSet;
 public interface CasSimpleMultifactorTokenCommunicationStrategy {
 
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "mfaSimpleMultifactorTokenCommunicationStrategy";
+
+    /**
      * All strategy options allowed.
      *
      * @return the cas simple multifactor token communication strategy

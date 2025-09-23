@@ -20,7 +20,10 @@ public class StaticMetadataResolverAdapter extends AbstractMetadataResolverAdapt
         super(metadataResources);
     }
 
-    @Scheduled(initialDelayString = "${cas.saml.mdui.schedule.start-delay:PT30S}",
+    @Scheduled(
+        cron = "${cas.saml.mdui.schedule.cron-expression:}",
+        zone = "${cas.saml.mdui.schedule.cron-time-zone:}",
+        initialDelayString = "${cas.saml.mdui.schedule.start-delay:PT30S}",
         fixedDelayString = "${cas.saml.mdui.schedule.repeat-interval:PT90S}")
     @Override
     public void buildMetadataResolverAggregate() {

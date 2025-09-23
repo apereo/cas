@@ -23,8 +23,8 @@ import static org.mockito.Mockito.*;
 class MongoDbPropertySourceLocatorTests {
 
     @Test
-    void verifyOperation() throws Throwable {
-        val factory = new SimpleMongoClientDatabaseFactory(MongoDbCloudConfigBootstrapAutoConfigurationTests.MONGODB_URI);
+    void verifyOperation() {
+        val factory = new SimpleMongoClientDatabaseFactory(CasMongoDbCloudConfigBootstrapAutoConfigurationTests.MONGODB_URI);
         val template = new MongoTemplate(factory);
         val loc = new MongoDbPropertySourceLocator(template);
         assertNull(loc.locate(mock(Environment.class)));

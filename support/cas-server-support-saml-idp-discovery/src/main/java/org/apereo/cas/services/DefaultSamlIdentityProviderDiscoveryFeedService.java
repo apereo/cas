@@ -43,49 +43,54 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
     private final List<DelegatedClientIdentityProviderAuthorizer> authorizers;
 
     @Override
-    public Collection<SamlIdentityProviderEntity> getDiscoveryFeed() {
+    public Collection<SamlIdentityProviderEntity> getDiscoveryFeed(final HttpServletRequest request,
+                                                                   final HttpServletResponse response) {
         return parsers
             .stream()
-            .map(SamlIdentityProviderEntityParser::getIdentityProviders)
+            .map(parser -> parser.resolveEntities(request, response))
             .flatMap(Set::stream)
             .collect(Collectors.toSet());
     }
 
     @Override
-    public Collection<String> getEntityIds() {
-        return identityProviders.findAllClients()
+    public Collection<String> getEntityIds(final HttpServletRequest request,
+                                           final HttpServletResponse response) {
+        val context = new JEEContext(request, response);
+        return identityProviders.findAllClients(context)
             .stream()
             .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast)
             .peek(InitializableObject::init)
-            .map(SAML2Client::getServiceProviderResolvedEntityId)
+            .map(SAML2Client::getIdentityProviderResolvedEntityId)
             .collect(Collectors.toList());
     }
 
     @Override
     public DelegatedClientIdentityProviderConfiguration getProvider(final String entityID,
-                                                                    final HttpServletRequest httpServletRequest,
-                                                                    final HttpServletResponse httpServletResponse) throws Throwable {
-        val idp = getDiscoveryFeed()
+                                                                    final HttpServletRequest request,
+                                                                    final HttpServletResponse response) {
+        val idp = getDiscoveryFeed(request, response)
             .stream()
             .filter(entity -> entity.getEntityID().equals(entityID))
             .findFirst()
-            .orElseThrow();
-        val samlClient = identityProviders.findAllClients()
+            .orElseThrow(() -> new IllegalArgumentException("No identity provider found for discovery feed's entity ID: " + entityID));
+
+        val context = new JEEContext(request, response);
+        val samlClient = identityProviders.findAllClients(context)
             .stream()
             .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast)
             .peek(InitializableObject::init)
             .filter(c -> c.getIdentityProviderResolvedEntityId().equalsIgnoreCase(idp.getEntityID()))
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new IllegalArgumentException("No SAML identity provider found for entity ID: " + entityID));
 
-        val webContext = new JEEContext(httpServletRequest, httpServletResponse);
-        val service = argumentExtractor.extractService(httpServletRequest);
+        val webContext = new JEEContext(request, response);
+        val service = argumentExtractor.extractService(request);
 
         val authorized = authorizers
             .stream()
-            .allMatch(Unchecked.predicate(authz -> authz.isDelegatedClientAuthorizedForService(samlClient, service, httpServletRequest)));
+            .allMatch(Unchecked.predicate(authz -> authz.isDelegatedClientAuthorizedForService(samlClient, service, request)));
 
         if (authorized) {
             val provider = DelegatedClientIdentityProviderConfigurationFactory.builder()

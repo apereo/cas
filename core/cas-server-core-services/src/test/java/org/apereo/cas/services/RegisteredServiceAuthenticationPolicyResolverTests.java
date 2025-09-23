@@ -10,10 +10,12 @@ import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RegisteredServiceAuthenticationPolicyResolver;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
 import org.apereo.cas.config.BaseAutoConfigurationTests;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
 class RegisteredServiceAuthenticationPolicyResolverTests {
     @Autowired
@@ -33,7 +36,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
     protected ServicesManager servicesManager;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         val svc1 = RegisteredServiceTestUtils.getRegisteredService("serviceid1");
         val p1 = new DefaultRegisteredServiceAuthenticationPolicy();
         val cr1 = new AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria();
@@ -149,7 +152,7 @@ class RegisteredServiceAuthenticationPolicyResolverTests {
     }
 
     @Test
-    void checkDisabledPolicy() throws Throwable {
+    void checkDisabledPolicy() {
         val resolver = new RegisteredServiceAuthenticationPolicyResolver(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(RegisteredServiceTestUtils.getService("not-found-service"),

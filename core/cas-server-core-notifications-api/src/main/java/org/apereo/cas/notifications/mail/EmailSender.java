@@ -2,11 +2,10 @@ package org.apereo.cas.notifications.mail;
 
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.context.HierarchicalMessageSource;
-
+import org.apache.commons.text.StringSubstitutor;
+import org.springframework.context.MessageSource;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -50,8 +49,10 @@ public interface EmailSender {
      * @return the string
      */
     default String determineEmailSubject(final EmailMessageRequest emailRequest,
-                                         final HierarchicalMessageSource messageSource) {
-        var subject = emailRequest.getEmailProperties().getSubject();
+                                         final MessageSource messageSource) {
+        val substitutor = new StringSubstitutor(emailRequest.getContext(), "${", "}");
+        var subject = substitutor.replace(emailRequest.getEmailProperties().getSubject());
+
         val pattern = RegexUtils.createPattern("#\\{(.+)\\}");
         val matcher = pattern.matcher(subject);
         if (matcher.find()) {
@@ -60,7 +61,7 @@ public interface EmailSender {
                 args.add(emailRequest.getPrincipal().getId());
             }
             return messageSource.getMessage(matcher.group(1), args.toArray(),
-                "Email Subject", ObjectUtils.defaultIfNull(emailRequest.getLocale(), Locale.getDefault()));
+                "Email Subject", ObjectUtils.getIfNull(emailRequest.getLocale(), Locale.getDefault()));
         }
         return SpringExpressionLanguageValueResolver.getInstance().resolve(subject);
     }

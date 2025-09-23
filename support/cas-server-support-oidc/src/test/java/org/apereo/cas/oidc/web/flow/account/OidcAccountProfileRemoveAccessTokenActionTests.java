@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@Tag("OIDC")
-public class OidcAccountProfileRemoveAccessTokenActionTests extends AbstractOidcTests {
+@Tag("OIDCWeb")
+class OidcAccountProfileRemoveAccessTokenActionTests extends AbstractOidcTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_OIDC_ACCESS_TOKEN)

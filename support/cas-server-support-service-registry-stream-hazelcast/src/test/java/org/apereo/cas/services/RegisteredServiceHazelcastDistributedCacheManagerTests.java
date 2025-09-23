@@ -6,6 +6,7 @@ import org.apereo.cas.services.publisher.DefaultCasRegisteredServiceStreamPublis
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,13 +29,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Hazelcast")
+@ExtendWith(CasTestExtension.class)
 class RegisteredServiceHazelcastDistributedCacheManagerTests {
     private HazelcastInstance hz;
 
     private RegisteredServiceHazelcastDistributedCacheManager mgr;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         val properties = new BaseHazelcastProperties();
         properties.getCluster().getCore().setInstanceName(getClass().getSimpleName());
         val config = HazelcastConfigurationFactory.build(properties,
@@ -48,7 +51,7 @@ class RegisteredServiceHazelcastDistributedCacheManagerTests {
     }
 
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         var obj = mgr.get(registeredService);
         assertNull(obj);
@@ -71,7 +74,7 @@ class RegisteredServiceHazelcastDistributedCacheManagerTests {
     }
 
     @Test
-    void verifyPublisher() throws Throwable {
+    void verifyPublisher() {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         val casRegisteredServiceStreamPublisherIdentifier = new PublisherIdentifier("123456");
         

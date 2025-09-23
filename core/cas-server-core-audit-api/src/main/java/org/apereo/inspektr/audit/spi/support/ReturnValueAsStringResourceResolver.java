@@ -4,6 +4,7 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import lombok.Setter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,10 +63,10 @@ public class ReturnValueAsStringResourceResolver implements AuditResourceResolve
      * @return the string
      */
     public String toResourceString(final Object arg) {
-        if (auditFormat == AuditTrailManager.AuditFormats.JSON) {
+        if (auditFormat == AuditTrailManager.AuditFormats.JSON && arg != null) {
             return postProcess(AuditTrailManager.toJson(arg));
         }
-        return postProcess(arg.toString());
+        return arg == null ? StringUtils.EMPTY : postProcess(arg.toString());
     }
 
     protected String postProcess(final String value) {

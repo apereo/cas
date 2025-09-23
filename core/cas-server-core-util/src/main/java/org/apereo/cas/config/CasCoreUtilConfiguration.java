@@ -6,9 +6,6 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.util.feature.DefaultCasRuntimeModuleLoader;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
-import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.Converters;
@@ -42,6 +39,8 @@ import jakarta.validation.MessageInterpolator;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -62,6 +61,21 @@ class CasCoreUtilConfiguration {
     @Lazy(false)
     public ApplicationContextProvider casApplicationContextProvider() {
         return new ApplicationContextProvider();
+    }
+
+    /**
+     * Bean bootstrap executor.
+     * Enables bean background initialization option: {@code @Bean(bootstrap=BACKGROUND)}
+     * for singling out specific beans for background initialization, covering the entire bean
+     * creation step for each such bean on context startup.
+     * A {@code bootstrapExecutor} bean of type {@link Executor} must be declared for background bootstrapping to
+     * be actually active. Otherwise, the background markers will be ignored at runtime.
+     * @return the executor
+     */
+    @Bean
+    @Lazy(false)
+    public Executor bootstrapExecutor() {
+        return Executors.newVirtualThreadPerTaskExecutor();
     }
 
     @Configuration(value = "CasCoreUtilContextConfiguration", proxyBeanMethods = false)
@@ -103,8 +117,12 @@ class CasCoreUtilConfiguration {
         }
 
         @Bean
-        public static ObjectMapper objectMapper() {
-            return JacksonObjectMapperFactory.builder().build().toObjectMapper();
+        public static ObjectMapper objectMapper(final ConfigurableApplicationContext applicationContext) {
+            return JacksonObjectMapperFactory
+                .builder()
+                .applicationContext(applicationContext)
+                .build()
+                .toObjectMapper();
         }
 
     }
@@ -124,14 +142,6 @@ class CasCoreUtilConfiguration {
         @ConditionalOnMissingBean(name = "casBeanValidationPostProcessor")
         public static BeanPostProcessor casBeanValidationPostProcessor() {
             return new BeanValidationPostProcessor();
-        }
-
-        @Bean
-        @ConditionalOnMissingBean(name = ScriptResourceCacheManager.BEAN_NAME)
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager(
-            final CasConfigurationProperties casProperties) {
-            return new GroovyScriptResourceCacheManager(casProperties.getCore().getGroovyCacheManager());
         }
 
         @Bean

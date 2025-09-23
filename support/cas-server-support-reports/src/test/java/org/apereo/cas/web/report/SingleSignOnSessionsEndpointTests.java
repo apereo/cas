@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@TestPropertySource(properties = "management.endpoint.ssoSessions.enabled=true")
+@TestPropertySource(properties = "management.endpoint.ssoSessions.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 @Execution(ExecutionMode.SAME_THREAD)
 class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
@@ -57,7 +57,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     private TicketRegistry ticketRegistry;
 
     @BeforeEach
-    public void setup() throws Throwable {
+    void setup() throws Throwable {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult();
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
         val st = centralAuthenticationService.grantServiceTicket(tgt.getId(), CoreAuthenticationTestUtils.getWebApplicationService(), result);
@@ -65,7 +65,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @AfterEach
-    public void teardown() throws Throwable {
+    public void teardown() {
         singleSignOnSessionsEndpoint.destroySsoSessions(
             new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
                 .withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType()),
@@ -100,17 +100,12 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         var results = singleSignOnSessionsEndpoint.getSsoSessions(new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
             .withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType()));
         assertFalse(results.isEmpty());
-        assertTrue(results.containsKey("totalUsageCount"));
         assertTrue(results.containsKey("activeSsoSessions"));
-        assertTrue(results.containsKey("totalTicketGrantingTickets"));
-        assertTrue(results.containsKey("totalTickets"));
-        assertTrue(results.containsKey("totalPrincipals"));
-        assertTrue(results.containsKey("totalProxyGrantingTickets"));
-
+        
         val sessions = (List) results.get("activeSsoSessions");
         assertEquals(1, sessions.size());
 

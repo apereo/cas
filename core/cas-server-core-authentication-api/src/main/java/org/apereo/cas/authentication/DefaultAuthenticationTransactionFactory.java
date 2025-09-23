@@ -40,7 +40,7 @@ public class DefaultAuthenticationTransactionFactory implements AuthenticationTr
                 .filter(Objects::nonNull)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         }
-        return new HashSet<>(0);
+        return new HashSet<>();
     }
 
     @Override

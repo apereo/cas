@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
+import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -17,6 +18,7 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -133,7 +135,7 @@ public class DynamoDbTicketRegistryFacilitator {
                     keys, DynamoDbTicketRegistryFacilitator::deserializeTicket);
             })
             .toList();
-        return Streams.concat(resultStreams.toArray(new Stream[]{}));
+        return Streams.concat(resultStreams.toArray(new Stream[0]));
     }
 
     /**
@@ -144,12 +146,20 @@ public class DynamoDbTicketRegistryFacilitator {
      */
     public Stream<Ticket> query(final TicketRegistryQueryCriteria criteria) {
         val definition = ticketCatalog.find(criteria.getType());
-        val keys = List.<DynamoDbQueryBuilder>of(
+        val keys = CollectionUtils.<DynamoDbQueryBuilder>wrapList(
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.PREFIX.getColumnName())
                 .attributeValue(List.of(AttributeValue.builder().s(definition.getPrefix()).build()))
                 .operator(ComparisonOperator.EQ)
                 .build());
+        if (StringUtils.isNotBlank(criteria.getId())) {
+            keys.add(DynamoDbQueryBuilder.builder()
+                .key(ColumnNames.ID.getColumnName())
+                .attributeValue(List.of(AttributeValue.builder().s(criteria.getId()).build()))
+                .operator(ComparisonOperator.EQ)
+                .build());
+        }
+
         return DynamoDbTableUtils.scanPaginator(amazonDynamoDBClient,
             definition.getProperties().getStorageName(), criteria.getCount(),
             keys, DynamoDbTicketRegistryFacilitator::deserializeTicket);
@@ -294,7 +304,7 @@ public class DynamoDbTicketRegistryFacilitator {
     private PutItemRequest buildPutItemRequest(final TicketPayload payload) {
         val metadata = this.ticketCatalog.find(payload.getOriginalTicket());
         val values = buildTableAttributeValuesMapFromTicket(payload);
-        LOGGER.debug("Adding ticket id [{}] with attribute values [{}]", payload.getEncodedTicket().getId(), values);
+        LOGGER.debug("Building a put request for ticket id [{}] with attribute values [{}]", payload.getEncodedTicket().getId(), values);
         return PutItemRequest.builder().tableName(metadata.getProperties().getStorageName()).item(values).build();
     }
 
@@ -305,8 +315,8 @@ public class DynamoDbTicketRegistryFacilitator {
      */
     public void createTicketTables(final boolean deleteTables) {
         val metadata = this.ticketCatalog.findAll();
-        metadata.forEach(Unchecked.consumer(r -> {
-            val attributeDefns = List.of(
+        metadata.forEach(Unchecked.consumer(defn -> {
+            val attributeDefinitions = List.of(
                 AttributeDefinition.builder()
                     .attributeName(ColumnNames.ID.getColumnName())
                     .attributeType(ScalarAttributeType.S)
@@ -316,9 +326,9 @@ public class DynamoDbTicketRegistryFacilitator {
                 .keyType(KeyType.HASH)
                 .build());
             val tableDesc = DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
-                r.getProperties().getStorageName(),
+                defn.getProperties().getStorageName(),
                 deleteTables,
-                attributeDefns,
+                attributeDefinitions,
                 keySchemaElements);
             DynamoDbTableUtils.enableTimeToLiveOnTable(amazonDynamoDBClient,
                 tableDesc.tableName(), ColumnNames.EXPIRATION.getColumnName());
@@ -357,8 +367,10 @@ public class DynamoDbTicketRegistryFacilitator {
             AttributeValue.builder().n(Integer.toString(payload.getOriginalTicket().getCountOfUses())).build());
         values.put(ColumnNames.TIME_TO_LIVE.getColumnName(),
             AttributeValue.builder().n(Long.toString(payload.getOriginalTicket().getExpirationPolicy().getTimeToLive())).build());
-        values.put(ColumnNames.TIME_TO_IDLE.getColumnName(),
-            AttributeValue.builder().n(Long.toString(payload.getOriginalTicket().getExpirationPolicy().getTimeToIdle())).build());
+
+        val idleTimeout = payload.getOriginalTicket().getExpirationPolicy() instanceof final IdleExpirationPolicy iep ? Long.toString(iep.getTimeToIdle()) : "0";
+        values.put(ColumnNames.TIME_TO_IDLE.getColumnName(), AttributeValue.builder().n(idleTimeout).build());
+
         values.put(ColumnNames.ENCODED.getColumnName(),
             AttributeValue.builder().b(SdkBytes.fromByteBuffer(ByteBuffer.wrap(SerializationUtils.serialize(payload.getEncodedTicket())))).build());
         LOGGER.debug("Created attribute values [{}] based on provided ticket [{}]", values, payload.getEncodedTicket().getId());
@@ -367,12 +379,17 @@ public class DynamoDbTicketRegistryFacilitator {
 
     private static Map<String, AttributeValue> convertAttributes(final TicketPayload payload) {
         val attributes = new HashMap<String, AttributeValue>();
-        payload.getAttributes().forEach((key, values) -> {
-            val attributeValues = AttributeValue.builder()
-                .ss(values.stream().map(Object::toString).collect(Collectors.toList()))
-                .build();
-            attributes.put(key, attributeValues);
-        });
+        payload.getAttributes()
+            .entrySet()
+            .stream()
+            .filter(entry -> !entry.getValue().isEmpty())
+            .forEach(entry -> {
+                val allValues = entry.getValue().stream().map(Object::toString).collect(Collectors.toList());
+                if (!allValues.isEmpty()) {
+                    val attributeValues = AttributeValue.builder().ss(allValues).build();
+                    attributes.put(entry.getKey(), attributeValues);
+                }
+            });
         return attributes;
     }
 
@@ -492,7 +509,7 @@ public class DynamoDbTicketRegistryFacilitator {
 
     @SuperBuilder
     @Getter
-    static class TicketPayload {
+    public static class TicketPayload {
         private final Ticket originalTicket;
 
         private final Ticket encodedTicket;

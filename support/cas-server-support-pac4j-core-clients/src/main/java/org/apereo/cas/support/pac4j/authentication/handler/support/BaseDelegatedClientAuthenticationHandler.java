@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +41,10 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
 
     private boolean isTypedIdUsed;
 
-    protected BaseDelegatedClientAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    protected BaseDelegatedClientAuthenticationHandler(final String name,
                                                        final PrincipalFactory principalFactory, final Integer order,
                                                        final SessionStore sessionStore) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.sessionStore = sessionStore;
     }
 
@@ -85,7 +84,7 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
                                                                                        final BaseClient client,
                                                                                        final Service service) throws Throwable {
         preFinalizeAuthenticationHandlerResult(credentials, principal, profile, client, service);
-        val result = createHandlerResult(credentials, principal, new ArrayList<>(0));
+        val result = createHandlerResult(credentials, principal, new ArrayList<>());
         return postFinalizeAuthenticationHandlerResult(result, credentials, principal, client, service);
     }
 
@@ -111,7 +110,7 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
      */
     protected String determinePrincipalIdFrom(final UserProfile profile, final BaseClient client) {
         var id = profile.getId();
-        val properties = client != null ? client.getCustomProperties() : new HashMap<>(0);
+        val properties = client != null ? client.getCustomProperties() : new HashMap<>();
         if (client != null && properties.containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID)) {
             val attrObject = properties.get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID);
             if (attrObject != null) {
@@ -138,8 +137,8 @@ public abstract class BaseDelegatedClientAuthenticationHandler extends AbstractP
                 }
             } else {
                 LOGGER.warn("CAS cannot use [{}] as the principal attribute id, since the profile attributes do not contain the attribute. "
-                            + "Either adjust the CAS configuration to use a different attribute, or contact the authentication provider noted by [{}] "
-                            + "to release the expected attribute to CAS", principalAttributeId, profile.getAttributes());
+                    + "Either adjust the CAS configuration to use a different attribute, or contact the authentication provider noted by [{}] "
+                    + "to release the expected attribute to CAS", principalAttributeId, profile.getAttributes());
             }
             LOGGER.debug("Authentication indicates usage of attribute [{}] for the identifier [{}]", principalAttributeId, id);
         } else if (isTypedIdUsed) {

@@ -7,13 +7,10 @@ env:
   REPOSITORY_USER: ${{ secrets.REPOSITORY_USER }}
   REPOSITORY_PWD: ${{ secrets.REPOSITORY_PWD }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GRADLE_BUILDCACHE_USER: ci
-  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
-  GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
+  DEVELOCITY_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
-  CAS_PROJECT_DB_URL_ENDPOINT: ${{ secrets.CAS_PROJECT_DB_URL_ENDPOINT }}
-  CAS_PROJECT_DB_API_KEY: ${{ secrets.CAS_PROJECT_DB_API_KEY }}
+  CAS_MODULE_METADATA_MONGODB_URL: ${{ secrets.CAS_MODULE_METADATA_MONGODB_URL }}
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
 
@@ -21,47 +18,72 @@ env:
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 15 * * *'
   push:
     branches: [ master ]
 
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
-  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
+  cancel-in-progress: true
 
 ##########################################################################
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+    outputs:
+      is_snapshot: ${{ steps.check.outputs.is_snapshot }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Determine version
+        id: check
+        run: |
+          casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
+          echo "Detected CAS version: $casVersion"
+          
+          if [[ "$casVersion" == *-SNAPSHOT ]]; then
+            echo "is_snapshot=true"
+          else
+            echo "is_snapshot=false"
+          fi \
+          >> $GITHUB_OUTPUT
+  ##########################################################################
+  
   initialize:
     runs-on: ubuntu-latest
+    needs: [check]
+    if: needs.check.outputs.is_snapshot == 'true'
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v5
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         
-
   ##########################################################################
 
   publish-snapshots:
      runs-on: ubuntu-latest
      needs: [initialize]
      continue-on-error: false
-     if: ${{ github.event_name == 'push' }}
      steps:
-       - uses: actions/checkout@v4
+       - name: Checkout
+         uses: actions/checkout@v5
        - name: Set up JDK
-         uses: actions/setup-java@v4
+         uses: actions/setup-java@v5
          with:
            java-version: ${{ env.JDK_CURRENT }}
            distribution: ${{ env.JDK_DISTRIBUTION }}
        - name: Setup Gradle
-         uses: gradle/actions/setup-gradle@v3
+         uses: gradle/actions/setup-gradle@v4
        - name: Initialize
          run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
        - name: Publish SNAPSHOTs
@@ -71,30 +93,58 @@ jobs:
            max_attempts: 3
            retry_on: error
            retry_wait_seconds: 10
-           timeout_minutes: 50
+           timeout_minutes: 70
            shell: bash
            command: ./ci/release.sh
+       - name: Verify SNAPSHOTs
+         if: ${{ env.REPOSITORY_USER != null && env.REPOSITORY_PWD != null }}
+         run: |
+            casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
+            echo "Detected CAS version: $casVersion"
+            mvn --version
+            mvn clean package -U -f ./ci/verify-pom.xml -Dcas.version="${casVersion}"
   ##########################################################################
 
   publish-modules-metadata:
     runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
-    if: ${{ github.event_name == 'push' }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v5
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - name: Publish Modules Metadata
-        if: ${{ env.CAS_PROJECT_DB_URL_ENDPOINT != null && env.CAS_PROJECT_DB_API_KEY != null }}
+      - name: Install MongoDB tools
+        if: ${{ env.CAS_MODULE_METADATA_MONGODB_URL != null }}
         run: |
-          python -m pip install --upgrade pip wheel
-          python -m pip install httpie
-          ./ci/metadata/publish-project-metadata.sh
+          wget -qO- https://www.mongodb.org/static/pgp/server-7.0.asc | sudo tee /etc/apt/trusted.gpg.d/server-7.0.asc
+          echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+          sudo apt-get update
+          sudo apt-get install -y mongodb-mongosh mongodb-database-tools
+          mongosh --version
+      - name: Build Modules Metadata
+        run: |
+          ./gradlew generateProjectModulesMetadata --no-configuration-cache \
+              --build-cache --configure-on-demand --no-daemon \
+              --parallel -x test -x javadoc -x check
+      - name: Publish Modules Metadata
+        if: ${{ env.CAS_MODULE_METADATA_MONGODB_URL != null }}
+        run: |
+          casVersion=$(cat gradle.properties | grep version | awk -F"=" '{printf $2}')
+          echo "Checking CAS version ${casVersion}..."
+          versionNumbers=${casVersion%%-*}
+          versionNumbers=${versionNumbers//./}
+          echo "CAS simple version number is: $versionNumbers"
+          collectionName="casmodules$versionNumbers"
+          echo "CAS module collection is $collectionName"
+          echo "Uploading module records for ${casVersion} to $collectionName"
+          mongoimport --uri "$CAS_MODULE_METADATA_MONGODB_URL" \
+              --collection "$collectionName" --file build/modules.json \
+              --type json --jsonArray --drop 2>/dev/null

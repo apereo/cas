@@ -29,7 +29,6 @@ import org.pac4j.core.exception.http.WithLocationAction;
 import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -61,7 +60,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val ticket = requestContext.getFlowScope().get(TransientSessionTicket.class.getName(), TransientSessionTicket.class);
-        val client = locateClientIdentityProvider(ticket);
+        val client = locateClientIdentityProvider(ticket, requestContext);
         initializeClientIdentityProvider(client);
         val action = getRedirectionAction(ticket, requestContext);
         LOGGER.debug("Determined final redirect action for client [{}] as [{}]", client, action.toString());
@@ -72,7 +71,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
         if (action instanceof WithContentAction) {
             handleIdentityProviderWithDynamicContent(requestContext, client, action);
         }
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 
     protected RedirectionAction getRedirectionAction(final TransientSessionTicket ticket,
@@ -93,7 +92,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
             .ifPresent(Unchecked.consumer(service -> configureWebContextForRegisteredService(webContext, ticket)));
 
         val clientName = ticket.getProperty(Client.class.getName(), String.class);
-        return configContext.getIdentityProviders().findClient(clientName)
+        return configContext.getIdentityProviders().findClient(clientName, webContext)
             .map(IndirectClient.class::cast)
             .stream()
             .peek(client -> configContext.getDelegatedClientAuthenticationRequestCustomizers()
@@ -144,9 +143,13 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
         FunctionUtils.throwIf(!client.isInitialized(), DelegatedAuthenticationFailureException::new);
     }
 
-    protected IndirectClient locateClientIdentityProvider(final TransientSessionTicket ticket) {
+    protected IndirectClient locateClientIdentityProvider(final TransientSessionTicket ticket, final RequestContext requestContext) {
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        val webContext = new JEEContext(request, response);
+        
         val clientName = ticket.getProperty(Client.class.getName(), String.class);
-        return configContext.getIdentityProviders().findClient(clientName)
+        return configContext.getIdentityProviders().findClient(clientName, webContext)
             .map(IndirectClient.class::cast)
             .stream()
             .findFirst()

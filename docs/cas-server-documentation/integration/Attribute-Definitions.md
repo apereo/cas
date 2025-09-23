@@ -23,6 +23,12 @@ with special decorations to be considered during attribute resolution and releas
 optional and the store may not contain any attribute definitions.
 
 {% include_cached casproperties.html properties="cas.authn.attribute-repository.attribute-definition-store" %}
+   
+## Actuator Endpoint
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="attributeDefinitions" casModule="cas-server-support-reports" %}
 
 ## JSON Attribute Definitions
 
@@ -69,6 +75,7 @@ The following settings can be specified by an attribute definition:
 | `patterns`             | (Optional) A map of regular expression patterns to static/dynamic constructs to build values, in scenarios where the attribute definition is built off of an existing attribute.                              |
 | `flattened`            | (Optional) Indicate whether attribute definitions with multiple values should be flattened into a single value, separated by the assigned delimiter.                                                          |
 | `singleValue`          | (Optional) Default is `false`. Determines if the attribute should be produced as a single-value claim if it has only a single value.                                                                          |
+| `hashingStrategy`      | (Optional) Attempts to *hash* the attribute value based on `hex`, `base64`, `sha1`, `sha256` or `sha512` hashing function.                                                                                    |
 
 The following operations in the order given should take place, if an attribute definition is to produce values:
 
@@ -77,6 +84,7 @@ The following operations in the order given should take place, if an attribute d
 - Produce attribute values based on the `patterns` setting specified in the attribute definition, if any.
 - Produce attribute values based on the `scoped` setting specified in the attribute definition, if any.
 - Produce attribute values based on the `patternFormat` setting specified in the attribute definition, if any.
+- Produce attribute values based on the `hashingStrategy` setting specified in the attribute definition, if any.
 - Produce attribute values based on the `encrypted` setting specified in the attribute definition, if any.
 - Produce attribute values based on the `canonicalizationMode` setting specified in the attribute definition, if any.
 - Produce attribute values based on the `flattened` setting specified in the attribute definition, if any.
@@ -115,7 +123,7 @@ as usual with the following definition:
 {% endtab %}
 
 
-{% tab attrdefinitions Encrypted %}
+{% tab attrdefinitions <i class="fa fa-mask px-1"></i> Encrypted %}
 Same use case as above, except the attribute value will be encrypted and encoded using the service definition's public key:
 
 ```json 
@@ -175,7 +183,7 @@ released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPerso
 
 {% endtab %}
 
-{% tab attrdefinitions Embedded Script %}
+{% tab attrdefinitions <i class="fa fa-pencil px-1"></i>Embedded Script %}
 Same use case as above, except the attribute value be additional processed by an embedded Groovy script
 
 ```json 
@@ -197,7 +205,7 @@ the final values of `eduPersonPrincipalName` would be [`Hi, casuser`]
 released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPersonPrincipalName`.
 {% endtab %}
 
-{% tab attrdefinitions External Script %}
+{% tab attrdefinitions <i class="fa fa-file-code px-1"></i>External Script %}
 Same use case as above, except the attribute value be additionally processed by an external Groovy script:
 
 ```json 
@@ -262,6 +270,8 @@ defined and on a successful match, the linked construct will be evaluated to det
 
 For example, if the resolved set of attributes are `memberships=[m1, m2, m3, m4, m9]`,
 the final values of `memberships` would be [`admins`,`users`] which would then be released under the name `affiliations`.
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 

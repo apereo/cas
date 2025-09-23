@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
@@ -20,7 +19,6 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,6 +43,8 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(of = {"mergingStrategy", "attributeRepositoryIds"})
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Accessors(chain = true)
+@Getter
+@Setter
 public abstract class AbstractPrincipalAttributesRepository implements RegisteredServicePrincipalAttributesRepository {
     @Serial
     private static final long serialVersionUID = 6350245643948535906L;
@@ -54,17 +54,11 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
      * and those that are retrieved from the source. By default, existing attributes
      * are ignored and the source is always consulted.
      */
-    @Getter
-    @Setter
     private PrincipalAttributesCoreProperties.MergingStrategyTypes mergingStrategy =
         PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED;
 
-    @Getter
-    @Setter
-    private Set<String> attributeRepositoryIds = new LinkedHashSet<>(0);
+    private Set<String> attributeRepositoryIds = new LinkedHashSet<>();
 
-    @Getter
-    @Setter
     private boolean ignoreResolvedAttributes;
 
     protected static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Map<String, ?> attributes) {
@@ -99,7 +93,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
     }
 
     protected PrincipalAttributesCoreProperties.MergingStrategyTypes determineMergingStrategy() {
-        return ObjectUtils.defaultIfNull(getMergingStrategy(), PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
+        return ObjectUtils.getIfNull(getMergingStrategy(), PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
     }
 
     @JsonIgnore
@@ -110,7 +104,8 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
     protected Map<String, List<Object>> retrievePersonAttributesFromAttributeRepository(
         final RegisteredServiceAttributeReleasePolicyContext context) {
         val repository = context.getApplicationContext().getBean(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY, PersonAttributeDao.class);
-        return PrincipalAttributeRepositoryFetcher.builder()
+        return PrincipalAttributeRepositoryFetcher
+            .builder()
             .attributeRepository(repository)
             .principalId(context.getPrincipal().getId())
             .activeAttributeRepositoryIdentifiers(this.attributeRepositoryIds)
@@ -122,7 +117,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
     @JsonIgnore
     protected Map<String, List<Object>> getPrincipalAttributes(final Principal principal) {
         if (ignoreResolvedAttributes) {
-            return new HashMap<>(0);
+            return new HashMap<>();
         }
         return convertPrincipalAttributesToPersonAttributes(principal.getAttributes());
     }

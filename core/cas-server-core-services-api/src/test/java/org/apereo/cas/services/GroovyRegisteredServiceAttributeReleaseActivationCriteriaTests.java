@@ -17,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("RegisteredService")
-public class GroovyRegisteredServiceAttributeReleaseActivationCriteriaTests {
+class GroovyRegisteredServiceAttributeReleaseActivationCriteriaTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyExternalGroovyFile() throws Throwable {
+    void verifyExternalGroovyFile() {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .principal(CoreAuthenticationTestUtils.getPrincipal("Gandalf"))
             .build();
@@ -32,7 +32,7 @@ public class GroovyRegisteredServiceAttributeReleaseActivationCriteriaTests {
     }
 
     @Test
-    void verifyInlineGroovyFile() throws Throwable {
+    void verifyInlineGroovyFile() {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .principal(CoreAuthenticationTestUtils.getPrincipal("Frodo"))
             .build();

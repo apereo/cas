@@ -26,13 +26,14 @@ const cas = require("../../cas.js");
 
         "configurationMetadata",
         "events",
+        "mfaDevices/casuser",
         "loggingConfig",
         "registeredServices",
         "registeredServices/10000001",
         "authenticationHandlers",
         "authenticationHandlers/STATIC",
         "authenticationPolicies",
-        "auditLog/PT1H",
+        "auditLog?interval=PT1H",
         "ssoSessions",
         `sso?tgc=${tgc.value}`,
         "casModules",
@@ -65,7 +66,7 @@ const cas = require("../../cas.js");
     const ticketMetrics = [
         "addTicket",
         "getTicket",
-        "getTickets"
+        "stream"
     ];
     for (let i = 0; i < ticketMetrics.length; i++) {
         const url = `${baseUrl}metrics/org.apereo.cas.ticket.registry.TicketRegistry.${ticketMetrics[i]}`;
@@ -93,7 +94,7 @@ const cas = require("../../cas.js");
     const authnMetrics = [
         "authenticate"
     ];
-    
+
     for (let i = 0; i < authnMetrics.length; i++) {
         const url = `${baseUrl}metrics/org.apereo.cas.authentication.AuthenticationManager.${authnMetrics[i]}`;
         await cas.log(`Trying ${url}`);
@@ -119,6 +120,6 @@ const cas = require("../../cas.js");
     }
     
     await context.close();
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

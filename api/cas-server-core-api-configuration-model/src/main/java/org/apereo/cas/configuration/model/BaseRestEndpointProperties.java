@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model;
 
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -31,6 +32,7 @@ public class BaseRestEndpointProperties implements CasFeatureModule, Serializabl
      * The endpoint URL to contact and retrieve attributes.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String url;
 
     /**

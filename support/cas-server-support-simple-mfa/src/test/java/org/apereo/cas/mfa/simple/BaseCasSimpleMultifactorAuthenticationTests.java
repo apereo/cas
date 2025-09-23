@@ -22,14 +22,11 @@ import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.push.NotificationSenderExecutionPlanConfigurer;
 import org.apereo.cas.notifications.sms.MockSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
@@ -41,25 +38,14 @@ import org.springframework.context.annotation.Import;
  */
 public abstract class BaseCasSimpleMultifactorAuthenticationTests {
     @ImportAutoConfiguration({
-        RefreshAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
         CasMultifactorAuthnTrustAutoConfiguration.class,
-        
-        CasSimpleMultifactorAuthenticationAutoConfiguration.CasSimpleMultifactorTrustConfiguration.class,
         CasSimpleMultifactorAuthenticationAutoConfiguration.class,
-
         CasCoreLogoutAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
@@ -69,6 +55,9 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
         CasCoreAuditAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @SpringBootTestAutoConfigurations
+    @Import(CasRegisteredServicesTestConfiguration.class)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SharedTestConfiguration {
     }

@@ -1,0 +1,27 @@
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources",
+  "resources": [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 1458625,
+        "enforceAllPolicies": true,
+        "pattern": "/api/grouper",
+        "method": "POST",
+        "policies": [ "java.util.ArrayList", [
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredGrouperGroupsAuthorizationPolicy",
+            "groups" : [ "java.util.HashSet", [ "a:b:c" ] ]
+          },
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredGrouperPermissionsAuthorizationPolicy",
+            "attributeDefinition" : "a:b:c",
+            "roleName" : "a:b:c"
+          }
+        ]]
+      }
+    ]
+  ],
+  "namespace": "API_GROUPER"
+}

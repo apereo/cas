@@ -15,6 +15,9 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+import org.springframework.http.HttpStatus;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -37,10 +40,12 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
 
     private final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
+    private final WebEndpointProperties webEndpointProperties;
+
     private static String getStringProperty(final Optional<RegisteredService> result,
                                             final RegisteredServiceProperties property) {
         if (result.isPresent()) {
-            val registeredService = (RegisteredService) result.get();
+            val registeredService = result.get();
             LOGGER.trace("Resolved registered service [{}] from request to enforce response headers", registeredService);
             val properties = registeredService.getProperties();
             if (!properties.containsKey(property.getPropertyName())) {
@@ -67,6 +72,11 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     @Override
     protected Optional<RegisteredService> prepareFilterBeforeExecution(final HttpServletResponse httpServletResponse,
                                                                        final HttpServletRequest httpServletRequest) throws Throwable {
+        val basePath = webEndpointProperties.getBasePath();
+        if (httpServletRequest.getRequestURI().contains(basePath)) {
+            return Optional.empty();
+        }
+        
         val service = argumentExtractor.getObject().extractService(httpServletRequest);
         if (service != null) {
             LOGGER.trace("Attempting to resolve service for [{}]", service);
@@ -81,7 +91,12 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
                 .service(service)
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.getObject().execute(audit);
-            accessResult.throwExceptionIfNeeded();
+            if (accessResult.isExecutionFailure()) {
+                LOGGER.warn("Service [{}] is not authorized", resolved);
+                httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
+                httpServletRequest.setAttribute(RequestDispatcher.ERROR_EXCEPTION, accessResult.getException().orElse(null));
+                return Optional.empty();
+            }
             return Optional.of(registeredService);
         }
         return Optional.empty();

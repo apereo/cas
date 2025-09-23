@@ -42,5 +42,5 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#main-content h2", "Password Reset Failed");
 
     await cas.sleep(2000);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

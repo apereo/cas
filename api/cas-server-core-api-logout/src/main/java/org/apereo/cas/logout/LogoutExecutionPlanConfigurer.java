@@ -1,5 +1,7 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.util.NamedObject;
+
 /**
  * This is {@link LogoutExecutionPlanConfigurer}.
  *
@@ -7,20 +9,11 @@ package org.apereo.cas.logout;
  * @since 5.1.0
  */
 @FunctionalInterface
-public interface LogoutExecutionPlanConfigurer {
+public interface LogoutExecutionPlanConfigurer extends NamedObject {
     /**
      * configure the plan.
      *
      * @param plan the plan
      */
     void configureLogoutExecutionPlan(LogoutExecutionPlan plan);
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
 }

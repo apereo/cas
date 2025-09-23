@@ -6,6 +6,8 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
@@ -15,19 +17,19 @@ import org.apereo.cas.services.DefaultRegisteredServiceSingleSignOnParticipation
 import org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -41,13 +43,14 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("Webflow")
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebEndpointAutoConfiguration.class,
-    EndpointAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class,
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
-}, properties = "spring.main.allow-bean-definition-overriding=true")
+})
 @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
+@ExtendWith(CasTestExtension.class)
 class DefaultSingleSignOnParticipationStrategyTests {
 
     @Autowired
@@ -116,8 +119,8 @@ class DefaultSingleSignOnParticipationStrategyTests {
     void verifyParticipateForServiceTgtExpirationPolicyWithoutTgt() throws Throwable {
         val mgr = mock(ServicesManager.class);
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
-        registeredService.setTicketGrantingTicketExpirationPolicy(
-            new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy(2));
+        val policy = new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy().setMaxTimeToLiveInSeconds(2);
+        registeredService.setTicketGrantingTicketExpirationPolicy(policy);
         when(mgr.findServiceBy(any(Service.class))).thenReturn(registeredService);
 
         val context = MockRequestContext.create(applicationContext);
@@ -230,8 +233,8 @@ class DefaultSingleSignOnParticipationStrategyTests {
         val mgr = mock(ServicesManager.class);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAccessStrategy().isServiceAccessAllowedForSso(registeredService)).thenReturn(true);
-        when(registeredService.getTicketGrantingTicketExpirationPolicy())
-            .thenReturn(new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy(1));
+        val policy = new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy().setMaxTimeToLiveInSeconds(1);
+        when(registeredService.getTicketGrantingTicketExpirationPolicy()).thenReturn(policy);
         when(mgr.findServiceBy(any(Service.class))).thenReturn(registeredService);
 
         val context = MockRequestContext.create(applicationContext);

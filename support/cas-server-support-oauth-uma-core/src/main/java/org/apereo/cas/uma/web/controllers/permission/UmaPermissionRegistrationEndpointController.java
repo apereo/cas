@@ -8,13 +8,14 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -27,8 +28,8 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Controller("umaPermissionRegistrationEndpointController")
 @Slf4j
+@Tag(name = "User Managed Access")
 public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpointController {
     public UmaPermissionRegistrationEndpointController(final UmaConfigurationContext umaConfigurationContext) {
         super(umaConfigurationContext);
@@ -45,6 +46,10 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
     @PostMapping(value = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_PERMISSION_URL,
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+        summary = "Register permission ticket",
+        description = "Registers a permission ticket and returns the ticket ID"
+    )
     public ResponseEntity handle(
         @RequestBody
         final String body, final HttpServletRequest request,

@@ -42,7 +42,7 @@ class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tes
 
     @Test
     void verifyAccessTokenAsDefault() throws Throwable {
-        val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
+        val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(false);
         servicesManager.save(registeredService);
 
@@ -61,7 +61,7 @@ class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tes
 
     @Test
     void verifyAccessTokenAsJwt() throws Throwable {
-        val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
+        val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
         servicesManager.save(registeredService);
 
@@ -69,6 +69,20 @@ class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tes
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
 
         val at = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
+        val jwt = JWTParser.parse(at);
+        assertNotNull(jwt);
+    }
+
+    @Test
+    void verifyRefreshTokenAsJwt() throws Throwable {
+        val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
+        registeredService.setJwtRefreshToken(true);
+        servicesManager.save(registeredService);
+
+        val mv = generateAccessTokenResponseAndGetModelAndView(registeredService);
+        assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
+
+        val at = mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString();
         val jwt = JWTParser.parse(at);
         assertNotNull(jwt);
     }

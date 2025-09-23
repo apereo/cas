@@ -15,18 +15,19 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRedisAuthenticationAutoConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -42,6 +43,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasRedisAuthenticationAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
@@ -52,9 +54,7 @@ import static org.mockito.Mockito.*;
     CasCoreWebAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
-    CasCoreAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    RefreshAutoConfiguration.class
+    CasCoreAutoConfiguration.class
 }, properties = {
     "cas.authn.redis.host=localhost",
     "cas.authn.redis.port=6379",
@@ -63,6 +63,7 @@ import static org.mockito.Mockito.*;
 })
 @EnableScheduling
 @Tag("Redis")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 6379)
 class RedisAuthenticationHandlerTests {
 
@@ -75,7 +76,7 @@ class RedisAuthenticationHandlerTests {
     private CasRedisTemplate authenticationRedisTemplate;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         createUser("casuser", RedisUserAccount.AccountStatus.OK);
         createUser("casdisabled", RedisUserAccount.AccountStatus.DISABLED);
         createUser("caslocked", RedisUserAccount.AccountStatus.LOCKED);
@@ -101,31 +102,31 @@ class RedisAuthenticationHandlerTests {
     }
 
     @Test
-    void verifyNotFound() throws Throwable {
+    void verifyNotFound() {
         assertThrows(AccountNotFoundException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("123456", "caspassword"), mock(Service.class)));
     }
 
     @Test
-    void verifyInvalid() throws Throwable {
+    void verifyInvalid() {
         assertThrows(FailedLoginException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("casuser", "badpassword"), mock(Service.class)));
     }
 
     @Test
-    void verifyExpired() throws Throwable {
+    void verifyExpired() {
         assertThrows(AccountExpiredException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("casexpired", "caspassword"), mock(Service.class)));
     }
 
     @Test
-    void verifyLocked() throws Throwable {
+    void verifyLocked() {
         assertThrows(AccountLockedException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("caslocked", "caspassword"), mock(Service.class)));
     }
 
     @Test
-    void verifyChangePsw() throws Throwable {
+    void verifyChangePsw() {
         assertThrows(AccountPasswordMustChangeException.class,
             () -> authenticationHandler.authenticate(new UsernamePasswordCredential("caschangepsw", "caspassword"), mock(Service.class)));
     }

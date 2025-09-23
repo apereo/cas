@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.apereo.cas.web.HttpMessage;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
@@ -58,7 +59,7 @@ class SimpleHttpClientTests {
     @Nested
     class DefaultTests {
         @Test
-        void verifyMessageRejected() throws Throwable {
+        void verifyMessageRejected() {
             val msg = mock(HttpMessage.class);
             when(msg.getUrl()).thenThrow(RejectedExecutionException.class);
             val result = getHttpClient().sendMessageToEndPoint(msg);
@@ -66,7 +67,7 @@ class SimpleHttpClientTests {
         }
 
         @Test
-        void verifyMessageFail() throws Throwable {
+        void verifyMessageFail() {
             val msg = mock(HttpMessage.class);
             when(msg.getUrl()).thenThrow(RuntimeException.class);
             val result = getHttpClient().sendMessageToEndPoint(msg);
@@ -100,12 +101,12 @@ class SimpleHttpClientTests {
         }
 
         @Test
-        void verifyBadUrl() throws Throwable {
+        void verifyBadUrl() {
             assertFalse(getHttpClient().isValidEndPoint("https://www.whateverabc1234.org"));
         }
 
         @Test
-        void verifyInvalidHttpsUrl() throws Throwable {
+        void verifyInvalidHttpsUrl() {
             val client = getHttpClient();
             assertFalse(client.isValidEndPoint("https://wrong.host.badssl.com/"));
             assertFalse(client.isValidEndPoint("xyz"));
@@ -123,7 +124,7 @@ class SimpleHttpClientTests {
         }
 
         @Test
-        void verifyOkayUrl() throws Throwable {
+        void verifyOkayUrl() {
             assertTrue(getHttpClient().isValidEndPoint("https://www.google.com"));
         }
 

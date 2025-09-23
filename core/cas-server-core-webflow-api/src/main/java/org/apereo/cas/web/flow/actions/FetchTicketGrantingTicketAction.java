@@ -26,7 +26,7 @@ public class FetchTicketGrantingTicketAction extends BaseCasWebflowAction {
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val cookieResult = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         Optional.ofNullable(cookieResult).ifPresent(cookie -> populateWebflowWithTicketFromCookie(requestContext, cookie));

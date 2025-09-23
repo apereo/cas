@@ -20,13 +20,14 @@ import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasX509CertificateExtractorAutoConfiguration;
 import org.apereo.cas.config.CasX509RestAutoConfiguration;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
+import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,9 +36,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     CasX509CertificateExtractorAutoConfiguration.class,
     CasX509RestAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
@@ -60,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "cas.rest.x509.tls-client-auth=true")
 @Tag("X509")
+@ExtendWith(CasTestExtension.class)
 class X509RestConfigurationTests {
     @Autowired
     @Qualifier("x509RestMultipartBody")
@@ -74,7 +75,7 @@ class X509RestConfigurationTests {
     private RestHttpRequestCredentialFactory x509RestTlsClientCert;
     
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertNotNull(x509RestMultipartBody);
         assertNotNull(x509RestRequestHeader);
         assertNotNull(x509RestTlsClientCert);

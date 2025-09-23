@@ -5,9 +5,9 @@ import org.apereo.cas.configuration.model.support.passwordless.account.Passwordl
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationLdapAccountsProperties;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationMongoDbAccountsProperties;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationRestAccountsProperties;
+import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationSyncopeAccountsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -28,7 +28,6 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("PasswordlessAuthenticationAccountsProperties")
 public class PasswordlessAuthenticationAccountsProperties implements Serializable {
 
     @Serial
@@ -63,6 +62,12 @@ public class PasswordlessAuthenticationAccountsProperties implements Serializabl
      */
     @NestedConfigurationProperty
     private PasswordlessAuthenticationMongoDbAccountsProperties mongo = new PasswordlessAuthenticationMongoDbAccountsProperties();
+
+    /**
+     * Passwordless authentication settings via Apache Syncope.
+     */
+    @NestedConfigurationProperty
+    private PasswordlessAuthenticationSyncopeAccountsProperties syncope = new PasswordlessAuthenticationSyncopeAccountsProperties();
 
     /**
      * Passwordless authentication settings using static accounts.

@@ -3,11 +3,13 @@ package org.apereo.cas.gauth.credential;
 import org.apereo.cas.config.CasGoogleAuthenticatorJpaAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,18 +39,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableScheduling
 @Getter
 @Tag("JDBCMFA")
+@ExtendWith(CasTestExtension.class)
 class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     @Autowired(required = false)
-    @Qualifier("googleAuthenticatorAccountRegistry")
+    @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository registry;
 
     @BeforeEach
-    public void cleanUp() {
+    void cleanUp() {
         this.getRegistry().deleteAll();
     }
     
     @Test
-    void verifyCreateUniqueNames() throws Throwable {
+    void verifyCreateUniqueNames() {
         var acct1 = getAccount("verifyCreateUniqueNames", UUID.randomUUID().toString());
         assertNotNull(acct1);
         val repo = getRegistry("verifyCreate");

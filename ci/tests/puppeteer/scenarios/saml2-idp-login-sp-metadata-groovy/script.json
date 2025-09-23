@@ -1,5 +1,5 @@
 {
-  "dependencies": "saml-idp",
+  "dependencies": "saml-idp,scripting",
   "conditions": {
     "docker": "true"
   },
@@ -11,7 +11,6 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
 
-    "--logging.level.org.apereo.cas=info",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
 
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
@@ -19,7 +18,7 @@
 
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoint.health.show-details=always",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"

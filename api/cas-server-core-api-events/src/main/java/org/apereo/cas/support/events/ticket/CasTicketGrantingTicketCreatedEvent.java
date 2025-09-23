@@ -7,9 +7,8 @@ import org.apereo.inspektr.common.web.ClientInfo;
 
 import java.io.Serial;
 
-
 /**
- * Concrete subclass of {@code AbstractCasEvent} representing single sign on session establishment
+ * Concrete subclass of {@link org.apereo.cas.support.events.AbstractCasEvent} representing single sign on session establishment
  * event e.g. user logged in
  * and <i>TicketGrantingTicket</i> has been vended by a CAS server.
  *

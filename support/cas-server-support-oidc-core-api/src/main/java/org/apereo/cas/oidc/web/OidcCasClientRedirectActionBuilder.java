@@ -40,7 +40,7 @@ public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientR
             renew = true;
         }
 
-        val action = super.build(casClient, context, renew, gateway);
+        val action = build(casClient, context, renew, gateway);
         LOGGER.debug("Final redirect action is [{}]", action);
         return action;
     }

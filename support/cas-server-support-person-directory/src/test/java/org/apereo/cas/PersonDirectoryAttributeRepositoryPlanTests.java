@@ -18,11 +18,11 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Attributes")
+@Tag("AttributeRepository")
 class PersonDirectoryAttributeRepositoryPlanTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val input = mock(PersonDirectoryAttributeRepositoryPlan.class);
         doCallRealMethod().when(input).registerAttributeRepositories();
         doReturn(new ArrayList<>()).when(input).getAttributeRepositories();

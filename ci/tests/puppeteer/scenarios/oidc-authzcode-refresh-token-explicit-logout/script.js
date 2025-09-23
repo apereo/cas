@@ -50,7 +50,7 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
 }
 
 async function exchangeToken(refreshToken, clientId, successHandler, errorHandler) {
-    let accessTokenParams = "scope=openid%offline_access";
+    let accessTokenParams = encodeURIComponent("openid offline_access");
     accessTokenParams += `&grant_type=refresh_token&refresh_token=${refreshToken}`;
 
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}`;
@@ -107,5 +107,5 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
             throw "Operation should not fail";
         });
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

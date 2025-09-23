@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.oidc;
 import org.apereo.cas.configuration.model.support.oidc.jwks.OidcJsonWebKeystoreProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,7 +21,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("OidcProperties")
 public class OidcProperties implements Serializable {
 
     @Serial
@@ -105,4 +103,10 @@ public class OidcProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OidcIdentityAssuranceProperties identityAssurance = new OidcIdentityAssuranceProperties();
+
+    /**
+     * Configuration properties to manage OIDC federation settings.
+     */
+    @NestedConfigurationProperty
+    private OidcFederationProperties federation = new OidcFederationProperties();
 }

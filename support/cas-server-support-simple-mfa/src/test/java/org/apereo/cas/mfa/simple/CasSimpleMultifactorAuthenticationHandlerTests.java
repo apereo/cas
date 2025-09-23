@@ -1,28 +1,33 @@
 package org.apereo.cas.mfa.simple;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationHolder;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailedException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.SurrogatePrincipal;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
+import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationAccountService;
 import org.apereo.cas.mfa.simple.validation.DefaultCasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import javax.security.auth.login.FailedLoginException;
 import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,6 +42,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFAProvider")
+@ExtendWith(CasTestExtension.class)
 class CasSimpleMultifactorAuthenticationHandlerTests {
     @Autowired
     @Qualifier("casSimpleMultifactorAuthenticationHandler")
@@ -57,14 +63,14 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier(ServicesManager.BEAN_NAME)
-    private ServicesManager servicesManager;
+    @Qualifier(CasSimpleMultifactorAuthenticationAccountService.BEAN_NAME)
+    private ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountService;
 
     @Test
-    void verifyFailsToFindToken() throws Throwable {
+    void verifyFailsToFindToken() {
         val id = UUID.randomUUID().toString();
         val credential = new CasSimpleMultifactorTokenCredential(id);
-        assertThrows(FailedLoginException.class,
+        assertThrows(MultifactorAuthenticationFailedException.class,
             () -> casSimpleMultifactorAuthenticationHandler.authenticate(credential, mock(Service.class)));
     }
 
@@ -74,9 +80,22 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
         val ticket = factory.create(RegisteredServiceTestUtils.getService(), Map.of());
         ticketRegistry.addTicket(ticket);
         val credential = new CasSimpleMultifactorTokenCredential(ticket.getId());
-        assertThrows(FailedLoginException.class, () -> casSimpleMultifactorAuthenticationHandler.authenticate(credential, mock(Service.class)));
+        assertThrows(MultifactorAuthenticationFailedException.class, () -> casSimpleMultifactorAuthenticationHandler.authenticate(credential, mock(Service.class)));
         assertFalse(casSimpleMultifactorAuthenticationHandler.supports(new UsernamePasswordCredential()));
         assertFalse(casSimpleMultifactorAuthenticationHandler.supports(UsernamePasswordCredential.class));
+    }
+
+    @Test
+    void verifyMismatchedPrincipal() throws Throwable {
+        val principal = RegisteredServiceTestUtils.getPrincipal();
+        val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
+        val ticket = factory.create(RegisteredServiceTestUtils.getService(),
+            Map.of(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
+        ticketRegistry.addTicket(ticket);
+        AuthenticationHolder.setCurrentAuthentication(RegisteredServiceTestUtils.getAuthentication("principal2"));
+        val credential = new CasSimpleMultifactorTokenCredential(ticket.getId());
+        assertThrows(MultifactorAuthenticationFailedException.class, () -> casSimpleMultifactorAuthenticationHandler.authenticate(credential, mock(Service.class)));
+        AuthenticationHolder.clear();
     }
 
     @Test
@@ -90,23 +109,40 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
         val credential = new CasSimpleMultifactorTokenCredential(ticket.getId());
         ticket.markTicketExpired();
 
-        val mfaService = new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry, defaultTicketFactory);
+        val mfaService = new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry, defaultTicketFactory, accountService);
         val handler = new CasSimpleMultifactorAuthenticationHandler(casProperties.getAuthn().getMfa().getSimple(),
-            applicationContext, servicesManager, PrincipalFactoryUtils.newPrincipalFactory(), mfaService,
+            applicationContext, PrincipalFactoryUtils.newPrincipalFactory(), mfaService,
             new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
-        assertThrows(FailedLoginException.class, () -> handler.authenticate(credential, mock(Service.class)));
+        assertThrows(MultifactorAuthenticationFailedException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }
 
     @Test
     void verifySuccessfulAuthenticationWithTokenWithoutPrefix() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal();
-
         val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService(),
             Map.of(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
         ticketRegistry.addTicket(ticket);
         val ticketIdWithoutPrefix = ticket.getId().substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
         val credential = new CasSimpleMultifactorTokenCredential(ticketIdWithoutPrefix);
+        AuthenticationHolder.setCurrentAuthentication(RegisteredServiceTestUtils.getAuthentication(principal));
         assertNotNull(casSimpleMultifactorAuthenticationHandler.authenticate(credential, mock(Service.class)).getPrincipal());
+        AuthenticationHolder.clear();
+    }
+
+    @Test
+    void verifySuccessWithImpersonation() throws Throwable {
+        val principal = RegisteredServiceTestUtils.getPrincipal();
+        val factory = (CasSimpleMultifactorAuthenticationTicketFactory) defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
+        val ticket = factory.create(RegisteredServiceTestUtils.getService(),
+            Map.of(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal));
+        ticketRegistry.addTicket(ticket);
+        val ticketIdWithoutPrefix = ticket.getId().substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
+        val credential = new CasSimpleMultifactorTokenCredential(ticketIdWithoutPrefix);
+
+        val surrogatePrincipal = new SurrogatePrincipal(principal, RegisteredServiceTestUtils.getPrincipal("surrogate"));
+        AuthenticationHolder.setCurrentAuthentication(RegisteredServiceTestUtils.getAuthentication(surrogatePrincipal));
+        assertNotNull(casSimpleMultifactorAuthenticationHandler.authenticate(credential, mock(Service.class)).getPrincipal());
+        AuthenticationHolder.clear();
     }
 }

@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.authentication.SamlIdPAuthenticationContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
@@ -17,11 +16,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.shared.codec.Base64Support;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
-import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
@@ -30,15 +27,12 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
-import java.io.ByteArrayInputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 /**
  * This is {@link SamlIdPSessionManager}.
@@ -125,20 +119,7 @@ public class SamlIdPSessionManager {
      * @return the t
      */
     public <T extends RequestAbstractType> T fetch(final Class<T> clazz, final String requestValue) {
-        try {
-            LOGGER.trace("Retrieving SAML request from [{}]", requestValue);
-            val decodedBytes = Base64Support.decode(requestValue);
-            try (val is = new InflaterInputStream(new ByteArrayInputStream(decodedBytes), new Inflater(true))) {
-                return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(openSamlConfigBean.getParserPool(), is));
-            }
-        } catch (final Throwable e) {
-            return FunctionUtils.doUnchecked(() -> {
-                val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
-                try (val is = new ByteArrayInputStream(encodedRequest)) {
-                    return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(openSamlConfigBean.getParserPool(), is));
-                }
-            });
-        }
+        return SamlUtils.convertToSamlObject(openSamlConfigBean, requestValue, clazz);
     }
 
     private Optional<SamlIdPSessionEntry> getSamlIdPSessionEntryFromRequest(final WebContext context, final Map<String, SamlIdPSessionEntry> ctx) {

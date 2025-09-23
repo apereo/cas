@@ -5,16 +5,13 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.services.ServicesManager;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
+import org.apache.commons.lang3.Strings;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,17 +40,17 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     private Map<String, String> users;
 
     public AcceptUsersAuthenticationHandler(final Map<String, String> users) {
-        this(null, null, PrincipalFactoryUtils.newPrincipalFactory(), Integer.MAX_VALUE, users);
+        this(null, PrincipalFactoryUtils.newPrincipalFactory(), Integer.MAX_VALUE, users);
     }
 
     public AcceptUsersAuthenticationHandler(final String name) {
-        this(name, null, PrincipalFactoryUtils.newPrincipalFactory(), Integer.MAX_VALUE, new HashMap<>(0));
+        this(name, PrincipalFactoryUtils.newPrincipalFactory(), Integer.MAX_VALUE, new HashMap<>());
     }
 
-    public AcceptUsersAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public AcceptUsersAuthenticationHandler(final String name,
                                             final PrincipalFactory principalFactory, final Integer order,
                                             final Map<String, String> users) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.users = users;
     }
 
@@ -70,7 +67,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
             LOGGER.debug("[{}] was not found in the map.", username);
             throw new AccountNotFoundException(username + " not found in backing map.");
         }
-        if (!StringUtils.equals(credential.toPassword(), cachedPassword)) {
+        if (!Strings.CS.equals(credential.toPassword(), cachedPassword)) {
             throw new FailedLoginException();
         }
         val strategy = getPasswordPolicyHandlingStrategy();

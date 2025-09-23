@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
@@ -52,8 +51,6 @@ public class ServiceWarningAction extends BaseCasWebflowAction {
 
     private final CasCookieBuilder warnCookieGenerator;
 
-    private final PrincipalElectionStrategy principalElectionStrategy;
-
     private final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities;
 
     private final CasWebflowCredentialProvider casWebflowCredentialProvider;
@@ -70,15 +67,14 @@ public class ServiceWarningAction extends BaseCasWebflowAction {
             () -> new InvalidTicketException(new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket));
         val credentials = casWebflowCredentialProvider.extract(requestContext);
         val authenticationResultBuilder = authenticationSystemSupport.establishAuthenticationContextFromInitial(
-            authentication, credentials.toArray(credentials.toArray(new Credential[0])));
-        val authenticationResult = FunctionUtils.doUnchecked(() -> authenticationResultBuilder.build(principalElectionStrategy, service));
+            authentication, credentials.toArray(credentials.toArray(Credential.EMPTY_CREDENTIALS_ARRAY)));
+        val authenticationResult = FunctionUtils.doUnchecked(() -> authenticationResultBuilder.build(service));
         grantServiceTicket(authenticationResult, service, requestContext);
 
-        if (request.getParameterMap().containsKey(PARAMETER_NAME_IGNORE_WARNING)) {
-            if (BooleanUtils.toBoolean(request.getParameter(PARAMETER_NAME_IGNORE_WARNING))) {
-                val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-                warnCookieGenerator.removeCookie(response);
-            }
+        if (request.getParameterMap().containsKey(PARAMETER_NAME_IGNORE_WARNING)
+            && BooleanUtils.toBoolean(request.getParameter(PARAMETER_NAME_IGNORE_WARNING))) {
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            warnCookieGenerator.removeCookie(response);
         }
         return new Event(this, CasWebflowConstants.STATE_ID_REDIRECT);
     }

@@ -11,7 +11,7 @@ category: Logs & Audits
 [Cloud Logging](https://cloud.google.com/logging/) is the managed logging service provided by Google Cloud.
 
 The integration here also provides automatic support for associating a web request trace ID with the corresponding log entries
-by retrieving the `X-B3-TraceId` or `x-cloud-trace-context` header values.
+by retrieving the `X-B3-TraceId` or `X-Cloud-Trace-Context` header values from MDC.
    
 ## JSON Layout Template
 
@@ -38,7 +38,7 @@ in the logging configuration.</p></div>
 This is an example of the logging configuration:
 
 ```xml
-<Configuration packages="org.apereo.cas.logging">
+<Configuration>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <JsonLayout locationInfo="false"
@@ -52,15 +52,14 @@ This is an example of the logging configuration:
                 <KeyValuePair key="timestampSeconds" value="$${ctx:timestampSeconds:-}"/>
                 <KeyValuePair key="timestampNanos" value="$${ctx:timestampNanos:-}"/>
                 <KeyValuePair key="severity" value="$${ctx:severity:-}"/>
-                <KeyValuePair key="labels" value="$${ctx:labels:-}"/>
-                <KeyValuePair key="httpRequest" value="$${ctx:httpRequest:-}"/>
-                <KeyValuePair key="logging.googleapis.com/sourceLocation" value="$${ctx:sourceLocation:-}"/>
+                <KeyValuePair key="logging.googleapis.com/insertId" value="$${ctx:insertId:-}"/>
                 <KeyValuePair key="logging.googleapis.com/spanId" value="$${ctx:spanId:-}"/>
                 <KeyValuePair key="logging.googleapis.com/trace" value="$${ctx:traceId:-}"/>
             </JsonLayout>
         </Console>
         <!-- Update the projectId, or remove and let CAS determine the project id automatically -->
         <GoogleCloudAppender name="GoogleCloudAppender" 
+                             flattenMessage="true"
                              projectId="...">
             <AppenderRef ref="casConsole"/>
         </GoogleCloudAppender>
@@ -75,3 +74,11 @@ This is an example of the logging configuration:
 
 </Configuration>
 ```
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="gcpLogs" %}
+
+{% include_cached casproperties.html properties="cas.logging.gcp" %}

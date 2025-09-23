@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,18 +22,17 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiresModule(name = "cas-server-support-pac4j-webflow")
+@RequiresModule(name = "cas-server-support-pac4j-oidc")
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("BasePac4jOidcClientProperties")
 public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableClientProperties {
 
     @Serial
     private static final long serialVersionUID = 3359382317533639638L;
 
     /**
-     * The discovery endpoint to locate the provide metadata.
+     * The discovery endpoint to locate the provider metadata.
      */
     @RequiredProperty
     private String discoveryUri;
@@ -76,7 +74,7 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
     /**
      * Custom parameters to send along in authZ requests, etc.
      */
-    private Map<String, String> customParams = new HashMap<>(0);
+    private Map<String, String> customParams = new HashMap<>();
 
     /**
      * The response mode specifies how the result of the authorization request is formatted.
@@ -148,4 +146,10 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
      * Example might be {@code client_secret_basic,client_secret_post,client_secret_jwt}.
      */
     private String supportedClientAuthenticationMethods;
+
+    /**
+     * Controls whether the logout token submitted as a JWT should be validated
+     * for the correct signature, etc.
+     */
+    private boolean validateLogoutToken = true;
 }

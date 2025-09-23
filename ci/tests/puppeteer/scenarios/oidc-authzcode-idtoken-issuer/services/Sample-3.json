@@ -1,0 +1,13 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "jwtaccesstoken",
+  "clientSecret": "secret",
+  "serviceId": "^https://localhost:9859/anything/jwtaccesstoken.*",
+  "name": "Sample",
+  "idTokenIssuer": "https://sso.example.org/cas/oidc",
+  "id": 3,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "mail", "roles" ] ]
+  }
+}

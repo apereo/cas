@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <div class="attribute-tab w-100 d-none" id="attribute-tab-3">
+        <h3>Scheduled Tasks</h3>
+        <table id="scheduledTasksTable" class="mdc-data-table__table table table-striped noborder">
+            <thead>
+            <tr class="mdc-data-table__header-row">
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Task</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+            </tr>
+            </thead>
+            <tbody class="mdc-data-table__content">
+            </tbody>
+        </table>
+
+        <h3>Thread Dump</h3>
+        <table id="threadDumpTable" class="mdc-data-table__table table table-striped noborder">
+            <thead>
+            <tr class="mdc-data-table__header-row">
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">State</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Priority</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Daemon</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Suspended</th>
+            </tr>
+            </thead>
+            <tbody class="mdc-data-table__content">
+            </tbody>
+        </table>
+        
+        <div class="mdc-layout-grid">
+          <div class="mdc-layout-grid__inner">
+            <div class="mdc-layout-grid__cell"><canvas id="jvmThreadsChart"></canvas></div>
+            <div class="mdc-layout-grid__cell"><canvas id="threadDumpChart"></canvas></div>
+          </div>
+       </div>
+    </div>
+</span>
+</body>
+</html>

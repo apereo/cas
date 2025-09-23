@@ -50,5 +50,5 @@ async function login(page, redirectUrl, params) {
     assert(payload.form.code !== undefined);
     assert(payload.form.state === state);
     assert(payload.form.nonce === nonce);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -28,8 +28,8 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
     private final long expireTokensInSeconds;
 
     @Override
-    public void store(final GoogleAuthenticatorToken token) {
-        this.mongoTemplate.save(token, this.collectionName);
+    public GoogleAuthenticatorToken store(final GoogleAuthenticatorToken token) {
+        return (GoogleAuthenticatorToken) mongoTemplate.save(token.assignIdIfNecessary(), this.collectionName);
     }
 
     @Override

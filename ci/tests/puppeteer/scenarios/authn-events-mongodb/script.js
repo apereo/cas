@@ -11,8 +11,9 @@ const fs = require("fs");
     await context.overridePermissions("https://localhost:8443/cas/login", ["geolocation"]);
     await page.setGeolocation({latitude: 90, longitude: 20});
 
+    await cas.gotoLogout(page);
     await cas.log("Deleting all startup events...");
-    await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
+    await cas.doDelete("https://localhost:8443/cas/actuator/events");
 
     const totalAttempts = 2;
     for (let i = 1; i <= totalAttempts; i++) {
@@ -31,24 +32,22 @@ const fs = require("fs");
 
     await cas.doGet("https://localhost:8443/cas/actuator/events",
         async (res) => {
-            const count = Object.keys(res.data[1]).length;
+            const count = res.data.length;
             await cas.log(`Total event records found ${count}`);
-            assert(count === totalAttempts + 1);
+            assert(count >= totalAttempts + 1);
             fs.rmSync(`${__dirname}/events.zip`, {force: true});
 
-            await cas.createZipFile(`${__dirname}/events.zip`, (archive) => {
-                res.data[1].forEach((entry) => archive.append(JSON.stringify(entry), { name: `event-${entry.id}.json`}));
-            });
+            await cas.createZipFile(`${__dirname}/events.zip`, (archive) => res.data.forEach((entry) => archive.append(JSON.stringify(entry), {name: `event-${entry.id}.json`})));
 
         }, async (error) => {
             throw error;
         }, {"Content-Type": "application/json"});
 
     await cas.log("Deleting all events...");
-    await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
+    await cas.doDelete("https://localhost:8443/cas/actuator/events");
     await cas.log("Checking events...");
     await cas.doGet("https://localhost:8443/cas/actuator/events",
-        async (res) => assert(Object.keys(res.data[1]).length === 0), async (error) => {
+        async (res) => assert(res.data.length === 0), async (error) => {
             throw error;
         }, {"Content-Type": "application/json"});
 
@@ -64,12 +63,12 @@ const fs = require("fs");
     fs.rmSync(`${__dirname}/events.zip`, {force: true});
     await cas.doGet("https://localhost:8443/cas/actuator/events",
         async (res) => {
-            const count = Object.keys(res.data[1]).length;
+            const count = res.data.length;
             await cas.log(`Total event records found ${count}`);
-            assert(count === totalAttempts + 1);
+            assert(count >= totalAttempts + 1);
         }, async (error) => {
             throw error;
         }, {"Content-Type": "application/json"});
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -2,5 +2,9 @@
   "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId": "^https://localhost:9859/anything/sample.*",
   "name": "Sample",
-  "id" : 1
+  "id" : 1,
+  "evaluationOrder" : 1,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
 }

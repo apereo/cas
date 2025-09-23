@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -15,9 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Web")
 class SimpleUrlValidatorTests {
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val validator = SimpleUrlValidator.getInstance();
         assertTrue(validator.isValid("https://github.com"));
         assertTrue(validator.isValidDomain("www.github.com"));
+        assertFalse(validator.isValid(null));
+        assertFalse(validator.isValid(StringUtils.EMPTY));
     }
 }

@@ -15,7 +15,7 @@ You can implement the conditions using the following strategies.
 
 {% tabs abacconditions %}
 
-{% tab abacconditions Attributes %}
+{% tab abacconditions Attributes <i class="fa fa-id-card px-1"></i> %}
 
 The policy can be conditionally activated based on available principal attributes.
 
@@ -51,7 +51,7 @@ Note that if the access strategy fails to activate and must remain inactive, the
 
 {% endtab %}
 
-{% tab abacconditions Groovy %}
+{% tab abacconditions <i class="fa fa-code px-1"></i>Groovy %}
 
 You can decide whether the access strategy should be activated using a Groovy script, that may be defined either inline
 or outsourced to an external Groovy script.
@@ -121,9 +121,11 @@ def run(Object[] args) {
 }
 ```
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
-{% tab abacconditions Chaining %}
+{% tab abacconditions <i class="fa fa-link px-1"></i>Chaining %}
 
 You can also combine multiple activation criteria using a chaining setup:
 

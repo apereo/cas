@@ -22,6 +22,7 @@ import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
@@ -31,6 +32,7 @@ import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.serialization.ComponentSerializationPlan;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.esotericsoftware.kryo.KryoException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -42,11 +44,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import javax.security.auth.login.AccountNotFoundException;
 import java.io.Serial;
 import java.time.ZoneId;
@@ -67,10 +68,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 @Tag("Memcached")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 11211)
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
@@ -110,7 +111,7 @@ class CasKryoTranscoderTests {
     private ComponentSerializationPlan componentSerializationPlan;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         val classesToRegister = new ArrayList<Class>();
         classesToRegister.add(MockServiceTicket.class);
         classesToRegister.add(MockTicketGrantingTicket.class);
@@ -125,18 +126,17 @@ class CasKryoTranscoderTests {
     }
 
     @Test
-    void verifyBorrowAndDecode() throws Throwable {
+    void verifyBorrowAndDecode() {
         val data = new CachedData(0, ArrayUtils.EMPTY_BYTE_ARRAY, 10);
         assertThrows(KryoException.class, () -> transcoder.decode(data));
         
-        if (transcoder instanceof CasKryoTranscoder) {
-            val enc = (CasKryoTranscoder) this.transcoder;
+        if (transcoder instanceof final CasKryoTranscoder enc) {
             assertNotNull(enc.getKryo());
         }
     }
 
     @Test
-    void verifyRegexRegisteredService() throws Throwable {
+    void verifyRegexRegisteredService() {
         var service = RegisteredServiceTestUtils.getRegisteredService("example");
         var encoded = transcoder.encode(service);
         var decoded = transcoder.decode(encoded);
@@ -195,7 +195,7 @@ class CasKryoTranscoderTests {
     }
 
     @Test
-    void verifyEncodeDecode() throws Throwable {
+    void verifyEncodeDecode() {
         val tgt = new MockTicketGrantingTicket(USERNAME);
         val expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
         assertEquals(expectedST, transcoder.decode(transcoder.encode(expectedST)));
@@ -211,7 +211,7 @@ class CasKryoTranscoderTests {
     }
 
     @Test
-    void verifyEncodeDecodeTGTWithUnmodifiableMap() throws Throwable {
+    void verifyEncodeDecodeTGTWithUnmodifiableMap() {
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         val expectedTGT =
             new MockTicketGrantingTicket(TGT_ID, userPassCredential, new HashMap<>(this.principalAttributes));
@@ -223,7 +223,7 @@ class CasKryoTranscoderTests {
     }
 
     @Test
-    void verifyEncodeDecodeTGTWithUnmodifiableList() throws Throwable {
+    void verifyEncodeDecodeTGTWithUnmodifiableList() {
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         val values = new ArrayList<String>();
         values.add(NICKNAME_VALUE);
@@ -238,7 +238,7 @@ class CasKryoTranscoderTests {
     }
 
     @Test
-    void verifyEncodeDecodeTGTWithLinkedHashMap() throws Throwable {
+    void verifyEncodeDecodeTGTWithLinkedHashMap() {
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         val expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, new LinkedHashMap<>(this.principalAttributes));
         expectedTGT.grantServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), null,
@@ -249,7 +249,7 @@ class CasKryoTranscoderTests {
     }
 
     @Test
-    void verifyEncodeDecodeTGTWithListOrderedMap() throws Throwable {
+    void verifyEncodeDecodeTGTWithListOrderedMap() {
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         val expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, this.principalAttributes);
         expectedTGT.grantServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), null,
@@ -260,7 +260,7 @@ class CasKryoTranscoderTests {
     }
 
     @Test
-    void verifyEncodeDecodeTGTWithUnmodifiableSet() throws Throwable {
+    void verifyEncodeDecodeTGTWithUnmodifiableSet() {
         val newAttributes = new HashMap<String, List<Object>>();
         newAttributes.put(NICKNAME_KEY, List.of(CollectionUtils.wrapSet(NICKNAME_VALUE)));
 
@@ -274,7 +274,7 @@ class CasKryoTranscoderTests {
     }
 
     @Test
-    void verifyEncodeDecodeTGTWithSingleton() throws Throwable {
+    void verifyEncodeDecodeTGTWithSingleton() {
         val newAttributes = new HashMap<String, List<Object>>();
         newAttributes.put(NICKNAME_KEY, List.of(NICKNAME_VALUE));
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
@@ -287,7 +287,7 @@ class CasKryoTranscoderTests {
     }
 
     @Test
-    void verifyEncodeDecodeTGTWithSingletonMap() throws Throwable {
+    void verifyEncodeDecodeTGTWithSingletonMap() {
         val newAttributes = Collections.<String, List<Object>>singletonMap(NICKNAME_KEY, List.of(NICKNAME_VALUE));
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         val expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, newAttributes);
@@ -299,7 +299,7 @@ class CasKryoTranscoderTests {
     }
 
     @Test
-    void verifyEncodeDecodeRegisteredService() throws Throwable {
+    void verifyEncodeDecodeRegisteredService() {
         val service = RegisteredServiceTestUtils.getRegisteredService("helloworld");
         val result = transcoder.encode(service);
         assertEquals(service, transcoder.decode(result));
@@ -307,7 +307,7 @@ class CasKryoTranscoderTests {
     }
 
     @Test
-    void verifySTWithServiceTicketExpirationPolicy() throws Throwable {
+    void verifySTWithServiceTicketExpirationPolicy() {
         val tgt = new MockTicketGrantingTicket(USERNAME);
         val expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
         val step = new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 600);
@@ -318,7 +318,7 @@ class CasKryoTranscoderTests {
     }
 
     @Test
-    void verifyEncodeDecodeNonRegisteredClass() throws Throwable {
+    void verifyEncodeDecodeNonRegisteredClass() {
         val tgt = new MockTicketGrantingTicket(USERNAME);
         val expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
 

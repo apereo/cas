@@ -11,8 +11,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Daniel Frett
  * @since 5.3.0
  */
-@Import({
+@ImportAutoConfiguration({
     CasJdbcMultifactorAuthnTrustAutoConfiguration.class,
     CasHibernateJpaAutoConfiguration.class
 })
@@ -54,12 +54,12 @@ class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorA
     private static final String DEVICE_FINGERPRINT = "deviceFingerprint";
 
     @BeforeEach
-    public void clearEngine() {
+    void clearEngine() {
         getMfaTrustEngine().getAll().forEach(r -> getMfaTrustEngine().remove(r.getRecordKey()));
     }
 
     @Test
-    void verifyExpireByKey() throws Throwable {
+    void verifyExpireByKey() {
         var record = MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
         record = getMfaTrustEngine().save(record);
         assertNotNull(getMfaTrustEngine().get(record.getId()));
@@ -77,7 +77,7 @@ class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorA
     }
 
     @Test
-    void verifyRetrieveAndExpireByDate() throws Throwable {
+    void verifyRetrieveAndExpireByDate() {
         val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
         Stream.of(PRINCIPAL, PRINCIPAL2).forEach(p -> {
             for (var offset = 0; offset < 3; offset++) {
@@ -95,7 +95,7 @@ class JpaMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorA
     }
 
     @Test
-    void verifyStoreAndRetrieve() throws Throwable {
+    void verifyStoreAndRetrieve() {
         val original = MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
         getMfaTrustEngine().save(original);
         val records = getMfaTrustEngine().get(PRINCIPAL);

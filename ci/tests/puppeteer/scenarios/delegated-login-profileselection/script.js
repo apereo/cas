@@ -28,5 +28,5 @@ const cas = require("../../cas.js");
     const principalId = await cas.innerText(page, "span#principalId");
     assert(principalId === profileId);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

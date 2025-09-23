@@ -47,7 +47,7 @@ public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver
             return super.buildResolvedPrincipal(id, attributes, credential, currentPrincipal, handler);
         }
         val principal = currentPrincipal.orElseThrow(() -> new IllegalArgumentException("Current principal resolved cannot be empty"));
-        return surrogatePrincipalBuilder.buildSurrogatePrincipal(id, principal);
+        return surrogatePrincipalBuilder.buildSurrogatePrincipal(credential, principal);
     }
 
     @Override

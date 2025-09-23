@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchOperation;
@@ -48,7 +48,7 @@ public class LdapUserAttributesToRolesAuthorizationGenerator extends BaseUseAttr
             .map(LdapAttribute::getStringValues)
             .map(value -> value.stream()
                 .map(entry -> entry.toUpperCase(Locale.ENGLISH))
-                .map(role -> StringUtils.prependIfMissing(role, rolePrefix))
+                .map(role -> Strings.CI.prependIfMissing(role, rolePrefix))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList()))
             .stream()

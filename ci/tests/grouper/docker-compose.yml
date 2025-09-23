@@ -1,7 +1,6 @@
-version: '3'
 services:
   postgres:
-    image: "postgres:16"
+    image: "postgres:17"
     restart: always
     ports:
       - '5432:5432'
@@ -9,10 +8,12 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=pass
   grouper:
-    image: "i2incommon/grouper:4.12.1"
+    image: "i2incommon/grouper:5.20.5"
     restart: always
+    container_name: grouper-core
     ports:
-      - '443:443'
+      - '7443:8443'
+      - '7080:8080'
     command:
       - quickstart
     environment:
@@ -21,5 +22,34 @@ services:
       - GROUPER_DATABASE_PASSWORD=pass
       - GROUPER_DATABASE_USERNAME=postgres
       - GROUPER_DATABASE_URL=jdbc:postgresql://postgres:5432/postgres
-      - GROUPER_AUTO_DDL_UPTOVERSION=4.*.*
+      - GROUPER_AUTO_DDL_UPTOVERSION=v5.*.*
       - GROUPER_RUN_HSQLDB=false
+      - GROUPER_START_DELAY_SECONDS=1
+    healthcheck:
+      test: curl -k https://localhost:8443/grouper/status?diagnosticType=trivial || exit 1
+      interval: 15s
+      timeout: 10s
+      retries: 5
+  grouper-ws:
+    image: "i2incommon/grouper:5.20.5"
+    restart: always
+    container_name: grouper-ws
+    depends_on:
+      grouper:
+        condition: service_healthy
+    ports:
+      - '9443:8443'
+    command:
+      - ws
+    environment:
+      - GROUPERSYSTEM_QUICKSTART_PASS=@4HHXr6SS42@IHz2
+      - GROUPER_MORPHSTRING_ENCRYPT_KEY=@4HHXr6SS42@IHz2
+      - GROUPER_DATABASE_PASSWORD=pass
+      - GROUPER_DATABASE_USERNAME=postgres
+      - GROUPER_DATABASE_URL=jdbc:postgresql://postgres:5432/postgres
+#      - GROUPER_AUTO_DDL_UPTOVERSION=v5.*.*
+      - GROUPER_RUN_HSQLDB=false
+      - GROUPER_UI_GROUPER_AUTH=true
+      - GROUPER_WS_GROUPER_AUTH=true
+      - GROUPER_SCIM_GROUPER_AUTH=true
+      - GROUPER_START_DELAY_SECONDS=10

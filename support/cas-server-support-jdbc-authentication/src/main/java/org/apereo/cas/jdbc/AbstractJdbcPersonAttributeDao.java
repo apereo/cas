@@ -57,7 +57,7 @@ public abstract class AbstractJdbcPersonAttributeDao<R> extends AbstractQueryPer
     protected PartialWhereClause appendAttributeToQuery(final PartialWhereClause queryBuilder,
                                                         final String dataAttribute, final List<Object> queryValues) {
         val effectiveBuilder = queryBuilder != null ? queryBuilder : new PartialWhereClause();
-        for (var queryValue : queryValues) {
+        for (val queryValue : queryValues) {
             var queryString = queryValue != null ? queryValue.toString() : null;
             if (StringUtils.isNotBlank(queryString)) {
                 if (!effectiveBuilder.getSql().isEmpty()) {

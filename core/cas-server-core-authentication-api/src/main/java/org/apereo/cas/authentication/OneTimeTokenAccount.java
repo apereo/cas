@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,9 +15,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -24,14 +25,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This is {@link OneTimeTokenAccount}.
@@ -54,6 +57,11 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
      */
     public static final String TABLE_NAME_SCRATCH_CODES = "scratch_codes";
 
+    /**
+     * Table name used to hold otp properties.
+     */
+    public static final String TABLE_NAME_OTP_PROPERTIES = "otp_properties";
+
     @Serial
     private static final long serialVersionUID = -8289105320642735252L;
 
@@ -63,8 +71,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @Id
     @Transient
     @JsonProperty("id")
-    @Builder.Default
-    private long id = System.currentTimeMillis();
+    private long id;
 
     @Column(nullable = false, length = 2048)
     @JsonProperty("secretKey")
@@ -78,7 +85,13 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @CollectionTable(name = TABLE_NAME_SCRATCH_CODES, joinColumns = @JoinColumn(name = "id"))
     @Column(nullable = false, columnDefinition = "numeric", precision = 255, scale = 0)
     @Builder.Default
-    private List<Number> scratchCodes = new ArrayList<>(0);
+    private List<Number> scratchCodes = new ArrayList<>();
+
+    @ElementCollection(targetClass = String.class)
+    @CollectionTable(name = TABLE_NAME_OTP_PROPERTIES, joinColumns = @JoinColumn(name = "id"))
+    @Column(nullable = false, columnDefinition = "VARCHAR(1024)")
+    @Builder.Default
+    private List<String> properties = new ArrayList<>();
 
     @Column(nullable = false)
     @JsonProperty("username")
@@ -97,21 +110,31 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @JsonProperty("lastUsedDateTime")
     private String lastUsedDateTime;
 
+    @Column
+    @JsonProperty("source")
+    private String source;
+
+    @Column
+    @JsonProperty("tenant")
+    private String tenant;
+
     @Override
-    public int compareTo(final OneTimeTokenAccount o) {
-        return new CompareToBuilder()
-            .append(this.scratchCodes.toArray(), o.getScratchCodes().toArray())
-            .append(this.validationCode, o.getValidationCode())
-            .append(this.secretKey, o.getSecretKey())
-            .append(this.username, o.getUsername())
-            .append(this.name, o.getName())
-            .append(this.lastUsedDateTime, o.getLastUsedDateTime())
-            .build()
-            .intValue();
+    public int compareTo(@Nonnull final OneTimeTokenAccount tokenAccount) {
+        return Comparator
+            .comparing((OneTimeTokenAccount account) -> account.getScratchCodes().toArray(),
+                Comparator.comparing(Arrays::toString))
+            .thenComparingInt(OneTimeTokenAccount::getValidationCode)
+            .thenComparing(OneTimeTokenAccount::getSecretKey)
+            .thenComparing(OneTimeTokenAccount::getUsername)
+            .thenComparing(OneTimeTokenAccount::getName)
+            .thenComparing(acct -> Objects.requireNonNullElse(acct.getLastUsedDateTime(), StringUtils.EMPTY))
+            .thenComparing(acct -> StringUtils.defaultString(acct.getSource()))
+            .thenComparing(acct -> StringUtils.defaultString(acct.getTenant()))
+            .compare(this, tokenAccount);
     }
 
     @Override
-    public OneTimeTokenAccount clone() {
+    public final OneTimeTokenAccount clone() {
         return Unchecked.supplier(() -> (OneTimeTokenAccount) super.clone()).get();
     }
 
@@ -123,5 +146,18 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @JsonIgnore
     public String toJson() {
         return FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
+    }
+
+    /**
+     * Assign id if undefined.
+     *
+     * @return the registered service
+     */
+    @CanIgnoreReturnValue
+    public OneTimeTokenAccount assignIdIfNecessary() {
+        if (getId() <= 0) {
+            setId(System.currentTimeMillis());
+        }
+        return this;
     }
 }

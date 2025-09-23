@@ -1,28 +1,105 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "timezone": "America/Los_Angeles",
   "extends": [
-    "config:base",
-    ":rebaseStalePrs",
+    ":dependencyDashboard",
     ":preserveSemverRanges",
     ":disableRateLimiting",
     ":semanticCommits",
-    ":semanticCommitTypeAll(renovatebot)"
+    ":semanticCommitTypeAll(renovatebot)",
+    "group:monorepos",
+    "group:recommended",
+    "replacements:all",
+    "workarounds:all"
+  ],
+  "enabledManagers": [
+    "gradle",
+    "npm",
+    "regex",
+    "dockerfile",
+    "docker-compose",
+    "github-actions"
+  ],
+  "rebaseWhen": "behind-base-branch",
+  "automerge": false,
+  "regexManagers": [
+    {
+      "fileMatch": ["run-.*\\.sh"],
+      "matchStrings": [
+        "export\\s+DOCKER_IMAGE\\s*=\\s*\"(?<depName>[^\"]+):(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
+      "fileMatch": [".github/workflows/.*\\.yml$"],
+      "matchStrings": [
+        "NODE_CURRENT:\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
+      ],
+      "datasourceTemplate": "node",
+      "depNameTemplate": "node",
+      "versioningTemplate": "node"
+    },
+    {
+      "fileMatch": [".github/workflows/.*\\.yml$"],
+      "matchStrings": [
+        "PYTHON_VERSION:\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
+      ],
+      "datasourceTemplate": "pypi",
+      "depNameTemplate": "python",
+      "versioningTemplate": "pep440"
+    },
+    {
+      "fileMatch": [".github/workflows/.*\\.yml$"],
+      "matchStrings": [
+        "RUBY_VERSION:\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
+      ],
+      "datasourceTemplate": "ruby-version",
+      "depNameTemplate": "ruby",
+      "versioningTemplate": "semver"
+    }
   ],
   "labels": ["Bot", "Renovate"],
   "schedule": [
-    "after 10pm and before 6am every weekday"
+    "after 5pm and before 9am every day"
   ],
+  "gradle": {
+    "enabled": true
+  },
+  "docker": {
+    "enabled": true
+  },
+  "dockerfile": {
+    "enabled": true
+  },
+  "docker-compose": {
+    "enabled": true
+  },
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-      "automerge": true,
-      "ignoreTests": true,
-      "automergeType": "pr",
-      "automergeSchedule": ["at any time"]
+      "matchPackageNames": ["com.google.guava:guava"],
+      "excludeVersions": "/-android$/"
     },
     {
-      "matchFileNames": ["**/package.json"],
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"]
+      "matchPackageNames": ["software.amazon.awssdk:.*"],
+      "matchManagers": ["maven"],
+      "matchUpdateTypes": ["major", "minor"]
+    },
+    {
+      "matchDepNames": ["com.h2database:h2"],
+      "matchManagers": ["maven"],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["dockerfile"],
+      "matchPaths": [".*oidc-login-strapi.*"],
+      "matchPackagePatterns": ["^node$"],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["gradle"],
+      "matchPaths": [".*radius.*/build.gradle"],
+      "matchPackageNames": ["org.bouncycastle:bcprov-jdk15on"],
+      "enabled": false
     }
   ]
 }

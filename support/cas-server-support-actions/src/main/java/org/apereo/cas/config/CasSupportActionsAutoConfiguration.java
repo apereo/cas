@@ -5,22 +5,26 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.logout.LogoutConfirmationResolver;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
+import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
@@ -43,6 +47,7 @@ import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 import org.apereo.cas.web.flow.login.InitialAuthenticationRequestValidationAction;
 import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
 import org.apereo.cas.web.flow.login.InitializeLoginAction;
+import org.apereo.cas.web.flow.login.NotifySingleSignOnEventAction;
 import org.apereo.cas.web.flow.login.RedirectUnauthorizedServiceUrlAction;
 import org.apereo.cas.web.flow.login.SendTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.login.ServiceWarningAction;
@@ -69,6 +74,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.webflow.execution.Action;
@@ -125,11 +131,11 @@ public class CasSupportActionsAutoConfiguration {
         public Action authenticationViaFormAction(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            @Qualifier(CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            @Qualifier(CasDelegatingWebflowEventResolver.BEAN_NAME_INITIAL_AUTHENTICATION_EVENT_RESOLVER)
             final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
-            @Qualifier("adaptiveAuthenticationPolicy")
+            @Qualifier(AdaptiveAuthenticationPolicy.BEAN_NAME)
             final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
 
             return WebflowActionBeanSupplier.builder()
@@ -163,7 +169,7 @@ public class CasSupportActionsAutoConfiguration {
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SINGLE_SIGNON_SESSION_CREATED)
         @Bean
         public Action singleSignOnSessionCreated(
             final ConfigurableApplicationContext applicationContext,
@@ -172,7 +178,7 @@ public class CasSupportActionsAutoConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> ConsumerExecutionAction.NONE)
-                .withId(CasWebflowConstants.ACTION_ID_SINGLE_SIGON_SESSION_CREATED)
+                .withId(CasWebflowConstants.ACTION_ID_SINGLE_SIGNON_SESSION_CREATED)
                 .build()
                 .get();
         }
@@ -194,19 +200,60 @@ public class CasSupportActionsAutoConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new SendTicketGrantingTicketAction(ticketRegistry, ticketGrantingTicketCookieGenerator,
-                    webflowSingleSignOnParticipationStrategy, applicationContext))
+                    webflowSingleSignOnParticipationStrategy))
                 .withId(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET)
                 .build()
                 .get();
         }
-
+        
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
+        @ConditionalOnMissingBean(name = "singleSignOnNotificationLogoutTicketJwtBuilder")
+        public JwtBuilder singleSignOnNotificationLogoutTicketJwtBuilder(
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier(CipherExecutor.BEAN_NAME_TGC_CIPHER_EXECUTOR)
+            final CipherExecutor cookieCipherExecutor,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return new JwtBuilder(cookieCipherExecutor, applicationContext,
+                servicesManager, defaultPrincipalResolver,
+                casProperties, webApplicationServiceFactory);
+        }
+        
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_NOTIFY_SINGLE_SIGNON_EVENT)
+        @Bean
+        public Action notifySingleSignOnEventAction(
+            @Qualifier("singleSignOnNotificationLogoutTicketJwtBuilder")
+            final JwtBuilder singleSignOnNotificationLogoutTicketJwtBuilder,
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationManager,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            final ConfigurableApplicationContext applicationContext) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new NotifySingleSignOnEventAction(ticketRegistry,
+                    communicationManager, singleSignOnNotificationLogoutTicketJwtBuilder, casProperties))
+                .withId(CasWebflowConstants.ACTION_ID_NOTIFY_SINGLE_SIGNON_EVENT)
+                .build()
+                .get();
+        }
+        
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET)
         @Bean
         public Action createTicketGrantingTicketAction(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("casWebflowConfigurationContext")
+            @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
@@ -385,6 +432,8 @@ public class CasSupportActionsAutoConfiguration {
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties,
+            @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+            final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
@@ -393,7 +442,7 @@ public class CasSupportActionsAutoConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new GenericSuccessViewAction(ticketRegistry, servicesManager,
-                    webApplicationServiceFactory, casProperties))
+                    webApplicationServiceFactory, casProperties, principalAccessStrategyEnforcer))
                 .withId(CasWebflowConstants.ACTION_ID_GENERIC_SUCCESS_VIEW)
                 .build()
                 .get();
@@ -403,16 +452,16 @@ public class CasSupportActionsAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_REDIRECT_UNAUTHORIZED_SERVICE_URL)
         public Action redirectUnauthorizedServiceUrlAction(
-            @Qualifier(ScriptResourceCacheManager.BEAN_NAME)
-            final ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> cacheManager,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(ScriptResourceCacheManager.BEAN_NAME)
+            final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new RedirectUnauthorizedServiceUrlAction(servicesManager, applicationContext, cacheManager))
+                .withAction(() -> new RedirectUnauthorizedServiceUrlAction(servicesManager, scriptResourceCacheManager))
                 .withId(CasWebflowConstants.ACTION_ID_REDIRECT_UNAUTHORIZED_SERVICE_URL)
                 .build()
                 .get();
@@ -434,8 +483,6 @@ public class CasSupportActionsAutoConfiguration {
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
-            final PrincipalElectionStrategy principalElectionStrategy,
             final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities,
             @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)
             final CasWebflowCredentialProvider casWebflowCredentialProvider) {
@@ -444,7 +491,7 @@ public class CasSupportActionsAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new GenerateServiceTicketAction(authenticationSystemSupport, centralAuthenticationService,
                     ticketRegistrySupport, authenticationRequestServiceSelectionStrategies,
-                    servicesManager, principalElectionStrategy, serviceTicketAuthorities, casWebflowCredentialProvider))
+                    servicesManager, serviceTicketAuthorities, casWebflowCredentialProvider))
                 .withId(CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET)
                 .build()
                 .get();
@@ -521,6 +568,8 @@ public class CasSupportActionsAutoConfiguration {
         public Action terminateSessionAction(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(LogoutConfirmationResolver.DEFAULT_BEAN_NAME)
+            final LogoutConfirmationResolver logoutConfirmationResolver,
             @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
             final LogoutManager logoutManager,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
@@ -536,7 +585,7 @@ public class CasSupportActionsAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
                     warnCookieGenerator, casProperties.getLogout(), logoutManager,
-                    applicationContext, defaultSingleLogoutRequestExecutor))
+                    defaultSingleLogoutRequestExecutor, logoutConfirmationResolver))
                 .withId(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
                 .build()
                 .get();
@@ -611,8 +660,6 @@ public class CasSupportActionsAutoConfiguration {
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
-            final PrincipalElectionStrategy principalElectionStrategy,
             final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities,
             @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)
             final CasWebflowCredentialProvider casWebflowCredentialProvider) {
@@ -620,7 +667,7 @@ public class CasSupportActionsAutoConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new ServiceWarningAction(centralAuthenticationService, authenticationSystemSupport,
-                    ticketRegistrySupport, warnCookieGenerator, principalElectionStrategy, serviceTicketAuthorities,
+                    ticketRegistrySupport, warnCookieGenerator, serviceTicketAuthorities,
                     casWebflowCredentialProvider))
                 .withId(CasWebflowConstants.ACTION_ID_SERVICE_WARNING)
                 .build()
@@ -632,7 +679,7 @@ public class CasSupportActionsAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action populateSpringSecurityContextAction(
             @Qualifier("securityContextRepository")
-            final ObjectProvider securityContextRepository,
+            final ObjectProvider<SecurityContextRepository> securityContextRepository,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return WebflowActionBeanSupplier.builder()
@@ -675,6 +722,8 @@ public class CasSupportActionsAutoConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final AuditTrailExecutionPlan auditTrailExecutionPlan,
+            @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+            final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -685,7 +734,8 @@ public class CasSupportActionsAutoConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new PrepareAccountProfileViewAction(ticketRegistry,
-                    servicesManager, casProperties, auditTrailExecutionPlan, geoLocationService.getIfAvailable()))
+                    servicesManager, casProperties, auditTrailExecutionPlan,
+                    geoLocationService.getIfAvailable(), principalAccessStrategyEnforcer))
                 .withId(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
                 .build()
                 .get();

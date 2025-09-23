@@ -179,7 +179,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
                 .samlRequest(authnRequest)
                 .authenticatedAssertion(Optional.of(assertion))
                 .registeredService(service)
-                .adaptor(adaptor.get())
+                .adaptor(adaptor.orElseThrow())
                 .build();
             val result = defaultAuthnContextClassRefBuilder.build(buildContext);
             assertEquals("https://refeds.org/profile/mfa", result.getAuthnContextClassRef().getURI());
@@ -197,7 +197,7 @@ class SamlProfileAuthnContextClassRefBuilderTests {
                 .samlRequest(authnRequest)
                 .authenticatedAssertion(Optional.of(assertion))
                 .registeredService(service)
-                .adaptor(adaptor.get())
+                .adaptor(adaptor.orElseThrow())
                 .build();
             val result = defaultAuthnContextClassRefBuilder.build(buildContext);
             assertEquals(AuthnContext.PPT_AUTHN_CTX, result.getAuthnContextClassRef().getURI());

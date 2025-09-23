@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
@@ -32,7 +33,6 @@ import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import org.springframework.webflow.execution.RequestContextHolder;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
@@ -69,7 +69,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
 
     @Nonnull
     @Override
-    public String resolveThemeName(@Nonnull final HttpServletRequest request) {
+    public String resolveThemeName(final HttpServletRequest request) {
         val context = RequestContextHolder.getRequestContext();
         val serviceContext = WebUtils.getService(context);
         val service = FunctionUtils.doUnchecked(() -> authenticationRequestServiceSelectionStrategies.getObject().resolveService(serviceContext));
@@ -91,12 +91,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
         val themeName = determineThemeNameToChoose(request, service, registeredService);
         return rememberThemeName(request, themeName);
     }
-
-    @Override
-    public void setThemeName(
-        @Nonnull final HttpServletRequest request, final HttpServletResponse response, final String themeName) {
-    }
-
+    
     protected String determineThemeNameToChoose(final HttpServletRequest request,
                                                 final Service service,
                                                 final WebBasedRegisteredService registeredService) {
@@ -176,7 +171,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
         val theme = SpringExpressionLanguageValueResolver.getInstance().resolve(registeredService.getTheme());
         if (casProperties.getObject().getView().getTemplatePrefixes()
             .stream()
-            .map(prefix -> StringUtils.appendIfMissing(prefix, "/").concat(theme).concat(".properties"))
+            .map(prefix -> Strings.CI.appendIfMissing(prefix, "/").concat(theme).concat(".properties"))
             .anyMatch(ResourceUtils::doesResourceExist)) {
             LOGGER.trace("Found custom external theme [{}] for service [{}]", theme, registeredService.getName());
             return theme;

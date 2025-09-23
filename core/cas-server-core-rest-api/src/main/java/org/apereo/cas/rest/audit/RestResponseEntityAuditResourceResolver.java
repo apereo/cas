@@ -22,8 +22,8 @@ public class RestResponseEntityAuditResourceResolver extends ReturnValueAsString
 
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object returnValue) {
-        if (returnValue instanceof ResponseEntity) {
-            return getAuditResourceFromResponseEntity((ResponseEntity) returnValue);
+        if (returnValue instanceof final ResponseEntity entity) {
+            return getAuditResourceFromResponseEntity(entity);
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }

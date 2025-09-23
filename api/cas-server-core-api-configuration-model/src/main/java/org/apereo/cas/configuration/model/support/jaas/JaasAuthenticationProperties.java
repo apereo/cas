@@ -9,7 +9,6 @@ import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -28,7 +27,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
-@JsonFilter("JaasAuthenticationProperties")
+
 public class JaasAuthenticationProperties implements Serializable {
 
     @Serial

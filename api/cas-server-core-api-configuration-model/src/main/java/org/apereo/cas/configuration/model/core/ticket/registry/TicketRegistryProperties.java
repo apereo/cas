@@ -4,9 +4,11 @@ import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.Cassa
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.gcp.GoogleCloudFirestoreTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.geode.GeodeProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
+import org.apereo.cas.configuration.model.support.kafka.KafkaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
@@ -67,10 +69,22 @@ public class TicketRegistryProperties implements Serializable {
     private HazelcastTicketRegistryProperties hazelcast = new HazelcastTicketRegistryProperties();
 
     /**
+     * Kafka registry settings.
+     */
+    @NestedConfigurationProperty
+    private KafkaTicketRegistryProperties kafka = new KafkaTicketRegistryProperties();
+
+    /**
      * Apache Ignite registry settings.
      */
     @NestedConfigurationProperty
     private IgniteProperties ignite = new IgniteProperties();
+
+    /**
+     * Apache Geode registry settings.
+     */
+    @NestedConfigurationProperty
+    private GeodeProperties geode = new GeodeProperties();
 
     /**
      * JPA registry settings.

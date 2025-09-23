@@ -7,7 +7,7 @@ category: Authentication
 
 # OAuth Protocol Flow - Token/Implicit
 
-The `token` type used for the implicit flow is made for UI interactions as well as indirect non-interactive (i.e. Javascript) applications.
+The `token` type used for the implicit flow is made for UI interactions as well as indirect non-interactive (i.e. JavaScript) applications.
 
 | Endpoint              | Parameters                                               | Response                                                       |
 |-----------------------|----------------------------------------------------------|----------------------------------------------------------------|

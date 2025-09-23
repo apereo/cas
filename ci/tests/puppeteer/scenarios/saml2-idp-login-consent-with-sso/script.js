@@ -1,12 +1,11 @@
 
 const path = require("path");
 const cas = require("../../cas.js");
-const assert = require("assert");
 
 (async () => {
 
     await cas.log("Removing previous consent decisions for casuser");
-    await cas.doRequest("https://localhost:8443/cas/actuator/attributeConsent/casuser", "DELETE");
+    await cas.doDelete("https://localhost:8443/cas/actuator/attributeConsent/casuser");
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -28,7 +27,7 @@ const assert = require("assert");
     await cas.sleep(6000);
     await cas.logPage(page);
     await cas.screenshot(page);
-    assert(await page.url().startsWith("https://localhost:9859/post"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:9859/post");
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await cas.sleep(4000);
@@ -44,6 +43,6 @@ const assert = require("assert");
     await cas.log(authData);
 
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 

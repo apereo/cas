@@ -37,7 +37,7 @@ public class InternalTicketValidator implements TicketValidator {
         val principal = authentication.getPrincipal();
         val registeredService = servicesManager.findServiceBy(service);
         val authenticationAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(
-            authentication, assertion, new HashMap<>(0), registeredService);
+            authentication, assertion, new HashMap<>(), registeredService);
 
         return TicketValidationResult
             .builder()

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@TestPropertySource(properties = "management.endpoint.attributeConsent.enabled=true")
+@TestPropertySource(properties = "management.endpoint.attributeConsent.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
-@Import(CasConsentCoreAutoConfiguration.class)
+@ImportAutoConfiguration(CasConsentCoreAutoConfiguration.class)
 class AttributeConsentReportEndpointTests extends AbstractCasEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
@@ -53,6 +53,8 @@ class AttributeConsentReportEndpointTests extends AbstractCasEndpointTests {
         consentRepository.storeConsentDecision(desc);
 
         var results = attributeConsentReportEndpoint.consentDecisions(uid);
+        assertFalse(results.isEmpty());
+        results = attributeConsentReportEndpoint.consentDecisions();
         assertFalse(results.isEmpty());
 
         val entity = attributeConsentReportEndpoint.export();

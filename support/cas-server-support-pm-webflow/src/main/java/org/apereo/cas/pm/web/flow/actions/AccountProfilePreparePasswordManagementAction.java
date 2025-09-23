@@ -29,7 +29,7 @@ public class AccountProfilePreparePasswordManagementAction extends BaseCasWebflo
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         WebUtils.putPasswordManagementEnabled(requestContext, casProperties.getAuthn().getPm().getCore().isEnabled());
         WebUtils.putForgotUsernameEnabled(requestContext, casProperties.getAuthn().getPm().getForgotUsername().isEnabled());
         WebUtils.putAccountProfileManagementEnabled(requestContext, true);

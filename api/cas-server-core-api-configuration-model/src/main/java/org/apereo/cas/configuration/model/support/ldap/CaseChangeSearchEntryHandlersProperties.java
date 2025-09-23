@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.ldap;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,7 +21,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("CaseChangeSearchEntryHandlersProperties")
 public class CaseChangeSearchEntryHandlersProperties implements Serializable {
 
     @Serial
@@ -46,5 +44,5 @@ public class CaseChangeSearchEntryHandlersProperties implements Serializable {
     /**
      * The Attribute names.
      */
-    private List<String> attributeNames = new ArrayList<>(0);
+    private List<String> attributeNames = new ArrayList<>();
 }

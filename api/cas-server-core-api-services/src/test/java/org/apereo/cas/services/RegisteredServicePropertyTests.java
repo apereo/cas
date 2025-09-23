@@ -1,15 +1,12 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.io.Serial;
 import java.util.Map;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -23,21 +20,35 @@ import static org.mockito.Mockito.*;
 class RegisteredServicePropertyTests {
 
     @Test
-    void verifyNull() throws Throwable {
+    void verifyNull() {
         val p1 = new DefaultRegisteredServiceProperty(null);
         assertNull(p1.getValue(String.class));
         assertFalse(p1.getBooleanValue());
     }
 
     @Test
-    void verifyValue() throws Throwable {
+    void verifyValue() {
         val p1 = new DefaultRegisteredServiceProperty("true");
         assertEquals("true", p1.getValue(String.class));
         assertTrue(p1.getBooleanValue());
     }
 
     @Test
-    void verifyTypedValue() throws Throwable {
+    void verifyNotAssignedValue() {
+        val service = mock(RegisteredService.class);
+        val properties = (Map) Map.of(
+            RegisteredServiceProperties.CORS_MAX_AGE.getPropertyName(), new DefaultRegisteredServiceProperty("100"),
+            RegisteredServiceProperties.CORS_ALLOW_CREDENTIALS.getPropertyName(), new DefaultRegisteredServiceProperty("false")
+        );
+        when(service.getProperties()).thenReturn(properties);
+        assertTrue(RegisteredServiceProperties.INTERNAL_SERVICE_DEFINITION.isNotAssignedTo(service));
+        assertFalse(RegisteredServiceProperties.CORS_MAX_AGE.isNotAssignedTo(service, "100"::equalsIgnoreCase));
+        assertTrue(RegisteredServiceProperties.CORS_MAX_AGE.isNotAssignedTo(service, "600"::equalsIgnoreCase));
+    }
+
+
+    @Test
+    void verifyTypedValue() {
         val service = mock(RegisteredService.class);
         val properties = (Map) Map.of(
             RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_CIPHER_STRATEGY_TYPE.getPropertyName(), new DefaultRegisteredServiceProperty("ENCRYPT_AND_SIGN"),
@@ -64,7 +75,7 @@ class RegisteredServicePropertyTests {
 
         @Override
         public Set<String> getValues() {
-            return Set.of();
+            return Set.of(value);
         }
 
         @Override

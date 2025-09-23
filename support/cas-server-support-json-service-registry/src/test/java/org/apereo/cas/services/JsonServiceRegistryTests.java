@@ -7,12 +7,24 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
+import com.fasterxml.jackson.dataformat.smile.SmileFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -22,6 +34,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -33,6 +46,8 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Tag("FileSystem")
+@ExtendWith(CasTestExtension.class)
+@Slf4j
 @SpringBootTest(classes = AbstractServiceRegistryTests.SharedTestConfiguration.class)
 class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     @Autowired
@@ -114,6 +129,27 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
         assertEquals("casuser", username);
     }
 
+    @ParameterizedTest
+    @MethodSource("getObjectMapperFactories")
+    void verifySerializationPerformance(final JsonFactory factory) throws Throwable {
+        val mapper = JacksonObjectMapperFactory
+            .builder()
+            .jsonFactory(factory)
+            .build()
+            .toObjectMapper();
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        val stopWatch = new StopWatch();
+        stopWatch.start();
+        for (var i = 0; i < 100; i++) {
+            val written = mapper.writeValueAsBytes(registeredService);
+            assertNotNull(written);
+            val result = mapper.readValue(written, RegisteredService.class);
+            assertNotNull(result);
+        }
+        LOGGER.debug("[{}]->[{}]", factory.getClass().getSimpleName(), stopWatch.getDuration());
+        stopWatch.stop();
+    }
+    
     @Override
     protected Stream<Class<? extends BaseWebBasedRegisteredService>> getRegisteredServiceTypes() {
         return Stream.of(
@@ -124,11 +160,20 @@ class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
             WSFederationRegisteredService.class);
     }
 
-    private AbstractResourceBasedServiceRegistry buildResourceBasedServiceRegistry(final Resource location) throws Exception {
+    private AbstractResourceBasedServiceRegistry buildResourceBasedServiceRegistry(final Resource location) {
         return new JsonServiceRegistry(location, WatcherService.noOp(),
             applicationContext,
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
+    }
+
+    public static Stream<Arguments> getObjectMapperFactories() {
+        return Stream.of(
+            Arguments.of(new JsonFactory()),
+            Arguments.of(new YAMLFactory()),
+            Arguments.of(new CBORFactory()),
+            Arguments.of(new SmileFactory())
+        );
     }
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.GroovyAuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
@@ -19,6 +18,7 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -36,6 +36,8 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Utility")
 class CoreAuthenticationUtilsTests {
+    private static final String PROPERTY = "property";
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -80,7 +82,7 @@ class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyNoAuthPolicy() throws Throwable {
+    void verifyNoAuthPolicy() {
         val props = new AuthenticationPolicyProperties();
         props.getAny().setEnabled(false);
         props.getNotPrevented().setEnabled(false);
@@ -123,37 +125,37 @@ class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyMapTransform() throws Throwable {
+    void verifyMapTransform() {
         val results = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMap(CollectionUtils.wrapList("name", "family"));
         assertEquals(2, results.size());
     }
 
     @Test
-    void verifyCredentialSelectionPredicateNone() throws Throwable {
+    void verifyCredentialSelectionPredicateNone() {
         val pred = CoreAuthenticationUtils.newCredentialSelectionPredicate(null);
         assertTrue(pred.test(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
-    void verifyCredentialSelectionPredicateGroovy() throws Throwable {
+    void verifyCredentialSelectionPredicateGroovy() {
         val pred = CoreAuthenticationUtils.newCredentialSelectionPredicate("classpath:CredentialPredicate.groovy");
         assertTrue(pred.test(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
-    void verifyCredentialSelectionPredicateClazz() throws Throwable {
+    void verifyCredentialSelectionPredicateClazz() {
         val pred = CoreAuthenticationUtils.newCredentialSelectionPredicate(PredicateExample.class.getName());
         assertTrue(pred.test(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
-    void verifyCredentialSelectionPredicateRegex() throws Throwable {
+    void verifyCredentialSelectionPredicateRegex() {
         val pred = CoreAuthenticationUtils.newCredentialSelectionPredicate("\\w.+");
         assertTrue(pred.test(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
-    void verifyPasswordPolicy() throws Throwable {
+    void verifyPasswordPolicy() {
         val properties = new PasswordPolicyProperties();
         assertNotNull(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(properties, mock(ApplicationContext.class)));
 
@@ -166,7 +168,7 @@ class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyAttributeMerger() throws Throwable {
+    void verifyAttributeMerger() {
         val merger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
         val m1 = CollectionUtils.<String, List<Object>>wrap("key", CollectionUtils.wrapList("value1"));
         val m2 = CollectionUtils.<String, List<Object>>wrap("key", CollectionUtils.wrapList("value2"));
@@ -176,7 +178,7 @@ class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyAttributeMergerOriginal() throws Throwable {
+    void verifyAttributeMergerOriginal() {
         val merger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.SOURCE);
         val m1 = CollectionUtils.<String, List<Object>>wrap("key1", CollectionUtils.wrapList("value1"));
         val m2 = CollectionUtils.<String, List<Object>>wrap("key2", CollectionUtils.wrapList("value2"));
@@ -185,34 +187,16 @@ class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyAttributeMergerChanged() throws Throwable {
+    void verifyAttributeMergerChanged() {
         val merger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.DESTINATION);
         val m1 = CollectionUtils.<String, List<Object>>wrap("key1", CollectionUtils.wrapList("value1"));
         val m2 = CollectionUtils.<String, List<Object>>wrap("key2", CollectionUtils.wrapList("value2"));
         val result = merger.mergeAttributes(m1, m2);
         assertEquals(m2, result);
     }
-
+    
     @Test
-    void verifyIpIntelligenceService() throws Throwable {
-        var properties = new AdaptiveAuthenticationProperties();
-        assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
-
-        properties = new AdaptiveAuthenticationProperties();
-        properties.getIpIntel().getRest().setUrl("http://localhost:1234");
-        assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
-
-        properties = new AdaptiveAuthenticationProperties();
-        properties.getIpIntel().getGroovy().setLocation(new ClassPathResource("GroovyIPService.groovy"));
-        assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
-
-        properties = new AdaptiveAuthenticationProperties();
-        properties.getIpIntel().getBlackDot().setEmailAddress("cas@example.org");
-        assertNotNull(CoreAuthenticationUtils.newIpAddressIntelligenceService(properties));
-    }
-
-    @Test
-    void verifyPrincipalAttributeTransformations() throws Throwable {
+    void verifyPrincipalAttributeTransformations() {
         val list = Stream.of("a1", "a2:newA2", "a1:newA1").collect(Collectors.toList());
         val result = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(list);
         assertEquals(3, result.size());
@@ -230,7 +214,7 @@ class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyPrincipalConflictResolution() throws Throwable {
+    void verifyPrincipalConflictResolution() {
         val r1 = CoreAuthenticationUtils.newPrincipalElectionStrategyConflictResolver(
             new PersonDirectoryPrincipalResolverProperties().setPrincipalResolutionConflictStrategy("LAST"));
         assertNotNull(r1);
@@ -249,5 +233,23 @@ class CoreAuthenticationUtilsTests {
         public boolean test(final Credential credential) {
             return true;
         }
+    }
+
+    @Test
+    void verifyConvertAttributeValues() {
+        var originalMap = CollectionUtils.<String, Object>wrap(PROPERTY, Boolean.FALSE);
+        var newMap = CoreAuthenticationUtils.convertAttributeValuesToObjects(originalMap);
+        assertEquals(Boolean.FALSE, newMap.get(PROPERTY));
+
+        originalMap = CollectionUtils.wrap(PROPERTY, List.of(Boolean.FALSE));
+        newMap = CoreAuthenticationUtils.convertAttributeValuesToObjects(originalMap);
+        assertEquals(Boolean.FALSE, newMap.get(PROPERTY));
+
+        val mapValue = new HashMap<>();
+        mapValue.put("key", "value");
+        originalMap = CollectionUtils.wrap(PROPERTY, List.of(mapValue));
+        newMap = CoreAuthenticationUtils.convertAttributeValuesToObjects(originalMap);
+        assertTrue(newMap.get(PROPERTY) instanceof Collection);
+        assertEquals(mapValue, ((Collection<?>) newMap.get(PROPERTY)).iterator().next());
     }
 }

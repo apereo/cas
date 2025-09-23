@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @TestPropertySource(properties = {
-    "management.endpoint.oauthTokens.enabled=true",
+    "management.endpoint.oauthTokens.access=UNRESTRICTED",
     "management.endpoints.web.exposure.include=*"
 })
 @Tag("OAuthWeb")
@@ -56,7 +56,7 @@ class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyBadOperation() throws Throwable {
+    void verifyBadOperation() {
         assertNull(tokenManagementEndpoint.getToken("unknown"));
     }
 }

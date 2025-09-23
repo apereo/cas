@@ -8,38 +8,33 @@ buildscript {
         mavenCentral()
         gradlePluginPortal()
         maven {
-            url "https://repo.spring.io/milestone"
+            url = "https://repo.spring.io/milestone"
             mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://repo.spring.io/snapshot"
-            mavenContent { snapshotsOnly() }
         }
     }
 
     dependencies {
-//        classpath "gradle.plugin.com.ewerk.gradle.plugins:jaxb2-plugin:1.0.10"
-        classpath "com.github.node-gradle:gradle-node-plugin:$gradleNodeVersion"
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.gorylenko.gradle-git-properties:gradle-git-properties:$gradleGitVersion"
-        classpath "io.freefair.gradle:lombok-plugin:$gradleLombokVersion"
-        classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
-        classpath "org.graalvm.buildtools:native-gradle-plugin:${gradleGraalVmNativePluginVersion}"
-        classpath "net.ltgt.gradle:gradle-errorprone-plugin:$gradleErrorProneVersion"
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
-        classpath "com.github.johnrengelman:shadow:$gradleShadowVersion"
-        classpath "io.github.gradle-nexus:publish-plugin:$gradleNexusPublishingVersion"
+        classpath libs.gradle.plugin.spring.boot
+        classpath libs.gradle.plugin.git.properties
+        classpath libs.gradle.plugin.lombok
+        classpath libs.gradle.plugin.versions
+        classpath libs.gradle.plugin.native
+        classpath libs.gradle.plugin.errorprone
+        classpath libs.gradle.plugin.sonarqube
+        classpath libs.gradle.plugin.nmcp
+        classpath libs.gradle.plugin.nexus
     }
 }
 
 ext {
     srcTagMap = new ConcurrentHashMap<File, Set<String>>()
+    
+    repositoryUsername = providers.systemProperty("repositoryUsername").getOrElse(System.getenv("REPOSITORY_USER"))
+    repositoryPassword = providers.systemProperty("repositoryPassword").getOrElse(System.getenv("REPOSITORY_PWD"))
 
-    repositoryUsername = providers.systemProperty("repositoryUsername").getOrNull()
-    repositoryPassword = providers.systemProperty("repositoryPassword").getOrNull()
-
-    publishSnapshots = providers.systemProperty("publishSnapshots").present
-    publishReleases = providers.systemProperty("publishReleases").present
+    snapshotVersion = version.toString().endsWith("-SNAPSHOT")
+    publishSnapshots = providers.systemProperty("publishSnapshots").present && snapshotVersion
+    publishReleases = providers.systemProperty("publishReleases").present && !snapshotVersion
 
     publishFlag = publishSnapshots || publishReleases
 
@@ -47,6 +42,7 @@ ext {
 
     skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").present
     skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").present
+    skipSpringBootDevTools = providers.systemProperty("skipSpringBootDevTools").present
 
     skipArtifactSigning = providers.systemProperty("skipArtifactSigning").present
     terminateCompilerOnWarning = providers.systemProperty("terminateCompilerOnWarning").getOrElse("true") == "true"
@@ -55,25 +51,27 @@ ext {
     remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend").getOrElse("false") == "true" ? "y" : "n"
     generateGitProperties = publishFlag || providers.systemProperty("generateGitProperties").present
     generateTimestamps = publishFlag || providers.systemProperty("generateTimestamps").present
+    
+    skipBootifulLaunchScript = providers.systemProperty("skipBootifulLaunchScript").present
 
     ci = System.getenv("CI") || providers.systemProperty("CI").present
 
     excludedFilesFromTestCoverage = [
-            '**/docs/**',
-            '**/org/springframework/**',
-            '**/soap/generated/**',
-            '**/com/duosecurity/**',
-            '**/org/apereo/inspektr/**',
-            '**/net/jradius/**',
-            '**/com/yubico/**',
-            '**/saml/sts/SamlToken**',
-            '**/**ConfigurationMetadata**',
-            '**/**NimbusOAuthJacksonModule**',
-            '**/**Application**',
-            '**/**Application$**',
-            '**/**Exception$**',
-            '**/**Properties**',
-            '**/**Properties$**'
+        '**/docs/**',
+        '**/org/springframework/**',
+        '**/soap/generated/**',
+        '**/com/duosecurity/**',
+        '**/org/apereo/inspektr/**',
+        '**/net/jradius/**',
+        '**/com/yubico/**',
+        '**/saml/sts/SamlToken**',
+        '**/**ConfigurationMetadata**',
+        '**/**NimbusOAuthJacksonModule**',
+        '**/**Application**',
+        '**/**Application$**',
+        '**/**Exception$**',
+        '**/**Properties**',
+        '**/**Properties$**'
     ]
 }
 
@@ -81,7 +79,7 @@ def isArtifactSigningRequired = {
     publishReleases && !skipArtifactSigning
 }
 
-if ("${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
+if (publishSnapshots) {
     apply plugin: "io.github.gradle-nexus.publish-plugin"
     nexusPublishing {
         packageGroup = "org.apereo"
@@ -90,15 +88,28 @@ if ("${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
                 stagingProfileId = "11d1ddbbdeae9d"
                 username = "${repositoryUsername}"
                 password = "${repositoryPassword}"
+                snapshotRepositoryUrl.set(uri("${snapshotsRepositoryUrl}"))
             }
         }
-
         clientTimeout = java.time.Duration.ofSeconds(120)
         connectTimeout = java.time.Duration.ofSeconds(120)
         transitionCheckOptions {
-            maxRetries.set(60)
-            delayBetween.set(java.time.Duration.ofSeconds(30))
+            maxRetries.set(100)
+            delayBetween.set(java.time.Duration.ofSeconds(60))
         }
+    }
+} else if (publishReleases) {
+    apply plugin: "com.gradleup.nmcp.aggregation"
+    nmcpAggregation {
+        centralPortal {
+            username = "${repositoryUsername}"
+            password = "${repositoryPassword}"
+            publicationName = "Apereo CAS Release ${project.version}"
+            publishingType = "AUTOMATIC"
+            validationTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
+            publishingTimeout = java.time.Duration.of(120, java.time.temporal.ChronoUnit.MINUTES)
+        }
+        publishAllProjectsProbablyBreakingProjectIsolation()
     }
 }
 
@@ -112,12 +123,13 @@ if (!providers.systemProperty("skipSonarqube").present) {
         def exclusions = rootProject.excludedFilesFromTestCoverage.join(",")
         def token = providers.systemProperty("SONARCLOUD_TOKEN")
                 .getOrElse(System.getenv("SONARCLOUD_TOKEN"))
+
         properties {
-            property "sonar.host.url", "https://sonarcloud.io"
-            property "sonar.projectName", "cas"
+            property "sonar.host.url", "$sonarHostUrl"
+            property "sonar.organization", "$sonarOrganization"
+            property "sonar.projectName", "$sonarProjectName"
             property "sonar.sourceEncoding", "UTF-8"
             property "sonar.java.source", project.targetCompatibility
-            property "sonar.organization", "apereo"
             property "sonar.token", token
             property "sonar.gradle.skipCompile", true
             property "sonar.coverage.exclusions", exclusions
@@ -133,7 +145,7 @@ allprojects {
     apply plugin: "jacoco"
 
     jacoco {
-        toolVersion = "$gradleJacocoVersion"
+        toolVersion = "${libs.versions.jacoco.get()}"
     }
 
     if (gradle.startParameter.taskNames.any { task -> task.contains("publishToMavenLocal") }) {
@@ -149,22 +161,26 @@ allprojects {
         logger.info("The OS platform architecture for this Gradle build is reset to ${arch} for ${name}")
     }
 
-    if (rootProject.generateGitProperties) {
-        apply plugin: "com.gorylenko.gradle-git-properties"
-    }
-
     project.ext["forceBootifulArtifact"] = null
 
-    afterEvaluate { project ->
-        if (rootProject.generateGitProperties) {
-            gitProperties {
-                customProperty 'project.group', project.group
-                customProperty 'project.name', project.name
-                customProperty 'project.version', project.version
-                customProperty 'project.description', project.description
-                extProperty = "gitProps"
-                keys = ["git.branch", "git.build.time", "git.build.user.name",
-                        "git.build.version", "git.commit.id", "git.remote.origin.url"]
+    if (rootProject.generateGitProperties) {
+        apply plugin: "io.hndrs.git-properties"
+        tasks.named("generateGitProperties") {
+            def propertiesFile = project.layout.buildDirectory.file("resources/main/git.properties").get().asFile
+            def projectGroup = project.group
+            def projectName = project.name
+            def projectVersion = project.version
+            def projectDescription = project.description
+            
+            it.dotGitDirectory.set(rootProject.layout.projectDirectory.dir(".git"))
+            it.output.set(propertiesFile)
+            doLast {
+                propertiesFile.withWriterAppend('UTF-8') { writer ->
+                    writer << "project.group=${projectGroup}"
+                    writer << "\nproject.name=${projectName}"
+                    writer << "\nproject.version=${projectVersion}"
+                    writer << "\nproject.description=${projectDescription}\n"
+                }
             }
         }
     }
@@ -182,7 +198,7 @@ allprojects {
             jdkName = project.targetCompatibility
             excludeDirs += file(".gradle")
             [".settings", "classes", "bin", "out", "docs", "dependency-cache", "libs",
-             "reports", "resources", "test-results", "tmp"].each {
+             "reports", "resources", "test-results", "tmp", "gh-pages"].each {
                 excludeDirs += project.layout.buildDirectory.files(it)
             }
         }
@@ -215,6 +231,8 @@ subprojects {
     configurations {
         tests
         provided
+        jvmAgents
+        javadocClasspath
     }
 
     apply from: rootProject.file("gradle/overrides.gradle")
@@ -236,18 +254,23 @@ subprojects {
                         mavenWeb(MavenPublication) {
                             from components.web
                             pom {
-                                createPom(it, project)
+                                project.ext.createPom(it, project)
                             }
                             pom.withXml {
-                                createPomRepositories(asNode())
+                                project.ext.createPomRepositories(asNode())
                             }
                         }
                     } else if (project.hasProperty("skipPublication") && project.skipPublication) {
                         logger.info "Skipping artifact publication for project ${project.name}"
+                    } else if (project.name.contains("cas-server-support-bom")) {
+                        logger.info "Project ${project.name} is published as a BOM"
                     } else {
                         logger.info "Project ${project.name} should be published as a JAR"
                         mavenJava(MavenPublication) {
+
+                            logger.info "Project ${project.name} does not have a bootJar task, using default JAR"
                             from components.java
+                            
                             if (project.hasProperty("publishMinimalArtifacts") && project.publishMinimalArtifacts) {
                                 logger.info "Publishing minimal artifacts for project ${project.name}"
                             } else {
@@ -258,41 +281,10 @@ subprojects {
                             }
 
                             pom {
-                                createPom(it, project)
+                                project.ext.createPom(it, project)
                             }
                             pom.withXml {
-                                createPomRepositories(asNode())
-                            }
-                        }
-                    }
-                }
-
-                if (!"${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
-                    repositories {
-                        if (rootProject.publishReleases) {
-                            maven {
-                                name "CAS-Releases"
-                                url "${releaseRepositoryUrl}"
-                                mavenContent {
-                                    releasesOnly()
-                                }
-                                credentials {
-                                    username "${repositoryUsername}"
-                                    password "${repositoryPassword}"
-                                }
-                            }
-                        }
-                        if (rootProject.publishSnapshots) {
-                            maven {
-                                name "CAS-Snapshots"
-                                url "${snapshotsRepositoryUrl}"
-                                mavenContent {
-                                    snapshotsOnly()
-                                }
-                                credentials {
-                                    username "${repositoryUsername}"
-                                    password "${repositoryPassword}"
-                                }
+                                project.ext.createPomRepositories(asNode())
                             }
                         }
                     }
@@ -301,19 +293,24 @@ subprojects {
 
             signing {
                 required = isArtifactSigningRequired
+                if (System.getenv("PGP_PRIVATE_KEY") && System.getenv("PGP_PASSPHRASE")) {
+                    useInMemoryPgpKeys(System.getenv("PGP_PRIVATE_KEY"), System.getenv("PGP_PASSPHRASE"))
+                }
                 sign publishing.publications
             }
         }
     }
 
+    tasks.named("assemble") {
+        if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
+            dependsOn(sourcesJar, javadocJar, resourcesJar, testJar)
+        } else {
+            dependsOn(testJar)
+        }
+    }
+    
     artifacts {
         tests testJar
-        if (rootProject.publishFlag && !rootProject.publishMinimalArtifacts) {
-            archives sourcesJar
-            archives javadocJar
-            archives resourcesJar
-        }
-        archives testJar
     }
 
     sourceSets {
@@ -348,7 +345,7 @@ subprojects {
         it.options.fork = true
         it.options.incremental = true
 
-        def casCompilerArgs = ["-parameters"]
+        def casCompilerArgs = ["-parameters", '-Xlint:-removal']
         if (rootProject.ext.terminateCompilerOnWarning) {
             casCompilerArgs.add("-Werror")
         }
@@ -357,13 +354,13 @@ subprojects {
             it.options.errorprone.disableAllChecks = !rootProject.ext.terminateCompilerOnWarning
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
-            it.options.errorprone.excludedPaths = ".*com/duosecurity.*"
-            it.options.errorprone.errorproneArgs = ['-Xep:StatementSwitchToExpressionSwitch:OFF',
-                                                    '-Xep:ClassCanBeStatic:OFF',
-                                                    '-Xep:NotJavadoc:OFF',
+            it.options.errorprone.errorproneArgs = [
                                                     '-Xep:JavaUtilDate:OFF',
+                                                    '-Xep:BooleanLiteral:OFF',
+                                                    '-Xep:StringConcatToTextBlock:OFF',
                                                     '-Xep:AddressSelection:OFF']
             casCompilerArgs.add("-XDcompilePolicy=byfile")
+            casCompilerArgs.add("-XDshould-stop.ifError=FLOW")
         }
         it.options.compilerArgs += casCompilerArgs
     }
@@ -371,7 +368,7 @@ subprojects {
     if (projectRequiresLombok(project)) {
         apply plugin: "io.freefair.lombok"
         lombok {
-            version = "$lombokVersion"
+            version = "${libs.versions.lombok.get()}"
         }
     }
 
@@ -379,13 +376,23 @@ subprojects {
         def projectName = project.name
         def projectGroup = project.group
         def projectVersion = project.version
-        def projectSpecVersion = project.ext.has("gitProps") ? project.ext.gitProps['git.commit.id'] : 'N/A'
+
+        def propertiesFile = project.layout.buildDirectory.file("resources/main/git.properties").get().asFile
+        def properties = new Properties()
+        if (propertiesFile.exists()) {
+            propertiesFile.withInputStream { stream ->
+                properties.load(stream)
+            }
+        }
+        def projectSpecVersion = properties.getProperty('git.commit.id', 'N/A')
+        
         manifest {
             attributes(
                     "Automatic-Module-Name": project.name.replace("-", "."),
                     "Implementation-Title": projectName,
                     "Implementation-Vendor": projectGroup,
-                    "Created-By": projectGroup)
+                    "Created-By": projectGroup
+            )
             if (generateTimestamps) {
                 attributes("Implementation-Date": java.time.ZonedDateTime.now(java.time.ZoneOffset.UTC))
             }
@@ -403,9 +410,9 @@ subprojects {
                     "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")
             ]
             configFile = new File(rootDir, "style/checkstyle-rules.xml")
-            ignoreFailures false
-            showViolations true
-            toolVersion "${checkstyleVersion}"
+            ignoreFailures = false
+            showViolations = true
+            toolVersion = "${libs.versions.checkstyle.get()}"
         }
     }
 
@@ -420,7 +427,6 @@ subprojects {
         api libraries.jackson
         api libraries.httpclient
         api libraries.quartz
-        api libraries.groovy
         api libraries.caffein
         api libraries.springcloud
         api libraries.springboot
@@ -428,18 +434,30 @@ subprojects {
         api libraries.springintegration
         api libraries.springwebflow
         api libraries.jakarta
+        
+        compileOnly libraries.jakartapersistence
 
         annotationProcessor libraries.springindexer
 
         if (!providers.systemProperty("skipErrorProneCompiler").present) {
-            errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
+            errorprone "com.google.errorprone:error_prone_core:${libs.versions.errorprone.get()}"
         }
 
         testImplementation libraries.tests
         testImplementation libraries.log4j
         testImplementation libraries.hibernatevalidator
+        testImplementation libraries.jakartapersistence
 
         runtimeOnly libraries.httpclient4
+
+        jvmAgents(libs.mockito.core) {
+            transitive = false
+        }
+        jvmAgents(libs.mockito.inline) {
+            transitive = false
+        }
+
+        javadocClasspath project(path: project.path, configuration: 'compileClasspath')
     }
 }
 
@@ -447,14 +465,16 @@ if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.
     tasks.withType(Javadoc).configureEach {
         source subprojects.collect { project -> project.sourceSets.main.allJava }
         destinationDir = new File(project.layout.buildDirectory.getAsFile().get(), "javadoc")
-        classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
+        if (project != rootProject) {
+            classpath = configurations.javadocClasspath
+        }
         options.addBooleanOption('html5', true)
         failOnError = providers.systemProperty("ignoreJavadocFailures").present
     }
 
     tasks.register('aggregateJavadocsIntoJar', Jar) {
         dependsOn javadoc
-        description = "Aggregate all Javadocs into a single directory"
+        description = "Aggregate all Javadoc into a single artifact"
         archiveClassifier.set("javadoc")
         from javadoc
     }
@@ -463,7 +483,7 @@ if (!gradle.startParameter.excludedTaskNames.contains("javadoc") || rootProject.
 if (rootProject.publishFlag) {
     tasks.register('rootSourcesJar', Jar) {
         description = "Build JAR for the root CAS module"
-        archiveBaseName.set("${project.archivesBaseName}")
+        archiveBaseName.set("${project.name}-sources")
         from rootProject.file("src")
     }
 }
@@ -560,7 +580,7 @@ tasks.register('verifyRequiredJavaVersion') {
     }
 }
 
-tasks.register('publishProjectModules') {
+tasks.register('generateProjectModulesMetadata') {
     def outputFile = new File(project.layout.buildDirectory.getAsFile().get(), "modules.json")
     def results = []
     subprojects.each {
@@ -575,7 +595,7 @@ tasks.register('publishProjectModules') {
             }
             results += [
                     name       : it.name,
-                    version    : it.version,
+                    version    : it.version.replaceAll("-SNAPSHOT", ""),
                     group      : it.group,
                     description: it.description,
                     details    : metadata
@@ -591,13 +611,10 @@ tasks.register('publishProjectModules') {
 }
 
 boolean projectShouldBePublished(Project project) {
-    def publishable = !["api", "core", "docs", "support", "webapp"].contains(project.name)
-            && !project.getPath().contains("cas-server-documentation")
-    if ("${releaseRepositoryUrl}".contains("github.com") && project.getPath().contains("cas-server-support-shell")) {
-        // shell is too big for github
-        publishable = false
-    }
+    def publishable = project.hasProperty("publishable") ? project.publishable : true
     project.ext.publishable = publishable
+    logger.info "Project ${project.name} is publishable: ${publishable}"
+    return publishable
 }
 
 boolean projectRequiresLombok(Project project) {

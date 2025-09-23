@@ -9,7 +9,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpStatus;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -51,20 +50,29 @@ public class ConsumerExecutionAction extends BaseCasWebflowAction {
         ctx.getExternalContext().recordResponseComplete();
     });
 
+    /**
+     * Consumer action that populates the flow scope with the current event attributes.
+     */
+    public static final Action EVENT_ATTRIBUTES_TO_FLOW_SCOPE = new ConsumerExecutionAction(ctx -> {
+        if (ctx.getCurrentEvent() != null) {
+            ctx.getFlowScope().putAll(ctx.getCurrentEvent().getAttributes());
+        }
+    });
+
     private final Consumer<RequestContext> task;
 
     @Setter
     private String eventId;
 
     @Override
-    public Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    public Event doExecuteInternal(final RequestContext requestContext) {
         this.task.accept(requestContext);
-        return StringUtils.isNotBlank(this.eventId) ? new EventFactorySupport().event(this, this.eventId) : null;
+        return StringUtils.isNotBlank(this.eventId) ? eventFactory.event(this, this.eventId) : null;
     }
 
     @Override
     public String toString() {
-        return "Inline Action, returning " + this.eventId;
+        return "InlineActionReturns%s".formatted(StringUtils.defaultIfBlank(this.eventId, "None"));
     }
 
     /**

@@ -8,11 +8,13 @@
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.http-client.host-name-verifier=none",
 
+    "--cas.authn.attribute-repository.core.expiration-time=1",
+    "--cas.authn.attribute-repository.core.expiration-time-unit=seconds",
+    
     "--cas.authn.attribute-repository.grouper.id=Grouper",
     "--cas.authn.attribute-repository.grouper.subject-type=SUBJECT_ID",
 
     "--cas.authn.accept.users=GrouperSystem::Mellon",
-    "--logging.level.org.apereo.cas=info",
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"

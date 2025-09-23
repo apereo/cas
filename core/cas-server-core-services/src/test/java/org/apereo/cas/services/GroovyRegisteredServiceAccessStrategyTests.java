@@ -1,12 +1,14 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("GroovyServices")
+@ExtendWith(CasTestExtension.class)
 class GroovyRegisteredServiceAccessStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "GroovyRegisteredServiceAccessStrategyTests.json");
 
@@ -27,7 +30,7 @@ class GroovyRegisteredServiceAccessStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void checkDefaultAuthzStrategyConfig() throws Throwable {
+    void checkDefaultAuthzStrategyConfig() {
         val accessStrategy = new GroovyRegisteredServiceAccessStrategy();
         accessStrategy.setGroovyScript("classpath:GroovyServiceAccessStrategy.groovy");
         assertTrue(accessStrategy.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
@@ -43,7 +46,7 @@ class GroovyRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    void verifyFailingOps() throws Throwable {
+    void verifyFailingOps() {
         val accessStrategy = new GroovyRegisteredServiceAccessStrategy();
         accessStrategy.setGroovyScript("classpath:Unknown.groovy");
         assertThrows(UnauthorizedServiceException.class, () -> accessStrategy.isServiceAccessAllowed(null, null));

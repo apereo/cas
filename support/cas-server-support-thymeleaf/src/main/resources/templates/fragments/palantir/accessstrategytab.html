@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <div class="attribute-tab w-100 d-none" id="attribute-tab-4">
+
+        <div class="jqueryui-tabs">
+            <ul>
+                <li><a id="accessStrategy" href="#accessstrategy-tab">Service Access Strategy</a></li>
+                <li><a id="heimdall" href="#heimdall-tab">Heimdall Authorization</a></li>
+            </ul>
+
+            <div id="accessstrategy-tab">
+                <p>You can verify whether a user is authorized to access a registered application with CAS.</p>
+
+                <form id="fmAccessStrategy" class="d-block">
+                    <section class="cas-field form-group my-3 mdc-input-group d-flex">
+                        <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                            <label for="accessService"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Service</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="accessService" data-param-name="service" tabindex="0" id="accessService" size="50"
+                                       autocomplete="off" required/>
+                            </label>
+                            <label for="accessUsername"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Username</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="accessUsername" data-param-name="username" tabindex="0" id="accessUsername"
+                                       size="50" autocomplete="off" required/>
+                            </label>
+                            <label for="accessPassword"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Password</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control pwd" type="password"
+                                       name="accessPassword" data-param-name="password" tabindex="0" id="accessPassword"
+                                       size="50" autocomplete="off"/>
+                                <button
+                                        class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
+                                        tabindex="-1"
+                                        type="button">
+                                    <i class="mdi mdi-eye fas fa-eye reveal-password-icon" style="vertical-align: middle;"
+                                       aria-hidden="true"></i>
+                                    <span class="visually-hidden">Toggle Token</span>
+                                </button>
+                            </label>
+                            <label for="accessClientId" id="accessClientIdLabel"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Client ID</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="accessClientId" data-param-name="client_id" tabindex="0" id="accessClientId"
+                                       size="50" autocomplete="off"/>
+                            </label>
+                            <label for="accessEntityId" id="accessEntityIdLabel"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Entity ID</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="accessEntityId" data-param-name="entityId" tabindex="0" id="accessEntityId"
+                                       size="50" autocomplete="off"/>
+                            </label>
+                        </div>
+
+                    </section>
+                    <div class="d-flex">
+                        <button type="button" name="accessStrategyButton" id="accessStrategyButton"
+                                class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all" aria-hidden="true"></i>Verify</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div id="accessStrategyAttributesContainer" class="d-none py-3">
+                    <h3>Attributes</h3>
+                    <table id="accessStrategyAttributesTable" class="mdc-data-table__table table table-striped noborder">
+                        <thead>
+                            <tr class="mdc-data-table__header-row">
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="mdc-data-table__content">
+                        </tbody>
+                    </table>
+                </div>
+
+                <span id="accessStrategyEditorContainer" class="d-none">
+                    <h3>Registered Service</h3>
+                    <p>This is the registered service definition that authorized the request. You can
+                        <button type="button" id="authorizedServiceNavigation">navigate to it</button>.</p>
+                    <section class="my-3 d-flex h-350px">
+                        <pre class="ace-editor ace-relative w-100 h-100" id="accessStrategyEditor"></pre>
+                    </section>
+                </span>
+            </div>
+
+            <div id="heimdall-tab">
+               <p>Examine the list of authorizable resources and APIs registered with the CAS authorization engine.</p>
+
+                <table id="heimdallResourcesTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                        <tr class="mdc-data-table__header-row">
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Namespace</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Pattern</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Method</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Enforce All Policies</th>
+                        </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+                
+                <div class="mdc-dialog modal" id="heimdallViewResourceDialog" role="alertdialog"
+                                 aria-modal="true" aria-labelledby="heimdallViewResourceDialog-title"
+                                 aria-describedby="dialog-content">
+                    <div class="mdc-dialog__container w-100 modal-dialog">
+                        <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
+                            <div class="mdc-dialog__content modal-body" id="heimdallViewResourceDialog-content">
+                                <div class="ace-editor ace-absolute" id="heimdallViewResourceEditor"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mdc-dialog__scrim"></div>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</span>
+</body>
+</html>

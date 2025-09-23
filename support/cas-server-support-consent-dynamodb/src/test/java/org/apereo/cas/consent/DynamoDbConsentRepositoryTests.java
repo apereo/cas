@@ -1,9 +1,11 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.config.CasConsentDynamoDbAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +28,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
         "cas.consent.dynamo-db.region=us-east-1"
     })
 @Tag("DynamoDb")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 8000)
 @Getter
 class DynamoDbConsentRepositoryTests extends BaseConsentRepositoryTests {

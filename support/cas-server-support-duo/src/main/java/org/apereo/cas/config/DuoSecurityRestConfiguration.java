@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.rest.DuoSecurityRestHttpRequestCredentialFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -48,10 +49,12 @@ class DuoSecurityRestConfiguration {
     @ConditionalOnMissingBean(name = "duoSecurityRestHttpRequestCredentialFactory")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public RestHttpRequestCredentialFactory duoSecurityRestHttpRequestCredentialFactory(
+        @Qualifier(TenantExtractor.BEAN_NAME)
+        final TenantExtractor tenantExtractor,
         final ConfigurableApplicationContext applicationContext) {
         return BeanSupplier.of(RestHttpRequestCredentialFactory.class)
             .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
-            .supply(DuoSecurityRestHttpRequestCredentialFactory::new)
+            .supply(() -> new DuoSecurityRestHttpRequestCredentialFactory(tenantExtractor))
             .otherwiseProxy()
             .get();
     }

@@ -6,7 +6,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.http.HttpMessage;
+import org.apereo.cas.web.HttpMessage;
+
 
 import com.yubico.client.v2.YubicoClient;
 import lombok.AllArgsConstructor;
@@ -53,7 +54,7 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
             val endpoints = client.getWsapiUrls();
             for (val endpoint : endpoints) {
                 LOGGER.debug("Pinging YubiKey API endpoint at [{}]", endpoint);
-                val msg = this.httpClient.sendMessageToEndPoint(new URI(endpoint).toURL());
+                val msg = httpClient.sendMessageToEndPoint(new URI(endpoint).toURL());
                 val message = Optional.ofNullable(msg).map(HttpMessage::getMessage).orElse(null);
                 if (StringUtils.isNotBlank(message)) {
                     val response = EncodingUtils.urlDecode(message);

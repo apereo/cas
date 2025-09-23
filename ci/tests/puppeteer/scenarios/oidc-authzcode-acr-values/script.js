@@ -2,10 +2,10 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
 
-const redirectUrl = "https://apereo.github.io";
+const redirectUrl = "https://localhost:9859/anything/oidc";
 
 async function fetchCode(page, acr, params) {
-    let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=openid%20email%20profile%20address%20phone&redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&state=1735fd6c43c14&acr_values=${acr}`;
+    let url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope=${encodeURIComponent("openid email profile address phone")}&redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&state=1735fd6c43c14&acr_values=${acr}`;
     if (params !== undefined) {
         url += `&${params}`;
     }
@@ -24,8 +24,8 @@ async function fetchCode(page, acr, params) {
     await cas.sleep(2000);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
-        await cas.sleep(3000);
     }
+    await cas.sleep(2000);
     await cas.screenshot(page);
     await cas.type(page, "#token", scratch);
     await cas.pressEnter(page);
@@ -34,9 +34,8 @@ async function fetchCode(page, acr, params) {
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);
-        await cas.sleep(2000);
     }
-
+    await cas.sleep(2000);
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
     return code;
@@ -107,5 +106,5 @@ async function exchangeCode(page, code, successHandler) {
         assert(idToken.acr === "https://refeds.org/profile/mfa");
         assert(idToken.amr.includes("GoogleAuthenticatorAuthenticationHandler"));
     });
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

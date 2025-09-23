@@ -63,7 +63,7 @@ public class OidcJpaJsonWebKeystoreGeneratorService implements OidcJsonWebKeysto
     }
 
     @Override
-    public Resource generate() throws Throwable {
+    public Resource generate() {
         val issuer = oidcProperties.getCore().getIssuer();
         return Optional.ofNullable(entityManager.find(OidcJsonWebKeystoreEntity.class, issuer))
             .map(Unchecked.function(jwks -> OidcJsonWebKeystoreGeneratorService.toResource(new JsonWebKeySet(jwks.getData()))))
@@ -74,7 +74,7 @@ public class OidcJpaJsonWebKeystoreGeneratorService implements OidcJsonWebKeysto
     }
 
     @Override
-    public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) throws Throwable {
+    public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) {
         val issuer = oidcProperties.getCore().getIssuer();
         return transactionTemplate.execute(status -> {
             val result = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);

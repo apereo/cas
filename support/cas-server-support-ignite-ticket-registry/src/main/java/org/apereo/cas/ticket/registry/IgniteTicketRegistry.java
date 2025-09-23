@@ -2,13 +2,13 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,11 +23,11 @@ import org.apache.ignite.cache.query.SqlFieldsQuery;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.cache.Cache;
 import javax.cache.expiry.Duration;
 import javax.cache.expiry.ExpiryPolicy;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -63,9 +63,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     private Ignite ignite;
 
     public IgniteTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
-                                final TicketCatalog ticketCatalog, final IgniteConfiguration igniteConfiguration,
-                                final IgniteProperties properties) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+                                final TicketCatalog ticketCatalog, final ConfigurableApplicationContext applicationContext,
+                                final IgniteConfiguration igniteConfiguration, final IgniteProperties properties) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.igniteConfiguration = igniteConfiguration;
         this.properties = properties;
     }
@@ -84,7 +84,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
             .entrySet()
             .stream()
             .map(entry -> {
-                val entryValues = (List) entry.getValue();
+                val entryValues = entry.getValue();
                 val valueList = entryValues.stream().map(Object::toString).collect(Collectors.joining(","));
                 return String.format("[%s:{%s}]", entry.getKey(), valueList);
             })
@@ -165,7 +165,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     }
 
     @Override
-    public Stream<? extends Ticket> stream() {
+    public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
         return ticketCatalog.findAll()
             .stream()
             .map(this::getIgniteCacheFromMetadata)
@@ -173,6 +173,8 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
                 val it = cache.query(new ScanQuery<>()).spliterator();
                 return StreamSupport.stream(it, false);
             })
+            .skip(criteria.getFrom())
+            .limit(criteria.getCount())
             .map(Cache.Entry::getValue)
             .map(IgniteTicketDocument.class::cast)
             .map(object -> decodeTicket(object.getTicket()))
@@ -277,8 +279,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
         @Override
         public Duration getExpiryForAccess() {
-            val idleTime = expirationPolicy.getTimeToIdle() <= 0
-                ? expirationPolicy.getTimeToLive() : expirationPolicy.getTimeToIdle();
+            val idleTime = expirationPolicy instanceof final IdleExpirationPolicy iep ? iep.getTimeToIdle() : expirationPolicy.getTimeToLive();
             return new Duration(TimeUnit.SECONDS, idleTime);
         }
 

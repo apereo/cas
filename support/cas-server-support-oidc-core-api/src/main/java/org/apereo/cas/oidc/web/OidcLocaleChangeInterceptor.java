@@ -13,6 +13,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -42,7 +43,7 @@ public class OidcLocaleChangeInterceptor extends CasLocaleChangeInterceptor {
                                  final HttpServletResponse response) {
         val service = argumentExtractor.getObject().extractService(request);
         if (service != null) {
-            val newLocale = service.getAttributes().get(OidcConstants.UI_LOCALES);
+            val newLocale = (List) service.getAttributes().get(OidcConstants.UI_LOCALES);
             if (newLocale != null && !newLocale.isEmpty()) {
                 configureLocale(request, response, Locale.forLanguageTag(newLocale.getFirst().toString()));
             }

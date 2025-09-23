@@ -20,8 +20,15 @@ The following themes are provided by this module and can be assigned to service 
 
 | Theme     | Description                                                                                     |
 |-----------|-------------------------------------------------------------------------------------------------|
-| `example` | A reference example theme that combines customized CSS, Javascript and views                    |
-| `twbs`    | A basic theme utilizing [Bootstrap](http://getbootstrap.com "Bootstrap") for CSS and Javascript |
+| `example` | A reference example theme that combines customized CSS, JavaScript and views                    |
+| `twbs`    | A basic theme utilizing [Bootstrap](http://getbootstrap.com "Bootstrap") for CSS and JavaScript |
 
 The collection of themes above can also serve as reference examples of how to define a theme with
-custom CSS, Javascript and associated views and fragments.
+custom CSS, JavaScript and associated views and fragments.
+
+## Bootstrap Themes
+
+If you intend to build your own themes based on Bootstrap, you will need to include the following
+module in the WAR overlay:
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-themes-bootstrap" %}

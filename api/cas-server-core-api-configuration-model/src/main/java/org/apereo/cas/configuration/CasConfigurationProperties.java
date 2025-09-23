@@ -27,6 +27,7 @@ import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.configuration.model.support.account.AccountManagementRegistrationProperties;
 import org.apereo.cas.configuration.model.support.acme.AcmeProperties;
 import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
+import org.apereo.cas.configuration.model.support.apn.APNMessagingProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.model.support.aws.AmazonSecurityTokenServiceProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
@@ -35,31 +36,50 @@ import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
 import org.apereo.cas.configuration.model.support.custom.CasCustomProperties;
+import org.apereo.cas.configuration.model.support.email.EmailProvidersProperties;
 import org.apereo.cas.configuration.model.support.firebase.GoogleFirebaseCloudMessagingProperties;
 import org.apereo.cas.configuration.model.support.geo.GeoLocationProperties;
+import org.apereo.cas.configuration.model.support.heimdall.HeimdallAuthorizationProperties;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
+import org.apereo.cas.configuration.model.support.javers.JaversProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
+import org.apereo.cas.configuration.model.support.multitenancy.MultitenancyProperties;
 import org.apereo.cas.configuration.model.support.saml.SamlCoreProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
-import org.apereo.cas.configuration.model.support.scim.ScimProperties;
+import org.apereo.cas.configuration.model.support.scim.ScimProvisioningProperties;
 import org.apereo.cas.configuration.model.support.slack.SlackMessagingProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProvidersProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
+import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
+import org.apereo.cas.configuration.support.ConfigurationPropertyBindingResult;
 import org.apereo.cas.configuration.support.RequiresModule;
-
-import com.fasterxml.jackson.annotation.JsonFilter;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.validation.annotation.Validated;
-
+import org.springframework.boot.context.properties.bind.BindContext;
+import org.springframework.boot.context.properties.bind.BindHandler;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
+import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.util.ReflectionUtils;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link CasConfigurationProperties}.
@@ -67,13 +87,11 @@ import java.time.Instant;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties("cas")
+@ConfigurationProperties(prefix = "cas")
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("CasConfigurationProperties")
 @RequiresModule(name = "cas-server-core-api", automated = true)
-@Validated
 public class CasConfigurationProperties implements Serializable {
     /**
      * Prefix used for all CAS-specific settings.
@@ -107,10 +125,16 @@ public class CasConfigurationProperties implements Serializable {
     private ConsentProperties consent = new ConsentProperties();
 
     /**
-     * Access Strategy and authorization-related functionality.
+     * Service access Strategy and authorization-related functionality.
      */
     @NestedConfigurationProperty
     private AccessStrategyProperties accessStrategy = new AccessStrategyProperties();
+
+    /**
+     * Heimdall authorization-related functionality.
+     */
+    @NestedConfigurationProperty
+    private HeimdallAuthorizationProperties heimdall = new HeimdallAuthorizationProperties();
 
     /**
      * ACME functionality.
@@ -122,7 +146,7 @@ public class CasConfigurationProperties implements Serializable {
      * SCIM functionality.
      */
     @NestedConfigurationProperty
-    private ScimProperties scim = new ScimProperties();
+    private ScimProvisioningProperties scim = new ScimProvisioningProperties();
 
     /**
      * General settings for authentication.
@@ -239,6 +263,12 @@ public class CasConfigurationProperties implements Serializable {
     private GoogleFirebaseCloudMessagingProperties googleFirebaseMessaging = new GoogleFirebaseCloudMessagingProperties();
 
     /**
+     * Apple Push Notification functionality.
+     */
+    @NestedConfigurationProperty
+    private APNMessagingProperties apnMessaging = new APNMessagingProperties();
+
+    /**
      * Slack Messaging functionality.
      */
     @NestedConfigurationProperty
@@ -255,6 +285,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SmsProvidersProperties smsProvider = new SmsProvidersProperties();
+
+    /**
+     * Email settings.
+     */
+    @NestedConfigurationProperty
+    private EmailProvidersProperties emailProvider = new EmailProvidersProperties();
 
     /**
      * AUP settings.
@@ -297,7 +333,7 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private DatabaseProperties jdbc = new DatabaseProperties();
-    
+
     /**
      * Integration settings for amazon sts.
      */
@@ -363,4 +399,65 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CasServerCoreProperties core = new CasServerCoreProperties();
+
+    /**
+     * Javers settings.
+     */
+    @NestedConfigurationProperty
+    private JaversProperties javers = new JaversProperties();
+
+    /**
+     * Multitenancy settings.
+     */
+    @NestedConfigurationProperty
+    private MultitenancyProperties multitenancy = new MultitenancyProperties();
+
+    /**
+     * Bind from map.
+     *
+     * @param payload the payload
+     * @return the optional
+     */
+    public static ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindFrom(final Map<String, Object> payload) {
+        return bindFrom(payload, CasConfigurationProperties.class);
+    }
+
+    /**
+     * Bind from map.
+     *
+     * @param <T>     the type parameter
+     * @param payload the payload
+     * @param clazz   the clazz
+     * @return the optional
+     */
+    public static <T> ConfigurationPropertiesBindingContext<T> bindFrom(final Map<String, Object> payload, final Class<T> clazz) {
+        val bindingResult = new LinkedHashMap<String, ConfigurationPropertyBindingResult>();
+        if (!payload.isEmpty()) {
+            val annotation = Objects.requireNonNull(clazz.getAnnotation(ConfigurationProperties.class));
+            val name = StringUtils.defaultIfBlank(annotation.prefix(), annotation.value());
+            val binder = new Binder(ConfigurationPropertySources.from(new MapPropertySource(clazz.getSimpleName(), payload)));
+            val bound = binder.bind(name, Bindable.of(clazz), new ConfigurationPropertyBindHandler(bindingResult));
+            if (bound.isBound()) {
+                return new ConfigurationPropertiesBindingContext<>(bound.get(), bindingResult);
+            }
+        }
+        return new ConfigurationPropertiesBindingContext(null, Map.of());
+    }
+
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    private static final class ConfigurationPropertyBindHandler implements BindHandler {
+        private final Map<String, ConfigurationPropertyBindingResult> bindingResults;
+        
+        @Override
+        public void onFinish(final ConfigurationPropertyName name, final Bindable<?> target,
+                             final BindContext context, final Object result) {
+            if (result != null) {
+                val field = ReflectionUtils.findField(context.getClass(), "dataObjectBindings");
+                Objects.requireNonNull(field).trySetAccessible();
+                val dataObjectBindings = Objects.requireNonNull((ArrayDeque) ReflectionUtils.getField(field, context));
+                val bindingResult = new ConfigurationPropertyBindingResult(name.toString(), result, new ArrayList<>(dataObjectBindings));
+                this.bindingResults.put(name.toString(), bindingResult);
+            }
+        }
+    }
 }

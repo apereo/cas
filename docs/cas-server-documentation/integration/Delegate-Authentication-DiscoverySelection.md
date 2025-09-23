@@ -13,21 +13,21 @@ using the following strategies.
 
 <div class="alert alert-info mt-3">:information_source: <strong>Remember</strong><p>
 If you are interested in supporting discovery of SAML2 identity providers using a discovery service,
-you may want to take a look at <a href="Delegate-Authentication-SAML.html">this guide</a>.
+you may want to take a look at <a href="Delegate-Authentication-SAML2.html">this guide</a>.
 </p></div>
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.core.discovery-selection" %}
 
 {% tabs deldiscoverysel %}
 
-{% tab deldiscoverysel Menu %}
+{% tab deldiscoverysel <i class="fa fa-bars px-1"></i> Menu %}
 
 This is the default and most common strategy that allows external identity providers to be listed on the login page,
 allowing the user to *order one from the menu* and select one from the list of options.
 
 {% endtab %}
 
-{% tab deldiscoverysel Dynamic %}
+{% tab deldiscoverysel <i class="fa fa-arrows-spin px-1"></i> Dynamic %}
 
 Rather than listing all available identity providers, this option allows CAS to auto-select the appropriate
 identity provider in a dynamic fashion using pre-defined rules and conditions and
@@ -60,7 +60,7 @@ The following parameters are available to the JSON resource:
 
 {% endtab %}
 
-{% tab deldiscoverysel Custom %}
+{% tab deldiscoverysel <i class="fa fa-code px-1"></i> Custom %}
 
 If you wish to create your own strategy to dynamically locate identity providers for
 delegated authentication discovery, you will need to design a component and register it with CAS as such:

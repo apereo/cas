@@ -43,8 +43,8 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
-        val authn = WebUtils.getAuthentication(requestContext);
-        if (authn == null) {
+        val authentication = WebUtils.getAuthentication(requestContext);
+        if (authentication == null) {
             LOGGER.error("Could not determine authentication from the request context");
             return error();
         }
@@ -52,12 +52,12 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val service = WebUtils.getService(requestContext);
 
-        if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
+        if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authentication)) {
             LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
             return success();
         }
 
-        val deviceBean = WebUtils.getMultifactorAuthenticationTrustRecord(requestContext, MultifactorAuthenticationTrustBean.class);
+        val deviceBean = MultifactorAuthenticationTrustUtils.getMultifactorAuthenticationTrustRecord(requestContext, MultifactorAuthenticationTrustBean.class);
         if (deviceBean.isEmpty()) {
             LOGGER.debug("No device information is provided. Trusted authentication record is not stored and tracked");
             return success();
@@ -69,18 +69,25 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
         }
 
         if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
-            storeTrustedAuthenticationRecord(requestContext, authn, deviceRecord);
+            val stored = storeTrustedAuthenticationRecord(requestContext, authentication, deviceRecord);
+            trackTrustedMultifactorAuthentication(requestContext, authentication);
+            return success(stored);
         }
+        trackTrustedMultifactorAuthentication(requestContext, authentication);
+        return success();
+    }
+
+    protected void trackTrustedMultifactorAuthentication(final RequestContext requestContext, final Authentication authn) {
         LOGGER.debug("Trusted authentication session exists for [{}]", authn.getPrincipal().getId());
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
             authn, trustedProperties.getCore().getAuthenticationContextAttribute());
         WebUtils.putAuthentication(authn, requestContext);
-        return success();
     }
 
-    protected void storeTrustedAuthenticationRecord(final RequestContext requestContext,
-                                                    final Authentication authentication,
-                                                    final MultifactorAuthenticationTrustBean deviceRecord) {
+    protected MultifactorAuthenticationTrustRecord storeTrustedAuthenticationRecord(
+        final RequestContext requestContext,
+        final Authentication authentication,
+        final MultifactorAuthenticationTrustBean deviceRecord) {
         if (storageService.isAvailable()) {
             val principal = authentication.getPrincipal().getId();
             LOGGER.debug("Attempting to store trusted authentication record for [{}] as device [{}]", principal, deviceRecord.getDeviceName());
@@ -98,8 +105,10 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
             }
 
             LOGGER.debug("Trusted authentication record will expire at [{}]", record.getExpirationDate());
-            storageService.save(record);
-            LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, record.getName());
+            val stored = storageService.save(record);
+            LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, stored.getName());
+            return stored;
         }
+        return null;
     }
 }

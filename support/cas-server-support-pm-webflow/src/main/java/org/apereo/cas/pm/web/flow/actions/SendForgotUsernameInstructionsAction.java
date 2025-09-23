@@ -9,6 +9,8 @@ import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
@@ -28,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.servlet.support.RequestContextUtils;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -51,33 +52,22 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
      */
     public static final String REQUEST_PARAMETER_EMAIL = "email";
 
-    /**
-     * The CAS configuration properties.
-     */
     protected final CasConfigurationProperties casProperties;
 
-    /**
-     * The communication manager for SMS/emails.
-     */
     protected final CommunicationsManager communicationsManager;
 
-    /**
-     * The password management service.
-     */
     protected final PasswordManagementService passwordManagementService;
 
-    /**
-     * The principal resolver to resolve the user
-     * and fetch attributes for follow-up ops, such as email message body building.
-     */
     protected final PrincipalResolver principalResolver;
+
+    protected final TenantExtractor tenantExtractor;
 
     @Audit(action = AuditableActions.REQUEST_FORGOT_USERNAME,
         principalResolverName = AuditPrincipalResolvers.REQUEST_FORGOT_USERNAME_PRINCIPAL_RESOLVER,
         actionResolverName = AuditActionResolvers.REQUEST_FORGOT_USERNAME_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         communicationsManager.validate();
         if (!communicationsManager.isMailSenderDefined()) {
             return getErrorEvent("email.failed", "Unable to send email as no mail sender is defined", requestContext);
@@ -92,15 +82,12 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
         if (!EmailValidator.getInstance().isValid(email)) {
             return getErrorEvent("email.invalid", "Provided email address is invalid", requestContext);
         }
-        return FunctionUtils.doUnchecked(() -> {
-            var query = PasswordManagementQuery.builder().email(email).build();
-            val username = passwordManagementService.findUsername(query);
-            if (StringUtils.isBlank(username)) {
-                return getErrorEvent("username.missing", "No username could be located for the given email address", requestContext);
-            }
-            query = PasswordManagementQuery.builder().username(username).email(email).build();
-            return locateUserAndProcess(requestContext, query);
-        });
+        val query = PasswordManagementQuery.builder().email(email).build();
+        val username = passwordManagementService.findUsername(query);
+        if (StringUtils.isBlank(username)) {
+            return getErrorEvent("username.missing", "No username could be located for the given email address", requestContext);
+        }
+        return locateUserAndProcess(requestContext, query.withUsername(username));
     }
 
     protected Event locateUserAndProcess(final RequestContext requestContext,
@@ -118,7 +105,7 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
         val credential = new BasicIdentifiableCredential();
         credential.setId(query.getUsername());
         val person = principalResolver.resolve(credential);
-        FunctionUtils.doIf(person != null && !person.getClass().equals(NullPrincipal.class),
+        FunctionUtils.doIf(person != null && !(person instanceof NullPrincipal),
             principal -> {
                 parameters.put("principal", principal);
                 requestContext.getFlashScope().put(Principal.class.getName(), person);
@@ -133,15 +120,19 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
             .parameters(parameters)
             .build()
             .get();
-        val emailRequest = EmailMessageRequest.builder().emailProperties(reset)
+        val emailRequest = EmailMessageRequest.builder()
+            .emailProperties(reset)
             .locale(locale.orElseGet(Locale::getDefault))
-            .to(List.of(query.getEmail())).body(body).build();
+            .to(List.of(query.getEmail()))
+            .tenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(StringUtils.EMPTY))
+            .body(body)
+            .build();
         return communicationsManager.email(emailRequest);
     }
 
     protected Event getErrorEvent(final String code, final String defaultMessage, final RequestContext requestContext) {
         WebUtils.addErrorMessageToContext(requestContext, "screen.pm.forgotusername." + code, defaultMessage);
         LOGGER.error(defaultMessage);
-        return new EventFactorySupport().event(this, CasWebflowConstants.VIEW_ID_ERROR);
+        return eventFactory.event(this, CasWebflowConstants.VIEW_ID_ERROR);
     }
 }

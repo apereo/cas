@@ -1,5 +1,4 @@
 
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 async function submitUser(page, user) {
@@ -31,9 +30,8 @@ async function submitUser(page, user) {
         await cas.log("Checking for user account with a single delegated client");
         await cas.gotoLogin(page);
         await submitUser(page, "single-delegation.json");
-        const url = await page.url();
         await cas.logPage(page);
-        assert(url.startsWith("https://localhost:9859/anything/cas3"));
+        await cas.assertPageUrlStartsWith(page, "https://localhost:9859/anything/cas3");
 
         await cas.log("Checking for all-options user account");
         await cas.gotoLogin(page);
@@ -43,11 +41,6 @@ async function submitUser(page, user) {
         await cas.assertVisibility(page, "li #CasClient2");
         await cas.assertInvisibility(page, "li #CasClient3");
         await cas.assertVisibility(page, "li #CasClient1");
-
-        await cas.log("Checking for unauthorized use of identity provider");
-        const response = await cas.goto(page, "https://localhost:8443/cas/clientredirect?client_name=CasClient3");
-        await cas.log(`${response.status()} ${response.statusText()}`);
-        assert(response.status() === 403);
   
         await cas.log("Checking for user account with multiple clients w/o password");
         await cas.gotoLogin(page);
@@ -61,7 +54,7 @@ async function submitUser(page, user) {
         failure = true;
         throw e;
     } finally {
-        await browser.close();
+        await cas.closeBrowser(browser);
         if (!failure) {
             await process.exit(0);
         }

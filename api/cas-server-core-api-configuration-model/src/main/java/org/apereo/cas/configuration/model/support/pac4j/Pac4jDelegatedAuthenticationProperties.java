@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProp
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPDiscoveryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -29,7 +28,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("Pac4jDelegatedAuthenticationProperties")
 public class Pac4jDelegatedAuthenticationProperties implements Serializable {
 
     @Serial
@@ -71,22 +69,22 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     /**
      * Settings that deal with having SAML2 IdPs as an external delegated-to authentication provider.
      */
-    private List<Pac4jSamlClientProperties> saml = new ArrayList<>(0);
+    private List<Pac4jSamlClientProperties> saml = new ArrayList<>();
 
     /**
      * Settings that deal with having OpenID Connect Providers as an external delegated-to authentication provider.
      */
-    private List<Pac4jOidcClientProperties> oidc = new ArrayList<>(0);
+    private List<Pac4jOidcClientProperties> oidc = new ArrayList<>();
 
     /**
      * Settings that deal with having OAuth2-capable providers as an external delegated-to authentication provider.
      */
-    private List<Pac4jOAuth20ClientProperties> oauth2 = new ArrayList<>(0);
+    private List<Pac4jOAuth20ClientProperties> oauth2 = new ArrayList<>();
 
     /**
      * Settings that deal with having CAS Servers as an external delegated-to authentication provider.
      */
-    private List<Pac4jCasClientProperties> cas = new ArrayList<>(0);
+    private List<Pac4jCasClientProperties> cas = new ArrayList<>();
 
     /**
      * Settings that deal with having LinkedIn as an external delegated-to authentication provider.
@@ -101,7 +99,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     private Pac4jDelegatedAuthenticationDropboxProperties dropbox = new Pac4jDelegatedAuthenticationDropboxProperties();
 
     /**
-     * Settings that deal with having Github as an external delegated-to authentication provider.
+     * Settings that deal with having GitHub as an external delegated-to authentication provider.
      */
     @NestedConfigurationProperty
     private Pac4jDelegatedAuthenticationGitHubProperties github = new Pac4jDelegatedAuthenticationGitHubProperties();
@@ -167,6 +165,13 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private Pac4jDelegatedAuthenticationRestfulProperties rest = new Pac4jDelegatedAuthenticationRestfulProperties();
+
+    /**
+     * Settings that allow CAS to fetch and build clients
+     * over a SQL database.
+     */
+    @NestedConfigurationProperty
+    private Pac4jDelegatedAuthenticationJdbcProperties jdbc = new Pac4jDelegatedAuthenticationJdbcProperties();
 
     /**
      * Cookie settings to be used with delegated authentication

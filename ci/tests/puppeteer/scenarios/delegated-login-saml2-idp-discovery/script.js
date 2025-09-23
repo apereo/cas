@@ -11,15 +11,15 @@ const path = require("path");
     await cas.sleep(1000);
     await cas.pressEnter(page);
     await cas.sleep(4000);
-    await cas.log(`Page url: ${ await page.url()}`);
+    await cas.logPage(page);
 
     await cas.loginWith(page, "user1", "password");
     await cas.sleep(2000);
 
-    await cas.log(`Page url: ${ await page.url()}`);
+    await cas.logPage(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.assertCookie(page);
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

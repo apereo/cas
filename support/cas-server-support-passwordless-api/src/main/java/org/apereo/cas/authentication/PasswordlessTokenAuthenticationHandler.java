@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
-import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,10 +25,10 @@ import java.util.ArrayList;
 public class PasswordlessTokenAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     private final PasswordlessTokenRepository passwordlessTokenRepository;
 
-    public PasswordlessTokenAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public PasswordlessTokenAuthenticationHandler(final String name,
                                                   final PrincipalFactory principalFactory, final Integer order,
                                                   final PasswordlessTokenRepository passwordlessTokenRepository) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.passwordlessTokenRepository = passwordlessTokenRepository;
     }
 
@@ -45,7 +44,7 @@ public class PasswordlessTokenAuthenticationHandler extends AbstractPreAndPostPr
                 .allMatch(tk -> tk.equalsIgnoreCase(otc.getPassword()));
             if (passed) {
                 val principal = principalFactory.createPrincipal(otc.getId());
-                return createHandlerResult(credential, principal, new ArrayList<>(0));
+                return createHandlerResult(credential, principal, new ArrayList<>());
             }
         }
         throw new FailedLoginException("Passwordless authentication has failed");

@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.support.dynamodb.AuditDynamoDbProperti
 import org.apereo.cas.configuration.model.support.redis.AuditRedisProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +22,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("AuditProperties")
 public class AuditProperties implements Serializable {
 
     @Serial
@@ -77,4 +75,10 @@ public class AuditProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AuditGroovyProperties groovy = new AuditGroovyProperties();
+
+    /**
+     * Family of sub-properties pertaining to Amazon Firehose/Kinesis audit destinations.
+     */
+    @NestedConfigurationProperty
+    private AuditAmazonFirehoseProperties amazonFirehose = new AuditAmazonFirehoseProperties();
 }

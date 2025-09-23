@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <div class="mdc-tab-bar" role="tablist" id="dashboardTabBar">
+        <div class="mdc-tab-scroller d-none">
+            <div class="mdc-tab-scroller__scroll-area">
+                <div class="mdc-tab-scroller__scroll-content">
+                    <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true">
+                        <span class="mdc-tab__content">
+                            <span class="mdc-tab__text-label"><i class="mdc-tab__icon mdi mdi-apps"
+                                                                 aria-hidden="true"></i>Applications</span>
+                        </span>
+                        <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                            <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                        </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                    <button class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label"><i class="mdc-tab__icon mdi mdi-laptop"
+                                                                     aria-hidden="true"></i>System</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                    <button class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label"><i class="mdc-tab__icon mdi mdi-database"
+                                                                     aria-hidden="true"></i>Tickets</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                    <button class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label"><i class="mdc-tab__icon mdi-tire " aria-hidden="true"></i>Tasks</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                    <button class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label"><i class="mdc-tab__icon mdi mdi-shield-check"
+                                                                     aria-hidden="true"></i>Access Strategy</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                    <button class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label"><i class="mdc-tab__icon mdi mdi-text"
+                                                                     aria-hidden="true"></i>Logging</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                     <button class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label"><i class="mdc-tab__icon mdi mdi-account-multiple"
+                                                                     aria-hidden="true"></i>SSO Sessions</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                    <button class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label">
+                                    <i class="mdc-tab__icon mdi mdi-wrench"
+                                       aria-hidden="true"></i>Configuration</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                    <button class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label">
+                                    <i class="mdc-tab__icon mdi mdi-card-account-details"
+                                       aria-hidden="true"></i>Person Directory</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                    <button class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label">
+                                    <i class="mdc-tab__icon mdi mdi-account-check"
+                                       aria-hidden="true"></i>Authentication</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                     <button class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label">
+                                    <i class="mdc-tab__icon mdi mdi-checkerboard"
+                                       aria-hidden="true"></i>Consent</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                    <button class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label">
+                                    <i class="mdc-tab__icon mdi mdi-protocol"
+                                       aria-hidden="true"></i>Protocols</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                    <button class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label">
+                                    <i class="mdc-tab__icon mdi mdi-account-lock"
+                                       aria-hidden="true"></i>Throttled Authentications</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                    <button class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label">
+                                    <i class="mdc-tab__icon mdi mdi-two-factor-authentication"
+                                       aria-hidden="true"></i>Multifactor Authentication</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                    <button class="mdc-tab" role="tab" aria-selected="true">
+                          <span class="mdc-tab__content">
+                                <span class="mdc-tab__text-label">
+                                    <i class="mdc-tab__icon mdi mdi-home-circle"
+                                       aria-hidden="true"></i>Multitenancy & Tenants</span>
+                          </span>
+                          <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                          </span>
+                        <span class="mdc-tab__ripple"></span>
+                        <div class="mdc-tab__focus-ring"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</span>
+</body>
+</html>

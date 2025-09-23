@@ -5,29 +5,28 @@ import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
+import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
-
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.List;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -43,6 +42,7 @@ import static org.mockito.Mockito.*;
 })
 @Getter
 @Tag("MFAProvider")
+@ExtendWith(CasTestExtension.class)
 class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
 
     @Autowired
@@ -50,22 +50,30 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     private OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator;
 
     @Autowired
-    @Qualifier("googleAuthenticatorAccountRegistry")
+    @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
 
     @Autowired
-    @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
+    @Qualifier(OneTimeTokenRepository.BEAN_NAME)
     private OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository;
 
     @Test
-    void verifyTokenAuthz() throws Throwable {
+    void verifyTokenAuthz() {
         val acct = getOneTimeTokenAccount();
         assertTrue(validator.isTokenAuthorizedFor(123456, acct));
         assertFalse(validator.isTokenAuthorizedFor(987654, acct));
     }
 
     @Test
-    void verifyStore() throws Throwable {
+    void verifyTokenAuthzWithScratchCode() {
+        val acct = getOneTimeTokenAccount(List.of(223856));
+        googleAuthenticatorAccountRegistry.save(acct);
+        assertTrue(validator.isTokenAuthorizedFor(223856, acct));
+        assertTrue(googleAuthenticatorAccountRegistry.get(acct.getId()).getScratchCodes().isEmpty());
+    }
+
+    @Test
+    void verifyStore() {
         val token = new GoogleAuthenticatorToken(632435, "casuser");
         assertDoesNotThrow(() -> validator.store(token));
     }
@@ -90,7 +98,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @Test
-    void verifyTokenReuse() throws Throwable {
+    void verifyTokenReuse() {
         val acct = getOneTimeTokenAccount();
         googleAuthenticatorAccountRegistry.save(acct);
 
@@ -102,7 +110,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @Test
-    void verifyBadToken() throws Throwable {
+    void verifyBadToken() {
         assertThrows(PreventedException.class,
             () -> validator.validate(CoreAuthenticationTestUtils.getAuthentication("casuser"),
                 new GoogleAuthenticatorTokenCredential("abcdefg", 123456L)));
@@ -112,7 +120,7 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @Test
-    void verifyMultipleAccountsWithNoId() throws Throwable {
+    void verifyMultipleAccountsWithNoId() {
         for (var i = 0; i < 2; i++) {
             val acct = GoogleAuthenticatorAccount.builder()
                 .username("casuser")
@@ -146,8 +154,8 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     @TestConfiguration(value = "GoogleAuthenticatorOneTimeTokenCredentialValidatorTestConfiguration", proxyBeanMethods = false)
     static class GoogleAuthenticatorOneTimeTokenCredentialValidatorTestConfiguration {
         @Bean
-        public IGoogleAuthenticator googleAuthenticatorInstance() {
-            val auth = mock(IGoogleAuthenticator.class);
+        public CasGoogleAuthenticator googleAuthenticatorInstance() {
+            val auth = mock(CasGoogleAuthenticator.class);
             when(auth.authorize(anyString(), ArgumentMatchers.eq(123456))).thenReturn(Boolean.TRUE);
             when(auth.authorize(anyString(), ArgumentMatchers.eq(987654))).thenReturn(Boolean.FALSE);
             when(auth.authorize(anyString(), ArgumentMatchers.eq(112233))).thenThrow(new IllegalArgumentException());

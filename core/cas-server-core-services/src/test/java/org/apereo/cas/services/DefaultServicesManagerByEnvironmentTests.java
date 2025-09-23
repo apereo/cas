@@ -1,11 +1,13 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.config.BaseAutoConfigurationTests;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,11 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("RegisteredService")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
 @ActiveProfiles({"prod1", "qa1"})
 class DefaultServicesManagerByEnvironmentTests extends AbstractServicesManagerTests {
     @Test
-    void verifyServiceByEnvironment() throws Throwable {
+    void verifyServiceByEnvironment() {
         val registeredService = new CasRegisteredService();
         registeredService.setId(RandomUtils.nextLong());
         registeredService.setName(getClass().getSimpleName());

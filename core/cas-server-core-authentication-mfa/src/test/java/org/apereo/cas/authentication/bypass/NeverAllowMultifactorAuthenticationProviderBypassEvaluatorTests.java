@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 class NeverAllowMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 

@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 @Tag("SAML2")
 class SamlMetadataResolverAuditResourceResolverTests {
     @Test
-    void verifyActionUnknown() throws Throwable {
+    void verifyActionUnknown() {
         val resourceRes = new SamlMetadataResolverAuditResourceResolver();
         val resolver = mock(MetadataResolver.class);
         when(resolver.getId()).thenReturn(UUID.randomUUID().toString());

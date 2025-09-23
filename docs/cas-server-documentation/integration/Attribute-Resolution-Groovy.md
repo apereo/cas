@@ -35,3 +35,5 @@ The following parameters are passed to the script:
 | `logger`     | The object responsible for issuing log messages such as `logger.info(...)`.         |
 | `properties` | CAS configuration properties.                                                       |
 | `appContext` | The current and active application context under the type `ApplicationContext`.     |
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

@@ -6,14 +6,11 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
-
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -30,13 +27,13 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
     public static final String MFA_YUBIKEY_EVENT_ID = "mfa-yubikey";
 
     public YubiKeyMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                               final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                final FlowDefinitionRegistry flowDefinitionRegistry,
+                                               final FlowDefinitionRegistry mfaFlowDefinitionRegistry,
                                                final ConfigurableApplicationContext applicationContext,
                                                final CasConfigurationProperties casProperties,
                                                final List<CasMultifactorWebflowCustomizer> mfaFlowCustomizers) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext,
-            casProperties, Optional.of(flowDefinitionRegistry), mfaFlowCustomizers);
+        super(flowBuilderServices, flowDefinitionRegistry, applicationContext,
+            casProperties, Optional.of(mfaFlowDefinitionRegistry), mfaFlowCustomizers);
     }
 
     @Override
@@ -57,7 +54,7 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
                     createEvaluateAction(CasWebflowConstants.ACTION_ID_YUBIKEY_ACCOUNT_REGISTRATION));
                 createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION);
                 createTransitionForState(acctRegCheckState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
-                val saveState = createActionState(flow, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION,
+                val saveState = createActionState(flow, CasWebflowConstants.STATE_ID_YUBIKEY_SAVE_REGISTRATION,
                     createEvaluateAction(CasWebflowConstants.ACTION_ID_YUBIKEY_SAVE_ACCOUNT_REGISTRATION));
                 createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
                 createTransitionForState(saveState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
@@ -68,7 +65,7 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
                 val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
                 val viewRegState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION, "yubikey/casYubiKeyRegistrationView");
                 viewRegState.getEntryActionList().addAll(setPrincipalAction);
-                createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_SAVE_REGISTRATION);
+                createTransitionForState(viewRegState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_YUBIKEY_SAVE_REGISTRATION);
                 val loginProperties = CollectionUtils.wrapList("token");
                 val loginBinder = createStateBinderConfiguration(loginProperties);
                 val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, "yubikey/casYubiKeyLoginView", loginBinder);
@@ -76,10 +73,10 @@ public class YubiKeyMultifactorWebflowConfigurer extends AbstractCasMultifactorW
                 viewLoginFormState.getEntryActionList().addAll(setPrincipalAction);
                 if (yubiProps.isMultipleDeviceRegistrationEnabled()) {
                     createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_REGISTER, CasWebflowConstants.STATE_ID_VIEW_REGISTRATION,
-                        Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
+                        createTransitionAttributes(false, false));
                 }
                 createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
-                    CasWebflowConstants.STATE_ID_REAL_SUBMIT, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
+                    CasWebflowConstants.STATE_ID_REAL_SUBMIT, createTransitionAttributes(true, true));
             });
 
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_YUBIKEY_EVENT_ID, yubiProps.getId());

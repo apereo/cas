@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * @since 6.4.0
  */
 @Slf4j
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "json")
 @Configuration(value = "CasPersonDirectoryJsonConfiguration", proxyBeanMethods = false)
 class CasPersonDirectoryJsonConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.json[0].location").exists();
@@ -59,18 +59,17 @@ class CasPersonDirectoryJsonConfiguration {
                             val r = json.getLocation();
                             val dao = new JsonPersonAttributeDao(r);
                             if (ResourceUtils.isFile(r)) {
-                                val watcherService = new FileWatcherService(r.getFile(), Unchecked.consumer(file -> {
+                                val watcherService = new FileWatcherService(r.getFile(), file -> {
                                     Thread.sleep(100);
                                     dao.init();
-                                }));
+                                });
                                 watcherService.start(getClass().getSimpleName());
                                 dao.setResourceWatcherService(watcherService);
                             }
                             dao.setOrder(json.getOrder());
                             FunctionUtils.doIfNotNull(json.getId(), id -> dao.setId(id));
                             dao.setEnabled(json.getState() != AttributeRepositoryStates.DISABLED);
-                            dao.putTag(PersonDirectoryAttributeRepositoryPlanConfigurer.class.getSimpleName(),
-                                json.getState() == AttributeRepositoryStates.ACTIVE);
+                            dao.putTag("state", json.getState());
                             dao.init();
                             LOGGER.debug("Configured JSON attribute sources from [{}]", r);
                             list.add(dao);

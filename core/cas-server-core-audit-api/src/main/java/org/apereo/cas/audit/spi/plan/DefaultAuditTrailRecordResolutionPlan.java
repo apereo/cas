@@ -45,14 +45,4 @@ public class DefaultAuditTrailRecordResolutionPlan implements AuditTrailRecordRe
             this.auditActionResolvers.putIfAbsent(key, resolver);
         }
     }
-
-    @Override
-    public void registerAuditActionResolvers(final Map<String, AuditActionResolver> resolvers) {
-        this.auditActionResolvers.putAll(resolvers);
-    }
-
-    @Override
-    public void registerAuditResourceResolvers(final Map<String, AuditResourceResolver> resolvers) {
-        this.auditResourceResolvers.putAll(resolvers);
-    }
 }

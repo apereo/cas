@@ -17,7 +17,7 @@
         <li class="property-name text-left" style="list-style: square">
             <code class="text-wrap">{{ include.name | replace: "[]", "[0]"}}={{ include.defaultValue }}</code>
         </li>
-        <div class="text-wrap">
+        <div class="property-description text-wrap">
             <p>
                 {{ include.description
                 | replace: "<p>", "<p/>"
@@ -80,19 +80,19 @@
                                     </div>
                                     <ul class="nav nav-tabs">
                                         <li class="nav-item">
-                                            <a class="nav-link active" data-bs-toggle='tab' href="#simpleproperty{{ singlePropertyKey }}">Java Property</a>
+                                            <a class="nav-link active" data-bs-toggle='tab' href="#simpleproperty{{ singlePropertyKey }}"><i class="fa-brands fa-java px-1"></i>Java Property</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" data-bs-toggle='tab' href="#yamlproperty{{ singlePropertyKey }}">YAML Property</a>
+                                            <a class="nav-link" data-bs-toggle='tab' href="#yamlproperty{{ singlePropertyKey }}"><i class="fa fa-file-code px-1"></i>YAML Property</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" data-bs-toggle='tab' href="#systemproperty{{ singlePropertyKey }}">System Property</a>
+                                            <a class="nav-link" data-bs-toggle='tab' href="#systemproperty{{ singlePropertyKey }}"><i class="fa fa-laptop px-1"></i>System Property</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" data-bs-toggle='tab' href="#envvar{{ singlePropertyKey }}">Environment Variable</a>
+                                            <a class="nav-link" data-bs-toggle='tab' href="#envvar{{ singlePropertyKey }}"><i class="fa fa-laptop-code px-1"></i>Environment Variable</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" data-bs-toggle='tab' href="#cmdarg{{ singlePropertyKey }}">Commandline Argument</a>
+                                            <a class="nav-link" data-bs-toggle='tab' href="#cmdarg{{ singlePropertyKey }}"><i class="fa fa-terminal px-1"></i>Command-line Argument</a>
                                         </li>
                                     </ul>
                                     <div class='tab-content'>
@@ -148,9 +148,7 @@
 {% endcapture -%}
                                             {{ yamlprop | markdownify | replace: "\n", "<br>" }}
                                             <script>
-                                                setTimeout(() => {
-                                                    $('#yamlproperty{{singlePropertyKey}} td.gl').empty();
-                                                }, 250);
+                                                setTimeout(() => $("#yamlproperty{{singlePropertyKey}} td.gl").empty(), 250);
                                             </script>
 
                                             <p/>

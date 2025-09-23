@@ -27,7 +27,7 @@ public class ChainingAccountRegistrationProvisioner implements AccountRegistrati
         actionResolverName = AuditActionResolvers.ACCOUNT_REGISTRATION_PROVISIONING_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.ACCOUNT_REGISTRATION_PROVISIONING_RESOURCE_RESOLVER)
     @Override
-    public AccountRegistrationResponse provision(final AccountRegistrationRequest request) throws Exception {
+    public AccountRegistrationResponse provision(final AccountRegistrationRequest request) {
         val aggregate = new AccountRegistrationResponse();
         provisioners.forEach(Unchecked.consumer(p -> aggregate.collect(p.provision(request))));
         return aggregate;

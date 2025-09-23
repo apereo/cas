@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -55,7 +56,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * The services associated to this ticket.
      */
-    private Map<String, Service> services = new HashMap<>(0);
+    private Map<String, Service> services = new ConcurrentHashMap<>(0);
 
     /**
      * The {@link TicketGrantingTicket} this is associated with.
@@ -65,12 +66,12 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * The PGTs associated to this ticket.
      */
-    private Map<String, Service> proxyGrantingTickets = new HashMap<>(0);
+    private Map<String, Service> proxyGrantingTickets = new HashMap<>();
 
     /**
      * The ticket ids which are tied to this ticket.
      */
-    private Set<String> descendantTickets = new HashSet<>(0);
+    private Set<String> descendantTickets = new HashSet<>();
 
     @JsonCreator
     public TicketGrantingTicketImpl(
@@ -99,6 +100,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         final boolean credentialProvided,
         final TicketTrackingPolicy trackingPolicy) {
         val serviceTicket = new ServiceTicketImpl(id, this, service, credentialProvided, expirationPolicy);
+        serviceTicket.setTenantId(service.getTenant());
         trackingPolicy.trackTicket(this, serviceTicket);
         return serviceTicket;
     }

@@ -1,0 +1,21 @@
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources",
+  "resources": [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 25453625,
+        "pattern": "/api/scopes",
+        "method": "POST",
+        "policies": [ "java.util.ArrayList", [
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredScopesAuthorizationPolicy",
+            "scopes" : [ "java.util.HashSet", [ "scope2" ] ]
+          }
+        ]]
+      }
+    ]
+  ],
+  "namespace": "API_SCOPES"
+}

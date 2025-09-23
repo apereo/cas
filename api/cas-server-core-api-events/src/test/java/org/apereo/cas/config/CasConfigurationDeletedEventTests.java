@@ -3,9 +3,7 @@ package org.apereo.cas.config;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-
-import java.io.File;
-
+import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,7 +19,7 @@ class CasConfigurationDeletedEventTests {
         assertDoesNotThrow(new Executable() {
             @Override
             public void execute() throws Throwable {
-                new CasConfigurationDeletedEvent(this, File.createTempFile("temp", ".file").toPath(), null);
+                new CasConfigurationDeletedEvent(this, Files.createTempFile("temp", ".file").toFile().toPath(), null);
             }
         });
     }

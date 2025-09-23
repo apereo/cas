@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.credential;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
@@ -11,12 +10,10 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.validation.ValidationContext;
-
 import java.io.Serial;
+import java.util.Objects;
 
 /**
  * Base class for CAS credentials that are safe for long-term storage.
@@ -36,6 +33,7 @@ public abstract class AbstractCredential implements Credential {
 
     /**
      * Gets credential metadata. Will initialize if metadata is null.
+     *
      * @return current credential metadata
      */
     @Override
@@ -53,26 +51,18 @@ public abstract class AbstractCredential implements Credential {
 
     @Override
     public int hashCode() {
-        val builder = new HashCodeBuilder(11, 41);
-        builder.append(getClass().getName());
-        builder.append(getId());
-        return builder.toHashCode();
+        return Objects.hash(getClass().getName(), getId());
     }
 
     @Override
     public boolean equals(final Object other) {
-        if (other == null) {
-            return false;
-        }
-        if (!(other instanceof Credential)) {
-            return false;
-        }
-        if (other == this) {
+        if (this == other) {
             return true;
         }
-        val builder = new EqualsBuilder();
-        builder.append(getId(), ((Credential) other).getId());
-        return builder.isEquals();
+        if (other instanceof Credential credential) {
+            return Objects.equals(getId(), credential.getId());
+        }
+        return false;
     }
 
     /**

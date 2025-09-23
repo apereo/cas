@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     await executeRequest(page, "https://localhost:9859/anything/4", "groupMembership4", "COURSE-H101");
     await executeRequest(page, "https://localhost:9859/anything/5", "COURSE", "CHEMISTRY-101");
     await executeRequest(page, "https://localhost:9859/anything/6", "COURSE", "SOFTENG-101");
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function executeRequest(page, service, attribute, attributeValue) {
@@ -22,9 +22,7 @@ async function executeRequest(page, service, attribute, attributeValue) {
     await cas.sleep(2000);
     await cas.logPage(page);
     const ticket = await cas.assertTicketParameter(page);
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-    await cas.log(body);
-    const json = JSON.parse(body);
+    const json = await cas.validateTicket(service, ticket);
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "casuser");
     assert(authenticationSuccess.attributes.accountId === undefined);
@@ -33,7 +31,7 @@ async function executeRequest(page, service, attribute, attributeValue) {
     assert(authenticationSuccess.attributes.isFromNewLogin === undefined);
     assert(authenticationSuccess.attributes.longTermAuthenticationRequestTokenUsed === undefined);
     assert(authenticationSuccess.attributes[attribute][0] === attributeValue);
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await cas.sleep(1000);
     await cas.log("============================");
     

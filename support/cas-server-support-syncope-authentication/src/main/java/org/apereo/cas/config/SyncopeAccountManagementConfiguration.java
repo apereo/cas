@@ -34,7 +34,7 @@ class SyncopeAccountManagementConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AccountRegistrationProvisionerConfigurer syncopeAccountRegistrationProvisionerConfigurer(
         final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(AccountRegistrationProvisionerConfigurer.class)
             .when(BeanCondition.on("cas.account-registration.provisioning.syncope.url")
                 .isUrl().given(applicationContext.getEnvironment()))

@@ -4,6 +4,8 @@
     "docker": "true"
   },
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.service-registry.core.init-from-json=true",
     "--cas.sso.create-sso-cookie-on-renew-authn=false",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"

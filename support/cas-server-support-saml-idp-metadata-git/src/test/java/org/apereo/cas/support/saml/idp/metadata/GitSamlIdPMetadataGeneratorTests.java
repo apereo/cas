@@ -63,7 +63,7 @@ class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
     }
 
     @AfterAll
-    public static void cleanUp() throws Exception {
+    public static void cleanUp() {
         val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
         if (gitDir.exists()) {
             FunctionUtils.doAndHandle(
@@ -75,7 +75,7 @@ class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
     void verifyOperation() throws Throwable {
         this.samlIdPMetadataGenerator.generate(Optional.empty());
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
-        assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
+        assertNotNull(samlIdPMetadataLocator.resolveEncryptionCertificate(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()));
@@ -90,7 +90,7 @@ class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
 
         samlIdPMetadataGenerator.generate(registeredService);
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(registeredService));
-        assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(registeredService));
+        assertNotNull(samlIdPMetadataLocator.resolveEncryptionCertificate(registeredService));
         assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(registeredService));
         assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(registeredService));
         assertNotNull(samlIdPMetadataLocator.resolveSigningKey(registeredService));

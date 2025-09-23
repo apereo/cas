@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticat
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -91,7 +92,7 @@ class MultifactorAuthenticationBypassActionTests {
             servicesManager.save(service);
             WebUtils.putRegisteredService(context, service);
             WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
-            WebUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
+            MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
 
             val transition = mock(Transition.class);
             when(transition.getId()).thenReturn(CasWebflowConstants.TRANSITION_ID_BYPASS);
@@ -124,7 +125,7 @@ class MultifactorAuthenticationBypassActionTests {
             servicesManager.save(service);
             WebUtils.putRegisteredService(context, service);
             WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
-            WebUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
+            MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
 
             val transition = mock(Transition.class);
             when(transition.getId()).thenReturn(CasWebflowConstants.TRANSITION_ID_BYPASS);
@@ -162,7 +163,7 @@ class MultifactorAuthenticationBypassActionTests {
             WebUtils.putRegisteredService(context, service);
             WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
 
-            WebUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
+            MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
             val transition = mock(Transition.class);
             when(transition.getId()).thenReturn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
             context.setCurrentTransition(transition);

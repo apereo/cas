@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.TransportConfigCallback;
+import org.eclipse.jgit.api.errors.RefNotFoundException;
 import org.eclipse.jgit.transport.ChainingCredentialsProvider;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.HttpTransport;
@@ -45,7 +46,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GitRepositoryBuilder {
     @Builder.Default
-    private final List<CredentialsProvider> credentialsProviders = new ArrayList<>(0);
+    private final List<CredentialsProvider> credentialsProviders = new ArrayList<>();
 
     private final String repositoryUri;
 
@@ -72,6 +73,31 @@ public class GitRepositoryBuilder {
     private final boolean clearExistingIdentities;
 
     private final BaseGitProperties.HttpClientTypes httpClientType;
+
+    private final class CasJschConfigSessionFactory extends JschConfigSessionFactory {
+        @Override
+        protected void configure(final OpenSshConfig.Host host, final Session session) {
+            if (StringUtils.hasText(sshSessionPassword)) {
+                session.setPassword(sshSessionPassword);
+            }
+            if (!strictHostKeyChecking) {
+                session.setConfig("StrictHostKeyChecking", "no");
+            }
+        }
+
+        @Override
+        protected JSch createDefaultJSch(final FS fs) throws JSchException {
+            val defaultJSch = super.createDefaultJSch(fs);
+            if (clearExistingIdentities) {
+                defaultJSch.removeAllIdentity();
+            }
+
+            if (StringUtils.hasText(privateKeyPath)) {
+                defaultJSch.addIdentity(privateKeyPath, privateKeyPassphrase);
+            }
+            return defaultJSch;
+        }
+    }
 
     private static String getBranchPath(final String branchName) {
         return "refs/heads/" + branchName;
@@ -142,30 +168,7 @@ public class GitRepositoryBuilder {
     protected TransportConfigCallback buildTransportConfigCallback() {
         return transport -> {
             if (transport instanceof final SshTransport sshTransport) {
-                val sshSessionFactory = new JschConfigSessionFactory() {
-                    @Override
-                    protected void configure(final OpenSshConfig.Host host, final Session session) {
-                        if (StringUtils.hasText(sshSessionPassword)) {
-                            session.setPassword(sshSessionPassword);
-                        }
-                        if (!strictHostKeyChecking) {
-                            session.setConfig("StrictHostKeyChecking", "no");
-                        }
-                    }
-
-                    @Override
-                    protected JSch createDefaultJSch(final FS fs) throws JSchException {
-                        val defaultJSch = super.createDefaultJSch(fs);
-                        if (clearExistingIdentities) {
-                            defaultJSch.removeAllIdentity();
-                        }
-
-                        if (StringUtils.hasText(privateKeyPath)) {
-                            defaultJSch.addIdentity(privateKeyPath, privateKeyPassphrase);
-                        }
-                        return defaultJSch;
-                    }
-                };
+                val sshSessionFactory = new CasJschConfigSessionFactory();
                 sshTransport.setSshSessionFactory(sshSessionFactory);
             }
             if (transport instanceof HttpTransport) {
@@ -206,9 +209,13 @@ public class GitRepositoryBuilder {
     private GitRepository getExistingGitRepository(final TransportConfigCallback transportCallback) throws Exception {
         val git = Git.open(repositoryDirectory.getFile());
         LOGGER.debug("Checking out the branch [{}] at [{}]", activeBranch, repositoryDirectory);
-        git.checkout()
-            .setName(activeBranch)
-            .call();
+        try {
+            git.checkout()
+                .setName(activeBranch)
+                .call();
+        } catch (final RefNotFoundException e) {
+            LOGGER.error("Unable to use the [{}] branch. Keeping the current branch. Error: [{}]", activeBranch, e.getMessage());
+        }
         return new DefaultGitRepository(git, credentialsProviders, transportCallback,
             timeoutInSeconds, signCommits, rebase);
     }

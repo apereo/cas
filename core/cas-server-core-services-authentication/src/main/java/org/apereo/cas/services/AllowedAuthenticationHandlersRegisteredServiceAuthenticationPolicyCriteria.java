@@ -29,9 +29,11 @@ public class AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyC
     @Serial
     private static final long serialVersionUID = -7298017804877275864L;
 
+    private boolean tryAll;
+    
     @Override
     public AuthenticationPolicy toAuthenticationPolicy(final RegisteredService registeredService) {
         val handlers = registeredService.getAuthenticationPolicy().getRequiredAuthenticationHandlers();
-        return new RequiredAuthenticationHandlerAuthenticationPolicy(handlers, false);
+        return new RequiredAuthenticationHandlerAuthenticationPolicy(handlers, this.tryAll);
     }
 }

@@ -19,11 +19,11 @@ import java.util.List;
 @Slf4j
 @Getter
 public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
-    private final List<LogoutRedirectionStrategy> logoutRedirectionStrategies = new ArrayList<>(0);
+    private final List<LogoutRedirectionStrategy> logoutRedirectionStrategies = new ArrayList<>();
 
-    private final List<LogoutPostProcessor> logoutPostProcessors = new ArrayList<>(0);
+    private final List<LogoutPostProcessor> logoutPostProcessors = new ArrayList<>();
 
-    private final List<SingleLogoutServiceMessageHandler> singleLogoutServiceMessageHandlers = new ArrayList<>(0);
+    private final List<SingleLogoutServiceMessageHandler> singleLogoutServiceMessageHandlers = new ArrayList<>();
 
     @Override
     public void registerLogoutPostProcessor(final LogoutPostProcessor handler) {

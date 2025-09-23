@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
-
 import lombok.val;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.hc.core5.http.HttpStatus;
@@ -25,12 +24,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -60,7 +57,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
     private TicketRegistry ticketRegistry;
 
     @Test
-    void verifyNoWa() throws Throwable {
+    void verifyNoWa() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         assertThrows(UnauthorizedAuthenticationException.class,
@@ -68,7 +65,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
     }
 
     @Test
-    void verifyLogoutWithReply() throws Throwable {
+    void verifyLogoutWithReply() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -88,7 +85,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
     }
 
     @Test
-    void verifyUnauthzServicesWithUnknownRealm() throws Throwable {
+    void verifyUnauthzServicesWithUnknownRealm() {
         val request = new MockHttpServletRequest();
 
         val registeredService = getWsFederationRegisteredService();
@@ -102,7 +99,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
     }
 
     @Test
-    void verifyUnauthzServicesWithMismatchedRealm() throws Throwable {
+    void verifyUnauthzServicesWithMismatchedRealm() {
         val request = new MockHttpServletRequest();
 
         val registeredService = getWsFederationRegisteredService("custom-realm");
@@ -117,7 +114,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
 
 
     @Test
-    void verifyLogoutWithoutReply() throws Throwable {
+    void verifyLogoutWithoutReply() {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -141,10 +138,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
         request.addParameter(WSFederationConstants.WREPLY, registeredService.getServiceId());
         request.addParameter(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
 
-        assertDoesNotThrow(() -> {
-            federationValidateRequestController.handleFederationRequest(response, request);
-            return null;
-        });
+        assertDoesNotThrow(() -> federationValidateRequestController.handleFederationRequest(response, request));
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
 
         val builder = new URIBuilder(response.getHeader("Location"));
@@ -167,10 +161,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
-        assertDoesNotThrow(() -> {
-            federationValidateRequestController.handleFederationRequest(response, request);
-            return null;
-        });
+        assertDoesNotThrow(() -> federationValidateRequestController.handleFederationRequest(response, request));
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
         val builder = new URIBuilder(response.getHeader("Location"));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(CasProtocolConstants.PARAMETER_SERVICE)));
@@ -193,10 +184,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
-        assertDoesNotThrow(() -> {
-            federationValidateRequestController.handleFederationRequest(response, request);
-            return null;
-        });
+        assertDoesNotThrow(() -> federationValidateRequestController.handleFederationRequest(response, request));
         assertNotNull(federationValidateRequestController.handleUnauthorizedServiceException(request, new RuntimeException()));
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
         val builder = new URIBuilder(response.getHeader("Location"));
@@ -234,13 +222,10 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.getDescendantTickets().add(id);
         ticketRegistry.addTicket(tgt);
-        ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
+        ticketGrantingTicketCookieGenerator.addCookie(request, response, tgt.getId());
         request.setCookies(response.getCookies());
 
-        assertDoesNotThrow(() -> {
-            federationValidateRequestController.handleFederationRequest(response, request);
-            return null;
-        });
+        assertDoesNotThrow(() -> federationValidateRequestController.handleFederationRequest(response, request));
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, response.getStatus());
         val builder = new URIBuilder(response.getHeader("Location"));
         assertTrue(builder.getQueryParams().stream().anyMatch(p -> p.getName().equals(CasProtocolConstants.PARAMETER_SERVICE)));

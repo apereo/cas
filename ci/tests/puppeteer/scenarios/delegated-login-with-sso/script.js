@@ -24,5 +24,5 @@ const cas = require("../../cas.js");
     await cas.assertCookie(page);
     await cas.assertInnerText(page, "#content div h2", "Anmeldung erfolgreich");
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

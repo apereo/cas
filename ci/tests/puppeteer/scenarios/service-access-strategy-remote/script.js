@@ -6,7 +6,6 @@ const assert = require("assert");
 (async () => {
     const app = express();
     app.get("/gateway", (req, res) => {
-        console.log(req.query);
         const username = req.query.username;
 
         if (username === "casblock") {
@@ -32,7 +31,7 @@ const assert = require("assert");
         
         server.close(() => {
             cas.log("Exiting server...");
-            browser.close();
+            cas.closeBrowser(browser);
         });
     });
 })();

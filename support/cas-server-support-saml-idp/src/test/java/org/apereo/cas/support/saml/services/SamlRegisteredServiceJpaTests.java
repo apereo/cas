@@ -11,7 +11,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Import({
+@ImportAutoConfiguration({
     CasHibernateJpaAutoConfiguration.class,
     CasJpaServiceRegistryAutoConfiguration.class
 })
@@ -34,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach
-    public void before() {
+    void before() {
         this.servicesManager.deleteAll();
     }
 
     @Test
-    void verifySavingSamlService() throws Throwable {
+    void verifySavingSamlService() {
         var service = new SamlRegisteredService();
         service.setName("SAML");
         service.setServiceId("http://mmoayyed.example.net");

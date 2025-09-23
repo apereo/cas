@@ -1,13 +1,10 @@
 package org.apereo.cas.configuration.model.core.events;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -21,7 +18,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("EventsProperties")
 public class EventsProperties implements Serializable {
 
     @Serial
@@ -63,4 +59,9 @@ public class EventsProperties implements Serializable {
     @NestedConfigurationProperty
     private RedisEventsProperties redis = new RedisEventsProperties();
 
+    /**
+     * Track authentication events inside Kafka topics.
+     */
+    @NestedConfigurationProperty
+    private KafkaEventsProperties kafka = new KafkaEventsProperties();
 }

@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.aws;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,7 +18,6 @@ import java.io.Serial;
 @Setter
 @RequiresModule(name = "cas-server-support-aws-s3-service-registry")
 @Accessors(chain = true)
-@JsonFilter("AmazonS3ServiceRegistryProperties")
 public class AmazonS3ServiceRegistryProperties extends BaseAmazonWebServicesProperties {
     @Serial
     private static final long serialVersionUID = -6790277338807046269L;

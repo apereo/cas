@@ -37,7 +37,7 @@ class GroovyAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePoli
 
     @Test
     void verifyPolicyTerms() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
         val tgt = new MockTicketGrantingTicket(credential.getId(), credential, Map.of());
         ticketRegistry.addTicket(tgt);
@@ -49,7 +49,7 @@ class GroovyAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePoli
 
     @Test
     void verifyPolicyTermsFails() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");
         val tgt = new MockTicketGrantingTicket(credential.getId(), credential, Map.of());
         ticketRegistry.addTicket(tgt);

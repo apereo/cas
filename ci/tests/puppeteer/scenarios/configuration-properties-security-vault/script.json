@@ -8,7 +8,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--logging.level.org.springframework.cloud.vault=debug",
+    "--logging.level.org.springframework.cloud.vault=info",
     "--spring.profiles.include=vault",
 
     "--spring.cloud.vault.enabled=true",

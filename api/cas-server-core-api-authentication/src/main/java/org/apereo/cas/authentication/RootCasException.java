@@ -1,9 +1,10 @@
 package org.apereo.cas.authentication;
 
 import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,9 @@ import java.util.List;
  * @since 4.0.0
  */
 @Getter
+@Accessors(chain = true)
+@ToString(callSuper = true, of = "code")
+@SuppressWarnings("OverrideThrowableToString")
 public class RootCasException extends RuntimeException {
 
     @Serial
@@ -24,7 +28,7 @@ public class RootCasException extends RuntimeException {
 
     private final String code;
 
-    private final List<Object> args = new ArrayList<>(0);
+    private final List<Object> args = new ArrayList<>();
 
     protected RootCasException(final String code) {
         super(code);
@@ -42,10 +46,15 @@ public class RootCasException extends RuntimeException {
     }
 
     protected RootCasException(final String code, final Throwable throwable) {
-        super(throwable);
+        super(code, throwable);
         this.code = code;
     }
 
+    protected RootCasException(final String code, final String msg, final Throwable throwable) {
+        super(msg, throwable);
+        this.code = code;
+    }
+    
     protected RootCasException(final String code, final Throwable throwable, final List<Object> args) {
         this(code, throwable);
         this.args.addAll(args);
@@ -70,8 +79,8 @@ public class RootCasException extends RuntimeException {
      */
     public String getCode() {
         val cause = this.getCause();
-        if (cause instanceof RootCasException) {
-            return ((RootCasException) cause).getCode();
+        if (cause instanceof final RootCasException rce) {
+            return rce.getCode();
         }
         return this.code;
     }

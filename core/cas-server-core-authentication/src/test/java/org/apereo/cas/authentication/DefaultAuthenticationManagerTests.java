@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
 import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
@@ -10,15 +12,34 @@ import org.apereo.cas.authentication.policy.RequiredAuthenticationHandlerAuthent
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
+import org.apereo.cas.authentication.principal.merger.ReplacingAttributeAdder;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.DirectObjectProvider;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.StaticApplicationContext;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -40,6 +61,15 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Authentication")
 @Slf4j
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = {
+    DefaultAuthenticationManagerTests.AuthenticationPlanTestConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasCoreEnvironmentBootstrapAutoConfiguration.class,
+    CasCoreMultitenancyAutoConfiguration.class
+})
+@ExtendWith(CasTestExtension.class)
 class DefaultAuthenticationManagerTests {
     private static final String HANDLER_A = "HandlerA";
 
@@ -49,6 +79,10 @@ class DefaultAuthenticationManagerTests {
         .newTransaction(CoreAuthenticationTestUtils.getService(),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser1"),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser2"));
+
+    @Autowired
+    @Qualifier(TenantExtractor.BEAN_NAME)
+    private TenantExtractor tenantExtractor;
 
     private ConfigurableApplicationContext applicationContext;
 
@@ -79,7 +113,7 @@ class DefaultAuthenticationManagerTests {
         when(mock.supports(any(Credential.class))).thenReturn(true);
         when(mock.getState()).thenCallRealMethod();
         if (success) {
-            val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("nobody");
+            val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("nobody", CoreAuthenticationTestUtils.getAttributes());
             val metadata = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("nobody");
             val result = new DefaultAuthenticationHandlerExecutionResult(mock, metadata, principal);
             when(mock.authenticate(any(Credential.class), any(Service.class))).thenReturn(result);
@@ -91,8 +125,9 @@ class DefaultAuthenticationManagerTests {
         return mock;
     }
 
-    private static AuthenticationEventExecutionPlan getAuthenticationExecutionPlan(final Map<AuthenticationHandler, PrincipalResolver> map) {
-        val plan = new DefaultAuthenticationEventExecutionPlan();
+    private AuthenticationEventExecutionPlan getAuthenticationExecutionPlan(
+        final Map<AuthenticationHandler, PrincipalResolver> map) {
+        val plan = new DefaultAuthenticationEventExecutionPlan(new DefaultAuthenticationHandlerResolver(), tenantExtractor);
         plan.registerAuthenticationHandlerWithPrincipalResolver(map);
         plan.registerAuthenticationHandlerResolver(new RegisteredServiceAuthenticationHandlerResolver(mockServicesManager(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())));
@@ -102,11 +137,13 @@ class DefaultAuthenticationManagerTests {
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() throws Throwable {
         applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
             CoreAuthenticationTestUtils.getAuthenticationSystemSupport(), AuthenticationSystemSupport.BEAN_NAME);
+        val context = MockRequestContext.create(applicationContext);
+        context.setRemoteAddr("185.86.151.11").setLocalAddr("185.86.151.11").setClientInfo();
     }
 
     @Test
@@ -123,7 +160,7 @@ class DefaultAuthenticationManagerTests {
     }
 
     @Test
-    void verifyNoHandlers() throws Throwable {
+    void verifyNoHandlers() {
         val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         val manager = getAuthenticationManager(authenticationExecutionPlan);
@@ -139,6 +176,42 @@ class DefaultAuthenticationManagerTests {
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
         val manager = getAuthenticationManager(authenticationExecutionPlan);
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));
+    }
+
+    @Test
+    void verifyMultipleCredentialsMergePrincipalAttributes() throws Throwable {
+        val map = new HashMap<AuthenticationHandler, PrincipalResolver>();
+
+        val handler1 = mock(AuthenticationHandler.class);
+        when(handler1.getName()).thenCallRealMethod();
+        when(handler1.getState()).thenCallRealMethod();
+        when(handler1.supports(any(UsernamePasswordCredential.class))).thenReturn(Boolean.TRUE);
+        val executionResult1 = new DefaultAuthenticationHandlerExecutionResult("Source1",
+            CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("uid", "casuser1")));
+        when(handler1.authenticate(any(UsernamePasswordCredential.class), any())).thenReturn(executionResult1);
+        map.put(handler1, null);
+
+        val handler2 = mock(AuthenticationHandler.class);
+        when(handler2.getName()).thenCallRealMethod();
+        when(handler2.getState()).thenCallRealMethod();
+        when(handler2.supports(any(BasicIdentifiableCredential.class))).thenReturn(Boolean.TRUE);
+        val executionResult2 = new DefaultAuthenticationHandlerExecutionResult("Source2",
+            CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("cn", "casuser2")));
+        when(handler2.authenticate(any(BasicIdentifiableCredential.class), any())).thenReturn(executionResult2);
+        map.put(handler2, null);
+
+        val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        val manager = getAuthenticationManager(authenticationExecutionPlan);
+
+        val testTransaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
+            .newTransaction(CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser1"),
+                new BasicIdentifiableCredential("casuser2"));
+
+        val authentication = manager.authenticate(testTransaction);
+        val principal = authentication.getPrincipal();
+        assertTrue(principal.containsAttribute("cn"));
+        assertTrue(principal.containsAttribute("uid"));
     }
 
     @Test
@@ -373,10 +446,27 @@ class DefaultAuthenticationManagerTests {
         assertEquals(2, auth.getCredentials().size());
     }
 
-    private AuthenticationManager getAuthenticationManager(final AuthenticationEventExecutionPlan authenticationExecutionPlan) {
+    private AuthenticationManager getAuthenticationManager(
+        final AuthenticationEventExecutionPlan authenticationExecutionPlan) {
+        return getAuthenticationManager(new ReplacingAttributeAdder(), authenticationExecutionPlan);
+    }
+
+    private AuthenticationManager getAuthenticationManager(
+        final AttributeMerger attributeMerger,
+        final AuthenticationEventExecutionPlan authenticationExecutionPlan) {
         return new DefaultAuthenticationManager(authenticationExecutionPlan,
-            new DirectObjectProvider<>(CoreAuthenticationTestUtils.getAuthenticationSystemSupport()),
+            new DirectObjectProvider<>(CoreAuthenticationTestUtils.getAuthenticationSystemSupport(attributeMerger)),
             false, applicationContext);
+    }
+    
+
+    @TestConfiguration(value = "AuthenticationPlanTestConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class AuthenticationPlanTestConfiguration {
+        @Bean
+        public ServicesManager servicesManager() {
+            return mockServicesManager();
+        }
     }
 
 }

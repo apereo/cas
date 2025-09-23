@@ -1,9 +1,7 @@
 package org.apereo.cas.support.events.dao;
 
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
-
 import com.github.benmanes.caffeine.cache.LoadingCache;
-
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -38,6 +36,7 @@ public class InMemoryCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public CasEvent saveInternal(final CasEvent event) {
+        event.assignIdIfNecessary();
         cache.put(UUID.randomUUID().toString(), event);
         return event;
     }

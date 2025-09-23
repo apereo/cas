@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.yubikey.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -29,7 +30,7 @@ class YubiKeyAuthenticationWebflowActionTests {
         when(resolver.resolve(any())).thenReturn(Set.of(new EventFactorySupport().success(this)));
         when(resolver.resolveSingle(any())).thenReturn(new EventFactorySupport().success(this));
 
-        val action = new YubiKeyAuthenticationWebflowAction(resolver);
+        val action = new YubiKeyAuthenticationWebflowAction(resolver, mock(TenantExtractor.class));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
 }

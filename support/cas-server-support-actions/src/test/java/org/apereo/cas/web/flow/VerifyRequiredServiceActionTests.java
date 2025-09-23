@@ -38,7 +38,7 @@ class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
     private TicketRegistrySupport ticketRegistrySupport;
 
     @BeforeEach
-    public void onSetUp() throws Throwable {
+    void onSetUp() throws Throwable {
         ticketRegistrySupport = mock(TicketRegistrySupport.class);
         verifyRequiredServiceAction = new VerifyRequiredServiceAction(getServicesManager(),
             getTicketGrantingTicketCookieGenerator(), casProperties, ticketRegistrySupport);
@@ -79,7 +79,7 @@ class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
 
         val tgt = new MockTicketGrantingTicket("casuser");
         when(ticketRegistrySupport.getTicketGrantingTicket(anyString())).thenReturn(tgt);
-        requestContext.getHttpServletRequest().setCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));
+        requestContext.setHttpRequestCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));
 
         val result = verifyRequiredServiceAction.execute(this.requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
@@ -96,7 +96,7 @@ class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
             serviceTicketSessionTrackingPolicy);
 
         when(ticketRegistrySupport.getTicketGrantingTicket(anyString())).thenReturn(tgt);
-        requestContext.getHttpServletRequest().setCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));
+        requestContext.setHttpRequestCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));
 
         assertThrows(NoSuchFlowExecutionException.class, () -> verifyRequiredServiceAction.execute(this.requestContext));
     }
@@ -112,7 +112,7 @@ class VerifyRequiredServiceActionTests extends AbstractWebflowActionsTests {
             serviceTicketSessionTrackingPolicy);
 
         when(ticketRegistrySupport.getTicketGrantingTicket(anyString())).thenReturn(tgt);
-        requestContext.getHttpServletRequest().setCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));
+        requestContext.setHttpRequestCookies(new Cookie(casProperties.getTgc().getName(), tgt.getId()));
 
         assertDoesNotThrow(() -> verifyRequiredServiceAction.execute(this.requestContext));
     }

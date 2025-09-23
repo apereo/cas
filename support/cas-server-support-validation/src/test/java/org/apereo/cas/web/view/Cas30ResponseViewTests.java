@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -28,9 +29,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -40,6 +42,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContext;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import javax.crypto.Cipher;
@@ -59,15 +62,16 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.clearpass.cache-credential=true",
     "cas.clearpass.crypto.enabled=false"
 })
-@Import({
+@ImportAutoConfiguration({
     CasThymeleafAutoConfiguration.class,
     CasValidationAutoConfiguration.class
 })
 @Tag("CAS")
+@ExtendWith(CasTestExtension.class)
 class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
-    @Qualifier("serviceValidationViewFactory")
+    @Qualifier(ServiceValidationViewFactory.BEAN_NAME)
     protected ServiceValidationViewFactory serviceValidationViewFactory;
 
     @Autowired
@@ -102,7 +106,11 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
             }
 
             @Override
-            public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) {
+            public void render(final Map<String, ?> map,
+                               @Nonnull
+                               final HttpServletRequest request,
+                               @Nonnull
+                               final HttpServletResponse response) {
                 LOGGER.warn("Setting attribute [{}]", map.keySet());
                 map.forEach(request::setAttribute);
             }

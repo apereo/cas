@@ -155,16 +155,23 @@ public class BaseRedisProperties implements Serializable, CasFeatureModule {
     private boolean startTls;
 
     /**
-     * May be used when making SSL connections.
-     * Sets the certificate file to use for client authentication.
+     * May be used when making SSL connections to build the key manager.
+     * Sets the key certificate file to use for client authentication.
      * This is typically an {@code X.509} certificate file (or chain file) in PEM format.
      */
     private File keyCertificateChainFile;
 
     /**
+     * May be used when making SSL connections to build the trust manager.
+     * Sets the certificate file to use for client authentication.
+     * This is typically an {@code X.509} certificate file (or chain file) in PEM format.
+     */
+    private File certificateFile;
+
+    /**
      * May be used when making SSL connections.
      * Sets the key file for client authentication.
-     * The key is reloaded on each connection attempt that allows to replace certificates during runtime.
+     * The key is reloaded on each connection attempt that allows CAS to replace certificates during runtime.
      * This is typically a {@code PKCS#8} private key file in PEM format.
      */
     private File keyFile;

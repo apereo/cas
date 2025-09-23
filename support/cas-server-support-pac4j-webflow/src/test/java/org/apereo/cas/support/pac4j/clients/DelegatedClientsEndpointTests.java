@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @TestPropertySource(properties = {
-    "management.endpoint.delegatedClients.enabled=true",
+    "management.endpoint.delegatedClients.access=UNRESTRICTED",
     
     "cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
 
@@ -31,14 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pac4j.oidc[0].google.secret=123",
 
     "cas.authn.pac4j.github.id=123",
-    "cas.authn.pac4j.github.secret=123",
-
-    "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
-    "cas.authn.pac4j.saml[0].keystore-password=1234567890",
-    "cas.authn.pac4j.saml[0].private-key-password=1234567890",
-    "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
-    "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
-    "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid"
+    "cas.authn.pac4j.github.secret=123"
 })
 @Tag("ActuatorEndpoint")
 @Import(BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
@@ -48,7 +41,7 @@ class DelegatedClientsEndpointTests extends AbstractCasEndpointTests {
     private DelegatedClientsEndpoint endpoint;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertFalse(endpoint.getClients().isEmpty());
         assertFalse(endpoint.reload().isEmpty());
     }

@@ -10,15 +10,17 @@ import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.throttle.ThrottledRequestFilter;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -31,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import({
+@ImportAutoConfiguration({
     CasThymeleafAutoConfiguration.class,
     CasThrottlingAutoConfiguration.class,
     CasThemesAutoConfiguration.class,
@@ -44,10 +46,10 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @TestPropertySource(properties = {
     "CasFeatureModule.AccountManagement.enabled=true",
-    "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
     "cas.authn.oidc.jwks.file-system.jwks-file=classpath:keystore.jwks"
 })
-@Tag("OIDC")
+@Tag("OIDCWeb")
+@ExtendWith(CasTestExtension.class)
 class OidcWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Autowired
@@ -55,9 +57,9 @@ class OidcWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     private ThrottledRequestFilter oidcThrottledRequestFilter;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
 
         val request = new MockHttpServletRequest();

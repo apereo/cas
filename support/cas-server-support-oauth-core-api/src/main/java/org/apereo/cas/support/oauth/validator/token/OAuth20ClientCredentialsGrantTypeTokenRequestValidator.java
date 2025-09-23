@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
+import org.springframework.beans.factory.ObjectProvider;
 
 /**
  * This is {@link OAuth20ClientCredentialsGrantTypeTokenRequestValidator}.
@@ -17,13 +18,13 @@ import org.pac4j.core.context.WebContext;
  */
 @Slf4j
 public class OAuth20ClientCredentialsGrantTypeTokenRequestValidator extends OAuth20PasswordGrantTypeTokenRequestValidator {
-    public OAuth20ClientCredentialsGrantTypeTokenRequestValidator(final OAuth20ConfigurationContext configurationContext) {
+    public OAuth20ClientCredentialsGrantTypeTokenRequestValidator(final ObjectProvider<OAuth20ConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 
     @Override
     public boolean supports(final WebContext context) {
-        val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
+        val requestParameterResolver = getConfigurationContext().getObject().getRequestParameterResolver();
         val grantType = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.GRANT_TYPE)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         return OAuth20Utils.isGrantType(grantType, OAuth20GrantTypes.CLIENT_CREDENTIALS);

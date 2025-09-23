@@ -17,7 +17,7 @@ shared with the end-user and validating tokens once the end-user provides them b
 
 ## Generating Tokens
 
-When tokens need to be generated, this API endpoint would be invoked via a `GET` to create the ticket identifier. The body of 
+When tokens need to be generated, this API endpoint would be invoked via a `POST` to create the ticket identifier. The body of 
 the request will contain the authenticated principal that is put through the multifactor authentication flow,
 and the requesting application for which the token should be generated is passed to the API via a `service` parameter. 
 
@@ -33,7 +33,7 @@ status code on successful operations.
 ## Validating Tokens
 
 Generated tokens are passed to this API to validation where the token is appended to the URL endpoint and acts as a path variable. The response 
-that is returned to a `GET` call must be accompanied by a `2xx` status code where the body should contain `id` and `attributes` fields, the 
+that is returned to a `POST` call must be accompanied by a `2xx` status code where the body should contain `id` and `attributes` fields, the 
 latter being optional, which represent the authenticated principal for CAS:
 
 ```json

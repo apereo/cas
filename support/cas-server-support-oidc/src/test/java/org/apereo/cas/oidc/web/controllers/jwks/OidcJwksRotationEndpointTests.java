@@ -1,10 +1,12 @@
 package org.apereo.cas.oidc.web.controllers.jwks;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -19,13 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @TestPropertySource(properties = {
-    "spring.main.allow-bean-definition-overriding=true",
-    "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
     "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/oidc-jwks.jwks",
-    "management.endpoint.oidcJwks.enabled=true"
+    "management.endpoint.oidcJwks.access=UNRESTRICTED"
 })
 @Tag("ActuatorEndpoint")
 @Import(AbstractOidcTests.SharedTestConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class OidcJwksRotationEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("jwksRotationEndpoint")

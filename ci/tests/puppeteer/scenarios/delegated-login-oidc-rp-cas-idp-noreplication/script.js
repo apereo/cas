@@ -9,7 +9,7 @@ const cas = require("../../cas.js");
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
         "redirect_uri=https%3A%2F%2Flocalhost%3A9859%2Fanything%2F1&" +
-        "scope=openid%20email%20profile%20address%20phone&" +
+        `scope=${encodeURIComponent("openid email profile address phone")}&` +
         "response_type=code&" +
         "response_mode=form_post&" +
         "nonce=vn4qulthnx";
@@ -37,14 +37,14 @@ const cas = require("../../cas.js");
     await cas.waitForNavigation(page);
     await cas.sleep(2000);
 
-    await cas.log(await page.url());
-    assert(await page.url().startsWith("https://localhost:9859/anything/1"));
+    await cas.logPage(page);
+    await cas.assertPageUrlStartsWith(page, "https://localhost:9859/anything/1");
     await cas.sleep(2000);
     await cas.assertInnerTextContains(page, "pre", "OC-1-");
 
     await cas.gotoLogout(page);
-    assert(page.url().startsWith("https://localhost:8444/cas/logout"));
+    await cas.assertPageUrlStartsWith(page, "https://localhost:8444/cas/logout");
     await cas.sleep(2000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

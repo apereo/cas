@@ -1,13 +1,13 @@
 package org.apereo.cas.ws.idp.services;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.DefaultServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.services.BaseServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.Ordered;
 
 /**
@@ -17,7 +17,7 @@ import org.springframework.core.Ordered;
  * @since 6.3.0
  */
 @Slf4j
-public class WsFederationServicesManagerRegisteredServiceLocator extends DefaultServicesManagerRegisteredServiceLocator {
+public class WsFederationServicesManagerRegisteredServiceLocator extends BaseServicesManagerRegisteredServiceLocator {
     public WsFederationServicesManagerRegisteredServiceLocator() {
         setOrder(Ordered.HIGHEST_PRECEDENCE);
         setRegisteredServiceFilter(
@@ -36,8 +36,8 @@ public class WsFederationServicesManagerRegisteredServiceLocator extends Default
     }
 
     @Override
-    protected Class<? extends RegisteredService> getRegisteredServiceIndexedType() {
-        return WSFederationRegisteredService.class;
+    protected Pair<String, Class<? extends RegisteredService>> getRegisteredServiceIndexedType() {
+        return Pair.of(WSFederationRegisteredService.FRIENDLY_NAME, WSFederationRegisteredService.class);
     }
 
     @Override

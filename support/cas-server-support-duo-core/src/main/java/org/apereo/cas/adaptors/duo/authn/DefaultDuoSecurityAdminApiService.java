@@ -10,19 +10,18 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.duosecurity.client.Http;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
-
 import javax.net.ssl.X509TrustManager;
 import java.net.URI;
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
 
     @Override
     public Optional<DuoSecurityUserAccount> getDuoSecurityUserAccount(final String username, final boolean fetchBypassCodes) throws Exception {
-        val userResponse = (JSONArray) getEndpointResultFor(CollectionUtils.wrap("uri", "users", "username", username));
+        val userResponse = (JSONArray) executeAdminEndpoint(CollectionUtils.wrap("uri", "users", "username", username));
         if (userResponse != null && userResponse.length() == 1) {
             val userJson = userResponse.getJSONObject(0);
             val user = mapDuoSecurityUserAccount(userJson);
@@ -69,7 +68,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
 
     @Override
     public Optional<DuoSecurityUserAccount> modifyDuoSecurityUserAccount(final DuoSecurityUserAccount newAccount) throws Exception {
-        val userResponse = (JSONArray) getEndpointResultFor(CollectionUtils.wrap("uri", "users", "username", newAccount.getUsername()));
+        val userResponse = (JSONArray) executeAdminEndpoint(CollectionUtils.wrap("uri", "users", "username", newAccount.getUsername()));
         if (userResponse != null && userResponse.length() == 1) {
             val user = mapDuoSecurityUserAccount(userResponse.getJSONObject(0));
             val parameters = CollectionUtils.<String, String>wrap(
@@ -79,7 +78,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
             FunctionUtils.doIfNotNull(newAccount.getFirstName(), __ -> parameters.put("firstname", newAccount.getFirstName()));
             FunctionUtils.doIfNotNull(newAccount.getLastName(), __ -> parameters.put("lastname", newAccount.getLastName()));
             FunctionUtils.doIfNotNull(newAccount.getStatus(), __ -> parameters.put("status", newAccount.getStatus().toValue()));
-            val updateResponse = getEndpointResultFor(parameters);
+            val updateResponse = executeAdminEndpoint(parameters);
             val userAccount = (JSONObject) (updateResponse instanceof final JSONArray array ? array.get(0) : updateResponse);
             return Optional.of(mapDuoSecurityUserAccount(userAccount));
         }
@@ -87,24 +86,32 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     }
 
     @Override
+    public void deleteDuoSecurityUserDevice(final String username, final String deviceId) throws Exception {
+        val userIdentifier = getDuoSecurityUserAccount(username, false).map(DuoSecurityUserAccount::getUserId).orElseThrow();
+        val params = CollectionUtils.<String, String>wrap("uri", String.format("users/%s/phones/%s", userIdentifier, deviceId));
+        params.put("method", HttpMethod.DELETE.name());
+        executeAdminEndpoint(params);
+    }
+
+    @Override
     public List<Long> createDuoSecurityBypassCodesFor(final String userIdentifier) throws Exception {
         val params = CollectionUtils.<String, String>wrap("uri", String.format("users/%s/bypass_codes", userIdentifier));
         params.put("method", HttpMethod.POST.name());
-        val bypassResponse = (JSONArray) getEndpointResultFor(params);
+        val bypassResponse = (JSONArray) executeAdminEndpoint(params);
         if (bypassResponse != null) {
             return Arrays.stream(bypassResponse.join(",")
                     .replace("\"", StringUtils.EMPTY).split(","))
                 .map(Long::valueOf)
                 .collect(Collectors.toList());
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     @Override
     public List<DuoSecurityBypassCode> getDuoSecurityBypassCodesFor(final String userIdentifier) throws Exception {
         val codes = new ArrayList<DuoSecurityBypassCode>();
 
-        val bypassResponse = (JSONArray) getEndpointResultFor(CollectionUtils.wrap("uri", String.format("users/%s/bypass_codes", userIdentifier)));
+        val bypassResponse = (JSONArray) executeAdminEndpoint(CollectionUtils.wrap("uri", String.format("users/%s/bypass_codes", userIdentifier)));
         for (var i = 0; bypassResponse != null && i < bypassResponse.length(); i++) {
             val bypassJson = bypassResponse.getJSONObject(i);
             if (bypassJson.has("bypass_code_id")) {
@@ -122,13 +129,13 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     protected void prepareHttpRequest(final Http request) {
     }
 
-    private Object getEndpointResultFor(final Map<String, String> params) throws Exception {
+    private Object executeAdminEndpoint(final Map<String, String> params) throws Exception {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
         val uri = getAdminEndpointUri(params.getOrDefault("uri", StringUtils.EMPTY));
         val method = params.getOrDefault("method", HttpMethod.GET.name());
 
         val originalHost = resolver.resolve(duoProperties.getDuoApiHost());
-        val host = new URI(StringUtils.prependIfMissing(originalHost, "https://"));
+        val host = new URI(Strings.CI.prependIfMissing(originalHost, "https://"));
         val request = new CasHttpBuilder(method, host.getHost(), uri).build();
 
         val hostField = ReflectionUtils.findField(request.getClass(), "host");
@@ -164,7 +171,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
             && result.has(DuoSecurityAuthenticationService.RESULT_KEY_STAT)) {
             val response = result.optJSONArray(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE);
             if (response == null) {
-                return result.getJSONObject(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE);
+                return result.optJSONObject(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE, result);
             }
             return response;
         }
@@ -181,18 +188,20 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         val user = new DuoSecurityUserAccount(userJson.getString("username"));
         user.setUserId(userJson.getString("user_id"));
         user.setStatus(DuoSecurityUserAccountStatus.from(userJson.getString("status")));
-        FunctionUtils.doIfNotNull(userJson.get("email"), value -> user.addAttribute("email", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.getString("user_id"), value -> user.addAttribute("user_id", value));
-        FunctionUtils.doIfNotNull(userJson.get("firstname"), value -> user.addAttribute("firstname", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.get("lastname"), value -> user.addAttribute("lastname", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.get("realname"), value -> user.addAttribute("realname", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.getBoolean("is_enrolled"), value -> user.addAttribute("is_enrolled", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.getLong("last_login"), value -> user.addAttribute("last_login", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.getLong("created"), value -> user.addAttribute("created", value.toString()));
-        FunctionUtils.doIfNotNull(userJson.optString("alias1"), value -> user.addAttribute("alias1", value));
-        FunctionUtils.doIfNotNull(userJson.optString("alias2"), value -> user.addAttribute("alias2", value));
-        FunctionUtils.doIfNotNull(userJson.optString("notes"), value -> user.addAttribute("notes", value));
-        FunctionUtils.doIfNotNull(userJson.optString("lockout_reason"), value -> user.addAttribute("lockout_reason", value));
+
+        collectDuoSecurityUserAccountAttribute(userJson, "email", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "user_id", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "firstname", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "lastname", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "realname", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "is_enrolled", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "last_login", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "created", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "alias1", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "alias2", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "notes", user);
+        collectDuoSecurityUserAccountAttribute(userJson, "lockout_reason", user);
+
         if (user.getStatus() != DuoSecurityUserAccountStatus.DENY && !user.isEnrolled()) {
             user.setStatus(DuoSecurityUserAccountStatus.ENROLL);
         }
@@ -202,9 +211,15 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
         return user;
     }
 
+    private static void collectDuoSecurityUserAccountAttribute(final JSONObject userJson,
+                                                               final String attribute,
+                                                               final DuoSecurityUserAccount user) {
+        FunctionUtils.doIfNotNull(userJson.opt(attribute), value -> user.addAttribute(attribute, value.toString()));
+    }
+
     private static void mapUserGroups(final JSONObject userJson, final DuoSecurityUserAccount user) throws JSONException {
         val groupsResponse = userJson.getJSONArray("groups");
-        for (int i = 0; groupsResponse != null && i < groupsResponse.length(); i++) {
+        for (var i = 0; groupsResponse != null && i < groupsResponse.length(); i++) {
             val json = groupsResponse.getJSONObject(i);
             if (json.has("group_id")) {
                 val group = new DuoSecurityUserAccountGroup(json.getString("group_id"),
@@ -221,7 +236,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
 
     private static void mapUserPhones(final JSONObject userJson, final DuoSecurityUserAccount user) throws JSONException {
         val phones = userJson.getJSONArray("phones");
-        for (int i = 0; phones != null && i < phones.length(); i++) {
+        for (var i = 0; phones != null && i < phones.length(); i++) {
             val phoneJson = phones.getJSONObject(i);
             val phone = new DuoSecurityUserDevice(phoneJson.getString("name"), phoneJson.getString("type"));
             phone.setActivated(phoneJson.optBoolean("activated"));

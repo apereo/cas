@@ -1,12 +1,12 @@
 package org.apereo.cas.adaptors.radius;
 
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import net.jradius.dictionary.vsa_microsoft.Attr_MSCHAP2Success;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import java.security.Security;
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,7 +31,7 @@ public abstract class AbstractRadiusServerTests {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
         request.setLocalAddr("4.5.6.7");
-        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        request.addHeader(HttpHeaders.USER_AGENT, "test");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 

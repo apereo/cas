@@ -33,7 +33,7 @@ class CasSSLContextTests {
     }
 
     @Test
-    void verifyOperationBySystem() throws Throwable {
+    void verifyOperationBySystem() {
         val system = CasSSLContext.system();
         assertNotNull(system.getSslContext());
         assertNotNull(system.getKeyManagers());

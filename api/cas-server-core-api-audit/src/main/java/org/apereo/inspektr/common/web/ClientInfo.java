@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.jooq.lambda.Unchecked;
+import org.springframework.http.HttpHeaders;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serial;
 import java.io.Serializable;
@@ -63,6 +66,10 @@ public class ClientInfo implements Serializable {
 
     @JsonProperty("locale")
     private Locale locale;
+
+    @JsonProperty("tenant")
+    @Getter
+    private String tenant;
 
     public ClientInfo(final String clientIpAddress, final String serverIpAddress,
                       final String userAgent, final String geoLocation) {
@@ -196,6 +203,18 @@ public class ClientInfo implements Serializable {
     }
 
     /**
+     * Sets tenant.
+     *
+     * @param tenant the tenant
+     * @return the tenant id
+     */
+    @CanIgnoreReturnValue
+    public ClientInfo setTenant(final String tenant) {
+        this.tenant = tenant;
+        return this;
+    }
+
+    /**
      * Sets device fingerprint.
      *
      * @param value the fingerprint
@@ -206,7 +225,6 @@ public class ClientInfo implements Serializable {
         this.deviceFingerprint = value;
         return this;
     }
-
 
     /**
      * Sets locale.
@@ -297,6 +315,7 @@ public class ClientInfo implements Serializable {
         var geoLocation = UNKNOWN;
         var userAgent = UNKNOWN;
         var deviceFingerprint = UNKNOWN;
+        var tenantId = StringUtils.EMPTY;
 
         if (request != null) {
             if (options.isUseServerHostAddress()) {
@@ -311,7 +330,7 @@ public class ClientInfo implements Serializable {
                     ? request.getHeader(options.getAlternateLocalAddrHeaderName())
                     : request.getRemoteAddr();
             }
-            val header = request.getHeader("user-agent");
+            val header = request.getHeader(HttpHeaders.USER_AGENT);
             userAgent = header == null ? UNKNOWN : header;
 
             var geo = request.getParameter("geolocation");
@@ -319,8 +338,9 @@ public class ClientInfo implements Serializable {
                 geo = request.getHeader("geolocation");
             }
             geoLocation = geo == null ? UNKNOWN : geo;
-
             deviceFingerprint = StringUtils.defaultIfBlank(request.getParameter("deviceFingerprint"), UNKNOWN);
+
+            tenantId = TenantExtractor.tenantIdFromPath(request.getContextPath());
         }
 
         val serverIp = serverIpAddress == null ? UNKNOWN : serverIpAddress;
@@ -334,6 +354,7 @@ public class ClientInfo implements Serializable {
             .setGeoLocation(StringEscapeUtils.escapeHtml4(geoLocation))
             .setUserAgent(StringEscapeUtils.escapeHtml4(userAgent))
             .setDeviceFingerprint(deviceFingerprint)
+            .setTenant(tenantId)
             .setHeaders(headers);
     }
 }

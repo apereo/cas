@@ -40,8 +40,8 @@ import java.util.Set;
 @Getter
 public abstract class AbstractCasWebflowEventResolver implements CasWebflowEventResolver {
 
-    private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
-
+    protected final EventFactorySupport eventFactory = new EventFactorySupport();
+    
     private final CasWebflowEventResolutionConfigurationContext configurationContext;
 
     @Override
@@ -64,7 +64,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             event.getId(), event.getSource().getClass().getName());
         val targetState = WebUtils.getTargetTransition(context);
         return FunctionUtils.doIf(StringUtils.isNotBlank(targetState) && event.getId().equals(CasWebflowConstants.TRANSITION_ID_SUCCESS),
-                () -> new EventFactorySupport().event(this, targetState),
+                () -> eventFactory.event(this, targetState),
                 () -> event)
             .get();
     }
@@ -81,7 +81,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     }
 
     /**
-     * New event event.
+     * New event.
      *
      * @param id the id
      * @return the event
@@ -97,7 +97,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected List<Credential> getCredentialFromContext(final RequestContext context) {
         val applicationContext = context.getActiveFlow().getApplicationContext();
         val credentialProvider = ApplicationContextProvider.getBean(applicationContext, CasWebflowCredentialProvider.BEAN_NAME, CasWebflowCredentialProvider.class)
-            .orElseGet(DefaultCasWebflowCredentialProvider::new);
+            .orElseGet(() -> new DefaultCasWebflowCredentialProvider(configurationContext.getTenantExtractor()));
         return credentialProvider.extract(context);
     }
 
@@ -127,28 +127,21 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             LOGGER.debug("Handling authentication transaction for credentials [{}]", credentials);
             val service = WebUtils.getService(context);
             val builder = configurationContext.getAuthenticationSystemSupport()
-                .handleAuthenticationTransaction(service, builderResult, credentials.toArray(new Credential[]{}));
+                .handleAuthenticationTransaction(service, builderResult, credentials.toArray(Credential.EMPTY_CREDENTIALS_ARRAY));
 
             LOGGER.debug("Issuing ticket-granting tickets for service [{}]", service);
             return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-            WebUtils.addErrorMessageToContext(context, DEFAULT_MESSAGE_BUNDLE_PREFIX.concat(e.getClass().getSimpleName()));
+            configurationContext.getCasWebflowExceptionCatalog().translateException(context, e);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return CollectionUtils.wrapSet(getAuthenticationFailureErrorEvent(context, e));
         }
     }
 
-    /**
-     * Gets authentication failure error event.
-     *
-     * @param context   the context
-     * @param exception the exception
-     * @return the authentication failure error event
-     */
     protected Event getAuthenticationFailureErrorEvent(final RequestContext context,
                                                        final Exception exception) {
-        return new EventFactorySupport().error(this, exception);
+        return eventFactory.error(this, exception);
     }
 
 }

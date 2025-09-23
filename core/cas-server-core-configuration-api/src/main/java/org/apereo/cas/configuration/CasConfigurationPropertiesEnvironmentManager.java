@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration;
 
 import org.apereo.cas.util.function.FunctionUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
@@ -14,14 +15,16 @@ import org.springframework.core.env.ConfigurableEnvironment;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-
+@RequiredArgsConstructor
 @Slf4j
-public record CasConfigurationPropertiesEnvironmentManager(ConfigurationPropertiesBindingPostProcessor binder) {
+public class CasConfigurationPropertiesEnvironmentManager {
 
     /**
      * Default bean name.
      */
     public static final String BEAN_NAME = "configurationPropertiesEnvironmentManager";
+
+    private final ConfigurationPropertiesBindingPostProcessor binder;
 
     /**
      * Rebind cas configuration properties.
@@ -67,4 +70,5 @@ public record CasConfigurationPropertiesEnvironmentManager(ConfigurationProperti
         FunctionUtils.doIfNotNull(propertySources.get("systemEnvironment"), nativePropertySources::addPropertySource);
         return nativePropertySources;
     }
+
 }

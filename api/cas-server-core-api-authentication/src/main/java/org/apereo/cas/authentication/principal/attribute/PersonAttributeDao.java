@@ -1,9 +1,11 @@
 package org.apereo.cas.authentication.principal.attribute;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -142,7 +144,7 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
     default Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
                                                                      final PersonAttributeDaoFilter filter,
                                                                      final Set<PersonAttributes> resultPeople) {
-        return new LinkedHashSet<>(0);
+        return new LinkedHashSet<>();
     }
 
     /**
@@ -190,7 +192,7 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
      * @return A {@link Set} of possible attribute names for user queries.
      */
     default Set<String> getPossibleUserAttributeNames(final PersonAttributeDaoFilter filter) {
-        return new LinkedHashSet<>(0);
+        return new LinkedHashSet<>();
     }
 
     /**
@@ -204,7 +206,7 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
      * @return The set of attributes that can be used to query for user ids in this dao, null if the set is unknown.
      */
     default Set<String> getAvailableQueryAttributes(final PersonAttributeDaoFilter filter) {
-        return new LinkedHashSet<>(0);
+        return new LinkedHashSet<>();
     }
 
     /**
@@ -230,7 +232,7 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
     /**
      * Is this dao enabled?
      *
-     * @return the boolean
+     * @return true/false
      */
     default boolean isEnabled() {
         return true;
@@ -249,20 +251,52 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
      * Stuff attributes into list.
      *
      * @param personAttributesMap the person attributes map
-     * @param filter              the filter
      * @return the map
      */
-    default Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap,
-                                                              final PersonAttributeDaoFilter filter) {
+    static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap) {
         val personAttributes = new HashMap<String, List<Object>>();
         for (val stringObjectEntry : personAttributesMap.entrySet()) {
             val value = stringObjectEntry.getValue();
             if (value instanceof final List list && !list.isEmpty()) {
-                personAttributes.put(stringObjectEntry.getKey(), (List<Object>) value);
-            } else {
-                personAttributes.put(stringObjectEntry.getKey(), new ArrayList<>(Collections.singletonList(value)));
+                personAttributes.put(stringObjectEntry.getKey(), list);
+            } else if (value != null) {
+                personAttributes.put(stringObjectEntry.getKey(), new ArrayList<>(List.of(value)));
             }
         }
         return personAttributes;
+    }
+
+
+    /**
+     * Put tag into this DAO and override/remove existing tags by name.
+     *
+     * @param name  the name
+     * @param value the value
+     * @return the base person attribute dao
+     */
+    default PersonAttributeDao putTag(final String name, final Object value) {
+        getTags().put(name, value);
+        return this;
+    }
+    
+    /**
+     * Is disposable dao?.
+     *
+     * @return true/false
+     */
+    default boolean isDisposable() {
+        return this instanceof DisposableBean
+            && BooleanUtils.isTrue((Boolean) getTags().getOrDefault(DisposableBean.class.getName(), Boolean.FALSE));
+    }
+
+    /**
+     * Mark disposable dao.
+     *
+     * @return the dao
+     */
+    @CanIgnoreReturnValue
+    default PersonAttributeDao markDisposable() {
+        putTag(DisposableBean.class.getName(), Boolean.TRUE);
+        return this;
     }
 }

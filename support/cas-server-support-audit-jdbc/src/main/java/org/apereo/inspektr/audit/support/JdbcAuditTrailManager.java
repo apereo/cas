@@ -9,7 +9,10 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
+import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
+import org.apereo.cas.jpa.JpaEntityFactory;
 import org.apereo.cas.util.jpa.MapToJsonAttributeConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -17,24 +20,20 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionOperations;
+import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -107,6 +106,10 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
          */
         GEOLOCATION("AUD_GEOLOCATION"),
         /**
+         * Geolocation column.
+         */
+        TENANT("AUD_TENANT"),
+        /**
          * UserAgent column.
          */
         USERAGENT("AUD_USERAGENT"),
@@ -131,7 +134,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         + ") VALUES ("
         + Arrays.stream(AuditTableColumns.values())
         .map(AuditTableColumns::getColumnName)
-        .map(name -> StringUtils.prependIfMissing(name, ":"))
+        .map(name -> Strings.CI.prependIfMissing(name, ":"))
         .collect(Collectors.joining(","))
         + ')';
 
@@ -143,14 +146,11 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
      * Instance of TransactionTemplate to manually execute a transaction since
      * threads are not in the same transaction.
      */
-    @NotNull
-    private final TransactionOperations transactionTemplate;
-    @NotNull
-    private final JdbcTemplate jdbcTemplate;
+    private final @NotNull TransactionOperations transactionTemplate;
+    private final @NotNull JdbcTemplate jdbcTemplate;
+    private final @NotNull JpaEntityFactory<AuditTrailEntity> jpaAuditTrailEntityFactory;
 
-    @NotNull
-    @Size(min = 1)
-    private String tableName = "COM_AUDIT_TRAIL";
+    private @NotNull @Size(min = 1) String tableName = "COM_AUDIT_TRAIL";
 
     private int columnLength = DEFAULT_COLUMN_LENGTH;
 
@@ -161,14 +161,16 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
     private String dateFormatterFunction;
 
     private WhereClauseMatchCriteria cleanupCriteria = new NoMatchWhereClauseMatchCriteria();
-    
+
     private List<String> headerNames = new ArrayList<>();
-    
+
     @Override
     protected void saveAuditRecord(final AuditActionContext auditActionContext) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
-            protected void doInTransactionWithoutResult(final TransactionStatus __) {
+            protected void doInTransactionWithoutResult(
+                @Nonnull
+                final TransactionStatus __) {
                 val principal = auditActionContext.getPrincipal();
                 val userId = columnLength <= 0 || principal.length() <= columnLength
                     ? principal
@@ -196,6 +198,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
                 parameterMap.put(AuditTableColumns.APPLIC_CD.getColumnName(), auditActionContext.getApplicationCode());
                 parameterMap.put(AuditTableColumns.DATE.getColumnName(), auditActionContext.getWhenActionWasPerformed());
                 parameterMap.put(AuditTableColumns.GEOLOCATION.getColumnName(), clientInfo.getGeoLocation());
+                parameterMap.put(AuditTableColumns.TENANT.getColumnName(), clientInfo.getTenant());
                 parameterMap.put(AuditTableColumns.USERAGENT.getColumnName(), clientInfo.getUserAgent());
                 parameterMap.put(AuditTableColumns.LOCALE.getColumnName(), locale);
                 parameterMap.put(AuditTableColumns.ACTION.getColumnName(), action);
@@ -218,7 +221,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
                 val sql = String.format(DELETE_SQL_TEMPLATE, tableName, cleanupCriteria);
                 val params = cleanupCriteria.getParameterValues();
                 LOGGER.info("Cleaning audit records with query [{}]", sql);
-                LOGGER.debug("Query parameters: " + params);
+                LOGGER.debug("Query parameters: [{}]", params);
                 val count = jdbcTemplate.update(sql, params.toArray());
                 LOGGER.info("[{}] records deleted.", count);
             }
@@ -230,7 +233,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus __) {
-                val sql = String.format(DELETE_SQL_TEMPLATE, tableName, "aud");
+                val sql = String.format(DELETE_SQL_TEMPLATE, tableName, StringUtils.EMPTY);
                 val count = jdbcTemplate.update(sql);
                 LOGGER.info("[{}] records deleted.", count);
             }
@@ -238,34 +241,52 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     @Override
-    public Set<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
-        var builder = new StringBuilder("1=1 ");
+    public List<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
+        val builder = new StringBuilder("1=1 ");
+        val args = new ArrayList<>();
         if (whereClause.containsKey(WhereClauseFields.DATE)) {
-            val formatter = DateTimeFormatter.ofPattern(dateFormatterPattern, Locale.ENGLISH);
-            var sinceDate = (LocalDate) whereClause.get(WhereClauseFields.DATE);
-            var formattedDate = sinceDate.format(formatter);
+            builder.append("AND AUD_DATE>=? ");
+            var sinceDate = (TemporalAccessor) whereClause.get(WhereClauseFields.DATE);
             if (dateFormatterFunction != null) {
+                val formatter = DateTimeFormatter.ofPattern(dateFormatterPattern, Locale.ENGLISH);
                 val patternToUse = StringUtils.isNotBlank(dateFormatterPattern) ? dateFormatterPattern : "yyyy-MM-dd";
-                formattedDate = String.format(dateFormatterFunction, sinceDate.format(formatter), patternToUse);
-                builder.append(String.format("AND AUD_DATE>=%s ", formattedDate));
+                val formattedDate = String.format(dateFormatterFunction, formatter.format(sinceDate), patternToUse);
+                LOGGER.trace("Using date formatter [{}] to format date [{}] to [{}]", dateFormatterFunction, sinceDate, formattedDate);
+                args.add(formattedDate);
             } else {
-                builder.append(String.format("AND AUD_DATE>='%s' ", formattedDate));
+                args.add(sinceDate);
             }
         }
         if (whereClause.containsKey(WhereClauseFields.PRINCIPAL)) {
             var principal = whereClause.get(WhereClauseFields.PRINCIPAL).toString();
-            builder.append(String.format("AND AUD_USER='%s' ", principal));
+            args.add(principal);
+            builder.append("AND AUD_USER=? ");
         }
-        return getAuditRecordsSince(builder);
+        val count = whereClause.containsKey(WhereClauseFields.COUNT)
+            ? (long) whereClause.get(WhereClauseFields.COUNT)
+            : DEFAULT_MAX_AUDIT_RECORDS_TO_FETCH;
+
+        return getAuditRecordsSince(builder, args.toArray(), count);
     }
 
-    private Set<? extends AuditActionContext> getAuditRecordsSince(final StringBuilder where) {
-        return transactionTemplate.execute((TransactionCallback<Set>) transactionStatus -> {
-            val sql = String.format(selectByDateSqlTemplate, tableName, where);
-            val results = new LinkedHashSet<>();
+    private List<? extends AuditActionContext> getAuditRecordsSince(final StringBuilder where, final Object[] args,
+                                                                    final long count) {
+        return transactionTemplate.execute((TransactionCallback<List>) transactionStatus -> {
+            var sql = String.format(selectByDateSqlTemplate, tableName, where);
+            if (count > 0) {
+                if (jpaAuditTrailEntityFactory.isOracle()) {
+                    sql += " FETCH FIRST %s ROWS ONLY".formatted(count);
+                } else if (jpaAuditTrailEntityFactory.isMsSqlServer()) {
+                    sql = Strings.CI.replace(sql, "SELECT ", "SELECT TOP %s ".formatted(count));
+                } else {
+                    sql += " LIMIT %s".formatted(count);
+                }
+            }
+            val results = new ArrayList<>();
+            LOGGER.debug("Executing SQL query [{}]", sql);
             jdbcTemplate.query(sql, resultSet -> {
                 results.add(getAuditActionContext(resultSet));
-            });
+            }, args);
             return results;
         });
     }
@@ -275,10 +296,11 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         val resource = resultSet.getString(AuditTableColumns.RESOURCE.getColumnName());
         val clientIp = resultSet.getString(AuditTableColumns.CLIENT_IP.getColumnName());
         val serverIp = resultSet.getString(AuditTableColumns.SERVER_IP.getColumnName());
-        val audDate = resultSet.getDate(AuditTableColumns.DATE.getColumnName());
+        val audDate = resultSet.getTimestamp(AuditTableColumns.DATE.getColumnName());
         val appCode = resultSet.getString(AuditTableColumns.APPLIC_CD.getColumnName());
         val action = resultSet.getString(AuditTableColumns.ACTION.getColumnName());
         val userAgent = resultSet.getString(AuditTableColumns.USERAGENT.getColumnName());
+        val tenant = resultSet.getString(AuditTableColumns.TENANT.getColumnName());
         val geoLocation = resultSet.getString(AuditTableColumns.GEOLOCATION.getColumnName());
         val locale = StringUtils.defaultIfBlank(resultSet.getString(AuditTableColumns.LOCALE.getColumnName()), Locale.US.toLanguageTag());
 
@@ -291,8 +313,9 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         }
         val clientInfo = new ClientInfo(clientIp, serverIp, userAgent, geoLocation)
             .setLocale(Locale.forLanguageTag(locale))
+            .setTenant(tenant)
             .setHeaders(headers);
-        val auditDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(audDate.getTime()), ZoneOffset.UTC);
+        val auditDate = audDate.toLocalDateTime();
         return new AuditActionContext(principal, resource, action, appCode, auditDate, clientInfo);
     }
 }

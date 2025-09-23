@@ -23,19 +23,20 @@ import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
 import org.apereo.cas.config.CasTokenTicketsAutoConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import java.util.UUID;
@@ -47,12 +48,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasRegisteredServicesTestConfiguration.class,
     CasTokenTicketsAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
@@ -71,6 +70,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Tag("Authentication")
+@ExtendWith(CasTestExtension.class)
 class TokenWebApplicationServiceResponseBuilderTests {
     @Autowired
     @Qualifier("webApplicationServiceResponseBuilder")
@@ -85,17 +85,18 @@ class TokenWebApplicationServiceResponseBuilderTests {
     private TicketRegistry ticketRegistry;
 
     @Test
-    void verifyDecrypt() throws Throwable {
+    void verifyDecrypt() {
         val signingSecret = "EihBwA3OuDQMm4gdWzkqRJ87596G7o7a_naJAJipxFoRJbXK7APRcnCA91Y30rJdh4q-C2dmpfV6eNhQT0bR5A";
         val encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
 
         val cipher = new JwtTicketCipherExecutor(encryptionSecret, signingSecret, true, 0, 0);
+        cipher.setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
         val result = cipher.decode(cipher.encode("ThisIsValue"));
         assertEquals("ThisIsValue", result);
     }
 
     @Test
-    void verifyBuilderSupport() throws Throwable {
+    void verifyBuilderSupport() {
         assertTrue(responseBuilder.supports(serviceFactory.createService("test")));
     }
 
@@ -117,7 +118,7 @@ class TokenWebApplicationServiceResponseBuilderTests {
     }
 
     @Test
-    void verifyTokenBuilderWithoutServiceTicket() throws Throwable {
+    void verifyTokenBuilderWithoutServiceTicket() {
         val result = responseBuilder.build(CoreAuthenticationTestUtils.getWebApplicationService("jwtservice"),
             StringUtils.EMPTY, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(result);

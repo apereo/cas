@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -185,17 +184,16 @@ class CasCoreTicketsConfiguration {
             final PublisherIdentifier messageQueueTicketRegistryIdentifier,
             @Qualifier(TicketCatalog.BEAN_NAME)
             final TicketCatalog ticketCatalog,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketSerializationManager.BEAN_NAME)
             final TicketSerializationManager ticketSerializationManager,
-            @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
-            final ObjectProvider<LogoutManager> logoutManager,
             final CasConfigurationProperties casProperties) {
             LOGGER.info("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
                         + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
             val mem = casProperties.getTicket().getRegistry().getInMemory();
             val storageMap = new ConcurrentHashMap<String, Ticket>(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency());
             return new DefaultTicketRegistry(defaultTicketRegistryCipherExecutor, ticketSerializationManager, ticketCatalog,
-                storageMap, messageQueueTicketRegistryPublisher, messageQueueTicketRegistryIdentifier);
+                    applicationContext, storageMap, messageQueueTicketRegistryPublisher, messageQueueTicketRegistryIdentifier);
         }
 
         @Bean
@@ -218,12 +216,13 @@ class CasCoreTicketsConfiguration {
         @ConditionalOnMissingBean(name = "messageQueueTicketRegistryReceiver")
         @Lazy(false)
         public QueueableTicketRegistryMessageReceiver messageQueueTicketRegistryReceiver(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("messageQueueTicketRegistryIdentifier")
             final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
             return ticketRegistry instanceof final QueueableTicketRegistry queueableTicketRegistry
-                ? new DefaultQueueableTicketRegistryMessageReceiver(queueableTicketRegistry, messageQueueTicketRegistryIdentifier)
+                ? new DefaultQueueableTicketRegistryMessageReceiver(queueableTicketRegistry, messageQueueTicketRegistryIdentifier, applicationContext)
                 : QueueableTicketRegistryMessageReceiver.noOp();
         }
 
@@ -232,12 +231,12 @@ class CasCoreTicketsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PublisherIdentifier messageQueueTicketRegistryIdentifier(final CasConfigurationProperties casProperties) {
             val bean = new PublisherIdentifier();
-            val amqp = casProperties.getTicket().getRegistry().getCore();
-            FunctionUtils.doIfNotBlank(amqp.getQueueIdentifier(), __ -> bean.setId(amqp.getQueueIdentifier()));
+            val core = casProperties.getTicket().getRegistry().getCore();
+            FunctionUtils.doIfNotBlank(core.getQueueIdentifier(), __ -> bean.setId(core.getQueueIdentifier()));
             return bean;
         }
 
-        /*
+        /**
          * @deprecated since 7.1.0.
          */
         @Deprecated(since = "7.1.0")
@@ -561,7 +560,7 @@ class CasCoreTicketsConfiguration {
         @ConditionalOnMissingBean(name = LockRepository.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LockRepository casTicketRegistryLockRepository(
-            final ConfigurableApplicationContext applicationContext) throws Exception {
+            final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(LockRepository.class)
                 .when(BeanCondition.on("cas.ticket.registry.core.enable-locking").isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
                 .supply(LockRepository::asDefault)

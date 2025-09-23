@@ -5,7 +5,6 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import com.mchange.util.AssertException;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -39,7 +38,7 @@ class SamlProfileSamlAssertionBuilderTests {
         void verifyAssertionWithDefaultIssuer() throws Throwable {
             val service = getSamlRegisteredServiceForTestShib();
             val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId())
-                .orElseThrow(() -> new AssertException("Unable to locate metadata for %s".formatted(service.getServiceId())));
+                .orElseThrow(() -> new AssertionError("Unable to locate metadata for %s".formatted(service.getServiceId())));
 
             val buildContext = SamlProfileBuilderContext.builder()
                 .samlRequest(getAuthnRequestFor(service))

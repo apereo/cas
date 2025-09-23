@@ -21,6 +21,8 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
 
     testImplementation project(":core:cas-server-core-notifications")
+    testImplementation project(":core:cas-server-core-scripting")
+    
     testImplementation project(":support:cas-server-support-webconfig")
 
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")

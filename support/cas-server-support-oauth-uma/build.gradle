@@ -15,7 +15,6 @@ dependencies {
     implementation libraries.jose4j
     implementation libraries.nimbus
 
-
     implementation project(":support:cas-server-support-oauth-core-api")
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-oauth-api")
@@ -39,14 +38,18 @@ dependencies {
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-notifications-api")
+
+    testImplementation libraries.springboottomcat
     
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-throttle")
     testImplementation project(":support:cas-server-support-validation")
+    testImplementation project(":support:cas-server-support-webconfig")
 
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
@@ -66,6 +69,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-oauth", configuration: "tests")
-    testImplementation project(path: ":support:cas-server-support-oauth-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-oauth-services", configuration: "tests")
 }

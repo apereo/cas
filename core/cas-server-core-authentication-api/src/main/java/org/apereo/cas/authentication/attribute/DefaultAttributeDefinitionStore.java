@@ -17,9 +17,9 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hjson.JsonValue;
-import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -80,7 +80,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     }
 
     private static String getAttributeDefinitionKey(final String key, final AttributeDefinition definition) {
-        if (StringUtils.isNotBlank(definition.getKey()) && !StringUtils.equalsIgnoreCase(definition.getKey(), key)) {
+        if (StringUtils.isNotBlank(definition.getKey()) && !Strings.CI.equals(definition.getKey(), key)) {
             LOGGER.warn("Attribute definition contains a key property [{}] that differs from its registering key [{}]. "
                 + "This is likely due to misconfiguration of the attribute definition, and CAS will use the key property [{}] "
                 + "to register the attribute definition in the attribute store", definition.getKey(), key, definition.getKey());
@@ -240,13 +240,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             return this;
         });
     }
-
-    @Override
-    @CanIgnoreReturnValue
-    public AttributeDefinitionStore importStore(final AttributeDefinitionStore definitionStore) {
-        definitionStore.getAttributeDefinitions().forEach(this::registerAttributeDefinition);
-        return this;
-    }
+    
 
     /**
      * Import store.
@@ -281,7 +275,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
         if (attributes.containsKey(attributeKey)) {
             return attributes.get(attributeKey);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
     /**
@@ -293,7 +287,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     public void watchStore(final Resource resource) throws Exception {
         if (ResourceUtils.isFile(resource)) {
             this.storeWatcherService = new FileWatcherService(resource.getFile(),
-                Unchecked.consumer(file -> importStore(new FileSystemResource(file))));
+                file -> importStore(new FileSystemResource(file)));
             this.storeWatcherService.start(getClass().getSimpleName());
         }
     }
@@ -307,11 +301,13 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
     public static Map<String, AttributeDefinition> from(final Resource resource) {
         return FunctionUtils.doIfNotNull(resource,
             () -> {
-                LOGGER.trace("Loading attribute definitions from [{}]", resource);
-                val json = new String(resource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-                LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
-                return MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<>() {
-                });
+                try (val is = resource.getInputStream()) {
+                    LOGGER.trace("Loading attribute definitions from [{}]", resource);
+                    val json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+                    LOGGER.trace("Loaded attribute definitions [{}] from [{}]", json, resource);
+                    return MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<>() {
+                    });
+                }
             }, Map::<String, AttributeDefinition>of).get();
     }
 }

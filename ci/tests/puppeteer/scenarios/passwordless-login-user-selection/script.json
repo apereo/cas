@@ -1,0 +1,39 @@
+{
+  "dependencies": "passwordless-webflow,simple-mfa,scripting,pac4j-cas",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.authn.accept.users=caspassword::Mellon,castoken::Mellon,casmfa::Mellon,casdelegation::Mellon",
+
+    "--cas.authn.passwordless.tokens.mail.html=false",
+    "--cas.authn.passwordless.tokens.mail.text=${token}",
+    "--cas.authn.passwordless.tokens.mail.from=casuser@apereo.org",
+    "--cas.authn.passwordless.tokens.mail.subject=Passwordless AuthN",
+    
+    "--cas.authn.mfa.simple.mail.html=false",
+    "--cas.authn.mfa.simple.mail.from=cas@example.com",
+    "--cas.authn.mfa.simple.mail.subject=Token",
+    "--cas.authn.mfa.simple.mail.text=${token}",
+
+    "--cas.http-client.host-name-verifier=none",
+
+    "--cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers=memberOf",
+    "--cas.authn.mfa.triggers.principal.global-principal-attribute-value-regex=mfa",
+    
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[0].protocol=CAS30",
+    "--cas.authn.pac4j.cas[0].client-name=CasClient",
+
+    "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/cas/run-cas-server.sh"
+}

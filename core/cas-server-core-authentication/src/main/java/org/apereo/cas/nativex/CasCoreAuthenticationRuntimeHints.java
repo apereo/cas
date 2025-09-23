@@ -16,18 +16,22 @@ import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.PrePostAuthenticationHandler;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.PrincipalElectionStrategyConflictResolver;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceResponse;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.metadata.CacheCredentialsCipherExecutor;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.validation.ValidationResponseType;
 import lombok.val;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.beans.factory.DisposableBean;
 import java.util.List;
 
 /**
@@ -47,7 +51,6 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
             ValidationResponseType.class
         ));
 
-
         val subclassesInPackage = findSubclassesInPackage(Principal.class, CentralAuthenticationService.NAMESPACE);
         subclassesInPackage.addAll(findSubclassesInPackage(MessageDescriptor.class, CentralAuthenticationService.NAMESPACE));
         subclassesInPackage.addAll(findSubclassesInPackage(CredentialMetadata.class, CentralAuthenticationService.NAMESPACE));
@@ -58,6 +61,9 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
 
         val credentials = findSubclassesInPackage(Credential.class, CentralAuthenticationService.NAMESPACE);
         registerReflectionHints(hints, credentials);
+
+        registerSpringProxyHints(hints, PrePostAuthenticationHandler.class, AuthenticationHandler.class);
+        registerSpringProxyHints(hints, WebApplicationService.class);
 
         registerProxyHints(hints, List.of(
             AuthenticationMetaDataPopulator.class,
@@ -77,5 +83,7 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
                 CacheCredentialsCipherExecutor.class,
                 SimplePrincipal.class,
                 DefaultAuthentication.class));
+
+        registerSpringProxyHints(hints, AttributeDefinitionStore.class, DisposableBean.class, AutoCloseable.class);
     }
 }

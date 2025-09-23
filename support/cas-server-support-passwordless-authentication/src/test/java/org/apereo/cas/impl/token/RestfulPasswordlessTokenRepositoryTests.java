@@ -49,7 +49,7 @@ class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccoun
     }
 
     @Test
-    void verifyFindToken() throws Throwable {
+    void verifyFindToken() {
         val tokens = new CasConfigurationProperties().getAuthn().getPasswordless().getTokens();
         tokens.getRest().setUrl("http://localhost:9306");
         val passwordless = getRepository(tokens);
@@ -66,7 +66,7 @@ class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccoun
     }
 
     @Test
-    void verifyFindTokenFails() throws Throwable {
+    void verifyFindTokenFails() {
         try (val webServer = new MockWebServer(9306,
             new ByteArrayResource("token".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
@@ -79,7 +79,7 @@ class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccoun
     }
 
     @Test
-    void verifySaveToken() throws Throwable {
+    void verifySaveToken() {
         val data = "THE_TOKEN";
         try (val webServer = new MockWebServer(9307,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
@@ -101,7 +101,7 @@ class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccoun
     }
 
     @Test
-    void verifyDeleteToken() throws Throwable {
+    void verifyDeleteToken() {
         try (val webServer = new MockWebServer(9293,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
@@ -112,7 +112,7 @@ class RestfulPasswordlessTokenRepositoryTests extends BasePasswordlessUserAccoun
     }
 
     @Test
-    void verifyClean() throws Throwable {
+    void verifyClean() {
         try (val webServer = new MockWebServer(9293,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {

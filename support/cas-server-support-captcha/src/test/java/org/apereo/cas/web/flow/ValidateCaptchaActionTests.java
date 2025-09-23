@@ -1,10 +1,12 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.CaptchaActivationStrategy;
@@ -14,12 +16,15 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.webflow.execution.Action;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,9 +36,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = BaseCaptchaConfigurationTests.SharedTestConfiguration.class,
-    properties = "cas.google-recaptcha.verify-url=http://localhost:9294"
-)
+    properties = "cas.google-recaptcha.verify-url=http://localhost:${random.int[3000,9000]}")
 @Tag("WebflowActions")
+@ExtendWith(CasTestExtension.class)
 class ValidateCaptchaActionTests {
 
     @Autowired
@@ -48,9 +53,15 @@ class ValidateCaptchaActionTests {
     @Qualifier("captchaActivationStrategy")
     private CaptchaActivationStrategy captchaActivationStrategy;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
     void verifyCaptchaValidationSkipped() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
         val data = "{\"success\": true }";
         context.setParameter(GoogleCaptchaV2Validator.REQUEST_PARAM_RECAPTCHA_RESPONSE, data);
@@ -68,12 +79,15 @@ class ValidateCaptchaActionTests {
 
     @Test
     void verifyCaptchaValidated() throws Throwable {
-        val context = MockRequestContext.create();
+        val props = casProperties.getGoogleRecaptcha();
+        val port = URI.create(props.getVerifyUrl()).getPort();
+        
+        val context = MockRequestContext.create(applicationContext);
 
         val data = "{\"success\": true }";
         context.setParameter(GoogleCaptchaV2Validator.REQUEST_PARAM_RECAPTCHA_RESPONSE, data);
 
-        try (val webServer = new MockWebServer(9294,
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val result = validateCaptchaAction.execute(context);
@@ -83,13 +97,14 @@ class ValidateCaptchaActionTests {
 
     @Test
     void verifyCaptchaFails() throws Throwable {
-        val context = MockRequestContext.create();
+        val context = MockRequestContext.create(applicationContext);
 
-        try (val webServer = new MockWebServer(9305,
+        try (val webServer = new MockWebServer(
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 
-            val props = new GoogleRecaptchaProperties().setVerifyUrl("http://localhost:9305");
+            val props = new GoogleRecaptchaProperties()
+                .setVerifyUrl("http://localhost:%s".formatted(webServer.getPort()));
             val validateAction = new ValidateCaptchaAction(new GoogleCaptchaV2Validator(props), captchaActivationStrategy);
 
             val result = validateAction.execute(context);

@@ -1,5 +1,5 @@
 {
-  "dependencies": "redis-ticket-registry,reports",
+  "dependencies": "redis-ticket-registry,reports,redis-modules",
   "conditions": {
     "docker": "true"
   },
@@ -16,7 +16,7 @@
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     "--management.endpoint.health.show-details=always",
 
     "--cas.ticket.st.time-to-kill-in-seconds=30",
@@ -24,6 +24,7 @@
     "--cas.webflow.crypto.signing.key=Q4tQGAuJSmuJ5WA0zByB9P6hYr5dpTd2JJifyy6Tm_CJ35pkbdhFvcgG-3igDjA4CTjau6Z0yMft-dhVUbRnPQ",
     "--cas.webflow.crypto.encryption.key=g-Rk2ZvexS6tdooIiDh0IQ",
     
+    "--cas.tgc.crypto.alg=A128CBC-HS256",
     "--cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
     "--cas.tgc.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w"
   ],

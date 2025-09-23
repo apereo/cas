@@ -40,7 +40,7 @@ to broadcast state changes (such as configuration changes) or other management i
 
 The following endpoints are provided by Spring Cloud:
 
-{% include_cached actuators.html endpoints="features,refresh,busenv,bus-refresh,busrefresh,serviceregistry" %}
+{% include_cached actuators.html endpoints="features,refresh,busenv,bus-refresh,busrefresh,busshutdown,serviceregistry" %}
 
 The transport mechanism for the bus to broadcast events is handled via one of the following components.
 

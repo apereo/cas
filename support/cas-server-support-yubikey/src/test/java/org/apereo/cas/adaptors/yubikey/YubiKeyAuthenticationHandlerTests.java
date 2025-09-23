@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -16,9 +18,16 @@ import com.yubico.client.v2.YubicoClient;
 import com.yubico.client.v2.exceptions.YubicoVerificationException;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.LinkedHashMap;
@@ -33,6 +42,9 @@ import static org.mockito.Mockito.*;
  * @since 4.1
  */
 @Tag("MFAProvider")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(CasTestExtension.class)
 class YubiKeyAuthenticationHandlerTests {
 
     private static final Integer CLIENT_ID = 18421;
@@ -41,17 +53,19 @@ class YubiKeyAuthenticationHandlerTests {
 
     private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @BeforeEach
-    public void before() throws Exception {
-        val context = MockRequestContext.create();
+    void before() throws Exception {
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
     }
 
     @Test
-    void checkNoAuthN() throws Exception {
-        MockRequestContext.create();
+    void checkNoAuthN() {
         val handler = getHandler(YubicoClient.getClient(123456, EncodingUtils.encodeBase64("123456")));
-        assertThrows(NullPointerException.class, () -> handler.authenticate(new YubiKeyCredential(OTP), mock(Service.class)));
+        assertThrows(FailedLoginException.class, () -> handler.authenticate(new YubiKeyCredential(OTP), mock(Service.class)));
     }
 
     private static YubiKeyAuthenticationHandler getHandler(final YubicoClient client) {
@@ -102,7 +116,7 @@ class YubiKeyAuthenticationHandlerTests {
             new DefaultYubiKeyAccountValidator(YubicoClient.getClient(CLIENT_ID, SECRET_KEY)));
         registry.setCipherExecutor(CipherExecutor.noOpOfSerializableToString());
         val handler = new YubiKeyAuthenticationHandler(StringUtils.EMPTY,
-            null, PrincipalFactoryUtils.newPrincipalFactory(),
+            PrincipalFactoryUtils.newPrincipalFactory(),
             YubicoClient.getClient(CLIENT_ID, SECRET_KEY),
             registry, null, new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
         assertThrows(AccountNotFoundException.class, () -> handler.authenticate(new YubiKeyCredential(OTP), mock(Service.class)));
@@ -112,9 +126,11 @@ class YubiKeyAuthenticationHandlerTests {
     void checkEncryptedAccount() {
         val registry = new PermissiveYubiKeyAccountRegistry(new LinkedHashMap<>(), (uid, token) -> true);
         assertNotNull(registry.save(YubiKeyAccount.builder().username(UUID.randomUUID().toString()).build()));
-        registry.setCipherExecutor(new YubikeyAccountCipherExecutor(
+        val cipherExecutor = new YubikeyAccountCipherExecutor(
             "1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM",
-            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w", 0, 0));
+            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w", 0, 0);
+        cipherExecutor.setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
+        registry.setCipherExecutor(cipherExecutor);
 
         val request = YubiKeyDeviceRegistrationRequest.builder().username("encrypteduser").token(OTP).name(UUID.randomUUID().toString()).build();
         assertTrue(registry.registerAccountFor(request));

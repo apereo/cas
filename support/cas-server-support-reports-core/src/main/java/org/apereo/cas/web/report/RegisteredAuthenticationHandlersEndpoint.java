@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
  * @author Francesco Chicchiriccò
  * @since 6.3.0
  */
-@Endpoint(id = "authenticationHandlers", enableByDefault = false)
+@Endpoint(id = "authenticationHandlers", defaultAccess = Access.NONE)
 public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEndpoint {
 
     private final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
@@ -49,7 +50,7 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
         MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_CAS_YAML, MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Get collection of available authentication handlers")
     public Collection<AuthenticationHandlerDetails> handle() {
-        return this.authenticationEventExecutionPlan.getObject().getAuthenticationHandlers()
+        return authenticationEventExecutionPlan.getObject().resolveAuthenticationHandlers()
             .stream()
             .map(RegisteredAuthenticationHandlersEndpoint::buildHandlerDetails)
             .sorted(Comparator.comparing(AuthenticationHandlerDetails::getOrder))
@@ -62,11 +63,15 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
      * @param name the name
      * @return the authentication handler
      */
-    @Operation(summary = "Get available authentication handler by name", parameters = @Parameter(name = "name", required = true))
+    @Operation(summary = "Get available authentication handler by name", parameters = @Parameter(name = "name", required = true, description = "The handler name"))
     @ReadOperation(produces = {
-        MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_CAS_YAML, MediaType.APPLICATION_JSON_VALUE})
+        MediaType.APPLICATION_JSON_VALUE,
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+        MEDIA_TYPE_CAS_YAML
+    })
     public AuthenticationHandlerDetails fetchAuthnHandler(@Selector final String name) {
-        return this.authenticationEventExecutionPlan.getObject().getAuthenticationHandlers()
+        return authenticationEventExecutionPlan.getObject()
+            .resolveAuthenticationHandlers()
             .stream()
             .filter(authnHandler -> authnHandler.getName().equalsIgnoreCase(name))
             .findFirst()

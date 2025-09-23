@@ -36,5 +36,5 @@ const assert = require("assert");
     assert(decoded["family_name"] !== undefined);
     assert(decoded["given_name"] !== undefined);
     assert(decoded["name"] !== undefined);
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

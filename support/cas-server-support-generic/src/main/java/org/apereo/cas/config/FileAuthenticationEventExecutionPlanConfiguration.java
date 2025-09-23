@@ -58,12 +58,12 @@ class FileAuthenticationEventExecutionPlanConfiguration {
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
-        final ConfigurableApplicationContext applicationContext) throws Exception {
+        final ConfigurableApplicationContext applicationContext) {
         return BeanSupplier.of(AuthenticationHandler.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val fileProperties = casProperties.getAuthn().getFile();
-                val h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager, filePrincipalFactory,
+                val h = new FileAuthenticationHandler(fileProperties.getName(), filePrincipalFactory,
                     fileProperties.getFilename(), fileProperties.getSeparator());
                 h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(fileProperties.getPasswordEncoder(), applicationContext));
                 h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration);
@@ -83,7 +83,7 @@ class FileAuthenticationEventExecutionPlanConfiguration {
         final AuthenticationHandler fileAuthenticationHandler,
         final CasConfigurationProperties casProperties,
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final PrincipalResolver defaultPrincipalResolver) throws Exception {
+        final PrincipalResolver defaultPrincipalResolver) {
         return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> plan -> {

@@ -45,7 +45,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
         BaseWebflowConfigurerTests.SharedTestConfiguration.class
     })
     @TestPropertySource(properties = {
-        "spring.main.allow-bean-definition-overriding=true",
         "cas.authn.passwordless.accounts.simple.casuser=casuser@example.org",
         "cas.authn.passwordless.core.multifactor-authentication-activated=true"
     })
@@ -164,6 +163,9 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
 
     @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
     @TestPropertySource(properties = {
+        "cas.authn.attribute-repository.stub.attributes.groupMembership=adopters",
+        "cas.authn.attribute-repository.stub.attributes.name=CAS",
+
         "cas.authn.passwordless.accounts.simple.casuser=casuser@helloworld.org",
         "cas.authn.passwordless.core.multifactor-authentication-activated=true",
         "cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers=groupMembership",

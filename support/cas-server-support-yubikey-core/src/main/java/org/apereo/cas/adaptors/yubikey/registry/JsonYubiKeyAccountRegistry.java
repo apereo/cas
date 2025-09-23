@@ -2,18 +2,17 @@ package org.apereo.cas.adaptors.yubikey.registry;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
-import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
-import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.io.FileWatcherService;
+import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,16 +24,31 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry {
+public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry implements DisposableBean {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     private final Resource jsonResource;
-
-    public JsonYubiKeyAccountRegistry(final Resource jsonResource, final YubiKeyAccountValidator validator) {
+    
+    private WatcherService watcherService;
+    
+    public JsonYubiKeyAccountRegistry(final Resource jsonResource,
+                                      final boolean watchResource,
+                                      final YubiKeyAccountValidator validator) throws Exception {
         super(getDevicesFromJsonResource(jsonResource), validator);
         this.jsonResource = jsonResource;
+        
+        if (ResourceUtils.isFile(this.jsonResource) && watchResource) {
+            this.watcherService = new FileWatcherService(jsonResource.getFile(),
+                __ -> setDevices(getDevicesFromJsonResource(jsonResource)));
+            this.watcherService.start(getClass().getSimpleName());
+        }
+    }
+
+    @Override
+    public void destroy() {
+        FunctionUtils.doIfNotNull(watcherService, WatcherService::close);
     }
 
     private static Map<String, YubiKeyAccount> getDevicesFromJsonResource(final Resource jsonResource) {
@@ -54,7 +68,7 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
             } else {
                 LOGGER.warn("JSON resource @ [{}] does not exist", jsonResource);
             }
-            return new HashMap<>(0);
+            return new HashMap<>();
         });
     }
 
@@ -83,11 +97,10 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
     }
 
     @Override
-    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
-                               final YubiKeyRegisteredDevice... device) {
-        val acct = super.save(request, device);
+    public YubiKeyAccount save(final YubiKeyAccount yubiAccount) {
+        val account = super.save(yubiAccount);
         writeDevicesToFile();
-        return acct;
+        return account;
     }
 
     @Override

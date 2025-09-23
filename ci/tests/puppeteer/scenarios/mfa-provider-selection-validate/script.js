@@ -27,10 +27,7 @@ const cas = require("../../cas.js");
     const ticket = await cas.assertTicketParameter(page);
 
     await cas.log(`Validating ticket ${ticket} with service ${service}`);
-    const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
-
-    await cas.logg(body);
-    
+    const body = await cas.validateTicket(service, ticket, "XML");
     assert(body.includes("<cas:authenticationSuccess>"));
     assert(body.includes("<cas:user>casuser</cas:user>"));
     assert(body.includes("<cas:credentialType>GoogleAuthenticatorTokenCredential</cas:credentialType>"));
@@ -43,5 +40,5 @@ const cas = require("../../cas.js");
     assert(body.includes("<cas:successfulAuthenticationHandlers>Accept</cas:successfulAuthenticationHandlers>"));
     assert(body.includes("<cas:successfulAuthenticationHandlers>GoogleAuth</cas:successfulAuthenticationHandlers>"));
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

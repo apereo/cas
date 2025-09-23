@@ -9,5 +9,5 @@ def run(Object[] args) {
     logger.info("Checking provider ${provider.name}...")
     def response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext)
     logger.debug("Redirecting to ${provider.redirectUrl}")
-    response.sendRedirect(provider.redirectUrl);
+    response.sendRedirect(provider.redirectUrl)
 }

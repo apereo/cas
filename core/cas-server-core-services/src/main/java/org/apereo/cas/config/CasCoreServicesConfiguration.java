@@ -2,19 +2,20 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.DefaultWebApplicationResponseBuilderLocator;
-import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
-import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.DefaultChainingServiceRegistry;
+import org.apereo.cas.services.DefaultRegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.DefaultRegisteredServicesEventListener;
 import org.apereo.cas.services.DefaultRegisteredServicesTemplatesManager;
 import org.apereo.cas.services.DefaultServiceRegistryExecutionPlan;
@@ -26,6 +27,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
+import org.apereo.cas.services.RegisteredServiceIndexService;
+import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.RegisteredServicesEventListener;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
@@ -40,18 +43,19 @@ import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.ServicesManagerScheduledLoader;
 import org.apereo.cas.services.mgmt.DefaultChainingServicesManager;
 import org.apereo.cas.services.mgmt.DefaultServicesManager;
+import org.apereo.cas.services.query.DefaultRegisteredServiceIndexService;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import org.apereo.cas.util.spring.CasApplicationReadyListener;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.UrlValidator;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -63,7 +67,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -72,12 +75,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableAsync;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -119,11 +120,14 @@ class CasCoreServicesConfiguration {
         @Lazy(false)
         public RegisteredServicesEventListener registeredServicesEventListener(
             final CasConfigurationProperties casProperties,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(CommunicationsManager.BEAN_NAME)
             final CommunicationsManager communicationsManager) {
-            return new DefaultRegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
+            return new DefaultRegisteredServicesEventListener(servicesManager,
+                casProperties, communicationsManager, tenantExtractor);
         }
     }
 
@@ -145,14 +149,6 @@ class CasCoreServicesConfiguration {
     @Configuration(value = "CasCoreServicesBaseConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasCoreServicesBaseConfiguration {
-
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @Bean
-        @ConditionalOnMissingBean(name = "shibbolethCompatiblePersistentIdGenerator")
-        public PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator() {
-            return new ShibbolethCompatiblePersistentIdGenerator();
-        }
-
         @ConditionalOnMissingBean(name = RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -163,10 +159,20 @@ class CasCoreServicesConfiguration {
         @ConditionalOnMissingBean(name = AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuditableExecution registeredServiceAccessStrategyEnforcer(final ConfigurableApplicationContext applicationContext) {
-            return new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext);
+        public AuditableExecution registeredServiceAccessStrategyEnforcer(
+            @Qualifier(RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+            final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer,
+            final ConfigurableApplicationContext applicationContext) {
+            return new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext, principalAccessStrategyEnforcer);
         }
 
+        @ConditionalOnMissingBean(name = RegisteredServicePrincipalAccessStrategyEnforcer.BEAN_NAME)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer(final ConfigurableApplicationContext applicationContext) {
+            return new DefaultRegisteredServicePrincipalAccessStrategyEnforcer(applicationContext);
+        }
+        
         @ConditionalOnMissingBean(name = "groovyRegisteredServiceAccessStrategyEnforcer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -179,7 +185,8 @@ class CasCoreServicesConfiguration {
                     .given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val location = casProperties.getAccessStrategy().getGroovy().getLocation();
-                    return new GroovyRegisteredServiceAccessStrategyEnforcer(new WatchableGroovyScriptResource(location));
+                    val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+                    return new GroovyRegisteredServiceAccessStrategyEnforcer(scriptFactory.fromResource(location));
                 })
                 .otherwiseProxy()
                 .get();
@@ -197,7 +204,7 @@ class CasCoreServicesConfiguration {
             return new NoOpRegisteredServiceReplicationStrategy();
         }
 
-        @ConditionalOnMissingBean(name = "registeredServiceResourceNamingStrategy")
+        @ConditionalOnMissingBean(name = RegisteredServiceResourceNamingStrategy.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RegisteredServiceResourceNamingStrategy registeredServiceResourceNamingStrategy() {
@@ -256,7 +263,7 @@ class CasCoreServicesConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
             @Qualifier("serviceRegistryExecutionPlan")
-            final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan) throws Exception {
+            final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan) {
             val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
             val chainingRegistry = new DefaultChainingServiceRegistry(applicationContext);
             if (serviceRegistryExecutionPlan.find(filter).isEmpty()) {
@@ -268,7 +275,10 @@ class CasCoreServicesConfiguration {
                     Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new));
                 chainingRegistry.addServiceRegistry(inMemoryServiceRegistry);
             }
-            chainingRegistry.addServiceRegistries(serviceRegistryExecutionPlan.getServiceRegistries());
+            val serviceRegistries = serviceRegistryExecutionPlan.getServiceRegistries();
+            AnnotationAwareOrderComparator.sort(serviceRegistries);
+
+            chainingRegistry.addServiceRegistries(serviceRegistries);
             return chainingRegistry;
         }
     }
@@ -278,12 +288,19 @@ class CasCoreServicesConfiguration {
     static class CasCoreServicesManagerExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = ServicesManagerConfigurationContext.BEAN_NAME)
         public ServicesManagerConfigurationContext servicesManagerConfigurationContext(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,
             @Qualifier(RegisteredServicesTemplatesManager.BEAN_NAME)
             final RegisteredServicesTemplatesManager registeredServicesTemplatesManager,
             @Qualifier(ServiceRegistry.BEAN_NAME)
             final ChainingServiceRegistry serviceRegistry,
+            @Qualifier(RegisteredServiceIndexService.BEAN_NAME)
+            final RegisteredServiceIndexService registeredServiceIndexService,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory serviceFactory,
             @Qualifier("servicesManagerCache")
             final Cache<Long, RegisteredService> servicesManagerCache,
             final List<ServicesManagerRegisteredServiceLocator> servicesManagerRegisteredServiceLocators,
@@ -301,6 +318,9 @@ class CasCoreServicesConfiguration {
                 .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
                 .registeredServiceLocators(servicesManagerRegisteredServiceLocators)
                 .casProperties(casProperties)
+                .tenantExtractor(tenantExtractor)
+                .serviceFactory(serviceFactory)
+                .registeredServiceIndexService(registeredServiceIndexService)
                 .build();
         }
 
@@ -320,6 +340,16 @@ class CasCoreServicesConfiguration {
         public ServicesManagerRegisteredServiceLocator defaultServicesManagerRegisteredServiceLocator() {
             return new DefaultServicesManagerRegisteredServiceLocator();
         }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = RegisteredServiceIndexService.BEAN_NAME)
+        public RegisteredServiceIndexService registeredServiceIndexService(
+            final List<ServicesManagerRegisteredServiceLocator> servicesManagerRegisteredServiceLocators,
+            final CasConfigurationProperties casProperties) {
+            return new DefaultRegisteredServiceIndexService(servicesManagerRegisteredServiceLocators, casProperties);
+        }
+        
     }
 
     @Configuration(value = "CasCoreServicesManagerConfiguration", proxyBeanMethods = false)
@@ -333,8 +363,15 @@ class CasCoreServicesConfiguration {
         public RegisteredServicesTemplatesManager registeredServicesTemplatesManager(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
-            return new DefaultRegisteredServicesTemplatesManager(casProperties.getServiceRegistry(),
-                new RegisteredServiceJsonSerializer(applicationContext));
+            return BeanSupplier.of(RegisteredServicesTemplatesManager.class)
+                .when(BeanCondition.on("cas.service-registry.templates.directory.location").exists().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
+                    return new DefaultRegisteredServicesTemplatesManager(casProperties.getServiceRegistry(), registeredServiceSerializer);
+                })
+                .otherwise(RegisteredServicesTemplatesManager::noOp)
+                .get();
+            
         }
 
         @ConditionalOnMissingBean(name = ServicesManager.BEAN_NAME)
@@ -354,10 +391,12 @@ class CasCoreServicesConfiguration {
             return Beans.newCacheBuilder(casProperties.getServiceRegistry().getCache()).build();
         }
 
-        @EventListener
-        public void refreshServicesManagerWhenReady(final ApplicationReadyEvent event) {
-            val servicesManager = event.getApplicationContext().getBean(ServicesManager.BEAN_NAME, ChainingServicesManager.class);
-            servicesManager.load();
+        @Bean
+        @Lazy(false)
+        public CasApplicationReadyListener servicesManagerApplicationReady(
+            @Qualifier(ServicesManager.BEAN_NAME) final ChainingServicesManager servicesManager,
+            final CasConfigurationProperties casProperties) {
+            return event -> servicesManager.load();
         }
     }
 

@@ -75,11 +75,11 @@ public class MongoDbConnectionFactory {
     private final SSLContext sslContext;
 
     public MongoDbConnectionFactory() {
-        this(new ArrayList<>(0), SSLContexts.createSystemDefault());
+        this(new ArrayList<>(), SSLContexts.createSystemDefault());
     }
 
     public MongoDbConnectionFactory(final SSLContext sslContext) {
-        this(new ArrayList<>(0), sslContext);
+        this(new ArrayList<>(), sslContext);
     }
 
     public MongoDbConnectionFactory(final Converter... converters) {
@@ -167,7 +167,7 @@ public class MongoDbConnectionFactory {
                     .allMatch(entry -> entry.getValue().equals(existingIndex.get(entry.getKey())));
                 val noExtraOptions = existingIndex.keySet().stream()
                     .allMatch(key -> MONGO_INDEX_KEYS.contains(key) || indexOptions.containsKey(key));
-                indexExistsWithDifferentOptions |= keyMatches && !(optionsMatch && noExtraOptions);
+                indexExistsWithDifferentOptions = indexExistsWithDifferentOptions || (keyMatches && !(optionsMatch && noExtraOptions));
             }
 
             try {
@@ -176,7 +176,7 @@ public class MongoDbConnectionFactory {
                     collection.dropIndex(indexKeys);
                 }
                 LOGGER.debug("Creating index [{}] on collection [{}]", index, collectionName);
-                mongoTemplate.indexOps(collectionName).ensureIndex(index);
+                mongoTemplate.indexOps(collectionName).createIndex(index);
             } catch (final Exception e) {
                 LoggingUtils.warn(LOGGER, e);
             }
@@ -217,7 +217,7 @@ public class MongoDbConnectionFactory {
             if (serverAddresses.length == 0) {
                 throw new BeanCreationException("Unable to build a MongoDb client without any hosts/servers defined");
             }
-            val servers = new ArrayList<ServerAddress>(0);
+            val servers = new ArrayList<ServerAddress>();
             if (serverAddresses.length > 1) {
                 LOGGER.debug("Multiple MongoDb server addresses are defined. Ignoring port [{}], "
                              + "assuming ports are defined as part of the address", mongo.getPort());
@@ -323,12 +323,12 @@ public class MongoDbConnectionFactory {
     private Set<Class<?>> getInitialEntitySet() {
         return getMappingBasePackages().stream()
             .flatMap(basePackage -> scanForEntities(basePackage).stream())
-            .collect(Collectors.toCollection(HashSet::new));
+            .collect(Collectors.toSet());
     }
 
     private Set<Class<?>> scanForEntities(final String basePackage) {
         if (StringUtils.isBlank(basePackage)) {
-            return new HashSet<>(0);
+            return new HashSet<>();
         }
 
         val initialEntitySet = new HashSet<Class<?>>();

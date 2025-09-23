@@ -66,7 +66,6 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
 
     /**
      * Gets the values of the given attribute contained in the DN.
-     * <p>
      * <p><strong>NOTE:</strong> no escaping is done on special characters in the
      * values, which could be different from what would appear in the string
      * representation of the DN.</p>
@@ -126,11 +125,13 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
          * @return the string
          * @throws IllegalStateException if no values are remaining.
          */
-        public String nextValue() {
+        String nextValue() {
             if (this.currentIndex == this.values.length) {
                 throw new IllegalStateException("No values remaining for attribute");
             }
-            return this.values[this.currentIndex++].toString();
+            val value = this.values[this.currentIndex].toString();
+            this.currentIndex++;
+            return value;
         }
     }
 }

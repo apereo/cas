@@ -1,13 +1,13 @@
 package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintExtractor;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("MFATrustedDevices")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class UserAgentDeviceFingerprintExtractorTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
@@ -29,7 +30,6 @@ class UserAgentDeviceFingerprintExtractorTests {
     @Test
     void verifyAgentFingerprintNotFound() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        ClientInfoHolder.setClientInfo(null);
         val ex = new UserAgentDeviceFingerprintExtractor();
         assertFalse(ex.extract(RegisteredServiceTestUtils.getAuthentication(),
             context.getHttpServletRequest(), context.getHttpServletResponse()).isPresent());
@@ -39,7 +39,7 @@ class UserAgentDeviceFingerprintExtractorTests {
     void verifyAgentFingerprintFound() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         context.setRemoteAddr("1.2.3.4");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "TestAgent");
+        context.withUserAgent();
         val ex = new UserAgentDeviceFingerprintExtractor();
         assertTrue(ex.extract(RegisteredServiceTestUtils.getAuthentication(),
             context.getHttpServletRequest(), context.getHttpServletResponse()).isPresent());

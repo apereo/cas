@@ -38,12 +38,12 @@ class X509CertificateCredentialJsonSerializerTests {
         });
         assertNotNull(obj);
 
-        val ser = new X509CertificateCredentialJsonSerializer();
-        assertSame(X509CertificateCredential.class, ser.handledType());
+        val serializer = new X509CertificateCredentialJsonSerializer();
+        assertSame(X509CertificateCredential.class, serializer.handledType());
     }
 
     @Test
-    void verifyAuditableOperation() throws Throwable {
+    void verifyAuditableOperation() {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         val set = new LinkedHashSet<>();
         set.add(c);

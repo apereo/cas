@@ -28,7 +28,7 @@
                 onclick="document.getElementById('passwordManagementForm').submit();" />
             <br><br>
         </form>
-        <form th:if="${#bools.isTrue(passwordManagementEnabled) && #bools.isTrue(forgotUsernameEnabled)}" method="post" id="forgotUsernameForm">
+        <form th:if="${#cas.isTrue(passwordManagementEnabled) && #cas.isTrue(forgotUsernameEnabled)}" method="post" id="forgotUsernameForm">
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="forgotUsername" />
             <span class="mdi mdi-account-question" aria-hidden="true"></span>

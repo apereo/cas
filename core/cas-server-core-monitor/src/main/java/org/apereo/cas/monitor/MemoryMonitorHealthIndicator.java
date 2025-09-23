@@ -6,7 +6,6 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
-import java.text.NumberFormat;
 
 /**
  * Monitors JVM memory usage.
@@ -33,14 +32,14 @@ public class MemoryMonitorHealthIndicator extends AbstractHealthIndicator {
         val maxMemory = runtime.maxMemory();
         val availableMemory = maxMemory - usedMemory;
         val availableMemoryPercentage = (double) availableMemory * PERCENTAGE_VALUE / maxMemory;
-        val percentFormat = NumberFormat.getPercentInstance();
+        val freeMemoryPercentage = String.format("%.2f%%", availableMemoryPercentage);
         builder
             .withDetail("availableMemory", FileUtils.byteCountToDisplaySize(availableMemory))
             .withDetail("maxMemory", FileUtils.byteCountToDisplaySize(maxMemory))
             .withDetail("usedMemory", FileUtils.byteCountToDisplaySize(usedMemory))
             .withDetail("totalMemory", FileUtils.byteCountToDisplaySize(totalMemory))
             .withDetail("freeMemory", FileUtils.byteCountToDisplaySize(freeMemory))
-            .withDetail("freeMemoryPercentage", percentFormat.format(availableMemoryPercentage))
+            .withDetail("freeMemoryPercentage", freeMemoryPercentage)
             .status(availableMemoryPercentage < freeMemoryWarnThreshold ? Status.DOWN : Status.UP);
     }
 }

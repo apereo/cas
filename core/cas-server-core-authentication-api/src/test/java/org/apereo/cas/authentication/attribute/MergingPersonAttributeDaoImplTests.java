@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.attribute;
 
+import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
@@ -10,12 +11,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Testcase for {@link StubPersonAttributeDao}.
@@ -23,8 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@Tag("Attributes")
-public class MergingPersonAttributeDaoImplTests {
+@Tag("AttributeRepository")
+class MergingPersonAttributeDaoImplTests {
     private static final String QUERY_ATTR = "username";
 
     private StubPersonAttributeDao sourceNull;
@@ -92,6 +93,7 @@ public class MergingPersonAttributeDaoImplTests {
         val attributes = new HashMap<>(oneAndTwo);
         attributes.putAll(queryMap);
         assertEquals(attributes, result.iterator().next().getAttributes());
+        assertTrue(impl.getId().length > 0);
     }
 
     @Test
@@ -108,6 +110,22 @@ public class MergingPersonAttributeDaoImplTests {
     }
 
     @Test
+    void verifyStopOnSuccess() {
+        val attributeSources = new ArrayList<PersonAttributeDao>();
+        attributeSources.add(sourceOne);
+        attributeSources.add(sourceTwo);
+
+        val impl = new MergingPersonAttributeDaoImpl();
+        impl.setStopOnSuccess(true);
+        impl.setPersonAttributeDaos(attributeSources);
+
+        val queryMap = new HashMap<String, List<Object>>();
+        queryMap.put(QUERY_ATTR, List.of("awp9"));
+        val person = impl.getPeopleWithMultivaluedAttributes(queryMap, PersonAttributeDaoFilter.alwaysChoose());
+        assertEquals(1, person.size());
+    }
+
+    @Test
     void testExceptionHandling() {
         val attributeSources = new ArrayList<PersonAttributeDao>();
 
@@ -115,7 +133,7 @@ public class MergingPersonAttributeDaoImplTests {
         attributeSources.add(sourceTwo);
         attributeSources.add(collidesWithOne);
 
-        var impl = new MergingPersonAttributeDaoImpl();
+        val impl = new MergingPersonAttributeDaoImpl();
         impl.setPersonAttributeDaos(attributeSources);
 
         val queryMap = new HashMap<String, List<Object>>();
@@ -125,6 +143,27 @@ public class MergingPersonAttributeDaoImplTests {
         val attributes = new HashMap<>(oneAndTwoAndThree);
         attributes.putAll(queryMap);
         assertEquals(attributes, result.iterator().next().getAttributes());
+    }
+
+    @Test
+    void testExceptionHandlingRecoveryDisabled() {
+        val attributeSources = new ArrayList<PersonAttributeDao>();
+
+        val failingDao = mock(PersonAttributeDao.class);
+        when(failingDao.getPeopleWithMultivaluedAttributes(any(), any(), any()))
+            .thenThrow(new UnauthorizedAuthenticationException("Failed"));
+        
+        attributeSources.add(failingDao);
+
+        val impl = new MergingPersonAttributeDaoImpl();
+        impl.setPersonAttributeDaos(attributeSources);
+        impl.setRecoverExceptions(false);
+
+        val queryMap = new HashMap<String, List<Object>>();
+        queryMap.put(QUERY_ATTR, List.of("awp9"));
+
+        assertThrows(UnauthorizedAuthenticationException.class,
+            () -> impl.getPeopleWithMultivaluedAttributes(queryMap));
     }
 
     @Test
@@ -146,6 +185,19 @@ public class MergingPersonAttributeDaoImplTests {
         expectedAttribNames.addAll(collidesWithOne.getPossibleUserAttributeNames(PersonAttributeDaoFilter.alwaysChoose()));
 
         assertEquals(expectedAttribNames, attribNames);
+
+        var attributes = impl.getAvailableQueryAttributes(PersonAttributeDaoFilter.alwaysChoose());
+        assertTrue(attributes.isEmpty());
+
+        val failingDao = mock(PersonAttributeDao.class);
+        when(failingDao.getAvailableQueryAttributes(any()))
+            .thenThrow(new UnauthorizedAuthenticationException("Failed"));
+        val impl2 = new MergingPersonAttributeDaoImpl();
+        impl2.setPersonAttributeDaos(List.of(failingDao));
+        impl2.setRecoverExceptions(false);
+
+        assertThrows(UnauthorizedAuthenticationException.class,
+            () -> impl2.getAvailableQueryAttributes(PersonAttributeDaoFilter.alwaysChoose()));
     }
 
     @Test
@@ -213,7 +265,7 @@ public class MergingPersonAttributeDaoImplTests {
         var impl = new MergingPersonAttributeDaoImpl();
         impl.setPersonAttributeDaos(attributeSources);
 
-        var layoutOwners = impl.getPeople(Collections.singletonMap("username", "lo-*"));
+        var layoutOwners = impl.getPeople(Map.of("username", "lo-*"));
 
         val expectedLayoutOwners = new HashSet<PersonAttributes>();
         expectedLayoutOwners.add(new SimplePersonAttributes("lo-welcome", loWelcomeAttrs));
@@ -221,7 +273,7 @@ public class MergingPersonAttributeDaoImplTests {
 
         assertEquals(expectedLayoutOwners, layoutOwners);
 
-        var homeUsers = impl.getPeople(Collections.singletonMap("username", "*home"));
+        var homeUsers = impl.getPeople(Map.of("username", "*home"));
         val expectedHomeUsers = new HashSet<PersonAttributes>();
         expectedHomeUsers.add(new SimplePersonAttributes("jshome", jshomeAttrs));
         expectedHomeUsers.add(new SimplePersonAttributes("lo-home", loHomeAttrs));

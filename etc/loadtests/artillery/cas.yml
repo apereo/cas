@@ -1,0 +1,58 @@
+config:
+  plugins: 
+    metrics-by-endpoint: 
+      useOnlyRequestNames: true
+  target: 'https://localhost:8443'
+  processor: "./cas.js"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+  payload:
+    path: cas-users.csv
+    fields:
+      - username
+      - password
+  tls:
+    rejectUnauthorized: false
+  defaults:
+    headers:
+      Content-Type: application/x-www-form-urlencoded
+
+scenarios:
+  - flow:
+      - get:
+          name: Extract Execution Parameter
+          url: '/cas/login?service=https://localhost:9859/anything/cas'
+          capture:
+            - as: execution
+              group: 1
+              regexp: '<input type="hidden" name="execution" value="(.+?)"\s*/>'
+      # - log: "Captured execution: {{ execution }}"
+      - post:
+          name: Post Credentials & Login
+          url: '/cas/login?service=https://localhost:9859/anything/cas'
+          followRedirect: false
+          form:
+            username: "{{ username }}"
+            password: "{{ password }}"
+            execution: "{{ execution }}"
+            _eventId: submit
+          # think: 1
+          capture:
+            - as: redirectLocation
+              header: 'location'
+          expect:
+            - statusCode: 302
+      - log: "Redirect Location: {{ redirectLocation }}"
+      - function: 'extractServiceTicket'
+      - log: "Service Ticket: {{ serviceTicket }}"
+      # - think: 1
+      - get:
+          name: Validate Service Ticket
+          url: '/cas/p3/serviceValidate?service=https://localhost:9859/anything/cas&ticket={{ serviceTicket }}&format=JSON'
+          capture:
+            - as: serviceResponse
+              json: '$.serviceResponse'
+          expect:
+            - statusCode: 200
+      - function: 'logServiceResponse'

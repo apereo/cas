@@ -11,7 +11,7 @@
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
-    "--cas.authn.passwordless.accounts.ldap.email-attribute=email",
+
     "--cas.authn.passwordless.core.delegated-authentication-activated=false",
     "--cas.authn.passwordless.core.multifactor-authentication-activated=true",
 

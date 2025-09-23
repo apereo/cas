@@ -8,7 +8,7 @@ category: Protocols
 
 # Groovy - SAML2 Metadata Management
 
-A metadata location for a SAML service definition may  point to an external Groovy script, allowing the script to programmatically
+A metadata location for a SAML service definition may point to an external Groovy script, allowing the script to programmatically
 determine and build the metadata resolution machinery to be added to the collection of the existing resolvers.
 
 ```json
@@ -49,3 +49,5 @@ The parameters passed are as follows:
 | `samlProperties`    | The object responsible for capturing the CAS SAML IdP properties defined in the configuration.                     |
 | `criteriaSet`       | The object responsible for capturing the criteria for metadata solution, if any.                                   |
 | `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.                                        |
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

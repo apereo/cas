@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <div class="attribute-tab w-100 d-none" id="attribute-tab-9">
+
+        <div class="jqueryui-tabs">
+              <ul>
+                <li><a id="authenticationhandlers" href="#authenticationhandlers-tab">Authentication Handlers</a></li>
+                <li><a id="authenticationpolicies" href="#authenticationpolicies-tab">Authentication Policies</a></li>
+                <li><a id="delegatedclients" href="#delegatedclients-tab" class="d-none">External Identity Providers</a></li>
+              </ul>
+
+
+            <div id="authenticationhandlers-tab">
+                <table id="authenticationHandlersTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Type</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Handler</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">State</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Order</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="authenticationpolicies-tab">
+               <table id="authenticationPoliciesTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Policy</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Order</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div id="delegatedclients-tab">
+               <section id="delegatedClientsContainer" class="d-none">
+                    <table id="delegatedClientsTable" class="mdc-data-table__table table table-striped noborder">
+                        <thead>
+                        <tr class="mdc-data-table__header-row">
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Type</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                        </tr>
+                        </thead>
+                        <tbody class="mdc-data-table__content">
+                        </tbody>
+                    </table>
+
+                    <div class="mdc-dialog modal" id="delegatedClientsSaml2Dialog" role="alertdialog"
+                         aria-modal="true" aria-labelledby="delegatedClientsSaml2-title"
+                         aria-describedby="dialog-content">
+                        <div class="mdc-dialog__container w-100 modal-dialog">
+                            <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
+                                <div class="mdc-dialog__content modal-body" id="delegatedClientsSaml2-content">
+                                    <div class="ace-editor ace-absolute" id="delegatedClientsSaml2Editor"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mdc-dialog__scrim"></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</span>
+</body>
+</html>

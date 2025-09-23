@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.OptBoolean;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -45,6 +46,9 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     @ExpressionLanguageCapable
     private String metadataLocation;
 
+    @ExpressionLanguageCapable
+    private String idpMetadataLocation;
+
     private String metadataProxyLocation;
 
     /**
@@ -69,7 +73,7 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     @ExpressionLanguageCapable
     private String metadataSignatureLocation;
 
-    @JacksonInject("logoutResponseEnabled")
+    @JacksonInject(value = "logoutResponseEnabled", optional = OptBoolean.TRUE)
     private boolean logoutResponseEnabled = true;
 
     private String logoutResponseBinding;
@@ -91,69 +95,78 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     private String signingKeyAlgorithm;
 
     @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
-    @JacksonInject("signAssertions")
+    @JacksonInject(value = "signAssertions", optional = OptBoolean.TRUE)
     private TriStateBoolean signAssertions = TriStateBoolean.FALSE;
 
-    @JacksonInject("signUnsolicitedAuthnRequest")
+    @JacksonInject(value = "signUnsolicitedAuthnRequest", optional = OptBoolean.TRUE)
     private boolean signUnsolicitedAuthnRequest;
 
-    @JacksonInject("skipGeneratingAssertionNameId")
+    @JacksonInject(value = "skipGeneratingAssertionNameId", optional = OptBoolean.TRUE)
     private boolean skipGeneratingAssertionNameId;
 
-    @JacksonInject("skipGeneratingSubjectConfirmationInResponseTo")
+    @JacksonInject(value = "skipGeneratingSubjectConfirmationInResponseTo", optional = OptBoolean.TRUE)
     private boolean skipGeneratingSubjectConfirmationInResponseTo;
 
-    @JacksonInject("isSkipGeneratingResponseInResponseTo")
+    @JacksonInject(value = "isSkipGeneratingResponseInResponseTo", optional = OptBoolean.TRUE)
     private boolean isSkipGeneratingResponseInResponseTo;
 
-    @JacksonInject("skipGeneratingSubjectConfirmationNotOnOrAfter")
+    @JacksonInject(value = "skipGeneratingSubjectConfirmationNotOnOrAfter", optional = OptBoolean.TRUE)
     private boolean skipGeneratingSubjectConfirmationNotOnOrAfter;
 
-    @JacksonInject("skipGeneratingSubjectConfirmationRecipient")
+    @JacksonInject(value = "skipGeneratingSubjectConfirmationRecipient", optional = OptBoolean.TRUE)
     private boolean skipGeneratingSubjectConfirmationRecipient;
 
-    @JacksonInject("skipGeneratingSubjectConfirmationAddress")
+    @JacksonInject(value = "skipGeneratingSubjectConfirmationAddress", optional = OptBoolean.TRUE)
     private boolean skipGeneratingSubjectConfirmationAddress;
 
-    @JacksonInject("skipGeneratingSubjectConfirmationNotBefore")
+    @JacksonInject(value = "skipGeneratingSubjectConfirmationNotBefore", optional = OptBoolean.TRUE)
     private boolean skipGeneratingSubjectConfirmationNotBefore = true;
 
-    @JacksonInject("skipGeneratingSubjectConfirmationNameId")
+    @JacksonInject(value = "skipGeneratingSubjectConfirmationNameId", optional = OptBoolean.TRUE)
     private boolean skipGeneratingSubjectConfirmationNameId = true;
 
-    @JacksonInject("skipGeneratingNameIdQualifiers")
+    @JacksonInject(value = "skipGeneratingNameIdQualifiers", optional = OptBoolean.TRUE)
     private boolean skipGeneratingNameIdQualifiers;
 
-    @JacksonInject("skipGeneratingTransientNameId")
+    @JacksonInject(value = "skipGeneratingTransientNameId", optional = OptBoolean.TRUE)
     private boolean skipGeneratingTransientNameId;
 
-    @JacksonInject("skipValidatingAuthnRequest")
+    @JacksonInject(value = "skipValidatingAuthnRequest", optional = OptBoolean.TRUE)
     private boolean skipValidatingAuthnRequest;
 
-    @JacksonInject("skipGeneratingServiceProviderNameIdQualifier")
+    @JacksonInject(value = "skipGeneratingServiceProviderNameIdQualifier", optional = OptBoolean.TRUE)
     private boolean skipGeneratingServiceProviderNameIdQualifier;
 
-    @JacksonInject("skipGeneratingNameIdQualifier")
+    @JacksonInject(value = "skipGeneratingAuthenticatingAuthority", optional = OptBoolean.TRUE)
+    private boolean skipGeneratingAuthenticatingAuthority;
+
+    @JacksonInject(value = "skipGeneratingNameIdQualifier", optional = OptBoolean.TRUE)
     private boolean skipGeneratingNameIdQualifier;
 
-    @JacksonInject("skipGeneratingSessionNotOnOrAfter")
+    @JacksonInject(value = "skipGeneratingSessionNotOnOrAfter", optional = OptBoolean.TRUE)
     private boolean skipGeneratingSessionNotOnOrAfter;
+
+    private boolean validateMetadataCertificates;
     
     @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
-    @JacksonInject("signResponses")
+    @JacksonInject(value = "signResponses", optional = OptBoolean.TRUE)
     private TriStateBoolean signResponses = TriStateBoolean.TRUE;
 
     @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
-    @JacksonInject("signLogoutResponse")
+    @JacksonInject(value = "signLogoutResponse", optional = OptBoolean.TRUE)
     private TriStateBoolean signLogoutResponse = TriStateBoolean.UNDEFINED;
 
-    @JacksonInject("encryptAssertions")
+    @JsonDeserialize(using = TriStateBoolean.Deserializer.class)
+    @JacksonInject(value = "signLogoutRequest", optional = OptBoolean.TRUE)
+    private TriStateBoolean signLogoutRequest = TriStateBoolean.UNDEFINED;
+
+    @JacksonInject(value = "encryptAssertions", optional = OptBoolean.TRUE)
     private boolean encryptAssertions;
 
-    @JacksonInject("encryptAttributes")
+    @JacksonInject(value = "encryptAttributes", optional = OptBoolean.TRUE)
     private boolean encryptAttributes;
 
-    @JacksonInject("encryptionOptional")
+    @JacksonInject(value = "encryptionOptional", optional = OptBoolean.TRUE)
     private boolean encryptionOptional;
 
     private String metadataCriteriaRoles = SPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME;
@@ -176,25 +189,25 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
 
     private Map<String, String> attributeValueTypes = new TreeMap<>();
 
-    private Set<String> encryptableAttributes = new HashSet<>(0);
+    private Set<String> encryptableAttributes = new HashSet<>();
 
-    private List<String> signingSignatureReferenceDigestMethods = new ArrayList<>(0);
+    private List<String> signingSignatureReferenceDigestMethods = new ArrayList<>();
 
-    private List<String> signingSignatureAlgorithms = new ArrayList<>(0);
+    private List<String> signingSignatureAlgorithms = new ArrayList<>();
 
-    private List<String> signingSignatureBlackListedAlgorithms = new ArrayList<>(0);
+    private List<String> signingSignatureBlackListedAlgorithms = new ArrayList<>();
 
-    private List<String> signingSignatureWhiteListedAlgorithms = new ArrayList<>(0);
+    private List<String> signingSignatureWhiteListedAlgorithms = new ArrayList<>();
 
     private String signingSignatureCanonicalizationAlgorithm;
 
-    private List<String> encryptionDataAlgorithms = new ArrayList<>(0);
+    private List<String> encryptionDataAlgorithms = new ArrayList<>();
 
-    private List<String> encryptionKeyAlgorithms = new ArrayList<>(0);
+    private List<String> encryptionKeyAlgorithms = new ArrayList<>();
 
-    private List<String> encryptionBlackListedAlgorithms = new ArrayList<>(0);
+    private List<String> encryptionBlackListedAlgorithms = new ArrayList<>();
 
-    private List<String> encryptionWhiteListedAlgorithms = new ArrayList<>(0);
+    private List<String> encryptionWhiteListedAlgorithms = new ArrayList<>();
 
     @JsonIgnore
     @Override

@@ -24,7 +24,6 @@
 
 package com.yubico.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yubico.webauthn.AssertionRequest;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.PublicKeyCredentialRequestOptions;
@@ -47,7 +46,6 @@ public class AssertionRequestWrapper {
     Optional<String> username;
 
     @NonNull
-    @JsonIgnore
     AssertionRequest request;
 
     public AssertionRequestWrapper(

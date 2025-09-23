@@ -9,10 +9,10 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -22,10 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Optional;
 
 /**
@@ -39,7 +37,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class GroovyScriptMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger, DisposableBean {
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     private final ApplicationContext applicationContext;
 
@@ -47,6 +45,8 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
 
     private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
+    private final TenantExtractor tenantExtractor;
+    
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override

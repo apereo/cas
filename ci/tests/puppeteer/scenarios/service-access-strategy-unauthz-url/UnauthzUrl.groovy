@@ -10,5 +10,5 @@ def run(final Object... args) {
     def segment = authentication.principal.attributes["segment"][0] as String
     def url = "https://localhost:9859/anything/${segment}"
     logger.info("Redirecting to ${url}")
-    new URI(url);
+    new URI(url)
 }

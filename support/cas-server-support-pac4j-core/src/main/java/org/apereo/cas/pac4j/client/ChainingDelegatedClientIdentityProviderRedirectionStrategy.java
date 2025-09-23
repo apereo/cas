@@ -35,7 +35,7 @@ public class ChainingDelegatedClientIdentityProviderRedirectionStrategy implemen
     public Optional<DelegatedClientIdentityProviderConfiguration> select(
         final RequestContext context,
         final WebApplicationService service,
-        final Set<DelegatedClientIdentityProviderConfiguration> providers) throws Throwable {
+        final Set<DelegatedClientIdentityProviderConfiguration> providers) {
         return strategies
             .stream()
             .map(Unchecked.function(strategy -> strategy.select(context, service, providers)))

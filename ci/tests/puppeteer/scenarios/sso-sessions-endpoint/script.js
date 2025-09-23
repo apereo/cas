@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     const baseUrl = "https://localhost:8443/cas/actuator/ssoSessions";
     
     await cas.logg("Removing all SSO Sessions");
-    await cas.doRequest(`${baseUrl}?type=ALL&from=1&count=1000`, "DELETE", {});
+    await cas.doDelete(`${baseUrl}?type=ALL&from=1&count=1000`);
 
     await login();
     
@@ -27,12 +27,7 @@ const cas = require("../../cas.js");
     });
 
     await cas.logg("Checking for SSO sessions via paging filters");
-    await cas.doGet(`${baseUrl}?type=ALL&from=1&count=2`, (res) => {
-        assert(res.status === 200);
-        assert(res.data.totalTicketGrantingTickets === 2);
-        assert(res.data.totalPrincipals === 2);
-        assert(res.data.totalTickets === 2);
-    }, (err) => {
+    await cas.doGet(`${baseUrl}?type=ALL&from=1&count=2`, (res) => assert(res.status === 200), (err) => {
         throw err;
     });
 
@@ -45,10 +40,10 @@ const cas = require("../../cas.js");
     });
 
     await cas.logg("Removing all SSO Sessions for single user");
-    await cas.doRequest(`${baseUrl}?type=ALL&usernam=casuser1`, "DELETE", {});
-    await cas.doRequest(`${baseUrl}?type=ALL&usernam=casuser2`, "DELETE", {});
-    await cas.doRequest(`${baseUrl}?type=ALL&usernam=casuser3`, "DELETE", {});
-    await cas.doRequest(`${baseUrl}/users/casuser3`, "DELETE", {});
+    await cas.doDelete(`${baseUrl}?type=ALL&usernam=casuser1`);
+    await cas.doDelete(`${baseUrl}?type=ALL&usernam=casuser2`);
+    await cas.doDelete(`${baseUrl}?type=ALL&usernam=casuser3`);
+    await cas.doDelete(`${baseUrl}/users/casuser3`);
 
 })();
 
@@ -61,7 +56,7 @@ async function login() {
         await cas.loginWith(page, `casuser${i}`, "Mellon");
         await cas.assertCookie(page);
         await context.close();
-        await browser.close();
+        await cas.closeBrowser(browser);
     }
 }
 

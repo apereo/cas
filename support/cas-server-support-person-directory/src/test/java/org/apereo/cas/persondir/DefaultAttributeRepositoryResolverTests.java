@@ -1,6 +1,7 @@
 package org.apereo.cas.persondir;
 
 import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
+import org.apereo.cas.authentication.attribute.AttributeRepositoryQuery;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
@@ -10,10 +11,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,8 +32,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("Attributes")
-public class DefaultAttributeRepositoryResolverTests {
+@Tag("AttributeRepository")
+@ExtendWith(CasTestExtension.class)
+class DefaultAttributeRepositoryResolverTests {
 
     @Nested
     @SpringBootTest(classes = {
@@ -49,15 +53,15 @@ public class DefaultAttributeRepositoryResolverTests {
         private ServicesManager servicesManager;
 
         @Test
-        void verifyRepositoriesByServiceAssignment() throws Throwable {
+        void verifyRepositoriesByServiceAssignment() {
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
             val releasePolicy = new DenyAllAttributeReleasePolicy();
             releasePolicy.setPrincipalAttributesRepository(new DefaultPrincipalAttributesRepository().setAttributeRepositoryIds(Set.of("stub")));
 
             registeredService.setAttributeReleasePolicy(releasePolicy);
             servicesManager.save(registeredService);
-            
-            val query = AttributeRepositoryResolver.AttributeRepositoryQuery.builder()
+
+            val query = AttributeRepositoryQuery.builder()
                 .activeRepositoryIds(Set.of("stub", "ldap"))
                 .authenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("simpleHandler"))
                 .principal(RegisteredServiceTestUtils.getPrincipal())
@@ -69,8 +73,8 @@ public class DefaultAttributeRepositoryResolverTests {
         }
 
         @Test
-        void verifyRepositoriesRequestedByQuery() throws Throwable {
-            val query = AttributeRepositoryResolver.AttributeRepositoryQuery.builder()
+        void verifyRepositoriesRequestedByQuery() {
+            val query = AttributeRepositoryQuery.builder()
                 .activeRepositoryIds(Set.of("stub", "ldap"))
                 .authenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("simpleHandler"))
                 .principal(RegisteredServiceTestUtils.getPrincipal())
@@ -82,8 +86,8 @@ public class DefaultAttributeRepositoryResolverTests {
         }
 
         @Test
-        void verifyRepositoriesUndefinedInQuery() throws Throwable {
-            val query = AttributeRepositoryResolver.AttributeRepositoryQuery.builder()
+        void verifyRepositoriesUndefinedInQuery() {
+            val query = AttributeRepositoryQuery.builder()
                 .authenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("simpleHandler"))
                 .principal(RegisteredServiceTestUtils.getPrincipal())
                 .service(RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()))
@@ -108,10 +112,10 @@ public class DefaultAttributeRepositoryResolverTests {
         @Autowired
         @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
         private AttributeRepositoryResolver attributeRepositoryResolver;
-        
+
         @Test
-        void verifyRepositoriesRequestedByHandler() throws Throwable {
-            var query = AttributeRepositoryResolver.AttributeRepositoryQuery.builder()
+        void verifyRepositoriesRequestedByHandler() {
+            var query = AttributeRepositoryQuery.builder()
                 .activeRepositoryIds(Set.of("stub", "ldap", "other"))
                 .authenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("handler1"))
                 .principal(RegisteredServiceTestUtils.getPrincipal())
@@ -125,6 +129,34 @@ public class DefaultAttributeRepositoryResolverTests {
             results = attributeRepositoryResolver.resolve(query);
             assertEquals(2, results.size());
             assertTrue(results.containsAll(List.of("ldap", "other")));
+        }
+    }
+
+
+    @Nested
+    @SpringBootTest(classes = {
+        CasCoreServicesAutoConfiguration.class,
+        BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class
+    }, properties = {
+        "cas.multitenancy.core.enabled=true",
+        "cas.multitenancy.json.location=classpath:/tenants.json"
+    })
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    class MultitenancyTests {
+        @Autowired
+        @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+        private AttributeRepositoryResolver attributeRepositoryResolver;
+
+        @Test
+        void verifyRepositoriesRequestedByTenant() {
+            val query = AttributeRepositoryQuery.builder()
+                .principal(RegisteredServiceTestUtils.getPrincipal())
+                .service(RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()))
+                .tenant("attributes")
+                .build();
+            val results = attributeRepositoryResolver.resolve(query);
+            assertEquals(1, results.size());
+            assertTrue(results.contains("STUB"));
         }
     }
 }

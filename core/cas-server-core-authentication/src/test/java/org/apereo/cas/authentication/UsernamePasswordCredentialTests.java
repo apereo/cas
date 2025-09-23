@@ -2,14 +2,16 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.mapping.MappingResults;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -24,13 +26,11 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class
-},
-    properties = "cas.authn.policy.source-selection-enabled=true")
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = RefreshAutoConfiguration.class, properties = "cas.authn.policy.source-selection-enabled=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Authentication")
+@ExtendWith(CasTestExtension.class)
 class UsernamePasswordCredentialTests {
 
     @Autowired
@@ -62,7 +62,7 @@ class UsernamePasswordCredentialTests {
     }
 
     @Test
-    void verifySetGetUsername() throws Throwable {
+    void verifySetGetUsername() {
         val credential = new UsernamePasswordCredential();
         val userName = "test";
         credential.setUsername(userName);
@@ -70,7 +70,7 @@ class UsernamePasswordCredentialTests {
     }
 
     @Test
-    void verifySetGetPassword() throws Throwable {
+    void verifySetGetPassword() {
         val credential = new UsernamePasswordCredential();
         val password = "test";
 
@@ -79,7 +79,7 @@ class UsernamePasswordCredentialTests {
     }
 
     @Test
-    void verifyEquals() throws Throwable {
+    void verifyEquals() {
         val c1 = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword();
         assertNotEquals(null, c1);
         val c2 = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser");

@@ -1,0 +1,22 @@
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources",
+  "resources": [
+    "java.util.ArrayList",
+    [
+      {
+        "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 284536250,
+        "policies": [ "java.util.ArrayList", [
+          {
+            "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredAttributesAuthorizationPolicy",
+            "attributes" : {
+              "@class" : "java.util.HashMap",
+              "eduPersonAffiliation" : [ "java.util.HashSet", [ ".*developer.*" ] ]
+            }
+          }
+        ]]
+      }
+    ]
+  ],
+  "namespace": "authzen_resource"
+}

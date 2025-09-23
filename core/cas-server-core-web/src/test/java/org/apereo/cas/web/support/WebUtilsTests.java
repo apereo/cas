@@ -1,12 +1,12 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockRequestContext;
@@ -18,12 +18,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +79,6 @@ class WebUtilsTests {
 
         assertDoesNotThrow(() -> {
             WebUtils.putWildcardedRegisteredService(context, true);
-            WebUtils.putYubiKeyMultipleDeviceRegistrationEnabled(context, true);
             WebUtils.putInitialHttpRequestPostParameters(context);
             WebUtils.putExistingSingleSignOnSessionAvailable(context, true);
             WebUtils.putExistingSingleSignOnSessionPrincipal(context, CoreAuthenticationTestUtils.getPrincipal());
@@ -88,15 +87,6 @@ class WebUtilsTests {
             WebUtils.putForgotUsernameEnabled(context, true);
             WebUtils.putRecaptchaPropertiesFlowScope(context, new GoogleRecaptchaProperties().setEnabled(true));
             WebUtils.putLogoutUrls(context, Map.of());
-            val ac = OneTimeTokenAccount.builder()
-                .validationCode(123456)
-                .username("casuser")
-                .name("Example")
-                .build();
-            WebUtils.putOneTimeTokenAccount(context, ac);
-            assertNotNull(WebUtils.getOneTimeTokenAccount(context, OneTimeTokenAccount.class));
-            WebUtils.putOneTimeTokenAccounts(context, List.of(ac));
-
             WebUtils.putWarnCookieIfRequestParameterPresent(null, context);
             WebUtils.putTicketGrantingTicketInScopes(context, "ticket-id");
         });
@@ -126,8 +116,8 @@ class WebUtilsTests {
     }
 
     @Test
-    void verifyFindService() throws Throwable {
-        val casArgumentExtractor = new DefaultArgumentExtractor(new WebApplicationServiceFactory());
+    void verifyFindService() {
+        val casArgumentExtractor = new DefaultArgumentExtractor(List.of(RegisteredServiceTestUtils.getWebApplicationServiceFactory()));
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
         val service = HttpRequestUtils.getService(List.of(casArgumentExtractor), request);
@@ -138,27 +128,30 @@ class WebUtilsTests {
     @Test
     void verifyStorageRead() throws Throwable {
         val context1 = MockRequestContext.create();
+        context1.setContentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         context1.setParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE, "test");
         assertTrue(WebUtils.getBrowserStoragePayload(context1).isPresent());
         assertTrue(WebUtils.getRequestParameterOrAttribute(context1, BrowserStorage.PARAMETER_BROWSER_STORAGE).isPresent());
 
         val context2 = MockRequestContext.create();
         context2.setMethod(HttpMethod.POST);
-        context2.getHttpServletRequest().setContent((BrowserStorage.PARAMETER_BROWSER_STORAGE + '=' + UUID.randomUUID()).getBytes(StandardCharsets.UTF_8));
+        context2.setContentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        context2.setContent(BrowserStorage.PARAMETER_BROWSER_STORAGE + '=' + UUID.randomUUID());
         assertTrue(WebUtils.getBrowserStoragePayload(context2).isPresent());
         assertNotNull(context2.getHttpServletRequest().getAttribute(BrowserStorage.PARAMETER_BROWSER_STORAGE));
 
         val context3 = MockRequestContext.create();
-        context2.setMethod(HttpMethod.POST);
+        context3.setMethod(HttpMethod.POST);
+        context3.setContentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         assertTrue(WebUtils.getBrowserStoragePayload(context3).isEmpty());
     }
-
 
     @Test
     void verifyReadParametersFromRequestBody() throws Throwable {
         val context1 = MockRequestContext.create();
         context1.setMethod(HttpMethod.POST);
-        context1.getHttpServletRequest().setContent((BrowserStorage.PARAMETER_BROWSER_STORAGE + '=' + UUID.randomUUID()).getBytes(StandardCharsets.UTF_8));
+        context1.setContentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        context1.setContent(BrowserStorage.PARAMETER_BROWSER_STORAGE + '=' + UUID.randomUUID());
         var parameters = WebUtils.getHttpRequestParametersFromRequestBody(context1.getHttpServletRequest());
         assertTrue(parameters.containsKey(BrowserStorage.PARAMETER_BROWSER_STORAGE));
         assertNotNull(context1.getHttpServletRequest().getAttribute(BrowserStorage.PARAMETER_BROWSER_STORAGE));
@@ -168,4 +161,10 @@ class WebUtilsTests {
         assertTrue(parameters.isEmpty());
     }
 
+    @Test
+    void verifyErrorViewWithRootCause() {
+        val view = WebUtils.produceErrorView(new RuntimeException(new AuthenticationException("error")));
+        val error = (Exception) view.getModel().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION);
+        assertInstanceOf(AuthenticationException.class, error);
+    }
 }

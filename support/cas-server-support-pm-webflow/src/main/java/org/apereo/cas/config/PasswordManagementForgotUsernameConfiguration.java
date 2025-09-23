@@ -7,6 +7,7 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.ForgotUsernameCaptchaWebflowConfigurer;
@@ -91,12 +92,14 @@ class PasswordManagementForgotUsernameConfiguration {
             final CommunicationsManager communicationsManager,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
             final PasswordManagementService passwordManagementService,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new SendForgotUsernameInstructionsAction(casProperties, communicationsManager,
-                    passwordManagementService, defaultPrincipalResolver))
+                    passwordManagementService, defaultPrincipalResolver, tenantExtractor))
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
@@ -107,14 +110,14 @@ class PasswordManagementForgotUsernameConfiguration {
         public CasWebflowConfigurer forgotUsernameWebflowConfigurer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new ForgotUsernameWebflowConfigurer(flowBuilderServices,
-                    loginFlowDefinitionRegistry, applicationContext, casProperties))
+                    flowDefinitionRegistry, applicationContext, casProperties))
                 .otherwiseProxy()
                 .get();
         }
@@ -147,14 +150,14 @@ class PasswordManagementForgotUsernameConfiguration {
         public CasWebflowConfigurer forgotUsernameCaptchaWebflowConfigurer(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val configurer = new ForgotUsernameCaptchaWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                    val configurer = new ForgotUsernameCaptchaWebflowConfigurer(flowBuilderServices, flowDefinitionRegistry,
                         applicationContext, casProperties);
                     configurer.setOrder(casProperties.getAuthn().getPm().getWebflow().getOrder() + 2);
                     return configurer;
@@ -177,7 +180,7 @@ class PasswordManagementForgotUsernameConfiguration {
                     val recaptcha = casProperties.getAuthn().getPm().getForgotUsername().getGoogleRecaptcha();
                     return new ValidateCaptchaAction(CaptchaValidator.getInstance(recaptcha), forgotUsernameCaptchaActivationStrategy);
                 })
-                .otherwiseProxy()
+                .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
 
@@ -197,7 +200,7 @@ class PasswordManagementForgotUsernameConfiguration {
                         requestContext -> WebUtils.putRecaptchaForgotUsernameEnabled(requestContext, recaptcha),
                         recaptcha);
                 })
-                .otherwiseProxy()
+                .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
 

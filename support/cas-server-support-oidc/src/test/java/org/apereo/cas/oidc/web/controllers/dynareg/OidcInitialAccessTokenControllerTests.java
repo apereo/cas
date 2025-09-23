@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
@@ -21,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("OIDC")
+@Tag("OIDCWeb")
 class OidcInitialAccessTokenControllerTests {
 
     @TestPropertySource(properties = "cas.authn.oidc.registration.dynamic-client-registration-mode=OPEN")
@@ -32,7 +33,7 @@ class OidcInitialAccessTokenControllerTests {
         protected OidcInitialAccessTokenController controller;
 
         @Test
-        void verifyNotAllowed() throws Throwable {
+        void verifyNotAllowed() {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
             val entity = controller.handleRequestInternal(request, response);
@@ -52,36 +53,36 @@ class OidcInitialAccessTokenControllerTests {
         protected OidcInitialAccessTokenController controller;
 
         @Test
-        void verifyMismatchedEndpoint() throws Throwable {
+        void verifyMismatchedEndpoint() {
             val request = getHttpRequestForEndpoint("unknown/issuer");
             request.setRequestURI("unknown/issuer");
             val response = new MockHttpServletResponse();
-            request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("casuser:Mellon"));
+            request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("casuser:Mellon"));
             val entity = controller.handleRequestInternal(request, response);
             assertEquals(HttpStatus.BAD_REQUEST, entity.getStatus());
         }
 
         @Test
-        void verifyPasses() throws Throwable {
+        void verifyPasses() {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
-            request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("casuser:Mellon"));
+            request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("casuser:Mellon"));
             val entity = controller.handleRequestInternal(request, response);
             assertEquals(HttpStatus.OK, entity.getStatus());
             assertTrue(entity.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
         }
 
         @Test
-        void verifyAuthFails() throws Throwable {
+        void verifyAuthFails() {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
-            request.addHeader("Authorization", "Basic " + EncodingUtils.encodeBase64("casuser:unknown"));
+            request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("casuser:unknown"));
             val entity = controller.handleRequestInternal(request, response);
             assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatus());
         }
 
         @Test
-        void verifyAuthMissing() throws Throwable {
+        void verifyAuthMissing() {
             val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
             val response = new MockHttpServletResponse();
             val entity = controller.handleRequestInternal(request, response);

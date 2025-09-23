@@ -26,16 +26,17 @@ public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
     protected CacheStatistics[] getStatistics() {
         val list = mongoTemplate.getCollectionNames()
             .stream()
-            .map(c -> {
-                val stats = mongoTemplate.executeCommand(new Document("collStats", c));
-                return new MongoDbCacheStatistics(stats, c);
-            }).toList();
+            .map(collection -> {
+                val stats = mongoTemplate.executeCommand(new Document("collStats", collection));
+                return new MongoDbCacheStatistics(stats, collection);
+            })
+            .toList();
 
         return list.toArray(CacheStatistics[]::new);
     }
 
     @Override
-    protected String getName() {
+    public String getName() {
         val dbName = mongoTemplate.getMongoDatabaseFactory().getMongoDatabase().getName();
         return super.getName() + '-' + dbName;
     }

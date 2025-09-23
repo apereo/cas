@@ -2,6 +2,7 @@ package org.apereo.cas.tomcat;
 
 import org.apereo.cas.config.CasEmbeddedContainerTomcatAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
@@ -14,6 +15,7 @@ import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -36,6 +38,7 @@ import static org.mockito.Mockito.*;
 }, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
 @Tag("WebApp")
+@ExtendWith(CasTestExtension.class)
 class CasTomcatServletWebServerFactoryCloudClusterTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
@@ -52,7 +55,7 @@ class CasTomcatServletWebServerFactoryCloudClusterTests {
     private ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         casTomcatEmbeddedServletContainerCustomizer.customize(casServletWebServerFactory);
         val server = casServletWebServerFactory.getWebServer();
         assertNotNull(server);
@@ -60,7 +63,7 @@ class CasTomcatServletWebServerFactoryCloudClusterTests {
 
 
     @Test
-    void verifyDynamicCloud() throws Throwable {
+    void verifyDynamicCloud() {
         val props = new CasConfigurationProperties();
         props.getServer().getTomcat().getClustering()
             .setEnabled(true).setClusteringType("CLOUD");
@@ -91,7 +94,7 @@ class CasTomcatServletWebServerFactoryCloudClusterTests {
     }
 
     @Test
-    void verifyStaticCloud() throws Throwable {
+    void verifyStaticCloud() {
         val props = new CasConfigurationProperties();
         props.getServer().getTomcat().getClustering()
             .setEnabled(true)

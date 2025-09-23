@@ -1,0 +1,19 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^http://localhost:9443/simplesaml.*",
+  "name" : "SAML2",
+  "id" : 1,
+  "metadataLocation" : "file:/path/to/metadata",
+  "description": "SAML2 service definition that uses a static XML metadata file and will selectively release authorized attributes to the SAML2 service provider.",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "authorizedToReleaseAuthenticationAttributes": false,
+    "allowedAttributes": [
+      "java.util.ArrayList",
+      [
+        "mail",
+        "uid"
+      ]
+    ]
+  }
+}

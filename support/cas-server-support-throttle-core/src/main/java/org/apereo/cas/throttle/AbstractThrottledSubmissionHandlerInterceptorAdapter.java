@@ -97,7 +97,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
 
     @Override
     public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response,
-                                final Object handler, final Exception e) throws Exception {
+                                final Object handler, final Exception e) {
         if (!isRequestIgnoredForThrottling(request, response) && shouldResponseBeRecordedAsFailure(response)) {
             recordSubmissionFailure(request);
         }
@@ -175,8 +175,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     protected void updateThrottledSubmission(final HttpServletRequest request) {
         val duration = Beans.newDuration(getConfigurationContext().getCasProperties()
             .getAuthn().getThrottle().getFailure().getThrottleWindowSeconds());
-        val expiration = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(duration.getSeconds());
-        val submission = (ThrottledSubmission) request.getAttribute(ThrottledSubmission.class.getName());
+        val expiration = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(duration.toSeconds());
+        val submission = (ThrottledSubmission) request.getAttribute(ThrottledSubmission.class.getSimpleName());
         if (submission != null && !submission.isStillInExpirationWindow()) {
             submission.setExpiration(expiration);
             LOGGER.info("Updated throttled submission's expiration date: [{}]", submission);

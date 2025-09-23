@@ -36,7 +36,7 @@ const assert = require("assert");
         throw `Operation failed: ${error}`;
     });
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();
 
 async function getPayload(page, redirectUri, clientId, clientSecret, scopes) {

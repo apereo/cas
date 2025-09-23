@@ -26,6 +26,11 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class EncryptionRandomizedSigningJwtCryptographyProperties implements Serializable {
 
+    /**
+     * Encryption key size.
+     */
+    public static final int DEFAULT_ENCRYPTION_KEY_SIZE = 256;
+    
     @Serial
     private static final long serialVersionUID = -6802876221525521736L;
 

@@ -8,7 +8,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -49,7 +48,7 @@ public class RedirectToServiceAction extends BaseCasWebflowAction {
         WebUtils.putServiceResponseIntoRequestScope(requestContext, response);
         WebUtils.putServiceOriginalUrlIntoRequestScope(requestContext, service);
         val eventId = getFinalResponseEventId(service, response, requestContext);
-        return new EventFactorySupport().event(this, eventId);
+        return eventFactory.event(this, eventId);
     }
 
     protected String getFinalResponseEventId(final WebApplicationService service, final Response response, final RequestContext requestContext) {

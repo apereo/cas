@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Utility")
 class CollectionUtilsTests {
     @Test
-    void verifyCollectionAsInputMap() throws Throwable {
+    void verifyCollectionAsInputMap() {
         val value = new HashMap<String, List<Object>>();
         value.put("Hello", CollectionUtils.wrapList("People", "World"));
         val result = CollectionUtils.toCollection(value, ArrayList.class);
@@ -32,7 +32,7 @@ class CollectionUtilsTests {
     }
 
     @Test
-    void verifyToCol() throws Throwable {
+    void verifyToCol() {
         assertThrows(IllegalArgumentException.class, () ->
             CollectionUtils.toCollection("item", List.class));
         assertNotNull(CollectionUtils.toCollection(List.of("one").iterator()));
@@ -40,7 +40,7 @@ class CollectionUtilsTests {
     }
 
     @Test
-    void verifyWrap() throws Throwable {
+    void verifyWrap() {
         assertNotNull(CollectionUtils.wrap((Map) null));
         assertNotNull(CollectionUtils.wrap((Multimap) null));
         assertNotNull(CollectionUtils.wrap(List.of()));
@@ -55,17 +55,17 @@ class CollectionUtilsTests {
     }
 
     @Test
-    void verifyWrappingItemsAsList() throws Throwable {
+    void verifyWrappingItemsAsList() {
         assertEquals(4, CollectionUtils.wrapList(1, 2, 3, 4).size());
     }
 
     @Test
-    void verifyWrappingColItemsAsList() throws Throwable {
+    void verifyWrappingColItemsAsList() {
         assertEquals(10, CollectionUtils.wrapList(new Object[]{1, 2, 3, 4}, new Object[]{1, 2, 3, 4}, 5, 6).size());
     }
 
     @Test
-    void verifyWrappingMapItemsAsList() throws Throwable {
+    void verifyWrappingMapItemsAsList() {
         assertEquals(2, CollectionUtils.wrapList(CollectionUtils.wrap("1", 2, "2", 2)).size());
     }
 }

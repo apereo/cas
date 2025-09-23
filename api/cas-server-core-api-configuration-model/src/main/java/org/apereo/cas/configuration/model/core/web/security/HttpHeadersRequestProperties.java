@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +22,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("HttpHeadersRequestProperties")
 public class HttpHeadersRequestProperties implements Serializable {
 
     @Serial
@@ -87,9 +85,12 @@ public class HttpHeadersRequestProperties implements Serializable {
      * resources are allowed to load via a HTTP Header.
      * Header value is made up of one or more directives.
      * Multiple directives are separated with a semicolon.
+     * &#64;nonce&#64; is a specific value which is replaced by a generated random value
+     * saved as the request attribute 'contentSecurityPolicyGeneratedNonce'.
      */
     @ExpressionLanguageCapable
-    private String contentSecurityPolicy = "script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none';";
+    private String contentSecurityPolicy = "script-src 'self' 'unsafe-inline' 'unsafe-eval' "
+        + "https://www.googletagmanager.com https://www.google.com; object-src 'none'; worker-src 'self' blob: 'unsafe-inline';";
 
     /**
      * Files with these extensions are considered static, so they will be cached by browsers. The value is part of a RegEx.

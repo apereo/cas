@@ -11,6 +11,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.stream.Stream;
 
@@ -38,7 +39,7 @@ public class RemoteAuthenticationNonInteractiveCredentialsAction extends Abstrac
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         if (request.getCookies() != null && StringUtils.isNotBlank(properties.getCookie().getCookieName())) {
             return Stream.of(request.getCookies())
-                .filter(cookie -> StringUtils.equalsIgnoreCase(cookie.getName(), properties.getCookie().getCookieName()))
+                .filter(cookie -> Strings.CI.equals(cookie.getName(), properties.getCookie().getCookieName()))
                 .map(cookie -> new RemoteAuthenticationCredential(null, cookie.getValue()))
                 .findFirst()
                 .orElse(null);

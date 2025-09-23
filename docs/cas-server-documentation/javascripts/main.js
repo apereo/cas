@@ -249,28 +249,24 @@ function generateToolbarIcons() {
     editLink = `${baseLink}/edit/master/docs/cas-server-documentation/`;
     historyLink = `${baseLink}/commits/master/docs/cas-server-documentation/`;
     deleteLink = `${baseLink}/delete/master/docs/cas-server-documentation/`;
-  } else if (activeVersion.indexOf("5.") !== -1 || activeVersion.indexOf("6.") !== -1) {
+  } else {
     editLink = `${baseLink}/edit/${activeVersion}/docs/cas-server-documentation/`;
     historyLink = `${baseLink}/commits/${activeVersion}/docs/cas-server-documentation/`;
     deleteLink = `${baseLink}/delete/${activeVersion}/docs/cas-server-documentation/`;
-  } else if (activeVersion !== CONST_CURRENT_VER) {
-    editLink = `${baseLink}/edit/${activeVersion}/cas-server-documentation/`;
-    historyLink = `${baseLink}/commits/${activeVersion}/cas-server-documentation/`;
-    deleteLink = `${baseLink}/delete/${activeVersion}/cas-server-documentation/`;
   }
 
   editLink += editablePage;
 
-  $('#toolbarIcons').append(`<a target='_blank' href='${editLink}'><i class='fa fa-pencil-alt' title='Edit with Github'></i></a>`);
+  $('#toolbarIcons').append(`<a target='_blank' href='${editLink}'><i class='fa fa-pencil-alt' title='Edit with GitHub'></i></a>`);
 
   historyLink += editablePage;
 
 
-  $('#toolbarIcons').append(`<a target='_blank' href='${historyLink}'><i class='fa fa-history' title='View commit history on Github'></i></a>`);
+  $('#toolbarIcons').append(`<a target='_blank' href='${historyLink}'><i class='fa fa-history' title='View commit history on GitHub'></i></a>`);
 
   deleteLink += editablePage;
 
-  $('#toolbarIcons').append(`<a target='_blank' href='${deleteLink}'><i class='fa fa-times' title='Delete with Github'></i></a>`);
+  $('#toolbarIcons').append(`<a target='_blank' href='${deleteLink}'><i class='fa fa-times' title='Delete with GitHub'></i></a>`);
 }
 
 function generatePageTOC() {
@@ -341,12 +337,12 @@ function enableBootstrapTooltips() {
 function generateOverlay(artifactId, type) {
   let id = artifactId.replace("cas-server-", "");
   $("#overlayform").remove();
-  $('body').append(" \
-  <form id='overlayform' action='https://getcas.apereo.org/starter.zip' method='post'> \
-    <input type='submit' value='submit' /> \
-    <input type='hidden' name='dependencies' value='" + id + "' /> \
-    <input type='hidden' name='type' value='" + type + "' /> \
-  </form>");
+  $('body').append(` 
+  <form id='overlayform' action='https://getcas.apereo.org/starter.zip' method='post'> 
+    <input type='submit' value='submit' /> 
+    <input type='hidden' name='dependencies' value='${id}' /> 
+    <input type='hidden' name='type' value='${type}' /> 
+  </form>`);
   $("#overlayform").submit();
 }
 
@@ -386,9 +382,7 @@ function showOverlay(artifactId, type) {
     }
   };
   $('body').append("<div id='overlaydialog'></div>");
-  $(document).on("click", e => {
-      $("#overlaydialog").dialog('destroy');
-  });
+  $(document).on("click", e => $("#overlaydialog").dialog("destroy"));
 
   $("#overlaydialog").append(iframe).dialog(dialogConfig).dialog('open');
 }
@@ -431,7 +425,7 @@ $(() => $("h2, h3, h4, h5, h6").each((i, el) => {
   id = $el.attr('id');
   icon = '<i class="fa fa-link"></i>';
   if (id) {
-    return $el.prepend($("<a />").addClass("header-link").attr("href", "#" + id).html(icon));
+    return $el.prepend($("<a />").addClass("header-link").attr("href", `#${id}`).html(icon));
   }
 }));
 
@@ -442,12 +436,14 @@ codes.forEach((code) => {
 
   code.setAttribute("id", `code${countID}`);
   
-  let btn = document.createElement('button');
-  btn.innerHTML = "Copy";
+  const btn = document.createElement('button');
+  btn.innerHTML = "<i class=\"fa fa-copy\" style=\"color: cornflowerblue;\"></i>";
   btn.className = "btn-copy-code";
+  
+  btn.setAttribute("title", "Copy Code");
   btn.setAttribute("data-clipboard-action", "copy");
   btn.setAttribute("data-clipboard-target", `#code${countID}`);
-  btn.setAttribute("onclick", "this.innerHTML='Copied';");
+  // btn.setAttribute("onclick", "this.innerHTML='Copied';");
 
   let div = document.createElement('div');
   div.className = "div-code-button";
@@ -550,9 +546,7 @@ function previous(id) {
 
 const removeActiveClasses = ulElement => {
     const lis = ulElement.querySelectorAll('li');
-    Array.prototype.forEach.call(lis, li => {
-        li.classList.remove('active');
-    });
+    Array.prototype.forEach.call(lis, li => li.classList.remove("active"));
 };
 
 const getChildPosition = element => {

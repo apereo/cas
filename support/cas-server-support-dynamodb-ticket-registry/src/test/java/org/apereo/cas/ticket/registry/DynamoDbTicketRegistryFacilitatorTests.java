@@ -29,7 +29,7 @@ class DynamoDbTicketRegistryFacilitatorTests {
     @EnabledIfListeningOnPort(port = 8000)
     class OriginalDynamoDbTicketRegistryFacilitatorTests extends BaseDynamoDbTicketRegistryFacilitatorTests {
         @Test
-        void verifyBuildAttributeMap() throws Throwable {
+        void verifyBuildAttributeMap() {
             val ticket = new MockTicketGrantingTicket("casuser",
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
                 CollectionUtils.wrap("name", "CAS"));
@@ -46,7 +46,7 @@ class DynamoDbTicketRegistryFacilitatorTests {
         }
 
         @Test
-        void verifyTicketOperations() throws Throwable {
+        void verifyTicketOperations() {
             dynamoDbTicketRegistryFacilitator.createTicketTables(true);
             val ticket = new MockTicketGrantingTicket("casuser",
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
@@ -70,10 +70,10 @@ class DynamoDbTicketRegistryFacilitatorTests {
     @Nested
     @EnabledIfListeningOnPort(port = 8000)
     @TestPropertySource(properties = "cas.ticket.registry.dynamo-db.billing-mode=PAY_PER_REQUEST")
-    public class DynamoDbTicketRegistryFacilitatorBillingModePayPerRequestTests
+    class DynamoDbTicketRegistryFacilitatorBillingModePayPerRequestTests
         extends BaseDynamoDbTicketRegistryFacilitatorTests {
         @Test
-        void verifyCreateTableWithOnDemandBilling() throws Throwable {
+        void verifyCreateTableWithOnDemandBilling() {
             dynamoDbTicketRegistryFacilitator.createTicketTables(true);
             val client = dynamoDbTicketRegistryFacilitator.getAmazonDynamoDBClient();
             dynamoDbTicketRegistryFacilitator.getTicketCatalog().findAll().forEach(td -> {

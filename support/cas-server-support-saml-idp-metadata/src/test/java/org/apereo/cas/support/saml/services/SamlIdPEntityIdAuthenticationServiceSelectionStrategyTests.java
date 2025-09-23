@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -20,9 +20,9 @@ import static org.mockito.Mockito.*;
 @Tag("SAML2")
 class SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Test
-    void verifyAction() throws Throwable {
+    void verifyAction() {
         val servicesManager = mock(ServicesManager.class);
-        val factory = new WebApplicationServiceFactory();
+        val factory = RegisteredServiceTestUtils.getWebApplicationServiceFactory();
         val strategy = new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(servicesManager, factory, "http://localhost:8080/cas");
 
         val service = factory.createService("http://localhost:8080/cas/idp/profile/SAML2/Callback.+?"

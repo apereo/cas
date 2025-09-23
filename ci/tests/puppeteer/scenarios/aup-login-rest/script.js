@@ -43,16 +43,15 @@ const express = require("express");
         await cas.click(page, "#aupSubmit");
         await cas.waitForNavigation(page);
         const ticket = await cas.assertTicketParameter(page);
-        const body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}&format=JSON`);
-        await cas.logg(body);
-        const authenticationSuccess = JSON.parse(body).serviceResponse.authenticationSuccess;
+        const json = await cas.validateTicket(service, ticket);
+        const authenticationSuccess = json.serviceResponse.authenticationSuccess;
         assert(authenticationSuccess.user === "casuser");
 
         await cas.log("Logging in again, now with SSO");
         await cas.gotoLogin(page, service);
         await cas.sleep(1000);
         await cas.assertTicketParameter(page);
-        await cas.goto(page, "https://localhost:8443/cas/logout");
+        await cas.gotoLogout(page);
 
         await cas.log("Logging in again, now without SSO");
         await cas.gotoLogin(page, service);
@@ -62,7 +61,7 @@ const express = require("express");
 
         server.close(() => {
             cas.log("Exiting server...");
-            browser.close();
+            cas.closeBrowser(browser);
         });
     });
 })();

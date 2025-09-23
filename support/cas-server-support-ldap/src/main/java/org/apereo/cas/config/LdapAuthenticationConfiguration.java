@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.TenantLdapAuthenticationHandlerBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -72,16 +73,13 @@ class LdapAuthenticationConfiguration {
             final ServicesManager servicesManager) {
             val handlers = casProperties.getAuthn().getLdap()
                 .stream()
-                .filter(prop -> {
-                    if (prop.getType() == null || StringUtils.isBlank(prop.getLdapUrl())) {
-                        LOGGER.warn("Skipping LDAP authentication entry since no type or LDAP url is defined");
-                        return false;
-                    }
-                    return true;
-                }).map(prop -> {
+                .filter(LdapUtils::isLdapAuthenticationConfigured)
+                .map(prop -> {
                     val handler = LdapUtils.createLdapAuthenticationHandler(prop,
                         applicationContext, servicesManager, ldapPrincipalFactory);
                     handler.setState(prop.getState());
+                    LOGGER.info("Created LDAP authentication handler [{}] with state [{}]",
+                        handler.getName(), handler.getState());
                     return handler;
                 })
                 .collect(Collectors.toList());
@@ -103,7 +101,6 @@ class LdapAuthenticationConfiguration {
             });
         }
     }
-
 
     @Configuration(value = "LdapSpringSecurityAuthenticationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -131,7 +128,7 @@ class LdapAuthenticationConfiguration {
 
             @Override
             @CanIgnoreReturnValue
-            public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
+            public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
                 val ldap = casProperties.getMonitor().getEndpoints().getLdap();
                 if (StringUtils.isNotBlank(ldap.getLdapUrl()) && StringUtils.isNotBlank(ldap.getSearchFilter())) {
                     configureLdapAuthenticationProvider(http, ldap);
@@ -160,6 +157,29 @@ class LdapAuthenticationConfiguration {
                     && (StringUtils.isNotBlank(ldap.getLdapAuthz().getRoleAttribute())
                     || StringUtils.isNotBlank(ldap.getLdapAuthz().getGroupAttribute()));
             }
+        }
+    }
+
+    @Configuration(value = "LdapMultitenancyAuthenticationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Multitenancy)
+    static class LdapMultitenancyAuthenticationConfiguration {
+        @ConditionalOnMissingBean(name = "ldapMultitenancyAuthenticationPlanConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationEventExecutionPlanConfigurer ldapMultitenancyAuthenticationPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier("ldapPrincipalFactory")
+            final PrincipalFactory ldapPrincipalFactory,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager) {
+            return plan -> {
+                if (casProperties.getMultitenancy().getCore().isEnabled()) {
+                    val builder = new TenantLdapAuthenticationHandlerBuilder(applicationContext, ldapPrincipalFactory, servicesManager);
+                    plan.registerTenantAuthenticationHandlerBuilder(builder);
+                }
+            };
         }
     }
 }

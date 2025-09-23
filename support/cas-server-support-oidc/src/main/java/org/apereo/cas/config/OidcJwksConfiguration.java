@@ -73,7 +73,7 @@ class OidcJwksConfiguration {
         public Runnable oidcJsonWebKeystoreRotationScheduler(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcJsonWebKeystoreRotationService")
-            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) throws Exception {
+            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
             return BeanSupplier.of(Runnable.class)
                 .when(BeanCondition.on("cas.authn.oidc.jwks.rotation.schedule").isTrue().given(applicationContext.getEnvironment()))
                 .supply(() -> new OidcJsonWebKeystoreRotationScheduler(oidcJsonWebKeystoreRotationService))
@@ -101,7 +101,9 @@ class OidcJwksConfiguration {
         static class OidcJsonWebKeystoreRotationScheduler implements Runnable {
             private final OidcJsonWebKeystoreRotationService rotationService;
 
-            @Scheduled(initialDelayString = "${cas.authn.oidc.jwks.rotation.schedule.start-delay:PT60S}",
+            @Scheduled(
+                cron = "${cas.authn.oidc.jwks.rotation.schedule.cron-expression:}",
+                initialDelayString = "${cas.authn.oidc.jwks.rotation.schedule.start-delay:PT60S}",
                 fixedDelayString = "${cas.authn.oidc.jwks.rotation.schedule.repeat-interval:P90D}")
             @Override
             public void run() {
@@ -117,7 +119,10 @@ class OidcJwksConfiguration {
         static class OidcJsonWebKeystoreRevocationScheduler implements Runnable {
             private final OidcJsonWebKeystoreRotationService rotationService;
 
-            @Scheduled(initialDelayString = "${cas.authn.oidc.jwks.revocation.schedule.start-delay:PT60S}",
+            @Scheduled(
+                cron = "${cas.authn.oidc.jwks.revocation.schedule.cron-expression:}",
+                zone = "${cas.authn.oidc.jwks.revocation.schedule.cron-time-zone:}",
+                initialDelayString = "${cas.authn.oidc.jwks.revocation.schedule.start-delay:PT60S}",
                 fixedDelayString = "${cas.authn.oidc.jwks.revocation.schedule.repeat-interval:P14D}")
             @Override
             public void run() {

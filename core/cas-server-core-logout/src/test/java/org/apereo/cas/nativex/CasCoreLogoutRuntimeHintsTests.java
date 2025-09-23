@@ -12,9 +12,9 @@ import org.springframework.aot.hint.RuntimeHints;
  * @since 7.1.0
  */
 @Tag("Native")
-public class CasCoreLogoutRuntimeHintsTests {
+class CasCoreLogoutRuntimeHintsTests {
     @Test
-    void verifyHints() throws Throwable {
+    void verifyHints() {
         val hints = new RuntimeHints();
         new CasCoreLogoutRuntimeHints().registerHints(hints, getClass().getClassLoader());
     }

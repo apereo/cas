@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.principal.provision.RestfulDelegatedClientU
 import org.apereo.cas.authentication.principal.provision.ScimDelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.scim.v2.ScimV2PrincipalAttributeMapper;
+import org.apereo.cas.scim.v2.provisioning.ScimPrincipalAttributeMapper;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -39,7 +39,7 @@ import java.util.function.Supplier;
 class DelegatedAuthenticationProvisioningConfiguration {
     @Configuration(value = "DelegatedAuthenticationScimProvisioningConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnClass(ScimV2PrincipalAttributeMapper.class)
+    @ConditionalOnClass(ScimPrincipalAttributeMapper.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Provisioning, module = "pac4j")
     static class DelegatedAuthenticationScimProvisioningConfiguration {
         private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.pac4j.provisioning.scim.enabled").isTrue();
@@ -86,7 +86,7 @@ class DelegatedAuthenticationProvisioningConfiguration {
         @ConditionalOnMissingBean(name = "restDelegatedClientUserProfileProvisioner")
         public Supplier<DelegatedClientUserProfileProvisioner> restDelegatedClientUserProfileProvisioner(
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(Supplier.class)
                 .when(BeanCondition.on("cas.authn.pac4j.provisioning.rest.url").isUrl().given(applicationContext.getEnvironment()))
                 .supply(() -> {

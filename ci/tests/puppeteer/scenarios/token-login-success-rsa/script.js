@@ -15,7 +15,7 @@ async function loginWithToken(page, service, token) {
 }
 
 (async () => {
-    const service = "https://apereo.github.io";
+    const service = "https://localhost:9859/anything/cas";
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogout(page);
@@ -36,11 +36,10 @@ async function loginWithToken(page, service, token) {
     await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     const ticket = await cas.assertTicketParameter(page);
-    body = await cas.doRequest(`https://localhost:8443/cas/p3/serviceValidate?service=${service}&ticket=${ticket}`);
-    await cas.log(body);
+    body = await cas.validateTicket(service, ticket, "XML");
     const token = body.match(/<cas:token>(.+)<\/cas:token>/)[1];
     await cas.log(`SSO Token ${token}`);
     await loginWithToken(page, service, token);
     
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

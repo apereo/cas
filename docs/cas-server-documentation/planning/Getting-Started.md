@@ -10,9 +10,9 @@ category: Planning
 
 We want to start by saying thank you for using CAS.
 
-This document provides a high-level guide on how to get started with a CAS server deployment. 
-The sole focus of the guide is describe the process
-that must be followed and adopted by CAS deployers in order to arrive at a successful 
+This document provides a high-level guide on how to get started with a CAS server deployment.
+The sole focus of the guide is to describe the process
+that must be followed and adopted by CAS deployers in order to arrive at a successful
 and sustainable architecture and deployment.
        
 ## Before You Begin
@@ -25,7 +25,7 @@ how changes are managed and released, what the project expects from you and what
 
 A CAS deployment is often seen as mission critical. Its deployment success, health status and general upkeep is vital to an organization's
 daily routine and business. Furthermore, as an identity provider that operates in the domain of access management, it plays an important
-and sensitive role in the overall security architecture of one's deployment. Therefor, you may need *extra expert* help
+and sensitive role in the overall security architecture of one's deployment. Therefore, you may need *extra expert* help
 from specialists and experts that know the software in and out and can help you with gotchas, deployment best practices and practical upgrade guidelines.
 Free support only works up to a certain degree, and generally is best for personal use and/or hobbyists.
 

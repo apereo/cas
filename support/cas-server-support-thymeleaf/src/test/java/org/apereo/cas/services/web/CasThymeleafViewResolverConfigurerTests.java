@@ -1,10 +1,13 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.BaseThymeleafTests;
+import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,11 +32,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     BaseThymeleafTests.SharedTestConfiguration.class,
     CasThymeleafViewResolverConfigurerTests.CasThymeleafViewResolverConfigurerTestConfiguration.class
-}, properties = {
-    "spring.main.allow-bean-definition-overriding=true",
-    "cas.custom.properties.test=test"
-})
+}, properties = "cas.custom.properties.test=test")
 @Tag("Web")
+@ExtendWith(CasTestExtension.class)
 class CasThymeleafViewResolverConfigurerTests {
 
     @Autowired
@@ -61,7 +62,7 @@ class CasThymeleafViewResolverConfigurerTests {
 
     @Test
     void verifyDirectView() throws Throwable {
-        val resolver = themeViewResolverFactory.create("cas-theme-default");
+        val resolver = themeViewResolverFactory.create(ThemeProperties.DEFAULT_THEME_NAME);
         val view = resolver.resolveViewName("oneCustomView", Locale.ENGLISH);
         assertNotNull(view);
         assertTrue(((AbstractThymeleafView) view).getStaticVariables().containsKey("cas"));

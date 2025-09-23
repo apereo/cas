@@ -46,11 +46,11 @@ public interface OidcConstants {
     String REQUESTED_EXPIRY = "requested_expiry";
     
     /**
-     * ACR passed in the id token.
+     * ACR passed in the ID token.
      */
     String ACR = "acr";
     /**
-     * Authentication method reference passed in the id token.
+     * Authentication method reference passed in the ID token.
      */
     String AMR = "amr";
     /**
@@ -89,13 +89,30 @@ public interface OidcConstants {
      */
     String CLAIM_AT_HASH = "at_hash";
     /**
+     * The refresh token hash.
+     */
+    String CLAIM_RT_HASH = "urn:openid:params:jwt:claim:rt_hash";
+    /**
+     * The authentication request id hash for CIBA.
+     */
+    String CLAIM_AUTH_REQ_ID = "urn:openid:params:jwt:claim:auth_req_id";
+    /**
      * The session identifier claim.
      */
     String CLAIM_SESSION_ID = "sid";
     /**
-     * The id token.
+     * The session identifier that may be reversed back to the registry.
+     */
+    String CLAIM_SESSION_REF = "sid_ref";
+    /**
+     * The ID token.
      */
     String ID_TOKEN = "id_token";
+    /**
+     * For native SSO, the device secret contains relevant data to the device
+     * and the current users authenticated with the device.
+     */
+    String DEVICE_SECRET = "device_secret";
     /**
      * The issuer parameter.
      */
@@ -107,6 +124,11 @@ public interface OidcConstants {
      * parties involved in an OpenID Connect transaction.
      */
     String TXN = "txn";
+    /**
+     * The ds_hash value provides a binding between the
+     * id_token and the issued device_secret.
+     */
+    String DS_HASH = "ds_hash";
 
     /**
      * The max age.
@@ -224,6 +246,10 @@ public interface OidcConstants {
      * .well-known/openid-configuration path url.
      */
     String WELL_KNOWN_OPENID_CONFIGURATION_URL = WELL_KNOWN_URL + "/openid-configuration";
+    /**
+     * .well-known/openid-federation path url.
+     */
+    String WELL_KNOWN_OPENID_FEDERATION_URL = WELL_KNOWN_URL + "/openid-federation";
 
     /**
      * .well-known/oauth-authorization-server path url.
@@ -254,6 +280,10 @@ public interface OidcConstants {
      * JWT content type.
      */
     String CONTENT_TYPE_JWT = "application/jwt";
+    /**
+     * The post logout redirect uri.
+     */
+    String POST_LOGOUT_REDIRECT_URI = "post_logout_redirect_uri";
 
     /**
      * Standard openid connect scopes.
@@ -282,6 +312,12 @@ public interface OidcConstants {
          * An extension of OpenID Connect for providing Relying Parties with Verified Claims about End-Users.
          */
         ASSURANCE("assurance"),
+        /**
+         * When this scope is present on the authorization request, and the
+         * code is exchanged for tokens, a new device_secret will be returned.
+         * This is relevant for native SSO and native app authorization flows.
+         */
+        DEVICE_SSO("device_sso"),
         /**
          * phone scope.
          */

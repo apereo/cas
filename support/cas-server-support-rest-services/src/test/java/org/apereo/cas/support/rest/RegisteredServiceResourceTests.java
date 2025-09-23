@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
@@ -18,6 +17,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,7 +40,7 @@ class RegisteredServiceResourceTests {
 
     @Mock
     private ServicesManager servicesManager;
-
+    
     @Test
     void checkNoCredentials() throws Throwable {
         runTest("memberOf", "something", StringUtils.EMPTY, status().isBadRequest());
@@ -92,7 +92,8 @@ class RegisteredServiceResourceTests {
         lenient().when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail"))))
             .thenThrow(AuthenticationException.class);
         val authSystemSupport = CoreAuthenticationTestUtils.getAuthenticationSystemSupport(mgmr, servicesManager);
-        return new RegisteredServiceResource(authSystemSupport, new WebApplicationServiceFactory(),
+        return new RegisteredServiceResource(authSystemSupport,
+            RegisteredServiceTestUtils.getWebApplicationServiceFactory(),
             servicesManager, attrName, attrValue);
     }
 
@@ -108,7 +109,7 @@ class RegisteredServiceResourceTests {
             configureMockMvcFor(registeredServiceResource)
                 .perform(post("/cas/v1/services")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .header("Authorization", "Basic " + EncodingUtils.encodeBase64(credentials))
+                    .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64(credentials))
                     .content(writer.toString()))
                 .andExpect(result);
         }

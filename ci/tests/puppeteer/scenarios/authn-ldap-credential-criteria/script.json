@@ -1,0 +1,41 @@
+{
+  "dependencies": "ldap",
+  "conditions": {
+    "docker": "true"
+  },
+  "environmentVariables": [
+    "CAS_LDAP_BIND_DN=cn=Directory Manager"
+  ],
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.accept.enabled=false",
+
+    "--logging.level.org.ldaptive=info",
+    
+    "--cas.authn.ldap[0].name=LDAP1",
+    "--cas.authn.ldap[0].type=AUTHENTICATED",
+    "--cas.authn.ldap[0].ldap-url=ldap://localhost:10389",
+    "--cas.authn.ldap[0].base-dn=ou=people,dc=example,dc=org",
+    "--cas.authn.ldap[0].search-filter=mail={user}",
+    "--cas.authn.ldap[0].bind-credential=password",
+    "--cas.authn.ldap[0].bind-dn=${CAS_LDAP_BIND_DN}",
+    "--cas.authn.ldap[0].credential-criteria=.+@example.org",
+    "--cas.authn.ldap[0].principal-attribute-list=mail",
+    "--cas.authn.ldap[0].enhance-with-entry-resolver=false",
+
+    "--cas.authn.ldap[1].name=LDAP2",
+    "--cas.authn.ldap[1].type=AUTHENTICATED",
+    "--cas.authn.ldap[1].ldap-url=ldap://localhost:10389",
+    "--cas.authn.ldap[1].base-dn=ou=people,dc=example,dc=org",
+    "--cas.authn.ldap[1].search-filter=mail={user}",
+    "--cas.authn.ldap[1].bind-credential=password",
+    "--cas.authn.ldap[1].bind-dn=${CAS_LDAP_BIND_DN}",
+    "--cas.authn.ldap[1].credential-criteria=.+@system.org",
+    "--cas.authn.ldap[1].principal-attribute-list=mail",
+    "--cas.authn.ldap[1].enhance-with-entry-resolver=false"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}
+

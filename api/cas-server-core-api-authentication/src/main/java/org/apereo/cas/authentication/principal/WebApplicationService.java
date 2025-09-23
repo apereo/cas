@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.validation.ValidationResponseType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Represents a service using CAS that comes from the web.
@@ -53,4 +54,20 @@ public interface WebApplicationService extends Service {
      * @param loggedOutAlready if the service is already logged out.
      */
     void setLoggedOutAlready(boolean loggedOutAlready);
+
+    /**
+     * Collect fragment in web application service.
+     *
+     * @param fragment the fragment
+     * @return the web application service
+     */
+    @JsonIgnore
+    WebApplicationService setFragment(String fragment);
+
+    /**
+     * Gets fragment.
+     *
+     * @return the fragment
+     */
+    String getFragment();
 }

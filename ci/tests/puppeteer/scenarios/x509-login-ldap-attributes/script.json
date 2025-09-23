@@ -1,5 +1,5 @@
 {
-  "dependencies": "x509-webflow,ldap,person-directory",
+  "dependencies": "x509-webflow,ldap,person-directory,scripting",
   "conditions": {
     "docker": "true"
   },
@@ -12,7 +12,6 @@
     "--server.ssl.key-store-type=PKCS12",
     "--server.ssl.client-auth=want",
 
-    "--logging.level.org.apereo.cas=info",
     "--logging.level.org.apereo.services.persondir=info",
     "--logging.level.org.apereo.cas.persondir=info",
 

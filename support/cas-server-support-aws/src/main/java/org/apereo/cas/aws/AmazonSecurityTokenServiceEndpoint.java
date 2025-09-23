@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Endpoint(id = "awsSts", enableByDefault = false)
+@Endpoint(id = "awsSts", defaultAccess = Access.NONE)
 @Slf4j
 public class AmazonSecurityTokenServiceEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<RestAuthenticationService> restAuthenticationService;
@@ -98,14 +99,14 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasRestActuatorEndpo
      */
     @PostMapping
     @Operation(summary = "Fetch temporary credentials from Amazon Security Token Service", parameters = {
-        @Parameter(name = "duration"),
-        @Parameter(name = "tokenCode"),
-        @Parameter(name = "profile"),
-        @Parameter(name = "serialNumber"),
-        @Parameter(name = "roleArn"),
-        @Parameter(name = "requestBody"),
-        @Parameter(name = "request"),
-        @Parameter(name = "response")
+        @Parameter(name = "duration", description = "Duration of the temporary credentials"),
+        @Parameter(name = "tokenCode", description = "MFA token code"),
+        @Parameter(name = "profile", description = "AWS profile name"),
+        @Parameter(name = "serialNumber", description = "MFA serial number"),
+        @Parameter(name = "roleArn", description = "Role ARN"),
+        @Parameter(name = "requestBody", description = "Request body"),
+        @Parameter(name = "request", description = "Request"),
+        @Parameter(name = "response", description = "Response")
     })
     public ResponseEntity<String> fetchCredentials(@RequestParam(value = "token", required = false) final String tokenCode,
                                                    @RequestParam(required = false) final String profile,

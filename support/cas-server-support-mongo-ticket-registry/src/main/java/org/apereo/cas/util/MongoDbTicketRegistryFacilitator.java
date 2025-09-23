@@ -15,7 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexDefinition;
-import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 import java.time.Duration;
 import java.util.ArrayList;
 
@@ -34,10 +33,6 @@ public class MongoDbTicketRegistryFacilitator {
      * documentation that lists all supported indexes.
      */
     private static final String INDEX_NAME_ID = "IDX_ID";
-    /**
-     * Index name for ticket json body, type and id as a compound index.
-     */
-    private static final String INDEX_NAME_JSON_TYPE_ID = "IDX_JSON_TYPE_ID";
     private static final String INDEX_NAME_PRINCIPAL = "IDX_PRINCIPAL";
     private static final String INDEX_NAME_EXPIRATION = "IDX_EXPIRATION";
 
@@ -86,19 +81,8 @@ public class MongoDbTicketRegistryFacilitator {
                         .named(INDEX_NAME_PRINCIPAL);
                     expectedIndexes.add(principalIdIndex);
                 }
-                if (properties.getIndexes().isEmpty() || properties.getIndexes().contains(INDEX_NAME_JSON_TYPE_ID)){
-                    val columnsIndex = new TextIndexDefinition.TextIndexDefinitionBuilder()
-                        .onField(MongoDbTicketDocument.FIELD_NAME_JSON)
-                        .onField(MongoDbTicketDocument.FIELD_NAME_TYPE)
-                        .onField(MongoDbTicketDocument.FIELD_NAME_ID)
-                        .named(INDEX_NAME_JSON_TYPE_ID)
-                        .build();
-                    expectedIndexes.add(columnsIndex);
-                }
             }
-
-
-
+            
             if (properties.getIndexes().isEmpty() || properties.getIndexes().contains(INDEX_NAME_EXPIRATION)) {
                 val expireIndex = new Index()
                     .named(INDEX_NAME_EXPIRATION)

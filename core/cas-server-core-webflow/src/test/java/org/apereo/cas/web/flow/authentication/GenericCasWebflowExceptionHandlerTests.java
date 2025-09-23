@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.authentication;
 
-import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.util.MockRequestContext;
 
 import lombok.val;
@@ -34,11 +33,11 @@ class GenericCasWebflowExceptionHandlerTests {
 
         val context = MockRequestContext.create();
 
-        val handler = new GenericCasWebflowExceptionHandler(catalog, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+        val handler = new GenericCasWebflowExceptionHandler(catalog);
         assertTrue(handler.supports(new AccountExpiredException(), context));
 
         val event = handler.handle(new CredentialExpiredException(), context);
         assertNotNull(event);
-        assertEquals(CasWebflowExceptionHandler.UNKNOWN, event.getId());
+        assertEquals(CasWebflowExceptionCatalog.UNKNOWN, event.getId());
     }
 }

@@ -25,7 +25,7 @@ import java.util.Map;
  * @since 3.0.0
  */
 @ToString
-@RequiredArgsConstructor(onConstructor_={@JsonCreator})
+@RequiredArgsConstructor(onConstructor_ = @JsonCreator)
 @EqualsAndHashCode
 @Getter
 @NoArgsConstructor(force = true)

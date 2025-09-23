@@ -2,15 +2,20 @@ package org.apereo.cas.support.events.listener;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.LogoutRequestStatus;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationDetectedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
+import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.text.MessageSanitizer;
@@ -40,12 +45,14 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
 
     private final GeoLocationService geoLocationService;
 
-    private CasEvent prepareCasEvent(final AbstractCasEvent event) {
+    private final LogoutManager logoutManager;
+
+    protected CasEvent prepareCasEvent(final AbstractCasEvent event) {
         val dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
         val dt = DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(event.getTimestamp()));
-        dto.setCreationTime(dt.toString());
+        dto.setCreationTime(dt.toInstant());
         val clientInfo = event.getClientInfo();
         FunctionUtils.doIfNotNull(clientInfo, __ -> {
             dto.putClientIpAddress(clientInfo.getClientIpAddress());
@@ -54,16 +61,18 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
             val location = determineGeoLocationFor(clientInfo);
             dto.putGeoLocation(location);
             dto.putDeviceFingerprint(clientInfo.getDeviceFingerprint());
+            dto.putTenant(clientInfo.getTenant());
         });
         return dto;
     }
 
-    private GeoLocationRequest determineGeoLocationFor(final ClientInfo clientInfo) {
+    protected GeoLocationRequest determineGeoLocationFor(final ClientInfo clientInfo) {
         val geoLocationRequest = HttpRequestUtils.getHttpServletRequestGeoLocation(clientInfo.getGeoLocation());
         if (!geoLocationRequest.isValid() && geoLocationService != null) {
             val geoResponse = geoLocationService.locate(clientInfo.getClientIpAddress());
             if (geoResponse != null) {
-                return new GeoLocationRequest(geoResponse.getLatitude(), geoResponse.getLongitude());
+                return new GeoLocationRequest(geoResponse.getLatitude(),
+                    geoResponse.getLongitude()).setAddress(geoResponse.build());
             }
         }
         return geoLocationRequest;
@@ -72,19 +81,19 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
     @Override
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) throws Throwable {
         val dto = prepareCasEvent(event);
-        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
+        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toInstant());
         dto.putEventId(messageSanitizer.sanitize(event.getTicketGrantingTicket().getId()));
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
-        this.casEventRepository.save(dto);
+        casEventRepository.save(dto);
     }
 
     @Override
     public void handleCasTicketGrantingTicketDeletedEvent(final CasTicketGrantingTicketDestroyedEvent event) throws Throwable {
         val dto = prepareCasEvent(event);
-        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
+        dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toInstant());
         dto.putEventId(messageSanitizer.sanitize(event.getTicketGrantingTicket().getId()));
         dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
-        this.casEventRepository.save(dto);
+        casEventRepository.save(dto);
     }
 
     @Override
@@ -92,7 +101,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         val dto = prepareCasEvent(event);
         dto.setPrincipalId(event.getCredential().getId());
         dto.putEventId(CasAuthenticationTransactionFailureEvent.class.getSimpleName());
-        this.casEventRepository.save(dto);
+        casEventRepository.save(dto);
     }
 
     @Override
@@ -100,7 +109,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         val dto = prepareCasEvent(event);
         dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
         dto.putEventId(CasAuthenticationPolicyFailureEvent.class.getSimpleName());
-        this.casEventRepository.save(dto);
+        casEventRepository.save(dto);
     }
 
     @Override
@@ -108,6 +117,22 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         val dto = prepareCasEvent(event);
         dto.putEventId(event.getService().getName());
         dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
-        this.casEventRepository.save(dto);
+        casEventRepository.save(dto);
+    }
+
+    @Override
+    public void handleCasRequestSingleLogoutEvent(final CasRequestSingleLogoutEvent event) {
+        try {
+            val ticket = event.getTicketGrantingTicket();
+            LOGGER.debug("Performing single logout for expired ticket-granting ticket [{}]", ticket.getId());
+            val request = SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(ticket)
+                .build();
+            val results = logoutManager.performLogout(request);
+            results.stream().filter(r -> r.getStatus() == LogoutRequestStatus.FAILURE)
+                .forEach(r -> LOGGER.warn("Logout request for [{}] and [{}] has failed", r.getTicketId(), r.getLogoutUrl()));
+        } catch (final Throwable e) {
+            LoggingUtils.error(LOGGER, e);
+        }
     }
 }

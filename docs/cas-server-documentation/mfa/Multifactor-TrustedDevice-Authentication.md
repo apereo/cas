@@ -24,7 +24,7 @@ Before deployment, you should consider the following:
 - How long should user decisions be trusted by CAS?
 - How is a trusted authentication session communicated back to an application?
 
-Note that enabling this feature by default means it's globally applied to all in the case if you have multiple MFA providers turned on.
+Note that enabling this feature by default means it's globally applied to all providers when multiple MFA solutions are enabled.
 This can be optionally disabled and applied only to a selected set of providers.
 
 ## Configuration

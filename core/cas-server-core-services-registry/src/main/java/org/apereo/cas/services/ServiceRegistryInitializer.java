@@ -16,7 +16,7 @@ public interface ServiceRegistryInitializer extends InitializingBean {
     void initialize();
 
     @Override
-    default void afterPropertiesSet() throws Exception {
+    default void afterPropertiesSet() {
         initialize();
     }
 }

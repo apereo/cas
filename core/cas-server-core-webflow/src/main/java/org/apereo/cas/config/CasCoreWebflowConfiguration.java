@@ -7,7 +7,9 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailedException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationRequiredException;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
@@ -20,7 +22,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -106,18 +108,18 @@ class CasCoreWebflowConfiguration {
     @Configuration(value = "CasCoreWebflowEventResolutionConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasCoreWebflowEventResolutionConfiguration {
-        @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")
+        @ConditionalOnMissingBean(name = CasWebflowEventResolver.BEAN_NAME_SERVICE_TICKET_EVENT_RESOLVER)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver(
-            @Qualifier("casWebflowConfigurationContext")
+            @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
             final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             return new ServiceTicketRequestWebflowEventResolver(casWebflowConfigurationContext);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "webflowCipherExecutor")
+        @ConditionalOnMissingBean(name = CipherExecutor.BEAN_NAME_WEBFLOW_CIPHER_EXECUTOR)
         public CipherExecutor webflowCipherExecutor(final CasConfigurationProperties casProperties) {
             val webflow = casProperties.getWebflow();
             val crypto = webflow.getCrypto();
@@ -129,12 +131,7 @@ class CasCoreWebflowConfiguration {
                 enabled = true;
             }
             if (enabled) {
-                return new WebflowConversationStateCipherExecutor(
-                    crypto.getEncryption().getKey(),
-                    crypto.getSigning().getKey(),
-                    crypto.getAlg(),
-                    crypto.getSigning().getKeySize(),
-                    crypto.getEncryption().getKeySize());
+                return WebflowConversationStateCipherExecutor.from(crypto);
             }
             LOGGER.warn("Webflow encryption/signing is turned off. This "
                         + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
@@ -149,6 +146,7 @@ class CasCoreWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
         public CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
@@ -182,8 +180,14 @@ class CasCoreWebflowConfiguration {
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
+            @Qualifier(CasWebflowExceptionCatalog.BEAN_NAME)
+            final CasWebflowExceptionCatalog casWebflowExceptionCatalog,
             @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)
-            final CasWebflowCredentialProvider casWebflowCredentialProvider) {
+            final CasWebflowCredentialProvider casWebflowCredentialProvider,
+            @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME)
+            final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector) {
             return CasWebflowEventResolutionConfigurationContext
                 .builder()
                 .casWebflowCredentialProvider(casWebflowCredentialProvider)
@@ -204,6 +208,9 @@ class CasCoreWebflowConfiguration {
                 .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
                 .authenticationEventExecutionPlan(authenticationEventExecutionPlan)
                 .principalFactory(principalFactory)
+                .multifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector)
+                .casWebflowExceptionCatalog(casWebflowExceptionCatalog)
+                .tenantExtractor(tenantExtractor)
                 .build();
         }
     }
@@ -332,30 +339,27 @@ class CasCoreWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExceptionHandler<AuthenticationException> defaultCasWebflowAuthenticationExceptionHandler(
-            @Qualifier("handledAuthenticationExceptions")
+            @Qualifier(CasWebflowExceptionCatalog.BEAN_NAME)
             final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
-            return new DefaultCasWebflowAuthenticationExceptionHandler(
-                handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+            return new DefaultCasWebflowAuthenticationExceptionHandler(handledAuthenticationExceptions);
         }
 
         @ConditionalOnMissingBean(name = "defaultCasWebflowAbstractTicketExceptionHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExceptionHandler<AbstractTicketException> defaultCasWebflowAbstractTicketExceptionHandler(
-            @Qualifier("handledAuthenticationExceptions")
+            @Qualifier(CasWebflowExceptionCatalog.BEAN_NAME)
             final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
-            return new DefaultCasWebflowAbstractTicketExceptionHandler(
-                handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+            return new DefaultCasWebflowAbstractTicketExceptionHandler(handledAuthenticationExceptions);
         }
 
         @ConditionalOnMissingBean(name = "genericCasWebflowExceptionHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExceptionHandler genericCasWebflowExceptionHandler(
-            @Qualifier("handledAuthenticationExceptions")
+            @Qualifier(CasWebflowExceptionCatalog.BEAN_NAME)
             final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
-            return new GenericCasWebflowExceptionHandler(
-                handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+            return new GenericCasWebflowExceptionHandler(handledAuthenticationExceptions);
         }
     }
 
@@ -376,8 +380,8 @@ class CasCoreWebflowConfiguration {
          */
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @ConditionalOnMissingBean(name = "handledAuthenticationExceptions")
-        public CasWebflowExceptionCatalog handledAuthenticationExceptions(
+        @ConditionalOnMissingBean(name = CasWebflowExceptionCatalog.BEAN_NAME)
+        public CasWebflowExceptionCatalog casWebflowExceptionCatalog(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             val catalog = new DefaultCasWebflowExceptionCatalog();
@@ -398,6 +402,7 @@ class CasCoreWebflowConfiguration {
             catalog.registerException(UnauthorizedAuthenticationException.class);
             catalog.registerException(MultifactorAuthenticationProviderAbsentException.class);
             catalog.registerException(MultifactorAuthenticationRequiredException.class);
+            catalog.registerException(MultifactorAuthenticationFailedException.class);
             catalog.registerExceptions(casProperties.getAuthn().getErrors().getExceptions());
 
             val configurers = applicationContext.getBeansOfType(CasWebflowExceptionConfigurer.class)
@@ -434,8 +439,9 @@ class CasCoreWebflowConfiguration {
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
-            return new DefaultSingleSignOnBuildingStrategy(ticketRegistrySupport, centralAuthenticationService);
+            final CentralAuthenticationService centralAuthenticationService,
+            final ConfigurableApplicationContext applicationContext) {
+            return new DefaultSingleSignOnBuildingStrategy(ticketRegistrySupport, centralAuthenticationService, applicationContext);
         }
 
         @Bean
@@ -498,8 +504,10 @@ class CasCoreWebflowConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowCredentialProvider.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasWebflowCredentialProvider casWebflowCredentialProvider() {
-            return new DefaultCasWebflowCredentialProvider();
+        public CasWebflowCredentialProvider casWebflowCredentialProvider(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor) {
+            return new DefaultCasWebflowCredentialProvider(tenantExtractor);
         }
     }
 
@@ -523,7 +531,7 @@ class CasCoreWebflowConfiguration {
                     LOGGER.trace("Decorating login webflow using [{}]", groovyScript);
                     return new GroovyLoginWebflowDecorator(groovyScript);
                 })
-                .otherwiseProxy()
+                .otherwise(WebflowDecorator::noOp)
                 .get();
         }
 
@@ -541,7 +549,7 @@ class CasCoreWebflowConfiguration {
                     LOGGER.trace("Decorating login webflow REST endpoint [{}]", decorator.getRest().getUrl());
                     return new RestfulLoginWebflowDecorator(decorator.getRest());
                 })
-                .otherwiseProxy()
+                .otherwise(WebflowDecorator::noOp)
                 .get();
         }
     }

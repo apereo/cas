@@ -25,8 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.discovery.scopes=openid,profile,assurance",
     "cas.authn.oidc.discovery.claims=sub,name,nationalities,birth_family_name,title,place_of_birth"
 })
-@Tag("OIDC")
-public class OidcAssuranceScopeAttributeReleasePolicyTests extends AbstractOidcTests {
+@Tag("OIDCAttributes")
+class OidcAssuranceScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     @Test
     void verifyOperation() throws Throwable {
         val policy = new OidcAssuranceScopeAttributeReleasePolicy();
@@ -51,7 +51,7 @@ public class OidcAssuranceScopeAttributeReleasePolicyTests extends AbstractOidcT
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val policy = new OidcAssuranceScopeAttributeReleasePolicy();
         val chain = new ChainingAttributeReleasePolicy();
         chain.addPolicies(policy);

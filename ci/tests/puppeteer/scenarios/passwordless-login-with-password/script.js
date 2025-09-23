@@ -9,8 +9,7 @@ const cas = require("../../cas.js");
     
     await cas.gotoLogin(page);
 
-    const pswd = await page.$("#password");
-    assert(pswd === null);
+    await cas.assertElementDoesNotExist(page, "#password");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
@@ -44,5 +43,5 @@ const cas = require("../../cas.js");
     assert(surrogateUser === null);
     await cas.sleep(1000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,34 +26,25 @@ import java.util.Set;
  * @since 7.1.0
  */
 @Slf4j
-public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends AbstractDefaultAttributePersonAttributeDao {
-    /**
-     * A List of child {@link PersonAttributeDao} instances which we will poll in order.
-     */
-    @Getter
-    @Setter
+@Getter
+@Setter
+public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends AbstractDefaultAttributePersonAttributeDao implements AggregatingPersonAttributeDao {
     protected List<PersonAttributeDao> personAttributeDaos;
 
     /**
      * Strategy for merging together the results from successive PersonAttributeDaos.
      */
-    @Getter
-    @Setter
     protected AttributeMerger attributeMerger = new MultivaluedAttributeMerger();
 
     /**
-     * True if we should catch, logger, and ignore Throwables propogated by
+     * True if we should catch, logger, and ignore Throwables propagated by
      * individual DAOs.
      */
-    @Getter
-    @Setter
     protected boolean recoverExceptions = true;
 
     /**
      * The Stop on success.
      */
-    @Getter
-    @Setter
     protected boolean stopOnSuccess;
 
     /**
@@ -62,15 +52,13 @@ public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends 
      * produce results, and otherwise, halt execution
      * if any of them cannot resolve the principal and return null.
      */
-    @Getter
-    @Setter
     protected boolean requireAll;
 
     @Override
     public String[] getId() {
         val ids = new ArrayList<String>();
         ids.add(getClass().getSimpleName());
-        personAttributeDaos.forEach(dao -> ids.addAll(Arrays.asList(dao.getId())));
+        personAttributeDaos.forEach(dao -> ids.addAll(List.of(dao.getId())));
         return ids.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
@@ -105,8 +93,7 @@ public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends 
                 }
             } else if (this.requireAll) {
                 LOGGER.debug("Attribute repository dao [{}] did not resolve a person "
-                    + "and configuration requires all sources to produce valid results. "
-                    + "Short-circuiting the execution and returning null instead", currentlyConsidering);
+                    + "and configuration requires all sources to produce valid results. ", currentlyConsidering);
                 return null;
             }
 

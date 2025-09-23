@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionResult;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
@@ -15,6 +16,8 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +26,6 @@ import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -41,7 +43,7 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Slf4j
-@Controller("umaAuthorizationRequestEndpointController")
+@Tag(name = "User Managed Access")
 public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointController {
 
     public UmaAuthorizationRequestEndpointController(final UmaConfigurationContext umaConfigurationContext) {
@@ -57,6 +59,10 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
      * @return the response entity
      */
     @PostMapping(OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL)
+    @Operation(
+        summary = "Handle UMA authorization request",
+        description = "Handles the UMA authorization request and returns a response"
+    )
     public ResponseEntity handleAuthorizationRequest(
         @RequestBody
         final String body,
@@ -161,16 +167,22 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         val givenAccessToken = result.getAccessToken().orElseThrow();
         val accessToken = resolveAccessToken(givenAccessToken);
 
-        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(getUmaConfigurationContext().getAccessTokenJwtBuilder(),
-            registeredService, accessToken, accessToken.getService(), getUmaConfigurationContext().getCasProperties(), false);
+        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(getUmaConfigurationContext(),
+            registeredService, accessToken, accessToken.getService(), false);
         val encodedAccessToken = cipher.encode(accessToken.getId());
         val userProfile = OAuth20Utils.getAuthenticatedUserProfile(new JEEContext(request, response),
             getUmaConfigurationContext().getSessionStore());
         userProfile.addAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
         userProfile.addAttribute(ResourceSet.class.getName(), permissionTicket.getResourceSet());
 
-        val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator()
-            .generate(accessToken, userProfile, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.UMA_TICKET, registeredService);
+        val idTokenContext = IdTokenGenerationContext.builder()
+            .accessToken(accessToken)
+            .userProfile(userProfile)
+            .responseType(OAuth20ResponseTypes.CODE)
+            .grantType(OAuth20GrantTypes.UMA_TICKET)
+            .registeredService(registeredService)
+            .build();
+        val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator().generate(idTokenContext);
         accessToken.setIdToken(idToken.token());
         if (!accessToken.isStateless()) {
             getUmaConfigurationContext().getTicketRegistry().updateTicket(accessToken);

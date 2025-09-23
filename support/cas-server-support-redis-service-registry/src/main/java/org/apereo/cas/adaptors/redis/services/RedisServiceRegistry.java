@@ -34,15 +34,11 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
 
     private final CasRedisTemplate<String, RegisteredService> template;
 
-    private final long scanCount;
-
     public RedisServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                 final CasRedisTemplate<String, RegisteredService> template,
-                                final Collection<ServiceRegistryListener> serviceRegistryListeners,
-                                final long scanCount) {
+                                final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(applicationContext, serviceRegistryListeners);
         this.template = template;
-        this.scanCount = scanCount;
     }
 
     private static String getRegisteredServiceRedisKey(final RegisteredService registeredService) {
@@ -60,11 +56,12 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService save(final RegisteredService rs) {
         try {
+            rs.assignIdIfNecessary();
             LOGGER.trace("Saving registered service [{}]", rs);
             val redisKey = getRegisteredServiceRedisKey(rs);
             val clientInfo = ClientInfoHolder.getClientInfo();
             invokeServiceRegistryListenerPreSave(rs);
-            this.template.boundValueOps(redisKey).set(rs);
+            template.boundValueOps(redisKey).set(rs);
             LOGGER.trace("Saved registered service [{}]", rs);
             publishEvent(new CasRegisteredServiceSavedEvent(this, rs, clientInfo));
         } catch (final Exception e) {
@@ -127,6 +124,6 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     }
 
     private Stream<String> getRegisteredServiceKeys() {
-        return template.scan(getPatternRegisteredServiceRedisKey(), this.scanCount);
+        return template.scan(getPatternRegisteredServiceRedisKey());
     }
 }

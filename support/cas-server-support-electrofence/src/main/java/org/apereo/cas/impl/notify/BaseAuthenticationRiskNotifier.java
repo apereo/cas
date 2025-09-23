@@ -4,8 +4,10 @@ import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -54,6 +56,10 @@ public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRi
 
     protected final CipherExecutor riskVerificationCipherExecutor;
 
+    protected final ServiceFactory serviceFactory;
+
+    protected final TenantExtractor tenantExtractor;
+
     protected Authentication authentication;
 
     protected RegisteredService registeredService;
@@ -81,7 +87,7 @@ public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRi
     @Override
     public String createRiskToken() throws Throwable {
         val jwtBuilder = new JwtBuilder(riskVerificationCipherExecutor,
-            applicationContext, servicesManager, principalResolver, casProperties);
+            applicationContext, servicesManager, principalResolver, casProperties, serviceFactory);
         val expiration = Beans.newDuration(casProperties.getAuthn().getAdaptive()
             .getRisk().getResponse().getRiskVerificationTokenExpiration());
         val expirationDate = DateTimeUtils.dateOf(LocalDateTime.now(Clock.systemUTC()).plus(expiration));

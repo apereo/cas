@@ -21,19 +21,16 @@ import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -55,7 +52,7 @@ class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     private Saml10SuccessResponseView response;
 
     @BeforeEach
-    public void initialize() {
+    void initialize() {
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
         val protocolAttributeEncoder = new DefaultCasProtocolAttributeEncoder(servicesManager,
             RegisteredServicePublicKeyCipherExecutor.INSTANCE, CipherExecutor.noOpOfStringToString());
@@ -65,7 +62,7 @@ class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
             new NoOpProtocolAttributeEncoder(), servicesManager);
         this.response = new Saml10SuccessResponseView(protocolAttributeEncoder,
             servicesManager,
-            new DefaultArgumentExtractor(new SamlServiceFactory()),
+            new DefaultArgumentExtractor(List.of(new SamlServiceFactory(tenantExtractor, urlValidator))),
             new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(),
             NoOpProtocolAttributesRenderer.INSTANCE,
@@ -78,7 +75,7 @@ class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         val attributes = new HashMap<String, List<Object>>();
         attributes.put(TEST_ATTRIBUTE, List.of(TEST_VALUE));
-        attributes.put("testEmptyCollection", new ArrayList<>(0));
+        attributes.put("testEmptyCollection", new ArrayList<>());
         attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
         val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
 

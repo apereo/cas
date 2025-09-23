@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -38,12 +39,12 @@ class AmazonSecurityTokenServiceEndpointTests {
         "cas.amazon-sts.credential-access-key=test",
         "cas.amazon-sts.credential-secret-key=test",
         "cas.authn.mfa.groovy-script.location=classpath:AmazonStsGroovyMfa.groovy",
-        "management.endpoint.awsSts.enabled=true"
+        "management.endpoint.awsSts.access=UNRESTRICTED"
     })
-    @Import({
+    @Import(CasAuthenticationEventExecutionPlanTestConfiguration.class)
+    @ImportAutoConfiguration({
         CasAmazonCoreAutoConfiguration.class,
-        CasCoreRestAutoConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class
+        CasCoreRestAutoConfiguration.class
     })
     static class BaseAmazonSecurityTokenServiceEndpointTests extends AbstractCasEndpointTests {
     }
@@ -59,9 +60,9 @@ class AmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
-        
+
         @BeforeEach
-        public void beforeEach() {
+        void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         }
@@ -87,7 +88,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
 
         @BeforeEach
-        public void beforeEach() {
+        void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         }
@@ -114,9 +115,9 @@ class AmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
-        
+
         @BeforeEach
-        public void beforeEach() {
+        void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         }
@@ -182,9 +183,9 @@ class AmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
-        
+
         @BeforeEach
-        public void beforeEach() {
+        void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         }
@@ -213,9 +214,9 @@ class AmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
-        
+
         @BeforeEach
-        public void beforeEach() {
+        void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         }

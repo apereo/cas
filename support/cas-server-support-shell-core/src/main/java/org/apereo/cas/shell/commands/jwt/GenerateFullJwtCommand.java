@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
@@ -12,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.hjson.JsonValue;
 import org.jose4j.jwk.JsonWebKeySet;
@@ -22,7 +22,6 @@ import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -94,7 +93,7 @@ public class GenerateFullJwtCommand {
             val keystore = new JsonWebKeySet(FileUtils.readFileToString(new File(jwks), StandardCharsets.UTF_8));
             val jsonWebKey = (PublicJsonWebKey) keystore.getJsonWebKeys()
                 .stream()
-                .filter(key -> StringUtils.equalsIgnoreCase(key.getUse(), "signing"))
+                .filter(key -> Strings.CI.equals(key.getUse(), "signing"))
                 .findFirst()
                 .orElseGet(() -> keystore.getJsonWebKeys().getFirst());
             val jwt = EncodingUtils.signJwsRSASha512(jsonWebKey.getPrivateKey(),

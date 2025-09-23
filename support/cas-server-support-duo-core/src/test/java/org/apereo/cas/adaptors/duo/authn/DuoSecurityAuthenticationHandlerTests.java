@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 
 import lombok.val;
@@ -53,14 +52,6 @@ class DuoSecurityAuthenticationHandlerTests {
         when(duoService.authenticate(any(Credential.class))).thenThrow(new RuntimeException("Unable to authenticate"));
         assertThrows(FailedLoginException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }
-
-    private static DuoSecurityAuthenticationHandler getAuthenticationHandler(
-        final DuoSecurityMultifactorAuthenticationProvider provider) {
-        return new DuoSecurityAuthenticationHandler(null,
-            mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(),
-            new DirectObjectProvider<>(provider), 0, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
-    }
-
 
     @Test
     void verifyDuoSecurityUniversalPromptCredential() throws Throwable {
@@ -129,4 +120,12 @@ class DuoSecurityAuthenticationHandlerTests {
         val credential = new DuoSecurityDirectCredential(CoreAuthenticationTestUtils.getAuthentication().getPrincipal(), DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         assertThrows(FailedLoginException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }
+
+    private static DuoSecurityAuthenticationHandler getAuthenticationHandler(
+        final DuoSecurityMultifactorAuthenticationProvider provider) {
+        return new DuoSecurityAuthenticationHandler(null,
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            new DirectObjectProvider<>(provider), 0, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
+    }
+
 }

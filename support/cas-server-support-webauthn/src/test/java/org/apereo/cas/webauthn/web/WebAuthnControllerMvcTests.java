@@ -2,6 +2,7 @@ package org.apereo.cas.webauthn.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.BaseWebSecurityTests;
@@ -13,6 +14,7 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -49,18 +51,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     BaseWebAuthnWebflowTests.SharedTestConfiguration.class
 },
     properties = {
-        "server.port=8080",
-        "management.endpoints.enabled-by-default=true",
+        "management.endpoints.access.default=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*",
 
-        "--spring.security.user.name=s#kiooritea",
-        "--spring.security.user.password=p@$$W0rd",
+        "spring.security.user.name=s#kiooritea",
+        "spring.security.user.password=p@$$W0rd",
 
         "cas.monitor.endpoints.endpoint.env.access=AUTHENTICATED",
         "cas.monitor.endpoints.endpoint.info.access=ANONYMOUS"
-    }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+    }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFAProvider")
+@ExtendWith(CasTestExtension.class)
 class WebAuthnControllerMvcTests {
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -79,7 +81,7 @@ class WebAuthnControllerMvcTests {
     private MockMvc mvc;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         mvc = MockMvcBuilders
             .webAppContextSetup(webApplicationContext)
             .apply(springSecurity())
@@ -126,7 +128,10 @@ class WebAuthnControllerMvcTests {
         executeRequest(WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE, new MockHttpServletRequest(), new MockHttpServletResponse(), true, HttpStatus.SC_FORBIDDEN);
 
         val csrfResult = fetchAndStoreCsrfToken();
-        executeRequest(WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE, csrfResult.getRequest(), csrfResult.getResponse(), true, HttpStatus.SC_OK);
+        /*
+          Authentication should pass but the user is not registered.
+         */
+        executeRequest(WebAuthnController.WEBAUTHN_ENDPOINT_AUTHENTICATE, csrfResult.getRequest(), csrfResult.getResponse(), true, HttpStatus.SC_BAD_REQUEST);
     }
 
     private void populateSecurityContext(final MvcResult result) throws Exception {

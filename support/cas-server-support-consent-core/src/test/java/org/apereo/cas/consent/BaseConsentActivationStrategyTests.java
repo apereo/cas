@@ -7,11 +7,12 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
-import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Getter
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseConsentActivationStrategyTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
@@ -37,13 +39,12 @@ public abstract class BaseConsentActivationStrategyTests {
     private ConsentActivationStrategy consentActivationStrategy;
 
     @BeforeEach
-    public void beforeEach() {
+    void beforeEach() {
         servicesManager.deleteAll();
     }
 
     @Test
     void verifyConsentActive() throws Throwable {
-        MockRequestContext.create();
         val registeredService = getRegisteredServiceWithConsentStatus(TriStateBoolean.TRUE);
         val service = CoreAuthenticationTestUtils.getWebApplicationService(registeredService.getServiceId());
         assertTrue(getConsentActivationStrategy().isConsentRequired(service, registeredService,
@@ -52,7 +53,6 @@ public abstract class BaseConsentActivationStrategyTests {
 
     @Test
     void verifyConsentDisabled() throws Throwable {
-        MockRequestContext.create();
         val registeredService = getRegisteredServiceWithConsentStatus(TriStateBoolean.FALSE);
         val service = CoreAuthenticationTestUtils.getWebApplicationService(registeredService.getServiceId());
         assertFalse(getConsentActivationStrategy().isConsentRequired(service, registeredService,
@@ -61,7 +61,6 @@ public abstract class BaseConsentActivationStrategyTests {
 
     @Test
     void verifyConsentUndefined() throws Throwable {
-        MockRequestContext.create();
         val registeredService = getRegisteredServiceWithConsentStatus(TriStateBoolean.UNDEFINED);
         val service = CoreAuthenticationTestUtils.getWebApplicationService(registeredService.getServiceId());
         assertTrue(getConsentActivationStrategy().isConsentRequired(service, registeredService,

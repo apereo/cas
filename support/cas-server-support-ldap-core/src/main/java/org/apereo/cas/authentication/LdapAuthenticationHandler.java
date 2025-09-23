@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -50,7 +50,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * Mapping of LDAP attribute name to principal attribute name.
      */
-    protected Map<String, Object> principalAttributeMap = new HashMap<>(0);
+    protected Map<String, Object> principalAttributeMap = new HashMap<>();
 
     /**
      * Performs LDAP authentication given username/password.
@@ -63,7 +63,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private String principalIdAttribute;
 
     /**
-     * Flag indicating whether multiple values are allowed fo principalIdAttribute.
+     * Flag indicating whether multiple values are allowed for principalIdAttribute.
      */
     private boolean allowMultiplePrincipalAttributeValues;
 
@@ -85,21 +85,12 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     private String principalDnAttributeName = "principalLdapDn";
 
-    /**
-     * Creates a new authentication handler that delegates to the given authenticator.
-     *
-     * @param name             the name
-     * @param servicesManager  the services manager
-     * @param principalFactory the principal factory
-     * @param order            the order
-     * @param authenticator    Ldaptive authenticator component.
-     * @param strategy         the strategy
-     */
-    public LdapAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                     final PrincipalFactory principalFactory, final Integer order,
+    public LdapAuthenticationHandler(final String name,
+                                     final PrincipalFactory principalFactory,
+                                     final Integer order,
                                      final Authenticator authenticator,
                                      final AuthenticationPasswordPolicyHandlingStrategy strategy) {
-        super(name, servicesManager, principalFactory, order);
+        super(name, principalFactory, order);
         this.authenticator = authenticator;
         this.passwordPolicyHandlingStrategy = strategy;
     }
@@ -177,10 +168,10 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         principalAttributeMap
             .entrySet()
             .stream()
-            .filter(entry -> !StringUtils.equalsIgnoreCase(entry.getKey(), "*") && !StringUtils.equalsIgnoreCase(entry.getKey(), "+"))
+            .filter(entry -> !Strings.CI.equals(entry.getKey(), "*") && !Strings.CI.equals(entry.getKey(), "+"))
             .forEach(entry -> {
                 val attributeNames = CollectionUtils.toCollection(entry.getValue(), ArrayList.class);
-                if (attributeNames.size() == 1 && attributeNames.stream().allMatch(name -> name.toString().endsWith(";"))) {
+                if (attributeNames.size() == 1 && attributeNames.stream().allMatch(name -> !name.toString().isEmpty() && name.toString().charAt(name.toString().length() - 1) == ';')) {
                     val attrs = ldapEntry.getAttributes()
                         .stream()
                         .filter(attr -> attr.getName().startsWith(entry.getKey().concat(";"))).toList();

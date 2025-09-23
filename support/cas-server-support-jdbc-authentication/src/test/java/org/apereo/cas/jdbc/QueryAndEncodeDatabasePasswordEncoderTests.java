@@ -14,12 +14,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("JDBCAuthentication")
-public class QueryAndEncodeDatabasePasswordEncoderTests {
+class QueryAndEncodeDatabasePasswordEncoderTests {
     private static final String STATIC_SALT = "oU92&p4b&NIWjAbC";
     private static final String DYNAMIC_SALT = "l!Ue%wj6TPMNf*lI";
 
     @Test
-    void verifyStaticSaltOnly() throws Exception {
+    void verifyStaticSaltOnly() {
         val properties = new QueryEncodeJdbcAuthenticationProperties()
             .setAlgorithmName("SHA256")
             .setStaticSalt(STATIC_SALT)
@@ -30,7 +30,7 @@ public class QueryAndEncodeDatabasePasswordEncoderTests {
     }
 
     @Test
-    void verifyStaticAndDynamicSalt() throws Exception {
+    void verifyStaticAndDynamicSalt() {
         val properties = new QueryEncodeJdbcAuthenticationProperties()
             .setAlgorithmName("SHA512")
             .setStaticSalt(STATIC_SALT)
@@ -42,7 +42,7 @@ public class QueryAndEncodeDatabasePasswordEncoderTests {
     }
 
     @Test
-    void verifyNoStaticSaltWithDynamicIterations() throws Exception {
+    void verifyNoStaticSaltWithDynamicIterations() {
         val properties = new QueryEncodeJdbcAuthenticationProperties()
             .setAlgorithmName("SHA256")
             .setNumberOfIterationsFieldName("iterations")

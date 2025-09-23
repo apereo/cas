@@ -30,7 +30,7 @@ public interface Authenticators {
     String CAS_OAUTH_CLIENT_DYNAMIC_REGISTRATION_AUTHN = "clientDynamicRegistrationAuth";
 
     /**
-     * DPoP authenticator for proof of posession.
+     * DPoP authenticator for proof of possession.
      */
     String CAS_OAUTH_CLIENT_DPOP_AUTHN = "proofOfPossessionAuth";
 

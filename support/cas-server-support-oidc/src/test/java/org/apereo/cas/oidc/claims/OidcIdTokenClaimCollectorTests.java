@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@Tag("OIDC")
+@Tag("OIDCAttributes")
 class OidcIdTokenClaimCollectorTests {
     @Test
     void verifyDefaultOperation() throws Throwable {

@@ -36,7 +36,7 @@ public class CasAcceptableUsagePolicyLdapAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier(TicketRegistrySupport.BEAN_NAME)
-        final TicketRegistrySupport ticketRegistrySupport) throws Exception {
+        final TicketRegistrySupport ticketRegistrySupport) {
         return BeanSupplier.of(AcceptableUsagePolicyRepository.class)
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
             .supply(() -> {

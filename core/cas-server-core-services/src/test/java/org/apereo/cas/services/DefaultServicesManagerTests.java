@@ -2,16 +2,21 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.config.BaseAutoConfigurationTests;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.Ordered;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +27,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("RegisteredService")
+@ExtendWith(CasTestExtension.class)
 @Execution(ExecutionMode.SAME_THREAD)
 class DefaultServicesManagerTests {
 
@@ -29,13 +35,35 @@ class DefaultServicesManagerTests {
     @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class,
         properties = "cas.service-registry.core.index-services=false")
     class NoIndexingTests extends AbstractServicesManagerTests {
+        @Test
+        void verifyQuerying() throws Exception {
+            val registeredService = new CasRegisteredService();
+            registeredService.setId(RandomUtils.nextLong());
+            registeredService.setName(UUID.randomUUID().toString());
+            registeredService.setServiceId(registeredService.getName());
+            servicesManager.save(registeredService);
+
+            val query1 = RegisteredServiceQuery.of(CasRegisteredService.class, "id", registeredService.getId());
+            var foundService = servicesManager.findServicesBy(query1).findFirst().orElseThrow();
+            assertEquals(foundService, registeredService);
+
+            val query2 = RegisteredServiceQuery.of(CasRegisteredService.class, "name", registeredService.getName(), true);
+            foundService = servicesManager.findServicesBy(query2).findFirst().orElseThrow();
+            assertEquals(foundService, registeredService);
+
+            val query3 = RegisteredServiceQuery.of(CasRegisteredService.class, "unknownProp", registeredService.getName(), true);
+            assertTrue(servicesManager.findServicesBy(query3).findFirst().isEmpty());
+
+            val query4 = RegisteredServiceQuery.of(CasRegisteredService.class, "name", "unknown-name", true);
+            assertTrue(servicesManager.findServicesBy(query4).findFirst().isEmpty());
+        }
     }
 
     @Nested
     @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
     class DefaultTests extends AbstractServicesManagerTests {
         @Test
-        void verifyOperation() throws Throwable {
+        void verifyOperation() {
             val mock = mock(ServicesManager.class);
             when(mock.findServiceBy(anyLong(), any())).thenCallRealMethod();
             when(mock.findServiceByName(anyString(), any())).thenCallRealMethod();
@@ -49,7 +77,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifySupports() throws Throwable {
+        void verifySupports() {
             val registeredService = new CasRegisteredService();
             registeredService.setId(RandomUtils.nextLong());
             registeredService.setName("domainService1");
@@ -61,7 +89,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifySaveWithDomains() throws Throwable {
+        void verifySaveWithDomains() {
             val svc = new CasRegisteredService();
             svc.setId(RandomUtils.nextLong());
             svc.setName("domainService2");
@@ -72,7 +100,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifySaveInBulk() throws Throwable {
+        void verifySaveInBulk() {
             servicesManager.deleteAll();
             servicesManager.save(() -> {
                 val svc = new CasRegisteredService();
@@ -86,7 +114,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifySaveInStreams() throws Throwable {
+        void verifySaveInStreams() {
             servicesManager.deleteAll();
             val s1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
             val s2 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
@@ -96,7 +124,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifyFindByQuery() throws Throwable {
+        void verifyFindByQuery() {
             val service = new CasRegisteredService();
             service.setId(RandomUtils.nextLong());
             service.setName("%s%d".formatted(UUID.randomUUID().toString(), service.getId()));
@@ -111,7 +139,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifyFindByName() throws Throwable {
+        void verifyFindByName() {
             val registeredService = new CasRegisteredService();
             registeredService.setId(RandomUtils.nextLong());
             registeredService.setName(UUID.randomUUID().toString());
@@ -127,7 +155,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifyFindByNameAndType() throws Throwable {
+        void verifyFindByNameAndType() {
             val registeredService = new CasRegisteredService();
             registeredService.setId(RandomUtils.nextLong());
             registeredService.setName(UUID.randomUUID().toString());
@@ -153,7 +181,7 @@ class DefaultServicesManagerTests {
         }
 
         @Test
-        void verifyEmptyCacheFirst() throws Throwable {
+        void verifyEmptyCacheFirst() {
             val registeredService = new CasRegisteredService();
             registeredService.setId(RandomUtils.nextLong());
             registeredService.setName(UUID.randomUUID().toString());
@@ -166,4 +194,43 @@ class DefaultServicesManagerTests {
         }
     }
 
+    @Nested
+    @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
+    class IndexableTests {
+        @Autowired
+        @Qualifier(ServicesManager.BEAN_NAME)
+        private ChainingServicesManager servicesManager;
+        
+        @Test
+        void verifyOperation() {
+            val indexedServicesManager = (IndexableServicesManager) servicesManager.getServiceManagers().getFirst();
+            indexedServicesManager.clearIndexedServices();
+            assertEquals(0, indexedServicesManager.countIndexedServices());
+
+            var registeredService = getRegisteredService(RandomUtils.nextLong());
+            indexedServicesManager.save(registeredService);
+
+            registeredService = getRegisteredService(registeredService.getId());
+            registeredService.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(List.of("one", "two")));
+            registeredService.setDescription(UUID.randomUUID().toString());
+            indexedServicesManager.save(registeredService);
+
+            assertEquals(1, indexedServicesManager.countIndexedServices());
+            assertTrue(indexedServicesManager.findIndexedServiceBy(registeredService.getId()).isPresent());
+        }
+
+        private static CasRegisteredService getRegisteredService(final long id) {
+            val registeredService = new CasRegisteredService();
+            registeredService.setId(id);
+            registeredService.setName(UUID.randomUUID().toString());
+            registeredService.setServiceId(registeredService.getName());
+            return registeredService;
+        }
+    }
+
+    @Nested
+    @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class,
+        properties = "cas.service-registry.cache.cache-size=0")
+    class NoCacheTests extends AbstractServicesManagerTests {
+    }
 }

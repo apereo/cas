@@ -74,6 +74,7 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
             ? tgtAware.getTicketGrantingTicket()
             : null;
 
+        val expirationTime = realTicket.getExpirationPolicy().toMaximumExpirationTime(realTicket);
         val entity = FunctionUtils.doUnchecked(() -> getEntityClass().getDeclaredConstructor().newInstance());
         return entity
             .setId(encodedTicket.getId())
@@ -85,7 +86,9 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
                 .map(Authentication::getPrincipal)
                 .map(Principal::getId)
                 .orElse(null))
-            .setCreationTime(ObjectUtils.defaultIfNull(encodedTicket.getCreationTime(), ZonedDateTime.now(Clock.systemUTC())));
+            .setExpirationTime(expirationTime)
+            .setLastUsedTime(ObjectUtils.getIfNull(encodedTicket.getLastTimeUsed(), ZonedDateTime.now(Clock.systemUTC())))
+            .setCreationTime(ObjectUtils.getIfNull(encodedTicket.getCreationTime(), ZonedDateTime.now(Clock.systemUTC())));
     }
 
     @Override

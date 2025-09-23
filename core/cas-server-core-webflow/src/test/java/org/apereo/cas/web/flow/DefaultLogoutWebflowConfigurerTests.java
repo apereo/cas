@@ -1,13 +1,11 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
 import org.springframework.webflow.engine.Flow;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -20,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultLogoutWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val interceptors = casWebflowExecutionPlan.getWebflowInterceptors();
         assertEquals(2, interceptors.size());
         assertTrue(interceptors.stream().anyMatch(CasLocaleChangeInterceptor.class::isInstance));
         assertTrue(interceptors.stream().anyMatch(ResourceUrlProviderExposingInterceptor.class::isInstance));
-        val flow = (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGOUT);
+        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGOUT);
         assertNotNull(flow);
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_TERMINATE_SESSION));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FINISH_LOGOUT));

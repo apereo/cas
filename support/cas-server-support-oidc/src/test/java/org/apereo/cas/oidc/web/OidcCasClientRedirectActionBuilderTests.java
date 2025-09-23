@@ -23,16 +23,16 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("OIDC")
+@Tag("OIDCWeb")
 class OidcCasClientRedirectActionBuilderTests extends AbstractOidcTests {
 
     @Test
-    void verifyPromptNone() throws Throwable {
+    void verifyPromptNone() {
         verifyBuild("=none");
     }
 
     @Test
-    void verifyPromptLogin() throws Throwable {
+    void verifyPromptLogin() {
         verifyBuild("=login");
     }
 

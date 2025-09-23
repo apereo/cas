@@ -4,12 +4,8 @@ import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.function.FunctionUtils;
-import com.redis.lettucemod.RedisModulesClient;
-import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.ReadFrom;
-import io.lettuce.core.RedisCommandExecutionException;
-import io.lettuce.core.RedisURI;
 import io.lettuce.core.SocketOptions;
 import io.lettuce.core.SslOptions;
 import io.lettuce.core.TimeoutOptions;
@@ -31,6 +27,7 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.StringUtils;
 import java.time.Duration;
@@ -38,8 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -51,6 +46,32 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class RedisObjectFactory {
+    /**
+     * New redis template.
+     *
+     * @param <K>               the type parameter
+     * @param <V>               the type parameter
+     * @param connectionFactory the connection factory
+     * @param valueSerializer   the value serializer
+     * @return the cas redis template
+     */
+    public static <K, V> CasRedisTemplate<K, V> newRedisTemplate(
+        final RedisConnectionFactory connectionFactory,
+        final RedisSerializer<?> valueSerializer) {
+        val template = new DefaultCasRedisTemplate<K, V>();
+
+        val stringRedisSerializer = new StringRedisSerializer();
+
+        template.setKeySerializer(stringRedisSerializer);
+        template.setHashKeySerializer(stringRedisSerializer);
+        
+        val compressedSerializer = new Lz4CompressionRedisSerializer(valueSerializer);
+        template.setValueSerializer(compressedSerializer);
+        template.setHashValueSerializer(compressedSerializer);
+
+        template.setConnectionFactory(connectionFactory);
+        return template;
+    }
 
     /**
      * New redis template.
@@ -61,17 +82,8 @@ public class RedisObjectFactory {
      * @return the redis template
      */
     public static <K, V> CasRedisTemplate<K, V> newRedisTemplate(final RedisConnectionFactory connectionFactory) {
-        val template = new DefaultCasRedisTemplate<K, V>();
-
-        val stringRedisSerializer = new StringRedisSerializer();
-        val jsonSerializer = new JdkSerializationRedisSerializer();
-
-        template.setKeySerializer(stringRedisSerializer);
-        template.setValueSerializer(jsonSerializer);
-        template.setHashValueSerializer(jsonSerializer);
-        template.setHashKeySerializer(stringRedisSerializer);
-        template.setConnectionFactory(connectionFactory);
-        return template;
+        val valueSerializer = new JdkSerializationRedisSerializer();
+        return newRedisTemplate(connectionFactory, valueSerializer);
     }
 
     /**
@@ -121,45 +133,6 @@ public class RedisObjectFactory {
     private boolean isRedisClusteringEnabled(final BaseRedisProperties redis) {
         return (redis.getSentinel() != null && StringUtils.hasText(redis.getSentinel().getMaster()))
             || (redis.getCluster() != null && !redis.getCluster().getNodes().isEmpty());
-    }
-
-    /**
-     * New redis modules commands.
-     *
-     * @param redis         the redis
-     * @param casSslContext the cas ssl context
-     * @return the redis search commands
-     * @throws Exception the exception
-     */
-    public static Optional<RedisModulesCommands> newRedisModulesCommands(
-        final BaseRedisProperties redis, final CasSSLContext casSslContext) throws Exception {
-        val uriBuilder = RedisURI.builder()
-            .withStartTls(redis.isStartTls())
-            .withVerifyPeer(redis.isVerifyPeer())
-            .withHost(redis.getHost())
-            .withPort(redis.getPort())
-            .withDatabase(redis.getDatabase())
-            .withSsl(redis.isUseSsl());
-
-        if (StringUtils.hasText(redis.getUsername()) && StringUtils.hasText(redis.getPassword())) {
-            uriBuilder.withAuthentication(redis.getUsername(), redis.getPassword());
-        } else if (StringUtils.hasText(redis.getPassword())) {
-            uriBuilder.withPassword(redis.getPassword().toCharArray());
-        }
-        val redisModulesClient = RedisModulesClient.create(uriBuilder.build());
-        val clientOptions = createClientOptions(redis, casSslContext);
-        redisModulesClient.setOptions(clientOptions);
-        val result = redisModulesClient.connect().sync();
-
-        try {
-            result.ftInfo(UUID.randomUUID().toString());
-        } catch (final RedisCommandExecutionException e) {
-            if (e.getMessage().contains("ERR unknown command")) {
-                LOGGER.trace(e.getMessage(), e);
-                return Optional.empty();
-            }
-        }
-        return Optional.of(result);
     }
 
     private static RedisClusterConfiguration getClusterConfig(final BaseRedisProperties redis) {
@@ -222,7 +195,7 @@ public class RedisObjectFactory {
             }
         }
 
-        val clientOptions = createClientOptions(redis, casSslContext);
+        val clientOptions = newClientOptions(redis, casSslContext);
         poolingClientConfig.clientOptions(clientOptions);
 
         val pool = redis.getPool();
@@ -238,14 +211,17 @@ public class RedisObjectFactory {
             config.setTestOnBorrow(pool.isTestOnBorrow());
             config.setTestOnReturn(pool.isTestOnReturn());
             config.setTestOnCreate(pool.isTestOnCreate());
+            if (pool.getTimeBetweenEvictionRunsMillis() > 0) {
+                config.setTimeBetweenEvictionRuns(Duration.ofMillis(pool.getTimeBetweenEvictionRunsMillis()));
+            }
             if (pool.getMinEvictableIdleTimeMillis() > 0) {
-                config.setMinEvictableIdleTime(Duration.ofMillis(pool.getMinEvictableIdleTimeMillis()));
+                config.setMinEvictableIdleDuration(Duration.ofMillis(pool.getMinEvictableIdleTimeMillis()));
             }
             if (pool.getNumTestsPerEvictionRun() > 0) {
                 config.setNumTestsPerEvictionRun(pool.getNumTestsPerEvictionRun());
             }
             if (pool.getSoftMinEvictableIdleTimeMillis() > 0) {
-                config.setSoftMinEvictableIdleTime(Duration.ofMillis(pool.getSoftMinEvictableIdleTimeMillis()));
+                config.setSoftMinEvictableIdleDuration(Duration.ofMillis(pool.getSoftMinEvictableIdleTimeMillis()));
             }
             poolingClientConfig.poolConfig(config);
             LOGGER.trace("Redis configuration: the pool is configured to [{}]", config);
@@ -253,8 +229,16 @@ public class RedisObjectFactory {
         return poolingClientConfig.build();
     }
 
-    private static ClientOptions createClientOptions(final BaseRedisProperties redis,
-                                                     final CasSSLContext casSslContext) throws Exception {
+    /**
+     * New client options.
+     *
+     * @param redis         the redis
+     * @param casSslContext the cas ssl context
+     * @return the client options
+     * @throws Exception the exception
+     */
+    public static ClientOptions newClientOptions(final BaseRedisProperties redis,
+                                                 final CasSSLContext casSslContext) throws Exception {
         val clientOptionsBuilder = initializeClientOptionsBuilder(redis);
         if (StringUtils.hasText(redis.getConnectTimeout())) {
             val connectTimeout = Beans.newDuration(redis.getConnectTimeout());
@@ -270,6 +254,9 @@ public class RedisObjectFactory {
                 redis.getKeyCertificateChainFile().getCanonicalPath(), redis.getKeyFile().getCanonicalPath());
             sslOptionsBuilder.keyManager(redis.getKeyCertificateChainFile(), redis.getKeyFile(),
                 StringUtils.hasText(redis.getKeyPassword()) ? redis.getKeyPassword().toCharArray() : null);
+        }
+        if (redis.isUseSsl() && redis.getCertificateFile() != null) {
+            sslOptionsBuilder.trustManager(redis.getCertificateFile());
         }
         return clientOptionsBuilder
             .timeoutOptions(TimeoutOptions.enabled())
@@ -336,8 +323,8 @@ public class RedisObjectFactory {
                 .map(hostAndPort -> StringUtils.split(hostAndPort, ":"))
                 .filter(Objects::nonNull)
                 .map(args -> new RedisNode(args[0], Integer.parseInt(args[1])))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 }

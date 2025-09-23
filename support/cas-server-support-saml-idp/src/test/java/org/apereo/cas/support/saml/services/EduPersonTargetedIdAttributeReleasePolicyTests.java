@@ -68,7 +68,7 @@ class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    void verifyEduPersonTargetedIdViaInCommon() throws Throwable {
+    void verifyEduPersonTargetedIdViaInCommon() {
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val filter = new InCommonRSAttributeReleasePolicy();
         filter.setOrder(1);
@@ -92,7 +92,7 @@ class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPConfigur
     }
 
     @Test
-    void verifyEduPersonTargetedIdDefinitions() throws Throwable {
+    void verifyEduPersonTargetedIdDefinitions() {
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         val policy = new EduPersonTargetedIdAttributeReleasePolicy();
         policy.setSalt("OqmG80fEKBQt");

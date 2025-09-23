@@ -7,6 +7,7 @@ import org.apereo.cas.util.PublisherIdentifier;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link BaseQueueableTicketRegistryMessageReceiver}.
@@ -22,14 +23,17 @@ public abstract class BaseQueueableTicketRegistryMessageReceiver implements Queu
 
     private final PublisherIdentifier ticketRegistryId;
 
+    private final ConfigurableApplicationContext applicationContext;
+
     @Override
     public void receive(final BaseMessageQueueCommand command) throws Exception {
         LOGGER.debug("[{}] received message [{}]", ticketRegistryId, command);
-        if (command.getId().equals(this.ticketRegistryId)) {
+        if (command.getPublisherIdentifier().equals(this.ticketRegistryId)) {
             LOGGER.trace("Ignoring inbound command on ticket registry with id [{}]", this.ticketRegistryId);
         } else {
-            LOGGER.debug("Accepting message from ticket registry id [{}]. Executing command [{}]", command.getId(), command);
-            command.withId(this.ticketRegistryId).execute(this.ticketRegistry);
+            LOGGER.debug("Accepting message from ticket registry id [{}]. Executing command [{}]", command.getPublisherIdentifier(), command);
+            command.withPublisherIdentifier(this.ticketRegistryId).execute(this.ticketRegistry);
         }
+        applicationContext.publishEvent(new QueueableTicketRegistryMessageReceivedEvent(this, command));
     }
 }

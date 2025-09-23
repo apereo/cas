@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
+import org.apereo.cas.support.saml.idp.MissingSamlAuthnRequestException;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -55,7 +56,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
     private SAML2MessageContext saml2MessageContext;
 
     @BeforeEach
-    public void initialize() throws Throwable {
+    void initialize() throws Throwable {
         this.saml2MessageContext = buildSamlMessageContext();
     }
 
@@ -70,7 +71,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
     }
 
     @Test
-    void verifyNoAuthnRequest() throws Throwable {
+    void verifyNoAuthnRequest() {
         val filter = new AuthnRequestRequestedAttributesAttributeReleasePolicy();
         filter.setAllowedAttributes(List.of("eduPersonPrincipalAttribute"));
         filter.setUseFriendlyName(true);
@@ -85,7 +86,7 @@ class AuthnRequestRequestedAttributesAttributeReleasePolicyTests extends BaseSam
             .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("eduPersonPrincipalName", "casuser")))
             .build();
-        assertThrows(IllegalArgumentException.class, () -> filter.getAttributes(context));
+        assertThrows(MissingSamlAuthnRequestException.class, () -> filter.getAttributes(context));
     }
 
     @Test

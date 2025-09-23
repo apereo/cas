@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,9 +43,9 @@ public abstract class AbstractDefaultAttributePersonAttributeDao extends Abstrac
     }
 
     protected Map<String, List<Object>> toSeedMap(final String username) {
-        val values = Collections.singletonList((Object) username);
+        val values = List.of((Object) username);
         val usernameAttribute = this.usernameAttributeProvider.getUsernameAttribute();
-        val seed = Collections.singletonMap(usernameAttribute, values);
+        val seed = Map.of(usernameAttribute, values);
         LOGGER.debug("Created seed map [{}] for username [{}]", seed, username);
         return seed;
     }

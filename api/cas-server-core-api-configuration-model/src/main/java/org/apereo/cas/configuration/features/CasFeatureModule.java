@@ -71,10 +71,22 @@ public interface CasFeatureModule {
 
     enum FeatureCatalog {
         /**
+         * Multitenancy support.
+         */
+        Multitenancy,
+        /**
+         * Authorization services and API access management.
+         */
+        Authorization,
+        /**
          * Dashboard and administrative console
          * to manage CAS services, configuration, etc.
          */
         Palantir,
+        /**
+         * Scripting and Groovy support.
+         */
+        Scripting,
         /**
          * Just-in-time provisioning users to external systems
          * and identity management solutions.

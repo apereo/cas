@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,12 +50,12 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
         void verifyActionAcceptedGlobal() throws Throwable {
             val properties = new AcceptableUsagePolicyProperties();
             properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.GLOBAL);
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val repo = getRepositoryInstance(properties);
             val authentication = CoreAuthenticationTestUtils.getAuthentication();
             authentication.getPrincipal().getAttributes().put(
                 properties.getCore().getAupAttributeName(),
-                Collections.singletonList("true"));
+                List.of("true"));
             WebUtils.putAuthentication(authentication, context);
             WebUtils.putTicketGrantingTicketInScopes(context, "TGT-12345");
             assertTrue(repo.verify(context).isAccepted());
@@ -73,13 +72,13 @@ class DefaultAcceptableUsagePolicyRepositoryTests {
         void verifyActionNoAuthentication() throws Throwable {
             val properties = new AcceptableUsagePolicyProperties();
             properties.getInMemory().setScope(InMemoryAcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
-            val context = MockRequestContext.create();
+            val context = MockRequestContext.create(applicationContext);
             val repo = getRepositoryInstance(properties);
             assertThrows(AuthenticationException.class, () -> repo.verify(context));
         }
 
         @Test
-        void verifyProps() throws Throwable {
+        void verifyProps() {
             val status = AcceptableUsagePolicyStatus.accepted(CoreAuthenticationTestUtils.getPrincipal());
             status.clearProperties();
             status.addProperty("example", "cas");

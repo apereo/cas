@@ -11,6 +11,8 @@ category: Services
 Access strategy and authorization decision can be carried using a Groovy script for all services and applications. This policy
 is not tied to a specific application and is invoked for all services and integrations.
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% include_cached casproperties.html properties="cas.access-strategy.groovy" %}
 
 The outline of the script is as follows:
@@ -75,3 +77,5 @@ def authorizeRequest(RegisteredServiceAccessStrategyRequest request) {
      
 All operations are seen as optional, and when undefined in the script, 
 the end result of the operation is seen as `false` and access is denied.
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

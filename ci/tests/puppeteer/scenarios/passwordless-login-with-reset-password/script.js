@@ -1,6 +1,3 @@
-
-const assert = require("assert");
-
 const cas = require("../../cas.js");
 
 (async () => {
@@ -9,8 +6,7 @@ const cas = require("../../cas.js");
 
     await cas.gotoLogin(page);
 
-    const pswd = await page.$("#password");
-    assert(pswd === null);
+    await cas.assertElementDoesNotExist(page, "#password");
 
     await cas.type(page,"#username", "casuser");
     await cas.pressEnter(page);
@@ -38,5 +34,5 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content h3", "Hello, casuser. You must change your password.");
     await cas.sleep(2000);
 
-    await browser.close();
+    await cas.closeBrowser(browser);
 })();

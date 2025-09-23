@@ -2,7 +2,10 @@ package org.apereo.cas.gauth.web.flow;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +29,13 @@ public class GoogleAuthenticatorValidateSelectedRegistrationAction extends BaseC
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
-        val account = WebUtils.getOneTimeTokenAccount(requestContext, OneTimeTokenAccount.class);
+        if (MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
+            val trustedDevice = MultifactorAuthenticationTrustUtils.getMultifactorAuthenticationTrustRecord(requestContext, MultifactorAuthenticationTrustRecord.class).orElseThrow();
+            LOGGER.info("Multifactor authentication device [{}] is trusted with fingerprint [{}]", trustedDevice.getName(), trustedDevice.getDeviceFingerprint());
+            return success(trustedDevice);
+        }
+
+        val account = MultifactorAuthenticationWebflowUtils.getOneTimeTokenAccount(requestContext, OneTimeTokenAccount.class);
         if (account == null) {
             LOGGER.warn("Unable to determine google authenticator account");
             addErrorMessageToContext(requestContext);

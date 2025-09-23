@@ -8,6 +8,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -15,9 +16,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.util.UriComponentsBuilder;
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -34,9 +37,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RestfulConsentRepository implements ConsentRepository {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true)
-        .build()
-        .toObjectMapper();
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Serial
     private static final long serialVersionUID = 6583408864586270206L;
@@ -49,16 +50,18 @@ public class RestfulConsentRepository implements ConsentRepository {
             HttpResponse response = null;
             try {
                 val headers = new HashMap<String, String>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("principal", principal);
+                headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
                 headers.putAll(properties.getHeaders());
-
+                val url = UriComponentsBuilder.fromUriString(resolveUrl())
+                    .queryParam("principal", principal)
+                    .build()
+                    .toUriString();
                 val exec = HttpExecutionRequest.builder()
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.GET)
-                    .url(properties.getUrl())
+                    .url(url)
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
@@ -72,7 +75,7 @@ public class RestfulConsentRepository implements ConsentRepository {
             } finally {
                 HttpUtils.close(response);
             }
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         });
     }
 
@@ -82,15 +85,15 @@ public class RestfulConsentRepository implements ConsentRepository {
             HttpResponse response = null;
             try {
                 val headers = new HashMap<String, String>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
                 headers.putAll(properties.getHeaders());
 
                 val exec = HttpExecutionRequest.builder()
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.GET)
-                    .url(properties.getUrl())
+                    .url(resolveUrl())
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
@@ -104,7 +107,7 @@ public class RestfulConsentRepository implements ConsentRepository {
             } finally {
                 HttpUtils.close(response);
             }
-            return new ArrayList<>(0);
+            return new ArrayList<>();
         });
     }
 
@@ -115,17 +118,19 @@ public class RestfulConsentRepository implements ConsentRepository {
             HttpResponse response = null;
             try {
                 val headers = new HashMap<String, String>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("service", service.getId());
-                headers.put("principal", authentication.getPrincipal().getId());
+                headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+                headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
                 headers.putAll(properties.getHeaders());
-
+                val url = UriComponentsBuilder.fromUriString(resolveUrl())
+                    .queryParam("service", service.getId())
+                    .queryParam("principal", authentication.getPrincipal().getId())
+                    .build()
+                    .toUriString();
                 val exec = HttpExecutionRequest.builder()
                     .basicAuthPassword(properties.getBasicAuthPassword())
                     .basicAuthUsername(properties.getBasicAuthUsername())
                     .method(HttpMethod.GET)
-                    .url(properties.getUrl())
+                    .url(url)
                     .headers(headers)
                     .build();
                 response = HttpUtils.execute(exec);
@@ -143,57 +148,55 @@ public class RestfulConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
-        return FunctionUtils.doUnchecked(() -> {
-            HttpResponse response = null;
-            try {
-                val headers = new HashMap<String, String>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
-                headers.putAll(properties.getHeaders());
-
-                val exec = HttpExecutionRequest.builder()
-                    .basicAuthPassword(properties.getBasicAuthPassword())
-                    .basicAuthUsername(properties.getBasicAuthUsername())
-                    .method(HttpMethod.POST)
-                    .url(properties.getUrl())
-                    .headers(headers)
-                    .entity(MAPPER.writeValueAsString(decision))
-                    .build();
-                response = HttpUtils.execute(exec);
-                if (HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
-                    return decision;
-                }
-            } finally {
-                HttpUtils.close(response);
+    public ConsentDecision storeConsentDecision(final ConsentDecision decision) throws Throwable {
+        HttpResponse response = null;
+        try {
+            val headers = new HashMap<String, String>();
+            headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(properties.getHeaders());
+            val exec = HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.POST)
+                .url(resolveUrl())
+                .headers(headers)
+                .entity(MAPPER.writeValueAsString(decision))
+                .build();
+            response = HttpUtils.execute(exec);
+            if (HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
+                return decision;
             }
-            return null;
-        });
+        } finally {
+            HttpUtils.close(response);
+        }
+        return null;
     }
 
     @Override
     public boolean deleteConsentDecisions(final String principal) {
-        return FunctionUtils.doUnchecked(() -> {
-            HttpResponse response = null;
-            try {
-                val headers = new HashMap<String, String>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("principal", principal);
-                headers.putAll(properties.getHeaders());
-                val exec = HttpExecutionRequest.builder()
-                    .basicAuthPassword(properties.getBasicAuthPassword())
-                    .basicAuthUsername(properties.getBasicAuthUsername())
-                    .method(HttpMethod.DELETE)
-                    .url(properties.getUrl())
-                    .headers(headers)
-                    .build();
-                response = HttpUtils.execute(exec);
-                return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
-            } finally {
-                HttpUtils.close(response);
-            }
-        });
+        HttpResponse response = null;
+        try {
+            val headers = new HashMap<String, String>();
+            headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(properties.getHeaders());
+            val url = UriComponentsBuilder.fromUriString(resolveUrl())
+                .queryParam("principal", principal)
+                .build()
+                .toUriString();
+            val exec = HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(url)
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
+            return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
+        } finally {
+            HttpUtils.close(response);
+        }
     }
 
     @Override
@@ -201,14 +204,14 @@ public class RestfulConsentRepository implements ConsentRepository {
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, String>();
-            headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-            headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+            headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(properties.getHeaders());
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
-                .url(properties.getUrl())
+                .url(resolveUrl())
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
@@ -219,27 +222,33 @@ public class RestfulConsentRepository implements ConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
-        return FunctionUtils.doUnchecked(() -> {
-            HttpResponse response = null;
-            try {
-                val headers = new HashMap<String, String>();
-                headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("Accept", MediaType.APPLICATION_JSON_VALUE);
-                headers.put("principal", principal);
-                headers.putAll(properties.getHeaders());
-                val deleteEndpoint = properties.getUrl().concat('/' + Long.toString(decisionId));
-                val exec = HttpExecutionRequest.builder()
-                    .basicAuthPassword(properties.getBasicAuthPassword())
-                    .basicAuthUsername(properties.getBasicAuthUsername())
-                    .method(HttpMethod.DELETE)
-                    .url(deleteEndpoint)
-                    .headers(headers)
-                    .build();
-                response = HttpUtils.execute(exec);
-                return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
-            } finally {
-                HttpUtils.close(response);
-            }
-        });
+        HttpResponse response = null;
+        try {
+            val headers = new HashMap<String, String>();
+            headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+            headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(properties.getHeaders());
+            val url = UriComponentsBuilder.fromUriString(resolveUrl())
+                .queryParam("id", decisionId)
+                .queryParam("principal", principal)
+                .build()
+                .toUriString();
+            val exec = HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(url)
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
+            return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+
+    private String resolveUrl() {
+        return SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl());
     }
 }

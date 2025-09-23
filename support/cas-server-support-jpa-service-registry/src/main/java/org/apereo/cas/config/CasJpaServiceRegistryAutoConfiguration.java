@@ -2,9 +2,9 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.jpa.JpaConfigurationContext;
 import org.apereo.cas.jpa.JpaPersistenceProviderConfigurer;
 import org.apereo.cas.services.JpaRegisteredServiceEntity;
 import org.apereo.cas.services.JpaServiceRegistry;
@@ -135,7 +135,7 @@ public class CasJpaServiceRegistryAutoConfiguration {
             @Qualifier("jpaServiceVendorAdapter") final JpaVendorAdapter jpaServiceVendorAdapter,
             @Qualifier("jpaServicePersistenceProvider") final PersistenceProvider jpaServicePersistenceProvider,
             @Qualifier("jpaServicePackagesToScan") final BeanContainer<String> jpaServicePackagesToScan,
-            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) throws Exception {
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) {
             return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {

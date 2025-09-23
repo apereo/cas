@@ -1,0 +1,11 @@
+description = "Apereo CAS Bootstrap Themes Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Bootstrap Themes",
+            category: "User Interface"
+    ]
+}
+dependencies {
+    runtimeOnly libraries.webjarsbootstrap
+}
