@@ -142,8 +142,7 @@ class OidcEndpointsConfiguration {
         public HandlerInterceptor requiresAuthenticationClientConfigurationInterceptor(
             @Qualifier("oauthSecConfig")
             final Config oauthSecConfig) {
-            val clients = String.join(",", OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
-            return new SecurityLogicInterceptor(oauthSecConfig, clients);
+            return new SecurityLogicInterceptor(oauthSecConfig, OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
         }
 
         @Bean
