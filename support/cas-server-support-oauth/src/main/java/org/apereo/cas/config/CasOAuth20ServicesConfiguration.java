@@ -6,6 +6,7 @@ import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.services.StartsWithRegisteredServiceMatchingStrategy;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuth20ServiceRegistry;
 import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocator;
@@ -38,14 +39,20 @@ class CasOAuth20ServicesConfiguration {
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
         return plan -> {
-            val oAuthCallbackUrl = casProperties.getServer().getPrefix()
-                                   + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+            val oAuthCallbackUrl = "^" 
+                                   + casProperties.getServer().getPrefix()
+                                   + OAuth20Constants.BASE_OAUTH20_URL
+                                   + '/' 
+                                   + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
             val service = new CasRegisteredService();
             service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
             service.setName(service.getClass().getSimpleName());
             service.setDescription("OAuth Authentication Callback Request URL");
             service.setServiceId(oAuthCallbackUrl);
             service.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
+            val matchingStrategy = new StartsWithRegisteredServiceMatchingStrategy();
+            matchingStrategy.setExpectedUrl(casProperties.getServer().getPrefix());
+            service.setMatchingStrategy(matchingStrategy);
             service.markAsInternal();
             plan.registerServiceRegistry(new OAuth20ServiceRegistry(applicationContext, service));
         };
