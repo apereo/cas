@@ -7,7 +7,6 @@ import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.StartsWithRegisteredServiceMatchingStrategy;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuth20ServiceRegistry;
 import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
