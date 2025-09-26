@@ -10,8 +10,6 @@ import java.nio.file.Files;
 import java.util.Locale;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This is {@link StartsWithRegisteredServiceMatchingStrategyTests}.
