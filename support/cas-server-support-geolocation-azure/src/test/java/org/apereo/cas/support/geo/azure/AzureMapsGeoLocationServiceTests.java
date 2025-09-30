@@ -41,9 +41,9 @@ class AzureMapsGeoLocationServiceTests {
     @Test
     void verifyOperation() throws Throwable {
         assertNotNull(geoLocationService.locate("8.8.8.8"));
-        val resp = geoLocationService.locate(40.689060, -74.044636);
-        assertEquals(40, Double.valueOf(resp.getLatitude()).intValue());
-        assertEquals(-74, Double.valueOf(resp.getLongitude()).intValue());
+        val resp = geoLocationService.locate(37.45, 122.26);
+        assertEquals(37.45, resp.getLatitude());
+        assertEquals(122.26, resp.getLongitude());
         assertFalse(resp.getAddresses().isEmpty());
         assertDoesNotThrow(() -> {
             geoLocationService.locate(InetAddress.getByName("www.github.com"));
