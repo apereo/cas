@@ -7,6 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo.cas" level="error" />
+        <Logger name="com.azure" level="debug" />
         <Logger name="org.apereo.cas.metadata" level="warn" />
         <Logger name="org.springframework.boot" level="warn" />
         <Root level="error">
