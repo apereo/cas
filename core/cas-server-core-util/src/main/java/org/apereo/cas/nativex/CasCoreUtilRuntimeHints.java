@@ -71,6 +71,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -149,7 +151,9 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             Locale.class
         ));
 
-        registerReflectionHintsForPublicElements(hints, List.of(System.class));
+        registerReflectionHintsForPublicElements(hints,
+            List.of(System.class, ExecutorService.class, Executor.class)
+        );
         
         registerReflectionHintsForDeclaredElements(hints, List.of(
             HashMap.class,
@@ -191,6 +195,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHintsForPublicElements(hints, findSubclassesInPackage(CipherExecutor.class, "org.apereo.cas"));
 
         registerCaffeineHints(hints);
+        
         FunctionUtils.doAndHandle(__ -> {
             val clazz = ClassUtils.getClass("nonapi.io.github.classgraph.classloaderhandler.ClassLoaderHandler", false);
             registerReflectionHints(hints, findSubclassesInPackage(clazz, "nonapi.io.github.classgraph.classloaderhandler"));
