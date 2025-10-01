@@ -50,7 +50,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
@@ -75,7 +75,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Run Analysis
@@ -100,7 +100,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
           develocity-token-expiry: 4
@@ -153,7 +153,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Validate Codebase
