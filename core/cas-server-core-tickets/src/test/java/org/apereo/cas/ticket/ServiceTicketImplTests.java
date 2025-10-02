@@ -5,7 +5,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.factory.BaseTicketFactoryTests;
-import org.apereo.cas.ticket.tracking.AllProxyGrantingTicketsTrackingPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -121,7 +120,7 @@ class ServiceTicketImplTests extends BaseTicketFactoryTests {
                 new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000),
                 false, serviceTicketSessionTrackingPolicy);
         val t1 = serviceTicket.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), authentication,
-            NeverExpiresExpirationPolicy.INSTANCE, AllProxyGrantingTicketsTrackingPolicy.INSTANCE);
+            NeverExpiresExpirationPolicy.INSTANCE, proxyGrantingTicketTrackingPolicy);
         assertEquals(authentication, t1.getAuthentication());
     }
 
@@ -143,9 +142,9 @@ class ServiceTicketImplTests extends BaseTicketFactoryTests {
                 new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000),
                 false, serviceTicketSessionTrackingPolicy);
         serviceTicket.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX),
-            authentication, NeverExpiresExpirationPolicy.INSTANCE, new AllProxyGrantingTicketsTrackingPolicy());
+            authentication, NeverExpiresExpirationPolicy.INSTANCE, proxyGrantingTicketTrackingPolicy);
         assertThrows(Exception.class,
             () -> serviceTicket.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX),
-                authentication, NeverExpiresExpirationPolicy.INSTANCE, AllProxyGrantingTicketsTrackingPolicy.INSTANCE));
+                authentication, NeverExpiresExpirationPolicy.INSTANCE, proxyGrantingTicketTrackingPolicy));
     }
 }
