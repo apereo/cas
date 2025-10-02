@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,9 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     protected final CipherExecutor<String, String> cipherExecutor;
 
     protected final ServicesManager servicesManager;
+
+    @Getter
+    protected final TicketTrackingPolicy proxyGrantingTicketTrackingPolicy;
 
     @Override
     public ProxyGrantingTicket create(final ServiceTicket serviceTicket, final Authentication authentication) throws Throwable {
@@ -75,11 +79,11 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
         if (servicePgtPolicy != null) {
             LOGGER.trace("Overriding proxy-granting ticket policy with the specific policy: [{}]", servicePgtPolicy);
             return serviceTicket.grantProxyGrantingTicket(pgtId, authentication,
-                new HardTimeoutExpirationPolicy(servicePgtPolicy.getMaxTimeToLiveInSeconds()));
+                new HardTimeoutExpirationPolicy(servicePgtPolicy.getMaxTimeToLiveInSeconds()), proxyGrantingTicketTrackingPolicy);
         }
         LOGGER.trace("Using default ticket-granting ticket policy for proxy-granting ticket");
         return serviceTicket.grantProxyGrantingTicket(pgtId, authentication,
-            this.expirationPolicyBuilder.buildTicketExpirationPolicy());
+            this.expirationPolicyBuilder.buildTicketExpirationPolicy(), proxyGrantingTicketTrackingPolicy);
 
     }
 

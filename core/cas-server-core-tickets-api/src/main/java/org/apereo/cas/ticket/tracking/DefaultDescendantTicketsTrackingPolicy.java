@@ -16,7 +16,7 @@ public class DefaultDescendantTicketsTrackingPolicy implements TicketTrackingPol
     private static final char DELIMITER = ',';
 
     @Override
-    public String trackTicket(final Ticket ownerTicket, final Ticket ticket) {
+    public String trackTicket(final Ticket ownerTicket, final Ticket ticket, final Object... parameters) {
         if (ownerTicket instanceof final TicketGrantingTicket tgt) {
             var trackedEntry = ticket.getId();
             if (ticket instanceof final ServiceAwareTicket sat) {

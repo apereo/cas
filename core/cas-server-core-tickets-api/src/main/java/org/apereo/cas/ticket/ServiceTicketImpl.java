@@ -3,6 +3,7 @@ package org.apereo.cas.ticket;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -68,7 +69,8 @@ public class ServiceTicketImpl extends AbstractTicket
     @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(
         final @NonNull String id, final @NonNull Authentication authentication,
-        final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
+        final ExpirationPolicy expirationPolicy,
+        final TicketTrackingPolicy proxyGrantingTicketTrackingPolicy) throws AbstractTicketException {
         if (this.grantedTicketAlready) {
             LOGGER.warn("Service ticket [{}] issued for service [{}] has already allotted a proxy-granting ticket", getId(), service.getId());
             throw new InvalidProxyGrantingTicketForServiceTicketException(service);
@@ -76,9 +78,7 @@ public class ServiceTicketImpl extends AbstractTicket
         this.grantedTicketAlready = Boolean.TRUE;
         val proxyGrantingTicket = new ProxyGrantingTicketImpl(id, service, ticketGrantingTicket, authentication, expirationPolicy);
         proxyGrantingTicket.setTenantId(service.getTenant());
-        if (ticketGrantingTicket != null) {
-            ticketGrantingTicket.getProxyGrantingTickets().put(proxyGrantingTicket.getId(), service);
-        }
+        proxyGrantingTicketTrackingPolicy.trackTicket(ticketGrantingTicket, proxyGrantingTicket, service);
         return proxyGrantingTicket;
     }
 
