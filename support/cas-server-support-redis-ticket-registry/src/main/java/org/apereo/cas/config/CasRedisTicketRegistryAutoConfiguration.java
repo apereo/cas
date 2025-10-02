@@ -341,7 +341,7 @@ public class CasRedisTicketRegistryAutoConfiguration {
             return BeanSupplier.of(RedisModulesOperations.class)
                 .when(redis.isEnableRedisSearch())
                 .supply(Unchecked.supplier(() -> {
-                    val commands = LettuceRedisModulesOperations.newRedisModulesCommands(redis, casSslContext);
+                    val commands = LettuceRedisModulesOperations.newRediSearchCommands(redis, casSslContext);
                     return new LettuceRedisModulesOperations(commands);
                 }))
                 .otherwiseProxy()
