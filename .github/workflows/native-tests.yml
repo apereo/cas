@@ -59,7 +59,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
@@ -83,7 +83,7 @@ jobs:
           distribution: ${{ env.JDK_DISTRIBUTION }}
           cache: 'gradle'
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
       - id: print-scenarios
         run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
       - id: get-scenarios255
@@ -112,7 +112,7 @@ jobs:
       - name: Configure CI
         run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
       - name: "Setup Graal VM"
         uses: graalvm/setup-graalvm@v1
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
@@ -168,7 +168,7 @@ jobs:
       - name: Configure CI
         run: ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
       - name: "Setup Graal VM"
         uses: graalvm/setup-graalvm@v1
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
@@ -225,7 +225,7 @@ jobs:
       - name: Configure CI
         run: ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
       - name: "Setup Graal VM"
         uses: graalvm/setup-graalvm@v1
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
