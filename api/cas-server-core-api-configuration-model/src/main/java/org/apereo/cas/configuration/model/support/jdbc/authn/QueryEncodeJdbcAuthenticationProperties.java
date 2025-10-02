@@ -72,4 +72,13 @@ public class QueryEncodeJdbcAuthenticationProperties extends BaseJdbcAuthenticat
      */
     private String staticSalt;
 
+    /**
+     * Custom database password encoder class (that implements
+     * {@link org.apereo.cas.authentication.support.password.DatabasePasswordEncoder})
+     * to use. If left blank, a default
+     * {@link org.apereo.cas.jdbc.QueryAndEncodeDatabasePasswordEncoder}
+     * will be used instead.
+     */
+    private String databasePasswordEncoder;
+
 }

@@ -103,7 +103,7 @@ public class JdbcAuthenticationUtils {
                                                                  final PrincipalFactory jdbcPrincipalFactory,
                                                                  final PasswordPolicyContext queryAndEncodePasswordPolicyConfiguration,
                                                                  final DataSource dataSource) {
-        val databasePasswordEncoder = new QueryAndEncodeDatabasePasswordEncoder(properties);
+        val databasePasswordEncoder = DatabasePasswordEncoderUtils.newDatabasePasswordEncoder(properties);
         val handler = new QueryAndEncodeDatabaseAuthenticationHandler(properties,
             jdbcPrincipalFactory, dataSource, databasePasswordEncoder);
         configureJdbcAuthenticationHandler(handler, queryAndEncodePasswordPolicyConfiguration, properties, applicationContext);
