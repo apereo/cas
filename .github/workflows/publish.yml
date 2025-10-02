@@ -64,7 +64,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         
@@ -83,7 +83,7 @@ jobs:
            java-version: ${{ env.JDK_CURRENT }}
            distribution: ${{ env.JDK_DISTRIBUTION }}
        - name: Setup Gradle
-         uses: gradle/actions/setup-gradle@v4
+         uses: gradle/actions/setup-gradle@v5
        - name: Initialize
          run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
        - name: Publish SNAPSHOTs
@@ -118,7 +118,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Install MongoDB tools
