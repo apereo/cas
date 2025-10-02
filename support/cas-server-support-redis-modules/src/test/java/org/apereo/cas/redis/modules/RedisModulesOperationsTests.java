@@ -3,11 +3,13 @@ package org.apereo.cas.redis.modules;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-import com.redis.lettucemod.search.Field;
+import io.lettuce.core.search.arguments.NumericFieldArgs;
+import io.lettuce.core.search.arguments.TextFieldArgs;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +29,7 @@ class RedisModulesOperationsTests {
         props.setPort(16389);
         props.setUsername("default");
         props.setPassword("pAssw0rd123");
-        val connection = LettuceRedisModulesOperations.newRedisModulesCommands(props, CasSSLContext.disabled());
+        val connection = LettuceRedisModulesOperations.newRediSearchCommands(props, CasSSLContext.disabled());
         assertNotNull(connection);
     }
 
@@ -36,11 +38,10 @@ class RedisModulesOperationsTests {
         val props = new BaseRedisProperties();
         props.setHost("localhost");
         props.setPort(6379);
-        val command = LettuceRedisModulesOperations.newRedisModulesCommands(props, CasSSLContext.disabled());
+        val command = LettuceRedisModulesOperations.newRediSearchCommands(props, CasSSLContext.disabled());
         val indexName = UUID.randomUUID().toString();
         val result = command.ftCreate(indexName,
-            Field.text("name").build(),
-            Field.numeric("id").build());
+            List.of(TextFieldArgs.builder().name("name").build(), NumericFieldArgs.builder().name("id").build()));
         assertEquals("OK", result);
         val info = command.ftInfo(indexName);
         assertNotNull(info);
@@ -57,11 +58,9 @@ class RedisModulesOperationsTests {
         props.setKeyFile(new File("../../ci/tests/redis/certs/redis.key"));
         props.setVerifyPeer(false);
         props.setUseSsl(true);
-        val connection = LettuceRedisModulesOperations.newRedisModulesCommands(props, CasSSLContext.disabled());
+        val connection = LettuceRedisModulesOperations.newRediSearchCommands(props, CasSSLContext.disabled());
         assertNotNull(connection);
-        try (val con = connection.getStatefulConnection()) {
-            assertTrue(con.isOpen());
-        }
+        assertDoesNotThrow(connection::ftList);
     }
 
     @Test
@@ -71,6 +70,6 @@ class RedisModulesOperationsTests {
         props.setPort(16389);
         props.setUsername(null);
         props.setPassword("pAssw0rd123");
-        assertDoesNotThrow(() -> LettuceRedisModulesOperations.newRedisModulesCommands(props, CasSSLContext.system()));
+        assertDoesNotThrow(() -> LettuceRedisModulesOperations.newRediSearchCommands(props, CasSSLContext.system()));
     }
 }

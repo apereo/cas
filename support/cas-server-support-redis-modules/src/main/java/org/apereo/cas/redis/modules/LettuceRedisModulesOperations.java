@@ -5,12 +5,12 @@ import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.redis.core.RedisModulesOperations;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import com.redis.lettucemod.RedisModulesClient;
-import com.redis.lettucemod.api.sync.RedisModulesCommands;
-import com.redis.lettucemod.search.CreateOptions;
-import com.redis.lettucemod.search.Field;
+import com.redis.lettucemod.api.sync.RediSearchCommands;
 import io.lettuce.core.RedisCommandExecutionException;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.search.SearchReply;
+import io.lettuce.core.search.arguments.CreateArgs;
+import io.lettuce.core.search.arguments.TextFieldArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.util.StringUtils;
@@ -27,38 +27,39 @@ import java.util.stream.Stream;
  */
 @RequiredArgsConstructor
 public class LettuceRedisModulesOperations implements RedisModulesOperations {
-    private final RedisModulesCommands commands;
+    private final RediSearchCommands rediSearchCommands;
 
     @Override
     public void createIndexes(final String indexName, final String prefix,
                               final List<String> fields) {
-        val options = CreateOptions.builder()
-            .prefix(prefix)
-            .maxTextFields(true)
+
+        val options = CreateArgs.builder()
+            .withPrefix(prefix)
+            .maxTextFields()
             .build();
-        val createIndex = commands.ftList().parallelStream().noneMatch(idx -> indexName.equalsIgnoreCase(idx.toString()));
+        val createIndex = rediSearchCommands.ftList().parallelStream().noneMatch(idx -> indexName.equalsIgnoreCase(idx.toString()));
         if (createIndex) {
-            val indexFields = fields.stream().map(field -> Field.text(field).build()).toList();
-            commands.ftCreate(indexName, options, indexFields.toArray(new Field[]{}));
+            val indexFields = fields.stream().map(field -> TextFieldArgs.builder().name(field).build()).toList();
+            rediSearchCommands.ftCreate(indexName, options, indexFields);
         }
     }
 
     @Override
     public Stream<Map<String, String>> search(final String searchIndexName, final String query) {
-        val results = (List<SearchReply.SearchResult>) commands.ftSearch(searchIndexName, query).getResults();
+        val results = (List<SearchReply.SearchResult>) rediSearchCommands.ftSearch(searchIndexName, query).getResults();
         return results.parallelStream().map(SearchReply.SearchResult::getFields);
 
     }
 
     /**
-     * New redis modules commands.
+     * New redi search commands.
      *
      * @param redis         the redis
      * @param casSslContext the cas ssl context
      * @return the optional
      * @throws Exception the exception
      */
-    public static RedisModulesCommands newRedisModulesCommands(
+    public static RediSearchCommands newRediSearchCommands(
         final BaseRedisProperties redis, final CasSSLContext casSslContext) throws Exception {
         val uriBuilder = RedisURI.builder()
             .withStartTls(redis.isStartTls())
