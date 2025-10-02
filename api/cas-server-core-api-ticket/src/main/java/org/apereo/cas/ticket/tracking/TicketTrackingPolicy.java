@@ -32,7 +32,7 @@ public interface TicketTrackingPolicy {
      *
      * @param ownerTicket the owner ticket
      * @param ticket      the tracked ticket
-     * @param parameters  additionnal parameters
+     * @param parameters  additional parameters
      */
     default String trackTicket(final Ticket ownerTicket, final Ticket ticket, final Object... parameters) {
         return null;
