@@ -39,7 +39,6 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
 
     protected final ServicesManager servicesManager;
 
-    @Getter
     protected final TicketTrackingPolicy proxyGrantingTicketTrackingPolicy;
 
     @Override
