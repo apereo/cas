@@ -22,7 +22,7 @@ public class AllServicesSessionTrackingPolicy implements TicketTrackingPolicy {
     private final CasReentrantLock lock = new CasReentrantLock();
     
     @Override
-    public String trackTicket(final Ticket ownerTicket, final Ticket ticket) {
+    public String trackTicket(final Ticket ownerTicket, final Ticket ticket, final Object... parameters) {
         val serviceTicket = (ServiceTicket) ticket;
         val ticketGrantingTicket = (TicketGrantingTicket) ownerTicket;
         val trackedEntry = String.format("%s,%s", serviceTicket.getId(), serviceTicket.getService());
