@@ -16,7 +16,7 @@ public abstract class BaseCasNativeImageFeature implements Feature {
      */
     protected static void log(final String message) {
         //CHECKSTYLE:OFF
-        System.out.println(message);
+        IO.println(message);
         //CHECKSTYLE:ON
     }
 }

@@ -23,7 +23,7 @@ public class ElasticApmAgentInitializer implements ApplicationEntrypointInitiali
             System.getenv(SETTING_ELASTIC_APM_AGENT_ENABLED)), "true");
         if (BooleanUtils.toBoolean(apmEnabled)) {
             //CHECKSTYLE:OFF
-            System.out.println("Attaching Elastic APM Agent...");
+            IO.println("Attaching Elastic APM Agent...");
             //CHECKSTYLE:ON
             ElasticApmAttacher.attach();
         }

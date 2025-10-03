@@ -454,7 +454,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      */
     default void log(final String message) {
         //CHECKSTYLE:OFF
-        System.out.println(message);
+        IO.println(message);
         //CHECKSTYLE:ON
     }
 }

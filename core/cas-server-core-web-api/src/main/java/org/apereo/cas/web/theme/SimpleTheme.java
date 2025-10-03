@@ -1,6 +1,5 @@
-package org.springframework.ui.context.support;
+package org.apereo.cas.web.theme;
 
-import org.springframework.ui.context.Theme;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
