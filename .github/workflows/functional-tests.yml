@@ -40,13 +40,13 @@ on:
     - cron: '0 18 * * *'
   push:
     branches:
-      - master
+      - 7.3.x
       - '!**.**.**'
       - '!heroku-*'
   pull_request:
     types: [ labeled ]
     branches:
-      - master
+      - 7.3.x
       - 'pr-*'
       - '!**.**.**'
 

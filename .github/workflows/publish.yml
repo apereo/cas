@@ -21,7 +21,7 @@ on:
   schedule:
     - cron: '0 15 * * *'
   push:
-    branches: [ master ]
+    branches: [ 7.3.x ]
 
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
