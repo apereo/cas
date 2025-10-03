@@ -12,7 +12,7 @@ env:
   TERM: xterm-256color
   REPO_OWNER: ${{ github.repository_owner }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  JDK_CURRENT: 21
+  JDK_CURRENT: 25
   TIMEOUT: 640000
 
 ##########################################################################

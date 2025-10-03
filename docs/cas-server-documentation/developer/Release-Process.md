@@ -123,6 +123,7 @@ points to the <code>master</code> branch</p></div>
 Then disable the following workflows:
 
 - `build.yml`
+- `performance.yml`
 - `dependencies.yml`
 - `native-tests.yml`
 
@@ -153,12 +154,6 @@ and create a tag for the released version. It will also create a GitHub release 
 appropriate release notes and artifacts attached to the release, which you will need to review and publish later to finalize the release.
 
 Once the release is staged and has passed validation, it will be published automatically.
-
-<div class="alert alert-warning">:warning: <strong>Remember</strong><p>
-If the deployment is stuck in a <code>PUBLISHING</code> state for a long time (i.e. more than 1 hour), contact Central support. 
-In case ingesting one of the CAS artifacts fails, the release process fails to notify the Central publisher that the ingesting was completed
-and the deployment is left in a <code>PUBLISHING</code> state.
-</p></div>
 
 ### Locally
 
@@ -191,11 +186,9 @@ You should now switch back to the main development branch (i.e. `master`) and fo
 
 ## Housekeeping
 
-<div class="alert alert-info">:information_source: <strong>Remember</strong><p>When updating the release description, try to be keep 
-consistent and follow the same layout as previous releases.</p></div>
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>This should be automatically handled if the release is running via GitHub Actions. If you're doing this manually and will be updating the release description, try to be keep consistent and follow the same layout as previous releases.</p></div>
 
-Remember to mark the release tag as pre-release if not done already, when releasing RC versions of the project on GitHub.
-If the GitHub release is already created, review the release description, edit details if needed and publish it.
+Remember to mark the release tag as pre-release if not done already, when releasing RC versions of the project on GitHub. If the GitHub release is already created, review the release description, edit details if needed and publish it.
 
 ## Update CAS Initializr
 
