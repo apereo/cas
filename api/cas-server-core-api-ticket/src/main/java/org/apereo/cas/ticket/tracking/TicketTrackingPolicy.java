@@ -21,7 +21,7 @@ public interface TicketTrackingPolicy {
     String BEAN_NAME_DESCENDANT_TICKET_TRACKING = "descendantTicketsTrackingPolicy";
 
     /**
-     * Tracking policy for service tickets.
+     * Tracking policy for proxy granting tickets.
      */
     String BEAN_NAME_PROXY_GRANTING_TICKET_TRACKING = "proxyGrantingTicketTrackingPolicy";
 

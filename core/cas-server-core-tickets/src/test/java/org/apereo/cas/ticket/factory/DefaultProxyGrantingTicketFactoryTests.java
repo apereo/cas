@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultProxyGrantingTicketFactoryTests {
 
     @Nested
-    class AllProxyGrantingTicketsTrackingPolicy extends BaseTicketFactoryTests {
+    class AllPGTsTrackingPolicy extends BaseTicketFactoryTests {
 
         @Test
         void verifyCustomExpirationPolicy() throws Throwable {
@@ -63,7 +63,7 @@ class DefaultProxyGrantingTicketFactoryTests {
 
     @Nested
     @TestPropertySource(properties = "cas.ticket.st.only-track-most-recent-proxy-granting-ticket=true")
-    class MostRecentProxyGrantingTicketTrackingPolicy extends BaseTicketFactoryTests {
+    class MostRecentPGTTrackingPolicy extends BaseTicketFactoryTests {
         
         @Test
         void verifyProxyGrantingTicketTrackingPolicy() throws Throwable {
