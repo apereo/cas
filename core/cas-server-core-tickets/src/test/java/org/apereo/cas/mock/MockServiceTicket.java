@@ -73,7 +73,7 @@ public class MockServiceTicket implements ServiceTicket, RenewableServiceTicket,
                                                         final ExpirationPolicy expirationPolicy,
                                                         final TicketTrackingPolicy proxyGrantingTicketTrackingPolicy) {
         val pgt = new ProxyGrantingTicketImpl(id, this.service, this.getTicketGrantingTicket(), authentication, expirationPolicy);
-        getTicketGrantingTicket().getProxyGrantingTickets().put(pgt.getId(), this.service);
+        proxyGrantingTicketTrackingPolicy.trackTicket(getTicketGrantingTicket(), pgt, this.service);
         return pgt;
     }
 

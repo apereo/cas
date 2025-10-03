@@ -45,7 +45,7 @@ class DefaultProxyGrantingTicketFactoryTests {
 
         @Test
         void verifyProxyGrantingTicketTrackingPolicy() throws Throwable {
-            val service = RegisteredServiceTestUtils.getService("PGT_TRACK_POLICY");
+            val service = RegisteredServiceTestUtils.getService("PGT_ALL_TRACK_POLICY");
 
             val tgt = new MockTicketGrantingTicket("casuser");
             val pgtFactory = (ProxyGrantingTicketFactory) this.ticketFactory.get(ProxyGrantingTicket.class);
@@ -67,7 +67,7 @@ class DefaultProxyGrantingTicketFactoryTests {
         
         @Test
         void verifyProxyGrantingTicketTrackingPolicy() throws Throwable {
-            val service = RegisteredServiceTestUtils.getService("PGT_TRACK_POLICY");
+            val service = RegisteredServiceTestUtils.getService("PGT_MOST_RECENT_TRACK_POLICY");
 
             val tgt = new MockTicketGrantingTicket("casuser");
             val pgtFactory = (ProxyGrantingTicketFactory) this.ticketFactory.get(ProxyGrantingTicket.class);
