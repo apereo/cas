@@ -2,13 +2,13 @@ package org.apereo.cas.services.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.web.theme.ResourceBundleThemeSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.StaticMessageSource;
-import org.springframework.ui.context.support.ResourceBundleThemeSource;
 import jakarta.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Locale;

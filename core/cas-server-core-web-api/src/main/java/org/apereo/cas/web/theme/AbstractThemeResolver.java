@@ -1,6 +1,5 @@
-package org.springframework.web.servlet.theme;
+package org.apereo.cas.web.theme;
 
-import org.springframework.web.servlet.ThemeResolver;
 import lombok.Getter;
 import lombok.Setter;
 

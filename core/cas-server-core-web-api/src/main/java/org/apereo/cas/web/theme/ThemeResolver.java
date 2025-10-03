@@ -1,4 +1,4 @@
-package org.springframework.web.servlet;
+package org.apereo.cas.web.theme;
 
 import org.springframework.lang.Nullable;
 import jakarta.servlet.http.HttpServletRequest;

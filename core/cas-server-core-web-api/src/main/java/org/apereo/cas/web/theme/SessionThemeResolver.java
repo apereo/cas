@@ -1,8 +1,8 @@
-package org.springframework.web.servlet.theme;
+package org.apereo.cas.web.theme;
 
-import org.springframework.web.util.WebUtils;
 import lombok.val;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 

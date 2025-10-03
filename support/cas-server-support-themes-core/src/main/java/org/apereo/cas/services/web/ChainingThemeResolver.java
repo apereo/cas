@@ -1,10 +1,10 @@
 package org.apereo.cas.services.web;
 
+import org.apereo.cas.web.theme.AbstractThemeResolver;
+import org.apereo.cas.web.theme.ThemeResolver;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.web.servlet.ThemeResolver;
-import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.LinkedHashSet;

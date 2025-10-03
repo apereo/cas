@@ -1,4 +1,4 @@
-package org.springframework.ui.context;
+package org.apereo.cas.web.theme;
 
 import org.springframework.context.MessageSource;
 

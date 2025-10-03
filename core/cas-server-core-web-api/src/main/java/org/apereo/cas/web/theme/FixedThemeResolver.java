@@ -1,4 +1,4 @@
-package org.springframework.web.servlet.theme;
+package org.apereo.cas.web.theme;
 
 import jakarta.servlet.http.HttpServletRequest;
 

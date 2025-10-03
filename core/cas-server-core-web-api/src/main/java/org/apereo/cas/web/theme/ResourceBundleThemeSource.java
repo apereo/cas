@@ -1,8 +1,5 @@
-package org.springframework.ui.context.support;
+package org.apereo.cas.web.theme;
 
-import org.springframework.ui.context.HierarchicalThemeSource;
-import org.springframework.ui.context.Theme;
-import org.springframework.ui.context.ThemeSource;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
