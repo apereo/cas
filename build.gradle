@@ -22,7 +22,6 @@ buildscript {
         classpath libs.gradle.plugin.errorprone
         classpath libs.gradle.plugin.sonarqube
         classpath libs.gradle.plugin.nmcp
-        classpath libs.gradle.plugin.nexus
     }
 }
 
@@ -79,26 +78,7 @@ def isArtifactSigningRequired = {
     publishReleases && !skipArtifactSigning
 }
 
-if (publishSnapshots) {
-    apply plugin: "io.github.gradle-nexus.publish-plugin"
-    nexusPublishing {
-        packageGroup = "org.apereo"
-        repositories {
-            sonatype {
-                stagingProfileId = "11d1ddbbdeae9d"
-                username = "${repositoryUsername}"
-                password = "${repositoryPassword}"
-                snapshotRepositoryUrl.set(uri("${snapshotsRepositoryUrl}"))
-            }
-        }
-        clientTimeout = java.time.Duration.ofSeconds(120)
-        connectTimeout = java.time.Duration.ofSeconds(120)
-        transitionCheckOptions {
-            maxRetries.set(100)
-            delayBetween.set(java.time.Duration.ofSeconds(60))
-        }
-    }
-} else if (publishReleases) {
+if (publishReleases || publishSnapshots) {
     apply plugin: "com.gradleup.nmcp.aggregation"
     nmcpAggregation {
         centralPortal {
@@ -106,8 +86,8 @@ if (publishSnapshots) {
             password = "${repositoryPassword}"
             publicationName = "Apereo CAS Release ${project.version}"
             publishingType = "AUTOMATIC"
-            validationTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
-            publishingTimeout = java.time.Duration.of(120, java.time.temporal.ChronoUnit.MINUTES)
+            validationTimeout.set(Duration.ZERO)
+            publishingTimeout.set(Duration.ZERO)
         }
         publishAllProjectsProbablyBreakingProjectIsolation()
     }

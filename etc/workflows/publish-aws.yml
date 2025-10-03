@@ -12,7 +12,7 @@ env:
   TERM: xterm-256color
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   REPO_OWNER: ${{ github.repository_owner }}
-  JDK_CURRENT: 21
+  JDK_CURRENT: 25
   CODE_ARTIFACT_DOMAIN: ${{ secrets.CODE_ARTIFACT_DOMAIN }}
   CODE_ARTIFACT_URL: ${{ secrets.CODE_ARTIFACT_URL }}
 

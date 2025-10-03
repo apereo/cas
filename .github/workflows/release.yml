@@ -10,7 +10,7 @@ env:
   PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
   REPOSITORY_USER: ${{ secrets.REPOSITORY_USER }}
   REPOSITORY_PWD: ${{ secrets.REPOSITORY_PWD }}
-  JDK_CURRENT: 21
+  JDK_CURRENT: 25
   JDK_DISTRIBUTION: "corretto"
 
 ##########################################################################
