@@ -11,7 +11,7 @@ env:
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   CAS_MODULE_METADATA_MONGODB_URL: ${{ secrets.CAS_MODULE_METADATA_MONGODB_URL }}
-  JDK_CURRENT: 21
+  JDK_CURRENT: 25
   JDK_DISTRIBUTION: "corretto"
 
 ##########################################################################

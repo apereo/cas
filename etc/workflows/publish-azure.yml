@@ -7,7 +7,7 @@ env:
   REPOSITORY_USER: ${{ secrets.ARTIFACTS_REPOSITORY_USER }}
   REPOSITORY_PWD: ${{ secrets.ARTIFACTS_REPOSITORY_PWD }}
   REPOSITORY_URL: ${{ secrets.ARTIFACTS_REPOSITORY_URL }}
-  JDK_CURRENT: 21
+  JDK_CURRENT: 25
   TIMEOUT: 640000
 
 ##########################################################################
