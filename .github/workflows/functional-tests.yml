@@ -41,8 +41,6 @@ on:
   push:
     branches:
       - 7.3.x
-      - '!**.**.**'
-      - '!heroku-*'
   pull_request:
     types: [ labeled ]
     branches:
