@@ -43,6 +43,10 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
+### Java 25
+
+As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `25`. 
+
 ### OpenRewrite Recipes
 
 CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
@@ -62,5 +66,9 @@ and scenarios. At the moment, total number of jobs stands at approximately `526`
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
+### Gradle 9.2
+
+CAS is now built with Gradle `9.1` and the build process has been updated to use the latest Gradle 
+features and capabilities. 
+
 ## Other Stuff
-     
