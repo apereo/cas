@@ -106,8 +106,8 @@ if (publishSnapshots) {
             password = "${repositoryPassword}"
             publicationName = "Apereo CAS Release ${project.version}"
             publishingType = "AUTOMATIC"
-            validationTimeout = java.time.Duration.of(30, java.time.temporal.ChronoUnit.MINUTES)
-            publishingTimeout = java.time.Duration.of(120, java.time.temporal.ChronoUnit.MINUTES)
+            validationTimeout.set(Duration.ZERO)
+            publishingTimeout.set(Duration.ZERO)
         }
         publishAllProjectsProbablyBreakingProjectIsolation()
     }
