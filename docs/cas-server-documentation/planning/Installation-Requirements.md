@@ -16,7 +16,7 @@ requirements.
 
 ## Java
 
-CAS at its heart is a Java-based web application. Prior to deployment, you will need to have [JDK](https://openjdk.java.net/projects/jdk/21/) `21` installed. The JDK requirement
+CAS at its heart is a Java-based web application. Prior to deployment, you will need to have [JDK](https://openjdk.java.net/projects/jdk/25/) `25` installed. The JDK requirement
 is global and applies to all CAS modules and features. The required Java version must be available both at compile-time when you build and package CAS and of course at runtime when
 you deploy the CAS web application.
 

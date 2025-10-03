@@ -70,7 +70,7 @@ org.gradle.parallel=false
 ```
 
 - Checkout the CAS project: `git clone git@github.com:apereo/cas.git cas-server`
-- Make sure you have the [latest version of JDK 21](https://openjdk.java.net/projects/jdk/21/) installed via `java -version`. 
+- Make sure you have the [latest version of JDK 25](https://openjdk.java.net/projects/jdk/25/) installed via `java -version`. 
 
 ## Preparing the Release
 
