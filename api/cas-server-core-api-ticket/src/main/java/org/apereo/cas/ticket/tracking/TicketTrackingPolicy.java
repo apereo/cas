@@ -21,14 +21,20 @@ public interface TicketTrackingPolicy {
     String BEAN_NAME_DESCENDANT_TICKET_TRACKING = "descendantTicketsTrackingPolicy";
 
     /**
+     * Tracking policy for proxy granting tickets.
+     */
+    String BEAN_NAME_PROXY_GRANTING_TICKET_TRACKING = "proxyGrantingTicketTrackingPolicy";
+
+    /**
      * Track application attempt and access.
      * Typically, ticket-granting tickets keep track of applications
      * and service tickets for which they are authorized to issue tickets.
      *
      * @param ownerTicket the owner ticket
      * @param ticket      the tracked ticket
+     * @param parameters  additional parameters
      */
-    default String trackTicket(final Ticket ownerTicket, final Ticket ticket) {
+    default String trackTicket(final Ticket ownerTicket, final Ticket ticket, final Object... parameters) {
         return null;
     }
 
