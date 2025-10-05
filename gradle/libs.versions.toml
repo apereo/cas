@@ -75,7 +75,7 @@ googleZxing = "3.5.3"
 graalVm = "25.0.0"
 graalVmMetadataRepository = "0.3.27"
 groovy = "5.0.1"
-grouper = "5.20.6"
+grouper = "5.21.0"
 gson = "2.13.2"
 guava = "33.5.0-jre"
 h2 = "1.4.197"
@@ -112,7 +112,7 @@ jakartaValidation = "3.1.1"
 jansi = "2.4.2"
 jasypt = "1.9.3"
 javaMelody = "2.5.1"
-javaParser = "3.27.0"
+javaParser = "3.27.1"
 javers = "7.8.6"
 jaxbApi = "4.0.4"
 jaxbImpl = "4.0.6"
@@ -267,7 +267,6 @@ gradleErrorProne = "4.3.0"
 gradleGraalVmNative = "0.11.1"
 gradleSonarqube = "6.3.1.5724"
 gradleNmcpPublishing = "1.2.0"
-gradleNexusPublishing = "2.0.0"
 gradleJib = "3.4.6"
 
 [libraries]
@@ -761,4 +760,3 @@ gradle-plugin-errorprone = { module = "net.ltgt.gradle:gradle-errorprone-plugin"
 gradle-plugin-sonarqube = { module = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin", version.ref = "gradleSonarqube" }
 gradle-plugin-nmcp = { module = "com.gradleup.nmcp.aggregation:com.gradleup.nmcp.aggregation.gradle.plugin", version.ref = "gradleNmcpPublishing" }
 gradle-plugin-jib = { module = "com.google.cloud.tools.jib:com.google.cloud.tools.jib.gradle.plugin", version.ref = "gradleJib" }
-gradle-plugin-nexus = { module = "io.github.gradle-nexus:publish-plugin", version.ref = "gradleNexusPublishing" }
