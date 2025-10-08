@@ -387,6 +387,12 @@ function validateScenario() {
     exit 1
   fi
 
+  scenarioEnabled=$(jq -j '.enabled // empty' "${config}")
+  if [[ "${scenarioEnabled}" == "false" ]]; then
+    printred "Test scenario ${scenario##*/} is not enabled. Review the scenario configuration at ${config} and re-enable the test."
+    exit 0
+  fi
+     
   requiredEnvVars=$(jq -j '.conditions.env // empty' "${config}")
   if [[ ! -z ${requiredEnvVars} ]]; then
     echo "Checking for required environment variables"

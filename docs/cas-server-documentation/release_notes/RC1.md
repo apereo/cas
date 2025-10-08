@@ -71,4 +71,32 @@ are now configured to run with parallelism enabled.
 CAS is now built with Gradle `9.1` and the build process has been updated to use the latest Gradle 
 features and capabilities. 
 
+### Spring Boot 4
+
+CAS is now built with Spring Boot `4`. This is a major platform upgrade that affects almost all aspects of the codebase
+including many of the third-party core libraries used by CAS as well as some CAS functionality. The following
+notable changes are worth mentioning:
+
+#### Retry Functionality
+
+The `spring-retry` library has been removed and replaced with the native retry capabilities
+provided by the Spring Framework. The CAS retry configuration has been updated to reflect this change, which 
+brings about the following minor change: retry attempts are set to **ONLY** affect retry operations, and do
+not count the initial execution attempt. This means that if a CAS operation is set to retry `3` times, the
+operation will be attempted a total of `4` times (`1` initial + `3` retries).
+
+#### Undertow Support
+
+[Support for Undertow]((../installation/Configuring-Servlet-Container-Embedded-Undertow.html)) 
+as an embedded servlet container has been dropped. Please consider using Apache Tomcat or Jetty
+as an alternative embedded server until Undertow adds support for Servlet `6.1`.
+We will consider re-adding support for Undertow once it is compatible with Spring Boot.
+
+#### JSON Processing w/ Jackson
+
+The Jackson library, responsible for JSON processing and parsing in CAS, is upgraded to `3.x` version. 
+This is a major upgrade that brings in many significant changes to the way JSON is processed in CAS. Almost all 
+such changes are internal and **SHOULD NOT** affect CAS configuration, application 
+records, etc are processed and loaded.
+
 ## Other Stuff
