@@ -1,15 +1,12 @@
 package org.apereo.cas.adaptors.x509.util;
 
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import org.jooq.lambda.Unchecked;
-
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.jsontype.TypeSerializer;
 import java.util.Arrays;
 
 /**
@@ -18,32 +15,32 @@ import java.util.Arrays;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class X509CertificateCredentialJsonSerializer extends JsonSerializer<X509CertificateCredential> {
+public class X509CertificateCredentialJsonSerializer extends ValueSerializer<X509CertificateCredential> {
 
     @Override
     public void serialize(final X509CertificateCredential value,
-                          final JsonGenerator generator, final SerializerProvider serializers)
-        throws IOException {
+                          final JsonGenerator generator,
+                          final SerializationContext context) {
 
-        if (serializers.getAttribute("WithType") != null) {
-            generator.writeArrayFieldStart("certificates");
+        if (context.getAttribute("WithType") != null) {
+            generator.writeStartArray("certificates");
         }
         Arrays.stream(value.getCertificates()).forEach(Unchecked.consumer(c -> generator.writeBinary(c.getEncoded())));
-        if (serializers.getAttribute("WithType") != null) {
+        if (context.getAttribute("WithType") != null) {
             generator.writeEndArray();
         }
     }
 
     @Override
     public void serializeWithType(final X509CertificateCredential value, final JsonGenerator generator,
-                                  final SerializerProvider serializers, final TypeSerializer typeSer) throws IOException {
+                                  final SerializationContext context, final TypeSerializer typeSer) {
         try {
-            serializers.setAttribute("WithType", Boolean.TRUE);
-            typeSer.writeTypePrefix(generator, typeSer.typeId(value, JsonToken.START_OBJECT));
-            serialize(value, generator, serializers);
-            typeSer.writeTypeSuffix(generator, typeSer.typeId(value, JsonToken.START_OBJECT));
+            context.setAttribute("WithType", Boolean.TRUE);
+            typeSer.writeTypePrefix(generator, context, typeSer.typeId(value, JsonToken.START_OBJECT));
+            serialize(value, generator, context);
+            typeSer.writeTypeSuffix(generator, context, typeSer.typeId(value, JsonToken.START_OBJECT));
         } finally {
-            serializers.setAttribute("WithType", Boolean.FALSE);
+            context.setAttribute("WithType", Boolean.FALSE);
         }
     }
 

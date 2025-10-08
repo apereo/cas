@@ -42,7 +42,7 @@ public class InternalGroovyScriptDao implements PersonAttributeScriptDao {
         val username = usernameAttributeProvider.getUsernameFromQuery(attributes);
         val results = new HashMap<String, List<Object>>();
         if (StringUtils.isNotBlank(username)) {
-            FunctionUtils.doAndHandle(__ -> {
+            FunctionUtils.doAndHandle(_ -> {
                 val allAttributes = new HashMap<>(attributes);
                 if (resultPeople != null && !resultPeople.isEmpty()) {
                     allAttributes.put("people", new ArrayList<>(resultPeople));

@@ -1,6 +1,5 @@
 package com.yubico.webauthn.attestation;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -12,7 +11,7 @@ import com.yubico.webauthn.data.ByteArray;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
+import tools.jackson.databind.JsonNode;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -88,7 +87,8 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
 
     @Override
     public Optional<Attestation> findMetadata(final X509Certificate attestationCertificate) {
-        return metadataObjects.stream()
+        return metadataObjects
+            .stream()
             .map(metadata -> {
                 Map<String, String> vendorProperties;
                 Map<String, String> deviceProperties = null;
@@ -99,10 +99,10 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
                 for (val device : metadata.getDevices()) {
                     if (deviceMatches(device.get(SELECTORS), attestationCertificate)) {
                         val devicePropertiesBuilder = ImmutableMap.<String, String>builder();
-                        for (val deviceEntry : Lists.newArrayList(device.fields())) {
+                        for (val deviceEntry : Lists.newArrayList(device.properties())) {
                             val value = deviceEntry.getValue();
-                            if (value.isTextual()) {
-                                devicePropertiesBuilder.put(deviceEntry.getKey(), value.asText());
+                            if (value.isString()) {
+                                devicePropertiesBuilder.put(deviceEntry.getKey(), value.asString());
                             }
                         }
                         deviceProperties = devicePropertiesBuilder.build();
@@ -130,7 +130,7 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
             return true;
         } else {
             for (val selector : selectors) {
-                val matcher = matchers.get(selector.get(SELECTOR_TYPE).asText());
+                val matcher = matchers.get(selector.get(SELECTOR_TYPE).asString());
                 if (matcher != null
                     && matcher.matches(attestationCertificate, selector.get(SELECTOR_PARAMETERS))) {
                     return true;

@@ -23,7 +23,7 @@ public class OneTimeTokenRepositoryCleaner implements Cleanable {
 
     @Override
     public void clean() {
-        lock.tryLock(__ -> {
+        lock.tryLock(_ -> {
             val now = ZonedDateTime.now(ZoneId.systemDefault());
             LOGGER.debug("Starting to clean previously used authenticator tokens from [{}] at [{}]", tokenRepository, now);
             tokenRepository.clean();

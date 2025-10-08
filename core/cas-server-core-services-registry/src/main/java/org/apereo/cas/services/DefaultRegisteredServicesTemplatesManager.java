@@ -79,7 +79,7 @@ public class DefaultRegisteredServicesTemplatesManager implements RegisteredServ
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
         return templateDefinitionFiles
             .stream()
-            .filter(__ -> CasRuntimeHintsRegistrar.notInNativeImage())
+            .filter(_ -> CasRuntimeHintsRegistrar.notInNativeImage())
             .filter(registeredServiceSerializer::supports)
             .filter(file -> FilenameUtils.getBaseName(file.getAbsolutePath()).equalsIgnoreCase(templateName))
             .map(file -> FunctionUtils.doUnchecked(() -> {

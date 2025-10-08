@@ -4,8 +4,6 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,6 +16,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
@@ -67,11 +67,10 @@ public class AmazonS3SamlIdPMetadataUtils {
      * @param doc             the doc
      * @param bucketNameToUse the bucket name to use
      * @return the saml id p metadata document
-     * @throws Throwable the throwable
      */
     public static SamlIdPMetadataDocument putSamlIdPMetadataIntoBucket(final S3Client s3Client,
                                                                        final SamlIdPMetadataDocument doc,
-                                                                       final String bucketNameToUse) throws Throwable {
+                                                                       final String bucketNameToUse) {
         val metadataObject = CollectionUtils.<String, String>wrap(
             "signingCertificate", StringUtils.defaultString(doc.getSigningCertificate()),
             "signingKey", StringUtils.defaultString(doc.getSigningKey()),

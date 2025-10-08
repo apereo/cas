@@ -34,7 +34,7 @@ public class DynamoDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerat
 
     @Override
     public void afterPropertiesSet() {
-        FunctionUtils.doUnchecked(__ -> generate(Optional.empty()));
+        FunctionUtils.doUnchecked(_ -> generate(Optional.empty()));
     }
 
     @Override

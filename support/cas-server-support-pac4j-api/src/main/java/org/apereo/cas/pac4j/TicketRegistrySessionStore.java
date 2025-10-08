@@ -77,7 +77,7 @@ public class TicketRegistrySessionStore implements SessionStore {
             ticket.getProperties().remove(key);
             updateTicket(context, ticket);
         } else if (ticket == null) {
-            FunctionUtils.doAndHandle(__ -> {
+            FunctionUtils.doAndHandle(_ -> {
                 val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
                 val transientSessionTicket = transientFactory.create(sessionId, properties);
                 val addedTicket = ticketRegistry.addTicket(transientSessionTicket);
@@ -94,7 +94,7 @@ public class TicketRegistrySessionStore implements SessionStore {
     }
 
     private void updateTicket(final WebContext context, final TransientSessionTicket ticket) {
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             val updatedTicket = ticketRegistry.updateTicket(ticket);
             context.setRequestAttribute(SESSION_ID_IN_REQUEST_ATTRIBUTE, updatedTicket.getId());
         });
@@ -105,7 +105,7 @@ public class TicketRegistrySessionStore implements SessionStore {
         val sessionId = fetchSessionIdFromContext(webContext);
         if (sessionId != null) {
             val ticketId = TransientSessionTicketFactory.normalizeTicketId(sessionId);
-            FunctionUtils.doUnchecked(__ -> ticketRegistry.deleteTicket(ticketId));
+            FunctionUtils.doUnchecked(_ -> ticketRegistry.deleteTicket(ticketId));
             val context = (JEEContext) webContext;
             cookieGenerator.removeCookie(context.getNativeResponse());
             LOGGER.trace("Removes session cookie and ticket: [{}]", ticketId);

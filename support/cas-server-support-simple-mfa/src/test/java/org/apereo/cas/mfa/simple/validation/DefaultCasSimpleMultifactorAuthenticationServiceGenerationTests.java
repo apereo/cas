@@ -101,7 +101,7 @@ class DefaultCasSimpleMultifactorAuthenticationServiceGenerationTests {
         private int sequence;
 
         @Override
-        public CasSimpleMultifactorAuthenticationTicket create(final Service service, final Map<String, Serializable> properties) throws Throwable {
+        public CasSimpleMultifactorAuthenticationTicket create(final Service service, final Map<String, Serializable> properties) {
             return new CasSimpleMultifactorAuthenticationTicketImpl(CasSimpleMultifactorAuthenticationTicket.PREFIX + "-" + sequence++,
                 NeverExpiresExpirationPolicy.INSTANCE, service, properties);
         }

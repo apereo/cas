@@ -8,9 +8,6 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -18,7 +15,8 @@ import org.hjson.JsonValue;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.execution.RequestContext;
-
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -44,7 +42,7 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer impleme
 
     public JsonResourceInterruptInquirer(final Resource resource) {
         this.resource = resource;
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             if (ResourceUtils.isFile(this.resource)) {
                 keystorePatchWatcherService = new FileWatcherService(resource.getFile(), file -> readResourceForInterrupts());
             }
@@ -72,7 +70,7 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer impleme
     }
 
     private void readResourceForInterrupts() {
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             this.interrupts.clear();
             if (ResourceUtils.doesResourceExist(resource)) {
                 try (val reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {

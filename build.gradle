@@ -323,6 +323,7 @@ subprojects {
         }
 
         it.options.fork = true
+        it.options.forkOptions.jvmArgs << '--sun-misc-unsafe-memory-access=allow'
         it.options.incremental = true
 
         def casCompilerArgs = ["-parameters", '-Xlint:-removal']
@@ -427,7 +428,9 @@ subprojects {
         testImplementation libraries.log4j
         testImplementation libraries.hibernatevalidator
         testImplementation libraries.jakartapersistence
-
+        testImplementation libraries.thymeleaf
+        testImplementation libraries.springboottomcat
+        
         runtimeOnly libraries.httpclient4
 
         jvmAgents(libs.mockito.core) {

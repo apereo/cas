@@ -123,7 +123,7 @@ class X509SubjectPrincipalResolverTests {
     @MethodSource("getTestParameters")
     void verifyResolvePrincipalInternal(final String certPath,
                                         final String descriptor,
-                                        final String expectedResult) throws Exception {
+                                        final String expectedResult) {
 
         val context = PrincipalResolutionContext.builder()
             .attributeDefinitionStore(attributeDefinitionStore)

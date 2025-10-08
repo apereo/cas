@@ -133,14 +133,14 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
             }
 
             val cookies = new LinkedHashMap<>();
-            FunctionUtils.doIfNotNull(request.getCookies(), __ -> Arrays.stream(request.getCookies())
+            FunctionUtils.doIfNotNull(request.getCookies(), _ -> Arrays.stream(request.getCookies())
                 .forEach(cookie -> collectHttpRequestProperty("cookie-%s".formatted(cookie.getName()), cookie.getValue(), cookies)));
             if (!cookies.isEmpty()) {
                 attributes.put(Service.SERVICE_ATTRIBUTE_COOKIES, cookies);
             }
             
             val headers = new LinkedHashMap<>();
-            FunctionUtils.doIfNotNull(request.getHeaderNames(), __ -> StreamSupport.stream(
+            FunctionUtils.doIfNotNull(request.getHeaderNames(), _ -> StreamSupport.stream(
                     Spliterators.spliteratorUnknownSize(request.getHeaderNames().asIterator(), Spliterator.ORDERED), false)
                 .forEach(header -> collectHttpRequestProperty("header-%s".formatted(header), request.getHeader(header), headers)));
             if (!headers.isEmpty()) {

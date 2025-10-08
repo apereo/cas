@@ -67,7 +67,7 @@ public class ConvertPropertiesToYAMLCommand {
     }
 
     private static Map<String, Object> getOrCreateSubMap(final Map<String, Object> map, final String key) {
-        return (Map<String, Object>) map.computeIfAbsent(key, __ -> new TreeMap<>());
+        return (Map<String, Object>) map.computeIfAbsent(key, _ -> new TreeMap<>());
     }
 
     private static void convertAndSaveToYaml(final Map<String, Object> properties,

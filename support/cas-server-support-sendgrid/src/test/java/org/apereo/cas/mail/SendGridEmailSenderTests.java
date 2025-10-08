@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.sendgrid.SendGridAutoConfiguration;
+import org.springframework.boot.sendgrid.autoconfigure.SendGridAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 import java.util.Locale;

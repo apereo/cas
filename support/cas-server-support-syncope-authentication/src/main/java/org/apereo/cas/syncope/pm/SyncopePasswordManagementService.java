@@ -13,8 +13,6 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,6 +26,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.util.UriComponentsBuilder;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -112,7 +112,7 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
             val entity = container.getEntity();
             val result = EntityUtils.toString(entity);
             LOGGER.debug("Received security question entity as [{}]", result);
-            return Map.of(MAPPER.readTree(result).get("content").asText(), UUID.randomUUID().toString());
+            return Map.of(MAPPER.readTree(result).get("content").asString(), UUID.randomUUID().toString());
         }
         return Map.of();
     }
@@ -136,7 +136,7 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
                 HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
                 HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
             .entity(MAPPER.writeValueAsString(getUserStatusUpdatePatch(userKey)))
-            .maximumRetryAttempts(1)
+            .maximumRetryAttempts(casProperties.getAuthn().getSyncope().getMaxRetryAttempts())
             .build();
         val response = Objects.requireNonNull(HttpUtils.execute(exec));
         if (HttpStatus.resolve(response.getCode()).is2xxSuccessful()) {

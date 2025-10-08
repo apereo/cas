@@ -41,7 +41,7 @@ class DefaultRegisteredServiceTicketGrantingTicketExpirationPolicyTests {
     }
 
     @Test
-    void verifyPolicyByUserAgent() throws Exception {
+    void verifyPolicyByUserAgent() {
         val policy = new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy();
         policy.setUserAgents(Map.of("Fire.+", 10L));
         val expirationPolicy = policy.toExpirationPolicy().orElseThrow();
@@ -49,7 +49,7 @@ class DefaultRegisteredServiceTicketGrantingTicketExpirationPolicyTests {
     }
 
     @Test
-    void verifyPolicyByIpAddress() throws Exception {
+    void verifyPolicyByIpAddress() {
         val policy = new DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy();
         policy.setIpAddresses(Map.of(".+86.151.+", 10L));
         val expirationPolicy = policy.toExpirationPolicy().orElseThrow();

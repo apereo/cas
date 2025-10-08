@@ -32,10 +32,11 @@ import org.apache.coyote.http2.Http2Protocol;
 import org.apache.tomcat.util.descriptor.web.LoginConfig;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
-import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
-import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
+import org.springframework.boot.tomcat.autoconfigure.TomcatServerProperties;
+import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.autoconfigure.ServerProperties;
+import org.springframework.boot.web.server.autoconfigure.servlet.ServletWebServerFactoryCustomizer;
+import org.springframework.boot.web.server.servlet.ConfigurableServletWebServerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.util.ReflectionUtils;
 import jakarta.servlet.ServletException;
@@ -57,13 +58,14 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
 
     private final CasConfigurationProperties casProperties;
 
-    private final ServerProperties serverProperties;
+    private final TomcatServerProperties tomcatServerProperties;
 
     public CasTomcatServletWebServerFactoryCustomizer(final ServerProperties serverProperties,
+                                                      final TomcatServerProperties tomcatServerProperties,
                                                       final CasConfigurationProperties casProperties) {
         super(serverProperties);
         this.casProperties = casProperties;
-        this.serverProperties = serverProperties;
+        this.tomcatServerProperties = tomcatServerProperties;
     }
 
     private static void configureConnectorForProtocol(final Connector connector,
@@ -182,7 +184,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             valve.setPattern(ext.getPattern());
 
             if (StringUtils.isBlank(ext.getDirectory())) {
-                valve.setDirectory(serverProperties.getTomcat().getAccesslog().getDirectory());
+                valve.setDirectory(tomcatServerProperties.getAccesslog().getDirectory());
             } else {
                 valve.setDirectory(ext.getDirectory());
             }
@@ -221,7 +223,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
                 connector.addUpgradeProtocol(new Http2Protocol());
 
                 http.getAttributes().forEach(connector::setProperty);
-                tomcat.addAdditionalTomcatConnectors(connector);
+                tomcat.addAdditionalConnectors(connector);
             });
     }
 
@@ -229,7 +231,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
         val proxy = casProperties.getServer().getTomcat().getHttpProxy();
         if (proxy.isEnabled()) {
             LOGGER.debug("Customizing HTTP proxying for connector listening on port [{}]", tomcat.getPort());
-            tomcat.getTomcatConnectorCustomizers().add(connector -> {
+            tomcat.getConnectorCustomizers().add(connector -> {
                 connector.setSecure(proxy.isSecure());
                 connector.setScheme(proxy.getScheme());
 
@@ -286,7 +288,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
                 ajpConnector.setRedirectPort(ajp.getRedirectPort());
             }
             ajp.getAttributes().forEach(ajpConnector::setProperty);
-            tomcat.addAdditionalTomcatConnectors(ajpConnector);
+            tomcat.addAdditionalConnectors(ajpConnector);
         }
     }
 
@@ -320,7 +322,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
         val rewriteValve = new RewriteValve() {
             @Override
             public void startInternal() {
-                FunctionUtils.doUnchecked(__ -> {
+                FunctionUtils.doUnchecked(_ -> {
                     super.startInternal();
                     try (val is = configLocation.getInputStream();
                          val isr = new InputStreamReader(is, StandardCharsets.UTF_8);

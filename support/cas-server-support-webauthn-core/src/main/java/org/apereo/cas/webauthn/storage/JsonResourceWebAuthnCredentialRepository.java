@@ -4,14 +4,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.webauthn.WebAuthnUtils;
-
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.data.CredentialRegistration;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
-
+import tools.jackson.core.type.TypeReference;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Collection;
@@ -69,7 +67,7 @@ public class JsonResourceWebAuthnCredentialRepository extends BaseWebAuthnCreden
                 return record;
             }).toList();
         storage.put(username.trim().toLowerCase(Locale.ENGLISH), new LinkedHashSet<>(records));
-        FunctionUtils.doUnchecked(__ -> WebAuthnUtils.getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(location.getFile(), storage));
+        FunctionUtils.doUnchecked(_ -> WebAuthnUtils.getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(location.getFile(), storage));
     }
 
     private Map<String, Set<CredentialRegistration>> readFromJsonRepository() {

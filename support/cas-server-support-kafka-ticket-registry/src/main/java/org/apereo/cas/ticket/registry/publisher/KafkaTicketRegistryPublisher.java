@@ -28,7 +28,7 @@ public class KafkaTicketRegistryPublisher implements QueueableTicketRegistryMess
 
     @Override
     public void publishMessageToQueue(final BaseMessageQueueCommand cmd) {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             if (cmd instanceof final TicketAwareQueueCommand taqm) {
                 val topic = ticketCatalog.find(taqm.getTicketId()).getProperties().getStorageName();
                 publishMessage(cmd, topic);

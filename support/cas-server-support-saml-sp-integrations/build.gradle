@@ -25,7 +25,7 @@ dependencies {
     implementation libraries.apachevelocity
 
     testImplementation libraries.pac4jsaml
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(path: ":support:cas-server-support-saml-idp", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-saml-core", configuration: "tests")

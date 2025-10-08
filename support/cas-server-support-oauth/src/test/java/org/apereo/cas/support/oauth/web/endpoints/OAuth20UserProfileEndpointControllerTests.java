@@ -200,14 +200,14 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
 
         val expectedObj = MAPPER.createObjectNode();
-        val attrNode = MAPPER.createObjectNode();
-        attrNode.put(NAME, VALUE);
-        val values = MAPPER.createArrayNode();
-        values.add(VALUE);
-        values.add(VALUE);
-        attrNode.put(NAME2, values);
+        val objectNode = MAPPER.createObjectNode();
+        objectNode.put(NAME, VALUE);
+        val arrayNode = MAPPER.createArrayNode();
+        arrayNode.add(VALUE);
+        arrayNode.add(VALUE);
+        objectNode.set(NAME2, arrayNode);
         expectedObj.put("id", ID);
-        expectedObj.put("attributes", attrNode);
+        expectedObj.set("attributes", objectNode);
 
         val receivedBody = (Map) entity.getBody();
         assertEquals(ID, receivedBody.get("id"));

@@ -20,7 +20,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.oauth2.sdk.client.RedirectURIValidator;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -35,7 +34,8 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.springframework.web.servlet.view.json.JacksonJsonView;
+import tools.jackson.databind.json.JsonMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.time.Clock;
@@ -61,8 +61,8 @@ import java.util.stream.Stream;
 @Slf4j
 @UtilityClass
 public class OAuth20Utils {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .singleArrayElementUnwrapped(true).build().toObjectMapper();
+    private static final JsonMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .singleArrayElementUnwrapped(true).build().toJsonMapper();
 
     /**
      * Write to the output this error.
@@ -86,7 +86,7 @@ public class OAuth20Utils {
     public static ModelAndView writeError(final HttpServletResponse response,
                                           final String error, final String description) {
         val model = getErrorResponseBody(error, description);
-        val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
+        val mv = new ModelAndView(new JacksonJsonView(MAPPER), model);
         mv.setStatus(HttpStatus.BAD_REQUEST);
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         return mv;

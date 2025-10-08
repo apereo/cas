@@ -13,21 +13,17 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -49,9 +45,10 @@ import static org.mockito.Mockito.*;
  */
 @Tag("AuthenticationHandler")
 class JsonResourceAuthenticationHandlerTests {
-    private final JsonResourceAuthenticationHandler handler;
+    private JsonResourceAuthenticationHandler handler;
 
-    JsonResourceAuthenticationHandlerTests() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         val accounts = new LinkedHashMap<String, CasUserAccount>();
 
         var acct = new CasUserAccount();
@@ -123,18 +120,8 @@ class JsonResourceAuthenticationHandlerTests {
 
         val resource = new FileSystemResource(Files.createTempFile("account", ".json").toFile());
 
-        val mapper = Jackson2ObjectMapperBuilder.json()
-            .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-            .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .build();
-
-        mapper
-            .findAndRegisterModules()
-            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
-            .writerWithDefaultPrettyPrinter();
-        mapper.activateDefaultTyping(mapper.getPolymorphicTypeValidator(),
-            ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-
+        val mapper = JacksonObjectMapperFactory.builder()
+            .defaultTypingEnabled(true).build().toObjectMapper();
         mapper.writeValue(resource.getFile(), accounts);
         this.handler = new JsonResourceAuthenticationHandler(null,
             PrincipalFactoryUtils.newPrincipalFactory(), null, resource);

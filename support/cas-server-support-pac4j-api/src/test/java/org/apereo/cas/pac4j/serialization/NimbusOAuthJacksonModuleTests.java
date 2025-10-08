@@ -44,7 +44,7 @@ class NimbusOAuthJacksonModuleTests {
         };
 
         val mapper = serializer.getObjectMapper();
-        assertTrue(mapper.getRegisteredModuleIds().contains(NimbusOAuthJacksonModule.class.getName()));
+        assertTrue(mapper.registeredModules().stream().anyMatch(module -> module.getModuleName().contains(NimbusOAuthJacksonModule.class.getName())));
         runTest(serializer, CodeVerifier.class, new CodeVerifier(RandomUtils.randomAlphabetic(CodeVerifier.MIN_LENGTH)));
         runTest(serializer, BearerAccessToken.class, new BearerAccessToken("access-token-value"));
         runTest(serializer, RefreshToken.class, new RefreshToken("access-token-value"));

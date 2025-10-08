@@ -13,7 +13,6 @@ import org.apereo.cas.util.spring.RestActuatorControllerEndpoint;
 import org.apereo.cas.util.spring.RestActuatorEndpointDiscoverer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
-import org.apereo.cas.web.CasYamlHttpMessageConverter;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -38,8 +37,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.WebProperties;
-import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.webmvc.autoconfigure.error.ErrorViewResolver;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.MessageSource;
@@ -51,7 +50,6 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -146,14 +144,7 @@ class CasCoreWebConfiguration {
             return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx,
                 authorityValidationRegExCaseSensitive);
         }
-
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "yamlHttpMessageConverter")
-        public HttpMessageConverter yamlHttpMessageConverter() {
-            return new CasYamlHttpMessageConverter();
-        }
-
+        
         @Bean
         @ConditionalOnMissingBean(name = "defaultMappedExceptionErrorViewResolver")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -163,7 +154,7 @@ class CasCoreWebConfiguration {
             val mappings = Map.<Class<? extends Throwable>, ModelAndView>of(
                 UnknownTenantException.class, WebUtils.toModelAndView(HttpStatus.NOT_FOUND, CasWebflowConstants.VIEW_ID_UNKNOWN_TENANT),
                 UnauthorizedServiceException.class, WebUtils.toModelAndView(HttpStatus.FORBIDDEN, CasWebflowConstants.VIEW_ID_SERVICE_ERROR),
-                NoSuchConversationException.class, WebUtils.toModelAndView(HttpStatus.UNPROCESSABLE_ENTITY, "error/%s".formatted(HttpStatus.UNPROCESSABLE_ENTITY.value())),
+                NoSuchConversationException.class, WebUtils.toModelAndView(HttpStatus.UNPROCESSABLE_CONTENT, "error/%s".formatted(HttpStatus.UNPROCESSABLE_ENTITY.value())),
                 RootCasException.class, WebUtils.toModelAndView(HttpStatus.BAD_REQUEST, CasWebflowConstants.VIEW_ID_SERVICE_ERROR)
             );
             return new MappedExceptionErrorViewResolver(applicationContext,

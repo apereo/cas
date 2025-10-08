@@ -178,8 +178,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                                                                  final Optional<Service> givenService,
                                                                  final Optional<AuthenticationHandler> handler) throws Throwable {
 
-        queryAttributes.computeIfAbsent("credentialId", __ -> CollectionUtils.wrapList(credential.getId()));
-        queryAttributes.computeIfAbsent("credentialClass", __ -> CollectionUtils.wrapList(credential.getClass().getSimpleName()));
+        queryAttributes.computeIfAbsent("credentialId", _ -> CollectionUtils.wrapList(credential.getId()));
+        queryAttributes.computeIfAbsent("credentialClass", _ -> CollectionUtils.wrapList(credential.getClass().getSimpleName()));
 
         val attributes = new LinkedHashMap<String, List<Object>>();
         currentPrincipal.ifPresent(p -> {

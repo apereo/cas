@@ -3,17 +3,14 @@ package org.apereo.cas.adaptors.x509.util;
 import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashSet;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,7 +27,7 @@ class X509CertificateCredentialJsonSerializerTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         val json = MAPPER.writeValueAsString(c);
         assertNotNull(json);

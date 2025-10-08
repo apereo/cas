@@ -6,7 +6,6 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.BrowserStorage;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,6 +17,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import tools.jackson.databind.ObjectMapper;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
@@ -44,7 +44,7 @@ class BrowserWebStorageSessionStoreTests {
     private CipherExecutor webflowCipherExecutor;
 
     @Test
-    void verifyOperation() throws Throwable {
+    void verifyOperation() {
         val store = new BrowserWebStorageSessionStore(webflowCipherExecutor, "ContextKey");
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());

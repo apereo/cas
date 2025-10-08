@@ -73,7 +73,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logging")
     testImplementation project(":core:cas-server-core-scripting")
 
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")

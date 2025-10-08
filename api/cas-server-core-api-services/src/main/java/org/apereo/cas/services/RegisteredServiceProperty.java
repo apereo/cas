@@ -19,7 +19,7 @@ import java.util.function.Predicate;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceProperty extends Serializable {
 
     /**

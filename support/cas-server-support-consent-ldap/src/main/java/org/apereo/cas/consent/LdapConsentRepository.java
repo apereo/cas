@@ -10,8 +10,6 @@ import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -20,7 +18,7 @@ import org.jooq.lambda.Unchecked;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.DisposableBean;
-
+import tools.jackson.databind.ObjectMapper;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.HashMap;

@@ -30,9 +30,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.thymeleaf.autoconfigure.ThymeleafProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -62,10 +62,9 @@ public class CasThemesAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ThemeSource themeSource(final CasConfigurationProperties casProperties) {
-        if (casProperties.getView().getThemeSourceType() == ViewProperties.ThemeSourceTypes.AGGREGATE) {
-            return new AggregateCasThemeSource(casProperties);
-        }
-        return new DefaultCasThemeSource(casProperties);
+        return casProperties.getView().getThemeSourceType() == ViewProperties.ThemeSourceTypes.AGGREGATE
+            ? new AggregateCasThemeSource(casProperties)
+            : new DefaultCasThemeSource(casProperties);
     }
     
     @ConditionalOnMissingBean(name = "casThemeResolver")

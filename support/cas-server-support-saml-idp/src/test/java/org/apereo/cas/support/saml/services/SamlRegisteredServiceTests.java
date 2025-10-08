@@ -14,7 +14,6 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.file.PathUtils;
@@ -26,6 +25,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.context.TestPropertySource;
+import tools.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -60,7 +60,7 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
         val jsonFolder = new File(FileUtils.getTempDirectory(), JSON_SERVICE_REGISTRY_FOLDER);
         if (jsonFolder.isDirectory()) {
             FunctionUtils.doAndHandle(
-                __ -> PathUtils.deleteDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
+                _ -> PathUtils.deleteDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
             jsonFolder.delete();
         }
         if (!jsonFolder.mkdir()) {

@@ -127,7 +127,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
             .findFirst()
             .ifPresent(Unchecked.consumer(auth -> {
                 if (auth.shouldGenerate(authenticationResult, service)) {
-                    FunctionUtils.doUnchecked(__ -> {
+                    FunctionUtils.doUnchecked(_ -> {
                         val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(requestContext);
                         val serviceTicketId = centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
                         WebUtils.putServiceTicketInRequestScope(requestContext, serviceTicketId);

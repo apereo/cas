@@ -107,7 +107,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
 
     @Override
     public void deleteAll() {
-        lock.tryLock(__ -> {
+        lock.tryLock(_ -> {
             configurationContext.getServicesCache().asMap().forEach((key, v) -> delete(v));
             configurationContext.getServicesCache().invalidateAll();
             val clientInfo = ClientInfoHolder.getClientInfo();
@@ -204,7 +204,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     @Override
     public RegisteredService findServiceBy(final long id) {
         val result = configurationContext.getServicesCache().get(id,
-            __ -> configurationContext.getServiceRegistry().findServiceById(id));
+            _ -> configurationContext.getServiceRegistry().findServiceById(id));
         return validateRegisteredService(result);
     }
 
@@ -217,7 +217,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
         LOGGER.trace("The service with id [{}] and type [{}] is not found in the cache; trying to find it from [{}]",
             id, clazz, configurationContext.getServiceRegistry().getName());
         service = configurationContext.getServicesCache().get(id,
-            __ -> configurationContext.getServiceRegistry().findServiceById(id, clazz));
+            _ -> configurationContext.getServiceRegistry().findServiceById(id, clazz));
         return (T) validateRegisteredService(service);
     }
 

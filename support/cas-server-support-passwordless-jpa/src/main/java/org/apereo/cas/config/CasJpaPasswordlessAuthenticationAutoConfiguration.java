@@ -149,7 +149,7 @@ public class CasJpaPasswordlessAuthenticationAutoConfiguration {
             initialDelayString = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.start-delay:PT30S}",
             fixedDelayString = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.repeat-interval:PT35S}")
         public void clean() {
-            lock.tryLock(__ -> repository.clean());
+            lock.tryLock(_ -> repository.clean());
         }
     }
 }

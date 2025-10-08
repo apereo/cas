@@ -41,7 +41,7 @@ public class CasTwilioMultifactorSendTokenAction extends AbstractMultifactorAuth
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val service = WebUtils.getService(requestContext);
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);

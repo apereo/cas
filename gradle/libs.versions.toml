@@ -82,7 +82,7 @@ h2 = "1.4.197"
 hazelcast = "5.5.0"
 hazelcastJClouds = "3.7.2"
 hazelcastZooKeeper = "4.0.2"
-hibernate = "6.6.31.Final"
+hibernate = "7.1.3.Final"
 hibernateValidator = "9.0.1.Final"
 highlightJs = "11.11.1"
 hikari = "7.0.2"
@@ -95,8 +95,10 @@ httpclient4 = "4.5.14"
 hypersistence = "3.11.0"
 influxDb = "1.4.0"
 ipGeoLocation = "2.0.1"
-jackson = "2.20.0"
-jacksonAnnotations = "2.20"
+jackson2 = "2.20.0"
+jackson = "3.0.0"
+jacksonJsr310 = "3.0.0-rc2"
+jacksonAnnotations = "3.0-rc5"
 jacksonAsl = "1.9.13"
 jacksonDataBind = "2.20.0"
 jacoco = "0.8.13"
@@ -122,12 +124,12 @@ jclouds = "2.7.0"
 jcloudsGoogleEngine = "1.9.3"
 jcpiAnnotations = "1.0-1"
 jdom = "2.0.6.1"
-jetty = "12.0.27"
+jetty = "12.1.2"
 jgit = "7.3.0.202506031305-r"
 jodaTime = "2.14.0"
 jool = "0.9.15"
 jose4j = "0.9.6"
-jpaPersistenceApi = "3.1.0"
+jpaPersistenceApi = "3.2.0"
 jquery = "3.7.1"
 jqueryUi = "1.14.1"
 jradius = "1.1.5"
@@ -160,8 +162,8 @@ material = "14.0.0"
 maxmind = "4.4.0"
 mdiFont = "7.4.47"
 mermaid = "11.6.0"
-micrometer = "1.15.4"
-micrometerOtel = "1.5.4"
+micrometer = "1.16.0-M3"
+micrometerOtel = "1.6.0-M3"
 mockito = "5.20.0"
 mockitoInline = "5.2.0"
 mongoDriver = "5.6.0"
@@ -202,35 +204,34 @@ slf4j = "2.0.17"
 snakeYaml = "2.5"
 socketJsClient = "1.5.1"
 splunkLogging = "1.11.8"
-spring = "6.2.11"
-springBoot = "3.5.6"
+spring = "7.0.0-M9"
+springBoot = "4.0.0-M3"
 springBootAdmin = "3.5.5"
 springCloudAzure = "6.0.0"
-springCloudBus = "4.3.0"
-springCloudCommons = "4.3.0"
-springCloudConfig = "4.3.0"
-springCloudConsul = "4.3.0"
-springCloudEureka = "4.3.0"
-springCloudKubernetesConfig = "3.3.0"
-springCloudVault = "4.3.0"
-springCloudZookeeper = "4.3.0"
-springDataCassandra = "4.5.4"
-springDataCommons = "3.5.4"
+springCloudBus = "5.0.0-M3"
+springCloudCommons = "5.0.0-M3"
+springCloudConfig = "5.0.0-M3"
+springCloudConsul = "5.0.0-M3"
+springCloudEureka = "5.0.0-M3"
+springCloudKubernetesConfig = "5.0.0-M3"
+springCloudVault = "5.0.0-M3"
+springCloudZookeeper = "5.0.0-M3"
+springDataCassandra = "5.0.0-M6"
+springDataCommons = "4.0.0-M6"
 springDataCosmosDb = "6.0.0"
-springDataMongoDb = "4.5.4"
-springDataRedis = "3.5.4"
+springDataMongoDb = "5.0.0-M6"
+springDataRedis = "4.0.0-M6"
 springDoc = "2.8.13"
-springIntegration = "6.5.2"
+springIntegration = "7.0.0-M3"
 springKafka = "4.0.0-M5"
-springRabbit = "3.2.7"
-springRetry = "2.0.12"
-springSecurity = "6.5.5"
+springRabbit = "4.0.0-M5"
+springSecurity = "7.0.0-M3"
 springSecurityRsa = "1.1.5"
-springSession = "3.5.2"
-springSessionMongo = "3.5.2"
+springSession = "4.0.0-M2"
+springSessionMongo = "4.0.0-M2"
 springShell = "3.4.1"
 springWebflow = "3.0.1"
-springWs = "4.1.1"
+springWs = "5.0.0-M1"
 spymemcached = "2.12.3"
 stompWebSocket = "2.3.4"
 streamBuffer = "2.1.0"
@@ -240,7 +241,7 @@ textEncoding = "0.7.0"
 textMagic = "2.0.43753"
 thymeleaf = "3.1.3.RELEASE"
 thymeleafDialect = "3.2.0"
-tomcat = "11.0.11"
+tomcat = "11.0.12"
 twilio = "11.0.0"
 unboundid = "7.0.3"
 undertow = "2.3.19.Final"
@@ -398,29 +399,29 @@ httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "h
 httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5", version.ref = "httpclient" }
 httpcore = { module = "org.apache.httpcomponents:httpcore", version.ref = "httpCore4" }
 httpcore5 = { module = "org.apache.httpcomponents.core5:httpcore5", version.ref = "httpCore" }
-hypersistence-utils-hibernate = { module = "io.hypersistence:hypersistence-utils-hibernate-63", version.ref = "hypersistence" }
+hypersistence-utils-hibernate = { module = "io.hypersistence:hypersistence-utils-hibernate-71", version.ref = "hypersistence" }
 ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "apacheIgnite" }
 ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "apacheIgnite" }
 ignite-log4j2 = { module = "org.apache.ignite:ignite-log4j2", version.ref = "apacheIgnite" }
 ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "apacheIgnite" }
 influxdb-client-java = { module = "com.influxdb:influxdb3-java", version.ref = "influxDb" }
 ipgeolocation = { module = "io.ipgeolocation:ipgeolocation", version.ref = "ipGeoLocation" }
+jackson-core-lib2 = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson2" }
+jackson-databind2 = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson2" }
 jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jacksonAnnotations" }
-jackson-core-lib = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-core-lib = { module = "tools.jackson.core:jackson-core", version.ref = "jackson" }
 jackson-core-asl = { module = "org.codehaus.jackson:jackson-core-asl", version.ref = "jacksonAsl" }
-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jacksonDataBind" }
-jackson-dataformat-cbor = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor", version.ref = "jackson" }
-jackson-dataformat-properties = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-properties", version.ref = "jackson" }
-jackson-dataformat-smile = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-smile", version.ref = "jackson" }
-jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
-jackson-dataformat-yaml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
-jackson-datatype-guava = { module = "com.fasterxml.jackson.datatype:jackson-datatype-guava", version.ref = "jackson" }
-jackson-datatype-jdk8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson" }
-jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+jackson-databind = { module = "tools.jackson.core:jackson-databind", version.ref = "jacksonDataBind" }
+jackson-dataformat-cbor = { module = "tools.jackson.dataformat:jackson-dataformat-cbor", version.ref = "jackson" }
+jackson-dataformat-properties = { module = "tools.jackson.dataformat:jackson-dataformat-properties", version.ref = "jackson" }
+jackson-dataformat-smile = { module = "tools.jackson.dataformat:jackson-dataformat-smile", version.ref = "jackson" }
+jackson-dataformat-xml = { module = "tools.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
+jackson-dataformat-yaml = { module = "tools.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
+jackson-datatype-guava = { module = "tools.jackson.datatype:jackson-datatype-guava", version.ref = "jackson" }
+jackson-datatype-jsr310 = { module = "tools.jackson.datatype:jackson-datatype-jsr310", version.ref = "jacksonJsr310" }
 jackson-mapper-asl = { module = "org.codehaus.jackson:jackson-mapper-asl", version.ref = "jacksonAsl" }
-jackson-module-blackbird = { module = "com.fasterxml.jackson.module:jackson-module-blackbird", version.ref = "jackson" }
-jackson-module-jakarta-xmlbind-annotations = { module = "com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations", version.ref = "jackson" }
-jackson-module-parameter-names = { module = "com.fasterxml.jackson.module:jackson-module-parameter-names", version.ref = "jackson" }
+jackson-module-blackbird = { module = "tools.jackson.module:jackson-module-blackbird", version.ref = "jackson" }
+jackson-module-jakarta-xmlbind-annotations = { module = "tools.jackson.module:jackson-module-jakarta-xmlbind-annotations", version.ref = "jackson" }
 jakarta-activation-api = { module = "jakarta.activation:jakarta.activation-api", version.ref = "jakartaActivation" }
 jakarta-annotation-api = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakartaAnnotationApi" }
 jakarta-el-api = { module = "jakarta.el:jakarta.el-api", version.ref = "jakartaEl" }
@@ -525,7 +526,6 @@ micrometer-registry-new-relic = { module = "io.micrometer:micrometer-registry-ne
 micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
 micrometer-registry-statsd = { module = "io.micrometer:micrometer-registry-statsd", version.ref = "micrometer" }
 micrometer-registry-otel = { module = "io.micrometer:micrometer-registry-otlp", version.ref = "micrometer" }
-micrometer-registry-wavefront = { module = "io.micrometer:micrometer-registry-wavefront", version.ref = "micrometer" }
 micrometer-tracing-bridge-brave = { module = "io.micrometer:micrometer-tracing-bridge-brave", version.ref = "micrometerOtel" }
 micrometer-tracing-bridge-otel = { module = "io.micrometer:micrometer-tracing-bridge-otel", version.ref = "micrometerOtel" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
@@ -610,6 +610,25 @@ spring-beans = { module = "org.springframework:spring-beans", version.ref = "spr
 spring-binding = { module = "org.springframework.webflow:spring-binding", version.ref = "springWebflow" }
 spring-boot-core = { module = "org.springframework.boot:spring-boot", version.ref = "springBoot" }
 spring-boot-actuator = { module = "org.springframework.boot:spring-boot-actuator", version.ref = "springBoot" }
+spring-boot-amqp = { module = "org.springframework.boot:spring-boot-amqp", version.ref = "springBoot" }
+spring-boot-health = { module = "org.springframework.boot:spring-boot-health", version.ref = "springBoot" }
+spring-boot-integration = { module = "org.springframework.boot:spring-boot-integration", version.ref = "springBoot" }
+spring-boot-jdbc = { module = "org.springframework.boot:spring-boot-jdbc", version.ref = "springBoot" }
+spring-boot-kafka = { module = "org.springframework.boot:spring-boot-kafka", version.ref = "springBoot" }
+spring-boot-mail = { module = "org.springframework.boot:spring-boot-mail", version.ref = "springBoot" }
+spring-boot-mustache = { module = "org.springframework.boot:spring-boot-mustache", version.ref = "springBoot" }
+spring-boot-restclient = { module = "org.springframework.boot:spring-boot-restclient", version.ref = "springBoot" }
+spring-boot-security = { module = "org.springframework.boot:spring-boot-security", version.ref = "springBoot" }
+spring-boot-sendgrid = { module = "org.springframework.boot:spring-boot-sendgrid", version.ref = "springBoot" }
+spring-boot-session-core = { module = "org.springframework.boot:spring-boot-session", version.ref = "springBoot" }
+spring-boot-session-hazelcast = { module = "org.springframework.boot:spring-boot-session-hazelcast", version.ref = "springBoot" }
+spring-boot-session-jdbc = { module = "org.springframework.boot:spring-boot-session-jdbc", version.ref = "springBoot" }
+spring-boot-session-mongodb = { module = "org.springframework.boot:spring-boot-session-data-mongodb", version.ref = "springBoot" }
+spring-boot-session-redis = { module = "org.springframework.boot:spring-boot-session-data-redis", version.ref = "springBoot" }
+spring-boot-sql = { module = "org.springframework.boot:spring-boot-sql", version.ref = "springBoot" }
+spring-boot-thymeleaf = { module = "org.springframework.boot:spring-boot-thymeleaf", version.ref = "springBoot" }
+spring-boot-tx = { module = "org.springframework.boot:spring-boot-tx", version.ref = "springBoot" }
+spring-boot-web-server = { module = "org.springframework.boot:spring-boot-web-server", version.ref = "springBoot" }
 spring-boot-admin-starter-client = { module = "de.codecentric:spring-boot-admin-starter-client", version.ref = "springBootAdmin" }
 spring-boot-admin-starter-server = { module = "de.codecentric:spring-boot-admin-starter-server", version.ref = "springBootAdmin" }
 spring-boot-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure", version.ref = "springBoot" }
@@ -619,11 +638,14 @@ spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools
 spring-boot-properties-migrator = { module = "org.springframework.boot:spring-boot-properties-migrator", version.ref = "springBoot" }
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "springBoot" }
 spring-boot-starter-amqp = { module = "org.springframework.boot:spring-boot-starter-amqp", version.ref = "springBoot" }
-spring-boot-starter-aop = { module = "org.springframework.boot:spring-boot-starter-aop", version.ref = "springBoot" }
+spring-boot-starter-aspectj = { module = "org.springframework.boot:spring-boot-starter-aspectj", version.ref = "springBoot" }
+spring-boot-starter-data-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc", version.ref = "springBoot" }
+spring-boot-starter-data-mongodb = { module = "org.springframework.boot:spring-boot-starter-data-mongodb", version.ref = "springBoot" }
 spring-boot-starter-jetty = { module = "org.springframework.boot:spring-boot-starter-jetty", version.ref = "springBoot" }
 spring-boot-starter-log4j2 = { module = "org.springframework.boot:spring-boot-starter-log4j2", version.ref = "springBoot" }
 spring-boot-starter-logging = { module = "org.springframework.boot:spring-boot-starter-logging", version.ref = "springBoot" }
 spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref = "springBoot" }
+spring-boot-starter-mongodb = { module = "org.springframework.boot:spring-boot-starter-mongodb", version.ref = "springBoot" }
 spring-boot-starter-mustache = { module = "org.springframework.boot:spring-boot-starter-mustache", version.ref = "springBoot" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
 spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "springBoot" }
@@ -676,14 +698,12 @@ spring-integration-jdbc = { module = "org.springframework.integration:spring-int
 spring-integration-jmx = { module = "org.springframework.integration:spring-integration-jmx", version.ref = "springIntegration" }
 spring-integration-redis = { module = "org.springframework.integration:spring-integration-redis", version.ref = "springIntegration" }
 spring-integration-zookeeper = { module = "org.springframework.integration:spring-integration-zookeeper", version.ref = "springIntegration" }
-spring-jcl = { module = "org.springframework:spring-jcl", version.ref = "spring" }
 spring-jdbc = { module = "org.springframework:spring-jdbc", version.ref = "spring" }
 spring-jms = { module = "org.springframework:spring-jms", version.ref = "spring" }
 spring-kafka = { module = "org.springframework.kafka:spring-kafka", version.ref = "springKafka" }
 spring-messaging = { module = "org.springframework:spring-messaging", version.ref = "spring" }
 spring-orm = { module = "org.springframework:spring-orm", version.ref = "spring" }
 spring-rabbit = { module = "org.springframework.amqp:spring-rabbit", version.ref = "springRabbit" }
-spring-retry = { module = "org.springframework.retry:spring-retry", version.ref = "springRetry" }
 spring-security-config = { module = "org.springframework.security:spring-security-config", version.ref = "springSecurity" }
 spring-security-core = { module = "org.springframework.security:spring-security-core", version.ref = "springSecurity" }
 spring-security-crypto = { module = "org.springframework.security:spring-security-crypto", version.ref = "springSecurity" }

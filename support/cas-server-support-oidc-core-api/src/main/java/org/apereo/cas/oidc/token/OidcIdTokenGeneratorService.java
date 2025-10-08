@@ -165,7 +165,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
         if (includeClaimsInIdToken(context) || includeClaimsInIdTokenForcefully(context)) {
             FunctionUtils.doIf(includeClaimsInIdTokenForcefully(context),
-                    __ -> LOGGER.warn("Individual claims requested by OpenID scopes are forced to be included in the ID token. "
+                    _ -> LOGGER.warn("Individual claims requested by OpenID scopes are forced to be included in the ID token. "
                         + "This is a violation of the OpenID Connect specification and a workaround via dedicated CAS configuration. "
                         + "Claims should be requested from the userinfo/profile endpoints in exchange for an access token."))
                 .accept(claims);
@@ -265,8 +265,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
         if (!mappedAcrValues.isEmpty()) {
             FunctionUtils.doIf(mappedAcrValues.size() == 1,
-                    __ -> claims.setStringClaim(OidcConstants.ACR, mappedAcrValues.getFirst()),
-                    __ -> claims.setStringListClaim(OidcConstants.ACR, mappedAcrValues))
+                    _ -> claims.setStringClaim(OidcConstants.ACR, mappedAcrValues.getFirst()),
+                    _ -> claims.setStringListClaim(OidcConstants.ACR, mappedAcrValues))
                 .accept(mappedAcrValues);
         }
     }

@@ -52,7 +52,7 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
 
     @Override
     public void writeCertificateAndKey(final Writer privateKeyWriter, final Writer certificateWriter) {
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             val keypair = generateKeyPair();
             val certificate = generateCertificate(keypair);
             try (val keyOut = new JcaPEMWriter(privateKeyWriter)) {

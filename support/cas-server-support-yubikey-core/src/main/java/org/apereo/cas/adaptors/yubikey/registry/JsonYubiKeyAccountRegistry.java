@@ -7,12 +7,12 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +41,7 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
         
         if (ResourceUtils.isFile(this.jsonResource) && watchResource) {
             this.watcherService = new FileWatcherService(jsonResource.getFile(),
-                __ -> setDevices(getDevicesFromJsonResource(jsonResource)));
+                _ -> setDevices(getDevicesFromJsonResource(jsonResource)));
             this.watcherService.start(getClass().getSimpleName());
         }
     }
@@ -111,7 +111,7 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
     }
 
     private void writeDevicesToFile() {
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             val file = jsonResource.getFile();
             MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
         });

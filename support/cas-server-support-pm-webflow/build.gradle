@@ -40,7 +40,7 @@ dependencies {
 
     implementation libraries.mail
 
-    testImplementation libraries.springboottomcat
+
 
     testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-themes")

@@ -67,7 +67,7 @@ public class GoogleCloudFirestoreServiceRegistry extends AbstractServiceRegistry
 
     @Override
     public void deleteAll() {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             val col = firestore.collection(collectionName);
             firestore.recursiveDelete(col).get();
         });

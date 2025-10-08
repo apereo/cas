@@ -97,7 +97,7 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                 configuration.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
 
                 FunctionUtils.doIf(saml.getCertificateExpirationDays() > 0,
-                    __ -> configuration.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays()))).accept(saml);
+                    _ -> configuration.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays()))).accept(saml);
                 FunctionUtils.doIfNotNull(saml.getResponseBindingType(), configuration::setResponseBindingType);
                 FunctionUtils.doIfNotNull(saml.getCertificateSignatureAlg(), configuration::setCertificateSignatureAlg);
 
@@ -105,9 +105,9 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                 configuration.setResponseDestinationAttributeMandatory(saml.isResponseDestinationMandatory());
                 configuration.setSupportedProtocols(saml.getSupportedProtocols());
 
-                FunctionUtils.doIfNotBlank(saml.getRequestInitiatorUrl(), __ -> configuration.setRequestInitiatorUrl(saml.getRequestInitiatorUrl()));
-                FunctionUtils.doIfNotBlank(saml.getSingleLogoutServiceUrl(), __ -> configuration.setSingleSignOutServiceUrl(saml.getSingleLogoutServiceUrl()));
-                FunctionUtils.doIfNotBlank(saml.getLogoutResponseBindingType(), __ -> configuration.setSpLogoutResponseBindingType(saml.getLogoutResponseBindingType()));
+                FunctionUtils.doIfNotBlank(saml.getRequestInitiatorUrl(), _ -> configuration.setRequestInitiatorUrl(saml.getRequestInitiatorUrl()));
+                FunctionUtils.doIfNotBlank(saml.getSingleLogoutServiceUrl(), _ -> configuration.setSingleSignOutServiceUrl(saml.getSingleLogoutServiceUrl()));
+                FunctionUtils.doIfNotBlank(saml.getLogoutResponseBindingType(), _ -> configuration.setSpLogoutResponseBindingType(saml.getLogoutResponseBindingType()));
 
                 configuration.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
                 configuration.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
@@ -134,8 +134,8 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                 configuration.setSslSocketFactory(casSslContext.getSslContext().getSocketFactory());
                 configuration.setHostnameVerifier(casSslContext.getHostnameVerifier());
 
-                FunctionUtils.doIfNotBlank(saml.getPrincipalIdAttribute(), __ -> configuration.setAttributeAsId(saml.getPrincipalIdAttribute()));
-                FunctionUtils.doIfNotBlank(saml.getNameIdAttribute(), __ -> configuration.setNameIdAttribute(saml.getNameIdAttribute()));
+                FunctionUtils.doIfNotBlank(saml.getPrincipalIdAttribute(), _ -> configuration.setAttributeAsId(saml.getPrincipalIdAttribute()));
+                FunctionUtils.doIfNotBlank(saml.getNameIdAttribute(), _ -> configuration.setNameIdAttribute(saml.getNameIdAttribute()));
 
                 configuration.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
                 configuration.setWantsResponsesSigned(saml.isWantsResponsesSigned());
@@ -150,7 +150,7 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                         FunctionUtils.doIf("SESSION".equalsIgnoreCase(saml.getMessageStoreFactory()),
                             ig -> configuration.setSamlMessageStoreFactory(new HttpSessionStoreFactory())).accept(saml);
                         if (saml.getMessageStoreFactory().contains(".")) {
-                            FunctionUtils.doAndHandle(__ -> {
+                            FunctionUtils.doAndHandle(_ -> {
                                 val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getMessageStoreFactory());
                                 val factory = (SAMLMessageStoreFactory) clazz.getDeclaredConstructor().newInstance();
                                 configuration.setSamlMessageStoreFactory(factory);
@@ -159,14 +159,14 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                     });
 
                 FunctionUtils.doIf(saml.getAssertionConsumerServiceIndex() >= 0,
-                    __ -> configuration.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex())).accept(saml);
+                    _ -> configuration.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex())).accept(saml);
 
                 if (!saml.getAuthnContextClassRef().isEmpty()) {
                     configuration.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase(Locale.ENGLISH));
                     configuration.setAuthnContextClassRefs(saml.getAuthnContextClassRef());
                 }
 
-                FunctionUtils.doIfNotBlank(saml.getNameIdPolicyFormat(), __ -> configuration.setNameIdPolicyFormat(saml.getNameIdPolicyFormat()));
+                FunctionUtils.doIfNotBlank(saml.getNameIdPolicyFormat(), _ -> configuration.setNameIdPolicyFormat(saml.getNameIdPolicyFormat()));
 
                 if (!saml.getRequestedAttributes().isEmpty()) {
                     saml.getRequestedAttributes().stream()
@@ -186,19 +186,19 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                 }
 
                 FunctionUtils.doIfNotBlank(saml.getSignatureCanonicalizationAlgorithm(),
-                    __ -> configuration.setSignatureCanonicalizationAlgorithm(saml.getSignatureCanonicalizationAlgorithm()));
+                    _ -> configuration.setSignatureCanonicalizationAlgorithm(saml.getSignatureCanonicalizationAlgorithm()));
                 configuration.setProviderName(saml.getProviderName());
                 configuration.setNameIdPolicyAllowCreate(saml.getNameIdPolicyAllowCreate().toBoolean());
 
                 if (StringUtils.isNotBlank(saml.getSaml2AttributeConverter())) {
                     if (scriptFactory.isPresent() && scriptFactory.get().isExternalScript(saml.getSaml2AttributeConverter())) {
-                        FunctionUtils.doAndHandle(__ -> {
+                        FunctionUtils.doAndHandle(_ -> {
                             val resource = ResourceUtils.getResourceFrom(saml.getSaml2AttributeConverter());
                             val script = scriptFactory.get().fromResource(resource);
                             configuration.setSamlAttributeConverter(new GroovyAttributeConverter(script));
                         });
                     } else {
-                        FunctionUtils.doAndHandle(__ -> {
+                        FunctionUtils.doAndHandle(_ -> {
                             val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getSaml2AttributeConverter());
                             val converter = (AttributeConverter) clazz.getDeclaredConstructor().newInstance();
                             configuration.setSamlAttributeConverter(converter);

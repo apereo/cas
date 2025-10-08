@@ -71,11 +71,11 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
             .filter(StringUtils::isNotBlank)
             .orElse(null);
         val func = FunctionUtils.doIf(StringUtils::isBlank,
-            __ -> {
+            _ -> {
                 val registeredService = servicesManager.findServiceBy(finalService);
                 return registeredService instanceof final CasModelRegisteredService casService ? casService.getResponseType() : null;
             },
-            __ -> methodRequest);
+            _ -> methodRequest);
         val method = func.apply(methodRequest);
         if (StringUtils.isBlank(method) || !EnumUtils.isValidEnum(Response.ResponseType.class, method.toUpperCase(Locale.ENGLISH))) {
             return Response.ResponseType.REDIRECT;

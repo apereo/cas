@@ -113,8 +113,8 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         val fb = pac4jProperties.getFacebook();
         if (fb.isEnabled() && StringUtils.isNotBlank(fb.getId()) && StringUtils.isNotBlank(fb.getSecret())) {
             val client = new FacebookClient(fb.getId(), fb.getSecret());
-            FunctionUtils.doIfNotBlank(fb.getScope(), __ -> client.setScope(fb.getScope()));
-            FunctionUtils.doIfNotBlank(fb.getFields(), __ -> client.setFields(fb.getFields()));
+            FunctionUtils.doIfNotBlank(fb.getScope(), _ -> client.setScope(fb.getScope()));
+            FunctionUtils.doIfNotBlank(fb.getFields(), _ -> client.setFields(fb.getFields()));
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             return List.of(new ConfigurableDelegatedClient(client, fb));
         }
@@ -126,7 +126,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         val ln = pac4jProperties.getLinkedIn();
         if (ln.isEnabled() && StringUtils.isNotBlank(ln.getId()) && StringUtils.isNotBlank(ln.getSecret())) {
             val client = new LinkedIn2Client(ln.getId(), ln.getSecret());
-            FunctionUtils.doIfNotBlank(ln.getScope(), __ -> client.setScope(ln.getScope()));
+            FunctionUtils.doIfNotBlank(ln.getScope(), _ -> client.setScope(ln.getScope()));
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             return List.of(new ConfigurableDelegatedClient(client, ln));
         }
@@ -138,7 +138,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         val github = pac4jProperties.getGithub();
         if (github.isEnabled() && StringUtils.isNotBlank(github.getId()) && StringUtils.isNotBlank(github.getSecret())) {
             val client = new GitHubClient(github.getId(), github.getSecret());
-            FunctionUtils.doIfNotBlank(github.getScope(), __ -> client.setScope(github.getScope()));
+            FunctionUtils.doIfNotBlank(github.getScope(), _ -> client.setScope(github.getScope()));
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             return List.of(new ConfigurableDelegatedClient(client, github));
         }
@@ -283,7 +283,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
             LOGGER.debug("Building OpenID Connect client for Apple...");
             val cfg = getOidcConfigurationForClient(clientProperties.getApple(), AppleOidcConfiguration.class);
 
-            FunctionUtils.doUnchecked(__ -> {
+            FunctionUtils.doUnchecked(_ -> {
                 val factory = new PrivateKeyFactoryBean();
                 factory.setAlgorithm("EC");
                 factory.setSingleton(false);
@@ -322,7 +322,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
 
         val cfg = FunctionUtils.doUnchecked(() -> clazz.getDeclaredConstructor().newInstance());
-        FunctionUtils.doIfNotBlank(oidc.getScope(), __ -> cfg.setScope(resolver.resolve(oidc.getScope())));
+        FunctionUtils.doIfNotBlank(oidc.getScope(), _ -> cfg.setScope(resolver.resolve(oidc.getScope())));
 
         cfg.setUseNonce(oidc.isUseNonce());
         cfg.setDisablePkce(oidc.isDisablePkce());
@@ -359,8 +359,8 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
             cfg.setTokenExpirationAdvance((int) Beans.newDuration(oidc.getTokenExpirationAdvance()).toSeconds());
         }
 
-        FunctionUtils.doIfNotBlank(oidc.getResponseMode(), __ -> cfg.setResponseMode(oidc.getResponseMode()));
-        FunctionUtils.doIfNotBlank(oidc.getResponseType(), __ -> cfg.setResponseType(oidc.getResponseType()));
+        FunctionUtils.doIfNotBlank(oidc.getResponseMode(), _ -> cfg.setResponseMode(oidc.getResponseMode()));
+        FunctionUtils.doIfNotBlank(oidc.getResponseType(), _ -> cfg.setResponseType(oidc.getResponseType()));
 
         if (!oidc.getMappedClaims().isEmpty()) {
             cfg.setMappedClaims(CollectionUtils.convertDirectedListToMap(oidc.getMappedClaims()));

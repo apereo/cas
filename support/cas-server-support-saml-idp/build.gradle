@@ -58,7 +58,7 @@ dependencies {
 
     testImplementation libraries.pac4joidcoauth
     testImplementation libraries.pac4jsaml
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

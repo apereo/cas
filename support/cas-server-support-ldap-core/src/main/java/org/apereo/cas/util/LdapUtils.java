@@ -362,7 +362,7 @@ public class LdapUtils {
         if (ResourceUtils.doesResourceExist(filterQuery)) {
             ApplicationContextProvider.getScriptResourceCacheManager()
                 .ifPresentOrElse(cacheMgr ->
-                        FunctionUtils.doUnchecked(__ -> {
+                        FunctionUtils.doUnchecked(_ -> {
                             val cacheKey = cacheMgr.computeKey(filterQuery);
                             var script = (ExecutableCompiledScript) null;
                             if (cacheMgr.containsKey(cacheKey)) {
@@ -643,7 +643,7 @@ public class LdapUtils {
             val initializer = new BindConnectionInitializer();
             val saslConfig = getSaslConfigFrom(properties);
 
-            FunctionUtils.doIfNotBlank(properties.getSaslAuthorizationId(), __ -> saslConfig.setAuthorizationId(properties.getSaslAuthorizationId()));
+            FunctionUtils.doIfNotBlank(properties.getSaslAuthorizationId(), _ -> saslConfig.setAuthorizationId(properties.getSaslAuthorizationId()));
             saslConfig.setMutualAuthentication(properties.getSaslMutualAuth());
             if (StringUtils.isNotBlank(properties.getSaslQualityOfProtection())) {
                 saslConfig.setQualityOfProtection(QualityOfProtection.valueOf(properties.getSaslQualityOfProtection()));
@@ -1085,7 +1085,7 @@ public class LdapUtils {
         }
 
         FunctionUtils.doIfNotBlank(props.getPrincipalDnAttributeName(),
-            __ -> handler.setPrincipalDnAttributeName(props.getPrincipalDnAttributeName()));
+            _ -> handler.setPrincipalDnAttributeName(props.getPrincipalDnAttributeName()));
         handler.setAllowMultiplePrincipalAttributeValues(props.isAllowMultiplePrincipalAttributeValues());
         handler.setAllowMissingPrincipalAttributeValue(props.isAllowMissingPrincipalAttributeValue());
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder(), applicationContext));

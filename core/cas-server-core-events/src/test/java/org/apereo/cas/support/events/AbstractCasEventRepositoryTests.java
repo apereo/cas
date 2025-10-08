@@ -33,9 +33,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class AbstractCasEventRepositoryTests {
 
     @Test
-    protected void verifyLoadOps() throws Throwable {
+    protected void verifyLoadOps() {
         val eventRepository = getEventRepository();
-        eventRepository.withTransaction(Unchecked.consumer(__ -> {
+        eventRepository.withTransaction(Unchecked.consumer(_ -> {
             eventRepository.removeAll();
 
             val dto1 = getCasEvent("example1");
@@ -57,9 +57,9 @@ public abstract class AbstractCasEventRepositoryTests {
     }
 
     @Test
-    protected void verifySave() throws Throwable {
+    protected void verifySave() {
         val eventRepository = getEventRepository();
-        eventRepository.withTransaction(Unchecked.consumer(__ -> {
+        eventRepository.withTransaction(Unchecked.consumer(_ -> {
             eventRepository.removeAll();
 
             val dto1 = getCasEvent("casuser");

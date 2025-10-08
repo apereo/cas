@@ -5,14 +5,14 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +38,7 @@ public class AssuranceVerificationJsonSource implements AssuranceVerificationSou
         if (ResourceUtils.doesResourceExist(resource)) {
             loadFromInputStream(resource);
             if (ResourceUtils.isFile(resource)) {
-                this.watcherService = new FileWatcherService(resource.getFile(), __ -> loadFromInputStream(resource));
+                this.watcherService = new FileWatcherService(resource.getFile(), _ -> loadFromInputStream(resource));
                 this.watcherService.start(getClass().getSimpleName());
             }
         }
@@ -69,7 +69,7 @@ public class AssuranceVerificationJsonSource implements AssuranceVerificationSou
     }
 
     private void loadFromInputStream(final Resource resource) {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             try (val is = resource.getInputStream()) {
                 val json = new String(is.readAllBytes(), StandardCharsets.UTF_8);
                 val results = MAPPER.readValue(JsonValue.readHjson(json).toString(), new TypeReference<List<Verification>>() {

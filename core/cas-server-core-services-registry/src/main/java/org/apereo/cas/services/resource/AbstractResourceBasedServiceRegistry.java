@@ -146,7 +146,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         super(applicationContext, serviceRegistryListeners);
         LOGGER.trace("Provided service registry directory is specified at [{}]", configDirectory);
 
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             val servicesDirectory = prepareRegisteredServicesDirectory(configDirectory);
             val file = servicesDirectory.getFile();
             LOGGER.trace("Prepared service registry directory is specified at [{}]", file);

@@ -6,11 +6,9 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.InitializingBean;
-
 import java.util.Optional;
 
 /**
@@ -35,7 +33,7 @@ public class RedisSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator 
 
     @Override
     public void afterPropertiesSet() {
-        FunctionUtils.doUnchecked(__ -> generate(Optional.empty()));
+        FunctionUtils.doUnchecked(_ -> generate(Optional.empty()));
     }
 
     @Override

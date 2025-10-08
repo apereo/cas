@@ -10,16 +10,9 @@ import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
-import org.springframework.retry.RetryCallback;
-import org.springframework.retry.RetryContext;
-import org.springframework.retry.RetryListener;
-import org.springframework.retry.backoff.FixedBackOffPolicy;
-import org.springframework.retry.backoff.NoBackOffPolicy;
-import org.springframework.retry.policy.NeverRetryPolicy;
-import org.springframework.retry.policy.SimpleRetryPolicy;
-import org.springframework.retry.support.RetryTemplate;
-import java.util.HashMap;
-import java.util.List;
+import org.springframework.core.retry.RetryPolicy;
+import org.springframework.core.retry.RetryTemplate;
+import org.springframework.core.retry.Retryable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -89,7 +82,7 @@ public class FunctionUtils {
      * @return the consumer
      */
     public static <T> Consumer<T> doIf(final boolean condition, final Consumer<T> trueFunction) {
-        return doIf(condition, trueFunction, __ -> {
+        return doIf(condition, trueFunction, _ -> {
         });
     }
 
@@ -445,9 +438,10 @@ public class FunctionUtils {
      * @param trueFunction the true function
      */
     public static <T> void doWhen(final boolean condition, final Consumer<T> trueFunction) {
-        doIf(condition, trueFunction, __ -> {}).accept(null);
+        doIf(condition, trueFunction, _ -> {
+        }).accept(null);
     }
-    
+
     /**
      * Do without throws and return status.
      *
@@ -494,73 +488,26 @@ public class FunctionUtils {
      * @return the t
      * @throws Exception the exception
      */
-    public static <T> T doAndRetry(final RetryCallback<T, Exception> callback) throws Exception {
-        return doAndRetry(List.of(), callback);
-    }
-
-    /**
-     * Do and retry with mix attempts.
-     *
-     * @param <T>             the type parameter
-     * @param callback        the callback
-     * @param maximumAttempts the maximum attempts
-     * @return the t
-     * @throws Exception the exception
-     */
-    public static <T> T doAndRetry(final RetryCallback<T, Exception> callback, final int maximumAttempts) throws Exception {
-        return doAndRetry(List.of(), callback, maximumAttempts);
-    }
-
-    /**
-     * Do and retry.
-     *
-     * @param <T>      the type parameter
-     * @param clazzes  the classified clazzes
-     * @param callback the callback
-     * @return the t
-     * @throws Exception the exception
-     */
-    public static <T> T doAndRetry(final List<Class<? extends Throwable>> clazzes,
-                                   final RetryCallback<T, Exception> callback) throws Exception {
-        return doAndRetry(clazzes, callback, SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS);
+    public static <T> T doAndRetry(final Retryable<T> callback) throws Exception {
+        return doAndRetry(callback, RetryPolicy.Builder.DEFAULT_MAX_ATTEMPTS);
     }
 
     /**
      * Do and retry with a max number of attempts.
      *
      * @param <T>             the type parameter
-     * @param clazzes         the clazzes
      * @param callback        the callback
      * @param maximumAttempts the maximum attempts
      * @return the t
      * @throws Exception the exception
      */
-    public static <T> T doAndRetry(final List<Class<? extends Throwable>> clazzes,
-                                   final RetryCallback<T, Exception> callback,
-                                   final int maximumAttempts) throws Exception {
+    public static <T> T doAndRetry(final Retryable<T> callback,
+                                   final long maximumAttempts) throws Exception {
         val retryTemplate = new RetryTemplate();
-
-        val classified = new HashMap<Class<? extends Throwable>, Boolean>();
-        classified.put(Error.class, Boolean.TRUE);
-        classified.put(Throwable.class, Boolean.TRUE);
-        clazzes.forEach(clz -> classified.put(clz, Boolean.TRUE));
-
-        val retryPolicy = maximumAttempts > 0
-            ? new SimpleRetryPolicy(maximumAttempts, classified, true)
-            : new NeverRetryPolicy();
-        retryTemplate.setBackOffPolicy(maximumAttempts > 0
-            ? new FixedBackOffPolicy()
-            : new NoBackOffPolicy());
-        
-        retryTemplate.setRetryPolicy(retryPolicy);
-        retryTemplate.setThrowLastExceptionOnExhausted(true);
-        retryTemplate.registerListener(new RetryListener() {
-            @Override
-            public boolean open(final RetryContext context, final RetryCallback __) {
-                context.setAttribute("retry.maxAttempts", retryPolicy.getMaxAttempts());
-                return RetryListener.super.open(context, __);
-            }
-        });
+        val defaultRetryPolicy = RetryPolicy.builder()
+            .maxAttempts(Math.max(maximumAttempts, 0))
+            .build();
+        retryTemplate.setRetryPolicy(defaultRetryPolicy);
         return retryTemplate.execute(callback);
     }
 

@@ -39,7 +39,7 @@ dependencies {
     compileOnly project(":support:cas-server-support-jpa-util")
 
     testImplementation libraries.pac4jcas
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services")

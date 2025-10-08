@@ -54,6 +54,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.RepeatedTest;
@@ -68,6 +69,7 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.retry.Retryable;
 import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.Serial;
@@ -306,15 +308,18 @@ public abstract class BaseTicketRegistryTests {
     @RepeatedTest(2)
     void verifyGetExistingTicketWithImproperClass() throws Throwable {
         val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
-        FunctionUtils.doAndRetry(callback -> {
-            val added = ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
-                CoreAuthenticationTestUtils.getAuthentication(),
-                NeverExpiresExpirationPolicy.INSTANCE));
+        FunctionUtils.doAndRetry(new Retryable<>() {
+            @Override
+            public @Nullable Object execute() throws Throwable {
+                val added = ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+                    CoreAuthenticationTestUtils.getAuthentication(),
+                    NeverExpiresExpirationPolicy.INSTANCE));
 
-            assertThrows(ClassCastException.class,
-                () -> ticketRegistry.getTicket(added.getId(), ServiceTicket.class),
-                () -> "Should throw ClassCastException. useEncryption[" + useEncryption + ']');
-            return null;
+                assertThrows(ClassCastException.class,
+                    () -> ticketRegistry.getTicket(added.getId(), ServiceTicket.class),
+                    () -> "Should throw ClassCastException. useEncryption[" + useEncryption + ']');
+                return null;
+            }
         });
     }
 
@@ -512,35 +517,38 @@ public abstract class BaseTicketRegistryTests {
         assumeTrue(canTicketRegistryIterate());
         val ticketGrantingTickets = new ArrayList<Ticket>();
         val serviceTickets = new ArrayList<Ticket>();
-        FunctionUtils.doAndRetry(callback -> {
-            ticketGrantingTickets.clear();
-            serviceTickets.clear();
-            for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
-                val auth = CoreAuthenticationTestUtils.getAuthentication();
-                val service = RegisteredServiceTestUtils.getService();
-                val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + i,
-                    auth, NeverExpiresExpirationPolicy.INSTANCE);
-                val st = ticketGrantingTicket.grantServiceTicket("ST-" + i,
-                    service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
-                ticketGrantingTickets.add(ticketGrantingTicket);
-                serviceTickets.add(st);
-                val addedTicket = ticketRegistry.addTicket(ticketGrantingTicket);
-                await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedTicket.getId())));
-                val addedServiceTicket = ticketRegistry.addTicket(st);
-                await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedServiceTicket.getId())));
-            }
-            await().untilAsserted(() -> {
-                val sessionCount = ticketRegistry.sessionCount();
-                assertEquals(ticketGrantingTickets.size(), sessionCount,
-                    () -> "The sessionCount " + sessionCount + " is not the same as the collection " + ticketGrantingTickets.size());
-            });
+        FunctionUtils.doAndRetry(new Retryable<>() {
+            @Override
+            public @Nullable Object execute() throws Throwable {
+                ticketGrantingTickets.clear();
+                serviceTickets.clear();
+                for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
+                    val auth = CoreAuthenticationTestUtils.getAuthentication();
+                    val service = RegisteredServiceTestUtils.getService();
+                    val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + i,
+                        auth, NeverExpiresExpirationPolicy.INSTANCE);
+                    val st = ticketGrantingTicket.grantServiceTicket("ST-" + i,
+                        service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+                    ticketGrantingTickets.add(ticketGrantingTicket);
+                    serviceTickets.add(st);
+                    val addedTicket = ticketRegistry.addTicket(ticketGrantingTicket);
+                    await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedTicket.getId())));
+                    val addedServiceTicket = ticketRegistry.addTicket(st);
+                    await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedServiceTicket.getId())));
+                }
+                await().untilAsserted(() -> {
+                    val sessionCount = ticketRegistry.sessionCount();
+                    assertEquals(ticketGrantingTickets.size(), sessionCount,
+                        () -> "The sessionCount " + sessionCount + " is not the same as the collection " + ticketGrantingTickets.size());
+                });
 
-            await().untilAsserted(() -> {
-                val ticketCount = ticketRegistry.serviceTicketCount();
-                assertEquals(serviceTickets.size(), ticketCount,
-                    () -> "The serviceTicketCount " + ticketCount + " is not the same as the collection " + serviceTickets.size());
-            });
-            return null;
+                await().untilAsserted(() -> {
+                    val ticketCount = ticketRegistry.serviceTicketCount();
+                    assertEquals(serviceTickets.size(), ticketCount,
+                        () -> "The serviceTicketCount " + ticketCount + " is not the same as the collection " + serviceTickets.size());
+                });
+                return null;
+            }
         });
     }
 
@@ -664,31 +672,34 @@ public abstract class BaseTicketRegistryTests {
     @RepeatedTest(2)
     void verifyDeleteTicketsWithMultiplePGTs() throws Throwable {
         assumeTrue(canTicketRegistryDelete());
-        FunctionUtils.doAndRetry(callback -> {
-            val authentication = CoreAuthenticationTestUtils.getAuthentication();
-            val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
-            val serviceTicketId = TestTicketIdentifiers.generate().serviceTicketId();
+        FunctionUtils.doAndRetry(new Retryable<>() {
+            @Override
+            public @Nullable Object execute() throws Throwable {
+                val authentication = CoreAuthenticationTestUtils.getAuthentication();
+                val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
+                val serviceTicketId = TestTicketIdentifiers.generate().serviceTicketId();
 
-            ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId, authentication, NeverExpiresExpirationPolicy.INSTANCE));
-            val tgt = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-            assertNotNull(tgt, "Ticket-granting ticket must not be null");
-            val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
-            IntStream.range(1, 5).forEach(Unchecked.intConsumer(i -> {
-                val st = (ProxyGrantingTicketIssuerTicket) tgt.grantServiceTicket(serviceTicketId + '-' + i, service,
-                    NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
-                ticketRegistry.addTicket(st);
-                ticketRegistry.updateTicket(tgt);
+                ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId, authentication, NeverExpiresExpirationPolicy.INSTANCE));
+                val tgt = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+                assertNotNull(tgt, "Ticket-granting ticket must not be null");
+                val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
+                IntStream.range(1, 5).forEach(Unchecked.intConsumer(i -> {
+                    val st = (ProxyGrantingTicketIssuerTicket) tgt.grantServiceTicket(serviceTicketId + '-' + i, service,
+                        NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+                    ticketRegistry.addTicket(st);
+                    ticketRegistry.updateTicket(tgt);
 
-                val proxyGrantingTicketId = TestTicketIdentifiers.generate().proxyGrantingTicketId();
-                val pgt = st.grantProxyGrantingTicket(proxyGrantingTicketId + '-' + i, authentication, NeverExpiresExpirationPolicy.INSTANCE);
-                ticketRegistry.addTicket(pgt);
-                ticketRegistry.updateTicket(tgt);
-                ticketRegistry.updateTicket(st);
-            }));
+                    val proxyGrantingTicketId = TestTicketIdentifiers.generate().proxyGrantingTicketId();
+                    val pgt = st.grantProxyGrantingTicket(proxyGrantingTicketId + '-' + i, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+                    ticketRegistry.addTicket(pgt);
+                    ticketRegistry.updateTicket(tgt);
+                    ticketRegistry.updateTicket(st);
+                }));
 
-            val count = ticketRegistry.deleteTicket(ticketGrantingTicketId);
-            assertEquals(9, count);
-            return null;
+                val count = ticketRegistry.deleteTicket(ticketGrantingTicketId);
+                assertEquals(9, count);
+                return null;
+            }
         });
     }
 

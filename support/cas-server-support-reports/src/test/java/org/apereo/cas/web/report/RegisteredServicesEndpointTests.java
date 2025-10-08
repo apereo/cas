@@ -15,7 +15,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import static org.apereo.cas.web.CasYamlHttpMessageConverter.MEDIA_TYPE_CAS_YAML;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -108,7 +107,7 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
         val content = new RegisteredServiceYamlSerializer(applicationContext)
             .toString(RegisteredServiceTestUtils.getRegisteredService());
         mockMvc.perform(post("/actuator/registeredServices/import")
-                .contentType(MEDIA_TYPE_CAS_YAML)
+                .contentType(MediaType.APPLICATION_YAML)
                 .content(content))
             .andExpect(status().isCreated());
     }

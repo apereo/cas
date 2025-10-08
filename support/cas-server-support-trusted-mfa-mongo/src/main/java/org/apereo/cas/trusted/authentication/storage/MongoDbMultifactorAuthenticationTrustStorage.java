@@ -7,7 +7,6 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.domain.Sort;
@@ -15,7 +14,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -112,7 +110,7 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
 
     @Override
     protected MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
-        FunctionUtils.doIf(record.getId() < 0, __ -> record.setId(System.nanoTime())).accept(record);
+        FunctionUtils.doIf(record.getId() < 0, _ -> record.setId(System.nanoTime())).accept(record);
         return mongoTemplate.save(record, getTrustedDevicesMultifactorProperties().getMongo().getCollection());
     }
 }

@@ -35,7 +35,7 @@ public abstract class BaseResourceBasedServiceRegistryTests extends AbstractServ
     }
 
     @Override
-    protected ServiceRegistry getNewServiceRegistry() throws Exception {
+    protected ServiceRegistry getNewServiceRegistry() {
         return newServiceRegistry;
     }
 

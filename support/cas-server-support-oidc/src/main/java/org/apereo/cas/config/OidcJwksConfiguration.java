@@ -18,7 +18,6 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
-
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -37,7 +36,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.scheduling.annotation.Scheduled;
-
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -107,7 +105,7 @@ class OidcJwksConfiguration {
                 fixedDelayString = "${cas.authn.oidc.jwks.rotation.schedule.repeat-interval:P90D}")
             @Override
             public void run() {
-                FunctionUtils.doUnchecked(__ -> {
+                FunctionUtils.doUnchecked(_ -> {
                     LOGGER.info("Starting to rotate keys in the OIDC keystore...");
                     rotationService.rotate();
                 });
@@ -126,7 +124,7 @@ class OidcJwksConfiguration {
                 fixedDelayString = "${cas.authn.oidc.jwks.revocation.schedule.repeat-interval:P14D}")
             @Override
             public void run() {
-                FunctionUtils.doUnchecked(__ -> {
+                FunctionUtils.doUnchecked(_ -> {
                     LOGGER.info("Starting to revoke keys in the OIDC keystore...");
                     rotationService.revoke();
                 });

@@ -149,7 +149,7 @@ class SyncopePersonAttributeDaoTests {
         void verifySyncopeDown() throws Throwable {
             val result = MAPPER.createObjectNode();
             result.putArray("result").add(user());
-            try (val __ = startMockSever(result, HttpStatus.INTERNAL_SERVER_ERROR, 8095)) {
+            try (val _ = startMockSever(result, HttpStatus.INTERNAL_SERVER_ERROR, 8095)) {
                 val first = syncopePersonAttributeDaos.first();
                 val results = first.getPeople(Map.of("username", List.of("casuser")), PersonAttributeDaoFilter.alwaysChoose());
                 assertTrue(results.iterator().next().getAttributes().isEmpty());

@@ -748,7 +748,6 @@ layout: null
             *   [InfluxDb](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage-InfluxDb.html) 
             *   [NewRelic](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage-NewRelic.html) 
             *   [StatsD](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage-StatsD.html) 
-            *   [Wavefront](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage-Wavefront.html) 
             *   [AppOptics](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage-AppOptics.html) 
             *   [Humio](/cas/{{ version }}/monitoring/Configuring-Metrics-Storage-Humio.html) 
         *   [Custom](/cas/{{ version }}/monitoring/Configuring-Metrics-Custom.html)

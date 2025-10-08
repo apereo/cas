@@ -156,9 +156,9 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         requestedClaims.forEach(authnBuilder::addAttribute);
 
         FunctionUtils.doIfNotNull(tokenRequestContext.getDpop(),
-            __ -> authnBuilder.addAttribute(OAuth20Constants.DPOP, tokenRequestContext.getDpop()));
+            _ -> authnBuilder.addAttribute(OAuth20Constants.DPOP, tokenRequestContext.getDpop()));
         FunctionUtils.doIfNotNull(tokenRequestContext.getDpopConfirmation(),
-            __ -> authnBuilder.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, tokenRequestContext.getDpopConfirmation()));
+            _ -> authnBuilder.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, tokenRequestContext.getDpopConfirmation()));
         return authnBuilder;
     }
 

@@ -146,7 +146,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                                                       final String attributeName,
                                                       final Map<String, List<Object>> resolvedAttributes,
                                                       final Map<String, List<Object>> attributesToRelease) {
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
             script.setBinding(args);
             val result = script.execute(args.values().toArray(), Object.class);

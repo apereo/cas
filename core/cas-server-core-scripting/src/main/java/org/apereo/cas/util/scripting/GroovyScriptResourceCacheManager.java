@@ -65,7 +65,7 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
 
     @Override
     public void close() {
-        lock.tryLock(__ -> cache.invalidateAll());
+        lock.tryLock(_ -> cache.invalidateAll());
     }
 
     @Override

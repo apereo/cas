@@ -14,7 +14,6 @@ import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessag
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -37,10 +36,11 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaAdminOperations;
 import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.kafka.support.serializer.JsonSerializer;
+import org.springframework.kafka.support.serializer.JacksonJsonDeserializer;
+import org.springframework.kafka.support.serializer.JacksonJsonSerializer;
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
 import org.springframework.messaging.handler.annotation.support.MessageHandlerMethodFactory;
+import tools.jackson.databind.json.JsonMapper;
 import java.util.Map;
 import java.util.UUID;
 
@@ -57,8 +57,8 @@ import java.util.UUID;
 @Slf4j
 @EnableKafka
 public class CasKafkaTicketRegistryAutoConfiguration {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).minimal(true).build().toObjectMapper();
+    private static final JsonMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).minimal(true).build().toJsonMapper();
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -68,7 +68,7 @@ public class CasKafkaTicketRegistryAutoConfiguration {
         final CasConfigurationProperties casProperties) {
         val kafka = casProperties.getTicket().getRegistry().getKafka();
         val factory = new KafkaObjectFactory<String, BaseMessageQueueCommand>(kafka.getBootstrapAddress());
-        return factory.getKafkaTemplate(new StringSerializer(), new JsonSerializer<>(MAPPER));
+        return factory.getKafkaTemplate(new StringSerializer(), new JacksonJsonSerializer<>(MAPPER));
     }
 
     @Bean
@@ -120,7 +120,7 @@ public class CasKafkaTicketRegistryAutoConfiguration {
         val factory = new DefaultKafkaConsumerFactory<String, BaseMessageQueueCommand>(config);
         factory.setKeyDeserializer(new StringDeserializer());
 
-        val valueDeserializer = new JsonDeserializer<BaseMessageQueueCommand>(MAPPER);
+        val valueDeserializer = new JacksonJsonDeserializer<BaseMessageQueueCommand>(MAPPER);
         valueDeserializer.addTrustedPackages(Ticket.class.getPackageName());
         valueDeserializer.addTrustedPackages(BaseMessageQueueCommand.class.getPackageName());
         valueDeserializer.addTrustedPackages(CentralAuthenticationService.NAMESPACE);

@@ -53,7 +53,7 @@ dependencies {
     testImplementation libraries.mongo
     testImplementation libraries.hazelcast
     testImplementation libraries.pac4jcas
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-services")

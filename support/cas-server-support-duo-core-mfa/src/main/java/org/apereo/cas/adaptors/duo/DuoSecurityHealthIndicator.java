@@ -5,8 +5,8 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.boot.actuate.health.AbstractHealthIndicator;
-import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.health.contributor.AbstractHealthIndicator;
+import org.springframework.boot.health.contributor.Health;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Objects;

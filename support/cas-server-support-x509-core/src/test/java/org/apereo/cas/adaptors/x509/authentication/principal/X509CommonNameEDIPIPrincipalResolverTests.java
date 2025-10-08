@@ -63,7 +63,7 @@ class X509CommonNameEDIPIPrincipalResolverTests {
         MockitoAnnotations.openMocks(this).close();
     }
 
-    private static X509Certificate getCertificateFrom(final String certPath) throws Exception {
+    private static X509Certificate getCertificateFrom(final String certPath) {
         val certLocation = X509CommonNameEDIPIPrincipalResolverTests.class.getResource(certPath).getPath();
         return FunctionUtils.doUnchecked(() -> {
             try (val in = new FileInputStream(certLocation)) {

@@ -30,7 +30,7 @@ public class DefaultMultifactorAuthenticationDeviceProviderAction extends BaseCa
         val principal = authentication.getPrincipal();
         val accounts = multifactorAuthenticationDeviceManager.findRegisteredDevices(principal);
         val currentAccounts = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationRegisteredDevices(requestContext);
-        FunctionUtils.doIfNotNull(currentAccounts, __ -> accounts.addAll(currentAccounts));
+        FunctionUtils.doIfNotNull(currentAccounts, _ -> accounts.addAll(currentAccounts));
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationRegisteredDevices(requestContext, new HashSet<>(accounts));
         return null;
     }

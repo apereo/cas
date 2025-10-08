@@ -38,7 +38,7 @@ public class OidcIntrospectionResponseGenerator extends OAuth20DefaultIntrospect
             val registeredService = oidcConfigurationContext.getObject().getServicesManager().findServiceBy(service, OidcRegisteredService.class);
             response.setIss(oidcConfigurationContext.getObject().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
         }
-        FunctionUtils.doIf(response.isActive(), __ -> response.setScope(String.join(" ", accessToken.getScopes()))).accept(response);
+        FunctionUtils.doIf(response.isActive(), _ -> response.setScope(String.join(" ", accessToken.getScopes()))).accept(response);
         CollectionUtils.firstElement(accessToken.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION))
             .ifPresent(dpop -> response.getConfirmation().setJkt(dpop.toString()));
         return response;
