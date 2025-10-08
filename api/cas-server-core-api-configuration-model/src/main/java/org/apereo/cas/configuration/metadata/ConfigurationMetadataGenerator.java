@@ -8,11 +8,6 @@ import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
@@ -29,6 +24,12 @@ import org.springframework.boot.configurationmetadata.Deprecation;
 import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.util.ReflectionUtils;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -63,12 +64,17 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class ConfigurationMetadataGenerator {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-        .setDefaultPrettyPrinter(new DefaultPrettyPrinter())
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults()
+        .changeDefaultPropertyInclusion(handler -> {
+            handler.withValueInclusion(JsonInclude.Include.NON_NULL);
+            handler.withContentInclusion(JsonInclude.Include.NON_NULL);
+            return handler;
+        })
+        .defaultPrettyPrinter(new DefaultPrettyPrinter())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        .findAndRegisterModules();
+        .findAndAddModules()
+        .build();
 
     private static final Pattern PATTERN_GENERICS = Pattern.compile(".+\\<(.+)\\>");
 
@@ -99,7 +105,7 @@ public class ConfigurationMetadataGenerator {
      * @param args the args
      * @throws Exception the exception
      */
-    public static void main(final String[] args) throws Exception {
+    static void main(final String[] args) throws Exception {
         if (args.length != 2) {
             throw new IllegalArgumentException("Usage: ConfigurationMetadataGenerator <input-file> <output-file>");
         }

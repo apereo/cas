@@ -6,20 +6,16 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.factory.BaseTicketFactoryTests;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
+import tools.jackson.databind.ObjectMapper;
 import java.io.File;
-import java.io.IOException;
 import java.time.Clock;
 import java.time.ZoneOffset;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -91,7 +87,7 @@ class ThrottledUseAndTimeoutExpirationPolicyTests extends BaseTicketFactoryTests
     }
 
     @Test
-    void verifySerializeATimeoutExpirationPolicyToJson() throws IOException {
+    void verifySerializeATimeoutExpirationPolicyToJson() {
         MAPPER.writeValue(JSON_FILE, expirationPolicy);
         val policyRead = MAPPER.readValue(JSON_FILE, ThrottledUseAndTimeoutExpirationPolicy.class);
         assertEquals(expirationPolicy, policyRead);

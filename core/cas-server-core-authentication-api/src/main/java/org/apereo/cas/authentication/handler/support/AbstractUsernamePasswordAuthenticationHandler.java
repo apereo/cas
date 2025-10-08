@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +18,8 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-
 import java.util.ArrayList;
 
 /**
@@ -77,7 +74,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val originalUserPass = (UsernamePasswordCredential) credential;
         val userPass = new UsernamePasswordCredential();
-        FunctionUtils.doUnchecked(__ -> BeanUtils.copyProperties(userPass, originalUserPass));
+        FunctionUtils.doUnchecked(_ -> BeanUtils.copyProperties(userPass, originalUserPass));
         transformUsername(userPass);
         transformPassword(userPass);
         LOGGER.debug("Attempting authentication internally for transformed credential [{}]", userPass);

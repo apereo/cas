@@ -173,7 +173,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        FunctionUtils.doIfNotNull(ticket, __ -> {
+        FunctionUtils.doIfNotNull(ticket, _ -> {
             LOGGER.debug("Updating ticket [{}]", ticket);
             addOrUpdateTicket(ticket);
             messagePublisher.ifAvailable(p -> p.update(ticket));

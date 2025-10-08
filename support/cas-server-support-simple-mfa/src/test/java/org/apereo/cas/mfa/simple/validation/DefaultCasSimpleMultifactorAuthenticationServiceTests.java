@@ -50,7 +50,7 @@ class DefaultCasSimpleMultifactorAuthenticationServiceTests {
     }
 
     @Test
-    void verifyGenerateTicketsUnderLoad() throws Throwable {
+    void verifyGenerateTicketsUnderLoad() {
         val testHasFailed = new AtomicBoolean();
         val threads = new ArrayList<Thread>();
         IntStream.range(0, 500).forEach(i -> {

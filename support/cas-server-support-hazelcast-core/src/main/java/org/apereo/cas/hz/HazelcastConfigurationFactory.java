@@ -64,10 +64,10 @@ public class HazelcastConfigurationFactory {
     public static void setConfigMap(final NamedConfig namedConfig, final Config config) {
         if (namedConfig instanceof final MapConfig mappedConfig) {
             FunctionUtils.doIf(!config.getMapConfigs().containsKey(namedConfig.getName()),
-                __ -> config.addMapConfig(mappedConfig)).accept(mappedConfig);
+                _ -> config.addMapConfig(mappedConfig)).accept(mappedConfig);
         } else if (namedConfig instanceof final ReplicatedMapConfig replicatedConfig) {
             FunctionUtils.doIf(!config.getReliableTopicConfigs().containsKey(namedConfig.getName()),
-                __ -> config.addReplicatedMapConfig(replicatedConfig)).accept(replicatedConfig);
+                _ -> config.addReplicatedMapConfig(replicatedConfig)).accept(replicatedConfig);
         }
     }
 

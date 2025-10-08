@@ -8,18 +8,19 @@ ext {
 }
 
 dependencies {
+    implementation libraries.thymeleaf
     runtimeOnly libraries.webjars
-    
+
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-notifications")
-    
+
     implementation project(":support:cas-server-support-themes-core")
     implementation project(":core:cas-server-core-multitenancy")
-    
+
     testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(":core:cas-server-core")
@@ -36,7 +37,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
 
-    testImplementation libraries.thymeleaf
 
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

@@ -17,12 +17,12 @@ import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.autoconfigure.web.WebProperties;
+import org.springframework.boot.security.autoconfigure.actuate.servlet.EndpointRequest;
+import org.springframework.boot.security.autoconfigure.servlet.PathRequest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -152,7 +152,7 @@ public class CasWebSecurityConfigurerAdapter {
         configureEndpointAccessByFormLogin(requests);
 
         val jaas = casProperties.getMonitor().getEndpoints().getJaas();
-        FunctionUtils.doIfNotNull(jaas.getLoginConfig(), __ -> configureJaasAuthenticationProvider(http, jaas));
+        FunctionUtils.doIfNotNull(jaas.getLoginConfig(), _ -> configureJaasAuthenticationProvider(http, jaas));
 
         http.securityContext(securityContext -> securityContext.securityContextRepository(securityContextRepository));
         webSecurityConfigurers

@@ -5,15 +5,14 @@ import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManag
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.function.FunctionUtils;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.yubico.core.RegistrationStorage;
 import com.yubico.data.CredentialRegistration;
-import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.webauthn.attestation.Attestation;
 import com.yubico.webauthn.data.ByteArray;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
+import tools.jackson.databind.ObjectWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class WebAuthnMultifactorAuthenticationDeviceManager implements MultifactorAuthenticationDeviceManager {
-    private static final ObjectWriter OBJECT_WRITER = JacksonCodecs.json().writerWithDefaultPrettyPrinter();
+    private static final ObjectWriter OBJECT_WRITER = null; // JacksonCodecs.json().writerWithDefaultPrettyPrinter();
 
     private final RegistrationStorage webAuthnCredentialRepository;
     private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
@@ -46,7 +45,7 @@ public class WebAuthnMultifactorAuthenticationDeviceManager implements Multifact
 
     @Override
     public void removeRegisteredDevice(final Principal principal, final String deviceId) {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             val credentialId = ByteArray.fromBase64Url(deviceId);
             webAuthnCredentialRepository.removeRegistrationByUsernameAndCredentialId(principal.getId(), credentialId);
         });

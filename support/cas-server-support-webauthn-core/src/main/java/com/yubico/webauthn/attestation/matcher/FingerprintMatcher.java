@@ -1,6 +1,6 @@
 package com.yubico.webauthn.attestation.matcher;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.google.common.hash.Hashing;
 import com.yubico.webauthn.attestation.DeviceMatcher;
 import lombok.val;
@@ -27,7 +27,7 @@ public final class FingerprintMatcher implements DeviceMatcher {
             try {
                 val fingerprint = Hashing.sha1().hashBytes(attestationCertificate.getEncoded()).toString().toLowerCase(Locale.ENGLISH);
                 for (val candidate : fingerprints) {
-                    if (fingerprint.equals(candidate.asText().toLowerCase(Locale.ENGLISH))) {
+                    if (fingerprint.equals(candidate.asString().toLowerCase(Locale.ENGLISH))) {
                         return true;
                     }
                 }

@@ -94,17 +94,17 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
 
     @Override
     public void deleteAll() {
-        lock.tryLock(__ -> accounts.clear());
+        lock.tryLock(_ -> accounts.clear());
     }
 
     @Override
     public void delete(final String username) {
-        lock.tryLock(__ -> accounts.remove(username.toLowerCase(Locale.ENGLISH).trim()));
+        lock.tryLock(_ -> accounts.remove(username.toLowerCase(Locale.ENGLISH).trim()));
     }
 
     @Override
     public void delete(final long id) {
-        lock.tryLock(__ -> accounts.forEach((key, value) -> value.removeIf(d -> d.getId() == id)));
+        lock.tryLock(_ -> accounts.forEach((key, value) -> value.removeIf(d -> d.getId() == id)));
     }
 
     @Override

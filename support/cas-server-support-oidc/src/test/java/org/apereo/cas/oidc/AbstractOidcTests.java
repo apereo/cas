@@ -102,6 +102,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.tomcat.autoconfigure.servlet.TomcatServletWebServerAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -127,7 +128,12 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
+@SpringBootTestAutoConfigurations
+@SpringBootTest(
+    classes = {
+        TomcatServletWebServerAutoConfiguration.class,
+        AbstractOidcTests.SharedTestConfiguration.class
+    },
     properties = {
         "spring.threads.virtual.enabled=true",
         "cas.audit.slf4j.use-single-line=true",
@@ -146,7 +152,7 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("mockMvc")
     protected MockMvc mockMvc;
-    
+
     @Autowired
     @Qualifier("oauthTokenGenerator")
     protected OAuth20TokenGenerator oauthTokenGenerator;
@@ -430,7 +436,7 @@ public abstract class AbstractOidcTests {
     protected JwtClaims getClaims(final String clientId, final String issuer) {
         return getClaims("casuser", issuer, clientId, UUID.randomUUID().toString());
     }
-    
+
     protected JwtClaims getClaims(final String clientId) {
         return getClaims("casuser", casProperties.getAuthn().getOidc().getCore().getIssuer(), clientId, clientId);
     }
@@ -561,9 +567,8 @@ public abstract class AbstractOidcTests {
             return request;
         };
     }
-    
+
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,

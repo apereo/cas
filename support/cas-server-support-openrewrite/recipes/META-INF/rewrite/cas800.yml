@@ -1,0 +1,43 @@
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: org.apereo.cas.cas800
+displayName: Upgrade CAS to version 8.0.0
+recipeList:
+  - org.openrewrite.gradle.AddProperty:
+      key: cas.version
+      value: 8.0.0
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: version
+      value: 8.0.0
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: sourceCompatibility
+      value: 25
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: targetCompatibility
+      value: 25
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: springBootVersion
+      value: 4.0.0-M3
+      overwrite: true
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.UpdateGradleWrapper:
+      version: 9.2.0-rc-1
+      addIfMissing: true
+  - org.openrewrite.gradle.AddProperty:
+      key: tomcatVersion
+      value: 11.0.12
+      overwrite: false
+      filePattern: 'gradle.properties'
+  - org.openrewrite.gradle.AddProperty:
+      key: jibVersion
+      value: 3.4.6
+      overwrite: true
+      filePattern: 'gradle.properties'

@@ -3,16 +3,13 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
+import tools.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,7 +25,7 @@ class BasicCredentialMetadataTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifySerializeABasicCredentialMetaDataToJson() throws Throwable {
+    void verifySerializeABasicCredentialMetaDataToJson() {
         val credentialMetadata = new BasicCredentialMetadata(new UsernamePasswordCredential());
         credentialMetadata.putProperty("key", "value").putProperties(Map.of("one", "two"));
         assertTrue(credentialMetadata.containsProperty("one"));

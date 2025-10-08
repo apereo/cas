@@ -2,14 +2,6 @@ package org.apereo.cas.util.serialization;
 
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.PrettyPrinter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +11,16 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hjson.JsonValue;
 import org.springframework.context.ConfigurableApplicationContext;
+import tools.jackson.core.PrettyPrinter;
+import tools.jackson.core.TokenStreamFactory;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.core.util.MinimalPrettyPrinter;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.ObjectWriter;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.dataformat.yaml.YAMLFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,12 +54,13 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
     private final ConfigurableApplicationContext applicationContext;
     @Getter
     private final Class<T> typeToSerialize;
-    
+
     private ObjectReader typeReader;
     private ObjectWriter typeWriter;
 
     private ObjectMapper objectMapper;
-    
+    private JacksonObjectMapperFactory objectMapperFactory;
+
     protected BaseJacksonSerializer(
         final ConfigurableApplicationContext applicationContext,
         final Class typeToSerialize) {
@@ -105,17 +108,17 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
 
     @Override
     public void to(final OutputStream out, final T object) {
-        FunctionUtils.doUnchecked(__ -> getTypeWriter().writeValue(out, object));
+        FunctionUtils.doUnchecked(_ -> getTypeWriter().writeValue(out, object));
     }
 
     @Override
     public void to(final Writer writer, final T object) {
-        FunctionUtils.doUnchecked(__ -> getTypeWriter().writeValue(writer, object));
+        FunctionUtils.doUnchecked(_ -> getTypeWriter().writeValue(writer, object));
     }
 
     @Override
     public void to(final File out, final T object) {
-        FunctionUtils.doUnchecked(__ -> getTypeWriter().writeValue(out, object));
+        FunctionUtils.doUnchecked(_ -> getTypeWriter().writeValue(out, object));
     }
 
     @Override
@@ -163,16 +166,20 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
      */
     public ObjectMapper getObjectMapper() {
         if (objectMapper == null) {
-            objectMapper = JacksonObjectMapperFactory
+            objectMapperFactory = JacksonObjectMapperFactory
                 .builder()
                 .defaultTypingEnabled(isDefaultTypingEnabled())
                 .jsonFactory(getJsonFactory())
                 .applicationContext(applicationContext)
-                .build()
-                .toObjectMapper();
+                .build();
+            objectMapper = objectMapperFactory.toJsonMapper();
             configureObjectMapper(objectMapper);
         }
         return objectMapper;
+    }
+
+    public JsonMapper getJsonMapper() {
+        return isJsonFormat() ? (JsonMapper) getObjectMapper() : null;
     }
 
     protected void configureObjectMapper(final ObjectMapper objectMapper) {
@@ -183,14 +190,14 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
             ? readHumanJson(IOUtils.toString(json, StandardCharsets.UTF_8))
             : String.join("\n", IOUtils.readLines(json, StandardCharsets.UTF_8));
     }
-    
+
 
     protected boolean isDefaultTypingEnabled() {
         return true;
     }
 
-    protected JsonFactory getJsonFactory() {
-        return null;
+    protected TokenStreamFactory getJsonFactory() {
+        return new JsonFactory();
     }
 
     protected T readObjectFromString(final String jsonString) {
@@ -223,7 +230,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
     }
 
     private boolean isJsonFormat() {
-        return !(getObjectMapper().getFactory() instanceof YAMLFactory);
+        return !(getObjectMapper().tokenStreamFactory() instanceof YAMLFactory);
     }
 
     private static String readHumanJson(final String json) {

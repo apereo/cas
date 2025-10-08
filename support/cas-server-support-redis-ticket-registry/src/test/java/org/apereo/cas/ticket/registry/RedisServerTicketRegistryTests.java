@@ -190,23 +190,23 @@ class RedisServerTicketRegistryTests {
                 })
                 .limit(COUNT);
             executedTimedOperation("Adding tickets in bulk",
-                Unchecked.consumer(__ -> getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd)));
+                Unchecked.consumer(_ -> getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd)));
             executedTimedOperation("Getting tickets",
-                Unchecked.consumer(__ -> {
+                Unchecked.consumer(_ -> {
                     val tickets = getNewTicketRegistry().getTickets();
                     assertFalse(tickets.isEmpty());
                 }));
             val ticketStream = executedTimedOperation("Getting tickets in bulk",
                 Unchecked.supplier(() -> getNewTicketRegistry().stream()));
             executedTimedOperation("Getting tickets individually",
-                Unchecked.consumer(__ -> ticketStream.forEach(ticket -> assertNotNull(getNewTicketRegistry().getTicket(ticket.getId())))));
+                Unchecked.consumer(_ -> ticketStream.forEach(ticket -> assertNotNull(getNewTicketRegistry().getTicket(ticket.getId())))));
 
             executedTimedOperation("Counting all SSO sessions",
-                Unchecked.consumer(__ -> getNewTicketRegistry().sessionCount()));
+                Unchecked.consumer(_ -> getNewTicketRegistry().sessionCount()));
             executedTimedOperation("Counting all application sessions",
-                Unchecked.consumer(__ -> getNewTicketRegistry().serviceTicketCount()));
+                Unchecked.consumer(_ -> getNewTicketRegistry().serviceTicketCount()));
             executedTimedOperation("Counting all user sessions",
-                Unchecked.consumer(__ -> getNewTicketRegistry().countSessionsFor(authentication.getPrincipal().getId())));
+                Unchecked.consumer(_ -> getNewTicketRegistry().countSessionsFor(authentication.getPrincipal().getId())));
         }
 
         @RepeatedTest(2)
@@ -289,7 +289,7 @@ class RedisServerTicketRegistryTests {
             val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
             getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
                 originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
-            assertNull(getNewTicketRegistry().getTicket(ticketGrantingTicketId, __ -> {
+            assertNull(getNewTicketRegistry().getTicket(ticketGrantingTicketId, _ -> {
                 throw new IllegalArgumentException();
             }));
             assertDoesNotThrow(() -> {
@@ -467,7 +467,7 @@ class RedisServerTicketRegistryTests {
                 for (var i = 0; i < max; i++) {
                     val tgtId = ticketGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
                     val tgt = new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
-                    FunctionUtils.doUnchecked(__ -> ticketRegistry.addTicket(tgt));
+                    FunctionUtils.doUnchecked(_ -> ticketRegistry.addTicket(tgt));
                 }
             }
         }
@@ -551,7 +551,7 @@ class RedisServerTicketRegistryTests {
                 for (var i = 0; i < max; i++) {
                     val proxyTicket = proxyGrantingTicket.grantProxyTicket(ptGenerator.getNewTicketId(ProxyTicket.PREFIX),
                         service, new HardTimeoutExpirationPolicy(20), serviceTicketSessionTrackingPolicy);
-                    FunctionUtils.doUnchecked(__ -> ticketRegistry.addTicket(proxyTicket));
+                    FunctionUtils.doUnchecked(_ -> ticketRegistry.addTicket(proxyTicket));
                 }
             }
         }

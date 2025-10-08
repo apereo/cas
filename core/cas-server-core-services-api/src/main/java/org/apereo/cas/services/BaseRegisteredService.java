@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
+import org.apereo.cas.util.serialization.PolymorphicMapDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,6 +14,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
+import tools.jackson.databind.annotation.JsonDeserialize;
 import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -95,6 +97,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     private RegisteredServiceAuthenticationPolicy authenticationPolicy = new DefaultRegisteredServiceAuthenticationPolicy();
 
+    @JsonDeserialize(using = PolymorphicMapDeserializer.class)
     private Map<String, RegisteredServiceProperty> properties = new HashMap<>();
 
     private List<RegisteredServiceContact> contacts = new ArrayList<>();

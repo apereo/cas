@@ -38,7 +38,7 @@ public class GoogleCloudTicketRegistryQueuePublisher implements QueueableTicketR
 
     @Override
     public void publishMessageToQueue(final BaseMessageQueueCommand cmd) {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             LOGGER.debug("[{}] is publishing message [{}]", cmd.getPublisherIdentifier().getId(), cmd);
             val headers = Map.of(GcpPubSubHeaders.ORDERING_KEY, cmd.getPublisherIdentifier().getId());
             val future = pubSubTemplate.publish(QUEUE_TOPIC, cmd, headers);

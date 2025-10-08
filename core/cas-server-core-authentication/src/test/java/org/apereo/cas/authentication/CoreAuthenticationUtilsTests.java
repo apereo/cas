@@ -8,15 +8,14 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalAttribute
 import org.apereo.cas.configuration.model.core.authentication.RestAuthenticationPolicyProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
+import tools.jackson.databind.ObjectMapper;
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +40,7 @@ class CoreAuthenticationUtilsTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
-    private static void verifySerialization(final Collection<AuthenticationPolicy> policy) throws IOException {
+    private static void verifySerialization(final Collection<AuthenticationPolicy> policy) {
         val file = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID() + ".json");
         MAPPER.writeValue(file, policy);
         val readPolicy = MAPPER.readValue(file, Collection.class);

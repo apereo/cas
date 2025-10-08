@@ -169,7 +169,7 @@ public class DynamoDbTableUtils {
     public static void enableTimeToLiveOnTable(final DynamoDbClient dynamoDbClient,
                                                final String tableName,
                                                final String ttlAttributeName) {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             val ttlSpec = TimeToLiveSpecification.builder()
                 .attributeName(ttlAttributeName)
                 .enabled(true)

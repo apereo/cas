@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyEvaluator;
+import org.apereo.cas.util.serialization.PolymorphicMapDeserializer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
+import tools.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.PostLoad;
 import java.io.Serial;
 import java.net.URI;
@@ -75,6 +77,7 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
      * Collection of required attributes
      * for this service to proceed.
      */
+    @JsonDeserialize(using = PolymorphicMapDeserializer.class)
     protected Map<String, Set<String>> requiredAttributes = new HashMap<>();
 
     /**
@@ -82,6 +85,7 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
      * that will be rejected which will cause this
      * policy to refuse access.
      */
+    @JsonDeserialize(using = PolymorphicMapDeserializer.class)
     protected Map<String, Set<String>> rejectedAttributes = new HashMap<>();
 
     /**

@@ -114,7 +114,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
 
     @Override
     public void close() {
-        FunctionUtils.doAndHandle(__ -> influxDb.close());
+        FunctionUtils.doAndHandle(_ -> influxDb.close());
     }
 
     public String getDatabase() {

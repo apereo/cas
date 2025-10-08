@@ -85,7 +85,7 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
         if (shouldSignLogoutRequestFor(samlService)) {
             val httpRequest = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val httpResponse = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-            FunctionUtils.doUnchecked(__ -> samlProfileHandlerConfigurationContext.getSamlObjectSigner().encode(
+            FunctionUtils.doUnchecked(_ -> samlProfileHandlerConfigurationContext.getSamlObjectSigner().encode(
                 samlLogoutRequest, samlService, adaptor,
                 httpResponse, httpRequest, binding, samlLogoutRequest, new MessageContext()));
         }

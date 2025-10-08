@@ -1,5 +1,6 @@
 package org.apereo.cas.util.serialization;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -7,27 +8,6 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.json.JsonWriteFeature;
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.cfg.MapperBuilder;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.xml.XmlFactory;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -36,11 +16,42 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import java.io.Serial;
+import org.springframework.util.ReflectionUtils;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.TokenStreamFactory;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.json.JsonReadFeature;
+import tools.jackson.core.json.JsonWriteFeature;
+import tools.jackson.core.util.MinimalPrettyPrinter;
+import tools.jackson.databind.DefaultTyping;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.dataformat.cbor.CBORFactory;
+import tools.jackson.dataformat.cbor.CBORMapper;
+import tools.jackson.dataformat.smile.SmileFactory;
+import tools.jackson.dataformat.smile.SmileMapper;
+import tools.jackson.dataformat.xml.XmlFactory;
+import tools.jackson.dataformat.xml.XmlMapper;
+import tools.jackson.dataformat.yaml.YAMLFactory;
+import tools.jackson.dataformat.yaml.YAMLMapper;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
@@ -76,12 +87,16 @@ public class JacksonObjectMapperFactory {
     private final Map<String, Object> injectableValues = new LinkedHashMap<>();
 
     @Builder.Default
+    private final List<JacksonModule> modules = new ArrayList<>();
+
+    @Builder.Default
     private final boolean minimal = false;
 
     @Builder.Default
     private final boolean sorted = false;
 
-    private final JsonFactory jsonFactory;
+    @Builder.Default
+    private final TokenStreamFactory jsonFactory = new JsonFactory();
 
     private final ConfigurableApplicationContext applicationContext;
 
@@ -91,25 +106,53 @@ public class JacksonObjectMapperFactory {
      * @return the object mapper
      */
     public ObjectMapper toObjectMapper() {
+        val builder = toBuilder();
+        val mapper = builder.build();
+        FunctionUtils.doUnchecked(_ -> {
+            val field = ReflectionUtils.findField(mapper.getClass(), "_injectableValues");
+            Objects.requireNonNull(field).trySetAccessible();
+            field.set(mapper, builder.injectableValues());
+        });
+        return mapper;
+    }
+
+    /**
+     * To json mapper.
+     *
+     * @return the json mapper
+     */
+    public JsonMapper toJsonMapper() {
+        return (JsonMapper) toObjectMapper();
+    }
+
+    /**
+     * To builder.
+     *
+     * @return the mapper builder
+     */
+    public MapperBuilder toBuilder() {
         val mapper = determineMapperInstance();
-        val objectMapper = initialize(mapper);
-        
+        var builder = initialize(mapper);
+
         val allCustomizers = getObjectMapperCustomizers();
-        configureInjectableValues(allCustomizers, objectMapper);
-        configureObjectMapperModules(objectMapper);
-        allCustomizers.forEach(customizer -> customizer.customize(objectMapper));
-        
-        return objectMapper;
-    }
-
-    private void configureObjectMapperModules(final ObjectMapper objectMapper) {
-        objectMapper.registerModule(new JavaTimeModule());
-        if (applicationContext != null) {
-            objectMapper.registerModule(new DecodableCipherExecutorMapModule(applicationContext));
+        builder = configureInjectableValues(allCustomizers, builder);
+        builder = configureObjectMapperModules(builder);
+        for (val customizer : allCustomizers) {
+            builder = customizer.customize(builder);
         }
+        return builder;
     }
 
-    private void configureInjectableValues(final List<JacksonObjectMapperCustomizer> allCustomizers, final ObjectMapper objectMapper) {
+    private MapperBuilder configureObjectMapperModules(final MapperBuilder<?, ?> mapperBuilder) {
+        mapperBuilder.addModule(new JavaTimeModule());
+        if (applicationContext != null) {
+            mapperBuilder.addModule(new DecodableCipherExecutorMapModule(applicationContext));
+        }
+        return mapperBuilder;
+    }
+
+    private MapperBuilder configureInjectableValues(final List<JacksonObjectMapperCustomizer> allCustomizers,
+                                                    final MapperBuilder<?, ?> mapperBuilder) {
         val injectedValues = (Map) allCustomizers
             .stream()
             .filter(BeanSupplier::isNotProxy)
@@ -117,7 +160,8 @@ public class JacksonObjectMapperFactory {
             .flatMap(entry -> entry.entrySet().stream())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         injectedValues.putAll(this.injectableValues);
-        objectMapper.setInjectableValues(new JacksonInjectableValueSupplier(() -> injectedValues));
+
+        return mapperBuilder.injectableValues(new JacksonInjectableValueSupplier(() -> injectedValues));
     }
 
     private List<JacksonObjectMapperCustomizer> getObjectMapperCustomizers() {
@@ -139,75 +183,93 @@ public class JacksonObjectMapperFactory {
     /**
      * Initialize.
      *
-     * @param mapper the mapper
+     * @param mapperBuilder the mapper
      * @return the object mapper
      */
-    protected ObjectMapper initialize(final MapperBuilder<?, ?> mapper) {
-        val obm = mapper
+    protected MapperBuilder initialize(final MapperBuilder<?, ?> mapperBuilder) {
+        mapperBuilder
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
             .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, isSingleArrayElementUnwrapped())
-            .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, isDefaultViewInclusion())
-            .configure(MapperFeature.USE_WRAPPER_NAME_AS_PROPERTY_NAME, isUseWrapperNameAsProperty())
-
-            .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, sorted)
             .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, sorted)
 
-            .configure(JsonWriteFeature.QUOTE_FIELD_NAMES.mappedFeature(), isQuoteFieldNames())
+            .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, isDefaultViewInclusion())
+            .configure(MapperFeature.USE_WRAPPER_NAME_AS_PROPERTY_NAME, isUseWrapperNameAsProperty())
+            .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, sorted)
+
+            .configure(EnumFeature.READ_ENUMS_USING_TO_STRING, false)
 
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, isFailOnUnknownProperties())
             .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
-            .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
             .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, isSingleValueAsArray())
-            .configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, isQuoteFieldNames())
 
-            .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, isWriteDatesAsTimestamps())
+            .disable(DateTimeFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+            .configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, isWriteDatesAsTimestamps())
 
-            .build();
-
-        obm
-            .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
-            .setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
-            .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
-            .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
-            .findAndRegisterModules()
-            .registerModule(getCasJacksonModule())
-            .registerModule(new JavaTimeModule())
-            .registerModule(new ParameterNamesModule());
+            .changeDefaultPropertyInclusion(handler -> {
+                handler.withValueInclusion(JsonInclude.Include.NON_DEFAULT);
+                handler.withContentInclusion(JsonInclude.Include.NON_DEFAULT);
+                return handler;
+            })
+            .changeDefaultVisibility(handler -> {
+                handler.withSetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
+                handler.withGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
+                handler.withIsGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
+                return handler;
+            })
+            .findAndAddModules()
+            .addModules(this.modules)
+            .addModule(getCasJacksonModule())
+            .addModule(new JavaTimeModule());
 
         if (isDefaultTypingEnabled()) {
-            obm.activateDefaultTyping(obm.getPolymorphicTypeValidator(),
-                ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+            val ptv = BasicPolymorphicTypeValidator.builder()
+                .allowSubTypesWithExplicitDeserializer()
+                .allowIfSubTypeIsArray()
+                .allowIfBaseType(CentralAuthenticationService.NAMESPACE)
+                .allowIfBaseType("java.util")
+                .allowIfBaseType("java.lang")
+                .build();
+            mapperBuilder.activateDefaultTyping(ptv, DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
         }
 
         if (minimal) {
-            obm.setDefaultPrettyPrinter(new MinimalPrettyPrinter());
+            mapperBuilder.defaultPrettyPrinter(new MinimalPrettyPrinter());
         }
-        return obm;
+        return mapperBuilder;
     }
 
-    private MapperBuilder<?, ?> determineMapperInstance() {
-        if (jsonFactory instanceof final YAMLFactory factory) {
-            return YAMLMapper.builder(factory);
+    private MapperBuilder determineMapperInstance() {
+        switch(jsonFactory) {
+            case YAMLFactory factory -> {
+                return YAMLMapper.builder(factory);
+            }
+            case XmlFactory factory -> {
+                return XmlMapper.builder(factory);
+            }
+            case CBORFactory factory -> {
+                return CBORMapper.builder(factory);
+            }
+            case SmileFactory factory -> {
+                return SmileMapper.builder(factory);
+            }
+            case JsonFactory factory -> {
+                return JsonMapper.builder(factory)
+                    .configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS, isQuoteFieldNames())
+                    .configure(JsonWriteFeature.QUOTE_PROPERTY_NAMES, isQuoteFieldNames());
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + jsonFactory);
         }
-        if (jsonFactory instanceof final XmlFactory factory) {
-            return XmlMapper.builder(factory);
-        }
-        return JsonMapper.builder(jsonFactory);
     }
 
-    private static Module getCasJacksonModule() {
+    private static JacksonModule getCasJacksonModule() {
         val casModule = new SimpleModule();
         casModule.addDeserializer(URI.class, new URIDeserializer());
         return casModule;
     }
 
     private static final class URIDeserializer extends StdDeserializer<URI> {
-        @Serial
-        private static final long serialVersionUID = -7547162569192932415L;
-
         URIDeserializer() {
-            this(null);
+            this(URI.class);
         }
 
         URIDeserializer(final Class<?> vc) {
@@ -217,7 +279,7 @@ public class JacksonObjectMapperFactory {
         @Override
         public URI deserialize(final JsonParser jp, final DeserializationContext ctxt) {
             return FunctionUtils.doUnchecked(() -> {
-                val value = SpringExpressionLanguageValueResolver.getInstance().resolve(jp.getText().trim());
+                val value = SpringExpressionLanguageValueResolver.getInstance().resolve(jp.getString().trim());
                 return StringUtils.isNotBlank(value) ? new URI(value) : null;
             });
         }

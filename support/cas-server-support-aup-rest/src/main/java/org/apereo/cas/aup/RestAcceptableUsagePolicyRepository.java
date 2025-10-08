@@ -10,7 +10,6 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.support.WebUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -21,6 +20,7 @@ import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
+import tools.jackson.databind.ObjectMapper;
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -62,7 +62,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                 "username", principal.getId(),
                 "locale", request.getLocale().toString());
             val service = WebUtils.getService(requestContext);
-            FunctionUtils.doIfNotNull(service, __ -> parameters.put("service", service.getId()));
+            FunctionUtils.doIfNotNull(service, _ -> parameters.put("service", service.getId()));
             LOGGER.debug("Sending AUP acceptance payload [{}] to [{}]", rest.getUrl(), parameters);
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
@@ -134,7 +134,7 @@ public class RestAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                     "username", principal.getId(),
                     "locale", request.getLocale().toString());
                 val service = WebUtils.getService(requestContext);
-                FunctionUtils.doIfNotNull(service, __ -> parameters.put("service", service.getId()));
+                FunctionUtils.doIfNotNull(service, _ -> parameters.put("service", service.getId()));
 
                 val exec = HttpExecutionRequest.builder()
                     .basicAuthPassword(rest.getBasicAuthPassword())

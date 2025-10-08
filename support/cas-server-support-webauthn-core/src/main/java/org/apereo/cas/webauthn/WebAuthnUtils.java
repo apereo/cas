@@ -1,16 +1,18 @@
 package org.apereo.cas.webauthn;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.yubico.data.CredentialRegistration;
-import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.webauthn.RegisteredCredential;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
+import tools.jackson.core.Base64Variants;
+import tools.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonPOJOBuilder;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 /**
  * This is {@link WebAuthnUtils}.
@@ -20,16 +22,22 @@ import org.apache.commons.lang3.StringUtils;
  */
 @UtilityClass
 public class WebAuthnUtils {
-    private static final ObjectMapper MAPPER = JacksonCodecs
-        .json()
+    private static final ObjectMapper MAPPER = JsonMapper.builder()
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .defaultBase64Variant(Base64Variants.MODIFIED_FOR_URL)
+        .addModule(new JavaTimeModule())
         .addMixIn(CredentialRegistration.class, CredentialRegistrationMixin.class)
         .addMixIn(CredentialRegistration.CredentialRegistrationBuilder.class, CredentialRegistrationBuilderMixin.class)
         .addMixIn(RegisteredCredential.class, RegisteredCredentialMixin.class)
         .addMixIn(RegisteredCredential.RegisteredCredentialBuilder.class, RegisteredCredentialBuilderMixin.class)
-        .findAndRegisterModules()
-        .setDefaultPrettyPrinter(new DefaultPrettyPrinter())
-        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        .findAndAddModules()
+        .defaultPrettyPrinter(new DefaultPrettyPrinter())
+        .changeDefaultPropertyInclusion(handler -> {
+            handler.withValueInclusion(JsonInclude.Include.NON_NULL);
+            handler.withContentInclusion(JsonInclude.Include.NON_NULL);
+            return handler;
+        })
+        .build();
 
     /**
      * Gets mapper instance.

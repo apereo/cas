@@ -232,7 +232,7 @@ class CasCoreTicketsConfiguration {
         public PublisherIdentifier messageQueueTicketRegistryIdentifier(final CasConfigurationProperties casProperties) {
             val bean = new PublisherIdentifier();
             val core = casProperties.getTicket().getRegistry().getCore();
-            FunctionUtils.doIfNotBlank(core.getQueueIdentifier(), __ -> bean.setId(core.getQueueIdentifier()));
+            FunctionUtils.doIfNotBlank(core.getQueueIdentifier(), _ -> bean.setId(core.getQueueIdentifier()));
             return bean;
         }
 

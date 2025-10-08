@@ -6,18 +6,15 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.factory.BaseTicketFactoryTests;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.test.context.TestPropertySource;
+import tools.jackson.databind.ObjectMapper;
 import java.io.File;
-import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -35,15 +32,8 @@ class TicketGrantingTicketImplTests {
 
     private static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
-    private static final ObjectMapper MAPPER;
-
-    static {
-        MAPPER = Jackson2ObjectMapperBuilder.json()
-            .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-            .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .build();
-        MAPPER.findAndRegisterModules();
-    }
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).writeDatesAsTimestamps(false).build().toObjectMapper();
 
     @Nested
     @TestPropertySource(properties = "cas.ticket.tgt.core.only-track-most-recent-session=true")
@@ -238,7 +228,7 @@ class TicketGrantingTicketImplTests {
     @Nested
     class DefaultTests {
         @Test
-        void verifySerializeToJson() throws IOException {
+        void verifySerializeToJson() {
             val authenticationWritten = CoreAuthenticationTestUtils.getAuthentication();
             val expirationPolicyWritten = NeverExpiresExpirationPolicy.INSTANCE;
             val tgtWritten = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), null, null,

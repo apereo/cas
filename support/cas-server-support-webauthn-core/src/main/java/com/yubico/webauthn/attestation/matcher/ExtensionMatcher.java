@@ -1,6 +1,6 @@
 package com.yubico.webauthn.attestation.matcher;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.yubico.webauthn.attestation.DeviceMatcher;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.exception.HexException;
@@ -34,7 +34,7 @@ public class ExtensionMatcher implements DeviceMatcher {
 
     @Override
     public boolean matches(final X509Certificate attestationCertificate, final JsonNode parameters) {
-        val matchKey = parameters.get(EXTENSION_KEY).asText();
+        val matchKey = parameters.get(EXTENSION_KEY).asString();
         val matchValue = parameters.get(EXTENSION_VALUE);
         val extensionValue = attestationCertificate.getExtensionValue(matchKey);
         if (extensionValue != null) {
@@ -65,7 +65,7 @@ public class ExtensionMatcher implements DeviceMatcher {
     private static boolean matchStringValue(final String matchKey, final JsonNode matchValue, final ASN1Primitive value) {
         if (value instanceof final DEROctetString octetString) {
             val readValue = new String(octetString.getOctets(), CHARSET);
-            return matchValue.asText().equals(readValue);
+            return matchValue.asString().equals(readValue);
         }
         LOGGER.debug("Expected text string value for extension {}, was: {}", matchKey, value);
         return false;

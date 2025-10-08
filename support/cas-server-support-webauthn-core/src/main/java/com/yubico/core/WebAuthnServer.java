@@ -24,21 +24,13 @@
 
 package com.yubico.core;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yubico.data.AssertionRequestWrapper;
 import com.yubico.data.AssertionResponse;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.data.RegistrationRequest;
 import com.yubico.data.RegistrationResponse;
 import com.yubico.internal.util.CertificateParser;
-import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.util.Either;
 import com.yubico.webauthn.FinishAssertionOptions;
 import com.yubico.webauthn.FinishRegistrationOptions;
@@ -64,7 +56,14 @@ import lombok.Setter;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.io.IOException;
+import org.jooq.lambda.Unchecked;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.annotation.JsonSerialize;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Clock;
@@ -73,14 +72,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.ExecutionException;
 
 @Setter
 @Slf4j
 @RequiredArgsConstructor
 public class WebAuthnServer {
     private static final int IDENTIFIER_LENGTH = 32;
-    private static final ObjectMapper OBJECT_MAPPER = JacksonCodecs.json();
+    private static final ObjectMapper OBJECT_MAPPER = null; //JacksonCodecs.json();
 
     private final RegistrationStorage userStorage;
     private final WebAuthnCache<RegistrationRequest> registerRequestStorage;
@@ -95,7 +93,7 @@ public class WebAuthnServer {
         final Optional<String> displayName,
         final Optional<String> credentialNickname,
         final ResidentKeyRequirement residentKeyRequirement,
-        final Optional<ByteArray> sessionToken) throws ExecutionException {
+        final Optional<ByteArray> sessionToken) {
 
         LOGGER.trace("Starting registration operation for username: [{}], credentialNickname: [{}]", username, credentialNickname);
         val registrations = userStorage.getRegistrationsByUsername(username);
@@ -138,7 +136,7 @@ public class WebAuthnServer {
         RegistrationResponse registrationResponse;
         try {
             registrationResponse = OBJECT_MAPPER.readValue(responseJson, RegistrationResponse.class);
-        } catch (final IOException e) {
+        } catch (final JacksonException e) {
             LOGGER.error("Registration failed; response: [{}]", responseJson, e);
             return Either.left(List.of("Registration failed", "Failed to decode response object.", e.getMessage()));
         }
@@ -218,7 +216,7 @@ public class WebAuthnServer {
         final AssertionResponse assertionResponse;
         try {
             assertionResponse = OBJECT_MAPPER.readValue(responseJson, AssertionResponse.class);
-        } catch (final IOException e) {
+        } catch (final JacksonException e) {
             LOGGER.debug("Failed to decode response object", e);
             return Either.left(List.of("Assertion failed!", "Failed to decode response object.", e.getMessage()));
         }
@@ -293,9 +291,11 @@ public class WebAuthnServer {
 
         ByteArray sessionToken;
 
-        public SuccessfulRegistrationResult(final RegistrationRequest request, final RegistrationResponse response,
+        public SuccessfulRegistrationResult(final RegistrationRequest request,
+                                            final RegistrationResponse response,
                                             final CredentialRegistration registration,
-                                            final boolean attestationTrusted, final ByteArray sessionToken) {
+                                            final boolean attestationTrusted,
+                                            final ByteArray sessionToken) {
             this.request = request;
             this.response = response;
             this.registration = registration;
@@ -303,14 +303,7 @@ public class WebAuthnServer {
             attestationCert = Optional.ofNullable(
                     response.credential().getResponse().getAttestation().getAttestationStatement().get("x5c")
                 ).map(certs -> certs.get(0))
-                .flatMap((final JsonNode certDer) -> {
-                    try {
-                        return Optional.of(new ByteArray(certDer.binaryValue()));
-                    } catch (final IOException e) {
-                        LOGGER.error("Failed to get binary value from x5c element: {}", certDer, e);
-                        return Optional.empty();
-                    }
-                })
+                .flatMap(Unchecked.function(certDer -> Optional.of(new ByteArray(certDer.binaryValue()))))
                 .map(AttestationCertInfo::new);
             this.authData = response.credential().getResponse().getParsedAuthenticatorData();
             this.username = request.username();
@@ -382,27 +375,27 @@ public class WebAuthnServer {
         boolean accountDeleted;
     }
 
-    private static class AuthDataSerializer extends JsonSerializer<AuthenticatorData> {
+    private static class AuthDataSerializer extends ValueSerializer<AuthenticatorData> {
         @Override
         public void serialize(final AuthenticatorData value, final JsonGenerator gen,
-                              final SerializerProvider serializers) throws IOException {
-            gen.writeStartObject();
-            gen.writeStringField("rpIdHash", value.getRpIdHash().getHex());
-            gen.writeObjectField("flags", value.getFlags());
-            gen.writeNumberField("signatureCounter", value.getSignatureCounter());
-            value.getAttestedCredentialData().ifPresent(acd -> {
-                try {
-                    gen.writeObjectFieldStart("attestedCredentialData");
-                    gen.writeStringField("aaguid", acd.getAaguid().getHex());
-                    gen.writeStringField("credentialId", acd.getCredentialId().getHex());
-                    gen.writeStringField("publicKey", acd.getCredentialPublicKey().getHex());
-                    gen.writeEndObject();
-                } catch (final IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            gen.writeObjectField("extensions", value.getExtensions());
-            gen.writeEndObject();
+                              final SerializationContext serializers) throws JacksonException {
+//            gen.writeStartObject();
+//            gen.writeStringField("rpIdHash", value.getRpIdHash().getHex());
+//            gen.writeObjectField("flags", value.getFlags());
+//            gen.writeNumberField("signatureCounter", value.getSignatureCounter());
+//            value.getAttestedCredentialData().ifPresent(acd -> {
+//                try {
+//                    gen.writeObjectFieldStart("attestedCredentialData");
+//                    gen.writeStringField("aaguid", acd.getAaguid().getHex());
+//                    gen.writeStringField("credentialId", acd.getCredentialId().getHex());
+//                    gen.writeStringField("publicKey", acd.getCredentialPublicKey().getHex());
+//                    gen.writeEndObject();
+//                } catch (final IOException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            });
+//            gen.writeObjectField("extensions", value.getExtensions());
+//            gen.writeEndObject();
         }
     }
 

@@ -139,7 +139,7 @@ public class CasMongoDbPasswordlessAuthenticationAutoConfiguration {
             initialDelayString = "${cas.authn.passwordless.tokens.mongo.cleaner.schedule.start-delay:PT30S}",
             fixedDelayString = "${cas.authn.passwordless.tokens.mongo.cleaner.schedule.repeat-interval:PT35S}")
         public void clean() {
-            lock.tryLock(__ -> repository.clean());
+            lock.tryLock(_ -> repository.clean());
         }
     }
 }

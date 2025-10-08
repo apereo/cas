@@ -664,7 +664,7 @@ public abstract class AbstractServiceRegistryTests {
         });
     }
 
-    protected abstract ServiceRegistry getNewServiceRegistry() throws Exception;
+    protected abstract ServiceRegistry getNewServiceRegistry();
 
     protected void initializeServiceRegistry() {
     }

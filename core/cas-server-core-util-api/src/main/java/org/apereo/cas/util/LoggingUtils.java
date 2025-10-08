@@ -116,8 +116,8 @@ public class LoggingUtils {
      */
     public static void error(final Logger logger, final String msg, final Throwable throwable) {
         FunctionUtils.doIf(LOG_MESSAGE_SUMMARIZER.shouldSummarize(logger),
-                __ -> logger.error(LOG_MESSAGE_SUMMARIZER.summarizeStackTrace(msg, throwable)),
-                __ -> logger.error(msg, throwable))
+                _ -> logger.error(LOG_MESSAGE_SUMMARIZER.summarizeStackTrace(msg, throwable)),
+                _ -> logger.error(msg, throwable))
             .accept(throwable);
     }
 
@@ -152,8 +152,8 @@ public class LoggingUtils {
      */
     public static void warn(final Logger logger, final String message, final Throwable throwable) {
         FunctionUtils.doIf(LOG_MESSAGE_SUMMARIZER.shouldSummarize(logger),
-                __ -> logger.warn(LOG_MESSAGE_SUMMARIZER.summarizeStackTrace(message, throwable)),
-                __ -> logger.warn(message, throwable))
+                _ -> logger.warn(LOG_MESSAGE_SUMMARIZER.summarizeStackTrace(message, throwable)),
+                _ -> logger.warn(message, throwable))
             .accept(throwable);
     }
 

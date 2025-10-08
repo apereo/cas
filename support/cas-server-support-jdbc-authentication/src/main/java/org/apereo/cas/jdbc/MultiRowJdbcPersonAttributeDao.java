@@ -59,7 +59,7 @@ public class MultiRowJdbcPersonAttributeDao extends AbstractJdbcPersonAttributeD
 
         for (val queryResult : queryResults) {
             val userName = getUserName(queryUserName, queryResult, userNameAttribute);
-            val attributes = peopleAttributesBuilder.computeIfAbsent(userName, __ -> new LinkedHashMap<>());
+            val attributes = peopleAttributesBuilder.computeIfAbsent(userName, _ -> new LinkedHashMap<>());
             for (val columnMapping : nameValueColumnMappings.entrySet()) {
                 val keyColumn = columnMapping.getKey();
                 val attrNameObj = queryResult.get(keyColumn);
@@ -111,7 +111,7 @@ public class MultiRowJdbcPersonAttributeDao extends AbstractJdbcPersonAttributeD
         if (value == null) {
             return;
         }
-        val currentValue = results.computeIfAbsent(key, __ -> new ArrayList<>());
+        val currentValue = results.computeIfAbsent(key, _ -> new ArrayList<>());
         if (value instanceof List) {
             currentValue.addAll((Collection<? extends V>) value);
         } else {

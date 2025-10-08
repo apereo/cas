@@ -12,8 +12,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
-
+import org.springframework.core.retry.Retryable;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
@@ -32,9 +33,10 @@ public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSim
     protected final TicketFactory ticketFactory;
     protected final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider;
 
-    public DefaultCasSimpleMultifactorAuthenticationService(final TicketRegistry ticketRegistry,
-                                                            final TicketFactory ticketFactory,
-                                                            final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider) {
+    public DefaultCasSimpleMultifactorAuthenticationService(
+        final TicketRegistry ticketRegistry,
+        final TicketFactory ticketFactory,
+        final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider) {
         super(ticketRegistry);
         this.ticketFactory = ticketFactory;
         this.accountServiceProvider = accountServiceProvider;
@@ -44,14 +46,17 @@ public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSim
     public CasSimpleMultifactorAuthenticationTicket generate(final Principal principal, final Service service) throws Throwable {
         val mfaFactory = (CasSimpleMultifactorAuthenticationTicketFactory) ticketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
         val properties = CollectionUtils.<String, Serializable>wrap(CasSimpleMultifactorAuthenticationConstants.PROPERTY_PRINCIPAL, principal);
-        return FunctionUtils.doAndRetry(retryContext -> {
-            val token = FunctionUtils.doAndThrow(() -> mfaFactory.create(service, properties), RuntimeException::new);
-            val trackingToken = ticketRegistry.getTicket(token.getId());
-            if (trackingToken != null) {
-                throw new IllegalArgumentException("Token: " + trackingToken.getId() + " already exists in ticket registry");
+        return FunctionUtils.doAndRetry(new Retryable<>() {
+            @Override
+            public @Nullable CasSimpleMultifactorAuthenticationTicket execute() throws Throwable {
+                val token = FunctionUtils.doAndThrow(() -> mfaFactory.create(service, properties), RuntimeException::new);
+                val trackingToken = ticketRegistry.getTicket(token.getId());
+                if (trackingToken != null) {
+                    throw new IllegalArgumentException("Token: " + trackingToken.getId() + " already exists in ticket registry");
+                }
+                LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token.getId(), service);
+                return token;
             }
-            LOGGER.debug("Created multifactor authentication token [{}] for service [{}]", token.getId(), service);
-            return token;
         }, MAX_ATTEMPTS);
     }
 

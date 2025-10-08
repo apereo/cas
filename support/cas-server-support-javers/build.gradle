@@ -34,7 +34,7 @@ dependencies {
 
     implementation project(":support:cas-server-support-mongo-core")
 
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-reports")

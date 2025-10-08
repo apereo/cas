@@ -28,7 +28,7 @@ dependencies {
     implementation libraries.springsecurityconfig
     implementation libraries.springsecurityweb
 
-    testImplementation libraries.springboottomcat
+
 
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-authentication")

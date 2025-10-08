@@ -3,7 +3,7 @@ package org.apereo.cas.monitor;
 import org.apereo.cas.util.LoggingUtils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.health.contributor.Health;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
