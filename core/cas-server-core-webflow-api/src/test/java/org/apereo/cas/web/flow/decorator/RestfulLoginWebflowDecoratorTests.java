@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("RestfulApi")
 class RestfulLoginWebflowDecoratorTests {
-    private static String getJsonData() throws Exception {
+    private static String getJsonData() {
         return new ObjectMapper().writeValueAsString(CollectionUtils.wrap("key", "value"));
     }
 

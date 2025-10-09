@@ -89,7 +89,7 @@ class DelegatedSaml2IdentityProviderTests {
         void verifyClient() {
             val clients = delegatedIdentityProviderFactory.build();
             assertEquals(1, clients.size());
-            val client = (SAML2Client) clients.iterator().next();
+            val client = (SAML2Client) clients.getFirst();
             assertNotNull(client.getConfiguration().getSamlMessageStoreFactory());
             assertInstanceOf(DefaultSAML2MetadataSigner.class, client.getConfiguration().getMetadataSigner());
         }

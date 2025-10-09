@@ -115,17 +115,7 @@ public class ServiceValidationViewFactory {
     public View getSuccessView(final String type) {
         return getView(type).getKey();
     }
-
-    /**
-     * Gets success view.
-     *
-     * @param type the type
-     * @return the success view
-     */
-    public View getSuccessView(final Class type) {
-        return getView(type.getSimpleName()).getKey();
-    }
-
+    
     /**
      * Gets view.
      *
@@ -134,16 +124,6 @@ public class ServiceValidationViewFactory {
      */
     public View getFailureView(final String type) {
         return getView(type).getValue();
-    }
-
-    /**
-     * Gets failure view.
-     *
-     * @param type the type
-     * @return the failure view
-     */
-    public View getFailureView(final Class type) {
-        return getView(type.getSimpleName()).getValue();
     }
 
     /**

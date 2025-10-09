@@ -72,7 +72,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         LOGGER.debug("Resolving metadata for [{}] at [{}]", service.getName(), metadataLocation);
         val cacheKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
         return FunctionUtils.doAndRetry(
-            new Retryable<CachedMetadataResolverResult>() {
+            new Retryable<>() {
                 @Override
                 public @Nullable CachedMetadataResolverResult execute() throws Throwable {
                     LOGGER.debug("Locating cached metadata resolver using key [{}] for service [{}].",

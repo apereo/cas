@@ -93,14 +93,13 @@ public class RadiusClient {
 
         protocolName = protocolName.toLowerCase(Locale.ENGLISH);
 
-        Class<?> c = authenticators.get(protocolName);
-
-        if (c == null) {
+        val authenticatorClass = authenticators.get(protocolName);
+        if (authenticatorClass == null) {
             return null;
         }
 
         try {
-            auth = (RadiusAuthenticator) c.getConstructor().newInstance();
+            auth = (RadiusAuthenticator) authenticatorClass.getConstructor().newInstance();
         } catch (final Exception e) {
             RadiusLog.error("Invalid auth protocol", e);
             return null;

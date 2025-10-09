@@ -31,7 +31,7 @@ class SimplePrincipalTests {
     }
 
     @Test
-    void verifySerializeACompletePrincipalToJson() throws Throwable {
+    void verifySerializeACompletePrincipalToJson() {
         val attributes = new HashMap<String, List<Object>>();
         attributes.put("attribute", List.of("value"));
         val principalWritten = new SimplePrincipal("id", attributes);
@@ -41,7 +41,7 @@ class SimplePrincipalTests {
     }
 
     @Test
-    void verifySerializeAPrincipalWithEmptyAttributesToJson() throws Throwable {
+    void verifySerializeAPrincipalWithEmptyAttributesToJson() {
         val principalWritten = new SimplePrincipal("id", new HashMap<>());
         MAPPER.writeValue(JSON_FILE, principalWritten);
         val principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);

@@ -58,7 +58,7 @@ class ZooKeeperCloudConfigBootstrapConfigurationTests {
 
     @BeforeAll
     public static void setup() throws Exception {
-        FunctionUtils.doAndRetry(new Retryable<Object>() {
+        FunctionUtils.doAndRetry(new Retryable<>() {
             @Override
             public @Nullable Object execute() throws Throwable {
                 val curator = CuratorFrameworkFactory.newClient("localhost:2181",

@@ -72,13 +72,6 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
         this.matchers = CollectionUtil.immutableMap(matchers);
     }
 
-    public YubicoJsonMetadataService() {
-        this(
-            Stream.of(MetadataObject.readDefault(), MetadataObject.readPreview())
-                .collect(Collectors.toList()),
-            DEFAULT_DEVICE_MATCHERS);
-    }
-
     public YubicoJsonMetadataService(
         @NonNull
         final Collection<MetadataObject> metadataObjects) {

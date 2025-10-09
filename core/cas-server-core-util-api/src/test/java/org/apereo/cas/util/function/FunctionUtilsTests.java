@@ -44,7 +44,7 @@ class FunctionUtilsTests {
         assertThrows(RetryException.class,
             () -> FunctionUtils.doAndRetry(new Retryable<>() {
                 @Override
-                public @Nullable Object execute() throws Throwable {
+                public @Nullable Object execute() {
                     count.incrementAndGet();
                     throw new IllegalArgumentException("Failed to execute");
                 }
