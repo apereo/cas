@@ -2475,13 +2475,27 @@ ext.libraries = [
                 dependencies.create(libs.jcip.annotations.get()) {
                 }
         ],
-        quartz                     : dependencies.create(libs.quartz.get()) {
-            exclude(group: "org.slf4j", module: "slf4j-api")
-            exclude(group: "c3p0", module: "c3p0")
-            exclude(group: "com.mchange", module: "c3p0")
-            exclude(group: "com.zaxxer", module: "HikariCP-java6")
-            exclude(group: "com.zaxxer", module: "HikariCP-java7")
-        },
+        quartz                     : [
+                dependencies.create(libs.quartz.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "c3p0", module: "c3p0")
+                    exclude(group: "com.mchange", module: "c3p0")
+                    exclude(group: "com.zaxxer", module: "HikariCP-java6")
+                    exclude(group: "com.zaxxer", module: "HikariCP-java7")
+                },
+                dependencies.create(libs.spring.boot.quartz.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aspectj")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                }
+        ],
         twilio                     : dependencies.create(libs.twilio.get()) {
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "tools.jackson.core", module: "jackson-annotations")
@@ -2700,6 +2714,9 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-webmvc")
@@ -2707,11 +2724,32 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-aop")
                 },
+                dependencies.create(libs.spring.boot.webmvc.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                },
+                dependencies.create(libs.spring.boot.websocket.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                },
+                dependencies.create(libs.spring.boot.servlet.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                },
                 dependencies.create(libs.spring.boot.restclient.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-webmvc")
@@ -2727,6 +2765,9 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                 },
                 dependencies.create(libs.spring.boot.starter.web.sdk.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
