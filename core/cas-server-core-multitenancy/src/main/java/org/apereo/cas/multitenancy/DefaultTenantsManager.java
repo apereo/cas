@@ -77,7 +77,8 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean, In
                 try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
                     val tenantsList = new TypeReference<List<TenantDefinition>>() {
                     };
-                    return objectMapper.readValue(JsonValue.readHjson(reader).toString(), tenantsList);
+                    val json = JsonValue.readHjson(reader).toString();
+                    return objectMapper.readValue(json, tenantsList);
                 }
             }
             return new ArrayList<>();

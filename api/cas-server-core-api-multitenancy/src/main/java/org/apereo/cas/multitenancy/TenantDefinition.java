@@ -3,6 +3,7 @@ package org.apereo.cas.multitenancy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.util.serialization.DecodableCipherMap;
+import org.apereo.cas.util.serialization.MapContentDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import tools.jackson.databind.annotation.JsonDeserialize;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -40,6 +42,7 @@ public class TenantDefinition implements Serializable {
     private String description;
 
     @DecodableCipherMap
+    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     private Map<String, Object> properties = new LinkedHashMap<>();
 
     private TenantAuthenticationPolicy authenticationPolicy = new DefaultTenantAuthenticationPolicy();
