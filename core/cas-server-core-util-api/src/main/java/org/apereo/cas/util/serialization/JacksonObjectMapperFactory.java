@@ -22,6 +22,7 @@ import tools.jackson.core.TokenStreamFactory;
 import tools.jackson.core.json.JsonFactory;
 import tools.jackson.core.json.JsonReadFeature;
 import tools.jackson.core.json.JsonWriteFeature;
+import tools.jackson.core.util.DefaultPrettyPrinter;
 import tools.jackson.core.util.MinimalPrettyPrinter;
 import tools.jackson.databind.DefaultTyping;
 import tools.jackson.databind.DeserializationContext;
@@ -45,7 +46,6 @@ import tools.jackson.dataformat.xml.XmlFactory;
 import tools.jackson.dataformat.xml.XmlMapper;
 import tools.jackson.dataformat.yaml.YAMLFactory;
 import tools.jackson.dataformat.yaml.YAMLMapper;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -143,8 +143,8 @@ public class JacksonObjectMapperFactory {
         return builder;
     }
 
-    private MapperBuilder configureObjectMapperModules(final MapperBuilder<?, ?> mapperBuilder) {
-        mapperBuilder.addModule(new JavaTimeModule());
+    private MapperBuilder configureObjectMapperModules(
+        final MapperBuilder<?, ?> mapperBuilder) {
         if (applicationContext != null) {
             mapperBuilder.addModule(new DecodableCipherExecutorMapModule(applicationContext));
         }
@@ -187,7 +187,7 @@ public class JacksonObjectMapperFactory {
      * @return the object mapper
      */
     protected MapperBuilder initialize(final MapperBuilder<?, ?> mapperBuilder) {
-        mapperBuilder
+        var configuredBuilder = mapperBuilder
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
             .configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, isSingleArrayElementUnwrapped())
             .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, sorted)
@@ -201,58 +201,54 @@ public class JacksonObjectMapperFactory {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, isFailOnUnknownProperties())
             .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
             .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, isSingleValueAsArray())
+            .configure(SerializationFeature.INDENT_OUTPUT, !minimal)
 
             .disable(DateTimeFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+            .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
             .configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, isWriteDatesAsTimestamps())
-
-            .changeDefaultPropertyInclusion(handler -> {
-                handler.withValueInclusion(JsonInclude.Include.NON_DEFAULT);
-                handler.withContentInclusion(JsonInclude.Include.NON_DEFAULT);
-                return handler;
-            })
-            .changeDefaultVisibility(handler -> {
-                handler.withSetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
-                handler.withGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
-                handler.withIsGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
-                return handler;
-            })
+            .changeDefaultPropertyInclusion(handler -> handler.withValueInclusion(JsonInclude.Include.NON_DEFAULT)
+                .withContentInclusion(JsonInclude.Include.NON_DEFAULT))
+            .changeDefaultVisibility(handler -> handler.withSetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
+            .withGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
+            .withIsGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC))
             .findAndAddModules()
             .addModules(this.modules)
             .addModule(getCasJacksonModule())
-            .addModule(new JavaTimeModule());
-
+            .defaultPrettyPrinter(minimal ? new MinimalPrettyPrinter() : new DefaultPrettyPrinter());
+        
         if (isDefaultTypingEnabled()) {
             val ptv = BasicPolymorphicTypeValidator.builder()
                 .allowSubTypesWithExplicitDeserializer()
                 .allowIfSubTypeIsArray()
-                .allowIfBaseType(CentralAuthenticationService.NAMESPACE)
-                .allowIfBaseType("java.util")
-                .allowIfBaseType("java.lang")
+                .allowIfBaseType(CentralAuthenticationService.NAMESPACE + '.')
+                .allowIfBaseType("java.util.")
+                .allowIfBaseType("java.lang.")
+                .allowIfBaseType("java.time.")
+                .allowIfBaseType("com.nimbusds.oauth2.")
+                .allowIfBaseType("org.pac4j.")
+                .allowIfBaseType("org.opensaml.")
                 .build();
-            mapperBuilder.activateDefaultTyping(ptv, DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+            return configuredBuilder.polymorphicTypeValidator(ptv)
+                .activateDefaultTyping(ptv, DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
         }
-
-        if (minimal) {
-            mapperBuilder.defaultPrettyPrinter(new MinimalPrettyPrinter());
-        }
-        return mapperBuilder;
+        return configuredBuilder.deactivateDefaultTyping();
     }
 
     private MapperBuilder determineMapperInstance() {
-        switch(jsonFactory) {
-            case YAMLFactory factory -> {
+        switch (jsonFactory) {
+            case final YAMLFactory factory -> {
                 return YAMLMapper.builder(factory);
             }
-            case XmlFactory factory -> {
+            case final XmlFactory factory -> {
                 return XmlMapper.builder(factory);
             }
-            case CBORFactory factory -> {
+            case final CBORFactory factory -> {
                 return CBORMapper.builder(factory);
             }
-            case SmileFactory factory -> {
+            case final SmileFactory factory -> {
                 return SmileMapper.builder(factory);
             }
-            case JsonFactory factory -> {
+            case final JsonFactory factory -> {
                 return JsonMapper.builder(factory)
                     .configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS, isQuoteFieldNames())
                     .configure(JsonWriteFeature.QUOTE_PROPERTY_NAMES, isQuoteFieldNames());
@@ -285,3 +281,4 @@ public class JacksonObjectMapperFactory {
         }
     }
 }
+    

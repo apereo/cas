@@ -1360,11 +1360,6 @@ ext.libraries = [
                     exclude(group: "tools.jackson", module: "jackson-bom")
                     exclude(group: "jakarta.activation", module: "jakarta.activation-api")
                 },
-                dependencies.create(libs.jackson.datatype.jsr310.get()) {
-                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
-                    exclude(group: "tools.jackson.core", module: "jackson-databind")
-                    exclude(group: "tools.jackson.core", module: "jackson-core")
-                },
                 dependencies.create(libs.hjson.get()) {
                     exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "tools.jackson.core", module: "jackson-databind")

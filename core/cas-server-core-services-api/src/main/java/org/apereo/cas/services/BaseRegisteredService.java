@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
-import org.apereo.cas.util.serialization.PolymorphicMapDeserializer;
+import org.apereo.cas.util.serialization.MapContentDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -97,7 +97,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     private RegisteredServiceAuthenticationPolicy authenticationPolicy = new DefaultRegisteredServiceAuthenticationPolicy();
 
-    @JsonDeserialize(using = PolymorphicMapDeserializer.class)
+    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     private Map<String, RegisteredServiceProperty> properties = new HashMap<>();
 
     private List<RegisteredServiceContact> contacts = new ArrayList<>();

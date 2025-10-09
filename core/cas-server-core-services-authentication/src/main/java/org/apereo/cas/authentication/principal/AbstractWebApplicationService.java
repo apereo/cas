@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.jpa.MultivaluedMapToJsonAttributeConverter;
+import org.apereo.cas.util.serialization.MapContentDeserializer;
 import org.apereo.cas.validation.ValidationResponseType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,6 +15,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
+import tools.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.DiscriminatorColumn;
@@ -78,6 +80,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
     @Column(columnDefinition = "json")
     @Convert(converter = MultivaluedMapToJsonAttributeConverter.class)
+    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     private Map<String, Object> attributes = new HashMap<>();
 
     protected AbstractWebApplicationService(final String id, final String originalUrl, final String artifactId) {

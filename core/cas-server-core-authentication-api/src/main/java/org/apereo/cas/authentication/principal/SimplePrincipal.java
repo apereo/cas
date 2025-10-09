@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.util.serialization.MapContentDeserializer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import tools.jackson.databind.annotation.JsonDeserialize;
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +45,7 @@ public class SimplePrincipal implements Principal {
      * Principal attributes.
      **/
     @JsonSetter(nulls = Nulls.AS_EMPTY)
+    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     private Map<String, List<Object>> attributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     @JsonCreator

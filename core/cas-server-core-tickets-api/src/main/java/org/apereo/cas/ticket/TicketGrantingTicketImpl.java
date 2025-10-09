@@ -3,7 +3,7 @@ package org.apereo.cas.ticket;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-
+import org.apereo.cas.util.serialization.MapContentDeserializer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.val;
-
+import tools.jackson.databind.annotation.JsonDeserialize;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +56,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * The services associated to this ticket.
      */
+    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     private Map<String, Service> services = new ConcurrentHashMap<>(0);
 
     /**
@@ -66,6 +67,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * The PGTs associated to this ticket.
      */
+    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     private Map<String, Service> proxyGrantingTickets = new HashMap<>();
 
     /**
@@ -75,11 +77,16 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
 
     @JsonCreator
     public TicketGrantingTicketImpl(
-        @JsonProperty("id") final String id,
-        @JsonProperty("proxiedBy") final Service proxiedBy,
-        @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticketGrantingTicket,
-        @JsonProperty("authentication") final @NonNull Authentication authentication,
-        @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
+        @JsonProperty("id")
+        final String id,
+        @JsonProperty("proxiedBy")
+        final Service proxiedBy,
+        @JsonProperty("ticketGrantingTicket")
+        final TicketGrantingTicket ticketGrantingTicket,
+        @JsonProperty("authentication")
+        final @NonNull Authentication authentication,
+        @JsonProperty("expirationPolicy")
+        final ExpirationPolicy policy) {
         super(id, policy);
         if (ticketGrantingTicket != null && proxiedBy == null) {
             throw new IllegalArgumentException("Must specify proxiedBy when providing parent ticket-granting ticket");

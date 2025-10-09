@@ -12,7 +12,6 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.annotation.JsonDeserialize;
 import tools.jackson.databind.annotation.JsonPOJOBuilder;
 import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 /**
  * This is {@link WebAuthnUtils}.
@@ -25,7 +24,6 @@ public class WebAuthnUtils {
     private static final ObjectMapper MAPPER = JsonMapper.builder()
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         .defaultBase64Variant(Base64Variants.MODIFIED_FOR_URL)
-        .addModule(new JavaTimeModule())
         .addMixIn(CredentialRegistration.class, CredentialRegistrationMixin.class)
         .addMixIn(CredentialRegistration.CredentialRegistrationBuilder.class, CredentialRegistrationBuilderMixin.class)
         .addMixIn(RegisteredCredential.class, RegisteredCredentialMixin.class)

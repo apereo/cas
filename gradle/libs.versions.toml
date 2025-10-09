@@ -29,7 +29,7 @@ caffeine = "3.2.2"
 casClient = "4.0.4"
 cbor = "4.5.6"
 chartJs = "4.5.0"
-checkstyle = "11.1.0"
+checkstyle = "12.0.0"
 classgraph = "4.8.181"
 clientJs = "0.2.1"
 commonsBeans = "1.11.0"
@@ -97,7 +97,6 @@ influxDb = "1.4.0"
 ipGeoLocation = "2.0.1"
 jackson2 = "2.20.0"
 jackson = "3.0.0"
-jacksonJsr310 = "3.0.0-rc2"
 jacksonAnnotations = "3.0-rc5"
 jacksonAsl = "1.9.13"
 jacksonDataBind = "2.20.0"
@@ -418,7 +417,6 @@ jackson-dataformat-smile = { module = "tools.jackson.dataformat:jackson-dataform
 jackson-dataformat-xml = { module = "tools.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
 jackson-dataformat-yaml = { module = "tools.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-datatype-guava = { module = "tools.jackson.datatype:jackson-datatype-guava", version.ref = "jackson" }
-jackson-datatype-jsr310 = { module = "tools.jackson.datatype:jackson-datatype-jsr310", version.ref = "jacksonJsr310" }
 jackson-mapper-asl = { module = "org.codehaus.jackson:jackson-mapper-asl", version.ref = "jacksonAsl" }
 jackson-module-blackbird = { module = "tools.jackson.module:jackson-module-blackbird", version.ref = "jackson" }
 jackson-module-jakarta-xmlbind-annotations = { module = "tools.jackson.module:jackson-module-jakarta-xmlbind-annotations", version.ref = "jackson" }
