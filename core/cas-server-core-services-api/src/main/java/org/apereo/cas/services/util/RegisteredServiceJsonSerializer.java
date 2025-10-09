@@ -7,7 +7,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
-import tools.jackson.core.PrettyPrinter;
 import java.io.File;
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
@@ -27,12 +26,7 @@ public class RegisteredServiceJsonSerializer extends BaseJacksonSerializer<Regis
     public RegisteredServiceJsonSerializer(final ConfigurableApplicationContext applicationContext) {
         super(applicationContext, RegisteredService.class);
     }
-
-    public RegisteredServiceJsonSerializer(final PrettyPrinter prettyPrinter,
-                                           final ConfigurableApplicationContext applicationContext) {
-        super(prettyPrinter, applicationContext, RegisteredService.class);
-    }
-
+    
     @Override
     public boolean supports(final File file) {
         try {

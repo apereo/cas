@@ -77,7 +77,7 @@ class X509CommonNameEDIPIPrincipalResolverTests {
      *
      * @return Test parameter data.
      */
-    public static Stream<Arguments> getTestParameters() throws Exception {
+    public static Stream<Arguments> getTestParameters() {
         return Stream.of(
             /*
              * test with cert with EDIPI and no alternate

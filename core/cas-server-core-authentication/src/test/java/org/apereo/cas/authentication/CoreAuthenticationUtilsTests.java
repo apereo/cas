@@ -48,7 +48,7 @@ class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyAuthnPolicyRequiredAttrs() throws Throwable {
+    void verifyAuthnPolicyRequiredAttrs() {
         val props = new AuthenticationPolicyProperties();
         props.getRequiredAttributes().setEnabled(true);
         props.getRequiredAttributes().setAttributes(Map.of("hello", "world"));
@@ -57,7 +57,7 @@ class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyAuthnPolicyRequired() throws Throwable {
+    void verifyAuthnPolicyRequired() {
         val props = new AuthenticationPolicyProperties();
         props.getReq().setEnabled(true);
         val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
@@ -65,7 +65,7 @@ class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyAuthnPolicyAllHandlers() throws Throwable {
+    void verifyAuthnPolicyAllHandlers() {
         val props = new AuthenticationPolicyProperties();
         props.getAllHandlers().setEnabled(true);
         val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
@@ -73,7 +73,7 @@ class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyAuthnPolicyAll() throws Throwable {
+    void verifyAuthnPolicyAll() {
         val props = new AuthenticationPolicyProperties();
         props.getAll().setEnabled(true);
         val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
@@ -89,7 +89,7 @@ class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyAuthnPolicyNotPrevented() throws Throwable {
+    void verifyAuthnPolicyNotPrevented() {
         val props = new AuthenticationPolicyProperties();
         props.getNotPrevented().setEnabled(true);
         val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);
@@ -97,7 +97,7 @@ class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyAuthnPolicyGroovy() throws Throwable {
+    void verifyAuthnPolicyGroovy() {
         val props = new AuthenticationPolicyProperties();
         props.getGroovy()
             .add(new GroovyAuthenticationPolicyProperties().setScript("classpath:example.groovy"));
@@ -106,7 +106,7 @@ class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyAuthnPolicyRest() throws Throwable {
+    void verifyAuthnPolicyRest() {
         val props = new AuthenticationPolicyProperties();
         val rest = new RestAuthenticationPolicyProperties();
         rest.setUrl("http://example.org");
@@ -116,7 +116,7 @@ class CoreAuthenticationUtilsTests {
     }
 
     @Test
-    void verifyAuthnPolicyAny() throws Throwable {
+    void verifyAuthnPolicyAny() {
         val props = new AuthenticationPolicyProperties();
         props.getAny().setEnabled(true);
         val policy = CoreAuthenticationUtils.newAuthenticationPolicy(props);

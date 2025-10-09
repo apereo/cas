@@ -123,7 +123,7 @@ class SyncopePersonAttributeDaoTests {
         void verifyUserIsFound() throws Throwable {
             val result = MAPPER.createObjectNode();
             result.putArray("result").add(user());
-            try (val webserver = startMockSever(result, HttpStatus.OK, 8095)) {
+            try (val _ = startMockSever(result, HttpStatus.OK, 8095)) {
                 assertFalse(syncopePersonAttributeDaos.toList().isEmpty());
                 assertFalse(attributeRepository.getPeople(Map.of("username", List.of("casuser"))).isEmpty());
 
@@ -138,7 +138,7 @@ class SyncopePersonAttributeDaoTests {
         void verifyUserIsNotFound() throws Throwable {
             val result = MAPPER.createObjectNode();
             result.putArray("result");
-            try (val webserver = startMockSever(result, HttpStatus.OK, 8095)) {
+            try (val _ = startMockSever(result, HttpStatus.OK, 8095)) {
                 val people = attributeRepository.getPeopleWithMultivaluedAttributes(
                     Map.of("anotherProp", List.of("casuser")), PersonAttributeDaoFilter.alwaysChoose());
                 assertTrue(people.isEmpty());

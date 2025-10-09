@@ -52,7 +52,7 @@ class NimbusOAuthJacksonModuleTests {
         runTest(serializer, Scope.class, new Scope("profile"));
     }
 
-    private static void runTest(final BaseJacksonSerializer serializer, final Class clazz, final Object object) throws Exception {
+    private static void runTest(final BaseJacksonSerializer serializer, final Class clazz, final Object object) {
         val mapper = serializer.getObjectMapper();
         val content = mapper.writeValueAsString(object);
         assertNotNull(mapper.readValue(content, clazz));

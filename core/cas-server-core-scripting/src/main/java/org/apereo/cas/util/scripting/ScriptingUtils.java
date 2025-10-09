@@ -3,7 +3,6 @@ package org.apereo.cas.util.scripting;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
@@ -234,22 +233,6 @@ public class ScriptingUtils {
             LoggingUtils.error(LOGGER, e);
         }
         return null;
-    }
-
-    /**
-     * Execute groovy script via run object.
-     *
-     * @param <T>          the type parameter
-     * @param groovyScript the groovy script
-     * @param args         the args
-     * @param clazz        the clazz
-     * @param failOnError  the fail on error
-     * @return the object
-     */
-    public static <T> T executeGroovyScript(final Resource groovyScript,
-                                            final Object[] args, final Class<T> clazz,
-                                            final boolean failOnError) {
-        return FunctionUtils.doUnchecked(() -> executeGroovyScript(groovyScript, "run", args, clazz, failOnError));
     }
 
     /**
