@@ -8,7 +8,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
  * This is {@link AllProxyGrantingTicketsTrackingPolicy}.
  *
  * @author Jerome LELEU
- * @since 7.4.0
+ * @since 8.0.0
  */
 public class AllProxyGrantingTicketsTrackingPolicy implements TicketTrackingPolicy {
     
@@ -18,9 +18,9 @@ public class AllProxyGrantingTicketsTrackingPolicy implements TicketTrackingPoli
     public static final TicketTrackingPolicy INSTANCE = new AllProxyGrantingTicketsTrackingPolicy();
 
     @Override
-    public String trackTicket(final Ticket ownerTicket, final Ticket ticket, final Object... parameters) {
+    public String trackTicket(final Ticket ownerTicket, final Ticket ticket, final Service service) {
         if (ownerTicket instanceof TicketGrantingTicket ticketGrantingTicket) {
-            ticketGrantingTicket.getProxyGrantingTickets().put(ticket.getId(), (Service) parameters[0]);
+            ticketGrantingTicket.getProxyGrantingTickets().put(ticket.getId(), service);
         }
         return null;
     }

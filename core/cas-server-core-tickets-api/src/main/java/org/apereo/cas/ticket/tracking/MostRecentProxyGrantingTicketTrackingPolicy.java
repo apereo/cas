@@ -9,7 +9,7 @@ import lombok.val;
  * This is {@link MostRecentProxyGrantingTicketTrackingPolicy}.
  *
  * @author Jerome LELEU
- * @since 7.4.0
+ * @since 8.0.0
  */
 public class MostRecentProxyGrantingTicketTrackingPolicy extends AllProxyGrantingTicketsTrackingPolicy {
     
@@ -19,20 +19,12 @@ public class MostRecentProxyGrantingTicketTrackingPolicy extends AllProxyGrantin
     public static final TicketTrackingPolicy INSTANCE = new MostRecentProxyGrantingTicketTrackingPolicy();
 
     @Override
-    public String trackTicket(final Ticket ownerTicket, final Ticket ticket, final Object... parameters) {
-        if (ownerTicket instanceof TicketGrantingTicket ticketGrantingTicket) {
+    public String trackTicket(final Ticket ownerTicket, final Ticket ticket, final Service service) {
+        if (ownerTicket instanceof final TicketGrantingTicket ticketGrantingTicket) {
             val proxyGrantingTickets = ticketGrantingTicket.getProxyGrantingTickets();
-            val service = (Service) parameters[0];
             val serviceId = service.getId();
-            for (val proxyGrantingTicket : proxyGrantingTickets.entrySet()) {
-                val existingService = proxyGrantingTicket.getValue();
-                if (existingService.getId().equals(serviceId)) {
-                    val pgtId = proxyGrantingTicket.getKey();
-                    proxyGrantingTickets.remove(pgtId);
-                    break;
-                }
-            }
+            proxyGrantingTickets.values().removeIf(existingService -> existingService.getId().equals(serviceId));
         }
-        return super.trackTicket(ownerTicket, ticket, parameters);
+        return super.trackTicket(ownerTicket, ticket, service);
     }
 }

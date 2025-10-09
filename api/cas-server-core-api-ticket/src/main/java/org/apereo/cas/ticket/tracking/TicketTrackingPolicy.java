@@ -32,10 +32,22 @@ public interface TicketTrackingPolicy {
      *
      * @param ownerTicket the owner ticket
      * @param ticket      the tracked ticket
-     * @param parameters  additional parameters
+     * @param service     the service
      */
-    default String trackTicket(final Ticket ownerTicket, final Ticket ticket, final Object... parameters) {
+    default String trackTicket(final Ticket ownerTicket, final Ticket ticket, final Service service) {
         return null;
+    }
+
+    /**
+     * Track application attempt and access.
+     * Typically, ticket-granting tickets keep track of applications
+     * and service tickets for which they are authorized to issue tickets.
+     *
+     * @param ownerTicket the owner ticket
+     * @param ticket      the tracked ticket
+     */
+    default String trackTicket(final Ticket ownerTicket, final Ticket ticket) {
+        return trackTicket(ownerTicket, ticket, null);
     }
 
     /**
