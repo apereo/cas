@@ -62,8 +62,10 @@ public class UsernamePasswordCredential extends AbstractCredential implements Mu
         assignPassword(StringUtils.defaultString(password));
     }
 
-    public UsernamePasswordCredential(final String username, final char[] password,
-                                      final String source, final Map<String, Object> customFields) {
+    public UsernamePasswordCredential(final String username,
+                                      final char[] password,
+                                      final String source,
+                                      final Map<String, Object> customFields) {
         this.username = username;
         this.password = password.clone();
         this.source = source;

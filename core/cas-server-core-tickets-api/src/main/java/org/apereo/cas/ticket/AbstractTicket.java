@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.util.serialization.MapContentDeserializer;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import tools.jackson.databind.annotation.JsonDeserialize;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -93,6 +95,7 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     private Boolean stateless = Boolean.FALSE;
 
     @Getter
+    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     private Map<String, Object> properties = new HashMap<>();
     
     protected AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {

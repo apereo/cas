@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.factory.BaseTicketFactoryTests;
@@ -16,6 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import java.util.List;
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -40,8 +43,10 @@ class TicketSerializersTests {
     @Test
     void verifyTicketGrantingTicketSerialization() throws Throwable {
         val factory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
-        val ticket = factory.create(RegisteredServiceTestUtils.getAuthentication(),
-            RegisteredServiceTestUtils.getService());
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("email", List.of("casuser@example.org")));
+        val authentication = RegisteredServiceTestUtils.getAuthentication(principal,
+            Map.of(AuthenticationManager.AUTHENTICATION_SESSION_TIMEOUT_ATTRIBUTE, List.of("PT10S")));
+        val ticket = factory.create(authentication, RegisteredServiceTestUtils.getService());
         verifySerialization(ticket);
     }
 

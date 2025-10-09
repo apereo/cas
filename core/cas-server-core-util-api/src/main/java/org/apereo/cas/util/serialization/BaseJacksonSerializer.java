@@ -210,7 +210,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
                     + "specially if the fragment describes a CAS registered service definition. "
                     + "Internal parsing error is [{}]",
                 DigestUtils.abbreviate(jsonString), getTypeToSerialize(), e.getMessage());
-            LOGGER.debug(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }

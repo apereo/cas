@@ -3,7 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.AttributeMappingRequest;
 import org.apereo.cas.authentication.PrincipalAttributesMapper;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.serialization.PolymorphicMapDeserializer;
+import org.apereo.cas.util.serialization.MapContentDeserializer;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
@@ -41,7 +41,7 @@ public abstract class BaseMappedAttributeReleasePolicy extends AbstractRegistere
     private static final long serialVersionUID = -6249488544306639050L;
 
     @JsonProperty("allowedAttributes")
-    @JsonDeserialize(using = PolymorphicMapDeserializer.class)
+    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     private Map<String, Object> allowedAttributes = new TreeMap<>();
 
     /**

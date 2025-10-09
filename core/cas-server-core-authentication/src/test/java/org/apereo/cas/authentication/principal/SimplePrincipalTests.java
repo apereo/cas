@@ -18,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 class SimplePrincipalTests {
 
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simplePrincipal.json");
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "SimplePrincipal.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
     void verifyEquality() {
