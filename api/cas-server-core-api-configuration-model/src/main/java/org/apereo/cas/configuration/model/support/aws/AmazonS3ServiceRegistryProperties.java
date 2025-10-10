@@ -21,4 +21,9 @@ import java.io.Serial;
 public class AmazonS3ServiceRegistryProperties extends BaseAmazonWebServicesProperties {
     @Serial
     private static final long serialVersionUID = -6790277338807046269L;
+
+    /**
+     * Path style enabled.
+     */
+    private boolean pathStyleEnabled = false;
 }
