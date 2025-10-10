@@ -41,6 +41,7 @@ dependencies {
 
     testImplementation project(":support:cas-server-support-actions")
     testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-trusted-mfa")
     testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-person-directory")

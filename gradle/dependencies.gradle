@@ -2959,6 +2959,9 @@ ext.libraries = [
                 dependencies.create(libs.spring.boot.starter.jetty.get()) {
                     exclude(group: "org.ow2.asm", module: "asm")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                 },
                 dependencies.create(libs.jetty.http2.server.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")

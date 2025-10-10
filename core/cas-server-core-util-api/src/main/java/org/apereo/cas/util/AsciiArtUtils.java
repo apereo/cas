@@ -26,6 +26,8 @@ public class AsciiArtUtils {
 
     private static final String ANSI_CYAN = "\u001B[36m";
 
+    private static final String ANSI_BOLD = "\u001B[1m";
+
     /**
      * Print ascii art.
      *
@@ -36,14 +38,14 @@ public class AsciiArtUtils {
     public static void printAsciiArt(final PrintStream out, final String asciiArt, final String additional) {
         out.println(ANSI_CYAN);
         if (StringUtils.isNotBlank(additional)) {
-            out.println(asciiArt);
+            out.println(ANSI_BOLD + asciiArt + ANSI_RESET);
             out.println(additional);
         } else {
-            out.print(asciiArt);
+            out.println(ANSI_BOLD + asciiArt + ANSI_RESET);
         }
         out.println(ANSI_RESET);
     }
-
+    
     /**
      * Print ascii art.
      *
