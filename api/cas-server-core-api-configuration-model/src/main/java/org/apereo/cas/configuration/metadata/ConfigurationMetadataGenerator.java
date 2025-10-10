@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
@@ -65,11 +66,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ConfigurationMetadataGenerator {
     private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults()
-        .changeDefaultPropertyInclusion(handler -> {
-            handler.withValueInclusion(JsonInclude.Include.NON_NULL);
-            handler.withContentInclusion(JsonInclude.Include.NON_NULL);
-            return handler;
-        })
+        .changeDefaultNullHandling(handler -> handler.withValueNulls(Nulls.SKIP).withContentNulls(Nulls.SKIP))
+        .changeDefaultPropertyInclusion(handler -> handler.withValueInclusion(JsonInclude.Include.NON_EMPTY)
+            .withContentInclusion(JsonInclude.Include.NON_EMPTY))
         .defaultPrettyPrinter(new DefaultPrettyPrinter())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
