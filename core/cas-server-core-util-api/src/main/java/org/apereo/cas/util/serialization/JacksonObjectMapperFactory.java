@@ -1,6 +1,5 @@
 package org.apereo.cas.util.serialization;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -209,18 +208,23 @@ public class JacksonObjectMapperFactory {
             .changeDefaultPropertyInclusion(handler -> handler.withValueInclusion(JsonInclude.Include.NON_DEFAULT)
                 .withContentInclusion(JsonInclude.Include.NON_DEFAULT))
             .changeDefaultVisibility(handler -> handler.withSetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
-            .withGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
-            .withIsGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC))
+                .withGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
+                .withIsGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC))
             .findAndAddModules()
             .addModules(this.modules)
-            .addModule(getCasJacksonModule())
-            .defaultPrettyPrinter(minimal ? new MinimalPrettyPrinter() : new DefaultPrettyPrinter());
-        
+            .addModule(getCasJacksonModule());
+
+        if (jsonFactory instanceof JsonFactory) {
+            configuredBuilder = configuredBuilder.defaultPrettyPrinter(
+                minimal ? new MinimalPrettyPrinter() : new DefaultPrettyPrinter());
+        }
+
         if (isDefaultTypingEnabled()) {
             val ptv = BasicPolymorphicTypeValidator.builder()
                 .allowSubTypesWithExplicitDeserializer()
                 .allowIfSubTypeIsArray()
-                .allowIfBaseType(CentralAuthenticationService.NAMESPACE + '.')
+                .allowIfBaseType("org.apereo.cas.")
+                .allowIfBaseType("org.apereo.inspektr.")
                 .allowIfBaseType("java.util.")
                 .allowIfBaseType("java.lang.")
                 .allowIfBaseType("java.time.")

@@ -36,16 +36,12 @@ maintenance and release planning, especially when it comes to addressing critica
 
 ## System Requirements
 
-The JDK baseline requirement for this CAS release is and **MUST** be JDK `25`. All compatible distributions
+The JDK baseline requirement for this CAS release is and **MUST be JDK `25`**. All compatible distributions
 such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
 
 ## New & Noteworthy
 
 The following items are new improvements and enhancements presented in this release.
-
-### Java 25
-
-As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `25`. 
 
 ### OpenRewrite Recipes
 
@@ -68,8 +64,14 @@ are now configured to run with parallelism enabled.
 
 ### Gradle 9.2
 
-CAS is now built with Gradle `9.1` and the build process has been updated to use the latest Gradle 
+CAS is now built with Gradle `9.2` and the build process has been updated to use the latest Gradle 
 features and capabilities. 
+ 
+### Configuration Properties
+
+CAS configuration properties, specifically those that belong to the `cas` namespace and begin with `cas.`
+are now strictly and forcefully validated at startup to reject any unknown properties.
+This is done to prevent misconfigurations and typos in property names that would otherwise go unnoticed.
 
 ### Spring Boot 4
 
@@ -85,14 +87,24 @@ brings about the following minor change: retry attempts are set to **ONLY** affe
 not count the initial execution attempt. This means that if a CAS operation is set to retry `3` times, the
 operation will be attempted a total of `4` times (`1` initial + `3` retries).
 
-#### Undertow Support
+#### Undertow
 
 [Support for Undertow]((../installation/Configuring-Servlet-Container-Embedded-Undertow.html)) 
 as an embedded servlet container has been dropped. Please consider using Apache Tomcat or Jetty
 as an alternative embedded server until Undertow adds support for Servlet `6.1`.
 We will consider re-adding support for Undertow once it is compatible with Spring Boot.
+   
+#### JavaMelody
 
-#### JSON Processing w/ Jackson
+Support for [JavaMelody](../monitoring/Configuring-Monitoring-JavaMelody.html) is not yet compatible with Spring Boot `4`. 
+We plan to re-add support for JavaMelody in a future release once compatibility is restored.
+
+#### SpringBoot Admin
+
+Support for [Spring Boot Admin](../monitoring/Configuring-SpringBootAdmin.html) is not yet compatible with Spring Boot `4`.
+We plan to re-add support for Spring Boot Admin in a future release once compatibility is restored.
+
+#### Jackson & JSON Processing
 
 The Jackson library, responsible for JSON processing and parsing in CAS, is upgraded to `3.x` version. 
 This is a major upgrade that brings in many significant changes to the way JSON is processed in CAS. Almost all 
