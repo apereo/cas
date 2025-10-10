@@ -11,7 +11,7 @@
         <Logger name="org.apereo.cas.util.LoggingUtilsSummarizeTests" level="warn" />
         <Logger name="org.apereo.cas.util.EncodingUtils" level="trace" />
         <Logger name="org.apereo.cas.util.HttpUtilsTests" level="warn" />
-        <Logger name="org.apereo.cas.util.spring.boot" level="info" />
+        <Logger name="org.apereo.cas.util.spring.boot" level="error" />
         <Root level="error">
             <AppenderRef ref="console"/>
         </Root>

@@ -99,7 +99,7 @@ jackson2 = "2.20.0"
 jackson = "3.0.0"
 jacksonAnnotations = "3.0-rc5"
 jacksonAsl = "1.9.13"
-jacksonDataBind = "2.20.0"
+jacksonDataBind = "3.0.0"
 jacoco = "0.8.13"
 jakartaActivation = "2.1.4"
 jakartaAnnotationApi = "3.0.0"
@@ -196,7 +196,7 @@ saajImpl = "3.0.4"
 scimSdkClient = "1.28.0"
 semver = "3.1.0"
 sendGrid = "4.10.3"
-sentry = "8.23.0"
+sentry = "8.24.0-alpha.1"
 shibbolethUtilJavaSupport = "9.1.6"
 slackClient = "1.45.4"
 slf4j = "2.0.17"
@@ -567,6 +567,7 @@ opensaml-xacml-saml-api = { module = "org.opensaml:opensaml-xacml-saml-api", ver
 opensaml-xacml-saml-impl = { module = "org.opensaml:opensaml-xacml-saml-impl", version.ref = "opensaml" }
 opensaml-xmlsec-impl = { module = "org.opensaml:opensaml-xmlsec-impl", version.ref = "opensaml" }
 opentelemetry-exporter-otlp = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "otel" }
+opentelemetry-sdk-autoconfigure = { module = "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure", version.ref = "otel" }
 eclipse-jgit-sdk = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
 eclipse-jgit-http-apache = { module = "org.eclipse.jgit:org.eclipse.jgit.http.apache", version.ref = "jgit" }
 eclipse-jgit-ssh-jsch = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.jsch", version.ref = "jgit" }
@@ -594,7 +595,7 @@ secretsmanager = { module = "software.amazon.awssdk:secretsmanager", version.ref
 semver4j = { module = "com.vdurmont:semver4j", version.ref = "semver" }
 sendgrid-java = { module = "com.sendgrid:sendgrid-java", version.ref = "sendGrid" }
 sentry-log4j2 = { module = "io.sentry:sentry-log4j2", version.ref = "sentry" }
-sentry-spring-boot-starter-jakarta = { module = "io.sentry:sentry-spring-boot-starter-jakarta", version.ref = "sentry" }
+sentry-spring-boot-starter-jakarta = { module = "io.sentry:sentry-spring-boot-4-starter", version.ref = "sentry" }
 ses = { module = "software.amazon.awssdk:ses", version.ref = "amazonSdk" }
 shib-support = { module = "net.shibboleth:shib-support", version.ref = "shibbolethUtilJavaSupport" }
 slack-api-client = { module = "com.slack.api:slack-api-client", version.ref = "slackClient" }
@@ -649,6 +650,7 @@ spring-boot-starter-logging = { module = "org.springframework.boot:spring-boot-s
 spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail", version.ref = "springBoot" }
 spring-boot-starter-mongodb = { module = "org.springframework.boot:spring-boot-starter-mongodb", version.ref = "springBoot" }
 spring-boot-starter-mustache = { module = "org.springframework.boot:spring-boot-starter-mustache", version.ref = "springBoot" }
+spring-boot-starter-opentelemetry = { module = "org.springframework.boot:spring-boot-starter-opentelemetry", version.ref = "springBoot" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
 spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "springBoot" }
 spring-boot-starter-tomcat = { module = "org.springframework.boot:spring-boot-starter-tomcat", version.ref = "springBoot" }

@@ -898,7 +898,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
             printcyan "Launching CAS from ${PWD}/cas/cas.${projectType} to perform a training run"
             java -XX:ArchiveClassesAtExit=${PWD}/cas/cas.jsa -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType} >/dev/null 2>&1
             printcyan "Generated archive cache file ${PWD}/cas/cas.jsa"
-            runArgs="${runArgs} -XX:SharedArchiveFile=${PWD}/cas/cas.jsa"
+            runArgs="${runArgs} -Xlog:cds=error:file=${PWD}/cas/cds.log -Xshare:auto -XX:SharedArchiveFile=${PWD}/cas/cas.jsa"
             casArtifactToRun="${PWD}/cas/cas.${projectType}"
           else
             printcyan "The scenario ${scenarioName} will run without CDS"

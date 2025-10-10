@@ -12,7 +12,7 @@ category: Logs & Audits
 insight into production deployments and information to reproduce and fix crashes.
              
 The integration here supports error handling and reporting to Sentry, performance monitoring via spans and transactions 
-as well as Sentry logging support. 
+as well as Sentry logging support.
 
 ## Configuration
 

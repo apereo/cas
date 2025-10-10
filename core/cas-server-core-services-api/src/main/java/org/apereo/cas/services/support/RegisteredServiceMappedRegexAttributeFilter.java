@@ -3,7 +3,6 @@ package org.apereo.cas.services.support;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.util.serialization.MapContentDeserializer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
@@ -12,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -44,7 +42,6 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
     @Serial
     private static final long serialVersionUID = 852145306984610128L;
 
-    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     private Map<String, Object> patterns;
 
     private boolean excludeUnmappedAttributes;

@@ -12,6 +12,12 @@ CAS takes advantage of [Spring Boot Admin][bootadmindocs] to manage and monitor 
 internal state visually. As a Spring Boot Admin client, CAS registers itself with the 
 Spring Boot Admin server over HTTP and reports back its status and health to the server's web interface.
 
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
+This functionality is not yet compatible with the CAS ecosystem of libraries, and/or Spring Boot. As a result, 
+support for this feature is dropped. Please consider using alternatives and keep an eye on future releases of CAS
+to see if support for this feature is re-introduced.
+</p></div>
+
 ## Spring Boot Admin Server
 
 The Spring Boot Admin web application server is part of the CAS server via a dedicated extension module. Support 

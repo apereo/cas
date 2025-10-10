@@ -2,7 +2,6 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.serialization.MapContentDeserializer;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -12,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.val;
-import tools.jackson.databind.annotation.JsonDeserialize;
 import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -65,21 +63,18 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Authentication metadata attributes.
      */
-    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, List<Object>> attributes = new LinkedHashMap<>();
 
     /**
      * Map of handler name to handler authentication success event.
      */
-    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, AuthenticationHandlerExecutionResult> successes = new LinkedHashMap<>();
 
     /**
      * Map of handler name to handler authentication failure cause.
      */
-    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, Throwable> failures = new LinkedHashMap<>();
 

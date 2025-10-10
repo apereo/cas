@@ -6,6 +6,8 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,9 +42,9 @@ public class ReturnStaticAttributeReleasePolicy extends AbstractRegisteredServic
 
     @JsonProperty("allowedAttributes")
     @ExpressionLanguageCapable
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, List<Object>> allowedAttributes = new TreeMap<>();
 
-    @SuppressWarnings("unchecked")
     @Override
     public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
                                                            final Map<String, List<Object>> resolvedAttributes) {

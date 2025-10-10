@@ -3,7 +3,6 @@ package org.apereo.cas.ticket;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-import org.apereo.cas.util.serialization.MapContentDeserializer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -14,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.val;
-import tools.jackson.databind.annotation.JsonDeserialize;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +54,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * The services associated to this ticket.
      */
-    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     private Map<String, Service> services = new ConcurrentHashMap<>(0);
 
     /**
@@ -67,7 +64,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * The PGTs associated to this ticket.
      */
-    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     private Map<String, Service> proxyGrantingTickets = new HashMap<>();
 
     /**
