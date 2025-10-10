@@ -75,7 +75,7 @@ This is done to prevent misconfigurations and typos in property names that would
 
 ### Spring Boot 4
 
-CAS is now built with Spring Boot `4`. This is a major platform upgrade that affects almost all aspects of the codebase
+CAS is now built with Spring Boot `4.x`. This is a major platform upgrade that affects almost all aspects of the codebase
 including many of the third-party core libraries used by CAS as well as some CAS functionality. The following
 notable changes are worth mentioning:
 
@@ -92,17 +92,17 @@ operation will be attempted a total of `4` times (`1` initial + `3` retries).
 [Support for Undertow]((../installation/Configuring-Servlet-Container-Embedded-Undertow.html)) 
 as an embedded servlet container has been dropped. Please consider using Apache Tomcat or Jetty
 as an alternative embedded server until Undertow adds support for Servlet `6.1`.
-We will consider re-adding support for Undertow once it is compatible with Spring Boot.
+We will consider re-adding support for Undertow once it is compatible with our version of Spring Boot.
    
 #### JavaMelody
 
 Support for [JavaMelody](../monitoring/Configuring-Monitoring-JavaMelody.html) is not yet compatible with Spring Boot `4`. 
-We plan to re-add support for JavaMelody in a future release once compatibility is restored.
+We plan to re-add support for JavaMelody in the future once compatibility is restored.
 
 #### SpringBoot Admin
 
 Support for [Spring Boot Admin](../monitoring/Configuring-SpringBootAdmin.html) is not yet compatible with Spring Boot `4`.
-We plan to re-add support for Spring Boot Admin in a future release once compatibility is restored.
+We plan to re-add support for Spring Boot Admin in the future once compatibility is restored.
 
 #### Jackson & JSON Processing
 

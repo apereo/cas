@@ -182,6 +182,11 @@ class ReturnAllowedAttributeReleasePolicyTests {
             MAPPER.writeValue(jsonFile, policyWritten);
             val policyRead = MAPPER.readValue(jsonFile, ReturnAllowedAttributeReleasePolicy.class);
             assertEquals(policyWritten, policyRead);
+
+            val p1 = new ReturnAllowedAttributeReleasePolicy();
+            p1.setAuthorizedToReleaseAuthenticationAttributes(false);
+            val p2 = MAPPER.readValue(MAPPER.writeValueAsString(p1), ReturnAllowedAttributeReleasePolicy.class);
+            assertEquals(p1, p2);
         }
 
         @Test

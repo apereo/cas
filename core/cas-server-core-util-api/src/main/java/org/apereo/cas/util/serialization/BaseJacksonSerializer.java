@@ -203,6 +203,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
     protected T readObjectFromString(final String jsonString) {
         try {
             LOGGER.trace("Attempting to parse [{}]", jsonString);
+
             return getTypeReader().readValue(jsonString);
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into type [{}]. This may be caused "

@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
-import org.apereo.cas.util.serialization.MapContentDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,7 +13,6 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
-import tools.jackson.databind.annotation.JsonDeserialize;
 import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -71,7 +69,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
     private RegisteredServiceExpirationPolicy expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
 
     private RegisteredServiceTicketGrantingTicketExpirationPolicy ticketGrantingTicketExpirationPolicy;
-    
+
     private int evaluationOrder;
 
     private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
@@ -97,13 +95,14 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     private RegisteredServiceAuthenticationPolicy authenticationPolicy = new DefaultRegisteredServiceAuthenticationPolicy();
 
-    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
     private Map<String, RegisteredServiceProperty> properties = new HashMap<>();
 
     private List<RegisteredServiceContact> contacts = new ArrayList<>();
 
     @Override
-    public int compareTo(@Nonnull final RegisteredService other) {
+    public int compareTo(
+        @Nonnull
+        final RegisteredService other) {
         return Comparator
             .comparingInt(RegisteredService::getEvaluationPriority)
             .thenComparingInt(RegisteredService::getEvaluationOrder)

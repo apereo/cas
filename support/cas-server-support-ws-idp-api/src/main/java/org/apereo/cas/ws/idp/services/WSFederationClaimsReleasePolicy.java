@@ -8,6 +8,8 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.ws.idp.WSFederationClaims;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,6 +40,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
     @Serial
     private static final long serialVersionUID = -2814928645221579489L;
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, String> allowedAttributes = new LinkedHashMap<>();
 
     public WSFederationClaimsReleasePolicy(final Map<String, String> allowedAttributes) {

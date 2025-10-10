@@ -30,6 +30,7 @@ import tools.jackson.databind.JacksonModule;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.annotation.JsonDeserialize;
 import tools.jackson.databind.cfg.DateTimeFeature;
 import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.cfg.MapperBuilder;
@@ -254,6 +255,7 @@ public class JacksonObjectMapperFactory {
             }
             case final JsonFactory factory -> {
                 return JsonMapper.builder(factory)
+                    .addMixIn(Map.class, PolymorphicMapMixIn.class)
                     .configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS, isQuoteFieldNames())
                     .configure(JsonWriteFeature.QUOTE_PROPERTY_NAMES, isQuoteFieldNames());
             }
@@ -283,6 +285,10 @@ public class JacksonObjectMapperFactory {
                 return StringUtils.isNotBlank(value) ? new URI(value) : null;
             });
         }
+    }
+
+    @JsonDeserialize(contentUsing = MapContentDeserializer.class)
+    private interface PolymorphicMapMixIn {
     }
 }
     
