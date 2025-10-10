@@ -42,9 +42,9 @@ public class CasAmazonS3ServiceRegistryAutoConfiguration {
         val amz = casProperties.getServiceRegistry().getAmazonS3();
         val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
             amz.getCredentialSecretKey(), amz.getProfilePath(), amz.getProfileName());
-        S3Configuration s3Config = S3Configuration.builder()
-                .pathStyleAccessEnabled(amz.isPathStyleEnabled())
-                .build();
+        val s3Config = S3Configuration.builder()
+            .pathStyleAccessEnabled(amz.isPathStyleEnabled())
+            .build();
         val builder = S3Client.builder();
         builder.serviceConfiguration(s3Config);
         AmazonClientConfigurationBuilder.prepareSyncClientBuilder(builder, credentials, amz);
