@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "cas.google-analytics.cookie.name=CasGoogleCookie",
         "cas.google-analytics.cookie.same-site-policy=strict",
-        "cas.tgc.cookie.same-site-policy=lax"
+        "cas.tgc.same-site-policy=lax"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Cookie")
