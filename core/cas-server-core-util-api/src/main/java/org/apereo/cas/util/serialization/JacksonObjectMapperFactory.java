@@ -213,7 +213,8 @@ public class JacksonObjectMapperFactory {
                 .withIsGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC))
             .findAndAddModules()
             .addModules(this.modules)
-            .addModule(getCasJacksonModule());
+            .addModule(getCasJacksonModule())
+            .addMixIn(Map.class, PolymorphicMapMixIn.class);
 
         if (jsonFactory instanceof JsonFactory) {
             configuredBuilder = configuredBuilder.defaultPrettyPrinter(
@@ -255,7 +256,6 @@ public class JacksonObjectMapperFactory {
             }
             case final JsonFactory factory -> {
                 return JsonMapper.builder(factory)
-                    .addMixIn(Map.class, PolymorphicMapMixIn.class)
                     .configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS, isQuoteFieldNames())
                     .configure(JsonWriteFeature.QUOTE_PROPERTY_NAMES, isQuoteFieldNames());
             }
