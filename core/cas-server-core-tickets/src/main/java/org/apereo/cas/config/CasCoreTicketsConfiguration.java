@@ -40,8 +40,10 @@ import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceiver;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.ticket.tracking.AllProxyGrantingTicketsTrackingPolicy;
 import org.apereo.cas.ticket.tracking.AllServicesSessionTrackingPolicy;
 import org.apereo.cas.ticket.tracking.DefaultDescendantTicketsTrackingPolicy;
+import org.apereo.cas.ticket.tracking.MostRecentProxyGrantingTicketTrackingPolicy;
 import org.apereo.cas.ticket.tracking.MostRecentServiceSessionTrackingPolicy;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
@@ -113,6 +115,17 @@ class CasCoreTicketsConfiguration {
             return onlyTrackMostRecentSession
                 ? new MostRecentServiceSessionTrackingPolicy(ticketRegistry)
                 : new AllServicesSessionTrackingPolicy(ticketRegistry);
+        }
+
+        @ConditionalOnMissingBean(name = TicketTrackingPolicy.BEAN_NAME_PROXY_GRANTING_TICKET_TRACKING)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public TicketTrackingPolicy proxyGrantingTicketTrackingPolicy(
+            final CasConfigurationProperties casProperties) {
+            val onlyTrackMostRecentProxyGrantingTicket = casProperties.getTicket().getSt().isOnlyTrackMostRecentProxyGrantingTicket();
+            return onlyTrackMostRecentProxyGrantingTicket
+                ? MostRecentProxyGrantingTicketTrackingPolicy.INSTANCE
+                : AllProxyGrantingTicketsTrackingPolicy.INSTANCE;
         }
 
         @ConditionalOnMissingBean(name = TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
@@ -469,12 +482,14 @@ class CasCoreTicketsConfiguration {
             @Qualifier("protocolTicketCipherExecutor")
             final CipherExecutor protocolTicketCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            final ServicesManager servicesManager,
+            @Qualifier(TicketTrackingPolicy.BEAN_NAME_PROXY_GRANTING_TICKET_TRACKING)
+            final TicketTrackingPolicy proxyGrantingTicketTrackingPolicy) {
             return new DefaultProxyGrantingTicketFactory(
                 proxyGrantingTicketUniqueIdGenerator,
                 proxyGrantingTicketExpirationPolicy,
                 protocolTicketCipherExecutor,
-                servicesManager);
+                servicesManager, proxyGrantingTicketTrackingPolicy);
         }
     }
 

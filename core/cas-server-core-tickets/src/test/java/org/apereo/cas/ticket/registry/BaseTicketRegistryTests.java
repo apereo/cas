@@ -117,6 +117,10 @@ public abstract class BaseTicketRegistryTests {
     protected TicketTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     @Autowired
+    @Qualifier(TicketTrackingPolicy.BEAN_NAME_PROXY_GRANTING_TICKET_TRACKING)
+    protected TicketTrackingPolicy proxyGrantingTicketTrackingPolicy;
+
+    @Autowired
     @Qualifier(TicketCatalog.BEAN_NAME)
     protected TicketCatalog ticketCatalog;
 
@@ -645,7 +649,8 @@ public abstract class BaseTicketRegistryTests {
         assertNotNull(ticketRegistry.getTicket(addedServiceTicket.getId(), ServiceTicket.class));
 
         val proxyGrantingTicketId = TestTicketIdentifiers.generate().proxyGrantingTicketId();
-        val pgt = st1.grantProxyGrantingTicket(proxyGrantingTicketId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+        val pgt = st1.grantProxyGrantingTicket(proxyGrantingTicketId, authentication,
+            NeverExpiresExpirationPolicy.INSTANCE, proxyGrantingTicketTrackingPolicy);
         ticketRegistry.addTicket(pgt);
         ticketRegistry.updateTicket(tgt);
         ticketRegistry.updateTicket(st1);
@@ -680,7 +685,8 @@ public abstract class BaseTicketRegistryTests {
                 ticketRegistry.updateTicket(tgt);
 
                 val proxyGrantingTicketId = TestTicketIdentifiers.generate().proxyGrantingTicketId();
-                val pgt = st.grantProxyGrantingTicket(proxyGrantingTicketId + '-' + i, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+                val pgt = st.grantProxyGrantingTicket(proxyGrantingTicketId + '-' + i, authentication,
+                    NeverExpiresExpirationPolicy.INSTANCE, proxyGrantingTicketTrackingPolicy);
                 ticketRegistry.addTicket(pgt);
                 ticketRegistry.updateTicket(tgt);
                 ticketRegistry.updateTicket(st);

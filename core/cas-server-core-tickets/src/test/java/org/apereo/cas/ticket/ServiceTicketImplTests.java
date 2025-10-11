@@ -120,7 +120,7 @@ class ServiceTicketImplTests extends BaseTicketFactoryTests {
                 new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000),
                 false, serviceTicketSessionTrackingPolicy);
         val t1 = serviceTicket.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), authentication,
-            NeverExpiresExpirationPolicy.INSTANCE);
+            NeverExpiresExpirationPolicy.INSTANCE, proxyGrantingTicketTrackingPolicy);
         assertEquals(authentication, t1.getAuthentication());
     }
 
@@ -142,9 +142,9 @@ class ServiceTicketImplTests extends BaseTicketFactoryTests {
                 new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000),
                 false, serviceTicketSessionTrackingPolicy);
         serviceTicket.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX),
-            authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            authentication, NeverExpiresExpirationPolicy.INSTANCE, proxyGrantingTicketTrackingPolicy);
         assertThrows(Exception.class,
             () -> serviceTicket.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX),
-                authentication, NeverExpiresExpirationPolicy.INSTANCE));
+                authentication, NeverExpiresExpirationPolicy.INSTANCE, proxyGrantingTicketTrackingPolicy));
     }
 }
