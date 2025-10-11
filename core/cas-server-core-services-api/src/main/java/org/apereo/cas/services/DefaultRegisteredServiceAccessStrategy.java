@@ -3,6 +3,8 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyEvaluator;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,7 +41,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @Setter
 @Accessors(chain = true)
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
 
     @Serial
@@ -75,6 +77,7 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
      * Collection of required attributes
      * for this service to proceed.
      */
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     protected Map<String, Set<String>> requiredAttributes = new HashMap<>();
 
     /**
@@ -82,6 +85,7 @@ public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServic
      * that will be rejected which will cause this
      * policy to refuse access.
      */
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     protected Map<String, Set<String>> rejectedAttributes = new HashMap<>();
 
     /**
