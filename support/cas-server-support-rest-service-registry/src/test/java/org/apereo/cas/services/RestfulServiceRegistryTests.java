@@ -1,10 +1,8 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRestServiceRegistryAutoConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -48,10 +46,8 @@ import java.util.List;
     AbstractServiceRegistryTests.SharedTestConfiguration.class,
     RestfulServiceRegistryTests.RestfulServiceRegistryTestConfiguration.class,
     CasRestServiceRegistryAutoConfiguration.class,
-    CasCoreMultifactorAuthenticationAutoConfiguration.class,
-    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
-    CasCoreWebflowAutoConfiguration.class,
+    CasThemesAutoConfiguration.class,
     CasWebAppAutoConfiguration.class
 },
     properties = {

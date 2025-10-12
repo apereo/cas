@@ -2,6 +2,8 @@ package org.apereo.cas.oidc.dynareg;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,6 +48,7 @@ public class OidcClientRegistrationResponse implements Serializable {
     private String subjectType;
 
     @JsonProperty("grant_types")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<String> grantTypes = new ArrayList<>();
 
     @JsonProperty("logo_uri")
@@ -58,9 +61,11 @@ public class OidcClientRegistrationResponse implements Serializable {
     private String termsOfUseUri;
 
     @JsonProperty("response_types")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<String> responseTypes = new ArrayList<>();
 
     @JsonProperty("redirect_uris")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<String> redirectUris = new ArrayList<>();
 
     @JsonProperty("userinfo_signed_response_alg")
@@ -73,6 +78,7 @@ public class OidcClientRegistrationResponse implements Serializable {
     private String userInfoEncryptedResponseEncoding;
 
     @JsonProperty("contacts")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<String> contacts = new ArrayList<>();
 
     @JsonProperty("request_object_signing_alg")

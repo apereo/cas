@@ -2,7 +2,9 @@ package org.apereo.cas.heimdall.authorizer.resource;
 
 import org.apereo.cas.heimdall.authorizer.resource.policy.ResourceAuthorizationPolicy;
 import org.apereo.cas.util.serialization.PatternJsonDeserializer;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -44,8 +46,10 @@ public class AuthorizableResource implements Serializable {
 
     private String method;
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<ResourceAuthorizationPolicy> policies = new ArrayList<>();
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, Object> properties = new HashMap<>();
 
     private boolean enforceAllPolicies;

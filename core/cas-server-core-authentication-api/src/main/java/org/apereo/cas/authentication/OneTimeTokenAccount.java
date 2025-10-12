@@ -5,7 +5,9 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -49,7 +51,7 @@ import java.util.Objects;
 @Setter
 @EqualsAndHashCode
 @SuperBuilder
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @NoArgsConstructor
 public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeTokenAccount>, Cloneable {
     /**
@@ -85,12 +87,14 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @CollectionTable(name = TABLE_NAME_SCRATCH_CODES, joinColumns = @JoinColumn(name = "id"))
     @Column(nullable = false, columnDefinition = "numeric", precision = 255, scale = 0)
     @Builder.Default
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<Number> scratchCodes = new ArrayList<>();
 
     @ElementCollection(targetClass = String.class)
     @CollectionTable(name = TABLE_NAME_OTP_PROPERTIES, joinColumns = @JoinColumn(name = "id"))
     @Column(nullable = false, columnDefinition = "VARCHAR(1024)")
     @Builder.Default
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<String> properties = new ArrayList<>();
 
     @Column(nullable = false)

@@ -1,6 +1,5 @@
 package org.apereo.cas.oidc.claims;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
@@ -28,13 +27,12 @@ public class OidcScopeFreeAttributeReleasePolicy extends BaseOidcScopeAttributeR
     @Serial
     private static final long serialVersionUID = -8338967628001071540L;
 
-    @JsonCreator
     public OidcScopeFreeAttributeReleasePolicy() {
         super(ANY_SCOPE);
     }
-    
-    @JsonCreator
-    public OidcScopeFreeAttributeReleasePolicy(@JsonProperty("allowedAttributes") final List<String> allowedAttributes) {
+
+    public OidcScopeFreeAttributeReleasePolicy(@JsonProperty("allowedAttributes")
+                                               final List<String> allowedAttributes) {
         this();
         setAllowedAttributes(allowedAttributes);
     }

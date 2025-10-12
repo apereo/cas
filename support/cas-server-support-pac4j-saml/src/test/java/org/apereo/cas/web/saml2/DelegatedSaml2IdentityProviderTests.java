@@ -123,7 +123,6 @@ class DelegatedSaml2IdentityProviderTests {
         "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
         "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
         "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
-        "cas.authn.pac4j.saml[0].metadata-signer-strategy=xmlsec",
         "cas.authn.pac4j.core.lazy-init=true"
     })
     class Saml2ClientsWithGroovyAttributeConverter extends BaseTests {
@@ -145,7 +144,6 @@ class DelegatedSaml2IdentityProviderTests {
         "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
         "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
         "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
-        "cas.authn.pac4j.saml[0].metadata-signer-strategy=xmlsec",
         "cas.authn.pac4j.core.lazy-init=true"
     })
     class Saml2ClientsWithCustomAttributeConverter extends BaseTests {
