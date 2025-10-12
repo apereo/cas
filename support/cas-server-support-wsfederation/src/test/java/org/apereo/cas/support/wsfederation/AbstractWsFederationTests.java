@@ -38,7 +38,6 @@ import java.util.Map;
         "cas.authn.wsfed[0].signing-certificate-resources=classpath:adfs-signing.crt",
         "cas.authn.wsfed[0].identity-attribute=upn",
         "cas.authn.wsfed[0].attribute-resolver-enabled=true",
-        "cas.authn.wsfed[0].auto-redirect=false",
         "cas.authn.wsfed[0].name=Test ADFS1",
         "cas.authn.wsfed[0].encryption-private-key=classpath:adfs-enc-private.key",
         "cas.authn.wsfed[0].encryption-certificate=classpath:adfs-enc-certificate.crt"

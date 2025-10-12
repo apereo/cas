@@ -1,13 +1,10 @@
 package org.apereo.cas;
 
 import org.apereo.cas.authentication.MessageDescriptor;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -19,7 +16,7 @@ import java.io.Serializable;
  * @since 4.0.0
  */
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(onConstructor_ = @JsonCreator)
 @EqualsAndHashCode
 public class DefaultMessageDescriptor implements MessageDescriptor {
 
@@ -32,8 +29,9 @@ public class DefaultMessageDescriptor implements MessageDescriptor {
 
     private final Serializable[] params;
 
-    @JsonCreator
-    public DefaultMessageDescriptor(@JsonProperty("code") final String code) {
+    public DefaultMessageDescriptor(final String code) {
         this(code, code, null);
     }
+
+
 }

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RegisteredService")
 class DefaultRegisteredServiceAuthenticationPolicyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private static void verify(final RegisteredServiceAuthenticationPolicyCriteria criteria) throws Exception {
         val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();

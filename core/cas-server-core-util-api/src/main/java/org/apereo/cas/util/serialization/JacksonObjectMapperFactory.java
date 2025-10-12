@@ -213,9 +213,8 @@ public class JacksonObjectMapperFactory {
                 .withIsGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC))
             .findAndAddModules()
             .addModules(this.modules)
-            .addModule(getCasJacksonModule())
-            .addMixIn(Map.class, PolymorphicMapMixIn.class);
-        
+            .addModule(getCasJacksonModule());
+
         if (jsonFactory instanceof JsonFactory) {
             configuredBuilder = configuredBuilder.defaultPrettyPrinter(
                 minimal ? new MinimalPrettyPrinter() : new DefaultPrettyPrinter());
@@ -235,7 +234,8 @@ public class JacksonObjectMapperFactory {
                 .allowIfBaseType("org.opensaml.")
                 .build();
             return configuredBuilder.polymorphicTypeValidator(ptv)
-                .activateDefaultTyping(ptv, DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+                .activateDefaultTyping(ptv, DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY)
+                .addMixIn(Map.class, PolymorphicMapMixIn.class);
         }
         return configuredBuilder.deactivateDefaultTyping();
     }

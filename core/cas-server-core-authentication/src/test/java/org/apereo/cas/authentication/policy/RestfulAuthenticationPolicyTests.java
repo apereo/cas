@@ -42,6 +42,7 @@ class RestfulAuthenticationPolicyTests {
             webServer.start();
             val props = new RestAuthenticationPolicyProperties();
             props.setUrl("http://localhost:" + port);
+            props.setMaximumRetryAttempts(0);
             val policy = new RestfulAuthenticationPolicy(props);
             assertThrowsWithRootCause(GeneralSecurityException.class, exceptionClass,
                 () -> policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), applicationContext));
@@ -58,6 +59,7 @@ class RestfulAuthenticationPolicyTests {
             webServer.start();
             val props = new RestAuthenticationPolicyProperties();
             props.setUrl("http://localhost:%s".formatted(webServer.getPort()));
+            props.setMaximumRetryAttempts(0);
             val policy = new RestfulAuthenticationPolicy(props);
             assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), applicationContext).isSuccess());
         }

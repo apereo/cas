@@ -27,16 +27,19 @@ class PasswordExpiringWarningMessageDescriptorTests {
 
     @Test
     void verifyOperation() {
-        val d = new PasswordExpiringWarningMessageDescriptor("DefaultMessage", 30);
-        assertEquals(30, d.getDaysToExpiration());
-        assertEquals("DefaultMessage", d.getDefaultMessage());
+        val descriptor = new PasswordExpiringWarningMessageDescriptor("DefaultMessage", 30);
+        assertEquals(30, descriptor.getDaysToExpiration());
+        assertEquals("DefaultMessage", descriptor.getDefaultMessage());
     }
 
     @Test
     void verifySerialization() throws Throwable {
-        val d = new PasswordExpiringWarningMessageDescriptor("DefaultMessage", 30);
+        val descriptor = new PasswordExpiringWarningMessageDescriptor("DefaultMessage", 30);
+        val json = MAPPER.writeValueAsString(descriptor);
+        val descriptorRead = MAPPER.readValue(json, PasswordExpiringWarningMessageDescriptor.class);
+        assertEquals(descriptor, descriptorRead);
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        handler.addMessageDescriptor(d);
+        handler.addMessageDescriptor(descriptor);
         val credential = new UsernamePasswordCredential("casuser", "resusac");
         val result = handler.authenticate(credential, mock(Service.class));
         assertNotNull(result);
