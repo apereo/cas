@@ -34,6 +34,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-oauth-services")
     testImplementation project(":support:cas-server-support-saml-idp-core")
     testImplementation project(":support:cas-server-support-oidc-services")

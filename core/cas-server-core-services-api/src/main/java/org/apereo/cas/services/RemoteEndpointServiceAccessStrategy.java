@@ -6,6 +6,8 @@ import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,6 +52,7 @@ public class RemoteEndpointServiceAccessStrategy extends BaseRegisteredServiceAc
 
     private String method = "GET";
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, String> headers = new TreeMap<>();
 
     @Override

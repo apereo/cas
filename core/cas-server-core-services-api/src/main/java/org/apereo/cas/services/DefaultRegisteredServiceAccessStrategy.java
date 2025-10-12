@@ -41,7 +41,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @Setter
 @Accessors(chain = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
 
     @Serial

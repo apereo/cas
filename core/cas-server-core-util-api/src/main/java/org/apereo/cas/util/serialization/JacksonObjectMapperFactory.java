@@ -215,7 +215,7 @@ public class JacksonObjectMapperFactory {
             .addModules(this.modules)
             .addModule(getCasJacksonModule())
             .addMixIn(Map.class, PolymorphicMapMixIn.class);
-
+        
         if (jsonFactory instanceof JsonFactory) {
             configuredBuilder = configuredBuilder.defaultPrettyPrinter(
                 minimal ? new MinimalPrettyPrinter() : new DefaultPrettyPrinter());

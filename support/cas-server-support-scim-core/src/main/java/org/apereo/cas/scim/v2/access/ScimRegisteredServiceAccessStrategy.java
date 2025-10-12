@@ -4,6 +4,8 @@ import org.apereo.cas.scim.v2.ScimService;
 import org.apereo.cas.services.BaseRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyEvaluator;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,6 +37,7 @@ public class ScimRegisteredServiceAccessStrategy extends BaseRegisteredServiceAc
      * Collection of required attributes
      * for this service to proceed.
      */
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, Set<String>> requiredAttributes = new HashMap<>();
 
     @Override

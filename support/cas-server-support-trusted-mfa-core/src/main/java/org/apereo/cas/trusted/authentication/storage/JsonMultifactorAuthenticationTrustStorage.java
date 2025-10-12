@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage implements DisposableBean {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     private final Resource location;
 

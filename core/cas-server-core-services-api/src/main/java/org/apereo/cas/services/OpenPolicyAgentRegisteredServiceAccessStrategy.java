@@ -9,6 +9,8 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -65,6 +67,7 @@ public class OpenPolicyAgentRegisteredServiceAccessStrategy extends BaseRegister
     @ExpressionLanguageCapable
     private String token;
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, Object> context = new HashMap<>();
 
     @Override

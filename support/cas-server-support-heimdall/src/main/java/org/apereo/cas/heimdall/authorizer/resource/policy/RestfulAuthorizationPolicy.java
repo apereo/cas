@@ -8,8 +8,10 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,16 +42,15 @@ import java.util.stream.Collectors;
 @ToString
 @Accessors(chain = true)
 @NoArgsConstructor
-@AllArgsConstructor
 @Slf4j
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RestfulAuthorizationPolicy implements ResourceAuthorizationPolicy {
     @Serial
     private static final long serialVersionUID = -1244481042826672523L;
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).minimal(true).build().toObjectMapper();
-
-
+    
     /**
      * The endpoint URL to contact and retrieve attributes.
      */
@@ -59,8 +60,10 @@ public class RestfulAuthorizationPolicy implements ResourceAuthorizationPolicy {
     /**
      * Headers, defined as a Map, to include in the request when making the REST call.
      */
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, String> headers = new HashMap<>();
 
+    @JsonSetter(nulls = Nulls.SKIP)
     private String method = "POST";
 
     @Override
