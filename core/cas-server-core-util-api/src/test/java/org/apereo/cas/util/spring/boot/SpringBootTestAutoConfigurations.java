@@ -42,6 +42,7 @@ import org.springframework.boot.webmvc.autoconfigure.actuate.web.WebMvcEndpointM
 import org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.resilience.annotation.EnableResilientMethods;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.lang.annotation.Documented;
@@ -95,6 +96,7 @@ import java.lang.annotation.Target;
 @Import(ServletWebServerConfiguration.class)
 @Inherited
 @EnableScheduling
+@EnableResilientMethods
 @EnableTransactionManagement
 @EnableConfigurationProperties({
     ManagementServerProperties.class,
