@@ -44,7 +44,7 @@ public class MapContentDeserializer extends ValueDeserializer {
         if (containerType == null && property != null) {
             containerType = property.getType();
         }
-
+        
         val valueType = containerType != null && containerType.isContainerType()
             ? containerType.getContentType()
             : (this.contentType != null ? this.contentType : ctxt.constructType(Object.class));

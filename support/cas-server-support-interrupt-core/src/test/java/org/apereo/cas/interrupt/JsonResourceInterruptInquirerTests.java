@@ -34,11 +34,11 @@ class JsonResourceInterruptInquirerTests {
             "field2", List.of("value3", "value4")));
         map.put("casuser", response);
 
-        val f = Files.createTempFile("interrupt", "json").toFile();
-        MAPPER.writer().withDefaultPrettyPrinter().writeValue(f, map);
-        assertTrue(f.exists());
+        val jsonFile = Files.createTempFile("interrupt", "json").toFile();
+        MAPPER.writeValue(jsonFile, map);
+        assertTrue(jsonFile.exists());
 
-        val inquirer = new JsonResourceInterruptInquirer(new FileSystemResource(f));
+        val inquirer = new JsonResourceInterruptInquirer(new FileSystemResource(jsonFile));
         response = inquirer.inquire(CoreAuthenticationTestUtils.getAuthentication("unknown"),
             CoreAuthenticationTestUtils.getRegisteredService(),
             CoreAuthenticationTestUtils.getService(),

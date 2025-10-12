@@ -27,6 +27,7 @@ import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasSamlIdPAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThrottlingAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
@@ -434,6 +435,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasCoreUtilAutoConfiguration.class,
         CasWebAppAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class,
+        CasThymeleafAutoConfiguration.class,
         CasThemesAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)

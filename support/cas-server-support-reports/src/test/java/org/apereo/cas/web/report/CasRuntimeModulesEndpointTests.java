@@ -23,8 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = "management.endpoint.casModules.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 class CasRuntimeModulesEndpointTests extends AbstractCasEndpointTests {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .build().toObjectMapper();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().build().toObjectMapper();
 
     @Test
     void verifyOperation() throws Throwable {

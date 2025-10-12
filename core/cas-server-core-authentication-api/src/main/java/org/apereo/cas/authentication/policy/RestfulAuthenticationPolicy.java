@@ -98,6 +98,7 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
                 .method(HttpMethod.POST)
                 .entity(entity)
                 .headers(headers)
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = HttpStatus.valueOf(response.getCode());
