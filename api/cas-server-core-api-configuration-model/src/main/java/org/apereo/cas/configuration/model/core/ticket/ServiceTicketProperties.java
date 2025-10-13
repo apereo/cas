@@ -42,4 +42,9 @@ public class ServiceTicketProperties implements Serializable {
      * Maximum length of generated service tickets.
      */
     private int maxLength = 20;
+
+    /**
+     * Only track the most recent proxy granting ticket.
+     */
+    private boolean onlyTrackMostRecentProxyGrantingTicket;
 }
