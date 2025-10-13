@@ -22,6 +22,6 @@ public class AllProxyGrantingTicketsTrackingPolicy implements TicketTrackingPoli
         if (ownerTicket instanceof TicketGrantingTicket ticketGrantingTicket) {
             ticketGrantingTicket.getProxyGrantingTickets().put(ticket.getId(), service);
         }
-        return null;
+        return ticket.getId();
     }
 }

@@ -11,7 +11,7 @@ import lombok.val;
  * @author Jerome LELEU
  * @since 8.0.0
  */
-public class MostRecentProxyGrantingTicketTrackingPolicy extends AllProxyGrantingTicketsTrackingPolicy {
+public class MostRecentProxyGrantingTicketTrackingPolicy implements TicketTrackingPolicy {
     
     /**
      * Static instance of the policy.
@@ -24,7 +24,8 @@ public class MostRecentProxyGrantingTicketTrackingPolicy extends AllProxyGrantin
             val proxyGrantingTickets = ticketGrantingTicket.getProxyGrantingTickets();
             val serviceId = service.getId();
             proxyGrantingTickets.values().removeIf(existingService -> existingService.getId().equals(serviceId));
+            proxyGrantingTickets.put(ticket.getId(), service);
         }
-        return super.trackTicket(ownerTicket, ticket, service);
+        return ticket.getId();
     }
 }
