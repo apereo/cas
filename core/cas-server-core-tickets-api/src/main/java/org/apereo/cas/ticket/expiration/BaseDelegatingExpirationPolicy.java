@@ -6,7 +6,9 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -51,6 +53,7 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
     @Serial
     private static final long serialVersionUID = 5927936344949518688L;
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private final Map<String, ExpirationPolicy> policies = new LinkedHashMap<>();
 
     /**
