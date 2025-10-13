@@ -61,6 +61,7 @@ public class AsciiArtUtils {
             (____/ (__) \\__/(__) \s
             
             """;
+        out.warn(ANSI_BOLD);
         out.warn(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
         out.warn(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional));
         out.warn(ASCII_ART_LOGGER_MARKER, ANSI_RESET);
@@ -80,6 +81,7 @@ public class AsciiArtUtils {
              )   / ) _) /    \\ ) D ( )  /\s
             (__\\_)(____)\\_/\\_/(____/(__/ \s
             """;
+        out.info(ANSI_BOLD);
         out.info(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
         out.info(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional).concat("\n"));
         out.info(ASCII_ART_LOGGER_MARKER, ANSI_RESET);
