@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.util;
 
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
+import lombok.val;
 import org.jooq.lambda.Unchecked;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.JsonToken;
@@ -22,11 +23,14 @@ public class X509CertificateCredentialJsonSerializer extends ValueSerializer<X50
                           final JsonGenerator generator,
                           final SerializationContext context) {
 
-        if (context.getAttribute("WithType") != null) {
-            generator.writeStartArray("certificates");
+        val withType = context.getAttribute("WithType") != null;
+
+        if (withType) {
+            generator.writeName("certificates");
+            generator.writeStartArray();
         }
         Arrays.stream(value.getCertificates()).forEach(Unchecked.consumer(c -> generator.writeBinary(c.getEncoded())));
-        if (context.getAttribute("WithType") != null) {
+        if (withType) {
             generator.writeEndArray();
         }
     }

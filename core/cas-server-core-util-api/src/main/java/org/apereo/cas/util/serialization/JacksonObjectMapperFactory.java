@@ -197,6 +197,7 @@ public class JacksonObjectMapperFactory {
             .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, sorted)
 
             .configure(EnumFeature.READ_ENUMS_USING_TO_STRING, false)
+            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
 
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, isFailOnUnknownProperties())
             .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
@@ -229,6 +230,7 @@ public class JacksonObjectMapperFactory {
                 .allowIfBaseType("java.util.")
                 .allowIfBaseType("java.lang.")
                 .allowIfBaseType("java.time.")
+                .allowIfBaseType("java.io.")
                 .allowIfBaseType("com.nimbusds.oauth2.")
                 .allowIfBaseType("org.pac4j.")
                 .allowIfBaseType("org.opensaml.")

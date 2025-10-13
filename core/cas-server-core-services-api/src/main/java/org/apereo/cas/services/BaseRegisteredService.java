@@ -5,6 +5,8 @@ import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -95,8 +97,10 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     private RegisteredServiceAuthenticationPolicy authenticationPolicy = new DefaultRegisteredServiceAuthenticationPolicy();
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, RegisteredServiceProperty> properties = new HashMap<>();
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<RegisteredServiceContact> contacts = new ArrayList<>();
 
     @Override

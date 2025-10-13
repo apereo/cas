@@ -12,12 +12,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import tools.jackson.core.JacksonException;
+import org.apache.commons.io.IOUtils;
 import tools.jackson.core.ObjectReadContext;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode(of = "data", callSuper = false)
 public class MetadataObject {
-    private static final ObjectMapper OBJECT_MAPPER = null; //JacksonCodecs.json();
+    private static final ObjectMapper OBJECT_MAPPER = WebAuthnUtils.getObjectMapper();
 
     private static final TypeReference<Map<String, String>> MAP_STRING_STRING_TYPE =
         new TypeReference<>() {
@@ -61,7 +62,7 @@ public class MetadataObject {
 
     private final List<JsonNode> devices;
 
-    @JsonCreator
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public MetadataObject(final JsonNode data) {
         this.data = data;
         vendorInfo = OBJECT_MAPPER.readValue(data.get("vendorInfo").traverse(ObjectReadContext.empty()), MAP_STRING_STRING_TYPE);
@@ -90,8 +91,8 @@ public class MetadataObject {
 
     public static MetadataObject readMetadata(final InputStream is) {
         try {
-            return WebAuthnUtils.getObjectMapper().readValue(is, MetadataObject.class);
-        } catch (final JacksonException e) {
+            return OBJECT_MAPPER.readValue(is, MetadataObject.class);
+        } catch (final Exception e) {
             throw ExceptionUtil.wrapAndLog(LOGGER, "Failed to read default metadata", e);
         }
     }
