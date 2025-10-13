@@ -28,22 +28,21 @@ class X509CertificateCredentialJsonSerializerTests {
 
     @Test
     void verifyOperation() {
-        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
-        val json = MAPPER.writeValueAsString(c);
+        val credential = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        val json = MAPPER.writeValueAsString(credential);
         assertNotNull(json);
         val obj = MAPPER.readValue(json, new TypeReference<X509CertificateCredential>() {
         });
         assertNotNull(obj);
-
         val serializer = new X509CertificateCredentialJsonSerializer();
         assertSame(X509CertificateCredential.class, serializer.handledType());
     }
 
     @Test
     void verifyAuditableOperation() {
-        val c = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
+        val credential = new X509CertificateCredential(new X509Certificate[]{VALID_CERTIFICATE});
         val set = new LinkedHashSet<>();
-        set.add(c);
+        set.add(credential);
         val json = AuditTrailManager.toJson(set);
         assertNotNull(json);
     }

@@ -1,6 +1,7 @@
 package org.apereo.cas.webauthn;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.RegisteredCredential;
 import lombok.experimental.UtilityClass;
@@ -30,11 +31,9 @@ public class WebAuthnUtils {
         .addMixIn(RegisteredCredential.RegisteredCredentialBuilder.class, RegisteredCredentialBuilderMixin.class)
         .findAndAddModules()
         .defaultPrettyPrinter(new DefaultPrettyPrinter())
-        .changeDefaultPropertyInclusion(handler -> {
-            handler.withValueInclusion(JsonInclude.Include.NON_NULL);
-            handler.withContentInclusion(JsonInclude.Include.NON_NULL);
-            return handler;
-        })
+        .changeDefaultNullHandling(handler -> handler.withValueNulls(Nulls.SKIP).withContentNulls(Nulls.SKIP))
+        .changeDefaultPropertyInclusion(handler -> handler.withValueInclusion(JsonInclude.Include.NON_NULL)
+            .withContentInclusion(JsonInclude.Include.NON_NULL))
         .build();
 
     /**

@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
 },
-    properties = "cas.ticket.registry.hazelcast.cluster.instance-name=testlocalmonitor")
+    properties = "cas.ticket.registry.hazelcast.cluster.core.instance-name=testlocalmonitor")
 @Tag("Hazelcast")
 @ExtendWith(CasTestExtension.class)
 class HazelcastHealthIndicatorTests {

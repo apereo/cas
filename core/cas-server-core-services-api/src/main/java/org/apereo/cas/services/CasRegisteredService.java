@@ -1,7 +1,9 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,6 +44,7 @@ public class CasRegisteredService extends BaseWebBasedRegisteredService implemen
 
     private String redirectUrl;
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Set<CasProtocolVersions> supportedProtocols = new LinkedHashSet<>();
 
     private String responseType;
