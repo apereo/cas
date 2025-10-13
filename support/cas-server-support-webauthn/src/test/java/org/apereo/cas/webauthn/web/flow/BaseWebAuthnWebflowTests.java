@@ -18,6 +18,7 @@ import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasSupportActionsAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.config.CasWebAuthnAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -52,6 +53,7 @@ public abstract class BaseWebAuthnWebflowTests {
         CasCoreScriptingAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasWebAppAutoConfiguration.class,
+        CasThymeleafAutoConfiguration.class,
         CasThemesAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)

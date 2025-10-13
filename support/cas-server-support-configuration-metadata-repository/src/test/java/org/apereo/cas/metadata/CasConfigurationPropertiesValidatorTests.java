@@ -36,9 +36,9 @@ import static org.junit.jupiter.api.Assertions.*;
         "custom.type=TYPE2",
         "custom.flag=true",
         "cas.authn.saml-idp.core.session-storage-type=HTTP",
-        "cas.unknown.setting=true",
-        "cas.something=else",
-        "cas.hello[0]=world"
+        "cas.custom.properties.unknown.setting=true",
+        "cas.custom.properties.something=else",
+        "cas.custom.properties.hello[0]=world"
     })
 @EnableConfigurationProperties({CasConfigurationPropertiesValidatorTests.TestCustomProperties.class, CasConfigurationProperties.class})
 @Tag("CasConfiguration")

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.google-recaptcha.site-key=6LauELajSYtaX8",
         "cas.google-recaptcha.secret=6L9LlZyI10_X4LV",
         "cas.google-recaptcha.version=GOOGLE_RECAPTCHA_V3",
-        "cas.geo-location.google-recaptcha.enabled=true"
+        "cas.google-recaptcha.enabled=true"
     }
 )
 @Tag("WebflowActions")

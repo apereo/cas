@@ -10,6 +10,7 @@ dependencies {
     implementation libraries.ldaptive
     
     implementation project(":support:cas-server-support-ldap-core")
+    
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-util-api")
@@ -18,14 +19,18 @@ dependencies {
     
     testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-cookie")
@@ -37,4 +42,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-saml-idp-core")
     testImplementation project(":support:cas-server-support-oidc-services")
     testImplementation project(":support:cas-server-support-ws-idp-api")
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-thymeleaf")
+    
 }

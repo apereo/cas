@@ -108,10 +108,14 @@ class CoreWsSecurityIdentityProviderConfiguration {
 
         @Bean
         public Service wsFederationCallbackService(
+            final CasConfigurationProperties casProperties,
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
-            return webApplicationServiceFactory
-                .createService(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
+            val service = casProperties.getServer()
+                .getPrefix()
+                .concat(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
+            LOGGER.debug("Locating WS-Federation callback service at [{}]", service);
+            return webApplicationServiceFactory.createService(service);
         }
 
         @Bean

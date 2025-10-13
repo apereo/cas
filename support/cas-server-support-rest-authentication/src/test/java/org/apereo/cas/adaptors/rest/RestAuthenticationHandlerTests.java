@@ -63,8 +63,7 @@ class RestAuthenticationHandlerTests {
         val formatted = DateTimeFormatter.RFC_1123_DATE_TIME
             .withZone(ZoneOffset.UTC)
             .format(instant);
-
-
+        
         try (val webServer = new MockWebServer(port)) {
             webServer.start();
             webServer.responseBodyJson(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser"));
