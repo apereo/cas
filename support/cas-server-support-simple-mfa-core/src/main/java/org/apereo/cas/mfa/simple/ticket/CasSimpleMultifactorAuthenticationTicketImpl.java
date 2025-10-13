@@ -6,7 +6,9 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -42,7 +44,9 @@ public class CasSimpleMultifactorAuthenticationTicketImpl extends AbstractTicket
     private Service service;
 
     public CasSimpleMultifactorAuthenticationTicketImpl(final String id, final ExpirationPolicy expirationPolicy,
-                                                        final Service service, final Map<String, Serializable> properties) {
+                                                        final Service service,
+                                                        @JsonSetter(nulls = Nulls.AS_EMPTY)
+                                                        final Map<String, Serializable> properties) {
         super(id, expirationPolicy);
         this.service = service;
         setProperties(new HashMap<>(properties));

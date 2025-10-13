@@ -300,13 +300,17 @@ public abstract class AbstractServiceRegistryTests {
     @Test
     void checkSaveMethodWithDelegatedAuthnPolicy() {
         getRegisteredServiceTypes().forEach(type -> {
-            val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type)
+            val registeredService = buildRegisteredServiceInstance(RandomUtils.nextInt(), type)
                 .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
             val strategy = new DefaultRegisteredServiceAccessStrategy();
             val providers = CollectionUtils.wrapList("one", "two");
-            strategy.setDelegatedAuthenticationPolicy(new DefaultRegisteredServiceDelegatedAuthenticationPolicy(providers, true, false, null));
-            r.setAccessStrategy(strategy);
-            val r2 = serviceRegistry.save(r);
+            val delegatedAuthenticationPolicy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy()
+                .setAllowedProviders(providers)
+                .setPermitUndefined(true)
+                .setExclusive(false);
+            strategy.setDelegatedAuthenticationPolicy(delegatedAuthenticationPolicy);
+            registeredService.setAccessStrategy(strategy);
+            val r2 = serviceRegistry.save(registeredService);
             val r3 = serviceRegistry.findServiceById(r2.getId());
             assertEquals(r2, r3);
         });
