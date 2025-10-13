@@ -112,16 +112,6 @@ public class CasThymeleafAutoConfiguration {
 
     }
 
-    private static String appendCharset(final MimeType type, final String charset) {
-        if (type.getCharset() != null) {
-            return type.toString();
-        }
-        val parameters = new LinkedHashMap<String, String>();
-        parameters.put("charset", charset);
-        parameters.putAll(type.getParameters());
-        return new MimeType(type, parameters).toString();
-    }
-
     private static void configureTemplateViewResolver(final AbstractConfigurableTemplateResolver resolver,
                                                       final ThymeleafProperties thymeleafProperties) {
         resolver.setCacheable(thymeleafProperties.isCache());
@@ -350,6 +340,16 @@ public class CasThymeleafAutoConfiguration {
             @Qualifier("casThymeleafTemplatesDirector")
             final ObjectProvider<CasThymeleafTemplatesDirector> casThymeleafTemplatesDirector) {
             return new CasThymeleafExpressionDialect(casThymeleafTemplatesDirector);
+        }
+
+        private static String appendCharset(final MimeType type, final String charset) {
+            if (type.getCharset() != null) {
+                return type.toString();
+            }
+            val parameters = new LinkedHashMap<String, String>();
+            parameters.put("charset", charset);
+            parameters.putAll(type.getParameters());
+            return new MimeType(type, parameters).toString();
         }
     }
 }
