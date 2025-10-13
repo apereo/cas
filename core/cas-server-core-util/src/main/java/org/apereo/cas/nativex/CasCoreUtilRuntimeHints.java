@@ -161,7 +161,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             TypeReference.of("java.time.Ser")
         ));
 
-        registerReflectionHintsForIntrospectedPublicElements(hints, List.of(
+        registerReflectionHintsForPublicElements(hints, List.of(
             TypeReference.of("java.util.LinkedHashMap$Entry"),
             TypeReference.of("java.util.TreeMap$Entry")
         ));
@@ -205,9 +205,9 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
     private void registerCaffeineHints(final RuntimeHints hints) {
         FunctionUtils.doAndHandle(_ -> {
             var clazz = ClassUtils.getClass("com.github.benmanes.caffeine.cache.Node", false);
-            registerReflectionHintsForConstructors(hints, findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
+            registerReflectionHintsForDeclaredAndPublicElements(hints, findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
             clazz = ClassUtils.getClass("com.github.benmanes.caffeine.cache.LocalCache", false);
-            registerReflectionHintsForConstructors(hints, findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
+            registerReflectionHintsForDeclaredAndPublicElements(hints, findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
         });
     }
 
