@@ -73,6 +73,7 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
                 .url(rest.getUrl())
                 .headers(headers)
                 .parameters(queryParams.toSingleValueMap())
+                .maximumRetryAttempts(rest.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = response.getCode();
