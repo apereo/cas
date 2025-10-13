@@ -55,14 +55,11 @@ public class AsciiArtUtils {
     public static void printAsciiArtWarning(final Logger out, final String additional) {
         val ascii = """
 
-              _____ ______   ___   ____  __\s
-             / ___/|      T /   \\ |    \\|  T
-            (   \\_ |      |Y     Y|  o  )  |
-             \\__  Tl_j  l_j|  O  ||   _/|__j
-             /  \\ |  |  |  |     ||  |   __\s
-             \\    |  |  |  l     !|  |  |  T
-              \\___j  l__j   \\___/ l__j  l__j
-                                           \s
+             ____  ____  __  ____\s
+            / ___)(_  _)/  \\(  _ \\
+            \\___ \\  )( (  O )) __/
+            (____/ (__) \\__/(__) \s
+            
             """;
         out.warn(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
         out.warn(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional));
@@ -77,16 +74,12 @@ public class AsciiArtUtils {
      */
     public static void printAsciiArtReady(final Logger out, final String additional) {
         val ascii = """
-             
-             ____     ___   ____  ___    __ __\s
-            |    \\   /  _] /    T|   \\  |  T  T
-            |  D  ) /  [_ Y  o  ||    \\ |  |  |
-            |    / Y    _]|     ||  D  Y|  ~  |
-            |    \\ |   [_ |  _  ||     |l___, |
-            |  .  Y|     T|  |  ||     ||     !
-            l__j\\_jl_____jl__j__jl_____jl____/\s
-                                              \s
-                        """;
+            
+             ____  ____   __   ____  _  _\s
+            (  _ \\(  __) / _\\ (    \\( \\/ )
+             )   / ) _) /    \\ ) D ( )  /\s
+            (__\\_)(____)\\_/\\_/(____/(__/ \s
+            """;
         out.info(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
         out.info(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional).concat("\n"));
         out.info(ASCII_ART_LOGGER_MARKER, ANSI_RESET);
