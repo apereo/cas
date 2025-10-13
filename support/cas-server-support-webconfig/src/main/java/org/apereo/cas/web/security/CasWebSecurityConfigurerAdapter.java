@@ -77,7 +77,7 @@ public class CasWebSecurityConfigurerAdapter {
     private final CasConfigurationProperties casProperties;
 
     private final WebEndpointProperties webEndpointProperties;
-    
+
     private final ManagementServerProperties managementServerProperties;
 
     private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;

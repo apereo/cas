@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoCon
 import org.springframework.boot.autoconfigure.ssl.SslAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.health.autoconfigure.registry.HealthContributorRegistryAutoConfiguration;
 import org.springframework.boot.integration.autoconfigure.IntegrationAutoConfiguration;
 import org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration;
 import org.springframework.boot.mail.autoconfigure.MailProperties;
@@ -89,6 +90,7 @@ import java.lang.annotation.Target;
     BeansEndpointAutoConfiguration.class,
     ConditionsReportEndpointAutoConfiguration.class,
     EnvironmentEndpointAutoConfiguration.class,
+    HealthContributorRegistryAutoConfiguration.class,
     HealthEndpointAutoConfiguration.class,
     InfoEndpointAutoConfiguration.class,
     SslAutoConfiguration.class

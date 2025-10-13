@@ -1,6 +1,7 @@
 package com.yubico.core;
 
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.webauthn.WebAuthnUtils;
 import com.yubico.webauthn.data.ByteArray;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +22,6 @@ import java.util.function.Function;
 @Slf4j
 @RequiredArgsConstructor
 public class WebSessionWebAuthnCache<R> implements WebAuthnCache<R> {
-
-    private static final ObjectMapper MAPPER = null; //JacksonCodecs.json().findAndRegisterModules();
 
     private final String mapName;
 
@@ -56,7 +55,7 @@ public class WebSessionWebAuthnCache<R> implements WebAuthnCache<R> {
     public void put(final HttpServletRequest request, final ByteArray key, final R obj) {
         val key64 = key.getBase64();
         FunctionUtils.doUnchecked(_ -> {
-            val value = MAPPER.writeValueAsString(obj);
+            val value = WebAuthnUtils.getObjectMapper().writeValueAsString(obj);
             LOGGER.trace("Put value([{}]): [{}] for key: [{}]", clazz, value, key64);
             retrieveMap(request).put(key64, value);
         });
@@ -70,7 +69,7 @@ public class WebSessionWebAuthnCache<R> implements WebAuthnCache<R> {
             return null;
         }
         LOGGER.trace("GetIfPresent value([{}]): [{}] for key: [{}]", clazz, value, key64);
-        return FunctionUtils.doUnchecked(() -> MAPPER.readValue(value, clazz));
+        return FunctionUtils.doUnchecked(() -> WebAuthnUtils.getObjectMapper().readValue(value, clazz));
     }
 
     @Override
@@ -82,14 +81,14 @@ public class WebSessionWebAuthnCache<R> implements WebAuthnCache<R> {
             if (value == null) {
                 val newObj = mappingFunction.apply(key);
                 if (newObj != null) {
-                    value = MAPPER.writeValueAsString(newObj);
+                    value = WebAuthnUtils.getObjectMapper().writeValueAsString(newObj);
                     LOGGER.trace("Save value([{}]): [{}] for key: [{}]", clazz, value, key64);
                     map.put(key64, value);
                 }
                 return newObj;
             }
             LOGGER.trace("Get value([{}]): [{}] for key: [{}]", clazz, value, key64);
-            return MAPPER.readValue(value, clazz);
+            return WebAuthnUtils.getObjectMapper().readValue(value, clazz);
         });
     }
 

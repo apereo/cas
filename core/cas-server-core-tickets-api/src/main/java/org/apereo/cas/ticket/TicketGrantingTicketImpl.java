@@ -7,7 +7,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,6 +56,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * The services associated to this ticket.
      */
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, Service> services = new ConcurrentHashMap<>(0);
 
     /**
@@ -64,11 +67,13 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * The PGTs associated to this ticket.
      */
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, Service> proxyGrantingTickets = new HashMap<>();
 
     /**
      * The ticket ids which are tied to this ticket.
      */
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Set<String> descendantTickets = new HashSet<>();
 
     @JsonCreator
