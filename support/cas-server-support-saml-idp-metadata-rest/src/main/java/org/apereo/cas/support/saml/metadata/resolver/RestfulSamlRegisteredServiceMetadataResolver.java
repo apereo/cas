@@ -66,6 +66,7 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
                 .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(rest.getUrl())
                 .parameters(CollectionUtils.wrap("entityId", service.getServiceId()))
+                .maximumRetryAttempts(rest.getMaximumRetryAttempts())
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);

@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class WebAuthnMultifactorAuthenticationDeviceManager implements MultifactorAuthenticationDeviceManager {
-    private static final ObjectWriter OBJECT_WRITER = null; // JacksonCodecs.json().writerWithDefaultPrettyPrinter();
+    private static final ObjectWriter OBJECT_WRITER = WebAuthnUtils.getObjectMapper().writer();
 
     private final RegistrationStorage webAuthnCredentialRepository;
     private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;

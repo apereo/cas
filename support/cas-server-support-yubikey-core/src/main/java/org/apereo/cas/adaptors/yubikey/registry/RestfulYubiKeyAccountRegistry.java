@@ -74,6 +74,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .url(restProperties.getUrl())
                 .headers(headers)
                 .entity(MAPPER.writeValueAsString(account))
+                .maximumRetryAttempts(restProperties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
@@ -97,6 +98,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
                 .headers(restProperties.getHeaders())
+                .maximumRetryAttempts(restProperties.getMaximumRetryAttempts())
                 .url(url)
                 .build();
 
@@ -116,6 +118,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
                 .headers(restProperties.getHeaders())
+                .maximumRetryAttempts(restProperties.getMaximumRetryAttempts())
                 .url(url)
                 .build();
             response = HttpUtils.execute(exec);
@@ -134,6 +137,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .method(HttpMethod.DELETE)
                 .url(restProperties.getUrl())
                 .headers(restProperties.getHeaders())
+                .maximumRetryAttempts(restProperties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
         } finally {
@@ -152,6 +156,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .method(HttpMethod.GET)
                 .url(url)
                 .headers(restProperties.getHeaders())
+                .maximumRetryAttempts(restProperties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null) {

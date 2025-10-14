@@ -68,6 +68,7 @@ public class RestfulSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
                 .url(url)
                 .headers(headers)
                 .entity(MAPPER.writeValueAsString(doc))
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null) {

@@ -58,6 +58,7 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
                 .url(properties.getUrl())
                 .entity(entity)
                 .headers(headers)
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && response.getCode() == HttpStatus.OK.value()) {

@@ -65,6 +65,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
+                .maximumRetryAttempts(rest.getMaximumRetryAttempts())
                 .method(HttpMethod.GET)
                 .url(rest.getUrl())
                 .headers(headers)

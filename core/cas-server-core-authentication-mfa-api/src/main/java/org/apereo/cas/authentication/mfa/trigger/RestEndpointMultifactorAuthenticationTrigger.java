@@ -114,6 +114,7 @@ public class RestEndpointMultifactorAuthenticationTrigger implements Multifactor
                 .url(rest.getUrl())
                 .headers(headers)
                 .entity(MAPPER.writeValueAsString(entity))
+                .maximumRetryAttempts(rest.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             val status = HttpStatus.valueOf(response.getCode());

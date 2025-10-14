@@ -52,6 +52,7 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
                 .url(restProperties.getUrl())
                 .parameters(parameters)
                 .headers(restProperties.getHeaders())
+                .maximumRetryAttempts(restProperties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             if (Objects.requireNonNull(response).getCode() == HttpStatus.OK.value()) {
@@ -80,6 +81,7 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
                 .method(HttpMethod.GET)
                 .url(restProperties.getUrl())
                 .headers(restProperties.getHeaders())
+                .maximumRetryAttempts(restProperties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             if (Objects.requireNonNull(response).getCode() == HttpStatus.OK.value()) {
@@ -115,6 +117,7 @@ public class RestfulWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
                 .entity(jsonRecords)
                 .headers(headers)
                 .parameters(parameters)
+                .maximumRetryAttempts(restProperties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
         } finally {
