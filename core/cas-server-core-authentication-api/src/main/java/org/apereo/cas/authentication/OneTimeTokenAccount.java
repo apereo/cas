@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -149,7 +148,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
      */
     @JsonIgnore
     public String toJson() {
-        return FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
+        return MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this);
     }
 
     /**

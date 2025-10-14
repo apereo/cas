@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -129,7 +128,7 @@ public class OpenPolicyAgentRegisteredServiceAccessStrategy extends BaseRegister
 
         @JsonIgnore
         String toJson() {
-            return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(Map.of("input", this)));
+            return MAPPER.writeValueAsString(Map.of("input", this));
         }
     }
 }

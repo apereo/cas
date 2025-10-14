@@ -54,7 +54,7 @@ public class DynamoDbConsentFacilitator {
         values.put(ColumnNames.SERVICE.getColumnName(), AttributeValue.builder().s(record.getService()).build());
         values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
 
-        val body = FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(record));
+        val body = MAPPER.writeValueAsString(record);
         values.put(ColumnNames.BODY.getColumnName(), AttributeValue.builder().s(body).build());
 
         val time = DateTimeUtils.dateOf(record.getCreatedDate());

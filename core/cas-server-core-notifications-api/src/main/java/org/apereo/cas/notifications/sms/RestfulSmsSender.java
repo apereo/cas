@@ -2,7 +2,6 @@ package org.apereo.cas.notifications.sms;
 
 import org.apereo.cas.configuration.model.support.sms.RestfulSmsProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
@@ -61,7 +60,7 @@ public class RestfulSmsSender implements SmsSender {
                 case QUERY_PARAMETERS -> exec.parameters(parameters).entity(message);
                 case REQUEST_BODY -> {
                     parameters.put("text", message);
-                    val body = FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(parameters));
+                    val body = MAPPER.writeValueAsString(parameters);
                     yield exec.entity(body);
                 }
             };

@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -153,7 +152,7 @@ public class PermifyRegisteredServiceAccessStrategy extends BaseRegisteredServic
          * @return the string
          */
         public String toJson() {
-            return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(this));
+            return MAPPER.writeValueAsString(this);
         }
     }
 }

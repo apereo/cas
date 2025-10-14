@@ -5,7 +5,6 @@ import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.AuthorizationResult;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -131,7 +130,7 @@ public class OpenFGAAuthorizationPolicy implements ResourceAuthorizationPolicy {
 
         @JsonIgnore
         String toJson() {
-            return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(Map.of("tuple_key", this)));
+            return MAPPER.writeValueAsString(Map.of("tuple_key", this));
         }
     }
 }
