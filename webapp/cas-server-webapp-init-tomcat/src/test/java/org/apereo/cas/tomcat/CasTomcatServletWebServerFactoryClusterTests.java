@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.tomcat.TomcatWebServer;
+import org.springframework.boot.tomcat.autoconfigure.TomcatServerProperties;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.boot.web.server.autoconfigure.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.web.server.servlet.ConfigurableServletWebServerFactory;
@@ -43,7 +44,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.server.tomcat.clustering.failure-fatal=false",
     "cas.server.tomcat.clustering.clustering-type=DEFAULT"
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
+@EnableConfigurationProperties({
+    CasConfigurationProperties.class,
+    ServerProperties.class,
+    TomcatServerProperties.class
+})
 @Tag("WebApp")
 @Slf4j
 @ExtendWith(CasTestExtension.class)

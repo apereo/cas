@@ -77,6 +77,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService extends BaseCasSim
                 .entity(writer.toString())
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .parameters(parameters)
                 .build();
             response = HttpUtils.execute(exec);
@@ -112,6 +113,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService extends BaseCasSim
                 .entity(writer.toString())
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = response.getCode();
@@ -138,6 +140,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService extends BaseCasSim
                 .entity(writer.toString())
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = response.getCode();
@@ -165,6 +168,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService extends BaseCasSim
                 .url(Strings.CI.appendIfMissing(properties.getUrl(), "/").concat(tokenCredential.getToken()))
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = response.getCode();
@@ -193,6 +197,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService extends BaseCasSim
                 .url(properties.getUrl())
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             Assert.isTrue(HttpStatus.valueOf(response.getCode()).is2xxSuccessful(), "Unable to update principal");

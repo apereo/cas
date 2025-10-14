@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.tomcat.autoconfigure.TomcatServerProperties;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.boot.web.server.autoconfigure.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.web.server.servlet.ConfigurableServletWebServerFactory;
@@ -36,8 +37,12 @@ import static org.mockito.Mockito.*;
     "server.port=8183",
     "server.ssl.enabled=false"
 }, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
 @Tag("WebApp")
+@EnableConfigurationProperties({
+    CasConfigurationProperties.class,
+    ServerProperties.class,
+    TomcatServerProperties.class
+})
 @ExtendWith(CasTestExtension.class)
 class CasTomcatServletWebServerFactoryCloudClusterTests {
     @Autowired

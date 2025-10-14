@@ -87,6 +87,7 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
         val exec = HttpExecutionRequest.builder()
             .basicAuthPassword(properties.getBasicAuthPassword())
             .basicAuthUsername(properties.getBasicAuthUsername())
+            .maximumRetryAttempts(properties.getMaximumRetryAttempts())
             .method(HttpMethod.POST)
             .url(properties.getUrl())
             .headers(headers)

@@ -26,7 +26,7 @@ import java.time.Duration;
  * @since 5.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ImportAutoConfiguration({MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
+@ImportAutoConfiguration({ MongoDataAutoConfiguration.class, MongoAutoConfiguration.class})
 @EnableMongoHttpSession
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SessionManagement, module = "mongo")
 @AutoConfiguration

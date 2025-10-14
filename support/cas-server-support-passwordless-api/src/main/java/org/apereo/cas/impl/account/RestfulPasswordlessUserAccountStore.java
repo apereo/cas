@@ -51,6 +51,7 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .maximumRetryAttempts(restProperties.getMaximumRetryAttempts())
                 .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(Strings.CI.appendIfMissing(restProperties.getUrl(), "/").concat(request.getUsername()))
                 .parameters(parameters)

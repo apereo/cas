@@ -59,6 +59,7 @@ public class RestfulPasswordSynchronizationAuthenticationPostProcessor implement
                 .url(properties.getUrl())
                 .basicAuthPassword(properties.getBasicAuthUsername())
                 .basicAuthUsername(properties.getBasicAuthPassword())
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .method(HttpMethod.POST)
                 .entity(entity)
                 .headers(headers)

@@ -59,6 +59,7 @@ public class OidcRestfulWebFingerUserInfoRepository implements OidcWebFingerUser
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(properties.getUrl())
                 .headers(properties.getHeaders())

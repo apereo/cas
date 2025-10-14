@@ -28,7 +28,11 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebApp")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
-@EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
+@EnableConfigurationProperties({
+    CasConfigurationProperties.class,
+    ServerProperties.class,
+    TomcatServerProperties.class
+})
 @ExtendWith(CasTestExtension.class)
 class CasTomcatServletWebServerFactoryCustomizerTests {
     @Autowired
