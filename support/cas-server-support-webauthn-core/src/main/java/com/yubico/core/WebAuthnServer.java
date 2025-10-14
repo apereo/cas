@@ -64,6 +64,7 @@ import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ValueSerializer;
 import tools.jackson.databind.annotation.JsonSerialize;
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Clock;
@@ -272,7 +273,7 @@ public class WebAuthnServer {
 
     @Value
     public static class SuccessfulRegistrationResult {
-        boolean success = true;
+        boolean success;
 
         RegistrationRequest request;
 
@@ -308,6 +309,7 @@ public class WebAuthnServer {
             this.authData = response.credential().getResponse().getParsedAuthenticatorData();
             this.username = request.username();
             this.sessionToken = sessionToken;
+            this.success = true;
         }
 
     }
@@ -379,23 +381,21 @@ public class WebAuthnServer {
         @Override
         public void serialize(final AuthenticatorData value, final JsonGenerator gen,
                               final SerializationContext serializers) throws JacksonException {
-//            gen.writeStartObject();
-//            gen.writeStringField("rpIdHash", value.getRpIdHash().getHex());
-//            gen.writeObjectField("flags", value.getFlags());
-//            gen.writeNumberField("signatureCounter", value.getSignatureCounter());
-//            value.getAttestedCredentialData().ifPresent(acd -> {
-//                try {
-//                    gen.writeObjectFieldStart("attestedCredentialData");
-//                    gen.writeStringField("aaguid", acd.getAaguid().getHex());
-//                    gen.writeStringField("credentialId", acd.getCredentialId().getHex());
-//                    gen.writeStringField("publicKey", acd.getCredentialPublicKey().getHex());
-//                    gen.writeEndObject();
-//                } catch (final IOException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            });
-//            gen.writeObjectField("extensions", value.getExtensions());
-//            gen.writeEndObject();
+            gen.writeStartObject();
+
+            gen.writeStringProperty("rpIdHash", value.getRpIdHash().getHex());
+            gen.writePOJOProperty("flags", value.getFlags());
+
+            gen.writeNumberProperty("signatureCounter", value.getSignatureCounter());
+            value.getAttestedCredentialData().ifPresent(acd -> {
+                gen.writeObjectPropertyStart("attestedCredentialData");
+                gen.writeStringProperty("aaguid", acd.getAaguid().getHex());
+                gen.writeStringProperty("credentialId", acd.getCredentialId().getHex());
+                gen.writeStringProperty("publicKey", acd.getCredentialPublicKey().getHex());
+                gen.writeEndObject();
+            });
+            gen.writePOJOProperty("extensions", value.getExtensions());
+            gen.writeEndObject();
         }
     }
 

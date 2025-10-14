@@ -24,12 +24,15 @@
 
 package com.yubico.data;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.PublicKeyCredentialCreationOptions;
 
 import java.util.Optional;
 
-public record RegistrationRequest(String username, Optional<String> credentialNickname, ByteArray requestId, PublicKeyCredentialCreationOptions publicKeyCredentialCreationOptions,
-                                  Optional<ByteArray> sessionToken) {
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public record RegistrationRequest(String username, Optional<String> credentialNickname,
+    ByteArray requestId, PublicKeyCredentialCreationOptions publicKeyCredentialCreationOptions,
+    Optional<ByteArray> sessionToken) {
 
 }

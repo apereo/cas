@@ -276,8 +276,10 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
 
     private LdapEntry searchLdapAccountsBy(final long id) {
         return FunctionUtils.doUnchecked(() -> {
-            val searchFilter = String.format("(%s=*\"id\":%s*)", ldapProperties.getAccountAttributeName(), id);
-            val filter = LdapUtils.newLdaptiveSearchFilter(searchFilter);
+            val searchFilterWithoutSpaces = String.format("(%s=*\"id\":%s*)", ldapProperties.getAccountAttributeName(), id);
+            val searchFilterWithSpaces = String.format("(%s=*\"id\" : %s*)", ldapProperties.getAccountAttributeName(), id);
+            val filterQuery = "(|" + searchFilterWithoutSpaces + searchFilterWithSpaces + ')';
+            val filter = LdapUtils.newLdaptiveSearchFilter(filterQuery);
             LOGGER.debug("Locating LDAP entry via filter [{}] based on attribute [{}]", filter,
                 ldapProperties.getAccountAttributeName());
             val response = connectionFactory.executeSearchOperation(ldapProperties.getBaseDn(),
