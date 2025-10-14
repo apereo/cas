@@ -10,9 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
-import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
-import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.time.Instant;
@@ -32,7 +30,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     private static final String MEASUREMENT = "InfluxDbCasEventRepositoryCasEvents";
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(false).build().toObjectMapper();
+        .defaultTypingEnabled(false).minimal(true).build().toObjectMapper();
 
     private final InfluxDbConnectionFactory influxDbConnectionFactory;
 
@@ -45,17 +43,16 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     @Override
     public CasEvent saveInternal(final CasEvent event) {
         event.assignIdIfNecessary();
-        influxDbConnectionFactory.write(MEASUREMENT,
-            Map.of("value", event.getEventId()),
-            Map.of(
-                "serverIpAddress", event.getServerIpAddress(),
-                "clientIpAddress", event.getClientIpAddress(),
-                "principalId", event.getPrincipalId(),
-                "geoLocation", Unchecked.supplier(() -> MAPPER.writeValueAsString(event.getGeoLocation())).get(),
-                "creationTime", String.valueOf(event.getCreationTime().toEpochMilli()),
-                "tenant", StringUtils.defaultIfBlank(event.getTenant(), "CAS"),
-                "timestamp", String.valueOf(event.getTimestamp()),
-                "type", event.getType()));
+        val tags = Map.of(
+            "serverIpAddress", event.getServerIpAddress(),
+            "clientIpAddress", event.getClientIpAddress(),
+            "principalId", event.getPrincipalId(),
+            "geoLocation", MAPPER.writeValueAsString(event.getGeoLocation()),
+            "creationTime", String.valueOf(event.getCreationTime().toEpochMilli()),
+            "tenant", StringUtils.defaultIfBlank(event.getTenant(), "CAS"),
+            "timestamp", String.valueOf(event.getTimestamp()),
+            "type", event.getType());
+        influxDbConnectionFactory.write(MEASUREMENT, Map.of("value", event.getEventId()), tags);
         return event;
     }
 
@@ -68,11 +65,11 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     private static CasEvent extractCasEventFromPointValues(final PointValues pointValues) {
         val event = new CasEvent();
         event.assignIdIfNecessary();
-        val geo = Unchecked.supplier(() -> MAPPER.readValue(pointValues.getTag("geoLocation"),
-                new TypeReference<GeoLocationRequest>() {
-                }))
-            .get();
+
+        val geoLocation = pointValues.getTag("geoLocation");
+        val geo = MAPPER.readValue(geoLocation, GeoLocationRequest.class);
         event.putGeoLocation(geo);
+
         event.setPrincipalId(pointValues.getTag("principalId"));
         event.setType(pointValues.getTag("type"));
         event.setCreationTime(Instant.ofEpochMilli(Long.parseLong(pointValues.getTag("creationTime"))));

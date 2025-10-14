@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -124,7 +123,7 @@ public class OpenFGARegisteredServiceAccessStrategy extends BaseRegisteredServic
 
         @JsonIgnore
         String toJson() {
-            return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(Map.of("tuple_key", this)));
+            return MAPPER.writeValueAsString(Map.of("tuple_key", this));
         }
     }
 }

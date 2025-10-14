@@ -356,6 +356,8 @@ ext.libraries = [
                     exclude(group: "com.squareup.okio", module: "okio")
                 },
                 dependencies.create(libs.arrow.memory.netty.get()) {
+                },
+                dependencies.create(libs.arrow.memory.unsafe.get()) {
                 }
         ],
         bouncycastle               : [

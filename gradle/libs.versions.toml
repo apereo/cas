@@ -289,6 +289,7 @@ apiguardian-api = { module = "org.apiguardian:apiguardian-api", version.ref = "a
 apm-agent-api = { module = "co.elastic.apm:apm-agent-api", version.ref = "elasticApm" }
 apm-agent-attach = { module = "co.elastic.apm:apm-agent-attach", version.ref = "elasticApm" }
 arrow-memory-netty = { module = "org.apache.arrow:arrow-memory-netty", version.ref = "arrow" }
+arrow-memory-unsafe = { module = "org.apache.arrow:arrow-memory-unsafe", version.ref = "arrow" }
 aspectjrt = { module = "org.aspectj:aspectjrt", version.ref = "aspectj" }
 aspectjweaver = { module = "org.aspectj:aspectjweaver", version.ref = "aspectj" }
 awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }

@@ -1,6 +1,5 @@
 package org.apereo.cas.util.jpa;
 
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
@@ -22,12 +21,12 @@ public class MultivaluedMapToJsonAttributeConverter implements AttributeConverte
 
     @Override
     public String convertToDatabaseColumn(final Map<String, List<Object>> map) {
-        return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(map));
+        return MAPPER.writeValueAsString(map);
     }
 
     @Override
     public Map<String, List<Object>> convertToEntityAttribute(final String value) {
-        return FunctionUtils.doUnchecked(() -> MAPPER.readValue(value, new TypeReference<>() {
-        }));
+        return MAPPER.readValue(value, new TypeReference<>() {
+        });
     }
 }

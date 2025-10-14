@@ -225,7 +225,7 @@ public class OAuth20Utils {
      * @return the string
      */
     public static String toJson(final Object value) {
-        return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(value));
+        return MAPPER.writeValueAsString(value);
     }
 
     /**
