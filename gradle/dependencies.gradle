@@ -2845,6 +2845,20 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "com.h2database", module: "h2")
                 },
+                dependencies.create(libs.spring.boot.cache.get()) {
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                },
                 dependencies.create(libs.spring.boot.core.get()) {
                     exclude(group: "org.hibernate.validator", module: "hibernate-validator")
                     exclude(group: "org.hibernate", module: "hibernate-core")

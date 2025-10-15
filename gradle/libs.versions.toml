@@ -638,6 +638,7 @@ spring-boot-admin-starter-server = { module = "de.codecentric:spring-boot-admin-
 spring-boot-autoconfigure = { module = "org.springframework.boot:spring-boot-autoconfigure", version.ref = "springBoot" }
 spring-boot-configuration-metadata = { module = "org.springframework.boot:spring-boot-configuration-metadata", version.ref = "springBoot" }
 spring-boot-configuration-processor = { module = "org.springframework.boot:spring-boot-configuration-processor", version.ref = "springBoot" }
+spring-boot-cache = { module = "org.springframework.boot:spring-boot-cache", version.ref = "springBoot" }
 spring-boot-devtools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "springBoot" }
 spring-boot-properties-migrator = { module = "org.springframework.boot:spring-boot-properties-migrator", version.ref = "springBoot" }
 spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator", version.ref = "springBoot" }
