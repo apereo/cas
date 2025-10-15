@@ -246,8 +246,8 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
                         HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
                         HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
                     .entity(MAPPER.writeValueAsString(getUserPasswordUpdateRequest(bean, userKey)))
-                    .maximumRetryAttempts(1)
-                    .build();
+                    .build()
+                    .withoutRetry();
             }
 
             return HttpExecutionRequest.builder()
@@ -260,8 +260,8 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
                     HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
                     HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
                 .entity(MAPPER.writeValueAsString(getPasswordPatch(bean)))
-                .maximumRetryAttempts(1)
-                .build();
+                .build()
+                .withoutRetry();
         });
     }
 

@@ -96,8 +96,8 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH)))
                 .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUri()))
                 .httpClient(httpClient)
-                .maximumRetryAttempts(1)
-                .build();
+                .build()
+                .withoutRetry();
             response = HttpUtils.execute(exec);
             val status = HttpStatus.resolve(Objects.requireNonNull(response).getCode());
             return switch (Objects.requireNonNull(status)) {
