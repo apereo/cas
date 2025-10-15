@@ -65,7 +65,9 @@ class HttpUtilsTests {
             .proxyUrl("http://localhost:8080")
             .build()
             .withoutRetry();
-        assertNull(HttpUtils.execute(exec));
+        val result = HttpUtils.execute(exec);
+        assertNotNull(result);
+        assertTrue(HttpStatus.resolve(result.getCode()).isError());
     }
 
     @Test
@@ -79,7 +81,9 @@ class HttpUtilsTests {
             .build()
             .withoutRetry();
 
-        assertNull(HttpUtils.execute(exec));
+        val result = HttpUtils.execute(exec);
+        assertNotNull(result);
+        assertTrue(HttpStatus.resolve(result.getCode()).isError());
     }
 
     @Test
