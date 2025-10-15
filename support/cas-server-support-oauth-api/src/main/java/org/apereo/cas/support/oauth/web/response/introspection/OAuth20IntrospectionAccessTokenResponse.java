@@ -58,6 +58,7 @@ public class OAuth20IntrospectionAccessTokenResponse extends BaseOAuth20Introspe
     private Confirmation confirmation = new Confirmation();
 
     @Data
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     public static class Confirmation implements Serializable {
         @Serial
         private static final long serialVersionUID = 5434898952283549630L;

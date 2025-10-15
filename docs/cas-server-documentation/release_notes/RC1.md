@@ -103,6 +103,12 @@ We plan to re-add support for JavaMelody in the future once compatibility is res
 
 Support for [Spring Boot Admin](../monitoring/Configuring-SpringBootAdmin.html) is not yet compatible with Spring Boot `4`.
 We plan to re-add support for Spring Boot Admin in the future once compatibility is restored.
+ 
+#### Spring Cloud Configuration ZooKeeper
+
+Support for [Spring Cloud Configuration ZooKeeper](../configuration/Configuration-Server-Management-SpringCloud-ZooKeeper.html)
+is not yet compatible with Spring Boot `4`. We plan to re-add support for Spring Cloud Configuration ZooKeeper
+in the future once compatibility is restored.
 
 #### Jackson & JSON Processing
 
@@ -112,3 +118,7 @@ such changes are internal and **SHOULD NOT** affect CAS configuration, applicati
 records, etc are processed and loaded.
 
 ## Other Stuff
+
+- [JPA Ticket Registry](../ticketing/JPA-Ticket-Registry.html) will lowercase all tables names to avoid issues with
+  case sensitivity in certain database engines, namely MariaDb.
+- PostgreSQL `18` is now supported.

@@ -6,7 +6,7 @@ const assert = require("assert");
     const secret = process.env.DUO_REGISTRATION_SIGNING_KEY;
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-duo");
+    await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-duo", "en");
     await cas.loginWith(page, "unknown", "Mellon");
     await cas.sleep(3000);
     await cas.screenshot(page);
@@ -24,7 +24,7 @@ const assert = require("assert");
         complete: false
     });
     assert(decoded.sub === "unknown");
-    assert(decoded.aud === "localhost");
+    assert(decoded.aud === "https://localhost:9859/anything/1");
     assert(decoded.iss === "https://localhost:8443");
     await cas.closeBrowser(browser);
 
