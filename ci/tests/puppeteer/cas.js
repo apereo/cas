@@ -590,13 +590,14 @@ exports.doRequest = async (url, method = "GET",
         }
         options.agent = new client.Agent(options);
 
-        if (requestBody === undefined) {
+        if (requestBody === undefined || requestBody === null) {
             this.logg(`Sending ${method} request to ${url} without a body`);
-            client.get(url, options, (res) => handler(res)).on("error", reject);
+            const request = client.get(url, options, (res) => handler(res)).on("error", reject);
+            request.end();
         } else {
             this.logg(`Sending ${method} request to ${url} with body ${requestBody}`);
             const request = client.request(url, options, (res) => handler(res)).on("error", reject);
-            request.write(requestBody);
+            request.end(requestBody);
         }
     });
 
