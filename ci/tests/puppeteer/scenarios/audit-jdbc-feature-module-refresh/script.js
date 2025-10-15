@@ -15,7 +15,7 @@ const fs = require("fs");
     await cas.loginWith(page, "unknown", "Mellon");
 
     await cas.doGet("https://localhost:8443/cas/actuator/auditLog",
-        (res) => assert(res.data.length === 0),
+        (res) => assert(res.data.length > 0),
         (error) => {
             throw (error);
         }, {
@@ -24,7 +24,9 @@ const fs = require("fs");
 
     const name = (Math.random() + 1).toString(36).substring(4);
     await cas.log("Updating configuration and waiting for changes to reload...");
-    await updateConfig(configFile, configFilePath, `jdbc:hsqldb:file:/tmp/db/${name}`);
+    const dbFile = `/tmp/db/${name}`;
+    await updateConfig(configFile, configFilePath, `jdbc:hsqldb:file:${dbFile}`);
+    await cas.log(`Updated database configuration to use ${dbFile}`);
     await cas.sleep(5000);
 
     await cas.refreshContext();
@@ -41,7 +43,7 @@ const fs = require("fs");
                 "Content-Type": "application/json"
             });
     } finally {
-        await updateConfig(configFile, configFilePath, "");
+        await updateConfig(configFile, configFilePath, "jdbc:hsqldb:mem:cas-hsql-database");
     }
     await cas.closeBrowser(browser);
 })();
