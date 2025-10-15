@@ -113,7 +113,7 @@ public class HttpUtils {
                 return response;
             }
         }
-        return null;
+        return new BasicHttpResponse(HttpStatus.SC_SERVICE_UNAVAILABLE);
     }
 
     /**

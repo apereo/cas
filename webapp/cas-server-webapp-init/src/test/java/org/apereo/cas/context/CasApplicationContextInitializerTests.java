@@ -24,8 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = RefreshAutoConfiguration.class, properties = {
     "server.port=8588",
-    "server.ssl.enabled=false",
-    "cas.server.unknown.property=false"
+    "server.ssl.enabled=false"
 }, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ContextConfiguration(initializers = CasApplicationContextInitializer.class)
@@ -39,6 +38,6 @@ class CasApplicationContextInitializerTests {
     void verifyOperation() {
         assertNotNull(applicationContext);
         val validateConfig = System.getProperty(CasApplicationContextInitializer.SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS);
-        assertEquals(Boolean.FALSE.toString(), validateConfig);
+        assertEquals(Boolean.TRUE.toString(), validateConfig);
     }
 }

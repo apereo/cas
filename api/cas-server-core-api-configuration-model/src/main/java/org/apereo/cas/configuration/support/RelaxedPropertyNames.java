@@ -170,24 +170,20 @@ public class RelaxedPropertyNames implements Iterable<String> {
         CAMELCASE_TO_UNDERSCORE {
             @Override
             public String apply(final String value) {
-                if (value.isEmpty()) {
-                    return value;
-                }
-                var matcher = CAMEL_CASE_PATTERN.matcher(value);
-                if (!matcher.find()) {
-                    return value;
-                }
-                matcher = matcher.reset();
-                var result = new StringBuilder();
-                while (matcher.find()) {
-                    matcher.appendReplacement(result, matcher.group(1) + '_' + StringUtils.uncapitalize(matcher.group(2)));
-                }
-                matcher.appendTail(result);
-                return result.toString();
+                return camelCaseToUnderscore(value, false);
             }
-
         },
 
+        /**
+         * The Case insensitive camelcase to underscore.
+         */
+        CASE_INSENSITIVE_CAMELCASE_TO_UNDERSCORE {
+            @Override
+            public String apply(final String value) {
+                return camelCaseToUnderscore(value, true);
+            }
+        },
+        
         /**
          * Convert camelcase into hyphens.
          */
@@ -256,7 +252,29 @@ public class RelaxedPropertyNames implements Iterable<String> {
         };
 
         private static final char[] SUFFIXES = {'_', '-', '.'};
-
+        
+        private static String camelCaseToUnderscore(final String value, final boolean caseInsensitive) {
+            if (value.isEmpty()) {
+                return value;
+            }
+            var matcher = CAMEL_CASE_PATTERN.matcher(value);
+            if (!matcher.find()) {
+                return value;
+            }
+            matcher = matcher.reset();
+            var result = new StringBuilder();
+            while (matcher.find()) {
+                var replacement = matcher.group(1) + '_' + StringUtils.uncapitalize(matcher.group(2));
+                matcher.appendReplacement(result, replacement);
+            }
+            matcher.appendTail(result);
+            var converted = result.toString();
+            if (caseInsensitive) {
+                converted = converted.toLowerCase(Locale.ENGLISH);
+            }
+            return converted;
+        }
+        
         private static String separatedToCamelCase(final String value, final boolean caseInsensitive) {
             if (value.isEmpty()) {
                 return value;

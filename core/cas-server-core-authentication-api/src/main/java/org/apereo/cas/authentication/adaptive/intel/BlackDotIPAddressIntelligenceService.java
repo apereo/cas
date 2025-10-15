@@ -68,8 +68,8 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .url(url)
-                .maximumRetryAttempts(1)
-                .build();
+                .build()
+                .withoutRetry();
             response = HttpUtils.execute(exec);
             if (response == null || response.getCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
                 LOGGER.error("Exceeded the number of allowed queries");

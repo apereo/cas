@@ -75,7 +75,6 @@ public class HttpExecutionRequest {
         return StringUtils.isNotBlank(bearerToken);
     }
 
-
     /**
      * Convert this record into JSON.
      *
@@ -86,5 +85,16 @@ public class HttpExecutionRequest {
     public HttpExecutionRequest body(final Object body) {
         return withEntity(FunctionUtils.doUnchecked(
             () -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(body)));
+    }
+
+    /**
+     * Without retry http execution request.
+     *
+     * @return the http execution request
+     */
+    @JsonIgnore
+    @CanIgnoreReturnValue
+    public HttpExecutionRequest withoutRetry() {
+        return withMaximumRetryAttempts(0);
     }
 }

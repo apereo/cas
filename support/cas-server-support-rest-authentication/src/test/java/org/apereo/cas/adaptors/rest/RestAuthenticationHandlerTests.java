@@ -88,8 +88,7 @@ class RestAuthenticationHandlerTests {
             assertThrows(AccountDisabledException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
             assertEquals(3, webServer.getRequestCount());
-
-
+            
             webServer.responseStatus(HttpStatus.UNAUTHORIZED);
             assertThrows(FailedLoginException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
