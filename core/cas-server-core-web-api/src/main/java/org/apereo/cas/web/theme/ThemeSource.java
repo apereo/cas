@@ -1,6 +1,6 @@
 package org.apereo.cas.web.theme;
 
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * This is {@link ThemeSource}.
