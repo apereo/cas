@@ -7,6 +7,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
+import org.apereo.cas.util.serialization.MapContentDeserializer;
 import org.apereo.cas.util.spring.RestActuatorEndpointFilter;
 import org.apereo.cas.util.thread.Cleanable;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
@@ -173,6 +174,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerReflectionHintsForConstructors(hints,
             List.of(
+                MapContentDeserializer.class,
                 TriStateBoolean.Deserializer.class,
                 PersistenceAnnotationBeanPostProcessor.class,
                 ConfigurationClassPostProcessor.class,
