@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.UsernameAttributeProvider;
+import org.apereo.cas.util.LoggingUtils;
 import edu.internet2.middleware.grouperClient.api.GcGetGroups;
 import lombok.Getter;
 import lombok.Setter;
@@ -117,7 +118,7 @@ public class GrouperPersonAttributeDao extends BasePersonAttributeDao {
             }
             return groupsList;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return groupsList;
     }

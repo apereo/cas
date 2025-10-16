@@ -5,6 +5,7 @@ import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -57,7 +58,7 @@ class DefaultCasSimpleMultifactorAuthenticationServiceTests {
             val thread = Thread.ofVirtual().unstarted(Unchecked.runnable(() ->
                 multifactorAuthenticationService.generate(RegisteredServiceTestUtils.getPrincipal(), RegisteredServiceTestUtils.getService())));
             thread.setUncaughtExceptionHandler((t, e) -> {
-                LOGGER.error(e.getMessage(), e);
+                LoggingUtils.error(LOGGER, e);
                 testHasFailed.set(true);
             });
             thread.setName("Thread-" + i);

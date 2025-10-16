@@ -92,7 +92,7 @@ class GroovyShellScriptTests {
                 val thread = new Thread(runnable);
                 thread.setName("Thread-" + i);
                 thread.setUncaughtExceptionHandler((t, e) -> {
-                    LOGGER.error(e.getMessage(), e);
+                    LoggingUtils.error(LOGGER, e);
                     testHasFailed.set(true);
                 });
                 threads.add(thread);
