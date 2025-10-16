@@ -217,7 +217,10 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
             MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
 
             MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS
+            MemberCategory.INVOKE_PUBLIC_METHODS,
+            
+            MemberCategory.ACCESS_DECLARED_FIELDS,
+            MemberCategory.ACCESS_PUBLIC_FIELDS
         };
         registerReflectionHints(hints, entries, memberCategories);
         return this;
@@ -234,7 +237,9 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     default CasRuntimeHintsRegistrar registerReflectionHintsForMethodsAndFields(final RuntimeHints hints, final Collection entries) {
         val memberCategories = new MemberCategory[]{
             MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS
+            MemberCategory.INVOKE_PUBLIC_METHODS,
+            MemberCategory.ACCESS_DECLARED_FIELDS,
+            MemberCategory.ACCESS_PUBLIC_FIELDS
         };
         registerReflectionHints(hints, entries, memberCategories);
         return this;
@@ -252,6 +257,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
         val memberCategories = new MemberCategory[]{
             MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
             MemberCategory.INVOKE_DECLARED_METHODS,
+            MemberCategory.ACCESS_DECLARED_FIELDS
         };
         registerReflectionHints(hints, entries, memberCategories);
         return this;
@@ -287,7 +293,9 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
             MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
             MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
             MemberCategory.INVOKE_DECLARED_METHODS,
-            MemberCategory.INVOKE_PUBLIC_METHODS
+            MemberCategory.INVOKE_PUBLIC_METHODS,
+            MemberCategory.ACCESS_DECLARED_FIELDS,
+            MemberCategory.ACCESS_PUBLIC_FIELDS
         };
         registerReflectionHints(hints, entries, memberCategories);
         return this;
@@ -304,7 +312,8 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     default CasRuntimeHintsRegistrar registerReflectionHintsForPublicElements(final RuntimeHints hints, final Collection entries) {
         val memberCategories = new MemberCategory[]{
             MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-            MemberCategory.INVOKE_PUBLIC_METHODS
+            MemberCategory.INVOKE_PUBLIC_METHODS,
+            MemberCategory.ACCESS_PUBLIC_FIELDS
         };
         registerReflectionHints(hints, entries, memberCategories);
         return this;
