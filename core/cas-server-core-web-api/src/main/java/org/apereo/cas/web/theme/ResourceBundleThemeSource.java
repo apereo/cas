@@ -9,7 +9,7 @@ import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
