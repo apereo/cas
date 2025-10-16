@@ -25,12 +25,19 @@
 package com.yubico.core;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.webauthn.WebAuthnUtils;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yubico.data.AssertionRequestWrapper;
 import com.yubico.data.AssertionResponse;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.data.RegistrationRequest;
 import com.yubico.data.RegistrationResponse;
 import com.yubico.internal.util.CertificateParser;
+import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.util.Either;
 import com.yubico.webauthn.FinishAssertionOptions;
 import com.yubico.webauthn.FinishRegistrationOptions;
@@ -57,12 +64,6 @@ import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.JsonGenerator;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.SerializationContext;
-import tools.jackson.databind.ValueSerializer;
-import tools.jackson.databind.annotation.JsonSerialize;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.security.cert.CertificateException;
@@ -79,7 +80,7 @@ import java.util.TreeSet;
 @RequiredArgsConstructor
 public class WebAuthnServer {
     private static final int IDENTIFIER_LENGTH = 32;
-    private static final ObjectMapper OBJECT_MAPPER = null; //JacksonCodecs.json();
+    private static final ObjectMapper OBJECT_MAPPER = JacksonCodecs.json();
 
     private final RegistrationStorage userStorage;
     private final WebAuthnCache<RegistrationRequest> registerRequestStorage;
@@ -137,7 +138,7 @@ public class WebAuthnServer {
         RegistrationResponse registrationResponse;
         try {
             registrationResponse = OBJECT_MAPPER.readValue(responseJson, RegistrationResponse.class);
-        } catch (final JacksonException e) {
+        } catch (final Exception e) {
             LOGGER.error("Registration failed; response: [{}]", responseJson, e);
             return Either.left(List.of("Registration failed", "Failed to decode response object.", e.getMessage()));
         }
@@ -217,7 +218,7 @@ public class WebAuthnServer {
         final AssertionResponse assertionResponse;
         try {
             assertionResponse = OBJECT_MAPPER.readValue(responseJson, AssertionResponse.class);
-        } catch (final JacksonException e) {
+        } catch (final Exception e) {
             LOGGER.debug("Failed to decode response object", e);
             return Either.left(List.of("Assertion failed!", "Failed to decode response object.", e.getMessage()));
         }
@@ -377,24 +378,27 @@ public class WebAuthnServer {
         boolean accountDeleted;
     }
 
-    private static class AuthDataSerializer extends ValueSerializer<AuthenticatorData> {
+    private static class AuthDataSerializer extends JsonSerializer<AuthenticatorData> {
+
         @Override
         public void serialize(final AuthenticatorData value, final JsonGenerator gen,
-                              final SerializationContext serializers) throws JacksonException {
+                              final SerializerProvider serializers) throws IOException {
             gen.writeStartObject();
-
-            gen.writeStringProperty("rpIdHash", value.getRpIdHash().getHex());
-            gen.writePOJOProperty("flags", value.getFlags());
-
-            gen.writeNumberProperty("signatureCounter", value.getSignatureCounter());
+            gen.writeStringField("rpIdHash", value.getRpIdHash().getHex());
+            gen.writeObjectField("flags", value.getFlags());
+            gen.writeNumberField("signatureCounter", value.getSignatureCounter());
             value.getAttestedCredentialData().ifPresent(acd -> {
-                gen.writeObjectPropertyStart("attestedCredentialData");
-                gen.writeStringProperty("aaguid", acd.getAaguid().getHex());
-                gen.writeStringProperty("credentialId", acd.getCredentialId().getHex());
-                gen.writeStringProperty("publicKey", acd.getCredentialPublicKey().getHex());
-                gen.writeEndObject();
+                try {
+                    gen.writeObjectFieldStart("attestedCredentialData");
+                    gen.writeStringField("aaguid", acd.getAaguid().getHex());
+                    gen.writeStringField("credentialId", acd.getCredentialId().getHex());
+                    gen.writeStringField("publicKey", acd.getCredentialPublicKey().getHex());
+                    gen.writeEndObject();
+                } catch (final IOException e) {
+                    throw new RuntimeException(e);
+                }
             });
-            gen.writePOJOProperty("extensions", value.getExtensions());
+            gen.writeObjectField("extensions", value.getExtensions());
             gen.writeEndObject();
         }
     }

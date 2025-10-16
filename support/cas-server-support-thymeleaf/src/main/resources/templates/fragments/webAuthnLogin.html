@@ -152,7 +152,11 @@
                                 },
                                 error: xhr => {
                                     const errorResponse = JSON.parse(xhr.responseText);
-                                    console.error(`Error: ${xhr.status} ${errorResponse.message}`);
+                                    if (xhr.status === 422) {
+                                        console.info(`${xhr.status} ${errorResponse.message}`);
+                                    } else {
+                                        console.error(`${xhr.status} ${errorResponse.message}`);
+                                    }
                                     setTimeout(verifyAuthenticationStatus, interval);
                                 }
                             });

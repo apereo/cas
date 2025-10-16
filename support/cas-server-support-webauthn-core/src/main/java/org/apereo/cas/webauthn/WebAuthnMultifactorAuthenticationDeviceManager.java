@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManag
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.function.FunctionUtils;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.yubico.core.RegistrationStorage;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.attestation.Attestation;
@@ -12,7 +13,6 @@ import com.yubico.webauthn.data.ByteArray;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import tools.jackson.databind.ObjectWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;

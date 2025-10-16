@@ -21,6 +21,7 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @ToString
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class OAuth20IntrospectionAccessTokenResponse extends BaseOAuth20IntrospectionAccessTokenResponse {
     @Serial
     private static final long serialVersionUID = -7917281748569741345L;

@@ -6,6 +6,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import org.apereo.cas.webauthn.WebAuthnUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.data.ByteArray;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +31,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import tools.jackson.core.type.TypeReference;
 import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -74,6 +74,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
      * @param username the username
      * @param record   the record
      * @return true/false
+     * @throws Exception the exception
      */
     @PostMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Add device registration for username",
@@ -81,7 +82,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
             @Parameter(name = "record", required = true, description = "The device registration record")})
     public boolean write(
         @PathVariable final String username,
-        @RequestParam final String record) {
+        @RequestParam final String record) throws Exception {
         val json = EncodingUtils.decodeBase64ToString(record);
         val registration = WebAuthnUtils.getObjectMapper().readValue(json, CredentialRegistration.class);
         return registrationStorage.getObject().addRegistrationByUsername(username, registration);
