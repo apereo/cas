@@ -72,6 +72,15 @@ features and capabilities.
 CAS configuration properties, specifically those that belong to the `cas` namespace and begin with `cas.`
 are now strictly and forcefully validated at startup to reject any unknown properties.
 This is done to prevent misconfigurations and typos in property names that would otherwise go unnoticed.
+  
+### Google Authenticator Scratch Codes
+
+When storing Google Authenticator accounts inside a relational database, the database column that holds
+the scratch codes is now changed to use a `VARCHAR` type to accommodate longer values of scratch codes,
+particularly if the codes are set to be encrypted.
+
+<div class="alert alert-warning">:warning: <strong>Breaking Change</strong><p>
+This may be a breaking change. You will need to adjust your database schema based on the notes below.</p></div>
 
 ### Spring Boot 4
 
@@ -121,4 +130,5 @@ records, etc are processed and loaded.
 
 - [JPA Ticket Registry](../ticketing/JPA-Ticket-Registry.html) will lowercase all tables names to avoid issues with
   case sensitivity in certain database engines, namely MariaDb.
-- PostgreSQL `18` is now supported.
+- PostgreSQL `18` is now the default PostgreSQL version for integration tests.
+
