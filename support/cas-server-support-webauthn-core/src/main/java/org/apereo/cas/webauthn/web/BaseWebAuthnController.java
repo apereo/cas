@@ -1,7 +1,8 @@
 package org.apereo.cas.webauthn.web;
 
 import org.apereo.cas.web.AbstractController;
-import org.apereo.cas.webauthn.WebAuthnUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yubico.internal.util.JacksonCodecs;
 
 /**
  * This is {@link BaseWebAuthnController}.
@@ -15,7 +16,9 @@ public abstract class BaseWebAuthnController extends AbstractController {
      */
     public static final String BASE_ENDPOINT_WEBAUTHN = "/webauthn";
 
-    protected static String writeJson(final Object o) {
-        return WebAuthnUtils.getObjectMapper().writeValueAsString(o);
+    private static final ObjectMapper MAPPER = JacksonCodecs.json().findAndRegisterModules();
+
+    protected static String writeJson(final Object o) throws Exception {
+        return MAPPER.writeValueAsString(o);
     }
 }

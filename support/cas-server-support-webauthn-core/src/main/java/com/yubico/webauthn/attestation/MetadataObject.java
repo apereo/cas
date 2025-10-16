@@ -5,6 +5,9 @@ import org.apereo.cas.webauthn.WebAuthnUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.MoreObjects;
 import com.yubico.internal.util.CertificateParser;
 import com.yubico.internal.util.ExceptionUtil;
@@ -13,9 +16,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import tools.jackson.core.ObjectReadContext;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -63,11 +64,16 @@ public class MetadataObject {
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public MetadataObject(final JsonNode data) {
         this.data = data;
-        vendorInfo = OBJECT_MAPPER.readValue(data.get("vendorInfo").traverse(ObjectReadContext.empty()), MAP_STRING_STRING_TYPE);
-        trustedCertificates = OBJECT_MAPPER.readValue(data.get("trustedCertificates").traverse(ObjectReadContext.empty()), LIST_STRING_TYPE);
-        devices = OBJECT_MAPPER.readValue(data.get("devices").traverse(ObjectReadContext.empty()), LIST_JSONNODE_TYPE);
-
-        identifier = data.get("identifier").asString();
+        try {
+            vendorInfo =
+                OBJECT_MAPPER.readValue(data.get("vendorInfo").traverse(), MAP_STRING_STRING_TYPE);
+            trustedCertificates =
+                OBJECT_MAPPER.readValue(data.get("trustedCertificates").traverse(), LIST_STRING_TYPE);
+            devices = OBJECT_MAPPER.readValue(data.get("devices").traverse(), LIST_JSONNODE_TYPE);
+        } catch (final IOException e) {
+            throw new IllegalArgumentException("Invalid JSON data", e);
+        }
+        identifier = data.get("identifier").asText();
         version = data.get("version").asLong();
     }
 

@@ -1,6 +1,6 @@
 {
   "@class":"org.apereo.cas.services.CasRegisteredService",
-  "id":605,
+  "id": 1,
   "serviceId": "^https://localhost:9859/anything/cas",
   "name":"Sample",
   "evaluationOrder":605,
