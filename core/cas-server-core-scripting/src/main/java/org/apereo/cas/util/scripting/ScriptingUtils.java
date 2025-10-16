@@ -42,98 +42,7 @@ import java.util.regex.Pattern;
 @Slf4j
 @UtilityClass
 public class ScriptingUtils {
-
-    private static final CompilerConfiguration GROOVY_COMPILER_CONFIG;
-
-    static {
-        GROOVY_COMPILER_CONFIG = new CompilerConfiguration();
-        
-        val isStaticCompilation = BooleanUtils.toBoolean(System.getProperty(ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC));
-        if (CasRuntimeHintsRegistrar.inNativeImage() || isStaticCompilation) {
-            GROOVY_COMPILER_CONFIG.addCompilationCustomizers(new ASTTransformationCustomizer(CompileStatic.class));
-        }
-        val imports = new ImportCustomizer();
-        imports.addStarImports(
-            "java.time",
-            "java.util",
-            "java.util.function",
-            "java.io",
-            "java.math",
-            "java.beans",
-            "java.net",
-            "java.nio",
-            "java.nio.charset",
-            "java.util.stream",
-
-            "groovy.net",
-            "groovy.json",
-            "groovy.text",
-            "groovy.util",
-            "groovy.lang",
-            "groovy.transform",
-
-            "org.slf4j",
-
-            "org.apache.http",
-            "org.apache.http.util",
-            "org.apache.http.client.methods",
-            "org.apache.http.impl.client",
-
-            "org.apache.commons.lang3",
-            "org.apache.commons.text",
-            "org.apache.commons.io",
-            "org.apache.commons.io.output",
-            "org.apache.commons.codec.binary",
-            "org.apache.commons.codec.digest",
-
-            "org.apereo.inspektr.common.web",
-
-            "jakarta.servlet",
-            "jakarta.servlet.http",
-
-            "org.ldaptive",
-            "org.jose4j.jwk",
-
-            "org.springframework.context",
-            "org.springframework.core",
-            "org.springframework.core.io",
-            "org.springframework.webflow",
-            "org.springframework.webflow.execution",
-            "org.springframework.webflow.action",
-
-            "org.opensaml.core.xml",
-            "org.opensaml.saml.metadata.resolver",
-            "org.opensaml.saml.saml2.core",
-            "org.opensaml.saml.saml2.binding",
-            "org.opensaml.saml.metadata.resolver",
-            "org.opensaml.saml.common",
-
-            "com.fasterxml.jackson",
-            "com.fasterxml.jackson.databind",
-            
-            "org.apereo.cas",
-            "org.apereo.cas.api",
-            "org.apereo.cas.audit",
-            "org.apereo.cas.authentication",
-            "org.apereo.cas.authentication.services",
-            "org.apereo.cas.authentication.credential",
-            "org.apereo.cas.authentication.principal",
-            "org.apereo.cas.configuration.support",
-            "org.apereo.cas.util",
-            "org.apereo.cas.util.model",
-            "org.apereo.cas.web",
-            "org.apereo.cas.web.support",
-            "org.apereo.cas.authentication.mfa",
-            "org.apereo.cas.services",
-            "org.apereo.cas.heimdall",
-            "org.apereo.cas.heimdall.authorizer",
-            "org.apereo.cas.support.saml",
-            "org.apereo.cas.support.saml.services"
-        );
-
-        GROOVY_COMPILER_CONFIG.addCompilationCustomizers(imports);
-    }
-
+    
     @SuppressWarnings("InlineFormatString")
     private static final String INLINE_PATTERN = "%s\\s*\\{\\s*(.+)\\s*\\}";
 
@@ -362,7 +271,7 @@ public class ScriptingUtils {
         val variables = inputVariables != null ? new HashMap<>(inputVariables) : new HashMap<>();
         variables.putIfAbsent("logger", LOGGER);
         val binding = new Binding(variables);
-        val shell = new GroovyShell(binding, GROOVY_COMPILER_CONFIG);
+        val shell = new GroovyShell(binding, createCompilerConfiguration());
         LOGGER.debug("Parsing groovy script [{}]", script);
         return shell.parse(script, binding);
     }
@@ -408,7 +317,7 @@ public class ScriptingUtils {
      * @return the groovy class loader
      */
     public static GroovyClassLoader newGroovyClassLoader() {
-        return new GroovyClassLoader(ScriptingUtils.class.getClassLoader(), GROOVY_COMPILER_CONFIG);
+        return new GroovyClassLoader(ScriptingUtils.class.getClassLoader(), createCompilerConfiguration());
     }
 
     private Class loadGroovyClass(final Resource groovyScript,
@@ -491,5 +400,94 @@ public class ScriptingUtils {
             LoggingUtils.error(LOGGER, e);
         }
         return null;
+    }
+
+    private static CompilerConfiguration createCompilerConfiguration() {
+        val compilerConfiguration = new CompilerConfiguration();
+        val isStaticCompilation = BooleanUtils.toBoolean(System.getProperty(ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC));
+        if (CasRuntimeHintsRegistrar.inNativeImage() || isStaticCompilation) {
+            compilerConfiguration.addCompilationCustomizers(new ASTTransformationCustomizer(CompileStatic.class));
+        }
+        val imports = new ImportCustomizer();
+        imports.addStarImports(
+            "java.time",
+            "java.util",
+            "java.util.function",
+            "java.io",
+            "java.math",
+            "java.beans",
+            "java.net",
+            "java.nio",
+            "java.nio.charset",
+            "java.util.stream",
+
+            "groovy.net",
+            "groovy.json",
+            "groovy.text",
+            "groovy.util",
+            "groovy.lang",
+            "groovy.transform",
+
+            "org.slf4j",
+
+            "org.apache.http",
+            "org.apache.http.util",
+            "org.apache.http.client.methods",
+            "org.apache.http.impl.client",
+
+            "org.apache.commons.lang3",
+            "org.apache.commons.text",
+            "org.apache.commons.io",
+            "org.apache.commons.io.output",
+            "org.apache.commons.codec.binary",
+            "org.apache.commons.codec.digest",
+
+            "org.apereo.inspektr.common.web",
+
+            "jakarta.servlet",
+            "jakarta.servlet.http",
+
+            "org.ldaptive",
+            "org.jose4j.jwk",
+
+            "org.springframework.context",
+            "org.springframework.core",
+            "org.springframework.core.io",
+            "org.springframework.webflow",
+            "org.springframework.webflow.execution",
+            "org.springframework.webflow.action",
+
+            "org.opensaml.core.xml",
+            "org.opensaml.saml.metadata.resolver",
+            "org.opensaml.saml.saml2.core",
+            "org.opensaml.saml.saml2.binding",
+            "org.opensaml.saml.metadata.resolver",
+            "org.opensaml.saml.common",
+
+            "com.fasterxml.jackson",
+            "com.fasterxml.jackson.databind",
+
+            "org.apereo.cas",
+            "org.apereo.cas.api",
+            "org.apereo.cas.audit",
+            "org.apereo.cas.authentication",
+            "org.apereo.cas.authentication.services",
+            "org.apereo.cas.authentication.credential",
+            "org.apereo.cas.authentication.principal",
+            "org.apereo.cas.configuration.support",
+            "org.apereo.cas.util",
+            "org.apereo.cas.util.model",
+            "org.apereo.cas.web",
+            "org.apereo.cas.web.support",
+            "org.apereo.cas.authentication.mfa",
+            "org.apereo.cas.services",
+            "org.apereo.cas.heimdall",
+            "org.apereo.cas.heimdall.authorizer",
+            "org.apereo.cas.support.saml",
+            "org.apereo.cas.support.saml.services"
+        );
+
+        compilerConfiguration.addCompilationCustomizers(imports);
+        return compilerConfiguration;
     }
 }
