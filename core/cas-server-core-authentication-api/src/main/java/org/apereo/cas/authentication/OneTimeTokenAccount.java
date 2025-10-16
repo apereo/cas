@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.util.jpa.StringToNumberAttributeConverter;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -21,6 +22,7 @@ import tools.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -84,9 +86,10 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
 
     @ElementCollection(targetClass = BigInteger.class)
     @CollectionTable(name = TABLE_NAME_SCRATCH_CODES, joinColumns = @JoinColumn(name = "id"))
-    @Column(nullable = false, columnDefinition = "numeric", precision = 255, scale = 0)
+    @Column(nullable = false, columnDefinition = "VARCHAR(1024)")
     @Builder.Default
     @JsonSetter(nulls = Nulls.AS_EMPTY)
+    @Convert(converter = StringToNumberAttributeConverter.class)
     private List<Number> scratchCodes = new ArrayList<>();
 
     @ElementCollection(targetClass = String.class)
@@ -163,4 +166,5 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
         }
         return this;
     }
+
 }
