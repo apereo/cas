@@ -1,6 +1,7 @@
 package org.apereo.cas.util.serialization;
 
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -210,7 +211,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
                     + "specially if the fragment describes a CAS registered service definition. "
                     + "Internal parsing error is [{}]",
                 DigestUtils.abbreviate(jsonString), getTypeToSerialize(), e.getMessage());
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
         return null;
     }

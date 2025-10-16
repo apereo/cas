@@ -23,6 +23,7 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.registry.key.RedisKeyGeneratorFactory;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
 import org.apereo.cas.util.ProxyTicketIdGenerator;
 import org.apereo.cas.util.ServiceTicketIdGenerator;
@@ -437,7 +438,7 @@ class RedisServerTicketRegistryTests {
                 val thread = Thread.ofVirtual();
                 thread.name("Thread-" + i);
                 thread.uncaughtExceptionHandler((t, e) -> {
-                    LOGGER.error(e.getMessage(), e);
+                    LoggingUtils.error(LOGGER, e);
                     testHasFailed.set(true);
                 });
                 threads.add(thread.start(runnable));
@@ -519,7 +520,7 @@ class RedisServerTicketRegistryTests {
                 val thread = new Thread(runnable);
                 thread.setName("Thread-" + i);
                 thread.setUncaughtExceptionHandler((t, e) -> {
-                    LOGGER.error(e.getMessage(), e);
+                    LoggingUtils.error(LOGGER, e);
                     testHasFailed.set(true);
                 });
                 threads.add(thread);
