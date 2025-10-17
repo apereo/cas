@@ -3,8 +3,9 @@
   "conditions": {
     "docker": "true"
   },
-
   "properties": [
+    "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml",
+    
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 

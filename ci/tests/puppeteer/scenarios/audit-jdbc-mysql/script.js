@@ -27,10 +27,6 @@ async function callAuditLog() {
 }
 
 (async () => {
-    const configFilePath = path.join(__dirname, "config.yml");
-    const file = fs.readFileSync(configFilePath, "utf8");
-    const configFile = await cas.parseYAML(file);
-
     let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.gotoLogin(page);
@@ -46,7 +42,15 @@ async function callAuditLog() {
 
     await cas.log("Updating configuration...");
     const number = await cas.randomNumber();
-    await updateConfig(configFile, configFilePath, number);
+    await cas.updateYamlConfigurationSource(__dirname, {
+        cas: {
+            audit: {
+                jdbc: {
+                    "max-age-days": number
+                }
+            }
+        }
+    });
     await cas.sleep(5000);
     await cas.refreshContext();
 
@@ -70,18 +74,3 @@ async function callAuditLog() {
 
 })();
 
-async function updateConfig(configFile, configFilePath, data) {
-    const config = {
-        cas: {
-            audit: {
-                jdbc: {
-                    "max-age-days": data
-                }
-            }
-        }
-    };
-    const newConfig = await cas.toYAML(config);
-    await cas.log(`Updated configuration:\n${newConfig}`);
-    await fs.writeFileSync(configFilePath, newConfig);
-    await cas.log(`Wrote changes to ${configFilePath}`);
-}
