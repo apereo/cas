@@ -146,6 +146,7 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
         }
 
         @JsonValue
+        @Override
         public abstract String toString();
     }
 }

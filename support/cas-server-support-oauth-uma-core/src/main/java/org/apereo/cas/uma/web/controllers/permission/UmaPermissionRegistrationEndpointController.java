@@ -60,19 +60,19 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
             val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), UmaPermissionRegistrationRequest.class);
             if (umaRequest == null || umaRequest.getResourceId() <= 0) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "UMA request cannot be found or parsed");
-                return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(model, HttpStatus.BAD_REQUEST);
             }
 
             val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(umaRequest.getResourceId());
             if (resourceSetResult.isEmpty()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
-                return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(model, HttpStatus.BAD_REQUEST);
             }
 
             val resourceSet = resourceSetResult.get();
             if (!resourceSet.getOwner().equals(profileResult.getId())) {
                 val model = buildResponseEntityErrorModel(HttpStatus.FORBIDDEN, "Resource-set owner does not match the authenticated profile");
-                return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(model, HttpStatus.BAD_REQUEST);
             }
 
             val umaTicketFactory = (UmaPermissionTicketFactory) getUmaConfigurationContext().getTicketFactory().get(UmaPermissionTicket.class);

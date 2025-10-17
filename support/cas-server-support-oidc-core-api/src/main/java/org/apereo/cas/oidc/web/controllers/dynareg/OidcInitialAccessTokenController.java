@@ -34,7 +34,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.springframework.web.servlet.view.json.JacksonJsonView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -93,7 +93,7 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
-            val modelAndView = new ModelAndView(new MappingJackson2JsonView(), body);
+            val modelAndView = new ModelAndView(new JacksonJsonView(), body);
             modelAndView.setStatus(HttpStatus.BAD_REQUEST);
             return modelAndView;
         }
@@ -154,7 +154,7 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
     }
 
     protected ModelAndView getBadRequestResponseEntity(final HttpStatus status) {
-        val mv = new ModelAndView(new MappingJackson2JsonView());
+        val mv = new ModelAndView(new JacksonJsonView());
         mv.setStatus(status);
         return mv;
     }

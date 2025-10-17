@@ -28,9 +28,9 @@ import org.springframework.binding.mapping.impl.DefaultMappingContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.expression.BeanExpressionContextAccessor;
 import org.springframework.context.expression.EnvironmentAccessor;
-import org.springframework.context.expression.MapAccessor;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.MapAccessor;
 import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
@@ -535,7 +535,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
                         state.getId(), criteriaOutcome);
                     return transition;
                 }
-                
+
                 val transition = createTransition(criteriaOutcome, targetState, actions);
                 attributes.forEach((key, value) -> transition.getAttributes().put(key, value));
                 state.getTransitionSet().add(transition);
@@ -981,7 +981,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     protected Map<String, Object> createTransitionAttributes(final boolean bind, final boolean validate) {
         return CollectionUtils.wrap("bind", bind, "validate", validate, "history", History.INVALIDATE);
     }
-    
+
     protected void doInitialize() {
     }
 
