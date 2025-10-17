@@ -245,7 +245,7 @@ public class CasJpaTicketRegistryAutoConfiguration {
             @Qualifier("jdbcLockRepository")
             final org.springframework.integration.jdbc.lock.LockRepository jdbcLockRepository) {
             return BeanSupplier.of(LockRegistry.class)
-                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .when(CONDITION_LOCKING.given(applicationContext.getEnvironment()))
                 .supply(() -> new JdbcLockRegistry(jdbcLockRepository))
                 .otherwiseProxy()
                 .get();
@@ -258,7 +258,7 @@ public class CasJpaTicketRegistryAutoConfiguration {
             @Qualifier("jdbcLockRegistry")
             final LockRegistry jdbcLockRegistry) {
             return BeanSupplier.of(LockRepository.class)
-                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .when(CONDITION_LOCKING.given(applicationContext.getEnvironment()))
                 .supply(() -> new DefaultLockRepository(jdbcLockRegistry))
                 .otherwise(LockRepository::noOp)
                 .get();
@@ -272,7 +272,7 @@ public class CasJpaTicketRegistryAutoConfiguration {
             final CloseableDataSource dataSourceTicket,
             final IntegrationJdbcProperties properties) {
             return BeanSupplier.of(InitializingBean.class)
-                .when(CONDITION.given(applicationContext.getEnvironment()))
+                .when(CONDITION_LOCKING.given(applicationContext.getEnvironment()))
                 .supply(() -> new IntegrationDataSourceScriptDatabaseInitializer(
                     dataSourceTicket, properties))
                 .otherwiseProxy()
