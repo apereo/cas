@@ -70,7 +70,7 @@ public class ClientCredential extends AbstractCredential {
     }
 
     public UserProfile getUserProfile() {
-        return Optional.ofNullable(userProfile).orElseGet(credentials::getUserProfile);
+        return userProfile != null ? userProfile : credentials.getUserProfile();
     }
 
     @Override
