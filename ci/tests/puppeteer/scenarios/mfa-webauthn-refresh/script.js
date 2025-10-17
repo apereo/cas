@@ -2,9 +2,6 @@
 const assert = require("assert");
 const cas = require("../../cas.js");
 
-const fs = require("fs");
-const path = require("path");
-
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -14,10 +11,20 @@ const path = require("path");
     await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
 
     await cas.log("Updating configuration and waiting for changes to reload...");
-    const configFilePath = path.join(__dirname, "config.yml");
-    const file = fs.readFileSync(configFilePath, "utf8");
-    const configFile = await cas.parseYAML(file);
-    await updateConfig(configFile, configFilePath, true);
+    
+    await cas.updateYamlConfigurationSource(__dirname, {
+        cas: {
+            authn: {
+                mfa: {
+                    "web-authn": {
+                        core: {
+                            enabled: true
+                        }
+                    }
+                }
+            }
+        }
+    });
     await cas.sleep(5000);
 
     try {
@@ -49,29 +56,20 @@ const path = require("path");
             assert(response.ok());
         }
     } finally {
-        await updateConfig(configFile, configFilePath, false);
-    }
-    
-    await cas.closeBrowser(browser);
-})();
-
-async function updateConfig(configFile, configFilePath, data) {
-    const config = {
-        cas: {
-            authn: {
-                mfa: {
-                    "web-authn": {
-                        core: {
-                            enabled: data
+        await cas.updateYamlConfigurationSource(__dirname, {
+            cas: {
+                authn: {
+                    mfa: {
+                        "web-authn": {
+                            core: {
+                                enabled: false
+                            }
                         }
                     }
                 }
             }
-        }
-    };
-
-    const newConfig = await cas.toYAML(config);
-    await cas.log(`Updated configuration:\n${newConfig}`);
-    await fs.writeFileSync(configFilePath, newConfig);
-    await cas.log(`Wrote changes to ${configFilePath}`);
-}
+        });
+    }
+    
+    await cas.closeBrowser(browser);
+})();

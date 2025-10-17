@@ -1,13 +1,7 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
-const path = require("path");
-const fs = require("fs");
 
 (async () => {
-    const configFilePath = path.join(__dirname, "config.yml");
-    const file = fs.readFileSync(configFilePath, "utf8");
-    const configFile = await cas.parseYAML(file);
-
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
@@ -21,8 +15,15 @@ const fs = require("fs");
             "Content-Type": "application/json"
         });
 
-    await cas.log(`Updating configuration ${configFilePath} and waiting for changes to reload...`);
-    await updateConfig(configFile, configFilePath, true);
+    await cas.updateYamlConfigurationSource(__dirname, {
+        cas: {
+            audit: {
+                redis: {
+                    enabled: true
+                }
+            }
+        }
+    });
     await cas.sleep(5000);
 
     await cas.refreshContext();
@@ -39,23 +40,16 @@ const fs = require("fs");
                 "Content-Type": "application/json"
             });
     } finally {
-        await updateConfig(configFile, configFilePath, false);
+        await cas.updateYamlConfigurationSource(__dirname, {
+            cas: {
+                audit: {
+                    redis: {
+                        enabled: false
+                    }
+                }
+            }
+        });
     }
     await cas.closeBrowser(browser);
 })();
 
-async function updateConfig(configFile, configFilePath, data) {
-    const config = {
-        cas: {
-            audit: {
-                redis: {
-                    enabled: data
-                }
-            }
-        }
-    };
-    const newConfig = await cas.toYAML(config);
-    await cas.log(`Updated configuration:\n${newConfig}`);
-    await fs.writeFileSync(configFilePath, newConfig);
-    await cas.log(`Wrote changes to ${configFilePath}`);
-}

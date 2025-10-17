@@ -1,14 +1,7 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
 
-const fs = require("fs");
-const path = require("path");
-
 (async () => {
-    const configFilePath = path.join(__dirname, "config.yml");
-    const file = fs.readFileSync(configFilePath, "utf8");
-    const configFile = await cas.parseYAML(file);
-
     let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.gotoLogin(page);
@@ -51,7 +44,15 @@ const path = require("path");
 
     await cas.log("Updating configuration...");
     const number = await cas.randomNumber();
-    await updateConfig(configFile, configFilePath, number);
+    await cas.updateYamlConfigurationSource(__dirname, {
+        cas: {
+            audit: {
+                jdbc: {
+                    "max-age-days": number
+                }
+            }
+        }
+    });
     await cas.sleep(6000);
     await cas.refreshContext();
     await cas.sleep(3000);
@@ -66,19 +67,3 @@ const path = require("path");
     await cas.closeBrowser(browser);
 
 })();
-
-async function updateConfig(configFile, configFilePath, data) {
-    const config = {
-        cas: {
-            audit: {
-                jdbc: {
-                    "max-age-days": data
-                }
-            }
-        }
-    };
-    const newConfig = await cas.toYAML(config);
-    await cas.log(`Updated configuration:\n${newConfig}`);
-    await fs.writeFileSync(configFilePath, newConfig);
-    await cas.log(`Wrote changes to ${configFilePath}`);
-}

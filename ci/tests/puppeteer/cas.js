@@ -181,7 +181,10 @@ exports.click = async (page, button) =>
     }, button);
 
 exports.asciiart = (text) => {
-    const art = figlet.textSync(text);
+    const art = figlet.textSync(text, {
+        font: "Small",
+        horizontalLayout: "fitted"
+    });
     console.log(colors.blue(art));
     console.log(`🔷 Puppeteer: ${colors.blue(require("puppeteer/package.json").version)}`);
 };
@@ -1243,6 +1246,14 @@ exports.readLocalStorage = async (page) => {
 exports.parseYAML = async (source) => YAML.parse(source);
 
 exports.toYAML = async (source) => YAML.stringify(source);
+
+exports.updateYamlConfigurationSource = async(configDirectory, config) => {
+    const configFilePath = path.join(configDirectory, "config.yml");
+    const newConfig = await this.toYAML(config);
+    await this.log(`Updated configuration:\n${newConfig}`);
+    await fs.writeFileSync(configFilePath, newConfig);
+    await this.log(`Wrote changes to ${configFilePath}`);
+};
 
 exports.createZipFile = async (file, callback) => {
     const zip = fs.createWriteStream(file);
