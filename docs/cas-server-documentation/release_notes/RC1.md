@@ -137,4 +137,5 @@ records, etc are processed and loaded.
 - [JPA Ticket Registry](../ticketing/JPA-Ticket-Registry.html) will lowercase all tables names to avoid issues with
   case sensitivity in certain database engines, namely MariaDb.
 - PostgreSQL `18` is now the default PostgreSQL version for integration tests.
+- A large number of deprecated classes, methods and configuration properties have been removed.
 
