@@ -2,6 +2,8 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
+    await cas.refreshContext();
+    
     const baseUrl = "https://localhost:8443/cas/actuator";
     await cas.logg("Removing all SSO Sessions");
     await cas.doDelete(`${baseUrl}/ssoSessions?type=ALL&from=1&count=100000`);

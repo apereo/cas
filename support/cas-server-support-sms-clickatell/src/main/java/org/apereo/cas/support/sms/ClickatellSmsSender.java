@@ -11,8 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import tools.jackson.databind.ObjectMapper;
 import java.io.StringWriter;
@@ -37,12 +36,12 @@ public class ClickatellSmsSender implements SmsSender {
 
     private final String serverUrl;
 
-    private final RestTemplate restTemplate = new RestTemplate(CollectionUtils.wrapList(new MappingJackson2HttpMessageConverter()));
+    private final RestTemplate restTemplate = new RestTemplate(CollectionUtils.wrapList(new JacksonJsonHttpMessageConverter()));
 
     @Override
     public boolean send(final String from, final String to, final String message) {
         try {
-            val headers = new LinkedMultiValueMap<String, String>();
+            val headers = new HttpHeaders();
             headers.add(HttpHeaders.AUTHORIZATION, this.token);
             headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);

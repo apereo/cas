@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.springframework.web.servlet.view.json.JacksonJsonView;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -49,7 +49,7 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
             if (originalRedirectUrl.isEmpty()) {
                 val model = new HashMap<String, String>();
                 model.put(OAuth20Constants.ERROR, OidcConstants.LOGIN_REQUIRED);
-                return new ModelAndView(new MappingJackson2JsonView(), model);
+                return new ModelAndView(new JacksonJsonView(), model);
             }
             val parameters = new LinkedHashMap<String, String>();
             parameters.put(OAuth20Constants.ERROR, OidcConstants.LOGIN_REQUIRED);
