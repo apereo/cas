@@ -223,7 +223,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
                 LOGGER.info("Cleaning audit records with query [{}]", sql);
                 LOGGER.debug("Query parameters: [{}]", params);
                 val count = jdbcTemplate.update(sql, params.toArray());
-                LOGGER.info("[{}] records deleted.", count);
+                LOGGER.info("[{}] records deleted and cleaned.", count);
             }
         });
     }
@@ -245,20 +245,20 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         val builder = new StringBuilder("1=1 ");
         val args = new ArrayList<>();
         if (whereClause.containsKey(WhereClauseFields.DATE)) {
-            builder.append("AND AUD_DATE>=? ");
             var sinceDate = (TemporalAccessor) whereClause.get(WhereClauseFields.DATE);
             if (dateFormatterFunction != null) {
                 val formatter = DateTimeFormatter.ofPattern(dateFormatterPattern, Locale.ENGLISH);
                 val patternToUse = StringUtils.isNotBlank(dateFormatterPattern) ? dateFormatterPattern : "yyyy-MM-dd";
                 val formattedDate = String.format(dateFormatterFunction, formatter.format(sinceDate), patternToUse);
                 LOGGER.trace("Using date formatter [{}] to format date [{}] to [{}]", dateFormatterFunction, sinceDate, formattedDate);
-                args.add(formattedDate);
+                builder.append("AND AUD_DATE>=").append(formattedDate);
             } else {
+                builder.append("AND AUD_DATE>=?");
                 args.add(sinceDate);
             }
         }
         if (whereClause.containsKey(WhereClauseFields.PRINCIPAL)) {
-            var principal = whereClause.get(WhereClauseFields.PRINCIPAL).toString();
+            val principal = whereClause.get(WhereClauseFields.PRINCIPAL).toString();
             args.add(principal);
             builder.append("AND AUD_USER=? ");
         }
