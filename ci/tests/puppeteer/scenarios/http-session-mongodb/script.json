@@ -1,5 +1,5 @@
 {
-  "dependencies": "session-mongo,reports,mongo-ticket-registry",
+  "dependencies": "session-mongo,reports,mongo-ticket-registry,audit-mongo",
   "conditions": {
     "docker": "true"
   },
@@ -23,8 +23,17 @@
     "--cas.ticket.registry.mongo.port=27017",
     "--cas.ticket.registry.mongo.drop-collection=true",
     "--cas.ticket.registry.mongo.user-id=root",
-    "--cas.ticket.registry.mongo.password=secret"
-  ,
+    "--cas.ticket.registry.mongo.password=secret",
+    
+    "--cas.audit.mongo.host=localhost",
+    "--cas.audit.mongo.port=27017",
+    "--cas.audit.mongo.drop-collection=true",
+    "--cas.audit.mongo.asynchronous=false",
+    "--cas.audit.mongo.user-id=root",
+    "--cas.audit.mongo.password=secret",
+    "--cas.audit.mongo.database-name=audit",
+    "--cas.audit.mongo.authentication-database-name=admin",
+
     "--spring.mongodb.host=localhost",
     "--spring.mongodb.port=27017",
     "--spring.mongodb.database=sessions",
