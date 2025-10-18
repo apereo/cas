@@ -150,7 +150,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
     private final @NotNull JdbcTemplate jdbcTemplate;
     private final @NotNull JpaEntityFactory<AuditTrailEntity> jpaAuditTrailEntityFactory;
 
-    private @NotNull @Size(min = 1) String tableName = "COM_AUDIT_TRAIL".toLowerCase();
+    private @NotNull @Size(min = 1) String tableName = "COM_AUDIT_TRAIL";
 
     private int columnLength = DEFAULT_COLUMN_LENGTH;
 

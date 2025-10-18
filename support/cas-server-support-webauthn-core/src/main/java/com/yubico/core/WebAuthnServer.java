@@ -25,7 +25,6 @@
 package com.yubico.core;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.webauthn.WebAuthnUtils;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
