@@ -7,7 +7,7 @@ echo "Running Oracle docker container..."
 docker stop oracle-db || true && docker rm oracle-db || true
 docker run --rm -d -e ORACLE_PASSWORD=Oradoc_db1 -p 1521:1521 --name oracle-db --rm ${DOCKER_IMAGE}
 echo "Waiting for Oracle docker container to prepare..."
-sleep 90
+sleep 30
 docker ps | grep "oracle-db"
 retVal=$?
 if [ $retVal == 0 ]; then

@@ -15,6 +15,8 @@ import lombok.val;
 import org.springframework.data.annotation.Id;
 import tools.jackson.databind.ObjectMapper;
 import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -51,7 +53,8 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     @Id
     @Transient
     @JsonProperty("id")
-    private long id = -1;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
     @Column(nullable = false)
     @JsonProperty("principal")

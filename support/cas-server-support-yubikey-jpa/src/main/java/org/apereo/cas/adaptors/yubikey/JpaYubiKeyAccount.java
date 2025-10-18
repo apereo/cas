@@ -33,7 +33,7 @@ public class JpaYubiKeyAccount extends YubiKeyAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Builder.Default
-    private long id = -1;
+    private long id;
 
     @Override
     public YubiKeyAccount setId(final long id) {

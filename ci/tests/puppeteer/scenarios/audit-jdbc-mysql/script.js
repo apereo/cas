@@ -1,7 +1,4 @@
 const cas = require("../../cas.js");
-
-const fs = require("fs");
-const path = require("path");
 const assert = require("assert");
 
 async function callRegisteredServices() {
