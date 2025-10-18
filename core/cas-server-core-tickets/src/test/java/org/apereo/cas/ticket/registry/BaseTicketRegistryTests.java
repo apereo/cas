@@ -96,7 +96,7 @@ import static org.junit.jupiter.api.Assumptions.*;
 @Slf4j
 @SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class,
     properties = {
-        "cas.ticket.tgt.core.only-track-most-recent-session=false",
+        "cas.ticket.tgt.core.service-tracking-policy=ALL",
         "cas.ticket.registry.cleaner.schedule.enabled=false"
     })
 @ExtendWith(CasTestExtension.class)
@@ -117,6 +117,10 @@ public abstract class BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
     protected TicketTrackingPolicy serviceTicketSessionTrackingPolicy;
+
+    @Autowired
+    @Qualifier(TicketTrackingPolicy.BEAN_NAME_PROXY_GRANTING_TICKET_TRACKING)
+    protected TicketTrackingPolicy proxyGrantingTicketTrackingPolicy;
 
     @Autowired
     @Qualifier(TicketCatalog.BEAN_NAME)
@@ -653,7 +657,8 @@ public abstract class BaseTicketRegistryTests {
         assertNotNull(ticketRegistry.getTicket(addedServiceTicket.getId(), ServiceTicket.class));
 
         val proxyGrantingTicketId = TestTicketIdentifiers.generate().proxyGrantingTicketId();
-        val pgt = st1.grantProxyGrantingTicket(proxyGrantingTicketId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+        val pgt = st1.grantProxyGrantingTicket(proxyGrantingTicketId, authentication,
+            NeverExpiresExpirationPolicy.INSTANCE, proxyGrantingTicketTrackingPolicy);
         ticketRegistry.addTicket(pgt);
         ticketRegistry.updateTicket(tgt);
         ticketRegistry.updateTicket(st1);
@@ -689,12 +694,13 @@ public abstract class BaseTicketRegistryTests {
                     ticketRegistry.addTicket(st);
                     ticketRegistry.updateTicket(tgt);
 
-                    val proxyGrantingTicketId = TestTicketIdentifiers.generate().proxyGrantingTicketId();
-                    val pgt = st.grantProxyGrantingTicket(proxyGrantingTicketId + '-' + i, authentication, NeverExpiresExpirationPolicy.INSTANCE);
-                    ticketRegistry.addTicket(pgt);
-                    ticketRegistry.updateTicket(tgt);
-                    ticketRegistry.updateTicket(st);
-                }));
+                val proxyGrantingTicketId = TestTicketIdentifiers.generate().proxyGrantingTicketId();
+                val pgt = st.grantProxyGrantingTicket(proxyGrantingTicketId + '-' + i, authentication,
+                    NeverExpiresExpirationPolicy.INSTANCE, proxyGrantingTicketTrackingPolicy);
+                ticketRegistry.addTicket(pgt);
+                ticketRegistry.updateTicket(tgt);
+                ticketRegistry.updateTicket(st);
+            }));
 
                 val count = ticketRegistry.deleteTicket(ticketGrantingTicketId);
                 assertEquals(9, count);

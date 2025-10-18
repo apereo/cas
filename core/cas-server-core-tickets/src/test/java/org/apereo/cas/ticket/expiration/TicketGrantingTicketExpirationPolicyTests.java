@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.4.10
  */
 @Tag("Tickets")
-@TestPropertySource(properties = "cas.ticket.tgt.core.only-track-most-recent-session=true")
+@TestPropertySource(properties = "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT")
 class TicketGrantingTicketExpirationPolicyTests extends BaseTicketFactoryTests {
 
     private static final long HARD_TIMEOUT = 200;

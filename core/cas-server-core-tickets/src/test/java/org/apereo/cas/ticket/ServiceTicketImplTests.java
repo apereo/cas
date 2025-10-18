@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("Tickets")
-@TestPropertySource(properties = "cas.ticket.tgt.core.only-track-most-recent-session=true")
+@TestPropertySource(properties = "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT")
 class ServiceTicketImplTests extends BaseTicketFactoryTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -120,7 +120,7 @@ class ServiceTicketImplTests extends BaseTicketFactoryTests {
                 new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000),
                 false, serviceTicketSessionTrackingPolicy);
         val t1 = serviceTicket.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), authentication,
-            NeverExpiresExpirationPolicy.INSTANCE);
+            NeverExpiresExpirationPolicy.INSTANCE, proxyGrantingTicketTrackingPolicy);
         assertEquals(authentication, t1.getAuthentication());
     }
 
@@ -142,9 +142,9 @@ class ServiceTicketImplTests extends BaseTicketFactoryTests {
                 new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000),
                 false, serviceTicketSessionTrackingPolicy);
         serviceTicket.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX),
-            authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            authentication, NeverExpiresExpirationPolicy.INSTANCE, proxyGrantingTicketTrackingPolicy);
         assertThrows(Exception.class,
             () -> serviceTicket.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX),
-                authentication, NeverExpiresExpirationPolicy.INSTANCE));
+                authentication, NeverExpiresExpirationPolicy.INSTANCE, proxyGrantingTicketTrackingPolicy));
     }
 }
