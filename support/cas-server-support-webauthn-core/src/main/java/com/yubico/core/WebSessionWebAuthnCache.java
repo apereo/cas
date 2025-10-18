@@ -1,7 +1,6 @@
 package com.yubico.core;
 
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.webauthn.WebAuthnUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.webauthn.data.ByteArray;
