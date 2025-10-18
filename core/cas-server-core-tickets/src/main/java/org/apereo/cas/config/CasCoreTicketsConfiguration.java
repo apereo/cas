@@ -111,7 +111,7 @@ class CasCoreTicketsConfiguration {
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
-            return switch(casProperties.getTicket().getTgt().getCore().getServiceTrackingPolicy()) {
+            return switch (casProperties.getTicket().getTgt().getCore().getServiceTrackingPolicy()) {
                 case ALL -> new AllServicesSessionTrackingPolicy(ticketRegistry);
                 case MOST_RECENT -> new MostRecentServiceSessionTrackingPolicy(ticketRegistry);
             };
