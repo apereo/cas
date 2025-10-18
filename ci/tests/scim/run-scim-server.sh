@@ -2,7 +2,7 @@
 export DOCKER_IMAGE="personify/personify-scim-server:2.1.2.RELEASE"
 echo "Running SCIM docker container..."
 docker stop scim-server || true && docker rm scim-server || true
-docker run --rm --name="scim-server" -p 9666:8080 -d ${DOCKER_IMAGE}
+docker run --rm --name="scim-server" -p 9666:8080 -d -e JAVA_TOOL_OPTIONS='-XX:-UseContainerSupport' ${DOCKER_IMAGE}
 docker logs -f scim-server &
 echo "Waiting for SCIM container to prepare..."
 sleep 5
