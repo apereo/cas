@@ -504,12 +504,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             val ops = casRedisTemplates.getSessionsRedisTemplate().boundZSetOps(redisPrincipalPattern);
             val now = Instant.now(Clock.systemUTC());
             switch (casProperties.getTicket().getTgt().getCore().getServiceTrackingPolicy()) {
-                case ALL:
-                    ops.removeRangeByScore(0, Long.valueOf(now.getEpochSecond()).doubleValue() + 1);
-                    break;
-                case MOST_RECENT:
-                    ops.expireAt(now);
-                    break;
+                case ALL -> ops.removeRangeByScore(0, Long.valueOf(now.getEpochSecond()).doubleValue() + 1);
+                case MOST_RECENT -> ops.expireAt(now);
             }
             val timeout = RedisKeyGenerator.getTicketExpirationInSeconds(ticket);
             val digestedId = digestIdentifier(ticket.getId());
