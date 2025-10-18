@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("ExpirationPolicy")
-@TestPropertySource(properties = "cas.ticket.tgt.core.only-track-most-recent-session=true")
+@TestPropertySource(properties = "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT")
 class ThrottledUseAndTimeoutExpirationPolicyTests extends BaseTicketFactoryTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "throttleUseAndTimeoutExpirationPolicy.json");

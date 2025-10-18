@@ -36,7 +36,7 @@ class TicketGrantingTicketImplTests {
         .defaultTypingEnabled(true).writeDatesAsTimestamps(false).build().toObjectMapper();
 
     @Nested
-    @TestPropertySource(properties = "cas.ticket.tgt.core.only-track-most-recent-session=true")
+    @TestPropertySource(properties = "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT")
     class TrackingAllowed extends BaseTicketFactoryTests {
         @Test
         void verifyServiceTicketAsFromInitialCredentials() throws Throwable {
@@ -207,7 +207,7 @@ class TicketGrantingTicketImplTests {
     }
 
     @Nested
-    @TestPropertySource(properties = "cas.ticket.tgt.core.only-track-most-recent-session=false")
+    @TestPropertySource(properties = "cas.ticket.tgt.core.service-tracking-policy=ALL")
     class TrackingDisabled extends BaseTicketFactoryTests {
         @Test
         void verifyDoubleGrantSameServiceTicketKeepAll() throws Throwable {

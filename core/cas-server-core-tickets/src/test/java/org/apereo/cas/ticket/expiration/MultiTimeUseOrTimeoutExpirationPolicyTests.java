@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("ExpirationPolicy")
-@TestPropertySource(properties = "cas.ticket.tgt.core.only-track-most-recent-session=true")
+@TestPropertySource(properties = "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT")
 class MultiTimeUseOrTimeoutExpirationPolicyTests extends BaseTicketFactoryTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

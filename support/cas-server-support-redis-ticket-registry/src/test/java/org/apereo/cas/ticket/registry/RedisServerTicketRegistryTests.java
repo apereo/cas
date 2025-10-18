@@ -336,7 +336,7 @@ class RedisServerTicketRegistryTests {
             CasRedisTicketRegistryAutoConfiguration.class,
             BaseTicketRegistryTests.SharedTestConfiguration.class
         }, properties = {
-        "cas.ticket.tgt.core.only-track-most-recent-session=true",
+        "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT",
         "cas.ticket.registry.redis.host=localhost",
         "cas.ticket.registry.redis.port=6379",
         "cas.ticket.registry.redis.pool.max-active=20",
@@ -370,7 +370,7 @@ class RedisServerTicketRegistryTests {
             CasRedisTicketRegistryAutoConfiguration.class,
             BaseTicketRegistryTests.SharedTestConfiguration.class
         }, properties = {
-        "cas.ticket.tgt.core.only-track-most-recent-session=false",
+        "cas.ticket.tgt.core.service-tracking-policy=ALL",
         "cas.ticket.registry.redis.host=localhost",
         "cas.ticket.registry.redis.port=6379",
         "cas.ticket.registry.redis.crypto.enabled=false"
@@ -418,7 +418,7 @@ class RedisServerTicketRegistryTests {
             CasRedisTicketRegistryAutoConfiguration.class,
             BaseTicketRegistryTests.SharedTestConfiguration.class
         }, properties = {
-        "cas.ticket.tgt.core.only-track-most-recent-session=true",
+        "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT",
         "cas.ticket.registry.redis.host=localhost",
         "cas.ticket.registry.redis.port=6379"
     })
@@ -481,7 +481,7 @@ class RedisServerTicketRegistryTests {
             CasRedisTicketRegistryAutoConfiguration.class,
             BaseTicketRegistryTests.SharedTestConfiguration.class
         }, properties = {
-        "cas.ticket.tgt.core.only-track-most-recent-session=false",
+        "cas.ticket.tgt.core.service-tracking-policy=ALL",
         "cas.ticket.registry.redis.host=localhost",
         "cas.ticket.registry.redis.port=6379"
     })
@@ -567,7 +567,7 @@ class RedisServerTicketRegistryTests {
             BaseTicketRegistryTests.SharedTestConfiguration.class
         },
         properties = {
-            "cas.ticket.tgt.core.only-track-most-recent-session=true",
+            "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT",
             "cas.ticket.registry.redis.host=localhost",
             "cas.ticket.registry.redis.port=6379",
             "cas.slo.disabled=true"
