@@ -17,7 +17,7 @@ const cas = require("../../cas.js");
         cas: {
             authn: {
                 accept: {
-                    users: ["casrefresh::p@$$word"]
+                    users: "casrefresh::p@$$word"
                 }
             }
         }

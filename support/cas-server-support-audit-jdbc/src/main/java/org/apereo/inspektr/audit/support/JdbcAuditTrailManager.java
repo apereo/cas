@@ -150,7 +150,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
     private final @NotNull JdbcTemplate jdbcTemplate;
     private final @NotNull JpaEntityFactory<AuditTrailEntity> jpaAuditTrailEntityFactory;
 
-    private @NotNull @Size(min = 1) String tableName = "COM_AUDIT_TRAIL";
+    private @NotNull @Size(min = 1) String tableName = "COM_AUDIT_TRAIL".toLowerCase();
 
     private int columnLength = DEFAULT_COLUMN_LENGTH;
 
@@ -251,9 +251,9 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
                 val patternToUse = StringUtils.isNotBlank(dateFormatterPattern) ? dateFormatterPattern : "yyyy-MM-dd";
                 val formattedDate = String.format(dateFormatterFunction, formatter.format(sinceDate), patternToUse);
                 LOGGER.trace("Using date formatter [{}] to format date [{}] to [{}]", dateFormatterFunction, sinceDate, formattedDate);
-                builder.append("AND AUD_DATE>=").append(formattedDate);
+                builder.append("AND AUD_DATE>=").append(formattedDate).append(' ');
             } else {
-                builder.append("AND AUD_DATE>=?");
+                builder.append("AND AUD_DATE>=? ");
                 args.add(sinceDate);
             }
         }

@@ -30,7 +30,7 @@ public class JpaSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id = -1;
+    private long id;
 
     @Override
     public void setId(final long id) {
