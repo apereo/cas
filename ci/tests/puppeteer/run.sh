@@ -849,6 +849,9 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
 
         if [[ "$DEBUG" == "true" ]]; then
           printgreen "Remote debugging is enabled on port $DEBUG_PORT"
+          if [[ "$DEBUG_SUSPEND" == "y" ]]; then
+            printyellow "Remote debugging will suspend JVM until debugger is attached to port $DEBUG_PORT"
+          fi
           runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
         fi
         runArgs="${runArgs} -XX:TieredStopAtLevel=1 "

@@ -22,7 +22,7 @@
     "--spring.cloud.bus.enabled=true",
     "--spring.cloud.bus.refresh.enabled=true",
     "--spring.cloud.bus.trace.enabled=true",
-    "--spring.cloud.bus.ack.enabled=true",
+    "--spring.cloud.bus.ack.enabled=false",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
