@@ -103,6 +103,22 @@ public class JsonUtils {
      * @return true/false
      */
     public boolean isValidJson(final String json) {
-        return FunctionUtils.doAndHandle(() -> !MAPPER.readTree(json).isEmpty(), t -> false).get();
+        try {
+            return !MAPPER.readTree(json).isEmpty();
+        } catch (final Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Parse JSON as object.
+     *
+     * @param <T>   the type parameter
+     * @param json  the json
+     * @param clazz the clazz
+     * @return the object
+     */
+    public <T> T parse(final String json, final Class<T> clazz) {
+        return FunctionUtils.doUnchecked(() -> MAPPER.readValue(json, clazz));
     }
 }

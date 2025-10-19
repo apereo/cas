@@ -138,4 +138,5 @@ records, etc are processed and loaded.
   case sensitivity in certain database engines, namely MariaDb.
 - PostgreSQL `18` is now the default PostgreSQL version for integration tests.
 - A large number of deprecated classes, methods and configuration properties have been removed.
+- Attribute values that are presented as valid JSON documents will be formatted as nested claims when collected into an [OpenID Connect ID token](../authentication/OIDC-Authentication-Claims.html).
 
