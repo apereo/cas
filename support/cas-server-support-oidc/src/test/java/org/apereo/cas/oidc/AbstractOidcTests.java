@@ -470,6 +470,12 @@ public abstract class AbstractOidcTests {
         return getAccessToken(StringUtils.EMPTY, clientId);
     }
 
+    protected OAuth20AccessToken getAccessToken(final String clientId, final Set<String> scopes) throws Throwable {
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
+            CollectionUtils.wrap("email", List.of("casuser@example.org")));
+        return getAccessToken(principal, StringUtils.EMPTY, clientId, scopes);
+    }
+
     protected OAuth20AccessToken getAccessToken(final String idToken, final String clientId) throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
             CollectionUtils.wrap("email", List.of("casuser@example.org")));
@@ -488,6 +494,14 @@ public abstract class AbstractOidcTests {
 
     protected OAuth20AccessToken getAccessToken(final Principal principal, final String idToken,
                                                 final String clientId) throws Throwable {
+        return getAccessToken(principal, idToken, clientId,
+            Set.of(OidcConstants.StandardScopes.EMAIL.getScope(),
+                OidcConstants.StandardScopes.PROFILE.getScope(),
+                OidcConstants.StandardScopes.OPENID.getScope()));
+    }
+
+    protected OAuth20AccessToken getAccessToken(final Principal principal, final String idToken,
+                                                final String clientId, final Set<String> scopes) throws Throwable {
         val code = addCode(principal, getOidcRegisteredService(clientId));
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
@@ -498,9 +512,7 @@ public abstract class AbstractOidcTests {
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getClientId()).thenReturn(clientId);
         when(accessToken.getCreationTime()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
-        when(accessToken.getScopes()).thenReturn(Set.of(OidcConstants.StandardScopes.EMAIL.getScope(),
-            OidcConstants.StandardScopes.PROFILE.getScope(),
-            OidcConstants.StandardScopes.OPENID.getScope()));
+        when(accessToken.getScopes()).thenReturn(scopes);
         when(accessToken.getToken()).thenReturn(code.getId());
         when(accessToken.getIdToken()).thenReturn(idToken);
         when(accessToken.getExpiresIn()).thenReturn(Duration.ofDays(365 * 5).toSeconds());
