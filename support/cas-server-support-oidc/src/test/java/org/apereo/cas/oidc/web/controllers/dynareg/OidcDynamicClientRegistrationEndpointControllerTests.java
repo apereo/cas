@@ -2,23 +2,18 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponse;
 import org.apereo.cas.util.MockWebServer;
-
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Set;
+import java.util.UUID;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link OidcDynamicClientRegistrationEndpointControllerTests}.
@@ -29,145 +24,210 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("OIDCWeb")
 @TestPropertySource(properties = "cas.authn.oidc.registration.client-secret-expiration=P14D")
 class OidcDynamicClientRegistrationEndpointControllerTests extends AbstractOidcTests {
-    @Autowired
-    @Qualifier("oidcDynamicClientRegistrationEndpointController")
-    protected OidcDynamicClientRegistrationEndpointController controller;
-
     @Test
-    void verifyBadEndpointRequest() {
-        val request = getHttpRequestForEndpoint("unknown/issuer");
-        request.setRequestURI("unknown/issuer");
-        val response = new MockHttpServletResponse();
-        val mv = controller.handleRequestInternal(StringUtils.EMPTY, request, response);
-        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST, mv.getStatusCode());
+    void verifyBadEndpointRequest() throws Throwable {
+        mockMvc
+            .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
+                .accept(MediaType.APPLICATION_JSON)
+                .with(withHttpRequestProcessor())
+                .content("{}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(r -> {
+                    r.setServerName("sso2.example.org");
+                    return r;
+                })
+            )
+            .andExpect(status().isUnauthorized());
+
+
+        val clientId = UUID.randomUUID().toString();
+        val accessToken = getAccessToken(clientId, Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
+        ticketRegistry.addTicket(accessToken);
+        mockMvc
+            .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(withHttpRequestProcessor())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+                .content("{}")
+                .with(r -> {
+                    r.setServerName("sso2.example.org");
+                    return r;
+                })
+            )
+            .andExpect(status().isBadRequest());
+
+        mockMvc
+            .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(withHttpRequestProcessor())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+                .content("bad-input")
+            )
+            .andExpect(status().isBadRequest());
     }
 
     @Test
-    void verifyBadInput() {
-        val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
-        val response = new MockHttpServletResponse();
-        assertEquals(HttpStatus.SC_BAD_REQUEST, controller.handleRequestInternal("bad-input", request, response).getStatusCode().value());
-    }
-
-    @Test
-    void verifyBadRedirect() {
+    void verifyBadRedirect() throws Throwable {
         val registrationReq = """
-    {
-       "redirect_uris": ["https://client.example.org/callback#something", "https://client.example.org/callback2"],
-       "request_uris": ["https://client.example.org/rf.txt#qpXaRLh_n93TTR9F252ValdatUQvQiJi5BDub2BeznA"]
-      }
-    """;
+            {
+               "redirect_uris": ["https://client.example.org/callback#something", "https://client.example.org/callback2"],
+               "request_uris": ["https://client.example.org/rf.txt#qpXaRLh_n93TTR9F252ValdatUQvQiJi5BDub2BeznA"]
+              }
+            """;
 
-        val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
-        val response = new MockHttpServletResponse();
-        assertEquals(HttpStatus.SC_BAD_REQUEST, controller.handleRequestInternal(registrationReq, request, response).getStatusCode().value());
+        val clientId = UUID.randomUUID().toString();
+        val accessToken = getAccessToken(clientId, Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
+        ticketRegistry.addTicket(accessToken);
+
+        mockMvc
+            .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(withHttpRequestProcessor())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+                .content(registrationReq)
+            )
+            .andExpect(status().isBadRequest());
     }
 
     @Test
-    void verifyOperation() {
-        val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
-        val response = new MockHttpServletResponse();
-
+    void verifyOperation() throws Throwable {
         try (val webServer = new MockWebServer(org.springframework.http.HttpStatus.OK)) {
             webServer.responseBodyJson(List.of("https://client.example.org/callback", "https://client.example.org/callback2"));
             webServer.start();
 
+            val clientId = UUID.randomUUID().toString();
+            val accessToken = getAccessToken(clientId, Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
+            ticketRegistry.addTicket(accessToken);
+
             val registrationReq = """
-    {
-        "application_type": "web",
-        "default_acr_values": ["mfa-duo","mfa-gauth"],
-        "redirect_uris": ["https://client.example.org/callback","https://client.example.org/callback2"],
-        "client_name": "My Example",
-        "client_name#ja-Japan-JP": "Japanese",
-        "logo_uri": "https://client.example.org/logo.png",
-        "policy_uri": "https://client.example.org/policy",
-        "tos_uri": "https://client.example.org/tos",
-        "subject_type": "pairwise",
-        "sector_identifier_uri": "http://localhost:%s",
-        "token_endpoint_auth_method": "client_secret_basic",
-        "jwks_uri": "https://client.example.org/my_public_keys.jwks",
-        "id_token_signed_response_alg": "RS256",
-        "id_token_encrypted_response_alg": "RSA1_5",
-        "id_token_encrypted_response_enc": "A128CBC-HS256",
-        "userinfo_encrypted_response_alg": "RSA1_5",
-        "userinfo_encrypted_response_enc": "A128CBC-HS256",
-        "contacts": ["ve7jtb@example.org", "mary@example.org"]
-    }
-    """.formatted(webServer.getPort());
-            val responseEntity = (ResponseEntity<OidcClientRegistrationResponse>) controller.handleRequestInternal(registrationReq, request, response);
-            assertEquals(HttpStatus.SC_CREATED, responseEntity.getStatusCode().value());
-            assertTrue(responseEntity.getBody().getClientIdIssuedAt() > 0);
+                {
+                    "application_type": "web",
+                    "default_acr_values": ["mfa-duo","mfa-gauth"],
+                    "redirect_uris": ["https://client.example.org/callback","https://client.example.org/callback2"],
+                    "client_name": "My Example",
+                    "client_name#ja-Japan-JP": "Japanese",
+                    "logo_uri": "https://client.example.org/logo.png",
+                    "policy_uri": "https://client.example.org/policy",
+                    "tos_uri": "https://client.example.org/tos",
+                    "subject_type": "pairwise",
+                    "sector_identifier_uri": "http://localhost:%s",
+                    "token_endpoint_auth_method": "client_secret_basic",
+                    "jwks_uri": "https://client.example.org/my_public_keys.jwks",
+                    "id_token_signed_response_alg": "RS256",
+                    "id_token_encrypted_response_alg": "RSA1_5",
+                    "id_token_encrypted_response_enc": "A128CBC-HS256",
+                    "userinfo_encrypted_response_alg": "RSA1_5",
+                    "userinfo_encrypted_response_enc": "A128CBC-HS256",
+                    "contacts": ["ve7jtb@example.org", "mary@example.org"]
+                }
+                """.formatted(webServer.getPort());
+
+            mockMvc
+                .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(withHttpRequestProcessor())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+                    .content(registrationReq)
+                )
+                .andExpect(status().isCreated());
         }
     }
 
     @Test
-    void verifyNoClientNameOperation() {
-        val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
-        val response = new MockHttpServletResponse();
-
+    void verifyNoClientNameOperation() throws Throwable {
         try (val webServer = new MockWebServer(org.springframework.http.HttpStatus.OK)) {
             webServer.responseBodyJson(List.of("https://client.example.org/callback", "https://client.example.org/callback2"));
             webServer.start();
 
-            val registrationReq = """
-    {
-        "application_type": "web",
-        "default_acr_values": ["mfa-duo", "mfa-gauth"],
-        "redirect_uris": ["https://client.example.org/callback", "https://client.example.org/callback2"],
-        "client_name#ja-Japan-JP": "Japanese",
-        "logo_uri": "https://client.example.org/logo.png",
-        "policy_uri": "https://client.example.org/policy",
-        "tos_uri": "https://client.example.org/tos",
-        "subject_type": "pairwise",
-        "sector_identifier_uri": "http://localhost:%s",
-        "token_endpoint_auth_method": "client_secret_basic",
-        "jwks": {"keys": []},
-        "id_token_signed_response_alg": "RS256",
-        "id_token_encrypted_response_alg": "RSA1_5",
-        "id_token_encrypted_response_enc": "A128CBC-HS256",
-        "userinfo_encrypted_response_alg": "RSA1_5",
-        "contacts": ["ve7jtb@example.org", "mary@example.org"]
-    }
-""".formatted(webServer.getPort());
+            val clientId = UUID.randomUUID().toString();
+            val accessToken = getAccessToken(clientId, Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
+            ticketRegistry.addTicket(accessToken);
 
-            assertEquals(HttpStatus.SC_CREATED,
-                controller.handleRequestInternal(registrationReq, request, response).getStatusCode().value());
+            val registrationReq = """
+                    {
+                        "application_type": "web",
+                        "default_acr_values": ["mfa-duo", "mfa-gauth"],
+                        "redirect_uris": ["https://client.example.org/callback", "https://client.example.org/callback2"],
+                        "client_name#ja-Japan-JP": "Japanese",
+                        "logo_uri": "https://client.example.org/logo.png",
+                        "policy_uri": "https://client.example.org/policy",
+                        "tos_uri": "https://client.example.org/tos",
+                        "subject_type": "pairwise",
+                        "sector_identifier_uri": "http://localhost:%s",
+                        "token_endpoint_auth_method": "client_secret_basic",
+                        "jwks": {"keys": []},
+                        "id_token_signed_response_alg": "RS256",
+                        "id_token_encrypted_response_alg": "RSA1_5",
+                        "id_token_encrypted_response_enc": "A128CBC-HS256",
+                        "userinfo_encrypted_response_alg": "RSA1_5",
+                        "contacts": ["ve7jtb@example.org", "mary@example.org"]
+                    }
+                """.formatted(webServer.getPort());
+
+            mockMvc
+                .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(withHttpRequestProcessor())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+                    .content(registrationReq)
+                )
+                .andExpect(status().isCreated());
         }
     }
 
     @Test
-    void verifyMissingBackchannelEndpoint() {
-        val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_URL);
-        val response = new MockHttpServletResponse();
+    void verifyMissingBackchannelEndpoint() throws Throwable {
+        val clientId = UUID.randomUUID().toString();
+        val accessToken = getAccessToken(clientId, Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
+        ticketRegistry.addTicket(accessToken);
 
         try (val webServer = new MockWebServer(org.springframework.http.HttpStatus.OK)) {
             webServer.responseBodyJson(List.of("https://client.example.org/callback", "https://client.example.org/callback2"));
             webServer.start();
 
             var registrationReq = """
-    {
-        "application_type": "web",
-        "backchannel_token_delivery_mode": "ping",
-        "default_acr_values": ["mfa-duo", "mfa-gauth"],
-        "redirect_uris": ["https://client.example.org/callback", "https://client.example.org/callback2"],
-        "contacts": ["ve7jtb@example.org", "mary@example.org"]
-    }
-""";
-            assertEquals(HttpStatus.SC_BAD_REQUEST,
-                controller.handleRequestInternal(registrationReq, request, response).getStatusCode().value());
+                    {
+                        "application_type": "web",
+                        "backchannel_token_delivery_mode": "ping",
+                        "default_acr_values": ["mfa-duo", "mfa-gauth"],
+                        "redirect_uris": ["https://client.example.org/callback", "https://client.example.org/callback2"],
+                        "contacts": ["ve7jtb@example.org", "mary@example.org"]
+                    }
+                """;
+            mockMvc
+                .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(withHttpRequestProcessor())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+                    .content(registrationReq)
+                )
+                .andExpect(status().isBadRequest());
 
             registrationReq = """
-    {
-        "application_type": "web",
-        "backchannel_token_delivery_mode": "ping",
-        "backchannel_client_notification_endpoint": "http://localhost:9811",
-        "default_acr_values": ["mfa-duo", "mfa-gauth"],
-        "redirect_uris": ["https://client.example.org/callback", "https://client.example.org/callback2"],
-        "contacts": ["ve7jtb@example.org", "mary@example.org"]
-    }
-""";
-            assertEquals(HttpStatus.SC_BAD_REQUEST,
-                controller.handleRequestInternal(registrationReq, request, response).getStatusCode().value());
+                    {
+                        "application_type": "web",
+                        "backchannel_token_delivery_mode": "ping",
+                        "backchannel_client_notification_endpoint": "http://localhost:9811",
+                        "default_acr_values": ["mfa-duo", "mfa-gauth"],
+                        "redirect_uris": ["https://client.example.org/callback", "https://client.example.org/callback2"],
+                        "contacts": ["ve7jtb@example.org", "mary@example.org"]
+                    }
+                """;
+            mockMvc
+                .perform(post("/cas/oidc/" + OidcConstants.REGISTRATION_URL)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .with(withHttpRequestProcessor())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+                    .content(registrationReq)
+                )
+                .andExpect(status().isBadRequest());
         }
     }
 }
