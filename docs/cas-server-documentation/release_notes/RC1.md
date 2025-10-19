@@ -72,7 +72,17 @@ features and capabilities.
 CAS configuration properties, specifically those that belong to the `cas` namespace and begin with `cas.`
 are now strictly and forcefully validated at startup to reject any unknown properties.
 This is done to prevent misconfigurations and typos in property names that would otherwise go unnoticed.
-  
+ 
+### Project Leyden & AOT Caching
+
+Functional tests are updated to use Project Leyden, AOT compilation and caching techniques that are offered
+by JDK `25`. This allows tests to run faster by pre-compiling and caching classes and resources ahead of time.
+A comparable CAS deployment now roughly takes `5` seconds to startup and be ready to serve requests
+as opposed to the previous `7~9` seconds in earlier runs and with previous JDK versions.
+     
+Support for this functionality will ultimately supersede CDS that is now available to 
+[CAS overlay installations](../installation/WAR-Overlay-Initializr.html).
+
 ### Google Authenticator Scratch Codes
 
 When storing Google Authenticator accounts inside a relational database, the database column that holds
@@ -80,13 +90,13 @@ the scratch codes is now changed to use a `VARCHAR` type to accommodate longer v
 particularly if the codes are set to be encrypted.
 
 <div class="alert alert-warning">:warning: <strong>Breaking Change</strong><p>
-This may be a breaking change. You will need to adjust your database schema based on the notes below.</p></div>
+This may be a breaking change. You will need to adjust your database schema based on the notes above.</p></div>
 
 ### Spring Boot 4
 
 CAS is now built with Spring Boot `4.x`. This is a major platform upgrade that affects almost all aspects of the codebase
 including many of the third-party core libraries used by CAS as well as some CAS functionality. The following
-notable changes are worth mentioning:
+notable changes are worth mentioning.
 
 #### Retry Functionality
 

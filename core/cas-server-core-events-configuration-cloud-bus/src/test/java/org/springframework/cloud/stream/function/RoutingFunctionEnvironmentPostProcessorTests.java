@@ -22,6 +22,7 @@ class RoutingFunctionEnvironmentPostProcessorTests {
     void verifyOperation() throws Exception {
         val environment = new MockEnvironment();
         val application = new SpringApplication();
-        assertDoesNotThrow(() -> new RoutingFunctionEnvironmentPostProcessor().postProcessEnvironment(environment, application));
+        assertDoesNotThrow(() -> new RoutingFunctionEnvironmentPostProcessor()
+            .postProcessEnvironment(environment, application));
     }
 }

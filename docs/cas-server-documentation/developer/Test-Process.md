@@ -248,6 +248,9 @@ A basic modest outline of the test configuration may be:
     "NAME=VALUE"
   ],
   "requirements": {
+    "aot": {
+      "enabled": false
+    }
     "graalvm": {
       "build": false
     },
