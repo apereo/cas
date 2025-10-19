@@ -66,7 +66,7 @@ public class OidcSimpleIdTokenClaimCollector implements OidcIdTokenClaimCollecto
 
     protected void collectClaim(final JwtClaims claims, final String name, final Object finalValue) {
         LOGGER.debug("Collecting ID token claim [{}] with value(s) [{}]", name, finalValue);
-        if (JsonUtils.isValidJson(finalValue.toString())) {
+        if (JsonUtils.isValidJsonObject(finalValue.toString())) {
             val jsonValue = JsonUtils.parse(finalValue.toString(), Map.class);
             claims.setClaim(name, jsonValue);
         } else {

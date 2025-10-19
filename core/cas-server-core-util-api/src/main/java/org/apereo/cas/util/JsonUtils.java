@@ -102,9 +102,10 @@ public class JsonUtils {
      * @param json the json
      * @return true/false
      */
-    public boolean isValidJson(final String json) {
+    public boolean isValidJsonObject(final String json) {
         try {
-            return !MAPPER.readTree(json).isEmpty();
+            val jsonNode = MAPPER.readTree(json);
+            return !jsonNode.isEmpty() && jsonNode.isObject();
         } catch (final Exception e) {
             return false;
         }
