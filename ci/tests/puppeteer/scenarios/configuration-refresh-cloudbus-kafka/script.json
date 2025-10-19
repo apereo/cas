@@ -1,0 +1,45 @@
+{
+  "dependencies": "reports,configuration-cloud-kafka",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    
+    "--logging.level.org.springframework.cloud=info",
+    "--logging.level.org.springframework.kafka=debug",
+    "--logging.level.org.springframework.cloud.bus=info",
+    "--logging.level.org.apache.kafka=info",
+
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.tgc.crypto.alg=A128CBC-HS256",
+    "--cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
+    "--cas.tgc.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
+
+    "--spring.kafka.bootstrap-servers=localhost:9092",
+    
+    "--spring.cloud.bus.enabled=true",
+    "--spring.cloud.bus.refresh.enabled=true",
+    "--spring.cloud.bus.trace.enabled=true",
+    "--spring.cloud.bus.ack.enabled=false",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.events.core.track-configuration-modifications=false",
+    "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml"
+  ],
+  "bootstrapScript": "${PWD}/ci/tests/kafka/run-kafka-server.sh",
+  "instances": 2,
+  "instance1": {
+    "properties": [
+      "--cas.server.name=https://localhost:8443"
+    ]
+  },
+  "instance2": {
+    "properties": [
+      "--cas.server.name=https://localhost:8444"
+    ]
+  }
+}
