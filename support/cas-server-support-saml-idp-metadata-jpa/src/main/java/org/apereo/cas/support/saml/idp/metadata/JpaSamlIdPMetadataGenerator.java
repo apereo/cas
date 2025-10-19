@@ -6,20 +6,14 @@ import org.apereo.cas.support.saml.idp.metadata.jpa.JpaSamlIdPMetadataDocumentFa
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionOperations;
-
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-
 import java.util.Optional;
 
 /**
@@ -43,14 +37,7 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator im
     }
 
     private void saveSamlIdPMetadataDocument(final SamlIdPMetadataDocument doc) {
-        this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(
-                @Nonnull
-                final TransactionStatus status) {
-                entityManager.merge(doc);
-            }
-        });
+        this.transactionTemplate.executeWithoutResult(_ -> entityManager.merge(doc));
     }
 
     @Override

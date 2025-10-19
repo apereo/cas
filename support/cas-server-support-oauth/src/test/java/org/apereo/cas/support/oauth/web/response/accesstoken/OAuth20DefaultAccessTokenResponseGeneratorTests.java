@@ -100,7 +100,7 @@ class OAuth20DefaultAccessTokenResponseGeneratorTests extends AbstractOAuth20Tes
 
         val dPopIssuer = new DPoPIssuer(new ClientID(registeredService.getClientId()));
         val verifier = new DPoPTokenRequestVerifier(Set.of(JWSAlgorithm.ES256),
-            new URI(mockRequest.getRequestURL().toString()), 30, null);
+            new URI(mockRequest.getRequestURL().toString()), 30, 0, null);
         
         val confirmation = verifier.verify(dPopIssuer, signedProof, null);
         val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser",

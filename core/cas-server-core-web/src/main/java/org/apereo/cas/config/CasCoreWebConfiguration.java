@@ -154,7 +154,7 @@ class CasCoreWebConfiguration {
             val mappings = Map.<Class<? extends Throwable>, ModelAndView>of(
                 UnknownTenantException.class, WebUtils.toModelAndView(HttpStatus.NOT_FOUND, CasWebflowConstants.VIEW_ID_UNKNOWN_TENANT),
                 UnauthorizedServiceException.class, WebUtils.toModelAndView(HttpStatus.FORBIDDEN, CasWebflowConstants.VIEW_ID_SERVICE_ERROR),
-                NoSuchConversationException.class, WebUtils.toModelAndView(HttpStatus.UNPROCESSABLE_CONTENT, "error/%s".formatted(HttpStatus.UNPROCESSABLE_ENTITY.value())),
+                NoSuchConversationException.class, WebUtils.toModelAndView(HttpStatus.UNPROCESSABLE_CONTENT, "error/%s".formatted(HttpStatus.UNPROCESSABLE_CONTENT.value())),
                 RootCasException.class, WebUtils.toModelAndView(HttpStatus.BAD_REQUEST, CasWebflowConstants.VIEW_ID_SERVICE_ERROR)
             );
             return new MappedExceptionErrorViewResolver(applicationContext,

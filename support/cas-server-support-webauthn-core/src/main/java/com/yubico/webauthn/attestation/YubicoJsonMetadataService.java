@@ -91,7 +91,7 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
                 for (val device : metadata.getDevices()) {
                     if (deviceMatches(device.get(SELECTORS), attestationCertificate)) {
                         val devicePropertiesBuilder = ImmutableMap.<String, String>builder();
-                        for (val deviceEntry : Lists.newArrayList(device.fields())) {
+                        for (val deviceEntry : Lists.newArrayList(device.properties())) {
                             val value = deviceEntry.getValue();
                             if (value.isTextual()) {
                                 devicePropertiesBuilder.put(deviceEntry.getKey(), value.asText());
