@@ -435,7 +435,7 @@ function validateScenario() {
     exit 1
   fi
 
-  cdsEnabled=$(jq -j 'if .requirements.cds.enabled == "" or .requirements.cds.enabled == null or .requirements.cds.enabled == true then true else false end' "${config}")
+  aotEnabled=$(jq -j 'if .requirements.aot.enabled == "" or .requirements.aot.enabled == null or .requirements.aot.enabled == true then true else false end' "${config}")
 
   scenarioName=${scenario##*/}
   enabled=$(jq -j '.enabled' "${config}")
@@ -893,18 +893,18 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
           docker logs -f cas-${scenarioName} 2>/dev/null &
         else
           casArtifactToRun="$PWD/cas.${projectType}"
-          if [[ "${cdsEnabled}" == "true" && "${serverType:-external}" != "external" ]]; then
-            printgreen "The scenario ${scenarioName} will run with CDS"
+          if [[ "${aotEnabled}" == "true" && "${serverType:-external}" != "external" ]]; then
+            printgreen "The scenario ${scenarioName} will run with AOT"
             rm -rf ${PWD}/cas 2>/dev/null
             printcyan "Extracting CAS to ${PWD}/cas"
-            java -Djarmode=tools -jar "$PWD"/cas.${projectType} extract >/dev/null 2>&1
+            java ${runArgs} -Djarmode=tools -jar "$PWD"/cas.${projectType} extract >/dev/null 2>&1
             printcyan "Launching CAS from ${PWD}/cas/cas.${projectType} to perform a training run"
-            java -XX:ArchiveClassesAtExit=${PWD}/cas/cas.jsa -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType} >/dev/null 2>&1
-            printcyan "Generated archive cache file ${PWD}/cas/cas.jsa"
-            runArgs="${runArgs} -Xlog:cds=error:file=${PWD}/cas/cds.log -Xshare:auto -XX:SharedArchiveFile=${PWD}/cas/cas.jsa"
+            java ${runArgs} -XX:AOTCacheOutput=${PWD}/cas/cas.aot -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType} >/dev/null 2>&1
+            printcyan "Generated archive cache file ${PWD}/cas/cas.aot"
+            runArgs="${runArgs} -XX:AOTCache=${PWD}/cas/cas.aot"
             casArtifactToRun="${PWD}/cas/cas.${projectType}"
           else
-            printcyan "The scenario ${scenarioName} will run without CDS"
+            printcyan "The scenario ${scenarioName} will run without AOT"
           fi
 
           if [[ "${serverType:-external}" == "external" ]]; then
