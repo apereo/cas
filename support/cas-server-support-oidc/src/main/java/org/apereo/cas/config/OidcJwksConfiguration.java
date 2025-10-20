@@ -75,7 +75,7 @@ class OidcJwksConfiguration {
             @Qualifier("oidcJsonWebKeystoreRotationService")
             final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
             return BeanSupplier.of(Runnable.class)
-                .when(BeanCondition.on("cas.authn.oidc.jwks.rotation.schedule").isTrue().given(applicationContext.getEnvironment()))
+                .when(BeanCondition.on("cas.authn.oidc.jwks.rotation.schedule.enabled").isTrue().given(applicationContext.getEnvironment()))
                 .supply(() -> new OidcJsonWebKeystoreRotationScheduler(oidcJsonWebKeystoreRotationService))
                 .otherwiseProxy()
                 .get();
