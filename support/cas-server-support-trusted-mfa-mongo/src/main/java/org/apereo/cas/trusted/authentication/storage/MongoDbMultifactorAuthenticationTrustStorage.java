@@ -30,10 +30,11 @@ import java.util.Set;
 public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
     private final MongoOperations mongoTemplate;
 
-    public MongoDbMultifactorAuthenticationTrustStorage(final TrustedDevicesMultifactorProperties properties,
-                                                        final CipherExecutor<Serializable, String> cipherExecutor,
-                                                        final MongoOperations mongoTemplate,
-                                                        final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy) {
+    public MongoDbMultifactorAuthenticationTrustStorage(
+        final TrustedDevicesMultifactorProperties properties,
+        final CipherExecutor<Serializable, String> cipherExecutor,
+        final MongoOperations mongoTemplate,
+        final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy) {
         super(properties, cipherExecutor, keyGenerationStrategy);
         this.mongoTemplate = mongoTemplate;
         configureIndexes(mongoTemplate);
@@ -110,7 +111,7 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
 
     @Override
     protected MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
-        FunctionUtils.doIf(record.getId() < 0, _ -> record.setId(System.nanoTime())).accept(record);
+        FunctionUtils.doIf(record.getId() <= 0, _ -> record.setId(System.nanoTime())).accept(record);
         return mongoTemplate.save(record, getTrustedDevicesMultifactorProperties().getMongo().getCollection());
     }
 }

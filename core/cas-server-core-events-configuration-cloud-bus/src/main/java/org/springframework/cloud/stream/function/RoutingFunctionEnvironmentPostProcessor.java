@@ -16,7 +16,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
  *
  * @author Misagh Moayyed
  * @see <a href="https://github.com/spring-cloud/spring-cloud-stream/pull/3150">Pull Request</a>
- * @see <a href="https://github.com/spring-cloud/spring-cloud-stream/blob/main/core/spring-cloud-stream/src/main/java/org/springframework/cloud/stream/function/RoutingFunctionEnvironmentPostProcessor.java">Original</a>
  * @since 8.0.0
  * @deprecated Since 8.0.0
  */
