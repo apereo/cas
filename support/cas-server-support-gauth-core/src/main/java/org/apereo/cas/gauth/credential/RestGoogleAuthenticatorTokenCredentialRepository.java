@@ -226,6 +226,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             headers.put("username", account.getUsername());
             headers.put("validationCode", String.valueOf(account.getValidationCode()));
             headers.put("secretKey", account.getSecretKey());
+            headers.put("name", account.getName());
 
             val codes = account.getScratchCodes()
                 .stream()
