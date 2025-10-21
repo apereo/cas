@@ -7,8 +7,8 @@ import org.apereo.cas.ticket.registry.RedisTicketRegistry.CasRedisTemplates;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 

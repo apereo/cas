@@ -9,8 +9,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -59,12 +57,6 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
     public Principal getAuthenticatedPrincipalFrom(final String ticketGrantingTicketId) {
         val auth = getAuthenticationFrom(ticketGrantingTicketId);
         return Optional.ofNullable(auth).map(Authentication::getPrincipal).orElse(null);
-    }
-
-    @Override
-    public Map<String, List<Object>> getPrincipalAttributesFrom(final String ticketGrantingTicketId) {
-        val principal = getAuthenticatedPrincipalFrom(ticketGrantingTicketId);
-        return Optional.ofNullable(principal).map(Principal::getAttributes).orElse(null);
     }
 
     @Override

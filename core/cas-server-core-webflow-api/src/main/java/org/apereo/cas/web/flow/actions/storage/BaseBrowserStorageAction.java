@@ -4,12 +4,12 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
+import tools.jackson.databind.ObjectMapper;
 import java.util.Locale;
 
 /**

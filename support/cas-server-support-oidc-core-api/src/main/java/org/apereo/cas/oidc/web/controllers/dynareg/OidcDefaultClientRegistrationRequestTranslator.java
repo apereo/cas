@@ -19,7 +19,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,6 +32,7 @@ import org.hjson.JsonValue;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
+import tools.jackson.databind.ObjectMapper;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
@@ -108,7 +108,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
         }
 
         FunctionUtils.doIfNotBlank(registrationRequest.getTokenEndpointAuthMethod(),
-            __ -> registeredService.setTokenEndpointAuthenticationMethod(registrationRequest.getTokenEndpointAuthMethod()));
+            _ -> registeredService.setTokenEndpointAuthenticationMethod(registrationRequest.getTokenEndpointAuthMethod()));
 
         if (StringUtils.isBlank(registeredService.getClientId())) {
             registeredService.setClientId(context.getClientIdGenerator().getNewString());
@@ -121,9 +121,9 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
             registrationRequest.getPostLogoutRedirectUris());
         registeredService.setLogoutUrl(urls);
 
-        FunctionUtils.doIfNotBlank(registrationRequest.getLogo(), __ -> registeredService.setLogo(registrationRequest.getLogo()));
-        FunctionUtils.doIfNotBlank(registrationRequest.getPolicyUri(), __ -> registeredService.setInformationUrl(registrationRequest.getPolicyUri()));
-        FunctionUtils.doIfNotBlank(registrationRequest.getTermsOfUseUri(), __ -> registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri()));
+        FunctionUtils.doIfNotBlank(registrationRequest.getLogo(), _ -> registeredService.setLogo(registrationRequest.getLogo()));
+        FunctionUtils.doIfNotBlank(registrationRequest.getPolicyUri(), _ -> registeredService.setInformationUrl(registrationRequest.getPolicyUri()));
+        FunctionUtils.doIfNotBlank(registrationRequest.getTermsOfUseUri(), _ -> registeredService.setPrivacyUrl(registrationRequest.getTermsOfUseUri()));
 
         processUserInfoSigningAndEncryption(registrationRequest, registeredService);
         processScopesAndResponsesAndGrants(registrationRequest, registeredService);
@@ -167,9 +167,9 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
                                                     final OidcRegisteredService registeredService) {
         val context = configurationContext.getObject();
         FunctionUtils.doIfNotNull(registrationRequest.getGrantTypes(),
-            __ -> registeredService.setSupportedGrantTypes(new HashSet<>(registrationRequest.getGrantTypes())));
+            _ -> registeredService.setSupportedGrantTypes(new HashSet<>(registrationRequest.getGrantTypes())));
         FunctionUtils.doIfNotNull(registrationRequest.getResponseTypes(),
-            __ -> registeredService.setSupportedResponseTypes(new HashSet<>(registrationRequest.getResponseTypes())));
+            _ -> registeredService.setSupportedResponseTypes(new HashSet<>(registrationRequest.getResponseTypes())));
 
         val properties = context.getCasProperties();
         val supportedScopes = new HashSet<>(properties.getAuthn().getOidc().getDiscovery().getScopes());
@@ -201,13 +201,13 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
     private static void processIntrospectionSigningAndEncryption(final OidcClientRegistrationRequest registrationRequest,
                                                                  final OidcRegisteredService registeredService) {
         FunctionUtils.doIfNotBlank(registrationRequest.getIntrospectionSignedResponseAlg(),
-            __ -> registeredService.setIntrospectionSignedResponseAlg(registrationRequest.getIntrospectionSignedResponseAlg()));
+            _ -> registeredService.setIntrospectionSignedResponseAlg(registrationRequest.getIntrospectionSignedResponseAlg()));
 
         FunctionUtils.doIfNotBlank(registrationRequest.getIntrospectionEncryptedResponseAlg(),
-            __ -> registeredService.setIntrospectionEncryptedResponseAlg(registrationRequest.getIntrospectionEncryptedResponseAlg()));
+            _ -> registeredService.setIntrospectionEncryptedResponseAlg(registrationRequest.getIntrospectionEncryptedResponseAlg()));
 
         FunctionUtils.doIfNotBlank(registrationRequest.getIntrospectionEncryptedResponseEncoding(),
-            __ -> registeredService.setIntrospectionEncryptedResponseEncoding(registrationRequest.getIntrospectionEncryptedResponseEncoding()));
+            _ -> registeredService.setIntrospectionEncryptedResponseEncoding(registrationRequest.getIntrospectionEncryptedResponseEncoding()));
     }
 
     private static void processIdTokenSigningAndEncryption(final OidcClientRegistrationRequest registrationRequest,

@@ -19,6 +19,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3Configuration;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +42,11 @@ public class CasAmazonS3ServiceRegistryAutoConfiguration {
         val amz = casProperties.getServiceRegistry().getAmazonS3();
         val credentials = ChainingAWSCredentialsProvider.getInstance(amz.getCredentialAccessKey(),
             amz.getCredentialSecretKey(), amz.getProfilePath(), amz.getProfileName());
+        val s3Config = S3Configuration.builder()
+            .pathStyleAccessEnabled(amz.isPathStyleEnabled())
+            .build();
         val builder = S3Client.builder();
+        builder.serviceConfiguration(s3Config);
         AmazonClientConfigurationBuilder.prepareSyncClientBuilder(builder, credentials, amz);
         return builder.build();
     }

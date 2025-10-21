@@ -6,7 +6,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
@@ -17,8 +16,7 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
-import org.springframework.lang.Nullable;
-
+import jakarta.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;

@@ -2,6 +2,23 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
+    const leak = await cas.randomNumber(4, 20);
+    await cas.log("Updating configuration and waiting for changes to reload...");
+    await cas.updateYamlConfigurationSource(__dirname, {
+        cas: {
+            ticket: {
+                registry: {
+                    mongo: {
+                        "timeout": `PT${leak}S`
+                    }
+                }
+            }
+        }
+    });
+    await cas.sleep(2000);
+    await cas.refreshContext();
+    await cas.sleep(5000);
+    
     const baseUrl = "https://localhost:8443/cas/actuator";
     await cas.logg("Removing all SSO Sessions");
     await cas.doDelete(`${baseUrl}/ssoSessions?type=ALL&from=1&count=100000`);

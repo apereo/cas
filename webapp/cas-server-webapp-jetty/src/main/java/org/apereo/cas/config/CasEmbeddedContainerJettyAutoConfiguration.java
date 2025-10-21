@@ -3,17 +3,14 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.ServerConnector;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.embedded.jetty.JettyServerCustomizer;
+import org.springframework.boot.jetty.JettyServerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 
@@ -26,7 +23,6 @@ import org.springframework.core.Ordered;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Jetty)
-@AutoConfiguration(before = ServletWebServerFactoryAutoConfiguration.class)
 public class CasEmbeddedContainerJettyAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "casJettyServerCustomizer")

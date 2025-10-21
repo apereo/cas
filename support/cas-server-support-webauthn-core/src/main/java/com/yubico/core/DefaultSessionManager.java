@@ -1,10 +1,9 @@
 package com.yubico.core;
 
 import com.yubico.webauthn.data.ByteArray;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -15,7 +14,7 @@ public class DefaultSessionManager implements SessionManager {
 
     @Override
     public ByteArray createSession(final HttpServletRequest request, @NonNull final ByteArray userHandle) {
-        var sessionId = usersToSessionIds.get(request, userHandle, __ -> SessionManager.generateRandom(32));
+        var sessionId = usersToSessionIds.get(request, userHandle, _ -> SessionManager.generateRandom(32));
         sessionIdsToUsers.put(request, sessionId, userHandle);
         return sessionId;
     }

@@ -7,7 +7,6 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,6 +18,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
+import tools.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,7 +46,7 @@ class CasRestfulCloudConfigBootstrapAutoConfigurationTests {
     private CasConfigurationProperties casProperties;
 
     @BeforeAll
-    public static void setup() throws Exception {
+    public static void setup() {
         val response = MAPPER.writeValueAsString(Map.of("cas.authn.accept.users", STATIC_AUTHN_USERS));
         System.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + '.' + "url", "http://localhost:9345");
         SERVER = new MockWebServer(9345, new ByteArrayResource(response.getBytes(StandardCharsets.UTF_8), "Output"),

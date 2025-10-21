@@ -368,6 +368,13 @@ public interface CasFeatureModule {
         }
 
         /**
+         * Clear registered features.
+         */
+        public static void clearRegisteredFeatures() {
+            PRESENT_FEATURES.clear();
+        }
+
+        /**
          * Register and keep track of features that are present at runtime.
          */
         public void register() {

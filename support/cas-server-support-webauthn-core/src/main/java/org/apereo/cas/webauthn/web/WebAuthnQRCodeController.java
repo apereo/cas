@@ -112,7 +112,7 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
             Assert.isTrue(transientTicket != null && !transientTicket.isExpired(), "Ticket not found or has expired");
             val webAuthnCredential = transientTicket.getProperty(WebAuthnCredential.class.getName(), WebAuthnCredential.class);
             if (webAuthnCredential == null) {
-                return ResponseEntity.unprocessableEntity().body(
+                return ResponseEntity.unprocessableContent().body(
                     Map.of("ticketId", ticketId, "message", "WebAuthn credential not found in the ticket"));
             }
             Assert.notNull(webAuthnCredential, "WebAuthn credential not found in the ticket");

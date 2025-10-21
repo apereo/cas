@@ -19,7 +19,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 
 /**
  * This is {@link CasRestServicesAutoConfiguration}.
@@ -32,10 +32,10 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 @AutoConfiguration
 public class CasRestServicesAutoConfiguration {
     @Bean
-    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(
+    public JacksonJsonHttpMessageConverter mappingJackson2HttpMessageConverter(
         final ConfigurableApplicationContext applicationContext) {
         val serializer = new RegisteredServiceJsonSerializer(applicationContext);
-        return new MappingJackson2HttpMessageConverter(serializer.getObjectMapper());
+        return new JacksonJsonHttpMessageConverter(serializer.getJsonMapper());
     }
 
     @Bean

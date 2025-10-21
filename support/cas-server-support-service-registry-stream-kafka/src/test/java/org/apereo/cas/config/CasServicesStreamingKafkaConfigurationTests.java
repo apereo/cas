@@ -64,7 +64,7 @@ class CasServicesStreamingKafkaConfigurationTests {
     }
 
     @Test
-    void verifySerialization() throws Throwable {
+    void verifySerialization() {
         val o = DistributedCacheObject.<RegisteredService>builder()
             .value(RegisteredServiceTestUtils.getRegisteredService())
             .publisherIdentifier(new PublisherIdentifier())

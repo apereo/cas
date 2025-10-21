@@ -2,9 +2,7 @@ package org.apereo.cas.ticket.catalog;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.util.function.Function;
 
 /**
@@ -53,7 +51,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return ST storage name function
      */
     default Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
-        return __ -> STORAGE_NAME_SERVICE_TICKETS;
+        return _ -> STORAGE_NAME_SERVICE_TICKETS;
     }
 
     /**
@@ -72,7 +70,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return PT storage name function
      */
     default Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
-        return __ -> STORAGE_NAME_PROXY_TICKET;
+        return _ -> STORAGE_NAME_PROXY_TICKET;
     }
 
     /**
@@ -91,7 +89,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return TGT storage name function
      */
     default Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
-        return __ -> STORAGE_NAME_TICKET_GRANTING_TICKETS;
+        return _ -> STORAGE_NAME_TICKET_GRANTING_TICKETS;
     }
 
     /**
@@ -110,7 +108,7 @@ public interface CasTicketCatalogConfigurationValuesProvider {
      * @return PGT storage name function
      */
     default Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
-        return __ -> STORAGE_NAME_PROXY_GRANTING_TICKETS;
+        return _ -> STORAGE_NAME_PROXY_GRANTING_TICKETS;
     }
 
     /**
@@ -133,10 +131,10 @@ public interface CasTicketCatalogConfigurationValuesProvider {
     }
 
     default Function<ConfigurableApplicationContext, Boolean> getProxyGrantingTicketCascadeRemovals() {
-        return __ -> false;
+        return _ -> false;
     }
 
     default Function<ConfigurableApplicationContext, Boolean> getTicketGrantingTicketCascadeRemovals() {
-        return __ -> false;
+        return _ -> false;
     }
 }

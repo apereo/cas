@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -34,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Spnego")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
-@ExtendWith(CasTestExtension.class)
+@ExtendWith({CasTestExtension.class, MockitoExtension.class})
 class SpnegoCredentialsToPrincipalResolverTests {
     private SpnegoPrincipalResolver resolver;
 

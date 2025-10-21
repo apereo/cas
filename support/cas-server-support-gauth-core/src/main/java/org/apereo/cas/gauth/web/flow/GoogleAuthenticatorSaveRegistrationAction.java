@@ -43,7 +43,7 @@ public class GoogleAuthenticatorSaveRegistrationAction extends OneTimeTokenAccou
 
     @Override
     protected boolean validate(final GoogleAuthenticatorAccount account, final RequestContext requestContext) {
-        return FunctionUtils.doAndHandle(__ -> {
+        return FunctionUtils.doAndHandle(_ -> {
             val token = requestContext.getRequestParameters().getRequiredInteger(REQUEST_PARAMETER_TOKEN);
             if (validator.isTokenAuthorizedFor(token, account)) {
                 LOGGER.debug("Successfully validated token [{}]", token);

@@ -261,7 +261,7 @@ class CasCoreAuthenticationHandlersConfiguration {
                     handler.setRealm(jaas.getRealm());
                     handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder(), applicationContext));
 
-                    FunctionUtils.doIfNotBlank(jaas.getLoginConfigType(), __ -> handler.setLoginConfigType(jaas.getLoginConfigType()));
+                    FunctionUtils.doIfNotBlank(jaas.getLoginConfigType(), _ -> handler.setLoginConfigType(jaas.getLoginConfigType()));
 
                     if (StringUtils.isNotBlank(jaas.getLoginConfigurationFile())) {
                         val file = FunctionUtils.doAndHandle(() -> ResourceUtils.getResourceFrom(jaas.getLoginConfigurationFile()).getFile());

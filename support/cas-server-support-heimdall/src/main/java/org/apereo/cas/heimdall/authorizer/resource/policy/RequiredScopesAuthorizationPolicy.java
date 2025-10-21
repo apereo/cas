@@ -1,6 +1,7 @@
 package org.apereo.cas.heimdall.authorizer.resource.policy;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -10,7 +11,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import java.io.Serial;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,6 +31,6 @@ public class RequiredScopesAuthorizationPolicy extends RequiredAttributesAuthori
 
     @JsonCreator
     public RequiredScopesAuthorizationPolicy(@JsonProperty("scopes") final Set<String> scopes) {
-        setAttributes(Map.of(OAuth20Constants.SCOPE, scopes));
+        setAttributes(CollectionUtils.wrap(OAuth20Constants.SCOPE, scopes));
     }
 }

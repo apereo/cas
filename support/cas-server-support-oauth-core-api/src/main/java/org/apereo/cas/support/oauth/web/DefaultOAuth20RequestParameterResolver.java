@@ -12,7 +12,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,6 +25,7 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.WebContextHelper;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
+import tools.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -243,7 +243,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     }
 
     @Override
-    public Map<String, Map<String, Object>> resolveRequestClaims(final WebContext context) throws Exception {
+    public Map<String, Map<String, Object>> resolveRequestClaims(final WebContext context) {
         val supported = jwtBuilder.getCasProperties().getAuthn().getOidc().getDiscovery().isClaimsParameterSupported();
 
         val claims = FunctionUtils.doIf(supported,

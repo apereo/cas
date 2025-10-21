@@ -51,6 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     CasCoreValidationAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,
     CasCoreMultitenancyAutoConfiguration.class,
+    CasThemesAutoConfiguration.class,
     CasTicketRegistrySessionAutoConfiguration.class
 })
 @SpringBootTestAutoConfigurations

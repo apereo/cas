@@ -58,7 +58,7 @@ public class CasSpnegoAutoConfiguration {
 
         if (ResourceUtils.doesResourceExist(spnegoSystem.getKerberosConf())) {
             val kerbConf = applicationContext.getResource(spnegoSystem.getKerberosConf());
-            FunctionUtils.doUnchecked(__ -> JcifsConfig.SystemSettings.setKerberosConf(kerbConf.getFile().getCanonicalPath()));
+            FunctionUtils.doUnchecked(_ -> JcifsConfig.SystemSettings.setKerberosConf(kerbConf.getFile().getCanonicalPath()));
         }
 
         JcifsConfig.SystemSettings.setKerberosDebug(spnegoSystem.getKerberosDebug());

@@ -19,7 +19,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.jpa.user=system",
     "cas.consent.jpa.password=Oradoc_db1",
     "cas.consent.jpa.driver-class=oracle.jdbc.driver.OracleDriver",
-    "cas.consent.jpa.url=jdbc:oracle:thin:@localhost:1521:ORCLCDB",
+    "cas.consent.jpa.url=jdbc:oracle:thin:@localhost:1521:FREE",
     "cas.consent.jpa.dialect=org.hibernate.dialect.OracleDialect"
 })
 class OracleJpaConsentRepositoryTests extends JpaConsentRepositoryTests {
