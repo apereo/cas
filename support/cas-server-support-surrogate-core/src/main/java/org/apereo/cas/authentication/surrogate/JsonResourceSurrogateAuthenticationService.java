@@ -7,9 +7,9 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
+import tools.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.util.Map;
 
@@ -47,7 +47,7 @@ public class JsonResourceSurrogateAuthenticationService extends SimpleSurrogateA
     }
 
     private void loadServices(final File file) {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             getEligibleAccounts().clear();
             getEligibleAccounts().putAll(readAccountsFromFile(file));
         });

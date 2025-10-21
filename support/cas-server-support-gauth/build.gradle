@@ -33,7 +33,7 @@ dependencies {
     compileOnly project(":core:cas-server-core-rest-api")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 
-    testImplementation libraries.springboottomcat
+
 
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-rest")

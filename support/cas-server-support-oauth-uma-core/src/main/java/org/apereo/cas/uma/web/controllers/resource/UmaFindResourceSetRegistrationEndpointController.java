@@ -89,7 +89,7 @@ public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEnd
             val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(id);
             if (resourceSetResult.isEmpty()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
-                return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(model, HttpStatus.BAD_REQUEST);
             }
             val resourceSet = resourceSetResult.get();
             resourceSet.validate(profileResult);

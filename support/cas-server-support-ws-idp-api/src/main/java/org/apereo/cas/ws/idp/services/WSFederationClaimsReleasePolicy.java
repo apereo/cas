@@ -8,6 +8,8 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.ws.idp.WSFederationClaims;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,6 +40,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
     @Serial
     private static final long serialVersionUID = -2814928645221579489L;
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, String> allowedAttributes = new LinkedHashMap<>();
 
     public WSFederationClaimsReleasePolicy(final Map<String, String> allowedAttributes) {
@@ -146,7 +149,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                                                       final String attributeName,
                                                       final Map<String, List<Object>> resolvedAttributes,
                                                       final Map<String, List<Object>> attributesToRelease) {
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
             script.setBinding(args);
             val result = script.execute(args.values().toArray(), Object.class);

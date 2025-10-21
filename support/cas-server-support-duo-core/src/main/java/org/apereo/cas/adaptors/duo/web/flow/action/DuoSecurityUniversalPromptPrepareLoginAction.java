@@ -77,11 +77,11 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         properties.put(AuthenticationResult.class.getSimpleName(), authenticationResult);
         properties.put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT, authenticationResult);
         properties.put(Credential.class.getSimpleName(), MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationParentCredential(requestContext));
-        FunctionUtils.doIfNotNull(service, __ -> properties.put(Service.class.getSimpleName(), service));
+        FunctionUtils.doIfNotNull(service, _ -> properties.put(Service.class.getSimpleName(), service));
         properties.put(DuoSecurityAuthenticationService.class.getSimpleName(), state);
 
         val targetState = WebUtils.getTargetTransition(requestContext);
-        FunctionUtils.doIfNotNull(targetState, __ -> properties.put(CasWebflowConstants.ATTRIBUTE_TARGET_TRANSITION, targetState));
+        FunctionUtils.doIfNotNull(targetState, _ -> properties.put(CasWebflowConstants.ATTRIBUTE_TARGET_TRANSITION, targetState));
 
         properties.put(FlowScope.class.getSimpleName(), requestContext.getFlowScope().asMap());
         properties.put(FlashScope.class.getSimpleName(), requestContext.getFlashScope().asMap());

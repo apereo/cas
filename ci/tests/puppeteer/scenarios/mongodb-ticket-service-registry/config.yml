@@ -1,0 +1,5 @@
+cas:
+  ticket:
+    registry:
+      mongo:
+        timeout: PT13S

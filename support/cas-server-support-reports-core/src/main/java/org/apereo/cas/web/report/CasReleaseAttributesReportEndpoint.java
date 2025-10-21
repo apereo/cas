@@ -28,7 +28,7 @@ import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.lang.Nullable;
+import jakarta.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;

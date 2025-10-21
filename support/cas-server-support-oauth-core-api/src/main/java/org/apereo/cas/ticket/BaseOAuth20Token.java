@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.code.OAuth20Code;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -29,8 +31,10 @@ public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20
     @Serial
     private static final long serialVersionUID = -8072724186202305800L;
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Set<String> scopes = new HashSet<>();
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, Map<String, Object>> claims = new HashMap<>();
 
     private Ticket ticketGrantingTicket;
@@ -60,10 +64,12 @@ public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20
                             final Authentication authentication,
                             final @NonNull ExpirationPolicy expirationPolicy,
                             final Ticket ticketGrantingTicket,
-                            final @NonNull Collection<String> scopes,
+                            @JsonSetter(nulls = Nulls.AS_EMPTY)
+                            final Collection<String> scopes,
                             final String codeChallenge,
                             final String codeChallengeMethod,
                             final String clientId,
+                            @JsonSetter(nulls = Nulls.AS_EMPTY)
                             final Map<String, Map<String, Object>> requestClaims,
                             final OAuth20ResponseTypes responseType,
                             final OAuth20GrantTypes grantType) {

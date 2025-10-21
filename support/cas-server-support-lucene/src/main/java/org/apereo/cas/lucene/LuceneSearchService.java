@@ -2,8 +2,6 @@ package org.apereo.cas.lucene;
 
 import org.apereo.cas.util.function.FunctionUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -26,6 +24,8 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.NIOFSDirectory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +52,7 @@ public class LuceneSearchService {
      * Delete indexes.
      */
     public void deleteIndexes() {
-        FunctionUtils.doUnchecked(__ -> FileUtils.deleteDirectory(indexDirectory));
+        FunctionUtils.doUnchecked(_ -> FileUtils.deleteDirectory(indexDirectory));
     }
 
     /**
@@ -61,7 +61,7 @@ public class LuceneSearchService {
      * @param input the input
      */
     public void createIndexes(final InputStream input) {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             val analyzer = new StandardAnalyzer();
             val config = new IndexWriterConfig(analyzer);
             try (val directory = new NIOFSDirectory(indexDirectory.toPath());
@@ -157,7 +157,7 @@ public class LuceneSearchService {
                 fieldType.setStoreTermVectors(true);
                 fieldType.setStoreTermVectorPayloads(true);
                 fieldType.setStoreTermVectorPositions(true);
-                document.add(new Field(field, node.get(field).asText(), fieldType));
+                document.add(new Field(field, node.get(field).asString(), fieldType));
             }
         });
         indexWriter.addDocument(document);

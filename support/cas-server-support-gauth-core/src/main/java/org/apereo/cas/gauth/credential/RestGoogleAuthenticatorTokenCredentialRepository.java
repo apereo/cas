@@ -9,8 +9,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,6 +21,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,6 +65,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(rest.getBasicAuthPassword())
                 .basicAuthUsername(rest.getBasicAuthUsername())
+                .maximumRetryAttempts(rest.getMaximumRetryAttempts())
                 .method(HttpMethod.GET)
                 .url(rest.getUrl())
                 .headers(headers)
@@ -227,7 +228,6 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             headers.put("validationCode", String.valueOf(account.getValidationCode()));
             headers.put("secretKey", account.getSecretKey());
             headers.put("name", account.getName());
-
             val codes = account.getScratchCodes()
                 .stream()
                 .map(Number::toString)

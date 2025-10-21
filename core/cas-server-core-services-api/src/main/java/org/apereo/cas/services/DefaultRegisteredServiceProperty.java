@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -10,12 +9,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.val;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
-
 import java.io.Serial;
 import java.util.Arrays;
 import java.util.Collection;

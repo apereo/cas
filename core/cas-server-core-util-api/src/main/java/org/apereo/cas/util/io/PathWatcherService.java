@@ -51,9 +51,9 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
 
     public PathWatcherService(final File watchablePath, final CheckedConsumer<File> onModify) {
         this(watchablePath.toPath(),
-            __ -> {
+            _ -> {
             }, onModify,
-            __ -> {
+            _ -> {
             });
     }
 
@@ -145,6 +145,6 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
         LOGGER.trace("Created watcher for events of type [{}]", Arrays.stream(KINDS)
             .map(WatchEvent.Kind::name)
             .collect(Collectors.joining(",")));
-        FunctionUtils.doUnchecked(__ -> watchablePath.register(Objects.requireNonNull(this.watchService), KINDS));
+        FunctionUtils.doUnchecked(_ -> watchablePath.register(Objects.requireNonNull(this.watchService), KINDS));
     }
 }

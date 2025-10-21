@@ -36,7 +36,7 @@ public class OAuth20DefaultDeviceUserCodeFactory implements OAuth20DeviceUserCod
         val userCode = StringUtils.defaultIfBlank(id, normalizeUserCode(RandomUtils.randomAlphanumeric(userCodeLength)));
         val expirationPolicyToUse = OAuth20DeviceTokenUtils.determineExpirationPolicyForService(servicesManager, expirationPolicyBuilder, service);
         val duc = new OAuth20DefaultDeviceUserCode(normalizeUserCode(userCode), service, expirationPolicyToUse);
-        FunctionUtils.doIfNotNull(service, __ -> duc.setTenantId(service.getTenant()));
+        FunctionUtils.doIfNotNull(service, _ -> duc.setTenantId(service.getTenant()));
         return duc;
     }
 

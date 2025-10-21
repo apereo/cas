@@ -87,7 +87,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(prefix = "cas")
+@ConfigurationProperties(prefix = "cas", ignoreUnknownFields = false)
 @Getter
 @Setter
 @Accessors(chain = true)

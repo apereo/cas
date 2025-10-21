@@ -8,7 +8,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.ticket.tgt.core.only-track-most-recent-session=false",
+    "--cas.ticket.tgt.core.service-tracking-policy=ALL",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",

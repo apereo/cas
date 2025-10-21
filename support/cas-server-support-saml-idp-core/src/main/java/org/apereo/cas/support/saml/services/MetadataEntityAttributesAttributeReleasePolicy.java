@@ -5,6 +5,8 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.MetadataEntityAttributeQuery;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +41,7 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
 
     private String entityAttributeFormat;
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Set<String> entityAttributeValues = new LinkedHashSet<>();
 
     @Override

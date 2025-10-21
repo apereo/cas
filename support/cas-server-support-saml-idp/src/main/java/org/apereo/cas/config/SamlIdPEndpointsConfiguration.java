@@ -25,6 +25,7 @@ import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.services.StartsWithRegisteredServiceMatchingStrategy;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.idp.SamlIdPDistributedSessionCookieCipherExecutor;
@@ -408,6 +409,9 @@ class SamlIdPEndpointsConfiguration {
                 service.setName(service.getClass().getSimpleName());
                 service.setDescription("SAML2 Authentication Request Callback");
                 service.setServiceId(callbackService);
+                val matchingStrategy = new StartsWithRegisteredServiceMatchingStrategy()
+                    .setExpectedUrl(samlIdPCallbackService.getId());
+                service.setMatchingStrategy(matchingStrategy);
                 service.markAsInternal();
                 plan.registerServiceRegistry(new SamlIdPServiceRegistry(applicationContext, service));
             };

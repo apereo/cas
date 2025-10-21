@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.metadata;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.configurationmetadata.ValueHint;
@@ -16,6 +17,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ConfigurationMetadataHint {
     private final List<ValueHint> values = new ArrayList<>();
 

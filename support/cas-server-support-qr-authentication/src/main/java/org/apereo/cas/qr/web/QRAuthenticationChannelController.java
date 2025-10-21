@@ -6,9 +6,6 @@ import org.apereo.cas.qr.validation.QRAuthenticationTokenValidatorService;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +15,8 @@ import org.springframework.messaging.core.MessageSendingOperations;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.RestController;
-
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -91,8 +89,8 @@ public class QRAuthenticationChannelController {
         return false;
     }
 
-    private void convertAndSend(final String endpoint, final Map data) {
+    private void convertAndSend(final String endpoint, final Map<String, ?> data) {
         LOGGER.trace("Sending [{}] to endpoint [{}]", data, endpoint);
-        messageTemplate.convertAndSend(endpoint, data);
+        messageTemplate.convertAndSend(endpoint, (Object) data);
     }
 }

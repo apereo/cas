@@ -58,7 +58,7 @@ public class MailjetEmailSender implements EmailSender {
             .trackOpens(TrackOpens.ENABLED);
 
         FunctionUtils.doIfNotBlank(emailProperties.getReplyTo(),
-            __ -> messageBuilder.replyTo(new SendContact(emailProperties.getReplyTo())));
+            _ -> messageBuilder.replyTo(new SendContact(emailProperties.getReplyTo())));
 
         if (emailProperties.isHtml()) {
             messageBuilder.htmlPart(emailRequest.getBody());

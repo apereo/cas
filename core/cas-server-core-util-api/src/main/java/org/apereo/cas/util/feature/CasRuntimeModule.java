@@ -1,12 +1,12 @@
 package org.apereo.cas.util.feature;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
-
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -21,7 +21,7 @@ import java.io.Serializable;
 @ToString
 @Getter
 @Jacksonized
-@AllArgsConstructor
+@AllArgsConstructor(onConstructor_ = @JsonCreator)
 public class CasRuntimeModule implements Serializable {
     @Serial
     private static final long serialVersionUID = -1581604787854700568L;

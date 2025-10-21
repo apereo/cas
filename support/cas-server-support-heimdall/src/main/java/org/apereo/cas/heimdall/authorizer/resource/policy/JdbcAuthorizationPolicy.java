@@ -47,8 +47,10 @@ public class JdbcAuthorizationPolicy implements ResourceAuthorizationPolicy {
 
     @ExpressionLanguageCapable
     private String url;
+
     @ExpressionLanguageCapable
     private String username;
+
     @ExpressionLanguageCapable
     private String password;
 

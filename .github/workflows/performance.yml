@@ -53,7 +53,7 @@ jobs:
         category:
           - tomcat
           - jetty
-          - undertow
+#          - undertow
     name: locust - ${{ matrix.category }}
     steps:
       - name: Checkout
@@ -85,7 +85,7 @@ jobs:
         category:
           - tomcat
           - jetty
-          - undertow
+#          - undertow
         protocols:
           - cas
           - oidc
@@ -126,7 +126,7 @@ jobs:
         category:
           - tomcat
           - jetty
-          - undertow
+#          - undertow
         protocols:
           - cas
           - saml

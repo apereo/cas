@@ -26,7 +26,7 @@ public class GroovyWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     public void doInitialize() {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             val resource = casProperties.getWebflow().getGroovy().getLocation();
             if (resource != null) {
                 val args = new Object[]{this, applicationContext, LOGGER};

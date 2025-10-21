@@ -92,7 +92,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
             .filter(TicketGrantingTicketAwareTicket.class::isInstance)
             .map(TicketGrantingTicketAwareTicket.class::cast)
             .filter(r -> r.getExpirationPolicy().isExpired(r))
-            .ifPresent(token -> FunctionUtils.doAndHandle(__ -> ticketRegistrySupport.getTicketRegistry().deleteTicket(token)));
+            .ifPresent(token -> FunctionUtils.doAndHandle(_ -> ticketRegistrySupport.getTicketRegistry().deleteTicket(token)));
     }
 
     private PasswordResetRequest getPasswordResetRequestFrom(final String tgt) {
@@ -103,7 +103,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
     private Optional<PasswordResetRequest> getPasswordResetRequestFrom(final RequestContext requestContext,
                                                                        final String transientTicket) {
         return Optional.ofNullable(transientTicket)
-            .map(Unchecked.function(__ -> {
+            .map(Unchecked.function(_ -> {
                 val ticketRegistry = ticketRegistrySupport.getTicketRegistry();
                 val passwordResetTicket = ticketRegistry.getTicket(transientTicket, TransientSessionTicket.class);
                 passwordResetTicket.update();

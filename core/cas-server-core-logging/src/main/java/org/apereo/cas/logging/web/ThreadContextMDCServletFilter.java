@@ -96,7 +96,7 @@ public class ThreadContextMDCServletFilter implements Filter {
             Collections.list(request.getAttributeNames()).forEach(a -> addContextAttribute(a, request.getAttribute(a)));
             val requestHeaderNames = request.getHeaderNames();
             FunctionUtils.doIfNotNull(requestHeaderNames,
-                __ -> Collections.list(requestHeaderNames)
+                _ -> Collections.list(requestHeaderNames)
                     .stream()
                     .filter(header -> mdc.getHeadersToExclude().stream().noneMatch(excludedHeader -> RegexUtils.find(header, excludedHeader)))
                     .forEach(h -> addContextAttribute(h, request.getHeader(h))));
@@ -105,7 +105,7 @@ public class ThreadContextMDCServletFilter implements Filter {
                 val cookieValue = builder.retrieveCookieValue(request);
                 if (StringUtils.isNotBlank(cookieValue)) {
                     val principal = ticketRegistrySupport.getObject().getAuthenticatedPrincipalFrom(cookieValue);
-                    FunctionUtils.doIfNotNull(principal, __ -> addContextAttribute("principal", principal.getId()));
+                    FunctionUtils.doIfNotNull(principal, _ -> addContextAttribute("principal", principal.getId()));
                 }
             });
             filterChain.doFilter(servletRequest, servletResponse);

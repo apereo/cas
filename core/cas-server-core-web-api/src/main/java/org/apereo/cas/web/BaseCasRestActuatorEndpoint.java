@@ -3,13 +3,13 @@ package org.apereo.cas.web;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.RestActuatorEndpoint;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * This is {@link BaseCasRestActuatorEndpoint}.

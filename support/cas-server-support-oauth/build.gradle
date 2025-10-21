@@ -34,7 +34,7 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-pac4j-api")
 
-    testImplementation libraries.springboottomcat
+
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-scripting")

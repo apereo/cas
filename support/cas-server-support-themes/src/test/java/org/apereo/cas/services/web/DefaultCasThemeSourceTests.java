@@ -4,6 +4,7 @@ import org.apereo.cas.BaseThemeTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.web.theme.ThemeSource;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Nested;
@@ -16,7 +17,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.ui.context.ThemeSource;
 import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.*;
 

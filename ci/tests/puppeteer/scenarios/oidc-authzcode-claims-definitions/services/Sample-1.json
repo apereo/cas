@@ -30,6 +30,22 @@
           "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
           "allowedAttributes" : [ "java.util.ArrayList", [ "org.apereo.cas.entity" ] ],
           "order": 2
+        },
+        {
+          "@class": "org.apereo.cas.services.ReturnStaticAttributeReleasePolicy",
+          "allowedAttributes": {
+            "@class": "java.util.LinkedHashMap",
+            "container": [ "java.util.ArrayList", [
+              '''
+                {
+                  "name": "Alice",
+                  "email": "alice@example.com",
+                  "roles": ["admin", "editor"]
+                }
+              '''
+            ] ]
+          },
+          "order": 3
         }
       ]
     ]

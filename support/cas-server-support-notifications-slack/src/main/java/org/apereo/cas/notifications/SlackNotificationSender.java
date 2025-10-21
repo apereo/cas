@@ -57,7 +57,7 @@ public class SlackNotificationSender implements NotificationSender {
                 val response = slackMethods.chatPostMessage(messageRequest);
                 LOGGER.trace(response.toString());
                 FunctionUtils.doIfNotBlank(response.getError(),
-                    __ -> LoggingUtils.error(LOGGER, "Error: %s, Provided: %s, Needed: %s"
+                    _ -> LoggingUtils.error(LOGGER, "Error: %s, Provided: %s, Needed: %s"
                         .formatted(response.getError(), response.getProvided(), response.getNeeded())));
                 FunctionUtils.doIfNotBlank(response.getWarning(), LOGGER::warn);
                 return response.isOk();

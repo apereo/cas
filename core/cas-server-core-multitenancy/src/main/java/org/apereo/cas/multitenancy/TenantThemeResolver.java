@@ -3,10 +3,10 @@ package org.apereo.cas.multitenancy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.theme.AbstractThemeResolver;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import javax.annotation.Nonnull;
 

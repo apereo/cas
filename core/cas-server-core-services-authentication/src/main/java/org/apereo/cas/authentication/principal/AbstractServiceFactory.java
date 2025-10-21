@@ -119,33 +119,21 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
 
         val collectAttributes = Objects.requireNonNullElse((Boolean) request.getAttribute(COLLECT_SERVICE_ATTRIBUTES), Boolean.TRUE);
         if (collectAttributes) {
-            val httpRequest = new LinkedHashMap<>();
-            FunctionUtils.doIfNotBlank(request.getPathInfo(), value -> collectHttpRequestProperty("pathInfo", value, httpRequest));
-            FunctionUtils.doIfNotBlank(request.getMethod(), value -> collectHttpRequestProperty("httpMethod", value, httpRequest));
-            FunctionUtils.doIfNotBlank(request.getRequestURL(), value -> collectHttpRequestProperty("requestURL", value.toString(), httpRequest));
-            FunctionUtils.doIfNotBlank(request.getRequestURI(), value -> collectHttpRequestProperty("requestURI", value, httpRequest));
-            FunctionUtils.doIfNotBlank(request.getRequestId(), value -> collectHttpRequestProperty("requestId", value, httpRequest));
-            FunctionUtils.doIfNotBlank(request.getContentType(), value -> collectHttpRequestProperty("contentType", value, httpRequest));
-            FunctionUtils.doIfNotBlank(request.getContextPath(), value -> collectHttpRequestProperty("contextPath", value, httpRequest));
-            FunctionUtils.doIfNotBlank(request.getLocalName(), value -> collectHttpRequestProperty("localeName", value, httpRequest));
-            if (!httpRequest.isEmpty()) {
-                attributes.put(Service.SERVICE_ATTRIBUTE_HTTP_REQUEST, httpRequest);
-            }
+            FunctionUtils.doIfNotBlank(request.getPathInfo(), value -> collectHttpRequestProperty("pathInfo", value, attributes));
+            FunctionUtils.doIfNotBlank(request.getMethod(), value -> collectHttpRequestProperty("httpMethod", value, attributes));
+            FunctionUtils.doIfNotBlank(request.getRequestURL(), value -> collectHttpRequestProperty("requestURL", value.toString(), attributes));
+            FunctionUtils.doIfNotBlank(request.getRequestURI(), value -> collectHttpRequestProperty("requestURI", value, attributes));
+            FunctionUtils.doIfNotBlank(request.getRequestId(), value -> collectHttpRequestProperty("requestId", value, attributes));
+            FunctionUtils.doIfNotBlank(request.getContentType(), value -> collectHttpRequestProperty("contentType", value, attributes));
+            FunctionUtils.doIfNotBlank(request.getContextPath(), value -> collectHttpRequestProperty("contextPath", value, attributes));
+            FunctionUtils.doIfNotBlank(request.getLocalName(), value -> collectHttpRequestProperty("localeName", value, attributes));
 
-            val cookies = new LinkedHashMap<>();
-            FunctionUtils.doIfNotNull(request.getCookies(), __ -> Arrays.stream(request.getCookies())
-                .forEach(cookie -> collectHttpRequestProperty("cookie-%s".formatted(cookie.getName()), cookie.getValue(), cookies)));
-            if (!cookies.isEmpty()) {
-                attributes.put(Service.SERVICE_ATTRIBUTE_COOKIES, cookies);
-            }
-            
-            val headers = new LinkedHashMap<>();
-            FunctionUtils.doIfNotNull(request.getHeaderNames(), __ -> StreamSupport.stream(
+            FunctionUtils.doIfNotNull(request.getCookies(), _ -> Arrays.stream(request.getCookies())
+                .forEach(cookie -> collectHttpRequestProperty("cookie-%s".formatted(cookie.getName()), cookie.getValue(), attributes)));
+
+            FunctionUtils.doIfNotNull(request.getHeaderNames(), _ -> StreamSupport.stream(
                     Spliterators.spliteratorUnknownSize(request.getHeaderNames().asIterator(), Spliterator.ORDERED), false)
-                .forEach(header -> collectHttpRequestProperty("header-%s".formatted(header), request.getHeader(header), headers)));
-            if (!headers.isEmpty()) {
-                attributes.put(Service.SERVICE_ATTRIBUTE_HEADERS, headers);
-            }
+                .forEach(header -> collectHttpRequestProperty("header-%s".formatted(header), request.getHeader(header), attributes)));
         }
 
         LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());

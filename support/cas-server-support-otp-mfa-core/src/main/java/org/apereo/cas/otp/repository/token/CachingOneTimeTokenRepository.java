@@ -2,12 +2,10 @@ package org.apereo.cas.otp.repository.token;
 
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -27,7 +25,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<On
 
     @Override
     public void cleanInternal() {
-        lock.tryLock(__ -> {
+        lock.tryLock(_ -> {
             LOGGER.trace("Beginning to clean up the cache storage to remove expiring tokens");
             storage.cleanUp();
             LOGGER.debug("Estimated total of [{}] token(s) cached and may be removed in future iterations", storage.estimatedSize());
@@ -69,7 +67,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<On
 
     @Override
     public void remove(final String uid, final Integer otp) {
-        lock.tryLock(__ -> {
+        lock.tryLock(_ -> {
             val dataset = this.storage.asMap();
             LOGGER.debug("Locating user [{}] to remove token [{}]", uid, otp);
             if (dataset.containsKey(uid)) {
@@ -83,12 +81,12 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<On
 
     @Override
     public void remove(final String uid) {
-        lock.tryLock(__ -> storage.invalidate(uid));
+        lock.tryLock(_ -> storage.invalidate(uid));
     }
 
     @Override
     public void remove(final Integer otp) {
-        lock.tryLock(__ -> {
+        lock.tryLock(_ -> {
             val dataset = storage.asMap();
             dataset.values().forEach(tokens -> tokens.removeIf(t -> otp.equals(t.getToken())));
         });
@@ -96,7 +94,7 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<On
 
     @Override
     public void removeAll() {
-        lock.tryLock(__ -> storage.invalidateAll());
+        lock.tryLock(_ -> storage.invalidateAll());
     }
 
     @Override
