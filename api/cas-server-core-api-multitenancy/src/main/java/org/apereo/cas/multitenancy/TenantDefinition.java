@@ -69,5 +69,5 @@ public class TenantDefinition implements Serializable {
     public ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindProperties() {
         return CasConfigurationProperties.bindFrom(properties);
     }
-    
+
 }

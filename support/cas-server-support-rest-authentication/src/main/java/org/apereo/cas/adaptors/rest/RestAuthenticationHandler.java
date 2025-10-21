@@ -19,7 +19,6 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -29,6 +28,7 @@ import org.apache.hc.core5.http.NameValuePair;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import tools.jackson.databind.ObjectMapper;
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
@@ -96,8 +96,8 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH)))
                 .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUri()))
                 .httpClient(httpClient)
-                .maximumRetryAttempts(1)
-                .build();
+                .build()
+                .withoutRetry();
             response = HttpUtils.execute(exec);
             val status = HttpStatus.resolve(Objects.requireNonNull(response).getCode());
             return switch (Objects.requireNonNull(status)) {

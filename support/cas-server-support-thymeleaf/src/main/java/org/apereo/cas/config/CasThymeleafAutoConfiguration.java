@@ -15,6 +15,8 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.theme.ThemeResolver;
+import org.apereo.cas.web.theme.ThemeSource;
 import org.apereo.cas.web.view.CasProtocolMustacheViewFactory;
 import org.apereo.cas.web.view.CasProtocolThymeleafViewFactory;
 import org.apereo.cas.web.view.CasThymeleafExpressionDialect;
@@ -34,12 +36,12 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.mustache.MustacheAutoConfiguration;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.servlet.view.MustacheViewResolver;
+import org.springframework.boot.mustache.autoconfigure.MustacheAutoConfiguration;
+import org.springframework.boot.mustache.servlet.view.MustacheViewResolver;
+import org.springframework.boot.thymeleaf.autoconfigure.ThymeleafAutoConfiguration;
+import org.springframework.boot.thymeleaf.autoconfigure.ThymeleafProperties;
+import org.springframework.boot.webmvc.autoconfigure.WebMvcAutoConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -47,10 +49,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
-import org.springframework.ui.context.ThemeSource;
 import org.springframework.util.MimeType;
 import org.springframework.util.ResourceUtils;
-import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.thymeleaf.dialect.IDialect;
 import org.thymeleaf.dialect.IPostProcessorDialect;
@@ -110,16 +110,6 @@ public class CasThymeleafAutoConfiguration {
             thymeleafView.addStaticVariable("host", InetAddressUtils.getCasServerHostName());
         }
 
-    }
-
-    private static String appendCharset(final MimeType type, final String charset) {
-        if (type.getCharset() != null) {
-            return type.toString();
-        }
-        val parameters = new LinkedHashMap<String, String>();
-        parameters.put("charset", charset);
-        parameters.putAll(type.getParameters());
-        return new MimeType(type, parameters).toString();
     }
 
     private static void configureTemplateViewResolver(final AbstractConfigurableTemplateResolver resolver,
@@ -350,6 +340,16 @@ public class CasThymeleafAutoConfiguration {
             @Qualifier("casThymeleafTemplatesDirector")
             final ObjectProvider<CasThymeleafTemplatesDirector> casThymeleafTemplatesDirector) {
             return new CasThymeleafExpressionDialect(casThymeleafTemplatesDirector);
+        }
+
+        private static String appendCharset(final MimeType type, final String charset) {
+            if (type.getCharset() != null) {
+                return type.toString();
+            }
+            val parameters = new LinkedHashMap<String, String>();
+            parameters.put("charset", charset);
+            parameters.putAll(type.getParameters());
+            return new MimeType(type, parameters).toString();
         }
     }
 }

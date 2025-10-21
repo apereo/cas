@@ -1,9 +1,9 @@
 package org.apereo.cas.services.web;
 
+import org.apereo.cas.web.theme.AbstractThemeResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 

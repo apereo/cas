@@ -6,7 +6,9 @@ import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.AuthorizationResult;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -17,6 +19,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import java.io.Serial;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,7 +45,8 @@ public class RequiredGrouperGroupsAuthorizationPolicy implements ResourceAuthori
 
     private GrouperGroupField groupField = GrouperGroupField.NAME;
 
-    private Set<String> groups;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private Set<String> groups = new HashSet<>();
 
     @Override
     public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) {

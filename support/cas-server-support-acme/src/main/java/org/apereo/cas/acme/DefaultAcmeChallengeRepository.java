@@ -4,7 +4,6 @@ import org.apereo.cas.util.concurrent.CasReentrantLock;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
-
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,7 +28,7 @@ public class DefaultAcmeChallengeRepository implements AcmeChallengeRepository {
 
     @Override
     public void add(final String token, final String challenge) {
-        lock.tryLock(__ -> {
+        lock.tryLock(_ -> {
             LOGGER.debug("Adding ACME token [{}] linked to challenge [{}]", token, challenge);
             cache.put(token, challenge);
         });

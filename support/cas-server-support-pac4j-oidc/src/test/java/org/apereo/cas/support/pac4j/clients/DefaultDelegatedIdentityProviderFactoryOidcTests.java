@@ -37,7 +37,7 @@ class DefaultDelegatedIdentityProviderFactoryOidcTests {
         void verifyGitHubClient() {
             val clients = delegatedIdentityProviderFactory.build();
             assertEquals(1, clients.size());
-            val client = (GitHubClient) clients.iterator().next();
+            val client = (GitHubClient) clients.getFirst();
             assertEquals("user", client.getScope());
         }
     }

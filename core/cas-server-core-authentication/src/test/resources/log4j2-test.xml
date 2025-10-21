@@ -12,8 +12,7 @@
         <Logger name="io.micrometer.observation" level="info"/>
 
         <!-- Required for test coverage on statements that execute conditionally on debug -->
-        <Logger name="org.apereo.cas.authentication.policy" level="warn" />
-        <Logger name="org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicy" level="debug" />
+        <Logger name="org.apereo.cas.authentication.policy" level="debug" />
 
         <Root level="off">
             <AppenderRef ref="console"/>

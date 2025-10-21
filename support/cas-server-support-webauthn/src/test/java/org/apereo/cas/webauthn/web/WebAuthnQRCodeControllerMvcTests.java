@@ -144,7 +144,7 @@ class WebAuthnQRCodeControllerMvcTests {
         val authn = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
         val ticket = getQRCodeTicket(context, authn);
         mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", ticket.getId()))
-            .andExpect(status().isUnprocessableEntity());
+            .andExpect(status().isUnprocessableContent());
         mvc.perform(get(BASE_ENDPOINT + "/{ticket}/status", UUID.randomUUID().toString()))
             .andExpect(status().isBadRequest());
     }

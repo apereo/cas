@@ -12,5 +12,6 @@ dependencies {
     implementation libraries.springkafka
     implementation libraries.springcloudbootstrap
 
+    implementation project(":core:cas-server-core-util-api")
     runtimeOnly project(":core:cas-server-core-events-configuration-cloud-bus")
 }

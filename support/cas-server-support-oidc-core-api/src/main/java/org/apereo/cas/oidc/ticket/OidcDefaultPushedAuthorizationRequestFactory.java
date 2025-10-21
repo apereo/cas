@@ -11,7 +11,6 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -47,7 +46,7 @@ public class OidcDefaultPushedAuthorizationRequestFactory implements OidcPushedA
             holder.getAuthentication(), holder.getService(), holder.getRegisteredService(),
             EncodingUtils.encodeBase64(request));
         par.setTenantId(holder.getService().getTenant());
-        FunctionUtils.doIfNotNull(holder.getService(), __ -> par.setTenantId(holder.getService().getTenant()));
+        FunctionUtils.doIfNotNull(holder.getService(), _ -> par.setTenantId(holder.getService().getTenant()));
         return par;
     }
 

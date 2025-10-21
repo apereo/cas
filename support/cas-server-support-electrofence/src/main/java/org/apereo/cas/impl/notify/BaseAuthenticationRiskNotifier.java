@@ -70,7 +70,7 @@ public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRi
 
     @Override
     public void run() {
-        FunctionUtils.doUnchecked(__ -> publish());
+        FunctionUtils.doUnchecked(_ -> publish());
     }
 
     protected String buildRiskVerificationUrl() {

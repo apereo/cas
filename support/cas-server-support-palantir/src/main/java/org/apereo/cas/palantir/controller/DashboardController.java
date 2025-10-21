@@ -86,7 +86,7 @@ public class DashboardController extends AbstractController {
                 val contents = new String(FileCopyUtils.copyToByteArray(input), StandardCharsets.UTF_8);
                 val definition = serializer.from(contents);
                 if (definition != null) {
-                    jsonFilesMap.computeIfAbsent(definition.getFriendlyName(), __ -> new ArrayList<>()).add(contents);
+                    jsonFilesMap.computeIfAbsent(definition.getFriendlyName(), _ -> new ArrayList<>()).add(contents);
                 }
             }
         }

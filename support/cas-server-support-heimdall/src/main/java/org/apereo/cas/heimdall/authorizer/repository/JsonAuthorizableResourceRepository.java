@@ -8,11 +8,11 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.PathWatcherService;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.hjson.JsonValue;
 import org.springframework.util.Assert;
+import tools.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
@@ -87,7 +87,7 @@ public class JsonAuthorizableResourceRepository implements AuthorizableResourceR
     }
 
     private void loadJsonResourceFrom(final File jsonFile) {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             try (val reader = new FileReader(jsonFile, StandardCharsets.UTF_8)) {
                 val json = JsonValue.readHjson(reader).toString();
                 val loadedResource = MAPPER.readValue(json, AuthorizableResources.class);
