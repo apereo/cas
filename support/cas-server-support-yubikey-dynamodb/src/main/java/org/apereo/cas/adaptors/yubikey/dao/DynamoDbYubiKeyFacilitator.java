@@ -105,7 +105,7 @@ public class DynamoDbYubiKeyFacilitator {
      * @param deleteTables the delete tables
      */
     public void createTable(final boolean deleteTables) {
-        FunctionUtils.doUnchecked(__ -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+        FunctionUtils.doUnchecked(_ -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
             dynamoDbProperties.getTableName(), deleteTables,
             List.of(AttributeDefinition.builder()
                 .attributeName(ColumnNames.USERNAME.getColumnName())

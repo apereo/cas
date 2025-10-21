@@ -9,6 +9,8 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,9 +48,11 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
     private static final long serialVersionUID = -7302163334687300920L;
 
     @JsonProperty
-    private List<String> allowedAttributes;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private List<String> allowedAttributes = new ArrayList<>();
 
     @JsonProperty("claimMappings")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, String> claimMappings = new TreeMap<>();
 
     @JsonIgnore

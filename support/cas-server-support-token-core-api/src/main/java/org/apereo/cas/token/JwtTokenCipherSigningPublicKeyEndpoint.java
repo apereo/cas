@@ -8,7 +8,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
@@ -18,8 +17,7 @@ import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.http.MediaType;
-import org.springframework.lang.Nullable;
-
+import jakarta.annotation.Nullable;
 import java.io.StringWriter;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPrivateCrtKey;

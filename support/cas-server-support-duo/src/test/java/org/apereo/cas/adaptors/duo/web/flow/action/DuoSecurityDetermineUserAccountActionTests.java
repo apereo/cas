@@ -87,7 +87,7 @@ class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifact
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         WebUtils.putAuthentication(authentication, context);
 
-        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("registration.duo.com"));
+        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("https://registration.duo.com"));
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, provider);
 
         val event = determineDuoUserAccountAction.execute(context);

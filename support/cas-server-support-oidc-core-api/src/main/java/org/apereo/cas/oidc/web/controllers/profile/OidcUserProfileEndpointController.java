@@ -94,7 +94,7 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
                     .collect(Collectors.toSet());
 
                 val seconds = Beans.newDuration(getConfigurationContext().getCasProperties().getAuthn().getOidc().getCore().getSkew()).toSeconds();
-                val verifier = new DPoPProtectedResourceRequestVerifier(acceptedAlgs, seconds, null);
+                val verifier = new DPoPProtectedResourceRequestVerifier(acceptedAlgs, seconds, 0, null);
                 val signedProof = SignedJWT.parse(dPopProof);
                 val dPoPIssuer = new DPoPIssuer(new ClientID(accessToken.getClientId()));
                 Assert.notNull(JWTParser.parse(accessTokenId), "Provided access token id must be a (signed) JWT");

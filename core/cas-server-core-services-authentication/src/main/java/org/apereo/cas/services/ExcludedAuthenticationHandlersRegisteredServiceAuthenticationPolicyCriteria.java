@@ -24,7 +24,7 @@ import java.io.Serial;
 @Getter
 @EqualsAndHashCode
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ExcludedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria implements RegisteredServiceAuthenticationPolicyCriteria {
     @Serial
     private static final long serialVersionUID = -7298017804877275864L;

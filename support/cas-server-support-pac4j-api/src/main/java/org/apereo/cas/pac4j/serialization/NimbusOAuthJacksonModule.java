@@ -3,14 +3,16 @@ package org.apereo.cas.pac4j.serialization;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.nimbusds.oauth2.sdk.Scope;
+import com.nimbusds.oauth2.sdk.id.State;
 import com.nimbusds.oauth2.sdk.pkce.CodeVerifier;
 import com.nimbusds.oauth2.sdk.token.AccessTokenType;
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.token.Token;
 import net.minidev.json.JSONObject;
+import tools.jackson.databind.module.SimpleModule;
 import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,12 +35,14 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
         setMixInAnnotation(Scope.class, ScopeMixin.class);
         setMixInAnnotation(Scope.Value.class, ScopeValueMixin.class);
         setMixInAnnotation(AccessTokenType.class, AccessTokenTypeMixin.class);
+        setMixInAnnotation(State.class, AbstractStateMixin.class);
     }
 
     private static final class AccessTokenTypeMixin {
         @JsonCreator
         AccessTokenTypeMixin(
-            @JsonProperty("value") final String value) {
+            @JsonProperty("value")
+            final String value) {
         }
     }
 
@@ -48,7 +52,8 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
 
         @JsonCreator
         ScopeValueMixin(
-            @JsonProperty("value") final String value) {
+            @JsonProperty("value")
+            final String value) {
             super(value);
         }
     }
@@ -59,7 +64,8 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
 
         @JsonCreator
         ScopeMixin(
-            @JsonProperty("values") final String... values) {
+            @JsonProperty("values")
+            final String... values) {
             super(values);
         }
     }
@@ -70,7 +76,8 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
 
         @JsonCreator
         RefreshTokenMixin(
-            @JsonProperty("value") final String value) {
+            @JsonProperty("value")
+            final String value) {
         }
 
         @Override
@@ -92,9 +99,12 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
 
         @JsonCreator
         BearerAccessTokenMixin(
-            @JsonProperty("value") final String value,
-            @JsonProperty("lifetime") final long lifetime,
-            @JsonProperty("scope") final Scope scope) {
+            @JsonProperty("value")
+            final String value,
+            @JsonProperty("lifetime")
+            final long lifetime,
+            @JsonProperty("scope")
+            final Scope scope) {
             super(value, lifetime, scope);
         }
 
@@ -111,7 +121,8 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
 
         @JsonCreator
         CodeVerifierMixin(
-            @JsonProperty("value") final String value) {
+            @JsonProperty("value")
+            final String value) {
             super(value);
         }
 
@@ -126,5 +137,16 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
         public byte[] getSHA256() {
             return super.getSHA256();
         }
+    }
+
+    private abstract static class AbstractStateMixin {
+        @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+        public static State parse(final String s) {
+            return State.parse(s);
+        }
+
+        @JsonValue
+        @Override
+        public abstract String toString();
     }
 }

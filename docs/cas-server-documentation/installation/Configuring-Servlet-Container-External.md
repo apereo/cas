@@ -16,10 +16,10 @@ may be used, in the [WAR Overlay](WAR-Overlay-Installation.html) :
 While there is no official project support, the following containers should be compatible with a CAS deployment:
 
 * [Apache Tomcat](https://tomcat.apache.org/) (At a minimum, Apache Tomcat `11` is required)
+* [Jetty](https://projects.eclipse.org/projects/rt.jetty) (At a minimum, Jetty `12.1` is required)
+* [Undertow](http://undertow.io/)
 * [JBoss](https://www.jboss.org/)
 * [Wildfly](https://wildfly.org/)
-* [Undertow](http://undertow.io/)
-* [Jetty](https://projects.eclipse.org/projects/rt.jetty) (At a minimum, Jetty `12` is required)
 * [GlassFish](https://glassfish.java.net/)
 * [WebSphere](https://www.ibm.com/cloud/websphere-hybrid-edition)
 
@@ -28,7 +28,8 @@ responsible for upgrades, maintenance and all other manners of configuration suc
 not provide official support and troubleshooting guidelines, etc for an external container's configuration or issues. 
 Refer to the servlet container's own documentation for more info.
 
-Note for JBoss, Wildfly and EAP, you may need to add a `jboss-deloyment-structure.xml` file to `src/main/webapp/WEB-INF` in your overlay in order for CAS to start properly.
+Note for JBoss, Wildfly and EAP, you may need to add a `jboss-deloyment-structure.xml` 
+file to `src/main/webapp/WEB-INF` in your overlay in order for CAS to start properly.
 
 ```xml
 <jboss-deployment-structure>

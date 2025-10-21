@@ -387,6 +387,12 @@ function validateScenario() {
     exit 1
   fi
 
+  scenarioEnabled=$(jq -j '.enabled // empty' "${config}")
+  if [[ "${scenarioEnabled}" == "false" ]]; then
+    printred "Test scenario ${scenario##*/} is not enabled. Review the scenario configuration at ${config} and re-enable the test."
+    exit 0
+  fi
+     
   requiredEnvVars=$(jq -j '.conditions.env // empty' "${config}")
   if [[ ! -z ${requiredEnvVars} ]]; then
     echo "Checking for required environment variables"
@@ -429,7 +435,7 @@ function validateScenario() {
     exit 1
   fi
 
-  cdsEnabled=$(jq -j 'if .requirements.cds.enabled == "" or .requirements.cds.enabled == null or .requirements.cds.enabled == true then true else false end' "${config}")
+  aotEnabled=$(jq -j 'if .requirements.aot.enabled == "" or .requirements.aot.enabled == null or .requirements.aot.enabled == true then true else false end' "${config}")
 
   scenarioName=${scenario##*/}
   enabled=$(jq -j '.enabled' "${config}")
@@ -843,6 +849,9 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
 
         if [[ "$DEBUG" == "true" ]]; then
           printgreen "Remote debugging is enabled on port $DEBUG_PORT"
+          if [[ "$DEBUG_SUSPEND" == "y" ]]; then
+            printyellow "Remote debugging will suspend JVM until debugger is attached to port $DEBUG_PORT"
+          fi
           runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
         fi
         runArgs="${runArgs} -XX:TieredStopAtLevel=1 "
@@ -884,18 +893,18 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
           docker logs -f cas-${scenarioName} 2>/dev/null &
         else
           casArtifactToRun="$PWD/cas.${projectType}"
-          if [[ "${cdsEnabled}" == "true" && "${serverType:-external}" != "external" ]]; then
-            printgreen "The scenario ${scenarioName} will run with CDS"
+          if [[ "${aotEnabled}" == "true" && "${serverType:-external}" != "external" ]]; then
+            printgreen "The scenario ${scenarioName} will run with AOT"
             rm -rf ${PWD}/cas 2>/dev/null
             printcyan "Extracting CAS to ${PWD}/cas"
-            java -Djarmode=tools -jar "$PWD"/cas.${projectType} extract >/dev/null 2>&1
+            java ${runArgs} -Djarmode=tools -jar "$PWD"/cas.${projectType} extract >/dev/null 2>&1
             printcyan "Launching CAS from ${PWD}/cas/cas.${projectType} to perform a training run"
-            java -XX:ArchiveClassesAtExit=${PWD}/cas/cas.jsa -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType} >/dev/null 2>&1
-            printcyan "Generated archive cache file ${PWD}/cas/cas.jsa"
-            runArgs="${runArgs} -XX:SharedArchiveFile=${PWD}/cas/cas.jsa"
+            java ${runArgs} -XX:AOTCacheOutput=${PWD}/cas/cas.aot -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType} >/dev/null 2>&1
+            printcyan "Generated archive cache file ${PWD}/cas/cas.aot"
+            runArgs="${runArgs} -XX:AOTCache=${PWD}/cas/cas.aot"
             casArtifactToRun="${PWD}/cas/cas.${projectType}"
           else
-            printcyan "The scenario ${scenarioName} will run without CDS"
+            printcyan "The scenario ${scenarioName} will run without AOT"
           fi
 
           if [[ "${serverType:-external}" == "external" ]]; then

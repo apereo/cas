@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import org.apereo.cas.web.theme.ThemeResolver;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -8,10 +9,8 @@ import lombok.val;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
-
 import jakarta.annotation.Nonnull;
 import java.util.Locale;
 import java.util.Map;

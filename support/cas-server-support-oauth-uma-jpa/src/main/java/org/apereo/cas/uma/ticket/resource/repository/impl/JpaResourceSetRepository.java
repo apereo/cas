@@ -41,7 +41,7 @@ public class JpaResourceSetRepository extends BaseResourceSetRepository {
             throw new IllegalArgumentException("Cannot save a resource set with inconsistent scopes.");
         }
         val jpaResource = new JpaResourceSet();
-        FunctionUtils.doUnchecked(__ -> BeanUtils.copyProperties(jpaResource, set));
+        FunctionUtils.doUnchecked(_ -> BeanUtils.copyProperties(jpaResource, set));
         return entityManager.merge(jpaResource);
     }
 

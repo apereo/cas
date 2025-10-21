@@ -14,7 +14,6 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -28,6 +27,7 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import tools.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,6 +66,7 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
                 .method(HttpMethod.valueOf(rest.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(rest.getUrl())
                 .parameters(CollectionUtils.wrap("entityId", service.getServiceId()))
+                .maximumRetryAttempts(rest.getMaximumRetryAttempts())
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);

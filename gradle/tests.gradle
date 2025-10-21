@@ -290,8 +290,6 @@ tasks.withType(Test).configureEach {
     list.add("java.management/sun.management=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
-    list.add("--add-opens")
-    list.add("java.base/sun.security.action=jdk.crypto.ec")
 
     list.add("-Xms512m")
     list.add("-Xmx6g")

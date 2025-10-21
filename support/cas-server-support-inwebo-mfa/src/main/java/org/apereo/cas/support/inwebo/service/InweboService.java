@@ -8,14 +8,14 @@ import org.apereo.cas.support.inwebo.service.response.InweboPushAuthenticateResp
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.util.UriComponentsBuilder;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import java.net.HttpURLConnection;
@@ -51,7 +51,7 @@ public class InweboService {
         if (response.isOk()) {
             val name = json.get("name");
             if (name != null) {
-                response.setDeviceName(name.asText());
+                response.setDeviceName(name.asString());
             }
         }
     }
@@ -110,13 +110,13 @@ public class InweboService {
 
             val json = call(url);
             LOGGER.debug("Push authenticate response from [{}]: [{}]", url, json.toPrettyString());
-            val err = json.get("err").asText("OK");
+            val err = json.get("err").asString("OK");
             val response = (InweboPushAuthenticateResponse) buildResponse(
                 new InweboPushAuthenticateResponse(), "pushAuthenticate(" + login + ')', err);
             if (response.isOk()) {
                 val sessionId = json.get("sessionId");
                 if (sessionId != null) {
-                    response.setSessionId(sessionId.asText());
+                    response.setSessionId(sessionId.asString());
                 }
             }
             return response;
@@ -142,7 +142,7 @@ public class InweboService {
                 .toUriString();
 
             val json = call(url);
-            val err = json.get("err").asText("OK");
+            val err = json.get("err").asString("OK");
             val response = (InweboDeviceNameResponse) buildResponse(new InweboDeviceNameResponse(),
                 "checkPushResult(" + login + ')', err);
             retrieveDeviceName(json, response);
@@ -169,7 +169,7 @@ public class InweboService {
                 .toUriString();
 
             val json = call(url);
-            val err = json.get("err").asText("OK");
+            val err = json.get("err").asString("OK");
             val response = (InweboDeviceNameResponse) buildResponse(
                 new InweboDeviceNameResponse(), "authenticateExtended(" + login + ')', err);
             retrieveDeviceName(json, response);

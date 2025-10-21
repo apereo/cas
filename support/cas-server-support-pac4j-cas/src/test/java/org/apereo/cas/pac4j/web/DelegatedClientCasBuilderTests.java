@@ -35,7 +35,7 @@ class DelegatedClientCasBuilderTests extends BaseDelegatedClientFactoryTests {
     void verifyFactoryForCasClientsHavingLoginInDomain() {
         val clients = delegatedIdentityProviderFactory.build();
         assertEquals(1, clients.size());
-        val client = (CasClient) clients.iterator().next();
+        val client = (CasClient) clients.getFirst();
         assertEquals("https://login.example.org/", client.getConfiguration().getPrefixUrl());
     }
 }

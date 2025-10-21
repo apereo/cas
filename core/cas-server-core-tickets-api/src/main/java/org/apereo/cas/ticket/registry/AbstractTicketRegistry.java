@@ -31,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ApplicationContext;
-
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashMap;
@@ -338,7 +337,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     protected Ticket decodeTicket(final Ticket ticketToProcess) {
         if (ticketToProcess instanceof EncodedTicket && !isCipherExecutorEnabled()) {
             LOGGER.warn("Found removable encoded ticket [{}] yet cipher operations are disabled.", ticketToProcess.getId());
-            FunctionUtils.doUnchecked(__ -> deleteTicket(ticketToProcess));
+            FunctionUtils.doUnchecked(_ -> deleteTicket(ticketToProcess));
             return null;
         }
 

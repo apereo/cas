@@ -1,15 +1,14 @@
 package com.yubico.core;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.webauthn.data.ByteArray;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -23,9 +22,8 @@ import java.util.function.Function;
 @Slf4j
 @RequiredArgsConstructor
 public class WebSessionWebAuthnCache<R> implements WebAuthnCache<R> {
-
     private static final ObjectMapper MAPPER = JacksonCodecs.json().findAndRegisterModules();
-
+    
     private final String mapName;
 
     private final Class<R> clazz;
@@ -57,7 +55,7 @@ public class WebSessionWebAuthnCache<R> implements WebAuthnCache<R> {
     @Override
     public void put(final HttpServletRequest request, final ByteArray key, final R obj) {
         val key64 = key.getBase64();
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             val value = MAPPER.writeValueAsString(obj);
             LOGGER.trace("Put value([{}]): [{}] for key: [{}]", clazz, value, key64);
             retrieveMap(request).put(key64, value);

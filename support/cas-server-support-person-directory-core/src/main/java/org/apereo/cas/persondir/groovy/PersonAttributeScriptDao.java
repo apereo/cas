@@ -32,14 +32,4 @@ public interface PersonAttributeScriptDao {
      */
     Map<String, List<Object>> getPersonAttributesFromMultivaluedAttributes(Map<String, List<Object>> attributes,
                                                                            Set<PersonAttributes> resultPeople);
-
-    /**
-     * Gets person attributes from multivalued attributes.
-     *
-     * @param attributes the attributes
-     * @return the person attributes from multivalued attributes
-     */
-    default Map<String, List<Object>> getPersonAttributesFromMultivaluedAttributes(final Map<String, List<Object>> attributes) {
-        return getPersonAttributesFromMultivaluedAttributes(attributes, Set.of());
-    }
 }

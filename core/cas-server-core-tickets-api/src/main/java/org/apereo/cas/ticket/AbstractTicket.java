@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.Authentication;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -89,12 +91,13 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
      * Flag to enforce manual expiration.
      */
     private Boolean expired = Boolean.FALSE;
-    
+
     private Boolean stateless = Boolean.FALSE;
 
     @Getter
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, Object> properties = new HashMap<>();
-    
+
     protected AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {
         this.id = id;
         this.creationTime = ZonedDateTime.now(expirationPolicy.getClock());

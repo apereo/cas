@@ -74,10 +74,10 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
             val parameters = CollectionUtils.<String, String>wrap(
                 "method", HttpMethod.POST.name(),
                 "uri", "users/%s".formatted(user.getUserId()));
-            FunctionUtils.doIfNotNull(newAccount.getEmail(), __ -> parameters.put("email", newAccount.getEmail()));
-            FunctionUtils.doIfNotNull(newAccount.getFirstName(), __ -> parameters.put("firstname", newAccount.getFirstName()));
-            FunctionUtils.doIfNotNull(newAccount.getLastName(), __ -> parameters.put("lastname", newAccount.getLastName()));
-            FunctionUtils.doIfNotNull(newAccount.getStatus(), __ -> parameters.put("status", newAccount.getStatus().toValue()));
+            FunctionUtils.doIfNotNull(newAccount.getEmail(), _ -> parameters.put("email", newAccount.getEmail()));
+            FunctionUtils.doIfNotNull(newAccount.getFirstName(), _ -> parameters.put("firstname", newAccount.getFirstName()));
+            FunctionUtils.doIfNotNull(newAccount.getLastName(), _ -> parameters.put("lastname", newAccount.getLastName()));
+            FunctionUtils.doIfNotNull(newAccount.getStatus(), _ -> parameters.put("status", newAccount.getStatus().toValue()));
             val updateResponse = executeAdminEndpoint(parameters);
             val userAccount = (JSONObject) (updateResponse instanceof final JSONArray array ? array.get(0) : updateResponse);
             return Optional.of(mapDuoSecurityUserAccount(userAccount));

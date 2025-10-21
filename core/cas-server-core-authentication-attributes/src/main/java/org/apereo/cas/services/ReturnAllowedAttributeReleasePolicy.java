@@ -5,6 +5,8 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -43,6 +45,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     @Serial
     private static final long serialVersionUID = -5771481877391140569L;
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<String> allowedAttributes = new ArrayList<>();
 
     @Override

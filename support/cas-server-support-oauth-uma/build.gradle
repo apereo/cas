@@ -39,7 +39,7 @@ dependencies {
     implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-notifications-api")
 
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-thymeleaf")

@@ -23,6 +23,7 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.registry.key.RedisKeyGeneratorFactory;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
 import org.apereo.cas.util.ProxyTicketIdGenerator;
 import org.apereo.cas.util.ServiceTicketIdGenerator;
@@ -190,23 +191,23 @@ class RedisServerTicketRegistryTests {
                 })
                 .limit(COUNT);
             executedTimedOperation("Adding tickets in bulk",
-                Unchecked.consumer(__ -> getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd)));
+                Unchecked.consumer(_ -> getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd)));
             executedTimedOperation("Getting tickets",
-                Unchecked.consumer(__ -> {
+                Unchecked.consumer(_ -> {
                     val tickets = getNewTicketRegistry().getTickets();
                     assertFalse(tickets.isEmpty());
                 }));
             val ticketStream = executedTimedOperation("Getting tickets in bulk",
                 Unchecked.supplier(() -> getNewTicketRegistry().stream()));
             executedTimedOperation("Getting tickets individually",
-                Unchecked.consumer(__ -> ticketStream.forEach(ticket -> assertNotNull(getNewTicketRegistry().getTicket(ticket.getId())))));
+                Unchecked.consumer(_ -> ticketStream.forEach(ticket -> assertNotNull(getNewTicketRegistry().getTicket(ticket.getId())))));
 
             executedTimedOperation("Counting all SSO sessions",
-                Unchecked.consumer(__ -> getNewTicketRegistry().sessionCount()));
+                Unchecked.consumer(_ -> getNewTicketRegistry().sessionCount()));
             executedTimedOperation("Counting all application sessions",
-                Unchecked.consumer(__ -> getNewTicketRegistry().serviceTicketCount()));
+                Unchecked.consumer(_ -> getNewTicketRegistry().serviceTicketCount()));
             executedTimedOperation("Counting all user sessions",
-                Unchecked.consumer(__ -> getNewTicketRegistry().countSessionsFor(authentication.getPrincipal().getId())));
+                Unchecked.consumer(_ -> getNewTicketRegistry().countSessionsFor(authentication.getPrincipal().getId())));
         }
 
         @RepeatedTest(2)
@@ -289,7 +290,7 @@ class RedisServerTicketRegistryTests {
             val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
             getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
                 originalAuthn, NeverExpiresExpirationPolicy.INSTANCE));
-            assertNull(getNewTicketRegistry().getTicket(ticketGrantingTicketId, __ -> {
+            assertNull(getNewTicketRegistry().getTicket(ticketGrantingTicketId, _ -> {
                 throw new IllegalArgumentException();
             }));
             assertDoesNotThrow(() -> {
@@ -335,7 +336,7 @@ class RedisServerTicketRegistryTests {
             CasRedisTicketRegistryAutoConfiguration.class,
             BaseTicketRegistryTests.SharedTestConfiguration.class
         }, properties = {
-        "cas.ticket.tgt.core.only-track-most-recent-session=true",
+        "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT",
         "cas.ticket.registry.redis.host=localhost",
         "cas.ticket.registry.redis.port=6379",
         "cas.ticket.registry.redis.pool.max-active=20",
@@ -369,7 +370,7 @@ class RedisServerTicketRegistryTests {
             CasRedisTicketRegistryAutoConfiguration.class,
             BaseTicketRegistryTests.SharedTestConfiguration.class
         }, properties = {
-        "cas.ticket.tgt.core.only-track-most-recent-session=false",
+        "cas.ticket.tgt.core.service-tracking-policy=ALL",
         "cas.ticket.registry.redis.host=localhost",
         "cas.ticket.registry.redis.port=6379",
         "cas.ticket.registry.redis.crypto.enabled=false"
@@ -417,7 +418,7 @@ class RedisServerTicketRegistryTests {
             CasRedisTicketRegistryAutoConfiguration.class,
             BaseTicketRegistryTests.SharedTestConfiguration.class
         }, properties = {
-        "cas.ticket.tgt.core.only-track-most-recent-session=true",
+        "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT",
         "cas.ticket.registry.redis.host=localhost",
         "cas.ticket.registry.redis.port=6379"
     })
@@ -437,7 +438,7 @@ class RedisServerTicketRegistryTests {
                 val thread = Thread.ofVirtual();
                 thread.name("Thread-" + i);
                 thread.uncaughtExceptionHandler((t, e) -> {
-                    LOGGER.error(e.getMessage(), e);
+                    LoggingUtils.error(LOGGER, e);
                     testHasFailed.set(true);
                 });
                 threads.add(thread.start(runnable));
@@ -467,7 +468,7 @@ class RedisServerTicketRegistryTests {
                 for (var i = 0; i < max; i++) {
                     val tgtId = ticketGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
                     val tgt = new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
-                    FunctionUtils.doUnchecked(__ -> ticketRegistry.addTicket(tgt));
+                    FunctionUtils.doUnchecked(_ -> ticketRegistry.addTicket(tgt));
                 }
             }
         }
@@ -480,7 +481,7 @@ class RedisServerTicketRegistryTests {
             CasRedisTicketRegistryAutoConfiguration.class,
             BaseTicketRegistryTests.SharedTestConfiguration.class
         }, properties = {
-        "cas.ticket.tgt.core.only-track-most-recent-session=false",
+        "cas.ticket.tgt.core.service-tracking-policy=ALL",
         "cas.ticket.registry.redis.host=localhost",
         "cas.ticket.registry.redis.port=6379"
     })
@@ -519,7 +520,7 @@ class RedisServerTicketRegistryTests {
                 val thread = new Thread(runnable);
                 thread.setName("Thread-" + i);
                 thread.setUncaughtExceptionHandler((t, e) -> {
-                    LOGGER.error(e.getMessage(), e);
+                    LoggingUtils.error(LOGGER, e);
                     testHasFailed.set(true);
                 });
                 threads.add(thread);
@@ -551,7 +552,7 @@ class RedisServerTicketRegistryTests {
                 for (var i = 0; i < max; i++) {
                     val proxyTicket = proxyGrantingTicket.grantProxyTicket(ptGenerator.getNewTicketId(ProxyTicket.PREFIX),
                         service, new HardTimeoutExpirationPolicy(20), serviceTicketSessionTrackingPolicy);
-                    FunctionUtils.doUnchecked(__ -> ticketRegistry.addTicket(proxyTicket));
+                    FunctionUtils.doUnchecked(_ -> ticketRegistry.addTicket(proxyTicket));
                 }
             }
         }
@@ -566,7 +567,7 @@ class RedisServerTicketRegistryTests {
             BaseTicketRegistryTests.SharedTestConfiguration.class
         },
         properties = {
-            "cas.ticket.tgt.core.only-track-most-recent-session=true",
+            "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT",
             "cas.ticket.registry.redis.host=localhost",
             "cas.ticket.registry.redis.port=6379",
             "cas.slo.disabled=true"

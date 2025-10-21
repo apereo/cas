@@ -2,12 +2,10 @@ package org.apereo.cas.notifications.sms;
 
 import org.apereo.cas.configuration.model.support.sms.RestfulSmsProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.hc.core5.http.HttpResponse;
@@ -16,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import tools.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -61,7 +60,7 @@ public class RestfulSmsSender implements SmsSender {
                 case QUERY_PARAMETERS -> exec.parameters(parameters).entity(message);
                 case REQUEST_BODY -> {
                     parameters.put("text", message);
-                    val body = FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(parameters));
+                    val body = MAPPER.writeValueAsString(parameters);
                     yield exec.entity(body);
                 }
             };

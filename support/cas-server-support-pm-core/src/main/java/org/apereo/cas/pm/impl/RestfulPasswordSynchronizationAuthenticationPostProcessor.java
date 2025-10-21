@@ -11,7 +11,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,6 +18,7 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import tools.jackson.databind.ObjectMapper;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -59,6 +59,7 @@ public class RestfulPasswordSynchronizationAuthenticationPostProcessor implement
                 .url(properties.getUrl())
                 .basicAuthPassword(properties.getBasicAuthUsername())
                 .basicAuthUsername(properties.getBasicAuthPassword())
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .method(HttpMethod.POST)
                 .entity(entity)
                 .headers(headers)

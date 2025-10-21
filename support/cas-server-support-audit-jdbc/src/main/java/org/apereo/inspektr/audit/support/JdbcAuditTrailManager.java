@@ -16,11 +16,8 @@ import org.apereo.cas.jpa.JpaEntityFactory;
 import org.apereo.cas.util.jpa.MapToJsonAttributeConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionOperations;
-import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.sql.ResultSet;
@@ -166,77 +163,66 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
 
     @Override
     protected void saveAuditRecord(final AuditActionContext auditActionContext) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(
-                @Nonnull
-                final TransactionStatus __) {
-                val principal = auditActionContext.getPrincipal();
-                val userId = columnLength <= 0 || principal.length() <= columnLength
-                    ? principal
-                    : principal.substring(0, columnLength);
-                val resourceOperatedUpon = auditActionContext.getResourceOperatedUpon();
-                val resource = columnLength <= 0 || resourceOperatedUpon.length() <= columnLength
-                    ? resourceOperatedUpon
-                    : resourceOperatedUpon.substring(0, columnLength);
-                val actionPerformed = auditActionContext.getActionPerformed();
-                val action = columnLength <= 0 || actionPerformed.length() <= columnLength
-                    ? actionPerformed
-                    : actionPerformed.substring(0, columnLength);
+        transactionTemplate.executeWithoutResult(_ -> {
+            val principal = auditActionContext.getPrincipal();
+            val userId = columnLength <= 0 || principal.length() <= columnLength
+                ? principal
+                : principal.substring(0, columnLength);
+            val resourceOperatedUpon = auditActionContext.getResourceOperatedUpon();
+            val resource = columnLength <= 0 || resourceOperatedUpon.length() <= columnLength
+                ? resourceOperatedUpon
+                : resourceOperatedUpon.substring(0, columnLength);
+            val actionPerformed = auditActionContext.getActionPerformed();
+            val action = columnLength <= 0 || actionPerformed.length() <= columnLength
+                ? actionPerformed
+                : actionPerformed.substring(0, columnLength);
 
-                val sql = String.format(INSERT_SQL_TEMPLATE, tableName);
-                val clientInfo = auditActionContext.getClientInfo();
-                val locale = Optional.ofNullable(clientInfo.getLocale())
-                    .map(Locale::toLanguageTag)
-                    .orElseGet(Locale.US::toLanguageTag);
+            val sql = String.format(INSERT_SQL_TEMPLATE, tableName);
+            val clientInfo = auditActionContext.getClientInfo();
+            val locale = Optional.ofNullable(clientInfo.getLocale())
+                .map(Locale::toLanguageTag)
+                .orElseGet(Locale.US::toLanguageTag);
 
-                val parameterMap = new HashMap<String, Object>();
-                parameterMap.put(AuditTableColumns.USER.getColumnName(), userId);
-                parameterMap.put(AuditTableColumns.CLIENT_IP.getColumnName(), clientInfo.getClientIpAddress());
-                parameterMap.put(AuditTableColumns.SERVER_IP.getColumnName(), clientInfo.getServerIpAddress());
-                parameterMap.put(AuditTableColumns.RESOURCE.getColumnName(), resource);
-                parameterMap.put(AuditTableColumns.APPLIC_CD.getColumnName(), auditActionContext.getApplicationCode());
-                parameterMap.put(AuditTableColumns.DATE.getColumnName(), auditActionContext.getWhenActionWasPerformed());
-                parameterMap.put(AuditTableColumns.GEOLOCATION.getColumnName(), clientInfo.getGeoLocation());
-                parameterMap.put(AuditTableColumns.TENANT.getColumnName(), clientInfo.getTenant());
-                parameterMap.put(AuditTableColumns.USERAGENT.getColumnName(), clientInfo.getUserAgent());
-                parameterMap.put(AuditTableColumns.LOCALE.getColumnName(), locale);
-                parameterMap.put(AuditTableColumns.ACTION.getColumnName(), action);
+            val parameterMap = new HashMap<String, Object>();
+            parameterMap.put(AuditTableColumns.USER.getColumnName(), userId);
+            parameterMap.put(AuditTableColumns.CLIENT_IP.getColumnName(), clientInfo.getClientIpAddress());
+            parameterMap.put(AuditTableColumns.SERVER_IP.getColumnName(), clientInfo.getServerIpAddress());
+            parameterMap.put(AuditTableColumns.RESOURCE.getColumnName(), resource);
+            parameterMap.put(AuditTableColumns.APPLIC_CD.getColumnName(), auditActionContext.getApplicationCode());
+            parameterMap.put(AuditTableColumns.DATE.getColumnName(), auditActionContext.getWhenActionWasPerformed());
+            parameterMap.put(AuditTableColumns.GEOLOCATION.getColumnName(), clientInfo.getGeoLocation());
+            parameterMap.put(AuditTableColumns.TENANT.getColumnName(), clientInfo.getTenant());
+            parameterMap.put(AuditTableColumns.USERAGENT.getColumnName(), clientInfo.getUserAgent());
+            parameterMap.put(AuditTableColumns.LOCALE.getColumnName(), locale);
+            parameterMap.put(AuditTableColumns.ACTION.getColumnName(), action);
 
-                val converter = new MapToJsonAttributeConverter();
-                parameterMap.put(AuditTableColumns.HEADERS.getColumnName(), converter.convertToDatabaseColumn(clientInfo.getHeaders()));
-                parameterMap.put(AuditTableColumns.EXTRA_INFO.getColumnName(), converter.convertToDatabaseColumn(clientInfo.getExtraInfo()));
+            val converter = new MapToJsonAttributeConverter();
+            parameterMap.put(AuditTableColumns.HEADERS.getColumnName(), converter.convertToDatabaseColumn(clientInfo.getHeaders()));
+            parameterMap.put(AuditTableColumns.EXTRA_INFO.getColumnName(), converter.convertToDatabaseColumn(clientInfo.getExtraInfo()));
 
-                val namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-                namedTemplate.update(sql, parameterMap);
-            }
+            val namedTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+            namedTemplate.update(sql, parameterMap);
         });
     }
 
     @Override
     public void clean() {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(final TransactionStatus __) {
-                val sql = String.format(DELETE_SQL_TEMPLATE, tableName, cleanupCriteria);
-                val params = cleanupCriteria.getParameterValues();
-                LOGGER.info("Cleaning audit records with query [{}]", sql);
-                LOGGER.debug("Query parameters: [{}]", params);
-                val count = jdbcTemplate.update(sql, params.toArray());
-                LOGGER.info("[{}] records deleted.", count);
-            }
+        transactionTemplate.executeWithoutResult(_ -> {
+            val sql = String.format(DELETE_SQL_TEMPLATE, tableName, cleanupCriteria);
+            val params = cleanupCriteria.getParameterValues();
+            LOGGER.info("Cleaning audit records with query [{}]", sql);
+            LOGGER.debug("Query parameters: [{}]", params);
+            val count = jdbcTemplate.update(sql, params.toArray());
+            LOGGER.info("[{}] records deleted and cleaned.", count);
         });
     }
 
     @Override
     public void removeAll() {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(final TransactionStatus __) {
-                val sql = String.format(DELETE_SQL_TEMPLATE, tableName, StringUtils.EMPTY);
-                val count = jdbcTemplate.update(sql);
-                LOGGER.info("[{}] records deleted.", count);
-            }
+        transactionTemplate.executeWithoutResult(_ -> {
+            val sql = String.format(DELETE_SQL_TEMPLATE, tableName, StringUtils.EMPTY);
+            val count = jdbcTemplate.update(sql);
+            LOGGER.info("[{}] records deleted.", count);
         });
     }
 
@@ -245,20 +231,20 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         val builder = new StringBuilder("1=1 ");
         val args = new ArrayList<>();
         if (whereClause.containsKey(WhereClauseFields.DATE)) {
-            builder.append("AND AUD_DATE>=? ");
             var sinceDate = (TemporalAccessor) whereClause.get(WhereClauseFields.DATE);
             if (dateFormatterFunction != null) {
                 val formatter = DateTimeFormatter.ofPattern(dateFormatterPattern, Locale.ENGLISH);
                 val patternToUse = StringUtils.isNotBlank(dateFormatterPattern) ? dateFormatterPattern : "yyyy-MM-dd";
                 val formattedDate = String.format(dateFormatterFunction, formatter.format(sinceDate), patternToUse);
                 LOGGER.trace("Using date formatter [{}] to format date [{}] to [{}]", dateFormatterFunction, sinceDate, formattedDate);
-                args.add(formattedDate);
+                builder.append("AND AUD_DATE>=").append(formattedDate).append(' ');
             } else {
+                builder.append("AND AUD_DATE>=? ");
                 args.add(sinceDate);
             }
         }
         if (whereClause.containsKey(WhereClauseFields.PRINCIPAL)) {
-            var principal = whereClause.get(WhereClauseFields.PRINCIPAL).toString();
+            val principal = whereClause.get(WhereClauseFields.PRINCIPAL).toString();
             args.add(principal);
             builder.append("AND AUD_USER=? ");
         }

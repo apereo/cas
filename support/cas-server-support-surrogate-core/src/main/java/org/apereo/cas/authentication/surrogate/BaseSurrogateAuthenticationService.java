@@ -37,7 +37,7 @@ public abstract class BaseSurrogateAuthenticationService implements SurrogateAut
     }
 
     protected boolean isServiceAuthorizedForImpersonation(final Principal principal,
-                                                          final Optional<? extends Service> givenService) throws Throwable {
+                                                          final Optional<? extends Service> givenService) {
         if (givenService.isPresent()) {
             val service = givenService.get();
             val registeredService = servicesManager.findServiceBy(service);

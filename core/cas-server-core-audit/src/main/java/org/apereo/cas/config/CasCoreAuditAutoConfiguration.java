@@ -549,7 +549,7 @@ public class CasCoreAuditAutoConfiguration {
                 .when(BeanCondition.on("cas.audit.groovy.template.location")
                     .exists().given(applicationContext.getEnvironment()))
                 .supply(() -> plan ->
-                    FunctionUtils.doAndHandle(__ -> {
+                    FunctionUtils.doAndHandle(_ -> {
                         val templateFile = casProperties.getAudit().getGroovy().getTemplate().getLocation().getFile();
                         val mgr = new GroovyAuditTrailManager(templateFile, applicationContext);
                         plan.registerAuditTrailManager(mgr);

@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.credential.AbstractCredential;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,9 +12,7 @@ import lombok.val;
 import org.pac4j.core.credentials.AnonymousCredentials;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.UserProfile;
-
 import java.io.Serial;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -70,7 +67,7 @@ public class ClientCredential extends AbstractCredential {
     }
 
     public UserProfile getUserProfile() {
-        return Optional.ofNullable(userProfile).orElseGet(credentials::getUserProfile);
+        return userProfile != null ? userProfile : credentials.getUserProfile();
     }
 
     @Override

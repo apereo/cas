@@ -41,7 +41,7 @@ class APNMessagingNotificationSenderTests {
     private NotificationSender notificationSender;
     
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val id = UUID.randomUUID().toString();
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("registrationToken", List.of(id)));
         assertDoesNotThrow(() -> {

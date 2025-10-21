@@ -9,7 +9,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -20,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import tools.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -87,6 +87,7 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
         val exec = HttpExecutionRequest.builder()
             .basicAuthPassword(properties.getBasicAuthPassword())
             .basicAuthUsername(properties.getBasicAuthUsername())
+            .maximumRetryAttempts(properties.getMaximumRetryAttempts())
             .method(HttpMethod.POST)
             .url(properties.getUrl())
             .headers(headers)

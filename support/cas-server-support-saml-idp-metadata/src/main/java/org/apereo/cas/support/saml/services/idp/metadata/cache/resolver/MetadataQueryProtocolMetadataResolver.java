@@ -113,7 +113,7 @@ public class MetadataQueryProtocolMetadataResolver extends UrlResourceMetadataRe
             .proxyUrl(service.getMetadataProxyLocation())
             .build();
         val response = HttpUtils.execute(exec);
-        if (response == null) {
+        if (response == null || HttpStatus.resolve(response.getCode()).is5xxServerError()) {
             LOGGER.error("Unable to fetch metadata from [{}]", metadataLocation);
             throw UnauthorizedServiceException.denied("Rejected: %s".formatted(metadataLocation));
         }

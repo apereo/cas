@@ -24,7 +24,7 @@ public class DynamoDbCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public void removeAll() {
-        FunctionUtils.doUnchecked(__ -> dbCasEventsFacilitator.createTable(true));
+        FunctionUtils.doUnchecked(_ -> dbCasEventsFacilitator.createTable(true));
     }
 
     @Override

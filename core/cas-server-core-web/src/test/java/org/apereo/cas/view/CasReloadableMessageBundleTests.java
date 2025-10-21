@@ -48,6 +48,10 @@ class CasReloadableMessageBundleTests {
 
     @Test
     void verifyMessage() {
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("185.86.151.11");
+        request.setLocalAddr("185.88.151.11");
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         assertEquals("cas.message", messageSource.getMessage("cas.message",
             ArrayUtils.EMPTY_STRING_ARRAY, null, Locale.ENGLISH));
         assertEquals("cas.message", messageSource.getMessage("cas.message",

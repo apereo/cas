@@ -5,7 +5,9 @@ import org.apereo.cas.util.RegexUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,6 +45,7 @@ public class PatternMatchingAttributeReleasePolicy extends AbstractRegisteredSer
 
     private static final Pattern PATTERN_TRANSFORM_GROUPS = RegexUtils.createPattern("\\$\\{(\\d+)\\}");
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, Rule> allowedAttributes = new TreeMap<>();
 
     @JsonCreator

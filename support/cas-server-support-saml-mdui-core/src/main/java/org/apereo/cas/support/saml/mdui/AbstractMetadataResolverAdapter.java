@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.mdui;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -17,7 +16,6 @@ import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,7 +94,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
             LOGGER.debug("Loading [{}]", resource.getFilename());
             resolvers.addAll(loadMetadataFromResource(entry.getValue(), resource, entityId));
         });
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
             this.metadataResolver.setResolvers(resolvers);
             LOGGER.debug("Collected metadata from [{}] resolvers(s). Initializing aggregate resolver...", resolvers.size());
@@ -149,7 +147,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
             metadataProvider.setMetadataFilter(metadataFilterChain);
         }
         LOGGER.debug("Initializing metadata resolver for [{}]", resource);
-        FunctionUtils.doUnchecked(__ -> metadataProvider.initialize());
+        FunctionUtils.doUnchecked(_ -> metadataProvider.initialize());
         val resolvers = new ArrayList<MetadataResolver>(1);
         resolvers.add(metadataProvider);
         return resolvers;

@@ -76,7 +76,7 @@ public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKe
                 file -> new Consumer<File>() {
                     @Override
                     public void accept(final File file) {
-                        FunctionUtils.doUnchecked(__ -> {
+                        FunctionUtils.doUnchecked(_ -> {
                             if (applicationContext.isActive()) {
                                 LOGGER.info("Publishing event to broadcast change in [{}]", file);
                                 applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, file, clientInfo));

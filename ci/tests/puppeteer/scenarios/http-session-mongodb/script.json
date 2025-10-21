@@ -1,5 +1,5 @@
 {
-  "dependencies": "session-mongo,reports,mongo-ticket-registry",
+  "dependencies": "session-mongo,reports,mongo-ticket-registry,audit-mongo",
   "conditions": {
     "docker": "true"
   },
@@ -23,14 +23,23 @@
     "--cas.ticket.registry.mongo.port=27017",
     "--cas.ticket.registry.mongo.drop-collection=true",
     "--cas.ticket.registry.mongo.user-id=root",
-    "--cas.ticket.registry.mongo.password=secret"
-  ,
-    "--spring.data.mongodb.host=localhost",
-    "--spring.data.mongodb.port=27017",
-    "--spring.data.mongodb.database=sessions",
-    "--spring.data.mongodb.username=root",
-    "--spring.data.mongodb.password=secret",
-    "--spring.data.mongodb.authentication-database=admin",
+    "--cas.ticket.registry.mongo.password=secret",
+    
+    "--cas.audit.mongo.host=localhost",
+    "--cas.audit.mongo.port=27017",
+    "--cas.audit.mongo.drop-collection=true",
+    "--cas.audit.mongo.asynchronous=false",
+    "--cas.audit.mongo.user-id=root",
+    "--cas.audit.mongo.password=secret",
+    "--cas.audit.mongo.database-name=audit",
+    "--cas.audit.mongo.authentication-database-name=admin",
+
+    "--spring.mongodb.host=localhost",
+    "--spring.mongodb.port=27017",
+    "--spring.mongodb.database=sessions",
+    "--spring.mongodb.username=root",
+    "--spring.mongodb.password=secret",
+    "--spring.mongodb.authentication-database=admin",
 
     "--cas.webflow.session.storage=true"
   ],

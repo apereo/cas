@@ -7,7 +7,7 @@
   },
   ".+@example.+" : {
     "@class" : "org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryProvider",
-    "clientName" : "OktaOidcClient",
+    "clientName" : "Keycloak",
     "order": 1
   }
 }

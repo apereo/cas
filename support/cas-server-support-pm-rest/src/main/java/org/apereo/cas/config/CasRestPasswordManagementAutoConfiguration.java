@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -68,7 +68,8 @@ public class CasRestPasswordManagementAutoConfiguration {
             .defaultHeader(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
         for (val entry : pmRest.getHeaders().entrySet()) {
             LOGGER.debug("Configuring header [{}] with value [{}]", entry.getKey(), entry.getValue());
-            builder = builder.defaultHeader(entry.getKey(), org.springframework.util.StringUtils.commaDelimitedListToStringArray(entry.getValue()));
+            builder = builder.defaultHeader(entry.getKey(),
+                org.springframework.util.StringUtils.commaDelimitedListToStringArray(entry.getValue()));
         }
 
         return builder.build();

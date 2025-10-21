@@ -5,9 +5,9 @@ import org.apereo.cas.configuration.DefaultCasConfigurationPropertiesSourceLocat
 import org.apereo.cas.configuration.StandaloneConfigurationFilePropertiesSourceLocator;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import lombok.val;
-import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringApplicationRunListener;
+import org.springframework.boot.bootstrap.ConfigurableBootstrapContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.DefaultResourceLoader;
 

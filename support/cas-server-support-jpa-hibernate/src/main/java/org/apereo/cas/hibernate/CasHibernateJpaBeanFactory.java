@@ -76,7 +76,7 @@ public class CasHibernateJpaBeanFactory implements JpaBeanFactory {
         properties.put(JdbcSettings.STATEMENT_FETCH_SIZE, jpaProperties.getFetchSize());
 
         FunctionUtils.doIfNotNull(jpaProperties.getPhysicalNamingStrategyClassName(),
-            __ -> {
+            _ -> {
                 val clazz = ClassUtils.getClass(JpaBeans.class.getClassLoader(), jpaProperties.getPhysicalNamingStrategyClassName());
                 val namingStrategy = (PhysicalNamingStrategy) clazz.getDeclaredConstructor().newInstance();
                 if (namingStrategy instanceof final ApplicationContextAware aware) {

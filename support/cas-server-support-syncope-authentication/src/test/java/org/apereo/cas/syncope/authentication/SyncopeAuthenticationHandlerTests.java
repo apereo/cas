@@ -87,20 +87,20 @@ class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
         private BeanContainer<AuthenticationHandler> syncopeAuthenticationHandlers;
 
         @Test
-        void verifyHandlerPasses() throws Throwable {
+        void verifyHandlerPasses() {
             val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
-            try (val webserver = startMockSever(user(), HttpStatus.OK, 8096)) {
+            try (val _ = startMockSever(user(), HttpStatus.OK, 8096)) {
                 assertDoesNotThrow(() ->
                     syncopeAuthenticationHandler.authenticate(CREDENTIAL, mock(Service.class)));
             }
         }
 
         @Test
-        void verifyHandlerMustChangePassword() throws Throwable {
+        void verifyHandlerMustChangePassword() {
             val user = MAPPER.createObjectNode();
             user.put("username", "casuser");
             user.put("mustChangePassword", true);
-            try (val webserver = startMockSever(user, HttpStatus.OK, 8096)) {
+            try (val _ = startMockSever(user, HttpStatus.OK, 8096)) {
                 val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
                 assertThrows(AccountPasswordMustChangeException.class,
                     () -> syncopeAuthenticationHandler.authenticate(CREDENTIAL, mock(Service.class)));
@@ -108,11 +108,11 @@ class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
         }
 
         @Test
-        void verifyHandlerSuspended() throws Throwable {
+        void verifyHandlerSuspended() {
             val user = MAPPER.createObjectNode();
             user.put("username", "casuser");
             user.put("suspended", true);
-            try (val webserver = startMockSever(user, HttpStatus.OK, 8096)) {
+            try (val _ = startMockSever(user, HttpStatus.OK, 8096)) {
                 val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
                 assertThrows(AccountDisabledException.class,
                     () -> syncopeAuthenticationHandler.authenticate(CREDENTIAL, mock(Service.class)));
@@ -122,15 +122,14 @@ class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
         @Test
         void verifyMembershipInfoPassed() throws Throwable {
             val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
-            try (val webserver = startMockSever(userForMembershipsTypeExtension(), HttpStatus.OK, 8096)) {
+            try (val _ = startMockSever(userForMembershipsTypeExtension(), HttpStatus.OK, 8096)) {
                 assertDoesNotThrow(() ->
                     syncopeAuthenticationHandler.authenticate(CREDENTIAL, mock(Service.class)));
                 val result = syncopeAuthenticationHandler.authenticate(CREDENTIAL, mock(Service.class));
                 assertNotNull(result);
                 assertFalse(result.getPrincipal().getAttributes().get("syncopeUserMemberships").isEmpty());
                 assertEquals(1, result.getPrincipal().getAttributes().get("syncopeUserMemberships").size());
-                Map<String, String> membershipAttrs =
-                    (Map<String, String>) result.getPrincipal().getAttributes().get("syncopeUserMemberships").get(0);
+                val membershipAttrs = (Map<String, String>) result.getPrincipal().getAttributes().get("syncopeUserMemberships").getFirst();
                 assertEquals(3, membershipAttrs.size());
                 assertTrue(membershipAttrs.containsKey("groupName"));
                 assertTrue(membershipAttrs.containsKey("testSchema1"));

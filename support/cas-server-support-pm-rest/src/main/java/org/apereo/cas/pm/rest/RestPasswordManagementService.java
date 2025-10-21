@@ -138,7 +138,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         if (StringUtils.isNotBlank(rest.getEndpointUrlSecurityQuestions())) {
             val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlSecurityQuestions())
                 .queryParam("username", query.getUsername()).build().toUriString();
-            val entity = new HttpEntity<>(query.getSecurityQuestions());
+            val entity = new HttpEntity<>(new HttpHeaders(query.getSecurityQuestions()));
             restTemplate.exchange(url, HttpMethod.POST, entity, Boolean.class);
         }
     }

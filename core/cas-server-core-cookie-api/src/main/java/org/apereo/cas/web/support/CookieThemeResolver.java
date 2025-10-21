@@ -1,13 +1,13 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
+import org.apereo.cas.web.theme.ThemeResolver;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.util.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

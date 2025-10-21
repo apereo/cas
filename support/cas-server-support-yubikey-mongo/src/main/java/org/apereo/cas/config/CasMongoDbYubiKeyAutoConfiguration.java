@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
  * This is {@link CasMongoDbYubiKeyAutoConfiguration}.
@@ -38,7 +39,7 @@ public class CasMongoDbYubiKeyAutoConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public MongoOperations mongoYubiKeyTemplate(
+    public MongoTemplate mongoYubiKeyTemplate(
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
         final CasConfigurationProperties casProperties) {
@@ -46,7 +47,7 @@ public class CasMongoDbYubiKeyAutoConfiguration {
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
-        return mongoTemplate;
+        return mongoTemplate.asMongoTemplate();
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

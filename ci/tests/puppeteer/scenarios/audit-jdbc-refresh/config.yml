@@ -1,0 +1,4 @@
+cas:
+  audit:
+    jdbc:
+      url: jdbc:hsqldb:mem:cas-hsql-database

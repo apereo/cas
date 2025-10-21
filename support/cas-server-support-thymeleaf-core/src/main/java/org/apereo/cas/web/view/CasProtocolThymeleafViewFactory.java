@@ -1,10 +1,9 @@
 package org.apereo.cas.web.view;
 
 import org.apereo.cas.validation.CasProtocolViewFactory;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
+import org.springframework.boot.thymeleaf.autoconfigure.ThymeleafProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.servlet.View;
 import org.thymeleaf.spring6.SpringTemplateEngine;

@@ -83,13 +83,10 @@
     "--cas.authn.attribute-repository.groovy[0].id=COMMONATTRS",
     "--cas.authn.attribute-repository.groovy[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attributes.groovy",
     "--cas.authn.attribute-repository.groovy[0].order=2",
-    "--cas.authn.attribute-repository.groovy[0].case-insensitive=false",
 
     "--cas.authn.attribute-repository.groovy[1].id=NOTUSEDATTRS",
     "--cas.authn.attribute-repository.groovy[1].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/notusedattributes.groovy",
-    "--cas.authn.attribute-repository.groovy[1].order=1",
-    "--cas.authn.attribute-repository.groovy[1].case-insensitive=false"
-
+    "--cas.authn.attribute-repository.groovy[1].order=1"
   ],
   "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/x509-login-ldap-attributes/cert.pem",
   "trustStorePrivateKeyFile": "./ci/tests/puppeteer/scenarios/x509-login-ldap-attributes/key.pem",

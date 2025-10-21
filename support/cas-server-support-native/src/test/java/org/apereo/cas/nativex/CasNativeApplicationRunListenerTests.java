@@ -4,11 +4,10 @@ import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.SpringApplicationRunListener;
+import org.springframework.boot.bootstrap.ConfigurableBootstrapContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.mock.env.MockEnvironment;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

@@ -5,7 +5,10 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.Nulls;
+import com.fasterxml.jackson.annotation.OptBoolean;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
@@ -26,8 +29,12 @@ public class ProxyTicketImpl extends ServiceTicketImpl implements ProxyTicket {
     private static final long serialVersionUID = -4469960563289285371L;
 
     @JsonCreator
-    public ProxyTicketImpl(@JsonProperty("id") final String id, @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticket,
-                           @JsonProperty("service") final Service service, @JsonProperty("credentialProvided") final boolean credentialProvided,
+    public ProxyTicketImpl(@JsonProperty("id") final String id,
+                           @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticket,
+                           @JsonProperty("service") final Service service,
+                           @JsonProperty(value = "credentialProvided", isRequired = OptBoolean.FALSE)
+                           @JsonSetter(nulls = Nulls.SKIP)
+                           final boolean credentialProvided,
                            @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, ticket, service, credentialProvided, policy);
     }

@@ -69,7 +69,7 @@ public class SamlSPUtils {
             service.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider(sp.getNameIdAttribute()));
         }
 
-        FunctionUtils.doIfNotBlank(sp.getNameIdFormat(), __ -> service.setRequiredNameIdFormat(sp.getNameIdFormat()));
+        FunctionUtils.doIfNotBlank(sp.getNameIdFormat(), _ -> service.setRequiredNameIdFormat(sp.getNameIdFormat()));
 
         val attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributesToRelease);
         val policy = new ChainingAttributeReleasePolicy();
@@ -81,7 +81,7 @@ public class SamlSPUtils {
         service.setMetadataCriteriaRemoveRolelessEntityDescriptors(true);
 
 
-        FunctionUtils.doIfNotBlank(sp.getSignatureLocation(), __ -> service.setMetadataSignatureLocation(sp.getSignatureLocation()));
+        FunctionUtils.doIfNotBlank(sp.getSignatureLocation(), _ -> service.setMetadataSignatureLocation(sp.getSignatureLocation()));
 
         val entityIDList = determineEntityIdList(sp, resolver, service);
 

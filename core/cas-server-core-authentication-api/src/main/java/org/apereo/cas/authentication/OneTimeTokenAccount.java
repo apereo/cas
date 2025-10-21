@@ -1,12 +1,13 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.jpa.StringToNumberAttributeConverter;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -17,9 +18,11 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -49,7 +52,7 @@ import java.util.Objects;
 @Setter
 @EqualsAndHashCode
 @SuperBuilder
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @NoArgsConstructor
 public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeTokenAccount>, Cloneable {
     /**
@@ -83,14 +86,17 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
 
     @ElementCollection(targetClass = BigInteger.class)
     @CollectionTable(name = TABLE_NAME_SCRATCH_CODES, joinColumns = @JoinColumn(name = "id"))
-    @Column(nullable = false, columnDefinition = "numeric", precision = 255, scale = 0)
+    @Column(nullable = false, columnDefinition = "VARCHAR(1024)")
     @Builder.Default
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    @Convert(converter = StringToNumberAttributeConverter.class)
     private List<Number> scratchCodes = new ArrayList<>();
 
     @ElementCollection(targetClass = String.class)
     @CollectionTable(name = TABLE_NAME_OTP_PROPERTIES, joinColumns = @JoinColumn(name = "id"))
     @Column(nullable = false, columnDefinition = "VARCHAR(1024)")
     @Builder.Default
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<String> properties = new ArrayList<>();
 
     @Column(nullable = false)
@@ -145,7 +151,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
      */
     @JsonIgnore
     public String toJson() {
-        return FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
+        return MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this);
     }
 
     /**
@@ -160,4 +166,5 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
         }
         return this;
     }
+
 }

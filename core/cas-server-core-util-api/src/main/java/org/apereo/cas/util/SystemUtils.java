@@ -34,7 +34,7 @@ public class SystemUtils {
 
     private static Properties loadGitProperties() {
         var properties = new Properties();
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             val resource = new ClassPathResource("git.properties");
             if (ResourceUtils.doesResourceExist(resource)) {
                 val loaded = PropertiesLoaderUtils.loadProperties(resource);

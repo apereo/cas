@@ -2,13 +2,13 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.util.feature.CasRuntimeModule;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -23,8 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = "management.endpoint.casModules.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 class CasRuntimeModulesEndpointTests extends AbstractCasEndpointTests {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .build().toObjectMapper();
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder().build().toObjectMapper();
 
     @Test
     void verifyOperation() throws Throwable {

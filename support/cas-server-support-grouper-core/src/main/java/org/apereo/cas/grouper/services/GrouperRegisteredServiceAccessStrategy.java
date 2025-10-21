@@ -7,6 +7,8 @@ import org.apereo.cas.services.BaseRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyEvaluator;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import edu.internet2.middleware.grouperClient.util.GrouperClientConfig;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import lombok.EqualsAndHashCode;
@@ -54,8 +56,10 @@ public class GrouperRegisteredServiceAccessStrategy extends BaseRegisteredServic
      * Collection of required attributes
      * for this service to proceed.
      */
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, Set<String>> requiredAttributes = new HashMap<>();
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, String> configProperties = new TreeMap<>();
 
     @Override

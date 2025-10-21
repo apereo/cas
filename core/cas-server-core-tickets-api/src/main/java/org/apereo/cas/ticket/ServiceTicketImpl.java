@@ -8,7 +8,9 @@ import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -49,8 +51,10 @@ public class ServiceTicketImpl extends AbstractTicket
 
     private Service service;
 
+    @JsonSetter(nulls = Nulls.SKIP)
     private boolean fromNewLogin;
 
+    @JsonSetter(nulls = Nulls.SKIP)
     private Boolean grantedTicketAlready = Boolean.FALSE;
 
     @JsonCreator
@@ -58,7 +62,9 @@ public class ServiceTicketImpl extends AbstractTicket
         @JsonProperty("id") final @NonNull String id,
         @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticket,
         @JsonProperty("service") final @NonNull Service service,
-        @JsonProperty("credentialProvided") final boolean credentialProvided,
+        @JsonProperty("credentialProvided")
+        @JsonSetter(nulls = Nulls.SKIP)
+        final boolean credentialProvided,
         @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
         this.ticketGrantingTicket = ticket;

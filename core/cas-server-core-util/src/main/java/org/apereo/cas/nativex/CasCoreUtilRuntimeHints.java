@@ -7,6 +7,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
+import org.apereo.cas.util.serialization.MapContentDeserializer;
 import org.apereo.cas.util.spring.RestActuatorEndpointFilter;
 import org.apereo.cas.util.thread.Cleanable;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
@@ -161,7 +162,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
             TypeReference.of("java.time.Ser")
         ));
 
-        registerReflectionHintsForIntrospectedPublicElements(hints, List.of(
+        registerReflectionHintsForPublicElements(hints, List.of(
             TypeReference.of("java.util.LinkedHashMap$Entry"),
             TypeReference.of("java.util.TreeMap$Entry")
         ));
@@ -173,6 +174,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerReflectionHintsForConstructors(hints,
             List.of(
+                MapContentDeserializer.class,
                 TriStateBoolean.Deserializer.class,
                 PersistenceAnnotationBeanPostProcessor.class,
                 ConfigurationClassPostProcessor.class,
@@ -196,18 +198,18 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerCaffeineHints(hints);
         
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             val clazz = ClassUtils.getClass("nonapi.io.github.classgraph.classloaderhandler.ClassLoaderHandler", false);
             registerReflectionHints(hints, findSubclassesInPackage(clazz, "nonapi.io.github.classgraph.classloaderhandler"));
         });
     }
     
     private void registerCaffeineHints(final RuntimeHints hints) {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             var clazz = ClassUtils.getClass("com.github.benmanes.caffeine.cache.Node", false);
-            registerReflectionHintsForConstructors(hints, findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
+            registerReflectionHintsForDeclaredAndPublicElements(hints, findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
             clazz = ClassUtils.getClass("com.github.benmanes.caffeine.cache.LocalCache", false);
-            registerReflectionHintsForConstructors(hints, findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
+            registerReflectionHintsForDeclaredAndPublicElements(hints, findSubclassesInPackage(clazz, "com.github.benmanes.caffeine.cache"));
         });
     }
 

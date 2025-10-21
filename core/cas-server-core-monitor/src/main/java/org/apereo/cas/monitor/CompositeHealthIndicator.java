@@ -2,11 +2,10 @@ package org.apereo.cas.monitor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.boot.actuate.health.AbstractHealthIndicator;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.boot.actuate.health.Status;
-
+import org.springframework.boot.health.contributor.AbstractHealthIndicator;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
+import org.springframework.boot.health.contributor.Status;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,10 +24,10 @@ public class CompositeHealthIndicator extends AbstractHealthIndicator {
     protected void doHealthCheck(final Health.Builder builder) {
         val aggregatedStatus = new ArrayList<Status>();
         healthIndicators.forEach(indicator -> {
-            val health = indicator.getHealth(true);
+            val health = indicator.health(true);
             val name = (String) health.getDetails().getOrDefault("name", indicator.getClass().getSimpleName());
             val details = new LinkedHashMap<>(health.getDetails());
-            details.putIfAbsent("status", health.getStatus());
+            details.computeIfAbsent("status", _ -> health.getStatus());
             builder.withDetail(name, details);
             aggregatedStatus.add(health.getStatus());
         });

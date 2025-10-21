@@ -44,7 +44,7 @@ public class ServiceTicketProperties implements Serializable {
     private int maxLength = 20;
 
     /**
-     * Only track the most recent proxy granting ticket.
+     * Proxy granting ticket tracking policy for service tickets.
      */
-    private boolean onlyTrackMostRecentProxyGrantingTicket;
+    private TicketTrackingPolicyTypes proxyGrantingTicketTrackingPolicy = TicketTrackingPolicyTypes.ALL;
 }

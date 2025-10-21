@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.boot.autoconfigure.web.WebProperties;
-import org.springframework.boot.autoconfigure.web.servlet.error.DefaultErrorViewResolver;
+import org.springframework.boot.webmvc.autoconfigure.error.DefaultErrorViewResolver;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;

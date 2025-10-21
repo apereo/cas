@@ -62,7 +62,7 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
                                               final RegisteredService registeredService,
                                               final OidcRegisteredServiceJwtCipherExecutor cipherExecutor) {
         val cipher = new InternalJwtAccessTokenCipherExecutor(encryptionKey, signingKey, cipherExecutor);
-        Unchecked.consumer(__ -> {
+        Unchecked.consumer(_ -> {
             if (EncodingUtils.isJsonWebKey(encryptionKey)) {
                 val jsonWebKey = toJsonWebKey(encryptionKey, registeredService);
                 cipher.setEncryptionKey(jsonWebKey.getPublicKey());

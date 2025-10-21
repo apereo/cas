@@ -181,7 +181,10 @@ exports.click = async (page, button) =>
     }, button);
 
 exports.asciiart = (text) => {
-    const art = figlet.textSync(text);
+    const art = figlet.textSync(text, {
+        font: "Small",
+        horizontalLayout: "fitted"
+    });
     console.log(colors.blue(art));
     console.log(`🔷 Puppeteer: ${colors.blue(require("puppeteer/package.json").version)}`);
 };
@@ -590,13 +593,14 @@ exports.doRequest = async (url, method = "GET",
         }
         options.agent = new client.Agent(options);
 
-        if (requestBody === undefined) {
+        if (requestBody === undefined || requestBody === null) {
             this.logg(`Sending ${method} request to ${url} without a body`);
-            client.get(url, options, (res) => handler(res)).on("error", reject);
+            const request = client.get(url, options, (res) => handler(res)).on("error", reject);
+            request.end();
         } else {
             this.logg(`Sending ${method} request to ${url} with body ${requestBody}`);
             const request = client.request(url, options, (res) => handler(res)).on("error", reject);
-            request.write(requestBody);
+            request.end(requestBody);
         }
     });
 
@@ -1242,6 +1246,14 @@ exports.readLocalStorage = async (page) => {
 exports.parseYAML = async (source) => YAML.parse(source);
 
 exports.toYAML = async (source) => YAML.stringify(source);
+
+exports.updateYamlConfigurationSource = async(configDirectory, config) => {
+    const configFilePath = path.join(configDirectory, "config.yml");
+    const newConfig = await this.toYAML(config);
+    await this.log(`Updated configuration:\n${newConfig}`);
+    await fs.writeFileSync(configFilePath, newConfig);
+    await this.log(`Wrote changes to ${configFilePath}`);
+};
 
 exports.createZipFile = async (file, callback) => {
     const zip = fs.createWriteStream(file);

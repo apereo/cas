@@ -33,13 +33,13 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
 
     implementation project(":support:cas-server-support-mongo-core")
-
-    testImplementation libraries.springboottomcat
     
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-webconfig")
-
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-thymeleaf")
+    
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")

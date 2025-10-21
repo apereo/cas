@@ -2,17 +2,14 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
-
+import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,9 +52,8 @@ public class JsonUtils {
      * @param response the response
      */
     public void render(final Object model, final HttpServletResponse response) {
-        Unchecked.consumer(__ -> {
-            val jsonConverter = new MappingJackson2HttpMessageConverter();
-            jsonConverter.setPrettyPrint(true);
+        Unchecked.consumer(_ -> {
+            val jsonConverter = new JacksonJsonHttpMessageConverter();
             val jsonMimeType = MediaType.APPLICATION_JSON;
             jsonConverter.write(model, jsonMimeType, new ServletServerHttpResponse(response));
         }).accept(model);
@@ -106,7 +102,24 @@ public class JsonUtils {
      * @param json the json
      * @return true/false
      */
-    public boolean isValidJson(final String json) {
-        return FunctionUtils.doAndHandle(() -> !MAPPER.readTree(json).isEmpty(), t -> false).get();
+    public boolean isValidJsonObject(final String json) {
+        try {
+            val jsonNode = MAPPER.readTree(json);
+            return !jsonNode.isEmpty() && jsonNode.isObject();
+        } catch (final Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Parse JSON as object.
+     *
+     * @param <T>   the type parameter
+     * @param json  the json
+     * @param clazz the clazz
+     * @return the object
+     */
+    public <T> T parse(final String json, final Class<T> clazz) {
+        return FunctionUtils.doUnchecked(() -> MAPPER.readValue(json, clazz));
     }
 }

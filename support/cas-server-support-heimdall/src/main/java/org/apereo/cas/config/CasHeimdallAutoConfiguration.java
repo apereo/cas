@@ -84,7 +84,7 @@ public class CasHeimdallAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = AuthorizableResourceRepository.BEAN_NAME)
     public AuthorizableResourceRepository authorizableResourceRepository(
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         val location = casProperties.getHeimdall().getJson().getLocation();
         return BeanSupplier.of(AuthorizableResourceRepository.class)
             .when(() -> location != null)

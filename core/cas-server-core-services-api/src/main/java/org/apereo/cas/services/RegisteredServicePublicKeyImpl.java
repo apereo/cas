@@ -47,7 +47,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
     @ExpressionLanguageCapable
     private String location;
 
-    private String algorithm = "RSA";
+    private String algorithm;
 
     @Override
     public PublicKey createInstance() {
@@ -79,7 +79,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
     private PublicKeyFactoryBean initializePublicKeyFactoryBean() throws Exception {
         val resolved = SpringExpressionLanguageValueResolver.getInstance().resolve(this.location);
         val resource = ResourceUtils.getResourceFrom(resolved);
-        val factory = new PublicKeyFactoryBean(resource, this.algorithm);
+        val factory = new PublicKeyFactoryBean(resource, StringUtils.defaultIfBlank(this.algorithm, "RSA"));
         factory.setSingleton(false);
         return factory;
     }

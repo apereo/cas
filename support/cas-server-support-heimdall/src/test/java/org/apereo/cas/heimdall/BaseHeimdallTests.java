@@ -52,7 +52,6 @@ abstract class BaseHeimdallTests {
         CasThemesAutoConfiguration.class,
         CasOAuth20WebflowAutoConfiguration.class,
         CasOidcAutoConfiguration.class,
-
         CasHeimdallAutoConfiguration.class
     })
     public static class SharedTestConfiguration {

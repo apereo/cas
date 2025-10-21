@@ -104,10 +104,12 @@ if (!providers.systemProperty("skipSonarqube").present) {
         def token = providers.systemProperty("SONARCLOUD_TOKEN")
                 .getOrElse(System.getenv("SONARCLOUD_TOKEN"))
 
+        def projectKey = "${sonarOrganization}_${sonarProjectName}"
         properties {
             property "sonar.host.url", "$sonarHostUrl"
             property "sonar.organization", "$sonarOrganization"
             property "sonar.projectName", "$sonarProjectName"
+            property "sonar.projectKey", "$projectKey"
             property "sonar.sourceEncoding", "UTF-8"
             property "sonar.java.source", project.targetCompatibility
             property "sonar.token", token
@@ -323,6 +325,7 @@ subprojects {
         }
 
         it.options.fork = true
+        it.options.forkOptions.jvmArgs << '--sun-misc-unsafe-memory-access=allow'
         it.options.incremental = true
 
         def casCompilerArgs = ["-parameters", '-Xlint:-removal']
@@ -427,7 +430,9 @@ subprojects {
         testImplementation libraries.log4j
         testImplementation libraries.hibernatevalidator
         testImplementation libraries.jakartapersistence
-
+        testImplementation libraries.thymeleaf
+        testImplementation libraries.springboottomcat
+        
         runtimeOnly libraries.httpclient4
 
         jvmAgents(libs.mockito.core) {

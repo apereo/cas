@@ -191,10 +191,10 @@ public class ResourceUtils {
             LOGGER.warn("Unable to create folder [{}]", parentDirectory);
         }
         val destination = new File(parentDirectory, Objects.requireNonNull(resource.getFilename()));
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             if (destination.exists()) {
                 LOGGER.trace("Deleting resource directory [{}]", destination);
-                FileUtils.forceDelete(destination);
+                FileUtils.deleteQuietly(destination);
             }
             try (val out = new FileOutputStream(destination);
                  val input = resource.getInputStream()) {

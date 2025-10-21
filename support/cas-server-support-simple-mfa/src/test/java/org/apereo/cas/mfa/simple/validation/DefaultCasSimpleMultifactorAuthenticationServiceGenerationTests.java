@@ -49,14 +49,12 @@ class DefaultCasSimpleMultifactorAuthenticationServiceGenerationTests {
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
-    private CasSimpleMultifactorAuthenticationTicketFactory ticketFactory;
-
     private CasSimpleMultifactorAuthenticationService customService;
 
     @BeforeEach
     public void setUp() {
         ticketRegistry.deleteAll();
-        ticketFactory = new MockCasSimpleMultifactorAuthenticationTicketFactory(1);
+        val ticketFactory = new MockCasSimpleMultifactorAuthenticationTicketFactory(1);
         customService = new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry, ticketFactory, null);
     }
 
@@ -69,16 +67,6 @@ class DefaultCasSimpleMultifactorAuthenticationServiceGenerationTests {
     }
 
     @Test
-    void verifyGenerateWithAFewTickets() throws Throwable {
-        val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
-        val service = CoreAuthenticationTestUtils.getService("mfa-simple");
-        addTicket("CASMFA-1", service);
-        addTicket("CASMFA-2", service);
-        val token = customService.generate(principal, service);
-        assertEquals("CASMFA-3", token.getId());
-    }
-
-    @Test
     void verifyGenerateWithTooManyTickets() throws Throwable {
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser");
         val service = CoreAuthenticationTestUtils.getService("mfa-simple");
@@ -87,7 +75,8 @@ class DefaultCasSimpleMultifactorAuthenticationServiceGenerationTests {
         addTicket("CASMFA-3", service);
         addTicket("CASMFA-4", service);
         addTicket("CASMFA-5", service);
-        assertThrows(IllegalArgumentException.class, () -> customService.generate(principal, service));
+        val token = customService.generate(principal, service);
+        assertEquals("CASMFA-6", token.getId());
     }
 
     private void addTicket(final String ticketId, final Service service) throws Exception {
@@ -101,7 +90,7 @@ class DefaultCasSimpleMultifactorAuthenticationServiceGenerationTests {
         private int sequence;
 
         @Override
-        public CasSimpleMultifactorAuthenticationTicket create(final Service service, final Map<String, Serializable> properties) throws Throwable {
+        public CasSimpleMultifactorAuthenticationTicket create(final Service service, final Map<String, Serializable> properties) {
             return new CasSimpleMultifactorAuthenticationTicketImpl(CasSimpleMultifactorAuthenticationTicket.PREFIX + "-" + sequence++,
                 NeverExpiresExpirationPolicy.INSTANCE, service, properties);
         }

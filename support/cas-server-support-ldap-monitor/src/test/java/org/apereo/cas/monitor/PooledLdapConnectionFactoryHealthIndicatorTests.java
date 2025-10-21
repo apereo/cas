@@ -12,9 +12,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ListFactoryBean;
-import org.springframework.boot.actuate.health.CompositeHealthContributor;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.boot.actuate.health.Status;
+import org.springframework.boot.health.contributor.CompositeHealthContributor;
+import org.springframework.boot.health.contributor.HealthIndicator;
+import org.springframework.boot.health.contributor.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,7 +48,7 @@ class PooledLdapConnectionFactoryHealthIndicatorTests {
     @Test
     void verifyObserve() throws Throwable {
         val results = monitor.stream()
-            .map(it -> (HealthIndicator) it.getContributor())
+            .map(it -> (HealthIndicator) it.contributor())
             .map(it -> it.health().getStatus()).toList();
         assertFalse(results.isEmpty());
         assertEquals(Status.UP, results.getFirst());

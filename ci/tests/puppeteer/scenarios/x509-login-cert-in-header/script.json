@@ -27,8 +27,7 @@
 
     "--cas.authn.attribute-repository.groovy[0].id=COMMONATTRS",
     "--cas.authn.attribute-repository.groovy[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attributes.groovy",
-    "--cas.authn.attribute-repository.groovy[0].order=2",
-    "--cas.authn.attribute-repository.groovy[0].case-insensitive=false"
+    "--cas.authn.attribute-repository.groovy[0].order=2"
   ],
   "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/x509-login-cert-in-header/cert.pem",
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"

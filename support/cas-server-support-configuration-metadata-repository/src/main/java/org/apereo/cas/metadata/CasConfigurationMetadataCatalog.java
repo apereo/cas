@@ -9,9 +9,6 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
@@ -20,6 +17,10 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepository;
 import org.springframework.util.ReflectionUtils;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 import java.io.File;
 import java.util.Comparator;
 import java.util.Map;
@@ -51,12 +52,17 @@ public class CasConfigurationMetadataCatalog {
      * @param data        the data
      */
     public static void export(final File destination, final Object data) {
-        FunctionUtils.doUnchecked(__ -> {
-            val mapper = new ObjectMapper(new YAMLFactory())
-                .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
+        FunctionUtils.doUnchecked(_ -> {
+            val mapper = YAMLMapper.builder()
+                .changeDefaultPropertyInclusion(handler -> {
+                    handler.withValueInclusion(JsonInclude.Include.NON_DEFAULT);
+                    handler.withContentInclusion(JsonInclude.Include.NON_DEFAULT);
+                    return handler;
+                })
+                .configure(EnumFeature.WRITE_ENUMS_USING_TO_STRING, true)
+                .configure(SerializationFeature.INDENT_OUTPUT, true)
                 .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-                .configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true)
-                .configure(SerializationFeature.INDENT_OUTPUT, true);
+                .build();
             mapper.writeValue(destination, data);
         });
     }

@@ -47,7 +47,7 @@ public class DefaultTransientSessionTicketFactory implements TransientSessionTic
                                                                            final Service service,
                                                                            final Map<String, Serializable> properties) {
         val ticket = new TransientSessionTicketImpl(id, expirationPolicy, service, properties);
-        FunctionUtils.doIfNotNull(service, __ -> ticket.setTenantId(service.getTenant()));
+        FunctionUtils.doIfNotNull(service, _ -> ticket.setTenantId(service.getTenant()));
         return ticket;
     }
 

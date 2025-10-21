@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.claims;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
+import org.apereo.cas.util.JsonUtils;
 
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
@@ -57,6 +58,15 @@ class OidcSimpleIdTokenClaimCollectorTests extends AbstractOidcTests {
         val claims = new JwtClaims();
         oidcIdTokenClaimCollector.collect(claims, "mail", List.of("cas1@example.org", "cas2@example.org"));
         assertEquals(2, claims.getStringListClaimValue("mail").size());
+    }
+
+    @Test
+    void verifyJsonValue() throws Throwable {
+        val claims = new JwtClaims();
+        val map = Map.of("key1", "value1", "key2", List.of("v2", "v3"));
+        val json = JsonUtils.render(map);
+        oidcIdTokenClaimCollector.collect(claims, "container", List.of(json));
+        assertEquals(map, claims.getClaimValue("container", Map.class));
     }
 
     @Test

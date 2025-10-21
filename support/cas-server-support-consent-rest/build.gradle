@@ -37,7 +37,8 @@ dependencies {
     testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-thymeleaf")
-    
+    testImplementation project(":support:cas-server-support-themes")
+
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
@@ -46,6 +47,6 @@ dependencies {
     testImplementation project(path: ":support:cas-server-support-consent-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
     
-    testImplementation libraries.springboottomcat
+
     testImplementation libraries.springcloudbootstrap
 }

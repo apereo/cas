@@ -35,14 +35,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class RestfulAuthenticationPolicyTests {
     private static void assertPolicyFails(final int port, final HttpStatus status,
                                           final Class<? extends Throwable> exceptionClass) {
-        val applicationContext = new StaticApplicationContext();
-        applicationContext.refresh();
-
-        try (val webServer = new MockWebServer(port,
+        try (val applicationContext = new StaticApplicationContext();
+             val webServer = new MockWebServer(port,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), status)) {
+            applicationContext.refresh();
             webServer.start();
             val props = new RestAuthenticationPolicyProperties();
             props.setUrl("http://localhost:" + port);
+            props.setMaximumRetryAttempts(0);
             val policy = new RestfulAuthenticationPolicy(props);
             assertThrowsWithRootCause(GeneralSecurityException.class, exceptionClass,
                 () -> policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), applicationContext));
@@ -59,6 +59,7 @@ class RestfulAuthenticationPolicyTests {
             webServer.start();
             val props = new RestAuthenticationPolicyProperties();
             props.setUrl("http://localhost:%s".formatted(webServer.getPort()));
+            props.setMaximumRetryAttempts(0);
             val policy = new RestfulAuthenticationPolicy(props);
             assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), applicationContext).isSuccess());
         }

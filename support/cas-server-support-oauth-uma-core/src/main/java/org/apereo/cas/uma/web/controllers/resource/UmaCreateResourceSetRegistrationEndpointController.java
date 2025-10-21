@@ -57,7 +57,7 @@ public class UmaCreateResourceSetRegistrationEndpointController extends BaseUmaE
             val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), UmaResourceRegistrationRequest.class);
             if (umaRequest == null || StringUtils.isBlank(umaRequest.getName())) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "UMA request cannot be found or parsed");
-                return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(model, HttpStatus.BAD_REQUEST);
             }
 
             val resourceSet = umaRequest.asResourceSet(profileResult);

@@ -1,6 +1,7 @@
 package com.yubico.webauthn.attestation;
 
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.webauthn.WebAuthnUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -10,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.MoreObjects;
 import com.yubico.internal.util.CertificateParser;
 import com.yubico.internal.util.ExceptionUtil;
-import com.yubico.internal.util.JacksonCodecs;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode(of = "data", callSuper = false)
 public class MetadataObject {
-    private static final ObjectMapper OBJECT_MAPPER = JacksonCodecs.json();
+    private static final ObjectMapper OBJECT_MAPPER = WebAuthnUtils.getObjectMapper();
 
     private static final TypeReference<Map<String, String>> MAP_STRING_STRING_TYPE =
         new TypeReference<>() {
@@ -60,7 +60,7 @@ public class MetadataObject {
 
     private final List<JsonNode> devices;
 
-    @JsonCreator
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public MetadataObject(final JsonNode data) {
         this.data = data;
         try {
@@ -72,7 +72,6 @@ public class MetadataObject {
         } catch (final IOException e) {
             throw new IllegalArgumentException("Invalid JSON data", e);
         }
-
         identifier = data.get("identifier").asText();
         version = data.get("version").asLong();
     }
@@ -95,8 +94,8 @@ public class MetadataObject {
 
     public static MetadataObject readMetadata(final InputStream is) {
         try {
-            return JacksonCodecs.json().readValue(is, MetadataObject.class);
-        } catch (final IOException e) {
+            return OBJECT_MAPPER.readValue(is, MetadataObject.class);
+        } catch (final Exception e) {
             throw ExceptionUtil.wrapAndLog(LOGGER, "Failed to read default metadata", e);
         }
     }

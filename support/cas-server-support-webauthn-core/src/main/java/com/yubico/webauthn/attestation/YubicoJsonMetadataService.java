@@ -12,7 +12,6 @@ import com.yubico.webauthn.data.ByteArray;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
@@ -22,7 +21,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link YubicoJsonMetadataService}.
@@ -73,13 +71,6 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
         this.matchers = CollectionUtil.immutableMap(matchers);
     }
 
-    public YubicoJsonMetadataService() {
-        this(
-            Stream.of(MetadataObject.readDefault(), MetadataObject.readPreview())
-                .collect(Collectors.toList()),
-            DEFAULT_DEVICE_MATCHERS);
-    }
-
     public YubicoJsonMetadataService(
         @NonNull
         final Collection<MetadataObject> metadataObjects) {
@@ -88,7 +79,8 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
 
     @Override
     public Optional<Attestation> findMetadata(final X509Certificate attestationCertificate) {
-        return metadataObjects.stream()
+        return metadataObjects
+            .stream()
             .map(metadata -> {
                 Map<String, String> vendorProperties;
                 Map<String, String> deviceProperties = null;
@@ -99,7 +91,7 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
                 for (val device : metadata.getDevices()) {
                     if (deviceMatches(device.get(SELECTORS), attestationCertificate)) {
                         val devicePropertiesBuilder = ImmutableMap.<String, String>builder();
-                        for (val deviceEntry : Lists.newArrayList(device.fields())) {
+                        for (val deviceEntry : Lists.newArrayList(device.properties())) {
                             val value = deviceEntry.getValue();
                             if (value.isTextual()) {
                                 devicePropertiesBuilder.put(deviceEntry.getKey(), value.asText());

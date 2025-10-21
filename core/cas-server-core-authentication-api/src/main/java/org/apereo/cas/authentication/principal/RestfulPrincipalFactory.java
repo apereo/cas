@@ -5,7 +5,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import tools.jackson.databind.ObjectMapper;
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -58,6 +58,7 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
                 .url(properties.getUrl())
                 .entity(entity)
                 .headers(headers)
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && response.getCode() == HttpStatus.OK.value()) {

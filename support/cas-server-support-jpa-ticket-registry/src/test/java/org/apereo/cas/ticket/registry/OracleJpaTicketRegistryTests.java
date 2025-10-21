@@ -16,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.jpa.user=system",
     "cas.ticket.registry.jpa.password=Oradoc_db1",
     "cas.ticket.registry.jpa.driver-class=oracle.jdbc.driver.OracleDriver",
-    "cas.ticket.registry.jpa.url=jdbc:oracle:thin:@localhost:1521:ORCLCDB",
+    "cas.ticket.registry.jpa.url=jdbc:oracle:thin:@localhost:1521:FREE",
     "cas.ticket.registry.jpa.dialect=org.hibernate.dialect.OracleDialect"
 })
 @EnabledIfListeningOnPort(port = 1521)

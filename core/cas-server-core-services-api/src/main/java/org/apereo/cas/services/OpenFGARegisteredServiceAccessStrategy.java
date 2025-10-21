@@ -2,14 +2,12 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import tools.jackson.databind.ObjectMapper;
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -124,7 +123,7 @@ public class OpenFGARegisteredServiceAccessStrategy extends BaseRegisteredServic
 
         @JsonIgnore
         String toJson() {
-            return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(Map.of("tuple_key", this)));
+            return MAPPER.writeValueAsString(Map.of("tuple_key", this));
         }
     }
 }

@@ -2,10 +2,6 @@ package org.apereo.cas.configuration;
 
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -19,6 +15,10 @@ import org.springframework.boot.context.properties.source.InvalidConfigurationPr
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.json.JsonMapper;
 import java.io.IOException;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,10 +38,11 @@ class AdditionalMetadataVerificationTests {
     private ResourceLoader resourceLoader;
 
     private static Set<ConfigurationMetadataProperty> getProperties(final Resource jsonFile) throws IOException {
-        val mapper = new ObjectMapper().findAndRegisterModules();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
-        val jsonNodeRoot = mapper.readTree(jsonFile.getURL());
+        val builder = JsonMapper.builderWithJackson2Defaults().findAndAddModules();
+        builder.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        builder.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
+        val mapper = builder.build();
+        val jsonNodeRoot = mapper.readTree(jsonFile.getInputStream());
         val propertiesNode = jsonNodeRoot.get("properties");
         val values = new TypeReference<Set<ConfigurationMetadataProperty>>() {
         };

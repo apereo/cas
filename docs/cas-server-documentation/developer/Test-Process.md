@@ -61,7 +61,7 @@ at reproducing scenarios related to an issue or possible defect, and can be very
 
 To test the functionality provided by a given CAS module, execute the following steps:
 
-- For the Apache Tomcat, undertow or Jetty web applications, add the module reference to the `webapp-dependencies.gradle` build script of web application you intend to run:
+- For the Apache Tomcat, Jetty, etc, add the module reference to the `webapp-dependencies.gradle` build script of web application you intend to run:
 
 ```gradle
 implementation project(":support:cas-server-support-modulename")
@@ -248,6 +248,9 @@ A basic modest outline of the test configuration may be:
     "NAME=VALUE"
   ],
   "requirements": {
+    "aot": {
+      "enabled": false
+    }
     "graalvm": {
       "build": false
     },

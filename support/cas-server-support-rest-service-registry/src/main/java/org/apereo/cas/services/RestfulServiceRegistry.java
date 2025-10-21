@@ -68,6 +68,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .method(HttpMethod.POST)
                 .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                 .headers(getRequestHeaders(properties))
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .entity(entity)
                 .build();
             response = HttpUtils.execute(exec);
@@ -96,6 +97,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .method(HttpMethod.DELETE)
                 .url(completeUrl)
                 .headers(getRequestHeaders(properties))
@@ -120,6 +122,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .method(HttpMethod.DELETE)
                 .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                 .headers(getRequestHeaders(properties))
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
         } finally {
@@ -138,6 +141,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .method(HttpMethod.GET)
                 .url(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUrl()))
                 .headers(getRequestHeaders(properties))
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null && response.getCode() == HttpStatus.OK.value()) {
@@ -172,6 +176,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .method(HttpMethod.GET)
                 .url(completeUrl)
                 .headers(getRequestHeaders(properties))
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
             if (response.getCode() == HttpStatus.OK.value()) {

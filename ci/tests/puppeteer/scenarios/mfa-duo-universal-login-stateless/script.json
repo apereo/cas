@@ -1,6 +1,6 @@
 {
   "dependencies": "duo,stateless-ticket-registry,reports",
-  "server": "undertow",
+
   "conditions": {
     "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST"
   },

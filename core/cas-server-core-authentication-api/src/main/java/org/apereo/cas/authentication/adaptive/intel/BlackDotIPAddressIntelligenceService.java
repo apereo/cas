@@ -7,7 +7,6 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -18,6 +17,7 @@ import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
+import tools.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
@@ -68,8 +68,8 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .url(url)
-                .maximumRetryAttempts(1)
-                .build();
+                .build()
+                .withoutRetry();
             response = HttpUtils.execute(exec);
             if (response == null || response.getCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
                 LOGGER.error("Exceeded the number of allowed queries");

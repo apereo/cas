@@ -1,9 +1,8 @@
 package org.apereo.cas.util.jpa;
 
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import java.util.Map;
@@ -21,12 +20,12 @@ public class MapToJsonAttributeConverter implements AttributeConverter<Map<Strin
 
     @Override
     public String convertToDatabaseColumn(final Map<String, ?> map) {
-        return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(map));
+        return MAPPER.writeValueAsString(map);
     }
 
     @Override
     public Map<String, Object> convertToEntityAttribute(final String value) {
-        return FunctionUtils.doUnchecked(() -> MAPPER.readValue(value, new TypeReference<>() {
-        }));
+        return MAPPER.readValue(value, new TypeReference<>() {
+        });
     }
 }

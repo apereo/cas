@@ -21,8 +21,6 @@ Hazelcast supports two different operation modes of WAN Replication:
 - Active-Passive: This mode is mostly used for failover scenarios where you want to replicate an active cluster to one or more passive clusters, for the purpose of maintaining a backup.
 - Active-Active: Every cluster is equal, each cluster replicates to all other clusters. This is normally used to connect different clients to different clusters for the sake of the shortest path between client and server.
 
-See [this page](https://hazelcast.com/products/wan-replication/) for more information.
-
 Defining WAN replication endpoints in CAS is done using static endpoints and discovery.
 
 {% include_cached casproperties.html properties="cas.ticket.registry.hazelcast.cluster.wan-replication" %}

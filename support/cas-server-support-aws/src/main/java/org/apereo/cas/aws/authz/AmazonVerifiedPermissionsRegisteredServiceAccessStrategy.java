@@ -8,6 +8,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -68,6 +70,7 @@ public class AmazonVerifiedPermissionsRegisteredServiceAccessStrategy extends Ba
     @ExpressionLanguageCapable
     private String actionId;
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, Object> context = new TreeMap<>();
 
     @Override

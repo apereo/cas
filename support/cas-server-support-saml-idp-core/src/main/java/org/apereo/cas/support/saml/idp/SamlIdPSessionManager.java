@@ -127,7 +127,7 @@ public class SamlIdPSessionManager {
         val argumentExtractor = applicationContext.getBean(ArgumentExtractor.BEAN_NAME, ArgumentExtractor.class);
         val service = argumentExtractor.extractService(((JEEContext) context).getNativeRequest());
         return Optional.ofNullable(service)
-            .map(Unchecked.function(__ -> {
+            .map(Unchecked.function(_ -> {
                 val serviceSelectionPlan = applicationContext.getBean(AuthenticationServiceSelectionPlan.BEAN_NAME, AuthenticationServiceSelectionPlan.class);
                 val resolvedService = serviceSelectionPlan.resolveService(service);
                 val authnRequestId = resolvedService.getAttributes().get(SamlIdPConstants.AUTHN_REQUEST_ID);

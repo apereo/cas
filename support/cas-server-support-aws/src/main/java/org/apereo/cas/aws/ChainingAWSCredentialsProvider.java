@@ -2,7 +2,6 @@ package org.apereo.cas.aws;
 
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +16,6 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.SystemPropertyCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.WebIdentityTokenFileCredentialsProvider;
 import software.amazon.awssdk.profiles.ProfileFile;
-
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +72,7 @@ public record ChainingAWSCredentialsProvider(List<AwsCredentialsProvider> chain)
         chain.add(InstanceProfileCredentialsProvider.create());
 
         if (StringUtils.isNotBlank(profilePath) && StringUtils.isNotBlank(profileName)) {
-            addProviderToChain(__ -> {
+            addProviderToChain(_ -> {
                 chain.add(ProfileCredentialsProvider.builder()
                     .profileName(profileName)
                     .profileFile(ProfileFile.builder().content(Path.of(profilePath)).build())
@@ -82,18 +80,18 @@ public record ChainingAWSCredentialsProvider(List<AwsCredentialsProvider> chain)
                 return null;
             });
         }
-        addProviderToChain(__ -> {
+        addProviderToChain(_ -> {
             chain.add(SystemPropertyCredentialsProvider.create());
             return null;
         });
 
-        addProviderToChain(__ -> {
+        addProviderToChain(_ -> {
             chain.add(EnvironmentVariableCredentialsProvider.create());
             return null;
         });
 
         if (StringUtils.isNotBlank(credentialAccessKey) && StringUtils.isNotBlank(credentialSecretKey)) {
-            addProviderToChain(__ -> {
+            addProviderToChain(_ -> {
                 val resolver = SpringExpressionLanguageValueResolver.getInstance();
                 val credentials = AwsBasicCredentials.create(resolver.resolve(credentialAccessKey), resolver.resolve(credentialSecretKey));
                 chain.add(StaticCredentialsProvider.create(credentials));
@@ -101,12 +99,12 @@ public record ChainingAWSCredentialsProvider(List<AwsCredentialsProvider> chain)
             });
         }
 
-        addProviderToChain(__ -> {
+        addProviderToChain(_ -> {
             chain.add(ContainerCredentialsProvider.builder().build());
             return null;
         });
 
-        addProviderToChain(__ -> {
+        addProviderToChain(_ -> {
             chain.add(InstanceProfileCredentialsProvider.builder().build());
             return null;
         });

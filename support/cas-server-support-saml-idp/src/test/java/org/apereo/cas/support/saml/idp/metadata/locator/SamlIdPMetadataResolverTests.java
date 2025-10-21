@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.idp.metadata.locator;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.idp.metadata.SamlIdPMetadataResolver;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
-
 import com.google.common.collect.Iterables;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -15,11 +14,8 @@ import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -34,7 +30,6 @@ import static org.mockito.Mockito.*;
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
     "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata99"
 })
-@EnableRetry
 class SamlIdPMetadataResolverTests extends BaseSamlIdPConfigurationTests {
 
     @RepeatedTest(2)

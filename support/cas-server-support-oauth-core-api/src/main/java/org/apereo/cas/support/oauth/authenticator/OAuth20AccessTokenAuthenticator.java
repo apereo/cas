@@ -5,6 +5,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Jwt
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator {
         val token = extractAccessTokenFrom(tokenCredentials);
         LOGGER.trace("Received access token [{}] for authentication", token);
 
-        val accessToken = ticketRegistry.getTicket(token, OAuth20AccessToken.class);
+        val accessToken = FunctionUtils.doAndHandle(() -> ticketRegistry.getTicket(token, OAuth20AccessToken.class));
         if (accessToken == null || accessToken.isExpired()) {
             LOGGER.error("Provided access token [{}] is either not found in the ticket registry or has expired", token);
             return Optional.empty();

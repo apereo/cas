@@ -4,7 +4,7 @@ import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
+import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 
 /**
  * This is {@link CasTestExtension}. This extension controls global settings

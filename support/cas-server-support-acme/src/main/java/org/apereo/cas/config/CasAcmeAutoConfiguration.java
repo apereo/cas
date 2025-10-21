@@ -88,7 +88,7 @@ public class CasAcmeAutoConfiguration {
     public CasApplicationReadyListener acmeApplicationReady(
         @Qualifier(AcmeCertificateManager.BEAN_NAME) final AcmeCertificateManager acmeCertificateManager,
         final CasConfigurationProperties casProperties) {
-        return event -> FunctionUtils.doUnchecked(__ -> {
+        return event -> FunctionUtils.doUnchecked(_ -> {
             val domains = casProperties.getAcme().getDomains();
             LOGGER.info("Fetching certificates for domains [{}]", domains);
             acmeCertificateManager.fetchCertificate(domains);

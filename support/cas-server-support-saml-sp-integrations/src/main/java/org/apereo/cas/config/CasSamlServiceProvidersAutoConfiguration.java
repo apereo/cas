@@ -37,14 +37,14 @@ public class CasSamlServiceProvidersAutoConfiguration {
     private static void processSamlServiceProvider(final AbstractSamlSPProperties provider,
                                                    final ServicesManager servicesManager,
                                                    final SamlRegisteredServiceCachingMetadataResolver resolver) throws Exception {
-        processSamlServiceProvider(provider, servicesManager, resolver, __ -> null, __ -> null);
+        processSamlServiceProvider(provider, servicesManager, resolver, _ -> null, _ -> null);
     }
 
     private static void processSamlServiceProvider(final AbstractSamlSPProperties provider,
                                                    final ServicesManager servicesManager,
                                                    final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                    final Function<SamlRegisteredService, Void> afterSave) throws Exception {
-        processSamlServiceProvider(provider, servicesManager, resolver, __ -> null, afterSave);
+        processSamlServiceProvider(provider, servicesManager, resolver, _ -> null, afterSave);
     }
 
     private static void processSamlServiceProvider(

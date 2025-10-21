@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -45,7 +46,7 @@ public class CasGoogleAuthenticatorMongoDbAutoConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public MongoOperations mongoDbGoogleAuthenticatorTemplate(
+    public MongoTemplate mongoDbGoogleAuthenticatorTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
@@ -53,7 +54,7 @@ public class CasGoogleAuthenticatorMongoDbAutoConfiguration {
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getTokenCollection(), mongo.isDropCollection());
-        return mongoTemplate;
+        return mongoTemplate.asMongoTemplate();
     }
 
     @Bean

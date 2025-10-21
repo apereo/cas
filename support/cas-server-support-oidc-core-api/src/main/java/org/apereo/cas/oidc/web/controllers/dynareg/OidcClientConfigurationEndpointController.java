@@ -68,7 +68,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.CLIENT_CONFIGURATION_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
-            return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(body);
         }
 
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
@@ -77,7 +77,8 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
             val regResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(oidcRegisteredService, prefix);
             return new ResponseEntity<>(regResponse, HttpStatus.OK);
         }
-        return ResponseEntity.badRequest().build();
+        val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Unknown client");
+        return ResponseEntity.badRequest().body(body);
     }
 
     /**

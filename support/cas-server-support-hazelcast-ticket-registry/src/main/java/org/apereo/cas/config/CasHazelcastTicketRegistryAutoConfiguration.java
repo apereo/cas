@@ -118,7 +118,7 @@ public class CasHazelcastTicketRegistryAutoConfiguration {
             ticketDefinitions.forEach(defn -> {
                 val query = buildCreateMappingQuery(defn);
                 LOGGER.trace("Creating mapping for [{}] via [{}]", defn.getPrefix(), query);
-                try (val __ = hazelcastInstance.getSql().execute(query)) {
+                try (val _ = hazelcastInstance.getSql().execute(query)) {
                     LOGGER.info("Created Hazelcast SQL mapping for [{}]", defn.getPrefix());
                 }
             });

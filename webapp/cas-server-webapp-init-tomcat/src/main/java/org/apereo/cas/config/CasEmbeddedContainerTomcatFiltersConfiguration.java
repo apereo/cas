@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.val;
 import org.apache.catalina.Globals;
 import org.apache.catalina.filters.CsrfPreventionFilter;
-import org.apache.catalina.filters.RemoteAddrFilter;
 import org.apache.catalina.filters.RequestFilter;
 import org.apache.catalina.filters.SessionInitializerFilter;
 import org.apache.juli.logging.Log;
@@ -74,7 +73,7 @@ class CasEmbeddedContainerTomcatFiltersConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "tomcatRemoteAddressFilter")
-    public FilterRegistrationBean<RemoteAddrFilter> tomcatRemoteAddressFilter(final CasConfigurationProperties casProperties) {
+    public FilterRegistrationBean<Filter> tomcatRemoteAddressFilter(final CasConfigurationProperties casProperties) {
         val bean = new FilterRegistrationBean();
         val addr = casProperties.getServer().getTomcat().getRemoteAddr();
         val filter = new ClientInfoRemoteAddrFilter();
@@ -92,7 +91,7 @@ class CasEmbeddedContainerTomcatFiltersConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "tomcatAsyncRequestsFilter")
-    public FilterRegistrationBean<RemoteAddrFilter> tomcatAsyncRequestsFilter(final CasConfigurationProperties casProperties) {
+    public FilterRegistrationBean<Filter> tomcatAsyncRequestsFilter(final CasConfigurationProperties casProperties) {
         val bean = new FilterRegistrationBean();
         val filter = new Filter() {
             @Override

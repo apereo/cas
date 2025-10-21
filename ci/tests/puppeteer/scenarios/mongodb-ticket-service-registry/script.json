@@ -3,8 +3,9 @@
   "conditions": {
     "docker": "true"
   },
-
   "properties": [
+    "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml",
+    
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
@@ -13,7 +14,7 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
 
     "--management.health.mongoHealthIndicator.enabled=true",
-    "--management.endpoints.web.exposure.include=health,ticketRegistry,ssoSessions",
+    "--management.endpoints.web.exposure.include=*",
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.access.default=UNRESTRICTED",
 
@@ -50,12 +51,12 @@
     "--spring.session.store-type=MONGODB",
     "--spring.session.mongodb.collection-name=MongoDbSessionRepository",
 
-    "--spring.data.mongodb.host=localhost",
-    "--spring.data.mongodb.port=27017",
-    "--spring.data.mongodb.database=sessions",
-    "--spring.data.mongodb.username=root",
-    "--spring.data.mongodb.password=secret",
-    "--spring.data.mongodb.authentication-database=admin"
+    "--spring.mongodb.host=localhost",
+    "--spring.mongodb.port=27017",
+    "--spring.mongodb.database=sessions",
+    "--spring.mongodb.username=root",
+    "--spring.mongodb.password=secret",
+    "--spring.mongodb.authentication-database=admin"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

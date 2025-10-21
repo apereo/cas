@@ -1,13 +1,11 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
-import org.springframework.boot.actuate.health.Health;
-
+import org.springframework.boot.health.contributor.Health;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;

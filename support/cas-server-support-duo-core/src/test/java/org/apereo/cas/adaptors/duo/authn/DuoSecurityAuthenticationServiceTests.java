@@ -15,7 +15,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.duosecurity.Client;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
@@ -27,6 +26,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import tools.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -57,7 +57,7 @@ class DuoSecurityAuthenticationServiceTests {
     private HttpClient httpClient;
 
     @Test
-    void verifyUserAccountStatus500Error() throws Exception {
+    void verifyUserAccountStatus500Error() {
         val payload = Map.of(
             DuoSecurityAuthenticationService.RESULT_KEY_CODE, DuoSecurityAuthenticationService.RESULT_CODE_ERROR_THRESHOLD + 1,
             DuoSecurityAuthenticationService.RESULT_KEY_STAT, "FAIL");
@@ -72,7 +72,7 @@ class DuoSecurityAuthenticationServiceTests {
     }
 
     @Test
-    void verifyUserAccountStatusUnknown() throws Exception {
+    void verifyUserAccountStatusUnknown() {
         val payload = Map.of(
             DuoSecurityAuthenticationService.RESULT_KEY_CODE, 1984,
             DuoSecurityAuthenticationService.RESULT_KEY_STAT, "FAIL");
@@ -87,7 +87,7 @@ class DuoSecurityAuthenticationServiceTests {
     }
 
     @Test
-    void verifyUserAccountStatusWithoutStat() throws Exception {
+    void verifyUserAccountStatusWithoutStat() {
         val payload = Map.of(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE,
             Map.of(
                 DuoSecurityAuthenticationService.RESULT_KEY_RESULT, "allow",
@@ -103,7 +103,7 @@ class DuoSecurityAuthenticationServiceTests {
     }
 
     @Test
-    void verifyUserAccountStatus() throws Exception {
+    void verifyUserAccountStatus() {
         val payload = Map.of(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE,
             Map.of(
                 DuoSecurityAuthenticationService.RESULT_KEY_RESULT, "allow",
@@ -126,7 +126,7 @@ class DuoSecurityAuthenticationServiceTests {
     }
 
     @Test
-    void verifyUserAccountStatusEnrolled() throws Exception {
+    void verifyUserAccountStatusEnrolled() {
         val payload = Map.of(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE,
             Map.of(
                 DuoSecurityAuthenticationService.RESULT_KEY_RESULT, "enroll",

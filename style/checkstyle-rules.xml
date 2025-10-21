@@ -33,7 +33,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="LambdaParameterName">
-            <property name="format" value="__|^[a-z]([a-zA-Z1-9]+)*$"/>
+            <property name="format" value="_|^[a-z]([a-zA-Z1-9]+)*$"/>
         </module>
         <module name="HiddenField">
             <property name="tokens" value="VARIABLE_DEF"/>

@@ -2,14 +2,11 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
+import tools.jackson.databind.ObjectMapper;
 import java.nio.file.Files;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,11 +29,15 @@ class RegisteredServicePublicKeyImplTests {
     }
 
     @Test
-    void verifyInstance() {
+    void verifyInstance() throws Throwable {
         val key1 = new RegisteredServicePublicKeyImpl("classpath:keys/RSA1024Public.key", "RSA");
         assertNotNull(key1.createInstance());
-
         val key2 = new RegisteredServicePublicKeyImpl(null, "RSA");
         assertNull(key2.createInstance());
+
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
+        MAPPER.writeValue(jsonFile, key1);
+        val keyRead = MAPPER.readValue(jsonFile, RegisteredServicePublicKeyImpl.class);
+        assertEquals(key1, keyRead);
     }
 }

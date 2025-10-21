@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
-import org.apereo.cas.ticket.InvalidTicketException;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -50,8 +49,7 @@ class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTests
         val credentials = new TokenCredentials(encodedAccessToken);
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        assertThrows(InvalidTicketException.class,
-            () -> oauthAccessTokenAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials));
+        assertTrue(oauthAccessTokenAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials).isEmpty());
     }
 
     @Test

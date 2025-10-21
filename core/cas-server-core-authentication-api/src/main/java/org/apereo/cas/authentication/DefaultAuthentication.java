@@ -2,7 +2,9 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -49,26 +51,31 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Authentication messages and warnings.
      */
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<MessageDescriptor> warnings = new ArrayList<>();
 
     /**
      * List of metadata about credentials presented at authentication.
      */
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<Credential> credentials = new ArrayList<>();
 
     /**
      * Authentication metadata attributes.
      */
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, List<Object>> attributes = new LinkedHashMap<>();
 
     /**
      * Map of handler name to handler authentication success event.
      */
-    private Map<String, AuthenticationHandlerExecutionResult> successes;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private Map<String, AuthenticationHandlerExecutionResult> successes = new LinkedHashMap<>();
 
     /**
      * Map of handler name to handler authentication failure cause.
      */
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, Throwable> failures = new LinkedHashMap<>();
 
     @Override

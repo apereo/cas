@@ -1,14 +1,13 @@
 package org.apereo.cas.services.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.autoconfigure.template.TemplateLocation;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
+import org.springframework.boot.thymeleaf.autoconfigure.ThymeleafProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.OrderComparator;
@@ -16,7 +15,6 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 import org.thymeleaf.spring6.view.AbstractThymeleafView;
-
 import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Locale;

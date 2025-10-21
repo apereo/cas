@@ -28,7 +28,7 @@ dependencies {
     implementation project(":core:cas-server-core-logging")
     implementation project(":core:cas-server-core-logging-api")
 
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(":support:cas-server-support-person-directory")
 

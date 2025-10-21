@@ -198,6 +198,12 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create(libs.spring.boot.sendgrid.get()) {
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aspectj")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                 }
         ],
         javamelody                 : [
@@ -205,7 +211,7 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aspectj")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
@@ -239,9 +245,9 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.dataformat", module: "jackson-dataformat-yaml")
                     exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
                     exclude(group: "org.eclipse.jetty", module: "jetty-eclipse")
                     exclude(group: "org.glassfish.jersey.containers", module: "jersey-container-servlet-core")
@@ -253,25 +259,25 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.dataformat", module: "jackson-dataformat-yaml")
                     exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
                     exclude(group: "org.eclipse.jetty", module: "jetty-eclipse")
                     exclude(group: "org.glassfish.jersey.containers", module: "jersey-container-servlet-core")
                 },
                 dependencies.create(libs.yubico.util.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-yaml")
-                    exclude(group: "com.fasterxml.jackson.dataformat", module: "jackson-dataformat-cbor")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.dataformat", module: "jackson-dataformat-yaml")
+                    exclude(group: "tools.jackson.dataformat", module: "jackson-dataformat-cbor")
                     exclude(group: "javax.ws.rs", module: "javax.ws.rs-api")
                     exclude(group: "org.eclipse.jetty", module: "jetty-eclipse")
                     exclude(group: "org.glassfish.jersey.containers", module: "jersey-container-servlet-core")
                 },
                 dependencies.create(libs.jackson.dataformat.cbor.get()) {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                 }
         ],
         semver                     : [
@@ -320,24 +326,24 @@ ext.libraries = [
                 dependencies.create(libs.swagger.core.jakarta.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "javax.validation", module: "validation-api")
                 },
                 dependencies.create(libs.swagger.jaxrs2.jakarta.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "javax.validation", module: "validation-api")
-                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
+                    exclude(group: "tools.jackson", module: "jackson-bom")
                 },
                 dependencies.create(libs.swagger.models.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "javax.validation", module: "validation-api")
@@ -350,6 +356,8 @@ ext.libraries = [
                     exclude(group: "com.squareup.okio", module: "okio")
                 },
                 dependencies.create(libs.arrow.memory.netty.get()) {
+                },
+                dependencies.create(libs.arrow.memory.unsafe.get()) {
                 }
         ],
         bouncycastle               : [
@@ -379,8 +387,8 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                 },
                 dependencies.create(libs.sentry.log4j2.get()) {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
@@ -527,8 +535,8 @@ ext.libraries = [
             exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "org.glassfish.jaxb", module: "jaxb-core")
-            exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-            exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+            exclude(group: "tools.jackson.core", module: "jackson-databind")
+            exclude(group: "tools.jackson.core", module: "jackson-core")
             exclude(group: "org.apereo.cas.client", module: "cas-client-support-saml")
         },
         commons                    : [
@@ -636,8 +644,8 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                 }
         ],
@@ -683,7 +691,7 @@ ext.libraries = [
         caffein                    : [
                 dependencies.create(libs.caffeine.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
                 }
         ],
         websockets                 : [
@@ -694,8 +702,8 @@ ext.libraries = [
                 dependencies.create(libs.spring.boot.starter.websocket.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-core")
@@ -714,7 +722,7 @@ ext.libraries = [
         guava                      : [
                 dependencies.create(libs.guava.get()) {
                     exclude(group: "com.google.errorprone", module: "error_prone_annotations")
-                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
                     exclude(group: "org.checkerframework", module: "checker-qual")
                 }
         ],
@@ -777,6 +785,20 @@ ext.libraries = [
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
                     exclude(group: "org.hibernate", module: "hibernate-ant")
+                }
+        ],
+        springbootjdbc            : [
+                dependencies.create(libs.spring.boot.starter.data.jdbc.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                },
+                dependencies.create(libs.spring.boot.jdbc.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                 }
         ],
         hibernate                  : [
@@ -844,8 +866,8 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
@@ -854,8 +876,8 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
@@ -864,8 +886,8 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
@@ -874,24 +896,24 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create(libs.aws.core.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create(libs.apache.client.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "software.amazon.awssdk", module: "annotations")
                 }
@@ -901,8 +923,8 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
@@ -911,8 +933,8 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
@@ -921,8 +943,8 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
@@ -931,8 +953,8 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
@@ -941,8 +963,8 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
@@ -951,16 +973,16 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create(libs.cognitoidentityprovider.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
@@ -969,8 +991,8 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
@@ -979,15 +1001,15 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                 },
                 dependencies.create(libs.cloudwatch.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                 }
         ],
         awsjavadynamodb            : [
@@ -995,15 +1017,15 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                 },
                 dependencies.create(libs.amazon.dax.client.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
@@ -1012,8 +1034,8 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                 }
         ],
         apachevelocity             : [
@@ -1174,6 +1196,13 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-aop")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                 },
+                dependencies.create(libs.spring.boot.amqp.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                },
                 dependencies.create(libs.spring.rabbit.get())
         ],
         thymeleaf                  : [
@@ -1200,7 +1229,7 @@ ext.libraries = [
                 dependencies.create(libs.spring.boot.starter.thymeleaf.get()) {
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "org.thymeleaf", module: "thymeleaf")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
@@ -1210,6 +1239,24 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.sourceforge.nekohtml", module: "nekohtml")
                     exclude(group: "org.javassist", module: "javassist")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                },
+                dependencies.create(libs.spring.boot.thymeleaf.get()) {
+                    exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "org.thymeleaf", module: "thymeleaf")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "nz.net.ultraq.thymeleaf", module: "thymeleaf-layout-dialect")
+                    exclude(group: "org.thymeleaf", module: "thymeleaf-spring5")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-aop")
@@ -1230,13 +1277,26 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                 },
+                dependencies.create(libs.spring.boot.mustache.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                },
                 dependencies.create(libs.jmustache.get()) {
                 }
         ],
         scimsdk                    : [
                 dependencies.create(libs.scim.sdk.client.get()) {
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
@@ -1245,10 +1305,10 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.datatype", module: "jackson-datatype-jsr310")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.datatype", module: "jackson-datatype-jsr310")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "commons-lang", module: "commons-lang")
@@ -1261,95 +1321,87 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
         jackson                    : [
-                dependencies.create(libs.jackson.databind.get()) {
+                dependencies.create(libs.jackson.databind2.get()) {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                 },
-                dependencies.create(libs.jackson.core.lib.get()) {
+                dependencies.create(libs.jackson.core.lib2.get()) {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
+                },
+                dependencies.create(libs.jackson.databind.get()) {
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
+                },
+                dependencies.create(libs.jackson.core.lib.get()) {
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson", module: "jackson-bom")
                 },
                 dependencies.create(libs.jackson.datatype.guava.get()) {
                     exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson", module: "jackson-bom")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
                 },
                 dependencies.create(libs.jackson.annotations.get()) {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
-                },
-                dependencies.create(libs.jackson.module.parameter.names.get()) {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson", module: "jackson-bom")
                 },
                 dependencies.create(libs.jackson.module.jakarta.xmlbind.annotations.get()) {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson", module: "jackson-bom")
                     exclude(group: "jakarta.activation", module: "jakarta.activation-api")
                 },
-                dependencies.create(libs.jackson.datatype.jsr310.get()) {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                },
-                dependencies.create(libs.jackson.datatype.jdk8.get()) {
-                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                },
                 dependencies.create(libs.hjson.get()) {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson", module: "jackson-bom")
                 },
                 dependencies.create(libs.jackson.dataformat.yaml.get()) {
                     exclude(group: "org.yaml", module: "snakeyaml")
-                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson", module: "jackson-bom")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                 },
                 dependencies.create(libs.jackson.dataformat.xml.get()) {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson", module: "jackson-bom")
                 },
                 dependencies.create(libs.jackson.dataformat.properties.get()) {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson", module: "jackson-bom")
                 },
                 dependencies.create(libs.jackson.module.blackbird.get()) {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson", module: "jackson-bom")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson", module: "jackson-bom")
                 },
                 dependencies.create(libs.jackson.dataformat.cbor.get()) {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                 },
                 dependencies.create(libs.jackson.dataformat.smile.get()) {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                 }
         ],
         jcifs                      : [
@@ -1458,10 +1510,10 @@ ext.libraries = [
                 dependencies.create(libs.azure.cosmos.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.json", module: "json")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.datatype", module: "jackson-datatype-jsr310")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.datatype", module: "jackson-datatype-jsr310")
                 },
                 dependencies.create(libs.azure.spring.data.cosmos.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1476,9 +1528,8 @@ ext.libraries = [
                     exclude(group: "org.springframework.data", module: "spring-data-commons")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "javax.annotation", module: "javax.annotation-api")
-                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-parameter-names")
-                    exclude(group: "com.fasterxml.jackson.datatype", module: "jackson-datatype-jsr310")
-                    exclude(group: "com.fasterxml.jackson.datatype", module: "jackson-datatype-jdk8")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-parameter-names")
+                    exclude(group: "tools.jackson.datatype", module: "jackson-datatype-jsr310")
                 }
         ],
         jdom                       : dependencies.create(libs.jdom2.get()) {
@@ -1795,6 +1846,27 @@ ext.libraries = [
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
+                },
+                dependencies.create(libs.opentelemetry.sdk.autoconfigure.get()) {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                },
+                dependencies.create(libs.spring.boot.starter.opentelemetry.get()) {
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
                 }
         ],
         tracingotel : [
@@ -1880,11 +1952,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-lang", module: "commons-lang")
                 },
-                dependencies.create(libs.micrometer.registry.wavefront.get()) {
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                },
                 dependencies.create(libs.micrometer.registry.new.relic.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1926,6 +1993,34 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-tx")
                     exclude(group: "org.mongodb", module: "mongodb-driver-core")
+                },
+                dependencies.create(libs.spring.boot.starter.mongodb.get()) {
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
+                },
+                dependencies.create(libs.spring.boot.starter.data.mongodb.get()) {
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
                 }
         ],
         opensaml                   : [
@@ -2188,7 +2283,7 @@ ext.libraries = [
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.cryptacular", module: "cryptacular")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
@@ -2225,8 +2320,8 @@ ext.libraries = [
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "org.cryptacular", module: "cryptacular")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "com.zaxxer", module: "HikariCP")
                     exclude(group: "org.projectlombok", module: "lombok")
                     exclude(group: "com.google.code.findbugs", module: "findbugs-annotations")
@@ -2237,8 +2332,8 @@ ext.libraries = [
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.projectlombok", module: "lombok")
                     exclude(group: "com.google.code.findbugs", module: "findbugs-annotations")
                 },
@@ -2248,8 +2343,8 @@ ext.libraries = [
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "commons-collections", module: "commons-collections")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.projectlombok", module: "lombok")
                     exclude(group: "com.google.code.findbugs", module: "findbugs-annotations")
                 }
@@ -2264,8 +2359,8 @@ ext.libraries = [
                     exclude(group: "net.minidev", module: "json-smart")
                     exclude(group: "com.nimbusds", module: "nimbus-jose-jwt")
                     exclude(group: "org.cryptacular", module: "cryptacular")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.projectlombok", module: "lombok")
                     exclude(group: "com.google.code.findbugs", module: "findbugs-annotations")
                 }
@@ -2278,9 +2373,9 @@ ext.libraries = [
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.jasig.cas.client", module: "cas-client-support-saml")
                     exclude(group: "org.jasig.cas.client", module: "cas-client-core")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
@@ -2364,8 +2459,8 @@ ext.libraries = [
                     exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
                     exclude(group: "commons-collections", module: "commons-collections")
                     exclude(group: "commons-codec", module: "commons-codec")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.projectlombok", module: "lombok")
                 },
@@ -2377,8 +2472,8 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "com.nimbusds", module: "oauth2-oidc-sdk")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.projectlombok", module: "lombok")
                 }
         ],
@@ -2403,26 +2498,40 @@ ext.libraries = [
                 dependencies.create(libs.jcip.annotations.get()) {
                 }
         ],
-        quartz                     : dependencies.create(libs.quartz.get()) {
-            exclude(group: "org.slf4j", module: "slf4j-api")
-            exclude(group: "c3p0", module: "c3p0")
-            exclude(group: "com.mchange", module: "c3p0")
-            exclude(group: "com.zaxxer", module: "HikariCP-java6")
-            exclude(group: "com.zaxxer", module: "HikariCP-java7")
-        },
+        quartz                     : [
+                dependencies.create(libs.quartz.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "c3p0", module: "c3p0")
+                    exclude(group: "com.mchange", module: "c3p0")
+                    exclude(group: "com.zaxxer", module: "HikariCP-java6")
+                    exclude(group: "com.zaxxer", module: "HikariCP-java7")
+                },
+                dependencies.create(libs.spring.boot.quartz.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aspectj")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                }
+        ],
         twilio                     : dependencies.create(libs.twilio.get()) {
             exclude(group: "org.slf4j", module: "slf4j-api")
-            exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-            exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-            exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+            exclude(group: "tools.jackson.core", module: "jackson-annotations")
+            exclude(group: "tools.jackson.core", module: "jackson-databind")
+            exclude(group: "tools.jackson.core", module: "jackson-core")
             exclude(group: "javax.xml.bind", module: "jaxb-api")
             exclude(group: "org.apache.httpcomponents", module: "httpclient")
         },
         nexmo                      : dependencies.create(libs.client.get()) {
             exclude(group: "org.slf4j", module: "slf4j-api")
-            exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-            exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-            exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+            exclude(group: "tools.jackson.core", module: "jackson-annotations")
+            exclude(group: "tools.jackson.core", module: "jackson-databind")
+            exclude(group: "tools.jackson.core", module: "jackson-core")
             exclude(group: "javax.xml.bind", module: "jaxb-api")
             exclude(group: "org.apache.httpcomponents", module: "httpclient")
             exclude(group: "commons-io", module: "commons-io")
@@ -2489,7 +2598,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aspectj")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                 }
         ],
@@ -2504,7 +2613,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "org.hibernate.validator", module: "hibernate-validator")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-webmvc")
@@ -2531,8 +2640,8 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "log4j-over-slf4j")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-core")
@@ -2601,12 +2710,12 @@ ext.libraries = [
                     exclude(group: "com.vaadin.external.google", module: "android-json")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-reactor-netty")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aspectj")
                     exclude(group: "org.springframework.boot", module: "spring-boot-parent")
                 }
         ],
         springboot                 : [
-                dependencies.create(libs.spring.boot.starter.aop.get()) {
+                dependencies.create(libs.spring.boot.starter.aspectj.get()) {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
@@ -2622,6 +2731,66 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context-support")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.aspectj", module: "aspectjweaver")
+                },
+                dependencies.create(libs.spring.boot.web.server.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "org.slf4j", module: "log4j-over-slf4j")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                },
+                dependencies.create(libs.spring.boot.webmvc.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                },
+                dependencies.create(libs.spring.boot.websocket.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                },
+                dependencies.create(libs.spring.boot.servlet.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                },
+                dependencies.create(libs.spring.boot.restclient.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "org.slf4j", module: "log4j-over-slf4j")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                },
+                dependencies.create(libs.spring.boot.tx.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                 },
                 dependencies.create(libs.spring.boot.starter.web.sdk.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -2639,9 +2808,9 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-aop")
-                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-json")
@@ -2669,12 +2838,26 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "com.h2database", module: "h2")
+                },
+                dependencies.create(libs.spring.boot.cache.get()) {
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 },
                 dependencies.create(libs.spring.boot.core.get()) {
                     exclude(group: "org.hibernate.validator", module: "hibernate-validator")
@@ -2690,15 +2873,15 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
-                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
                 },
                 dependencies.create(libs.spring.boot.starter.actuator.get()) {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
                     exclude(group: "org.hibernate.validator", module: "hibernate-validator")
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
@@ -2711,7 +2894,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
-                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
                     exclude(group: "io.micrometer", module: "micrometer-jakarta9")
                 },
                 dependencies.create(libs.spring.boot.starter.validation.get()) {
@@ -2719,8 +2902,8 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
                     exclude(group: "org.hibernate.validator", module: "hibernate-validator")
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
@@ -2737,11 +2920,11 @@ ext.libraries = [
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-core")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-websocket")
-                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
                 },
                 dependencies.create(libs.spring.boot.actuator.get()) {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
@@ -2751,7 +2934,33 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
-                    exclude(group: "com.fasterxml.jackson.module", module: "jackson-module-jaxb-annotations")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
+                },
+                dependencies.create(libs.spring.boot.health.get()) {
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
+                },
+                dependencies.create(libs.spring.boot.mail.get()) {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
                 }
         ],
         springboottomcat           : [
@@ -2787,6 +2996,9 @@ ext.libraries = [
                 dependencies.create(libs.spring.boot.starter.jetty.get()) {
                     exclude(group: "org.ow2.asm", module: "asm")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                 },
                 dependencies.create(libs.jetty.http2.server.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -2798,11 +3010,13 @@ ext.libraries = [
                 },
                 dependencies.create(libs.jakarta.annotation.api.get())
         ],
+        /*
         springbootundertow         : [
                 dependencies.create(libs.spring.boot.starter.undertow.get()),
                 dependencies.create(libs.jakarta.annotation.api.get()),
                 dependencies.create(libs.undertow.servlet.get()),
         ],
+         */
         redis                      : [
                 dependencies.create(libs.spring.data.redis.get()) {
                     exclude(group: "org.springframework", module: "spring-tx")
@@ -2835,6 +3049,11 @@ ext.libraries = [
                 dependencies.create(libs.spring.integration.core.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
+                dependencies.create(libs.spring.boot.integration.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                },
                 dependencies.create(libs.spring.integration.jmx.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "io.projectreactor", module: "reactor-core")
@@ -2842,6 +3061,14 @@ ext.libraries = [
         ],
         springintegrationjdbc      : [
                 dependencies.create(libs.spring.integration.jdbc.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.integration", module: "spring-integration-core")
+                },
+                dependencies.create(libs.spring.boot.sql.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.integration", module: "spring-integration-core")
+                },
+                dependencies.create(libs.spring.boot.jdbc.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                 }
@@ -2871,8 +3098,8 @@ ext.libraries = [
                     exclude(group: "org.springframework.retry", module: "spring-retry")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
@@ -2898,8 +3125,8 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                     exclude(group: "io.reactivex", module: "rxjava")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
@@ -2911,9 +3138,31 @@ ext.libraries = [
                     exclude(group: "log4j", module: "log4j")
                     exclude(group: "org.scala-lang", module: "scala-library")
                     exclude(group: "org.apache.kafka", module: "kafka-clients")
-                }
+                },
+                dependencies.create(libs.spring.boot.kafka.get()) {
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework.retry", module: "spring-retry")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
+                },
         ],
         springkafka                : [
+                dependencies.create(libs.spring.boot.kafka.get()) {
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework.retry", module: "spring-retry")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
+                },
                 dependencies.create(libs.kafka.streams.get()) {
                 },
                 dependencies.create(libs.kafka.clients.get()) {
@@ -2944,9 +3193,9 @@ ext.libraries = [
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "org.springframework", module: "spring-messaging")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
@@ -2976,8 +3225,8 @@ ext.libraries = [
                     exclude(group: "org.springframework.integration", module: "spring-integration-amqp")
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
@@ -2989,8 +3238,8 @@ ext.libraries = [
                 },
                 dependencies.create(libs.spring.cloud.starter.bus.amqp.get()) {
                     exclude(group: "org.springframework.retry", module: "spring-retry")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-web")
@@ -3006,7 +3255,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.amqp", module: "spring-rabbit")
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "org.objenesis", module: "objenesis")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
@@ -3085,7 +3334,7 @@ ext.libraries = [
                     exclude(group: "javax.servlet", module: "servlet-api")
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aspectj")
                     exclude(group: "com.netflix.archaius", module: "archaius-core")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
@@ -3093,7 +3342,7 @@ ext.libraries = [
                     exclude(group: "io.reactivex", module: "rxjava")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.netflix.servo", module: "servo-core")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "com.netflix.eureka", module: "eureka-client")
@@ -3109,8 +3358,8 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "com.netflix.archaius", module: "archaius-core")
@@ -3118,7 +3367,7 @@ ext.libraries = [
                     exclude(group: "com.netflix.netflix-commons", module: "netflix-eventbus")
                     exclude(group: "com.google.code.gson", module: "gson")
                     exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aop")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-aspectj")
                 },
                 dependencies.create(libs.netflix.eventbus.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -3131,7 +3380,7 @@ ext.libraries = [
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "javax.servlet", module: "servlet-api")
                     exclude(group: "com.thoughtworks.xstream", module: "xstream")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "com.google.code.gson", module: "gson")
                 }
         ],
@@ -3205,8 +3454,8 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.hibernate.validator", module: "hibernate-validator")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
@@ -3233,8 +3482,8 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.hibernate.validator", module: "hibernate-validator")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
@@ -3267,8 +3516,8 @@ ext.libraries = [
                     exclude(group: "org.springframework.retry", module: "spring-retry")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
@@ -3297,8 +3546,8 @@ ext.libraries = [
                     exclude(group: "org.springframework.retry", module: "spring-retry")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
@@ -3322,7 +3571,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jcl-over-slf4j")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
                     exclude(group: "org.hibernate.validator", module: "hibernate-validator")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
@@ -3342,10 +3591,22 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-context")
+                },
+                dependencies.create(libs.spring.boot.session.core.get()) {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
                 }
         ],
         springsessionhazelcast     : [
                 dependencies.create(libs.spring.session.hazelcast.get()) {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
+                },
+                dependencies.create(libs.spring.boot.session.hazelcast.get()) {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-webmvc")
@@ -3358,10 +3619,22 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-context")
+                },
+                dependencies.create(libs.spring.boot.session.jdbc.get()) {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
                 }
         ],
         springsessionredis         : [
                 dependencies.create(libs.spring.session.data.redis.get()) {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
+                },
+                dependencies.create(libs.spring.boot.session.redis.get()) {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-webmvc")
@@ -3375,6 +3648,12 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework.session", module: "spring-session")
+                },
+                dependencies.create(libs.spring.boot.session.mongodb.get()) {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
                 }
         ],
 
@@ -3434,25 +3713,8 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.springframework", module: "spring-beans")
                 },
-                dependencies.create(libs.spring.retry.get()) {
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-beans")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-expression")
-                    exclude(group: "org.springframework", module: "spring-tx")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "junit", module: "junit")
-                    exclude(group: "org.mockito", module: "mockito-core")
-                },
                 dependencies.create(libs.spring.core.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "org.springframework", module: "spring-jcl")
-                },
-                dependencies.create(libs.spring.jcl.get()) {
-                    exclude(group: "org.apache.logging.log4j", module: "log4j-api")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
                 },
                 dependencies.create(libs.spring.data.commons.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -3467,7 +3729,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-tx")
                     exclude(group: "org.mongodb", module: "mongo-java-driver")
                     exclude(group: "com.h2database", module: "h2")
-                },
+                },                          
                 dependencies.create(libs.spring.jms.get()) {
                     exclude(group: "org.springframework", module: "spring-messaging")
                 },
@@ -3576,6 +3838,18 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-expression")
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-tx")
+                },
+                dependencies.create(libs.spring.boot.security.get()) {
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-expression")
+                    exclude(group: "org.springframework", module: "spring-jdbc")
+                    exclude(group: "org.springframework", module: "spring-tx")
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.aspectj", module: "aspectjrt")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
         springws                   : [
@@ -3736,8 +4010,8 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.squareup.retrofit", module: "retrofit")
                     exclude(group: "org.projectlombok", module: "lombok")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-core")
                     exclude(group: "com.squareup.okhttp3", module: "logging-interceptor")
                 }
         ],

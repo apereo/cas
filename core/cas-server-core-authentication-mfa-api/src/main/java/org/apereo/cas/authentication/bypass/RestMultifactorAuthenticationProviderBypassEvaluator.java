@@ -62,6 +62,7 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
                 .headers(rest.getHeaders())
                 .url(rest.getUrl())
                 .parameters(parameters)
+                .maximumRetryAttempts(rest.getMaximumRetryAttempts())
                 .build();
 
             val response = HttpUtils.execute(exec);

@@ -62,7 +62,7 @@ public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
 
     @Override
     public CasWebflowExecutionPlan execute() {
-        lock.tryLock(__ -> {
+        lock.tryLock(_ -> {
             if (!initialized) {
                 AnnotationAwareOrderComparator.sortIfNecessary(webflowConfigurers);
                 AnnotationAwareOrderComparator.sortIfNecessary(webflowLoginContextProviders);

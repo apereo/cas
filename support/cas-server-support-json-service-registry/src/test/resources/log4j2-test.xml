@@ -6,7 +6,8 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="error" />
+        <Logger name="org.apereo" level="warn" />
+        <Logger name="tools.jackson" level="debug" />
         <Root level="error">
             <AppenderRef ref="console"/>
         </Root>

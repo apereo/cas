@@ -21,7 +21,7 @@ dependencies {
     implementation libraries.springsecurityweb
     
     testImplementation libraries.nimbus
-
+    
     testImplementation project(":core:cas-server-core-scripting")
 }
 

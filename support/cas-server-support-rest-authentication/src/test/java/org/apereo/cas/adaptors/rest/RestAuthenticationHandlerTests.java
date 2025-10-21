@@ -63,8 +63,7 @@ class RestAuthenticationHandlerTests {
         val formatted = DateTimeFormatter.RFC_1123_DATE_TIME
             .withZone(ZoneOffset.UTC)
             .format(instant);
-
-
+        
         try (val webServer = new MockWebServer(port)) {
             webServer.start();
             webServer.responseBodyJson(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("casuser"));
@@ -89,8 +88,7 @@ class RestAuthenticationHandlerTests {
             assertThrows(AccountDisabledException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
             assertEquals(3, webServer.getRequestCount());
-
-
+            
             webServer.responseStatus(HttpStatus.UNAUTHORIZED);
             assertThrows(FailedLoginException.class,
                 () -> getFirstHandler().authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));

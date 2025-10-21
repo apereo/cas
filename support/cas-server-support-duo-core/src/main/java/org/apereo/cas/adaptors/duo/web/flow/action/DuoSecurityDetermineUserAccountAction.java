@@ -94,7 +94,7 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
                 principalResolver, casProperties, serviceFactory);
             val jwtRequest = JwtBuilder.JwtRequest
                 .builder()
-                .serviceAudience(Set.of(builder.getHost()))
+                .serviceAudience(Set.of(builder.toString()))
                 .subject(principal.getId())
                 .jwtId(UUID.randomUUID().toString())
                 .issuer(casProperties.getServer().getName())

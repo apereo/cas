@@ -3,8 +3,7 @@ package org.apereo.cas.monitor;
 import lombok.val;
 import org.ldaptive.ConnectionValidator;
 import org.ldaptive.PooledConnectionFactory;
-import org.springframework.boot.actuate.health.Health;
-
+import org.springframework.boot.health.contributor.Health;
 import java.util.concurrent.ExecutorService;
 
 /**

@@ -528,7 +528,7 @@ public abstract class AbstractSamlIdPProfileHandlerController extends AbstractCo
 
     protected void storeAuthenticationRequest(final HttpServletRequest request, final HttpServletResponse response,
                                               final Pair<? extends SignableSAMLObject, MessageContext> context) {
-        lock.tryLock(__ -> {
+        lock.tryLock(_ -> {
             val webContext = new JEEContext(request, response);
             SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(),
                 configurationContext.getSessionStore()).store(webContext, context);

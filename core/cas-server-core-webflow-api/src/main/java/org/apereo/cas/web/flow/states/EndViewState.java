@@ -45,7 +45,7 @@ public class EndViewState extends ViewState {
                 context.setCurrentView(view);
                 context.viewRendering(view);
                 getRenderActionList().execute(context);
-                FunctionUtils.doAndHandle(__ -> view.render());
+                FunctionUtils.doAndHandle(_ -> view.render());
                 context.getFlashScope().clear();
                 context.getMessageContext().clearMessages();
                 context.getExternalContext().recordResponseComplete();

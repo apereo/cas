@@ -47,6 +47,7 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
                 .url(SpringExpressionLanguageValueResolver.getInstance().resolve(rest.getUrl()))
                 .parameters(parameters)
                 .headers(rest.getHeaders())
+                .maximumRetryAttempts(rest.getMaximumRetryAttempts())
                 .build();
 
             response = HttpUtils.execute(exec);

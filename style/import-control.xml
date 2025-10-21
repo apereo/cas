@@ -11,6 +11,13 @@
     <disallow pkg="org.junit.Assert"/>
     <disallow pkg="org\.junit\.(runners?|experimental\.categories)" regex="true" />
 
+    <file name=".*WebAuthn.*" regex="true">
+        <allow pkg="com.fasterxml.jackson.core"/>
+        <allow pkg="com.fasterxml.jackson.databind"/>
+        <allow pkg="com.fasterxml.jackson.datatype"/>
+        <allow pkg="com.fasterxml.jackson.dataformat"/>
+    </file>
+    
     <subpackage name="apereo.cas.util.junit">
         <allow pkg="org.junit" exact-match="true"/>
         <allow pkg="org\.junit\.runners?" regex="true"/>

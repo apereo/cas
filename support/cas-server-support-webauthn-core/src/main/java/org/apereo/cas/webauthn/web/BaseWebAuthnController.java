@@ -17,7 +17,7 @@ public abstract class BaseWebAuthnController extends AbstractController {
     public static final String BASE_ENDPOINT_WEBAUTHN = "/webauthn";
 
     private static final ObjectMapper MAPPER = JacksonCodecs.json().findAndRegisterModules();
-    
+
     protected static String writeJson(final Object o) throws Exception {
         return MAPPER.writeValueAsString(o);
     }

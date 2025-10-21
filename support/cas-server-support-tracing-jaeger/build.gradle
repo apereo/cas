@@ -22,7 +22,7 @@ dependencies {
 
     implementation project(":support:cas-server-support-metrics")
     
-    testImplementation libraries.springboottomcat
+
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-scripting")

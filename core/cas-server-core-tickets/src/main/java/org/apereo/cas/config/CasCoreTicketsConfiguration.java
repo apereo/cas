@@ -111,10 +111,10 @@ class CasCoreTicketsConfiguration {
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
-            val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
-            return onlyTrackMostRecentSession
-                ? new MostRecentServiceSessionTrackingPolicy(ticketRegistry)
-                : new AllServicesSessionTrackingPolicy(ticketRegistry);
+            return switch (casProperties.getTicket().getTgt().getCore().getServiceTrackingPolicy()) {
+                case ALL -> new AllServicesSessionTrackingPolicy(ticketRegistry);
+                case MOST_RECENT -> new MostRecentServiceSessionTrackingPolicy(ticketRegistry);
+            };
         }
 
         @ConditionalOnMissingBean(name = TicketTrackingPolicy.BEAN_NAME_PROXY_GRANTING_TICKET_TRACKING)
@@ -122,10 +122,10 @@ class CasCoreTicketsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TicketTrackingPolicy proxyGrantingTicketTrackingPolicy(
             final CasConfigurationProperties casProperties) {
-            val onlyTrackMostRecentProxyGrantingTicket = casProperties.getTicket().getSt().isOnlyTrackMostRecentProxyGrantingTicket();
-            return onlyTrackMostRecentProxyGrantingTicket
-                ? MostRecentProxyGrantingTicketTrackingPolicy.INSTANCE
-                : AllProxyGrantingTicketsTrackingPolicy.INSTANCE;
+            return switch (casProperties.getTicket().getSt().getProxyGrantingTicketTrackingPolicy()) {
+                case ALL -> AllProxyGrantingTicketsTrackingPolicy.INSTANCE;
+                case MOST_RECENT -> MostRecentProxyGrantingTicketTrackingPolicy.INSTANCE;
+            };
         }
 
         @ConditionalOnMissingBean(name = TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
@@ -245,7 +245,7 @@ class CasCoreTicketsConfiguration {
         public PublisherIdentifier messageQueueTicketRegistryIdentifier(final CasConfigurationProperties casProperties) {
             val bean = new PublisherIdentifier();
             val core = casProperties.getTicket().getRegistry().getCore();
-            FunctionUtils.doIfNotBlank(core.getQueueIdentifier(), __ -> bean.setId(core.getQueueIdentifier()));
+            FunctionUtils.doIfNotBlank(core.getQueueIdentifier(), _ -> bean.setId(core.getQueueIdentifier()));
             return bean;
         }
 

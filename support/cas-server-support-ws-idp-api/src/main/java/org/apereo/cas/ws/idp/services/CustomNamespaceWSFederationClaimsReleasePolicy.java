@@ -3,7 +3,10 @@ package org.apereo.cas.ws.idp.services;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.ws.idp.WSFederationConstants;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,6 +27,7 @@ import java.util.TreeMap;
 @Slf4j
 @Getter
 @Setter
+@NoArgsConstructor
 public class CustomNamespaceWSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     @Serial
@@ -31,11 +35,8 @@ public class CustomNamespaceWSFederationClaimsReleasePolicy extends AbstractRegi
 
     private String namespace = WSFederationConstants.HTTP_SCHEMAS_APEREO_CAS;
 
-    private Map<String, String> allowedAttributes;
-
-    public CustomNamespaceWSFederationClaimsReleasePolicy() {
-        this(new HashMap<>());
-    }
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private Map<String, String> allowedAttributes = new HashMap<>();
 
     public CustomNamespaceWSFederationClaimsReleasePolicy(final Map<String, String> allowedAttributes) {
         setAllowedAttributes(allowedAttributes);

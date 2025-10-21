@@ -10,8 +10,8 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
 import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -22,9 +22,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.zookeeper.config.ZookeeperConfigAutoConfiguration;
 import org.springframework.cloud.zookeeper.config.ZookeeperConfigBootstrapConfiguration;
-import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.core.retry.Retryable;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -49,7 +48,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ZooKeeper")
 @ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 2181)
-@EnableRetry
 class ZooKeeperCloudConfigBootstrapConfigurationTests {
     @Autowired
     @Qualifier("curatorFramework")
@@ -60,24 +58,27 @@ class ZooKeeperCloudConfigBootstrapConfigurationTests {
 
     @BeforeAll
     public static void setup() throws Exception {
-        FunctionUtils.doAndRetry(List.of(KeeperException.ConnectionLossException.class), context -> {
-            val curator = CuratorFrameworkFactory.newClient("localhost:2181",
-                5000, 5000, new RetryNTimes(2, 100));
-            curator.start();
-            val path = "/config/cas/cas/server/name";
+        FunctionUtils.doAndRetry(new Retryable<>() {
+            @Override
+            public @Nullable Object execute() throws Throwable {
+                val curator = CuratorFrameworkFactory.newClient("localhost:2181",
+                    5000, 5000, new RetryNTimes(2, 100));
+                curator.start();
+                val path = "/config/cas/cas/server/name";
 
-            val zk = curator.getZookeeperClient().getZooKeeper();
-            if (zk.exists(path, false) != null) {
-                curator.delete().forPath(path);
+                val zk = curator.getZookeeperClient().getZooKeeper();
+                if (zk.exists(path, false) != null) {
+                    curator.delete().forPath(path);
+                }
+                curator
+                    .create()
+                    .creatingParentContainersIfNeeded()
+                    .withMode(CreateMode.PERSISTENT)
+                    .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)
+                    .forPath(path, "apereocas".getBytes(StandardCharsets.UTF_8));
+                curator.close();
+                return null;
             }
-            curator
-                .create()
-                .creatingParentContainersIfNeeded()
-                .withMode(CreateMode.PERSISTENT)
-                .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)
-                .forPath(path, "apereocas".getBytes(StandardCharsets.UTF_8));
-            curator.close();
-            return null;
         });
     }
 

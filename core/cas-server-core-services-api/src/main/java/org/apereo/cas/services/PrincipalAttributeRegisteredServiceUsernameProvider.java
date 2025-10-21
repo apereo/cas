@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -14,7 +13,6 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serial;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +51,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         val releasePolicyAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
         FunctionUtils.doIfNull(context.getReleasingAttributes(),
-            __ -> releasePolicyAttributes.putAll(getPrincipalAttributesFromReleasePolicy(context)),
+            _ -> releasePolicyAttributes.putAll(getPrincipalAttributesFromReleasePolicy(context)),
             releasePolicyAttributes::putAll);
 
         LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].",

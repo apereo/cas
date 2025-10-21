@@ -8,7 +8,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.yubico.core.RegistrationStorage;
 import com.yubico.data.CredentialRegistration;
-import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.webauthn.attestation.Attestation;
 import com.yubico.webauthn.data.ByteArray;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class WebAuthnMultifactorAuthenticationDeviceManager implements MultifactorAuthenticationDeviceManager {
-    private static final ObjectWriter OBJECT_WRITER = JacksonCodecs.json().writerWithDefaultPrettyPrinter();
+    private static final ObjectWriter OBJECT_WRITER = WebAuthnUtils.getObjectMapper().writer();
 
     private final RegistrationStorage webAuthnCredentialRepository;
     private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
@@ -46,7 +45,7 @@ public class WebAuthnMultifactorAuthenticationDeviceManager implements Multifact
 
     @Override
     public void removeRegisteredDevice(final Principal principal, final String deviceId) {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             val credentialId = ByteArray.fromBase64Url(deviceId);
             webAuthnCredentialRepository.removeRegistrationByUsernameAndCredentialId(principal.getId(), credentialId);
         });

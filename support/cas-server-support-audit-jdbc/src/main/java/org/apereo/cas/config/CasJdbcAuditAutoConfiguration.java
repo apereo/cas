@@ -48,6 +48,7 @@ import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Locale;
 
 /**
  * This is {@link CasJdbcAuditAutoConfiguration}.
@@ -165,7 +166,7 @@ public class CasJdbcAuditAutoConfiguration {
             if (StringUtils.isNotBlank(jdbc.getDefaultCatalog())) {
                 tableName = jdbc.getDefaultCatalog().concat(".").concat(tableName);
             }
-            return tableName;
+            return tableName.toLowerCase(Locale.ENGLISH);
         }
 
         @Bean

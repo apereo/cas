@@ -48,7 +48,8 @@ class HttpUtilsTests {
                 .entity("entity")
                 .url("http://localhost:%s".formatted(webServer.getPort()))
                 .httpClient(new SimpleHttpClientFactoryBean().getObject())
-                .build();
+                .build()
+                .withoutRetry();
             assertNotNull(HttpUtils.execute(exec));
         }
     }
@@ -62,8 +63,11 @@ class HttpUtilsTests {
             .entity("entity")
             .url("http://localhost:8081")
             .proxyUrl("http://localhost:8080")
-            .build();
-        assertNull(HttpUtils.execute(exec));
+            .build()
+            .withoutRetry();
+        val result = HttpUtils.execute(exec);
+        assertNotNull(result);
+        assertTrue(HttpStatus.resolve(result.getCode()).isError());
     }
 
     @Test
@@ -74,9 +78,12 @@ class HttpUtilsTests {
             .entity("entity")
             .url("http://localhost:8081")
             .proxyUrl("http://localhost:8080")
-            .build();
+            .build()
+            .withoutRetry();
 
-        assertNull(HttpUtils.execute(exec));
+        val result = HttpUtils.execute(exec);
+        assertNotNull(result);
+        assertTrue(HttpStatus.resolve(result.getCode()).isError());
     }
 
     @Test
@@ -94,7 +101,8 @@ class HttpUtilsTests {
         val exec = HttpExecutionRequest.builder()
             .method(HttpMethod.GET)
             .url("https://untrusted-root.badssl.com/endpoint?secret=sensitiveinfo")
-            .build();
+            .build()
+            .withoutRetry();
         val response = HttpUtils.execute(exec);
         assertNotNull(response);
 

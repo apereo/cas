@@ -32,7 +32,7 @@ public class OidcIdTokenAuditResourceResolver extends ReturnValueAsStringResourc
         if (returnValue instanceof OidcIdToken(var token, var claims, var deviceSecret)) {
             if (claims.hasClaim(OidcConstants.TXN)) {
                 val txn = FunctionUtils.doUnchecked(() -> claims.getStringClaimValue(OidcConstants.TXN));
-                FunctionUtils.doIfNotNull(txn, __ -> values.put(OidcConstants.TXN, txn));
+                FunctionUtils.doIfNotNull(txn, _ -> values.put(OidcConstants.TXN, txn));
                 values.put("authn_methods", accessToken.getAuthentication().getSuccesses().keySet());
             }
             values.put(OidcConstants.ID_TOKEN, DigestUtils.abbreviate(token, properties.getAbbreviationLength()));
@@ -42,7 +42,7 @@ public class OidcIdTokenAuditResourceResolver extends ReturnValueAsStringResourc
         if (!accessToken.getScopes().isEmpty()) {
             values.put(OAuth20Constants.SCOPE, accessToken.getScopes());
         }
-        FunctionUtils.doIfNotNull(userProfile, __ -> values.put("username", userProfile.getId()));
+        FunctionUtils.doIfNotNull(userProfile, _ -> values.put("username", userProfile.getId()));
         FunctionUtils.doIfNotNull(accessToken.getService(), svc -> values.put("service", svc));
         return new String[]{auditFormat.serialize(values)};
     }
