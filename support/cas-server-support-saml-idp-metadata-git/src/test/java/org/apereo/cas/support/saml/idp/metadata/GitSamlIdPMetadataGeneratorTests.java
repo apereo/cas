@@ -45,7 +45,7 @@ class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
             val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
             if (gitDir.exists()) {
                 FunctionUtils.doAndHandle(
-                    __ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
+                    _ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
             }
             if (!gitDir.mkdir()) {
                 throw new IllegalArgumentException("Git repository directory location " + gitDir + " cannot be located/created");
@@ -67,7 +67,7 @@ class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
         val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
         if (gitDir.exists()) {
             FunctionUtils.doAndHandle(
-                __ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
+                _ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
         }
     }
 

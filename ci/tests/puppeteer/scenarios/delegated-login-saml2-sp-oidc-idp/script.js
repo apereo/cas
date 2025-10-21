@@ -8,12 +8,11 @@ const path = require("path");
 
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
     await cas.sleep(1000);
-    await cas.assertVisibility(page, "li #OktaOidcClient");
-    await cas.click(page, "li #OktaOidcClient");
+    await cas.assertVisibility(page, "li #Keycloak");
+    await cas.click(page, "li #Keycloak");
     await cas.sleep(3000);
 
-    await cas.loginWith(page, "info@fawnoos.com", "QFkN&d^bf9vhS3KS49",
-        "#okta-signin-username", "#okta-signin-password");
+    await cas.loginWith(page, "caskeycloak", "r2RlZXz6f2h5");
 
     await page.waitForSelector("#table_with_attributes", {visible: true});
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");

@@ -35,7 +35,7 @@ dependencies {
     compileOnly libraries.pac4jsaml
 
     testImplementation libraries.pac4jsaml
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-util")

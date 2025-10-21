@@ -144,7 +144,7 @@ jobs:
       - name: Configure CI
         run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Set up Nodejs
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
           cache: 'npm'
@@ -198,7 +198,7 @@ jobs:
       - name: Configure CI
         run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Set up Nodejs
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
           check-latest: true
@@ -253,7 +253,7 @@ jobs:
       - name: Configure CI
         run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Set up Nodejs
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
           check-latest: true

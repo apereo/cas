@@ -120,7 +120,9 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
      * @param account    the account
      * @return the response entity
      */
-    @PutMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/{username}",
+        consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE},
+        produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update Duo Security user account from Duo Admin API", parameters = {
         @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to update"),
         @Parameter(name = "providerId", description = "The multifactor authentication provider id defined in CAS settings")

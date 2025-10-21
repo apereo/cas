@@ -2,6 +2,8 @@ package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +12,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.io.Serial;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +36,8 @@ public class ReturnAllAttributeReleasePolicy extends AbstractRegisteredServiceAt
     private static final long serialVersionUID = 5519257723778012771L;
 
     @JsonProperty
-    private Set<String> excludedAttributes;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private Set<String> excludedAttributes = new HashSet<>();
 
     @Override
     public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,

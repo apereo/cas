@@ -4,7 +4,6 @@ import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -12,9 +11,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.ObjectMapper;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.HashMap;
@@ -37,12 +36,12 @@ public class ClickatellSmsSender implements SmsSender {
 
     private final String serverUrl;
 
-    private final RestTemplate restTemplate = new RestTemplate(CollectionUtils.wrapList(new MappingJackson2HttpMessageConverter()));
+    private final RestTemplate restTemplate = new RestTemplate(CollectionUtils.wrapList(new JacksonJsonHttpMessageConverter()));
 
     @Override
     public boolean send(final String from, final String to, final String message) {
         try {
-            val headers = new LinkedMultiValueMap<String, String>();
+            val headers = new HttpHeaders();
             headers.add(HttpHeaders.AUTHORIZATION, this.token);
             headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);

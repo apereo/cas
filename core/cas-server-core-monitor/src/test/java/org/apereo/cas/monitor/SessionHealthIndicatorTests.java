@@ -23,8 +23,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.health.contributor.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.util.stream.IntStream;
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
 @Tag("Metrics")
 @ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = CasCoreMonitorAutoConfigurationTests.SharedTestConfiguration.class,
-    properties = "cas.ticket.tgt.core.only-track-most-recent-session=true")
+    properties = "cas.ticket.tgt.core.service-tracking-policy=MOST_RECENT")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class SessionHealthIndicatorTests {
 

@@ -188,7 +188,7 @@ class CoreWsSecuritySecurityTokenServiceConfiguration {
             val subProvider = new DefaultSubjectProvider();
 
             FunctionUtils.doIfNotBlank(wsfed.getSubjectNameQualifier(),
-                __ -> subProvider.setSubjectNameQualifier(wsfed.getSubjectNameQualifier()));
+                _ -> subProvider.setSubjectNameQualifier(wsfed.getSubjectNameQualifier()));
             switch (wsfed.getSubjectNameIdFormat().trim().toLowerCase(Locale.ENGLISH)) {
                 case "email" -> subProvider.setSubjectNameIDFormat(NameIDType.EMAIL);
                 case "entity" -> subProvider.setSubjectNameIDFormat(NameIDType.ENTITY);

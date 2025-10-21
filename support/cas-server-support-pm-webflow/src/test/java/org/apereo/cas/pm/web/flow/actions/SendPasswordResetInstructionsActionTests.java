@@ -63,7 +63,7 @@ class SendPasswordResetInstructionsActionTests {
         "cas.authn.attribute-repository.stub.attributes.phone=1234567890",
 
         "cas.authn.pm.reset.mail.attribute-name=mail",
-        "cas.authn.pm.reset.phone.attribute-name=phone"
+        "cas.authn.pm.reset.sms.attribute-name=phone"
     })
     class PrincipalResolutionTests extends BasePasswordManagementActionTests {
         @Test

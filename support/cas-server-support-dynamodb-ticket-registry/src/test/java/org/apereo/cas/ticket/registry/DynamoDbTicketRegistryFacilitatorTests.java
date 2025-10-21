@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 import software.amazon.awssdk.services.dynamodb.model.BillingMode;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
-import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse;
 import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,7 +41,7 @@ class DynamoDbTicketRegistryFacilitatorTests {
                     .build());
             assertFalse(map.isEmpty());
             Arrays.stream(DynamoDbTicketRegistryFacilitator.ColumnNames.values())
-                .forEach(c -> assertTrue(map.containsKey(c.getColumnName())));
+                .forEach(defn -> assertTrue(map.containsKey(defn.getColumnName())));
         }
 
         @Test
@@ -77,7 +76,7 @@ class DynamoDbTicketRegistryFacilitatorTests {
             dynamoDbTicketRegistryFacilitator.createTicketTables(true);
             val client = dynamoDbTicketRegistryFacilitator.getAmazonDynamoDBClient();
             dynamoDbTicketRegistryFacilitator.getTicketCatalog().findAll().forEach(td -> {
-                DescribeTableResponse resp = client.describeTable(DescribeTableRequest.builder()
+                val resp = client.describeTable(DescribeTableRequest.builder()
                     .tableName(td.getProperties().getStorageName())
                     .build());
                 assertEquals(BillingMode.PAY_PER_REQUEST, resp.table().billingModeSummary().billingMode());

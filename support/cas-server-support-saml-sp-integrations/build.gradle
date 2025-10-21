@@ -25,7 +25,7 @@ dependencies {
     implementation libraries.apachevelocity
 
     testImplementation libraries.pac4jsaml
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(path: ":support:cas-server-support-saml-idp", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-saml-core", configuration: "tests")
@@ -39,7 +39,9 @@ dependencies {
     testImplementation project(":support:cas-server-support-throttle")
     testImplementation project(":support:cas-server-support-consent-core")
     testImplementation project(":support:cas-server-support-webconfig")
-
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-thymeleaf")
+    
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-notifications")

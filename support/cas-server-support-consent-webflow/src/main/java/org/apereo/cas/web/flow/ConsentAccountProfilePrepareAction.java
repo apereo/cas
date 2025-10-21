@@ -4,8 +4,6 @@ import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -14,7 +12,7 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
+import tools.jackson.databind.ObjectMapper;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;

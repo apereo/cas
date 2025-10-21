@@ -62,7 +62,7 @@ class DefaultProxyGrantingTicketFactoryTests {
     }
 
     @Nested
-    @TestPropertySource(properties = "cas.ticket.st.only-track-most-recent-proxy-granting-ticket=true")
+    @TestPropertySource(properties = "cas.ticket.st.proxy-granting-ticket-tracking-policy=MOST_RECENT")
     class MostRecentPGTTrackingPolicy extends BaseTicketFactoryTests {
         
         @Test

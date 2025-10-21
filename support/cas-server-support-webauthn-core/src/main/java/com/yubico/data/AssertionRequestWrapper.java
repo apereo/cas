@@ -24,6 +24,8 @@
 
 package com.yubico.data;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yubico.webauthn.AssertionRequest;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.PublicKeyCredentialRequestOptions;
@@ -48,9 +50,10 @@ public class AssertionRequestWrapper {
     @NonNull
     AssertionRequest request;
 
+    @JsonCreator
     public AssertionRequestWrapper(
-        @NonNull final ByteArray requestId,
-        @NonNull final AssertionRequest request) {
+        @NonNull @JsonProperty("requestId") final ByteArray requestId,
+        @NonNull @JsonProperty("request") final AssertionRequest request) {
         this.requestId = requestId;
         this.publicKeyCredentialRequestOptions = request.getPublicKeyCredentialRequestOptions();
         this.username = request.getUsername();

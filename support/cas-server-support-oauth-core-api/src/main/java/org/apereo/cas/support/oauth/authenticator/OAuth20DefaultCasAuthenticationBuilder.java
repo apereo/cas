@@ -108,8 +108,8 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
         if (!scopes.isEmpty()) {
             builder.addAttribute(OAuth20Constants.SCOPE, scopes);
         }
-        FunctionUtils.doIfNotBlank(state, __ -> builder.addAttribute(OAuth20Constants.STATE, state));
-        FunctionUtils.doIfNotBlank(nonce, __ -> builder.addAttribute(OAuth20Constants.NONCE, nonce));
+        FunctionUtils.doIfNotBlank(state, _ -> builder.addAttribute(OAuth20Constants.STATE, state));
+        FunctionUtils.doIfNotBlank(nonce, _ -> builder.addAttribute(OAuth20Constants.NONCE, nonce));
         builder
             .addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
             .addCredential(credential)

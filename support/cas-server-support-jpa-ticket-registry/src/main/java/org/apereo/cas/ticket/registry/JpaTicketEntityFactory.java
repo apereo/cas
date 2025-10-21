@@ -115,7 +115,7 @@ public class JpaTicketEntityFactory extends AbstractJpaEntityFactory<BaseTicketE
      */
     public String getTableName() {
         val tableName = getType().getAnnotation(Table.class).name();
-        return RelaxedPropertyNames.NameManipulations.CAMELCASE_TO_UNDERSCORE_TITLE_CASE.apply(tableName);
+        return RelaxedPropertyNames.NameManipulations.CASE_INSENSITIVE_CAMELCASE_TO_UNDERSCORE.apply(tableName);
     }
 
     private Class<? extends BaseTicketEntity> getEntityClass() {

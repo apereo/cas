@@ -10,7 +10,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -20,6 +19,7 @@ import org.hjson.JsonValue;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import tools.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,6 +54,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(properties.getUrl())
                 .headers(properties.getHeaders())
@@ -75,6 +76,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
+                .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(properties.getUrl())
                 .parameters(CollectionUtils.wrap("principal", username))

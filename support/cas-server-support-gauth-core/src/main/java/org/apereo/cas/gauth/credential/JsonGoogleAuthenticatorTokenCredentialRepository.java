@@ -167,12 +167,12 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
     @Override
     public void deleteAll() {
-        lock.tryLock(__ -> writeAccountsToJsonRepository(new HashMap<>()));
+        lock.tryLock(_ -> writeAccountsToJsonRepository(new HashMap<>()));
     }
 
     @Override
     public void delete(final String username) {
-        lock.tryLock(__ -> {
+        lock.tryLock(_ -> {
             val accounts = readAccountsFromJsonRepository();
             accounts.remove(username.trim().toLowerCase(Locale.ENGLISH));
             writeAccountsToJsonRepository(accounts);
@@ -181,7 +181,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
     @Override
     public void delete(final long id) {
-        lock.tryLock(__ -> {
+        lock.tryLock(_ -> {
             val accounts = readAccountsFromJsonRepository();
             accounts.forEach((key, value) -> value.removeIf(d -> d.getId() == id));
             writeAccountsToJsonRepository(accounts);
@@ -205,7 +205,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     }
 
     private void writeAccountsToJsonRepository(final Map<String, List<OneTimeTokenAccount>> accounts) {
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             if (location.getFile() != null) {
                 LOGGER.debug("Saving [{}] google authenticator accounts to JSON file at [{}]", accounts.size(), location.getFile());
                 serializer.to(location.getFile(), accounts);

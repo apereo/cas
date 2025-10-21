@@ -177,8 +177,8 @@ public class RedisObjectFactory {
         var poolingClientConfig = LettucePoolingClientConfiguration.builder();
         if (redis.isUseSsl()) {
             val sslPoolingConfig = poolingClientConfig.useSsl();
-            FunctionUtils.doWhen(!redis.isVerifyPeer(), __ -> sslPoolingConfig.disablePeerVerification());
-            FunctionUtils.doWhen(redis.isStartTls(), __ -> sslPoolingConfig.startTls());
+            FunctionUtils.doWhen(!redis.isVerifyPeer(), _ -> sslPoolingConfig.disablePeerVerification());
+            FunctionUtils.doWhen(redis.isStartTls(), _ -> sslPoolingConfig.startTls());
             LOGGER.trace("Redis configuration: SSL connections are enabled");
         }
         if (redis.getReadFrom() != null) {

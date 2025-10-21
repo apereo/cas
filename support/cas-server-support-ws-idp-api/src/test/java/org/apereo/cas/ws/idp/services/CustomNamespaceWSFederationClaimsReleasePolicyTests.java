@@ -10,7 +10,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
@@ -21,8 +20,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import tools.jackson.databind.ObjectMapper;
 import java.io.File;
-import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -67,7 +66,7 @@ class CustomNamespaceWSFederationClaimsReleasePolicyTests {
 
 
     @Test
-    void verifySerializePolicyToJson() throws IOException {
+    void verifySerializePolicyToJson() {
         val policyWritten = new CustomNamespaceWSFederationClaimsReleasePolicy(
             CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.getClaim(), "cn",
                 WSFederationClaims.EMAIL_ADDRESS.getClaim(), "email"));

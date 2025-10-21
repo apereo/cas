@@ -10,10 +10,11 @@ import org.apache.coyote.http2.Http2Protocol;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.tomcat.autoconfigure.TomcatServerProperties;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
-import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
+import org.springframework.boot.web.server.autoconfigure.ServerProperties;
+import org.springframework.boot.web.server.servlet.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -43,7 +44,8 @@ class CasEmbeddedContainerTomcatConfiguration {
     @Bean
     public WebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer(
         final ServerProperties serverProperties,
+        final TomcatServerProperties tomcatServerProperties,
         final CasConfigurationProperties casProperties) {
-        return new CasTomcatServletWebServerFactoryCustomizer(serverProperties, casProperties);
+        return new CasTomcatServletWebServerFactoryCustomizer(serverProperties, tomcatServerProperties, casProperties);
     }
 }

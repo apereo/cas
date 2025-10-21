@@ -3,13 +3,13 @@ package org.apereo.cas.web;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.mock.web.MockHttpServletRequest;
+import tools.jackson.databind.ObjectMapper;
 import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +26,7 @@ class CaptchaValidatorTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifyLowScore() throws Throwable {
+    void verifyLowScore() {
         val entity = MAPPER.writeValueAsString(Map.of("score", 0.5));
         try (val webServer = new MockWebServer(entity)) {
             webServer.start();
@@ -45,7 +45,7 @@ class CaptchaValidatorTests {
     
 
     @Test
-    void verifySuccess() throws Throwable {
+    void verifySuccess() {
         val entity = MAPPER.writeValueAsString(Map.of("score", 0.5, "success", true));
         try (val webServer = new MockWebServer(entity)) {
             webServer.start();

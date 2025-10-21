@@ -87,7 +87,7 @@ public class JpaBeans {
         }
 
         val bean = new HikariDataSource();
-        FunctionUtils.doIfNotBlank(jpaProperties.getDriverClass(), __ -> bean.setDriverClassName(jpaProperties.getDriverClass()));
+        FunctionUtils.doIfNotBlank(jpaProperties.getDriverClass(), _ -> bean.setDriverClassName(jpaProperties.getDriverClass()));
 
         val url = SpringExpressionLanguageValueResolver.getInstance().resolve(jpaProperties.getUrl());
         bean.setJdbcUrl(url);
@@ -95,7 +95,7 @@ public class JpaBeans {
         bean.setPassword(jpaProperties.getPassword());
 
         val poolSettings = jpaProperties.getPool();
-        FunctionUtils.doUnchecked(__ -> bean.setLoginTimeout((int) Beans.newDuration(poolSettings.getMaxWait()).toSeconds()));
+        FunctionUtils.doUnchecked(_ -> bean.setLoginTimeout((int) Beans.newDuration(poolSettings.getMaxWait()).toSeconds()));
         bean.setMaximumPoolSize(poolSettings.getMaxSize());
         bean.setMinimumIdle(poolSettings.getMinSize());
         bean.setIdleTimeout(Beans.newDuration(jpaProperties.getIdleTimeout()).toMillis());
@@ -134,7 +134,7 @@ public class JpaBeans {
             bean.setPersistenceProvider(config.getPersistenceProvider());
         }
 
-        FunctionUtils.doIfNotBlank(config.getPersistenceUnitName(), __ -> bean.setPersistenceUnitName(config.getPersistenceUnitName()));
+        FunctionUtils.doIfNotBlank(config.getPersistenceUnitName(), _ -> bean.setPersistenceUnitName(config.getPersistenceUnitName()));
         if (!config.getPackagesToScan().isEmpty()) {
             bean.setPackagesToScan(config.getPackagesToScan().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         }

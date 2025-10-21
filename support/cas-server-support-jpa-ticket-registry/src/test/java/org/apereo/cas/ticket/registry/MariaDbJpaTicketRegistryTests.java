@@ -24,3 +24,4 @@ import org.springframework.test.context.TestPropertySource;
 @Tag("MariaDb")
 class MariaDbJpaTicketRegistryTests extends BaseJpaTicketRegistryTests {
 }
+

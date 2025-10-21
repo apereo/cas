@@ -2,8 +2,6 @@ package org.apereo.cas.adaptors.duo;
 
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,7 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
-
+import tools.jackson.databind.ObjectMapper;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;

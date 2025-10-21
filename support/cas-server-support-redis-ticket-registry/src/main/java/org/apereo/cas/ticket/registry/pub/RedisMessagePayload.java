@@ -1,14 +1,12 @@
 package org.apereo.cas.ticket.registry.pub;
 
 import org.apereo.cas.util.PublisherIdentifier;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
-
 import java.io.Serial;
 import java.io.Serializable;
 

@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "cas.jdbc.show-sql=true",
+        "cas.authn.mfa.gauth.core.scratch-codes.encryption.key=12345678901234567890123456789012",
         "cas.authn.mfa.gauth.crypto.enabled=false"
     })
 @EnableTransactionManagement(proxyTargetClass = false)

@@ -71,7 +71,7 @@ public class DefaultPrincipalAttributesMapper implements PrincipalAttributesMapp
     private static Map<String, List<Object>> fetchAttributeValueFromScript(
         @NotNull final ExecutableCompiledScript script,
         final String attributeName,
-        final Map<String, List<Object>> resolvedAttributes) throws Throwable {
+        final Map<String, List<Object>> resolvedAttributes) {
         val attributesToRelease = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
         script.setBinding(args);

@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -63,6 +64,7 @@ import static org.mockito.Mockito.*;
     CasCoreMultitenancyAutoConfiguration.class
 })
 @ExtendWith(CasTestExtension.class)
+@ExtendWith(MockitoExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTestAutoConfigurations
 class PersonDirectoryPrincipalResolverTests {
@@ -113,6 +115,7 @@ class PersonDirectoryPrincipalResolverTests {
             .applicationContext(applicationContext)
             .attributeMerger(CoreAuthenticationUtils.getAttributeMerger(casProperties))
             .attributeRepository(attributeRepository)
+            .tenantExtractor(tenantExtractor)
             .principalFactory(PrincipalFactoryUtils.newPrincipalFactory());
     }
 

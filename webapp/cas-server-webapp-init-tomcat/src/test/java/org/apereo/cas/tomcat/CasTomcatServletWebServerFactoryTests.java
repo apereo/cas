@@ -7,11 +7,12 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
+import org.springframework.boot.tomcat.autoconfigure.TomcatServerProperties;
+import org.springframework.boot.web.server.autoconfigure.ServerProperties;
+import org.springframework.boot.web.server.autoconfigure.servlet.ServletWebServerFactoryCustomizer;
+import org.springframework.boot.web.server.servlet.ConfigurableServletWebServerFactory;
 
 /**
  * This is {@link CasTomcatServletWebServerFactoryTests}.
@@ -56,7 +57,11 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
         "cas.server.tomcat.ext-access-log.enabled=true",
         "cas.server.tomcat.rewrite-valve.location=classpath:/container/tomcat/rewrite.config"
     }, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
+@EnableConfigurationProperties({
+    CasConfigurationProperties.class,
+    ServerProperties.class,
+    TomcatServerProperties.class
+})
 @Tag("WebApp")
 class CasTomcatServletWebServerFactoryTests {
     @Autowired

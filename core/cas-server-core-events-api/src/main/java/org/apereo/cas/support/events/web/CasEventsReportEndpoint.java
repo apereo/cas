@@ -91,7 +91,7 @@ public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
         val emitter = new ResponseBodyEmitter();
 
         executor.submit(() ->
-            eventRepositoryProvider.getObject().withTransaction(__ -> {
+            eventRepositoryProvider.getObject().withTransaction(_ -> {
                 try (val stream = eventRepositoryProvider.getObject().load()
                     .sorted(Comparator.comparingLong(CasEvent::getTimestamp).reversed())
                     .limit(limit)) {
