@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import tools.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
