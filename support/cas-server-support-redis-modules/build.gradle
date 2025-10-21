@@ -33,7 +33,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-audit", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
 
-    testImplementation libraries.springboottomcat
+
 
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
 

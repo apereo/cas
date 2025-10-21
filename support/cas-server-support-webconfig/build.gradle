@@ -32,7 +32,7 @@ dependencies {
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-actions-core")
 
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-themes")

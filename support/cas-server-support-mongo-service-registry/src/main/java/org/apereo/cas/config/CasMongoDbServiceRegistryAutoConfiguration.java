@@ -20,6 +20,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class CasMongoDbServiceRegistryAutoConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public MongoOperations mongoDbServiceRegistryTemplate(
+    public MongoTemplate mongoDbServiceRegistryTemplate(
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext) {
@@ -51,7 +52,7 @@ public class CasMongoDbServiceRegistryAutoConfiguration {
         val columnsIndex = new TextIndexDefinition.TextIndexDefinitionBuilder().onField("id")
             .onField("serviceId").onField("name").build();
         MongoDbConnectionFactory.createOrUpdateIndexes(mongoTemplate, collection, List.of(columnsIndex));
-        return mongoTemplate;
+        return mongoTemplate.asMongoTemplate();
     }
 
     @Bean

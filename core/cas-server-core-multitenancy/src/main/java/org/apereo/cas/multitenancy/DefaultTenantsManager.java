@@ -4,8 +4,6 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.io.WatcherService;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -14,6 +12,8 @@ import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean, In
     private final List<TenantDefinition> tenantDefinitionList = new ArrayList<>();
 
     private void initializeWatchService() {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             if (ResourceUtils.isFile(jsonResource)) {
                 watcherService = new FileWatcherService(jsonResource.getFile(),
                     file -> {
@@ -77,7 +77,8 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean, In
                 try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
                     val tenantsList = new TypeReference<List<TenantDefinition>>() {
                     };
-                    return objectMapper.readValue(JsonValue.readHjson(reader).toString(), tenantsList);
+                    val json = JsonValue.readHjson(reader).toString();
+                    return objectMapper.readValue(json, tenantsList);
                 }
             }
             return new ArrayList<>();

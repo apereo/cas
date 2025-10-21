@@ -43,8 +43,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.integration.autoconfigure.IntegrationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Collections;
 import java.util.HashMap;
@@ -217,7 +217,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
             @Override
             public void run() {
                 for (var i = 0; i < 5; i++) {
-                    FunctionUtils.doUnchecked(__ -> {
+                    FunctionUtils.doUnchecked(_ -> {
                         val tgt = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + RandomUtils.randomAlphabetic(16),
                             CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()),
                             new HardTimeoutExpirationPolicy(1));

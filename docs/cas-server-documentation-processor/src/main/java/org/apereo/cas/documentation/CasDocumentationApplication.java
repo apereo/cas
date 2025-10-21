@@ -16,9 +16,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.Getter;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.help.HelpFormatter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RegExUtils;
@@ -135,7 +135,9 @@ public class CasDocumentationApplication {
         ui.setRequired(false);
         options.addOption(ui);
 
-        new HelpFormatter().printHelp("CAS Documentation", options);
+
+        HelpFormatter.builder().get().printHelp("-- Review Required Options --",
+            "ApereoCAS Documentation", options, "Apereo CAS Documentation", true);
         var cmd = new DefaultParser().parse(options, args);
 
         var dataDirectory = cmd.getOptionValue("data");
@@ -194,7 +196,7 @@ public class CasDocumentationApplication {
             exportTemplateViews(projectRootDirectory, dataPath);
             exportThemeProperties(projectRootDirectory, dataPath);
         }
-        
+
         var actuators = cmd.getOptionValue("actuators", "true");
         if (Strings.CI.equals("true", actuators)) {
             exportActuatorEndpoints(dataPath);
@@ -399,7 +401,7 @@ public class CasDocumentationApplication {
         if (Modifier.isAbstract(clazz.getModifiers())) {
             return null;
         }
-        
+
         var endpoint = (Endpoint) clazz.getAnnotation(Endpoint.class);
         if (endpoint != null) {
             return Pair.of(endpoint.id(), endpoint.annotationType().getSimpleName());
@@ -436,7 +438,7 @@ public class CasDocumentationApplication {
         var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(RestControllerEndpoint.class), "org");
         collectRestActuators(subTypes, parentPath, RestControllerEndpoint.class);
 
-        
+
         var restActuators = ReflectionUtils.findSubclassesInPackage(BaseCasRestActuatorEndpoint.class, "org.apereo.cas");
         collectRestActuators(restActuators, parentPath, Endpoint.class);
 
@@ -512,7 +514,7 @@ public class CasDocumentationApplication {
             var properties = new ArrayList<Map<?, ?>>();
             var endpoint = clazz.getAnnotation(annotationClazz);
             var endpointId = getEndpointId(endpoint, annotationClazz);
-            
+
             var methods = findAnnotatedMethods(clazz, GetMapping.class);
             LOGGER.debug("Checking actuator endpoint (GET) for [{}]", clazz.getName());
             methods.forEach(Unchecked.consumer(method -> {
@@ -762,14 +764,14 @@ public class CasDocumentationApplication {
         if (isCasEndpoint(clazz)) {
             var operation = Objects.requireNonNull(method.getAnnotation(Operation.class),
                 () -> "Unable to locate @Operation annotation for " + method.toGenericString()
-                      + " in declaring class " + clazz.getName());
+                    + " in declaring class " + clazz.getName());
             if (!map.containsKey("deprecated") && operation.deprecated()) {
                 map.put("deprecated", true);
             }
             map.put("summary", Strings.CI.appendIfMissing(operation.summary(), "."));
             var paramCount = Arrays.stream(method.getParameterTypes())
                 .filter(type -> !type.equals(HttpServletRequest.class) && !type.equals(HttpServletResponse.class)).count();
-            
+
             if (operation.parameters().length == 0 && paramCount > 0) {
                 for (var i = 0; i < method.getParameterTypes().length; i++) {
                     var parameter = method.getParameters()[i];
@@ -809,7 +811,7 @@ public class CasDocumentationApplication {
 
                 if (parameters.isEmpty()) {
                     throw new RuntimeException("Unable to locate @Parameter annotation for " + method.toGenericString()
-                                               + " in declaring class " + clazz.getName());
+                        + " in declaring class " + clazz.getName());
                 }
             }
 

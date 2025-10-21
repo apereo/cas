@@ -1,19 +1,21 @@
-
 const cas = require("../../cas.js");
 const assert = require("assert");
-const path = require("path");
-const fs = require("fs");
 
 (async () => {
-    const configFilePath = path.join(__dirname, "config.yml");
-    const file = fs.readFileSync(configFilePath, "utf8");
-    const configFile = await cas.parseYAML(file);
-
     const leak = await cas.randomNumber() * 100;
     await cas.log("Updating configuration and waiting for changes to reload...");
-    await updateConfig(configFile, configFilePath, leak);
+    await cas.updateYamlConfigurationSource(__dirname, {
+        cas: {
+            ticket: {
+                registry: {
+                    jpa: {
+                        "leak-threshold": leak
+                    }
+                }
+            }
+        }
+    });
     await cas.sleep(2000);
-
     await cas.refreshContext();
     await cas.sleep(5000);
 
@@ -23,7 +25,7 @@ const fs = require("fs");
     await cas.sleep(1000);
     await cas.log(`${response.status()} ${response.statusText()}`);
     assert(response.ok());
-    
+
     await cas.loginWith(page);
     await cas.sleep(1000);
     await cas.assertCookie(page);
@@ -41,20 +43,3 @@ const fs = require("fs");
     await cas.closeBrowser(browser);
 })();
 
-async function updateConfig(configFile, configFilePath, data) {
-    const config = {
-        cas: {
-            ticket: {
-                registry: {
-                    jpa: {
-                        "leak-threshold": data
-                    }
-                }
-            }
-        }
-    };
-    const newConfig = await cas.toYAML(config);
-    await cas.log(`Updated configuration:\n${newConfig}`);
-    await fs.writeFileSync(configFilePath, newConfig);
-    await cas.log(`Wrote changes to ${configFilePath}`);
-}

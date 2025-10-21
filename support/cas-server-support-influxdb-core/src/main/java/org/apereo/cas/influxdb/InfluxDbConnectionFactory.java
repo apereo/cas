@@ -34,6 +34,9 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
     private final ClientConfig clientConfig;
 
     static {
+        System.setProperty("sun.misc.unsafe.memory.access", "allow");
+        System.setProperty("io.netty.noUnsafe", "false");
+        System.setProperty("io.netty.tryUnsafe", "true");
         System.setProperty(
             DefaultAllocationManagerOption.ALLOCATION_MANAGER_TYPE_PROPERTY_NAME,
             DefaultAllocationManagerOption.AllocationManagerType.Netty.name()
@@ -114,7 +117,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
 
     @Override
     public void close() {
-        FunctionUtils.doAndHandle(__ -> influxDb.close());
+        FunctionUtils.doAndHandle(_ -> influxDb.close());
     }
 
     public String getDatabase() {

@@ -22,8 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(
     classes = BaseX509Tests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.x509.cache-disk-overflow=true",
-        "cas.authn.x509.cache-eternal=true",
         "cas.authn.x509.revocation-checker=crl",
         "cas.authn.x509.crl-unavailable-policy=allow",
         "cas.authn.x509.crl-resource-expired-policy=threshold"

@@ -35,5 +35,5 @@ public class TicketGrantingTicketCoreProperties implements Serializable {
      * how session information is tracked for every ticket which then
      * has a subsequent impact on logout.
      */
-    private boolean onlyTrackMostRecentSession = true;
+    private TicketTrackingPolicyTypes serviceTrackingPolicy = TicketTrackingPolicyTypes.MOST_RECENT;
 }

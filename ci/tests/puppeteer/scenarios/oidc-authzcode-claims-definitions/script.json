@@ -7,6 +7,8 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
+    "--cas.ticket.st.time-to-kill-in-seconds=60",
+    
     "--cas.authn.attribute-repository.stub.attributes.cn=casuser",
     "--cas.authn.attribute-repository.stub.attributes.mail=cas@example.org",
     "--cas.authn.attribute-repository.stub.attributes.sn=Apereo",
@@ -18,7 +20,7 @@
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
     
     "--cas.authn.oidc.discovery.scopes=openid,profile,email",
-    "--cas.authn.oidc.discovery.claims=sub,name,family_name,given_name,email,preferred_username,organization",
+    "--cas.authn.oidc.discovery.claims=sub,name,family_name,given_name,email,preferred_username,organization,container",
 
     "--cas.authn.oidc.core.claims-map.email=mail",
     "--cas.authn.oidc.core.claims-map.name=cn",

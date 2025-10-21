@@ -157,7 +157,7 @@ public class OidcJwtAuthenticator implements Authenticator {
 
     protected void determineUserProfile(final UsernamePasswordCredentials credentials,
                                         final JwtConsumer consumer) {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             val jwt = consumer.processToClaims(credentials.getPassword());
             val userProfile = new CommonProfile(true);
             userProfile.setId(jwt.getSubject());

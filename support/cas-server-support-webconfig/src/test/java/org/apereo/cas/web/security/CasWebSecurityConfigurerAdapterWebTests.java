@@ -119,7 +119,8 @@ class CasWebSecurityConfigurerAdapterWebTests {
         mvc.perform(get("/cas/actuator/env")
                 .with(httpBasic("casuser", "Mellon")))
             .andExpect(status().isOk());
-        mvc.perform(get("/cas/actuator/health").header("X-Forwarded-For", "196.1.1.0"))
+        mvc.perform(get("/cas/actuator/health")
+                .header("X-Forwarded-For", "196.1.1.0"))
             .andExpect(status().isOk());
         mvc.perform(get("/cas/actuator/health").header("X-Forwarded-For", "10.0.0.9"))
             .andExpect(status().isOk());

@@ -13,7 +13,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.duosecurity.client.Http;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -28,6 +27,7 @@ import org.apache.commons.lang3.Strings;
 import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
+import tools.jackson.databind.ObjectMapper;
 import javax.net.ssl.X509TrustManager;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -104,16 +104,16 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
                 throw new DuoSecurityException("Invalid response format received from Duo");
             }
 
-            if ("OK".equalsIgnoreCase(result.get(RESULT_KEY_STAT).asText())) {
+            if ("OK".equalsIgnoreCase(result.get(RESULT_KEY_STAT).asString())) {
                 val response = result.get(RESULT_KEY_RESPONSE);
-                val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase(Locale.ENGLISH);
+                val authResult = response.get(RESULT_KEY_RESULT).asString().toUpperCase(Locale.ENGLISH);
 
                 val status = DuoSecurityUserAccountStatus.valueOf(authResult);
                 account.setProviderId(properties.getId());
                 account.setStatus(status);
-                account.setMessage(response.get(RESULT_KEY_STATUS_MESSAGE).asText());
+                account.setMessage(response.get(RESULT_KEY_STATUS_MESSAGE).asString());
                 if (status == DuoSecurityUserAccountStatus.ENROLL) {
-                    val enrollUrl = response.get(RESULT_KEY_ENROLL_PORTAL_URL).asText();
+                    val enrollUrl = response.get(RESULT_KEY_ENROLL_PORTAL_URL).asString();
                     account.setEnrollPortalUrl(enrollUrl);
                 }
             } else {
@@ -126,8 +126,8 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
                 LOGGER.warn("Duo returned an Invalid response with message [{}] and detail [{}] "
                         + "when determining user account. This maybe a configuration error in the admin request and Duo will "
                         + "still be considered available.",
-                    result.hasNonNull(RESULT_KEY_MESSAGE) ? result.get(RESULT_KEY_MESSAGE).asText() : StringUtils.EMPTY,
-                    result.hasNonNull(RESULT_KEY_MESSAGE_DETAIL) ? result.get(RESULT_KEY_MESSAGE_DETAIL).asText() : StringUtils.EMPTY);
+                    result.hasNonNull(RESULT_KEY_MESSAGE) ? result.get(RESULT_KEY_MESSAGE).asString() : StringUtils.EMPTY,
+                    result.hasNonNull(RESULT_KEY_MESSAGE_DETAIL) ? result.get(RESULT_KEY_MESSAGE_DETAIL).asString() : StringUtils.EMPTY);
             }
         } catch (final Exception e) {
             LOGGER.warn("Reaching Duo has failed with error: [{}]", e.getMessage(), e);

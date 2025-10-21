@@ -17,7 +17,6 @@ CAS metrics may be routed to varying types of databases for storage and analytic
 - Statsd
 - InfluxDb
 - Prometheus
-- Wavefront
 - New Relic
 - AWS CloudWatch
 - ...

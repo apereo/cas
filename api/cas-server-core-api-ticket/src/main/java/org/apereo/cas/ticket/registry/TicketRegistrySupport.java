@@ -5,9 +5,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * Helper strategy API to ease retrieving CAS' {@code Authentication} object and its associated components
  * from available CAS SSO String token called <i>Ticket Granting Ticket (TGT)</i>.
@@ -54,15 +51,7 @@ public interface TicketRegistrySupport {
      * @return valid Principal OR <b>NULL</b> if there is no valid SSO session present identified by the provided TGT id SSO token
      */
     Principal getAuthenticatedPrincipalFrom(String ticketGrantingTicketId);
-
-    /**
-     * Retrieve a valid Principal's map of attributes identified by the provided TGT SSO token.
-     *
-     * @param ticketGrantingTicketId an SSO token identifying the requested authenticated Principal's attributes
-     * @return valid Principal's attributes OR <b>NULL</b> if there is no valid SSO session present identified by the provided TGT id SSO token
-     */
-    Map<String, List<Object>> getPrincipalAttributesFrom(String ticketGrantingTicketId);
-
+    
     /**
      * Update authentication associated with the ticket-granting ticket
      * and restore changes back to the registry; particularly updated authentication

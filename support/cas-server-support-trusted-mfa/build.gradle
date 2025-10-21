@@ -44,7 +44,7 @@ dependencies {
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-scripting")
 
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-reports")

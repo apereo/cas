@@ -1778,9 +1778,8 @@ public class WebUtils {
      *
      * @param requestContext the request context
      * @return the optional
-     * @throws Exception the exception
      */
-    public static Optional<String> getBrowserStoragePayload(final RequestContext requestContext) throws Exception {
+    public static Optional<String> getBrowserStoragePayload(final RequestContext requestContext) {
         if (requestContext.getRequestParameters().contains(BrowserStorage.PARAMETER_BROWSER_STORAGE)) {
             return Optional.of(requestContext.getRequestParameters().getRequired(BrowserStorage.PARAMETER_BROWSER_STORAGE))
                 .stream()

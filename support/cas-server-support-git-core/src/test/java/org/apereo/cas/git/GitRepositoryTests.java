@@ -2,6 +2,7 @@ package org.apereo.cas.git;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -85,7 +86,7 @@ class GitRepositoryTests {
             repo.push();
             fail("Pushing changes should fail");
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LoggingUtils.error(LOGGER, e);
         }
     }
 }

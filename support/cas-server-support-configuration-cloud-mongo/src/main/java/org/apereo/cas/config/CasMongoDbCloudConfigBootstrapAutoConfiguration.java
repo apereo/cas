@@ -38,7 +38,7 @@ public class CasMongoDbCloudConfigBootstrapAutoConfiguration {
     }
 
     @Bean
-    public MongoOperations mongoDbCloudConfigurationTemplate(final ConfigurableEnvironment environment) {
+    public MongoTemplate mongoDbCloudConfigurationTemplate(final ConfigurableEnvironment environment) {
         val uri = Objects.requireNonNull(environment.getProperty(CAS_CONFIGURATION_MONGODB_URI));
         return new MongoTemplate(new SimpleMongoClientDatabaseFactory(uri));
     }

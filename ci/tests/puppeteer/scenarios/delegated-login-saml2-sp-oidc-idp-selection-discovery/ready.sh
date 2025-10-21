@@ -16,3 +16,5 @@ echo -e "Using encryption certificate:\n$IDP_ENCRYPTION_CERTIFICATE"
 
 chmod +x "${PWD}/ci/tests/saml2/run-saml-server.sh"
 "${PWD}/ci/tests/saml2/run-saml-server.sh"
+
+"${PWD}/ci/tests/keycloak/run-keycloak-server.sh"

@@ -35,7 +35,7 @@ public class MultivaluedAttributeMerger extends BaseAdditiveAttributeMerger {
         for (val sourceEntry : toConsider.entrySet()) {
             var sourceKey = sourceEntry.getKey();
 
-            var values = toModify.computeIfAbsent(sourceKey, __ -> new ArrayList<>());
+            var values = toModify.computeIfAbsent(sourceKey, _ -> new ArrayList<>());
 
             val sourceValue = sourceEntry.getValue();
             if (this.distinctValues) {

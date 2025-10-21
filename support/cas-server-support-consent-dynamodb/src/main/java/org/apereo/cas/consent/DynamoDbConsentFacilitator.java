@@ -9,7 +9,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +22,7 @@ import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import tools.jackson.databind.ObjectMapper;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +54,7 @@ public class DynamoDbConsentFacilitator {
         values.put(ColumnNames.SERVICE.getColumnName(), AttributeValue.builder().s(record.getService()).build());
         values.put(ColumnNames.ID.getColumnName(), AttributeValue.builder().n(String.valueOf(record.getId())).build());
 
-        val body = FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(record));
+        val body = MAPPER.writeValueAsString(record);
         values.put(ColumnNames.BODY.getColumnName(), AttributeValue.builder().s(body).build());
 
         val time = DateTimeUtils.dateOf(record.getCreatedDate());
@@ -86,7 +86,7 @@ public class DynamoDbConsentFacilitator {
             .attributeName(ColumnNames.ID.getColumnName())
             .keyType(KeyType.HASH)
             .build());
-        FunctionUtils.doUnchecked(__ -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
+        FunctionUtils.doUnchecked(_ -> DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
             dynamoDbProperties.getTableName(), deleteTables, attributes, schema));
     }
 

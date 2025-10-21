@@ -21,8 +21,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.boot.actuate.health.Status;
+import org.springframework.boot.health.contributor.HealthIndicator;
+import org.springframework.boot.health.contributor.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Arrays;
 import java.util.Map;
@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
 },
-    properties = "cas.ticket.registry.hazelcast.cluster.instance-name=testlocalmonitor")
+    properties = "cas.ticket.registry.hazelcast.cluster.core.instance-name=testlocalmonitor")
 @Tag("Hazelcast")
 @ExtendWith(CasTestExtension.class)
 class HazelcastHealthIndicatorTests {

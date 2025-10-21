@@ -26,6 +26,8 @@ public class AsciiArtUtils {
 
     private static final String ANSI_CYAN = "\u001B[36m";
 
+    private static final String ANSI_BOLD = "\u001B[1m";
+
     /**
      * Print ascii art.
      *
@@ -36,14 +38,14 @@ public class AsciiArtUtils {
     public static void printAsciiArt(final PrintStream out, final String asciiArt, final String additional) {
         out.println(ANSI_CYAN);
         if (StringUtils.isNotBlank(additional)) {
-            out.println(asciiArt);
+            out.println(ANSI_BOLD + asciiArt + ANSI_RESET);
             out.println(additional);
         } else {
-            out.print(asciiArt);
+            out.println(ANSI_BOLD + asciiArt + ANSI_RESET);
         }
         out.println(ANSI_RESET);
     }
-
+    
     /**
      * Print ascii art.
      *
@@ -53,15 +55,13 @@ public class AsciiArtUtils {
     public static void printAsciiArtWarning(final Logger out, final String additional) {
         val ascii = """
 
-              _____ ______   ___   ____  __\s
-             / ___/|      T /   \\ |    \\|  T
-            (   \\_ |      |Y     Y|  o  )  |
-             \\__  Tl_j  l_j|  O  ||   _/|__j
-             /  \\ |  |  |  |     ||  |   __\s
-             \\    |  |  |  l     !|  |  |  T
-              \\___j  l__j   \\___/ l__j  l__j
-                                           \s
+             ____  ____  __  ____\s
+            / ___)(_  _)/  \\(  _ \\
+            \\___ \\  )( (  O )) __/
+            (____/ (__) \\__/(__) \s
+            
             """;
+        out.warn(ANSI_BOLD);
         out.warn(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
         out.warn(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional));
         out.warn(ASCII_ART_LOGGER_MARKER, ANSI_RESET);
@@ -75,16 +75,13 @@ public class AsciiArtUtils {
      */
     public static void printAsciiArtReady(final Logger out, final String additional) {
         val ascii = """
-             
-             ____     ___   ____  ___    __ __\s
-            |    \\   /  _] /    T|   \\  |  T  T
-            |  D  ) /  [_ Y  o  ||    \\ |  |  |
-            |    / Y    _]|     ||  D  Y|  ~  |
-            |    \\ |   [_ |  _  ||     |l___, |
-            |  .  Y|     T|  |  ||     ||     !
-            l__j\\_jl_____jl__j__jl_____jl____/\s
-                                              \s
-                        """;
+            
+             ____  ____   __   ____  _  _\s
+            (  _ \\(  __) / _\\ (    \\( \\/ )
+             )   / ) _) /    \\ ) D ( )  /\s
+            (__\\_)(____)\\_/\\_/(____/(__/ \s
+            """;
+        out.info(ANSI_BOLD);
         out.info(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
         out.info(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional).concat("\n"));
         out.info(ASCII_ART_LOGGER_MARKER, ANSI_RESET);
