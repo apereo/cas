@@ -43,7 +43,7 @@ dependencies {
     implementation libraries.pac4jsaml
     implementation libraries.nimbus
 
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-services")

@@ -61,13 +61,13 @@ public class UmaUpdateResourceSetRegistrationEndpointController extends BaseUmaE
 
             if (StringUtils.isBlank(newResource.getName()) || newResource.getScopes().isEmpty() || newResource.getId() != id) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Provided resource-set body is missing required fields");
-                return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(model, HttpStatus.BAD_REQUEST);
             }
 
             val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(id);
             if (resourceSetResult.isEmpty()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
-                return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(model, HttpStatus.BAD_REQUEST);
             }
             val resourceSet = resourceSetResult.get();
             resourceSet.validate(profileResult);

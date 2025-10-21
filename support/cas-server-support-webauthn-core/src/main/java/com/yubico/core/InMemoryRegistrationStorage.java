@@ -57,17 +57,17 @@ public class InMemoryRegistrationStorage extends BaseWebAuthnCredentialRepositor
 
     @Override
     public boolean addRegistrationByUsername(final String username, final CredentialRegistration reg) {
-        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), __ -> new HashSet<>()).add(reg));
+        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), _ -> new HashSet<>()).add(reg));
     }
 
     @Override
     public Collection<CredentialRegistration> getRegistrationsByUsername(final String username) {
-        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), __ -> new HashSet<>()));
+        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), _ -> new HashSet<>()));
     }
 
     @Override
     public boolean removeRegistrationByUsername(final String username, final CredentialRegistration credentialRegistration) {
-        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), __ -> new HashSet<>()).remove(credentialRegistration));
+        return FunctionUtils.doUnchecked(() -> storage.get(username.toLowerCase(Locale.ENGLISH), _ -> new HashSet<>()).remove(credentialRegistration));
     }
 
     @Override

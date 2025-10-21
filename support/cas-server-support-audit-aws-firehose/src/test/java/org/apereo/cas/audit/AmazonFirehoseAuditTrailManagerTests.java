@@ -49,7 +49,7 @@ class AmazonFirehoseAuditTrailManagerTests {
     }
     
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val audit = new AuditActionContext("casuser", "resource", "action",
             "CAS", LocalDateTime.now(Clock.systemUTC()),
             new ClientInfo("123.456.789.000", "123.456.789.000",

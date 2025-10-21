@@ -161,7 +161,7 @@ public class OidcJsonWebKeyStoreUtils {
     private Optional<JsonWebKeySet> buildJsonWebKeySet(
         final String json, final Optional<String> keyId,
         final Optional<OidcJsonWebKeyUsage> usage) throws Exception {
-        if (JsonUtils.isValidJson(json)) {
+        if (JsonUtils.isValidJsonObject(json)) {
             return getJsonWebKeyFromJsonWebKeySet(new JsonWebKeySet(json), keyId, usage);
         }
         val key = new AesKey(json.getBytes(StandardCharsets.UTF_8));

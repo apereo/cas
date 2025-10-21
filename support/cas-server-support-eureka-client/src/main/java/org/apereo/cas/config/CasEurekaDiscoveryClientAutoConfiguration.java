@@ -11,12 +11,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.cloud.configuration.SSLContextFactory;
 import org.springframework.cloud.configuration.TlsProperties;
-import org.springframework.cloud.netflix.eureka.RestTemplateTimeoutProperties;
+import org.springframework.cloud.netflix.eureka.TimeoutProperties;
 import org.springframework.cloud.netflix.eureka.http.DefaultEurekaClientHttpRequestFactorySupplier;
+import org.springframework.cloud.netflix.eureka.http.EurekaClientHttpRequestFactorySupplier;
 import org.springframework.cloud.netflix.eureka.http.RestClientDiscoveryClientOptionalArgs;
 import org.springframework.cloud.netflix.eureka.http.RestClientTransportClientFactories;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestClient;
+import java.util.HashSet;
 
 /**
  * This is {@link CasEurekaDiscoveryClientAutoConfiguration}.
@@ -26,14 +29,18 @@ import org.springframework.web.client.RestClient;
  */
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Discovery, module = "eureka")
 @AutoConfiguration
-@SuppressWarnings("removal")
 public class CasEurekaDiscoveryClientAutoConfiguration {
     @Bean
     public AbstractDiscoveryClientOptionalArgs restClientDiscoveryClientOptionalArgs(
-        final TlsProperties tlsProperties, final RestTemplateTimeoutProperties restTemplateTimeoutProperties,
-        @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
+        final ConfigurableApplicationContext applicationContext,
+        final TlsProperties tlsProperties,
+        final TimeoutProperties restTemplateTimeoutProperties,
+        @Qualifier(CasSSLContext.BEAN_NAME)
+        final CasSSLContext casSslContext,
         final ObjectProvider<RestClient.Builder> restClientBuilderProvider) throws Exception {
-        val factorySupplier = new DefaultEurekaClientHttpRequestFactorySupplier(restTemplateTimeoutProperties);
+        val customizers = new HashSet<>(applicationContext.getBeansOfType(
+            EurekaClientHttpRequestFactorySupplier.RequestConfigCustomizer.class).values());
+        val factorySupplier = new DefaultEurekaClientHttpRequestFactorySupplier(restTemplateTimeoutProperties, customizers);
         val result = new RestClientDiscoveryClientOptionalArgs(factorySupplier,
             () -> restClientBuilderProvider.getIfAvailable(RestClient::builder));
 

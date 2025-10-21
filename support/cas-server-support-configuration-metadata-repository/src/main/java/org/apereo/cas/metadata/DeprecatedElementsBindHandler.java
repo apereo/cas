@@ -26,7 +26,7 @@ class DeprecatedElementsBindHandler extends AbstractBindHandler {
     @Override
     public Object onSuccess(final ConfigurationPropertyName name, final Bindable<?> target,
                             final BindContext context, final Object result) {
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             if (result instanceof final Enum enumeration) {
                 val field = enumeration.getDeclaringClass().getField(enumeration.name());
                 if (field.isAnnotationPresent(Deprecated.class)) {

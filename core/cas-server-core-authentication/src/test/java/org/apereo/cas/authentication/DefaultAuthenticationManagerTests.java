@@ -153,7 +153,7 @@ class DefaultAuthenticationManagerTests {
         map.put(newMockHandler(false), null);
 
         val authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
-        authenticationExecutionPlan.registerAuthenticationPreProcessor(__ -> false);
+        authenticationExecutionPlan.registerAuthenticationPreProcessor(_ -> false);
 
         val manager = getAuthenticationManager(authenticationExecutionPlan);
         assertThrows(AuthenticationException.class, () -> manager.authenticate(transaction));

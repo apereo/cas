@@ -2,15 +2,13 @@ package org.apereo.cas.monitor;
 
 import org.apereo.cas.util.NamedObject;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.boot.actuate.health.AbstractHealthIndicator;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.Status;
-
+import org.springframework.boot.health.contributor.AbstractHealthIndicator;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.Status;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;

@@ -32,11 +32,11 @@ public class DeleteTicketMessageQueueCommand extends BaseMessageQueueCommand imp
     private final String ticketId;
 
     @JsonCreator
-    public DeleteTicketMessageQueueCommand(@JsonProperty("id")
-                                           final PublisherIdentifier id,
+    public DeleteTicketMessageQueueCommand(@JsonProperty("publisherIdentifier")
+                                           final PublisherIdentifier publisherIdentifier,
                                            @JsonProperty("ticketId")
                                            final String ticketId) {
-        super(id);
+        super(publisherIdentifier);
         this.ticketId = ticketId;
     }
 

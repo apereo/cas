@@ -5,7 +5,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +14,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
+import tools.jackson.databind.ObjectMapper;
 import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -66,7 +66,7 @@ public class DefaultBrowserStorage implements BrowserStorage {
     @JsonIgnore
     @CanIgnoreReturnValue
     public BrowserStorage setPayloadJson(final Object payload) {
-        FunctionUtils.doAndHandle(__ -> setPayload(EncodingUtils.encodeBase64(MAPPER.writeValueAsString(payload))));
+        FunctionUtils.doAndHandle(_ -> setPayload(EncodingUtils.encodeBase64(MAPPER.writeValueAsString(payload))));
         return this;
     }
 

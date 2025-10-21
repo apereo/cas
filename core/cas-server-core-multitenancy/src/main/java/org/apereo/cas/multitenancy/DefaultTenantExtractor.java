@@ -4,13 +4,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
+import tools.jackson.databind.ObjectMapper;
 import java.util.Optional;
 
 /**

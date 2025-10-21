@@ -12,9 +12,9 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.autoconfigure.tracing.ConditionalOnEnabledTracing;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.micrometer.tracing.autoconfigure.ConditionalOnEnabledTracingExport;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -36,7 +36,7 @@ import jakarta.servlet.http.HttpServletRequest;
 })
 @EnableAspectJAutoProxy
 @Lazy(false)
-@ConditionalOnEnabledTracing
+@ConditionalOnEnabledTracingExport
 class CasWebflowMonitoringConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "casWebflowMonitoringAspect")

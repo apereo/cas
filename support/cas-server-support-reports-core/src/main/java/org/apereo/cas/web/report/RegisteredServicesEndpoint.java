@@ -87,6 +87,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Handle and produce a list of services from registry")
     @GetMapping(produces = {
         MediaType.APPLICATION_JSON_VALUE,
+        MediaType.APPLICATION_YAML_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -112,6 +113,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Fetch service either by numeric id or service id pattern")
     @GetMapping(path = "{id}", produces = {
         MediaType.APPLICATION_JSON_VALUE,
+        MediaType.APPLICATION_YAML_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -139,6 +141,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Fetch services by their type")
     @GetMapping(path = "type/{type}", produces = {
         MediaType.APPLICATION_JSON_VALUE,
+        MediaType.APPLICATION_YAML_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -161,6 +164,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     @DeleteMapping(path = "/cache",
         consumes = {
             MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_YAML_VALUE,
             MediaType.APPLICATION_JSON_VALUE,
             MEDIA_TYPE_SPRING_BOOT_V2_JSON,
             MEDIA_TYPE_SPRING_BOOT_V3_JSON,
@@ -183,6 +187,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     @DeleteMapping(path = "{id}",
         consumes = {
             MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_YAML_VALUE,
             MEDIA_TYPE_SPRING_BOOT_V2_JSON,
             MEDIA_TYPE_SPRING_BOOT_V3_JSON,
             MEDIA_TYPE_CAS_YAML
@@ -217,11 +222,13 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     @PostMapping(path = "/import", consumes = {
         MediaType.APPLICATION_OCTET_STREAM_VALUE,
         MediaType.APPLICATION_JSON_VALUE,
+        MediaType.APPLICATION_YAML_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MEDIA_TYPE_CAS_YAML
     }, produces = {
         MediaType.APPLICATION_JSON_VALUE,
+        MediaType.APPLICATION_YAML_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MEDIA_TYPE_CAS_YAML
@@ -295,11 +302,13 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @PostMapping(consumes = {
         MediaType.APPLICATION_JSON_VALUE,
+        MediaType.APPLICATION_YAML_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MEDIA_TYPE_CAS_YAML
     }, produces = {
         MediaType.APPLICATION_JSON_VALUE,
+        MediaType.APPLICATION_YAML_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MEDIA_TYPE_CAS_YAML
@@ -326,11 +335,13 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @PutMapping(consumes = {
         MediaType.APPLICATION_JSON_VALUE,
+        MediaType.APPLICATION_YAML_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MEDIA_TYPE_CAS_YAML
     }, produces = {
         MediaType.APPLICATION_JSON_VALUE,
+        MediaType.APPLICATION_YAML_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MEDIA_TYPE_CAS_YAML

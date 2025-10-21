@@ -137,9 +137,9 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
                         .build();
                 })
             .limit(1000);
-        executedTimedOperation("Adding accounts", __ -> allAccounts.forEach(registry::save));
+        executedTimedOperation("Adding accounts", _ -> allAccounts.forEach(registry::save));
         executedTimedOperation("Getting accounts",
-            Unchecked.consumer(__ -> {
+            Unchecked.consumer(_ -> {
                 val accounts = registry.load();
                 assertFalse(accounts.isEmpty());
             }));
@@ -147,9 +147,9 @@ class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTime
         val accountsStream = executedTimedOperation("Getting accounts in bulk",
             Unchecked.supplier(() -> registry.load()));
         executedTimedOperation("Getting accounts individually",
-            Unchecked.consumer(__ -> accountsStream.forEach(acct -> assertNotNull(registry.get(acct.getId())))));
+            Unchecked.consumer(_ -> accountsStream.forEach(acct -> assertNotNull(registry.get(acct.getId())))));
         executedTimedOperation("Getting accounts individually for users",
-            Unchecked.consumer(__ -> accountsStream.forEach(acct -> assertNotNull(registry.get(acct.getUsername())))));
+            Unchecked.consumer(_ -> accountsStream.forEach(acct -> assertNotNull(registry.get(acct.getUsername())))));
     }
 
     private static <T> T executedTimedOperation(final String name, final Supplier<T> operation) {

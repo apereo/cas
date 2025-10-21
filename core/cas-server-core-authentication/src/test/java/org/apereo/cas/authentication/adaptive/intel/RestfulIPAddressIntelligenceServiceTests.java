@@ -33,7 +33,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class RestfulIPAddressIntelligenceServiceTests {
 
     @SpringBootTest(classes = BaseAuthenticationTests.SharedTestConfiguration.class,
-        properties = "cas.authn.adaptive.ip-intel.rest.url=http://localhost:${random.int[3000,9999]}")
+        properties = {
+            "cas.authn.adaptive.ip-intel.rest.url=http://localhost:${random.int[3000,9999]}",
+            "cas.authn.adaptive.ip-intel.rest.maximum-retry-attempts=0"
+        })
     abstract static class BaseTests {
         @Autowired
         protected CasConfigurationProperties casProperties;
@@ -88,7 +91,9 @@ class RestfulIPAddressIntelligenceServiceTests {
         @Test
         void verifyOperation() throws Throwable {
             val port = resolvePort();
-            try (val webServer = new MockWebServer(port, new ByteArrayResource("12.435".getBytes(StandardCharsets.UTF_8)), HttpStatus.PRECONDITION_REQUIRED)) {
+            try (val webServer = new MockWebServer(port,
+                new ByteArrayResource("12.435".getBytes(StandardCharsets.UTF_8)),
+                HttpStatus.PRECONDITION_REQUIRED)) {
                 webServer.start();
 
                 val requestContext = MockRequestContext.create(applicationContext);

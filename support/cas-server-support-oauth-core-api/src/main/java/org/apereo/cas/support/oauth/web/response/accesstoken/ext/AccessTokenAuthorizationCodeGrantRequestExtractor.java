@@ -168,7 +168,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
                 val configurationContext = getConfigurationContext().getObject();
                 val ticketGrantingTicket = configurationContext.getTicketRegistry().getTicket(id, TicketGrantingTicket.class);
 
-                FunctionUtils.doUnchecked(__ -> {
+                FunctionUtils.doUnchecked(_ -> {
                     token.assignTicketGrantingTicket(ticketGrantingTicket);
                     configurationContext.getTicketRegistry().updateTicket(token);
                 });

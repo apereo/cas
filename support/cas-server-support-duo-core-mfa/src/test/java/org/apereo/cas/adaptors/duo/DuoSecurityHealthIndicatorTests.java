@@ -8,7 +8,7 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.actuate.health.Status;
+import org.springframework.boot.health.contributor.Status;
 import org.springframework.context.support.StaticApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.*;

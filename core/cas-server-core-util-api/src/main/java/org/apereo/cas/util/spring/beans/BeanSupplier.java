@@ -303,7 +303,6 @@ public interface BeanSupplier<T> extends Supplier<T> {
         private final Class<T> clazz;
 
         @Override
-        @SuppressWarnings("unchecked")
         public T get() {
             if (!clazz.isInterface()) {
                 throw new IllegalArgumentException("Cannot create bean supplier proxy for non-interface type " + clazz.getSimpleName());

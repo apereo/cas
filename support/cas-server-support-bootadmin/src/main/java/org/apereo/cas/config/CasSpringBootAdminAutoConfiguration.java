@@ -6,7 +6,6 @@ import org.apereo.cas.sba.CasServerInstanceIdGenerator;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.codecentric.boot.admin.client.config.ClientProperties;
 import de.codecentric.boot.admin.client.config.SpringBootAdminClientEnabledCondition;
 import de.codecentric.boot.admin.client.registration.BlockingRegistrationClient;
@@ -14,7 +13,6 @@ import de.codecentric.boot.admin.client.registration.RegistrationClient;
 import de.codecentric.boot.admin.server.config.AdminServerProperties;
 import de.codecentric.boot.admin.server.config.SpringBootAdminServerEnabledCondition;
 import de.codecentric.boot.admin.server.services.InstanceIdGenerator;
-import de.codecentric.boot.admin.server.utils.jackson.AdminServerModule;
 import de.codecentric.boot.admin.server.web.client.InstanceWebClientCustomizer;
 import io.netty.handler.ssl.SslContextBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -38,6 +36,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.web.reactive.function.client.WebClient;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * This is {@link CasSpringBootAdminAutoConfiguration}.
@@ -60,9 +59,7 @@ public class CasSpringBootAdminAutoConfiguration {
             final ObjectMapper objectMapper,
             @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT) final HttpClient httpClient,
             final ClientProperties client) {
-
-            objectMapper.findAndRegisterModules()
-                .registerModule(new AdminServerModule(new String[]{".*password$"}));
+            
             var builder = new RestTemplateBuilder()
                 .connectTimeout(client.getConnectTimeout())
                 .readTimeout(client.getReadTimeout())

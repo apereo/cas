@@ -61,6 +61,7 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.integration.redis.util.RedisLockRegistry;
 import org.springframework.integration.support.locks.LockRegistry;
+import java.util.List;
 
 /**
  * This is {@link CasRedisTicketRegistryAutoConfiguration}.
@@ -104,23 +105,23 @@ public class CasRedisTicketRegistryAutoConfiguration {
         }
 
         @Bean
-        @ConditionalOnMissingBean(name = "redisTicketRegistryMessageTopic")
-        public Topic redisTicketRegistryMessageTopic() {
-            return new ChannelTopic(RedisKeyGenerator.REDIS_TICKET_REGISTRY_MESSAGE_TOPIC);
+        @ConditionalOnMissingBean(name = "redisTicketRegistryMessageTopics")
+        public List<Topic> redisTicketRegistryMessageTopics() {
+            return List.of(new ChannelTopic(RedisKeyGenerator.REDIS_TICKET_REGISTRY_MESSAGE_TOPIC));
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "redisTicketRegistryMessageListenerContainer")
         public RedisMessageListenerContainer redisTicketRegistryMessageListenerContainer(
-            @Qualifier("redisTicketRegistryMessageTopic")
-            final ChannelTopic redisTicketRegistryMessageTopic,
+            @Qualifier("redisTicketRegistryMessageTopics")
+            final List<Topic> redisTicketRegistryMessageTopics,
             @Qualifier("redisTicketRegistryMessageListener")
             final MessageListener redisTicketRegistryMessageListener,
             @Qualifier("redisTicketConnectionFactory")
             final RedisConnectionFactory redisTicketConnectionFactory) {
             val container = new RedisMessageListenerContainer();
             container.setConnectionFactory(redisTicketConnectionFactory);
-            container.addMessageListener(redisTicketRegistryMessageListener, redisTicketRegistryMessageTopic);
+            container.addMessageListener(redisTicketRegistryMessageListener, redisTicketRegistryMessageTopics);
             return container;
         }
 

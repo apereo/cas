@@ -90,7 +90,7 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
             .filter(Objects::nonNull)
             .peek(Unchecked.consumer(givenResolver -> {
                 if (givenResolver instanceof final AbstractIdentifiableInitializableComponent metadataResolver && !metadataResolver.isInitialized()) {
-                    FunctionUtils.doIfBlank(metadataResolver.getId(), __ -> metadataResolver.setId(registeredService.getName() + '-' + RandomUtils.generateSecureRandomId()));
+                    FunctionUtils.doIfBlank(metadataResolver.getId(), _ -> metadataResolver.setId(registeredService.getName() + '-' + RandomUtils.generateSecureRandomId()));
                     LOGGER.trace("Metadata resolver [{}] will be forcefully initialized", metadataResolver.getId());
                     metadataResolver.initialize();
                 }

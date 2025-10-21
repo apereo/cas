@@ -7,8 +7,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +19,9 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.json.JsonMapper;
 import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RestEndpointInterruptInquirerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
     private MockWebServer webServer;
 
     @BeforeEach
@@ -48,11 +49,15 @@ class RestEndpointInterruptInquirerTests {
         response.setMessage(getClass().getSimpleName());
         response.setLinks(CollectionUtils.wrap("text1", "link1", "text2", "link2"));
 
-        val data = new ObjectMapper()
-            .findAndRegisterModules()
-            .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
+        val data = JsonMapper.builder()
+            .configure(EnumFeature.READ_ENUMS_USING_TO_STRING, false)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .changeDefaultPropertyInclusion(handler -> {
+                handler.withValueInclusion(JsonInclude.Include.NON_NULL);
+                handler.withContentInclusion(JsonInclude.Include.NON_NULL);
+                return handler;
+            })
+            .build()
             .writeValueAsString(response);
         this.webServer = new MockWebServer(8888,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),

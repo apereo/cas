@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(
     classes = BaseTicketRegistryTests.SharedTestConfiguration.class,
     properties = {
-        "cas.ticket.tgt.core.only-track-most-recent-session=false",
+        "cas.ticket.tgt.core.service-tracking-policy=ALL",
         "cas.ticket.registry.cleaner.schedule.enabled=false"
     })
 @ExtendWith(CasTestExtension.class)

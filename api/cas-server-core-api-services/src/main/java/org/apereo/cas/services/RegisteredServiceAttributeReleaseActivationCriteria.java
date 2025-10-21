@@ -19,13 +19,4 @@ public interface RegisteredServiceAttributeReleaseActivationCriteria extends Ser
      * @return true/false
      */
     boolean shouldActivate(RegisteredServiceAttributeReleasePolicyContext context);
-
-    /**
-     * Always allow the condition to pass.
-     *
-     * @return the registered service attribute release condition
-     */
-    static RegisteredServiceAttributeReleaseActivationCriteria always() {
-        return context -> true;
-    }
 }

@@ -41,7 +41,7 @@ public class TicketRegistrySessionRepository extends MapSessionRepository {
 
     @Override
     public void save(final MapSession session) {
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             if (!session.getId().equals(session.getOriginalId())) {
                 deleteById(session.getOriginalId());
             }
@@ -86,7 +86,7 @@ public class TicketRegistrySessionRepository extends MapSessionRepository {
 
     @Override
     public void deleteById(final String id) {
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             LOGGER.trace("Deleting session by id [{}]", id);
             ticketRegistry.deleteTicket(id);
         });

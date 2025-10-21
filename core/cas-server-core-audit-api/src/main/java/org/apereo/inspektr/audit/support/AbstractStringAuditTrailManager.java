@@ -2,10 +2,10 @@ package org.apereo.inspektr.audit.support;
 
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
+import tools.jackson.core.util.MinimalPrettyPrinter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,7 +42,7 @@ public abstract class AbstractStringAuditTrailManager implements AuditTrailManag
             val builder = new StringBuilder();
             try {
                 var writer = useSingleLine
-                    ? MAPPER.writer(new MinimalPrettyPrinter())
+                    ? MAPPER.writer().with(new MinimalPrettyPrinter())
                     : MAPPER.writerWithDefaultPrettyPrinter();
                 builder.append(writer.writeValueAsString(getMappedAuditActionContext(auditActionContext)));
                 

@@ -30,7 +30,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-logout-api")
 
-    testImplementation libraries.springboottomcat
+
 
     testImplementation project(":support:cas-server-support-generic")
     testImplementation project(":support:cas-server-support-person-directory")

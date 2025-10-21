@@ -142,8 +142,6 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         list.add("--add-opens")
         list.add("java.base/java.net=ALL-UNNAMED")
         list.add("--add-opens")
-        list.add("java.base/sun.security.action=jdk.crypto.ec")
-        list.add("--add-opens")
         list.add("java.base/java.nio=ALL-UNNAMED")
         list.add("--add-opens")
         list.add("java.base/sun.nio.ch=ALL-UNNAMED")

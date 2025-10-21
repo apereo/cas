@@ -4,11 +4,11 @@ import org.apereo.cas.configuration.model.core.web.flow.RestfulWebflowLoginDecor
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
+import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("RestfulApi")
 class RestfulLoginWebflowDecoratorTests {
-    private static String getJsonData() throws Exception {
+    private static String getJsonData() {
         return new ObjectMapper().writeValueAsString(CollectionUtils.wrap("key", "value"));
     }
 

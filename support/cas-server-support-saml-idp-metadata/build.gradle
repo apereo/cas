@@ -26,7 +26,7 @@ dependencies {
 
     implementation libraries.shibutiljavasupport
 
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-web")

@@ -27,7 +27,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,7 +51,7 @@ public class OAuth20IntrospectionEndpointController<T extends OAuth20Configurati
         final String code, final boolean isAuthenticationFailure) {
         val response = new OAuth20IntrospectionAccessTokenFailureResponse();
         response.setError(code);
-        val headers = new LinkedMultiValueMap<String, String>();
+        val headers = new HttpHeaders();
         if (isAuthenticationFailure) {
             headers.add(HttpHeaders.WWW_AUTHENTICATE, "Basic");
         }
