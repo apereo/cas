@@ -36,7 +36,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-scripting")
 
     testImplementation libraries.ldaptive
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(":support:cas-server-support-jpa-util")
     testImplementation project(":support:cas-server-support-ldap-core")

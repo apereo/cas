@@ -3,6 +3,8 @@ package org.apereo.cas.services;
 import org.apereo.cas.util.EncodingUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -50,6 +52,7 @@ public class ReturnEncryptedAttributeReleasePolicy extends AbstractRegisteredSer
         Security.addProvider(new BouncyCastleProvider());
     }
 
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<String> allowedAttributes = new ArrayList<>();
 
     @Override

@@ -45,6 +45,7 @@ public class RestfulDelegatedClientUserProfileProvisioner extends BaseDelegatedC
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .maximumRetryAttempts(restProperties.getMaximumRetryAttempts())
                 .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(restProperties.getUrl())
                 .headers(restProperties.getHeaders())

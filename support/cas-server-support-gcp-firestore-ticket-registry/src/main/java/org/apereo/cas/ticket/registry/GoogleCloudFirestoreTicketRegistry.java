@@ -143,7 +143,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
     
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             LOGGER.debug("Updating ticket [{}]", ticket.getId());
             val ticketDocument = buildTicketAsDocument(ticket);
             val metadata = ticketCatalog.find(ticket);
@@ -175,7 +175,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     protected Ticket addSingleTicket(final Ticket ticket) {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             LOGGER.debug("Adding ticket [{}]", ticket.getId());
             val ticketDocument = buildTicketAsDocument(ticket);
             val metadata = ticketCatalog.find(ticket);

@@ -5,7 +5,6 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +14,6 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transport.http.HTTPConduitConfigurer;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.wss4j.common.WSS4JConstants;
-
 import javax.net.ssl.HostnameVerifier;
 import javax.xml.namespace.QName;
 import java.util.HashMap;
@@ -51,7 +49,7 @@ public class SecurityTokenServiceClientBuilder {
         sts.setKeyType(WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512_BEARER);
         sts.setWsdlLocation(prepareWsdlLocation(service));
 
-        FunctionUtils.doIfNotBlank(service.getPolicyNamespace(), __ -> sts.setWspNamespace(service.getPolicyNamespace()));
+        FunctionUtils.doIfNotBlank(service.getPolicyNamespace(), _ -> sts.setWspNamespace(service.getPolicyNamespace()));
         val namespace = StringUtils.defaultIfBlank(service.getNamespace(),
             WSFederationConstants.HTTP_DOCS_OASIS_OPEN_ORG_WS_SX_WS_TRUST_200512);
         sts.setServiceQName(new QName(namespace, StringUtils.defaultIfBlank(service.getWsdlService(),
@@ -62,7 +60,7 @@ public class SecurityTokenServiceClientBuilder {
         sts.getProperties().putAll(new HashMap<>());
         sts.setTokenType(StringUtils.defaultIfBlank(service.getTokenType(), WSS4JConstants.WSS_SAML2_TOKEN_TYPE));
 
-        FunctionUtils.doIfNotBlank(service.getPolicyNamespace(), __ -> sts.setWspNamespace(service.getPolicyNamespace()));
+        FunctionUtils.doIfNotBlank(service.getPolicyNamespace(), _ -> sts.setWspNamespace(service.getPolicyNamespace()));
         val tlsClientParams = getTlsClientParameters();
         sts.setTlsClientParameters(tlsClientParams);
         val configurer = new CasHTTPConduitConfigurer(tlsClientParams);

@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.springframework.boot.SpringBootConfiguration;
@@ -38,7 +39,8 @@ public abstract class BaseWebSecurityTests {
         CasCoreCookieAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasWebAppAutoConfiguration.class
+        CasWebAppAutoConfiguration.class,
+        CasThemesAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {

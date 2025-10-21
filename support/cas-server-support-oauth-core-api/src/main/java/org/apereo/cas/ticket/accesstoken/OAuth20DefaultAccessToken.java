@@ -8,6 +8,8 @@ import org.apereo.cas.ticket.BaseOAuth20Token;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,10 +43,12 @@ public class OAuth20DefaultAccessToken extends BaseOAuth20Token implements OAuth
                                      final ExpirationPolicy expirationPolicy,
                                      final Ticket ticketGrantingTicket,
                                      final String token,
+                                     @JsonSetter(nulls = Nulls.AS_EMPTY)
                                      final Collection<String> scopes,
                                      final String codeChallenge,
                                      final String codeChallengeMethod,
                                      final String clientId,
+                                     @JsonSetter(nulls = Nulls.AS_EMPTY)
                                      final Map<String, Map<String, Object>> requestClaims,
                                      final OAuth20ResponseTypes responseType,
                                      final OAuth20GrantTypes grantType) {
@@ -61,8 +65,10 @@ public class OAuth20DefaultAccessToken extends BaseOAuth20Token implements OAuth
                                      final ExpirationPolicy expirationPolicy,
                                      final Ticket ticketGrantingTicket,
                                      final String token,
+                                     @JsonSetter(nulls = Nulls.AS_EMPTY)
                                      final Collection<String> scopes,
                                      final String clientId,
+                                     @JsonSetter(nulls = Nulls.AS_EMPTY)
                                      final Map<String, Map<String, Object>> requestClaims,
                                      final OAuth20ResponseTypes responseType,
                                      final OAuth20GrantTypes grantType) {

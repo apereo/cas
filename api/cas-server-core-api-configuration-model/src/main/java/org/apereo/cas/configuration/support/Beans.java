@@ -129,7 +129,7 @@ public class Beans {
         }
         builder.removalListener((key, value, cause) -> {
             LOGGER.trace("Removing cached value [{}] linked to cache key [{}]; removal cause is [{}]", value, key, cause);
-            Unchecked.consumer(__ -> {
+            Unchecked.consumer(_ -> {
                 if (value instanceof final AutoCloseable closeable) {
                     Objects.requireNonNull(closeable).close();
                 }

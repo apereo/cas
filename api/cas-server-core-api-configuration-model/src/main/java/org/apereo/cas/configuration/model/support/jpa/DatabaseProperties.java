@@ -1,12 +1,10 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.util.LinkedCaseInsensitiveMap;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
@@ -35,12 +33,6 @@ public class DatabaseProperties implements Serializable {
      * Whether to generate DDL after the EntityManagerFactory has been initialized creating/updating all relevant tables.
      */
     private boolean genDdl = true;
-
-    /**
-     * When choosing physical table names, determine whether names
-     * should be considered case-insensitive.
-     */
-    private boolean caseInsensitive;
 
     /**
      * Indicate a physical table name

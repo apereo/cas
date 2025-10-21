@@ -3,7 +3,7 @@ package org.apereo.cas.services.web;
 import org.apereo.cas.BaseThemeTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
-
+import org.apereo.cas.web.theme.ThemeSource;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.ui.context.ThemeSource;
-
 import java.util.Locale;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

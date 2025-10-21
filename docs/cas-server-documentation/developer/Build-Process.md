@@ -261,7 +261,7 @@ The response will look something like this:
 
 ```bash
 ...
-INFO [org.apereo.cas.web.CasWebApplication] - <Started CasWebApplication in 21.893 seconds (JVM running for 36.888)>
+INFO [org.apereo.cas.web.CasWebApplication] - <Started CasWebApplication in 9.893 seconds (JVM running for 11.888)>
 ...
 ```
 

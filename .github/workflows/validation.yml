@@ -129,7 +129,7 @@ jobs:
         category:
           - tomcat
           - jetty
-          - undertow
+#          - undertow
     name: embedded - JDK ${{ matrix.jdk }} - ${{ matrix.category }}
     steps:
       - name: Checkout

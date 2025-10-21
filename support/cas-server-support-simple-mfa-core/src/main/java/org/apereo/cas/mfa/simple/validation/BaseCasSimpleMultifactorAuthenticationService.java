@@ -53,7 +53,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationService implements C
     }
 
     protected void deleteToken(final CasSimpleMultifactorAuthenticationTicket acct) {
-        FunctionUtils.doUnchecked(__ -> ticketRegistry.deleteTicket(acct.getId()));
+        FunctionUtils.doUnchecked(_ -> ticketRegistry.deleteTicket(acct.getId()));
     }
 
 }

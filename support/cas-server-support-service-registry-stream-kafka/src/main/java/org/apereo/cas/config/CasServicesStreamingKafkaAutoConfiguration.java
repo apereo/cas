@@ -13,7 +13,6 @@ import org.apereo.cas.util.cache.DistributedCacheObject;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -36,9 +35,8 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaAdminOperations;
 import org.springframework.kafka.core.KafkaOperations;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.kafka.support.serializer.JsonSerializer;
-
+import org.springframework.kafka.support.serializer.JacksonJsonDeserializer;
+import org.springframework.kafka.support.serializer.JacksonJsonSerializer;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -68,8 +66,9 @@ public class CasServicesStreamingKafkaAutoConfiguration {
         val kafka = casProperties.getServiceRegistry().getStream().getKafka();
         val factory = new KafkaObjectFactory<String, DistributedCacheObject>(kafka.getBootstrapAddress());
         factory.setConsumerGroupId(casRegisteredServiceStreamPublisherIdentifier.getId());
-        val mapper = new RegisteredServiceJsonSerializer(applicationContext).getObjectMapper();
-        return factory.getKafkaListenerContainerFactory(new StringDeserializer(), new JsonDeserializer<>(DistributedCacheObject.class, mapper));
+        val mapper = new RegisteredServiceJsonSerializer(applicationContext).getJsonMapper();
+        return factory.getKafkaListenerContainerFactory(new StringDeserializer(),
+            new JacksonJsonDeserializer<>(DistributedCacheObject.class, mapper));
     }
 
     @Bean
@@ -110,9 +109,9 @@ public class CasServicesStreamingKafkaAutoConfiguration {
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val kafka = casProperties.getServiceRegistry().getStream().getKafka();
-                val mapper = new RegisteredServiceJsonSerializer(applicationContext).getObjectMapper();
+                val mapper = new RegisteredServiceJsonSerializer(applicationContext).getJsonMapper();
                 val factory = new KafkaObjectFactory<String, DistributedCacheObject<RegisteredService>>(kafka.getBootstrapAddress());
-                return factory.getKafkaTemplate(new StringSerializer(), new JsonSerializer<>(mapper));
+                return factory.getKafkaTemplate(new StringSerializer(), new JacksonJsonSerializer<>(mapper));
             })
             .otherwiseProxy()
             .get();

@@ -330,7 +330,7 @@
                     $("#webauthnLoginPanel").show();
                 </script>
 
-                <div th:replace="~{fragments/webAuthnLogin :: webAuthnLogin}"/>
+                <div th:replace="~{fragments/webAuthnLogin :: webAuthnLogin(primaryAuthentication=true)}"/>
                 <hr class="my-4"/>
             </span>
 

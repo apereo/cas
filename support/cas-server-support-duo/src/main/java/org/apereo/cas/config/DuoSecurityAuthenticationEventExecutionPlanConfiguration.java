@@ -40,6 +40,7 @@ import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ImmutableInMemoryServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.StartsWithRegisteredServiceMatchingStrategy;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
@@ -63,11 +64,11 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
-import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.health.autoconfigure.contributor.ConditionalOnEnabledHealthIndicator;
+import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -79,7 +80,6 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-import java.net.URI;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -375,13 +375,15 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
             return plan -> casProperties.getAuthn().getMfa().getDuo().stream()
                 .filter(duo -> StringUtils.isNotBlank(duo.getRegistration().getRegistrationUrl()))
                 .forEach(duo -> {
-                    val serviceId = FunctionUtils.doUnchecked(() -> new URI(duo.getRegistration().getRegistrationUrl()).toURL().getHost());
                     val service = new CasRegisteredService();
                     service.setId(RandomUtils.nextInt());
                     service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
                     service.setName(service.getClass().getSimpleName());
                     service.setDescription("Duo Security Registration URL for " + duo.getId());
-                    service.setServiceId(serviceId);
+                    service.setServiceId('^' + duo.getRegistration().getRegistrationUrl());
+                    val matchingStrategy = new StartsWithRegisteredServiceMatchingStrategy()
+                        .setExpectedUrl(duo.getRegistration().getRegistrationUrl());
+                    service.setMatchingStrategy(matchingStrategy);
                     service.markAsInternal();
                     plan.registerServiceRegistry(new ImmutableInMemoryServiceRegistry(List.of(service), applicationContext, List.of()));
                 });

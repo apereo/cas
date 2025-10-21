@@ -3,7 +3,6 @@ package org.apereo.cas.services.util;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.core.PrettyPrinter;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -27,12 +26,7 @@ public class RegisteredServiceJsonSerializer extends BaseJacksonSerializer<Regis
     public RegisteredServiceJsonSerializer(final ConfigurableApplicationContext applicationContext) {
         super(applicationContext, RegisteredService.class);
     }
-
-    public RegisteredServiceJsonSerializer(final PrettyPrinter prettyPrinter,
-                                           final ConfigurableApplicationContext applicationContext) {
-        super(prettyPrinter, applicationContext, RegisteredService.class);
-    }
-
+    
     @Override
     public boolean supports(final File file) {
         try {

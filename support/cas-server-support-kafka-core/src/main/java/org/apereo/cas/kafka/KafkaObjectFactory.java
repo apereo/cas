@@ -31,7 +31,6 @@ import java.util.Map;
 public class KafkaObjectFactory<K, V> {
     private final String bootstrapAddress;
 
-
     private String consumerGroupId;
 
     /**

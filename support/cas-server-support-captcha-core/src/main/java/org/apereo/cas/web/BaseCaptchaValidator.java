@@ -5,7 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 
@@ -31,7 +32,8 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 @Slf4j
 public abstract class BaseCaptchaValidator implements CaptchaValidator {
-    protected static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    protected static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     protected final GoogleRecaptchaProperties recaptchaProperties;
 

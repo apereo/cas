@@ -36,7 +36,7 @@ class DefaultServicesManagerTests {
         properties = "cas.service-registry.core.index-services=false")
     class NoIndexingTests extends AbstractServicesManagerTests {
         @Test
-        void verifyQuerying() throws Exception {
+        void verifyQuerying() {
             val registeredService = new CasRegisteredService();
             registeredService.setId(RandomUtils.nextLong());
             registeredService.setName(UUID.randomUUID().toString());

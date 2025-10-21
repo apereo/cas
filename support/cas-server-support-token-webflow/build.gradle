@@ -32,7 +32,7 @@ dependencies {
     implementation libraries.jose4j
     implementation libraries.nimbus
 
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-scripting")
