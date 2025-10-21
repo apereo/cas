@@ -68,6 +68,6 @@ class PasswordManagementEndpointTests extends BasePasswordManagementActionTests 
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .accept(MediaType.APPLICATION_JSON)
             .queryParam(CasProtocolConstants.PARAMETER_SERVICE, service.getId())
-        ).andExpect(status().isUnprocessableEntity());
+        ).andExpect(status().isUnprocessableContent());
     }
 }

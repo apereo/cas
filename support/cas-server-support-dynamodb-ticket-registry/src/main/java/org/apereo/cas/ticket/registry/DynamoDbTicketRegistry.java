@@ -107,7 +107,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket addSingleTicket(final Ticket ticket) {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(),
                 ticket.getExpirationPolicy().getTimeToLive());
             dbTableService.put(toTicketPayload(ticket));

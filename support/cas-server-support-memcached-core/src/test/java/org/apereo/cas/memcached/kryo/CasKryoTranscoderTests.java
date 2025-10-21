@@ -107,6 +107,11 @@ class CasKryoTranscoderTests {
     private TicketTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     @Autowired
+    @Qualifier(TicketTrackingPolicy.BEAN_NAME_PROXY_GRANTING_TICKET_TRACKING)
+    private TicketTrackingPolicy proxyGrantingTicketSessionTrackingPolicy;
+
+    
+    @Autowired
     @Qualifier("componentSerializationPlan")
     private ComponentSerializationPlan componentSerializationPlan;
 
@@ -182,7 +187,7 @@ class CasKryoTranscoderTests {
         assertEquals(serviceTicket, decoded);
 
         val pgt = serviceTicket.grantProxyGrantingTicket(PGT_ID, authentication,
-            new HardTimeoutExpirationPolicy(100));
+            new HardTimeoutExpirationPolicy(100), proxyGrantingTicketSessionTrackingPolicy);
         encoded = transcoder.encode(pgt);
         decoded = transcoder.decode(encoded);
         assertEquals(pgt, decoded);

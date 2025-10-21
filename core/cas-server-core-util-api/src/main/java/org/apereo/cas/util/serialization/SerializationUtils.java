@@ -67,7 +67,7 @@ public class SerializationUtils {
      * @since 5.0.0
      */
     public static void serialize(final Serializable object, final OutputStream outputStream) {
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             try (val out = new ObjectOutputStream(outputStream)) {
                 out.writeObject(object);
             }

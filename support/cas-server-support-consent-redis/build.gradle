@@ -40,7 +40,8 @@ dependencies {
     testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-thymeleaf")
-    
+    testImplementation project(":support:cas-server-support-themes")
+
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

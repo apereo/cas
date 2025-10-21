@@ -169,9 +169,13 @@ configurations.configureEach {
                     if (requested.name.equals("jackson-annotations")) {
                         details.useVersion(libs.jackson.annotations.get().version)
                     } else {
-                        details.useVersion(libs.jackson.core.lib.get().version)
+                        details.useVersion(libs.versions.jackson2.get())
                     }
                 }
+                if (requested.group.startsWith("tools.jackson.core")) {
+                    details.useVersion(libs.jackson.core.lib.get().version)
+                }
+
                 if (requested.group == "io.micrometer" && requested.name.startsWith("micrometer-")) {
                     if (requested.name.contains("tracing")) {
                         details.useVersion(libs.micrometer.tracing.bridge.otel.get().version)
@@ -208,4 +212,5 @@ configurations.configureEach {
     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
     exclude(group: "io.netty", module: "netty-transport-native-kqueue")
+    exclude(group: "org.springframework", module: "spring-jcl")
 }

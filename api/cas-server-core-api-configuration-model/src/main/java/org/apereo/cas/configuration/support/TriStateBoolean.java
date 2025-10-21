@@ -1,13 +1,13 @@
 package org.apereo.cas.configuration.support;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
 /**
  * This is {@link TriStateBoolean}.
@@ -81,12 +81,12 @@ public enum TriStateBoolean {
     }
 
     @NoArgsConstructor
-    public static class Deserializer extends JsonDeserializer<TriStateBoolean> {
+    public static class Deserializer extends ValueDeserializer<TriStateBoolean> {
 
         @Override
         public TriStateBoolean deserialize(final JsonParser jsonParser,
-                                           final DeserializationContext deserializationContext) throws IOException {
-            val value = jsonParser.getText();
+                                           final DeserializationContext deserializationContext) throws JacksonException {
+            val value = jsonParser.getString();
             if (Strings.CI.equals(value, Boolean.TRUE.toString())) {
                 return TriStateBoolean.TRUE;
             }

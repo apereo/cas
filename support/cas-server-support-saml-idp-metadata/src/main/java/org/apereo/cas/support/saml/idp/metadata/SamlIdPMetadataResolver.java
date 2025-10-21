@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Iterables;
@@ -19,9 +18,7 @@ import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
-
+import org.springframework.resilience.annotation.Retryable;
 import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +84,7 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
 
     @Nonnull
     @Override
-    @Retryable(retryFor = ResolverException.class, maxAttempts = 3, backoff = @Backoff(delay = 1000, maxDelay = 5000))
+    @Retryable(value = ResolverException.class, maxAttempts = 3, delay = 1000)
     public Iterable<EntityDescriptor> resolve(final CriteriaSet criteria) {
         val filteringCriteria = determineFilteringCriteria(criteria);
         for (val filter : filteringCriteria) {

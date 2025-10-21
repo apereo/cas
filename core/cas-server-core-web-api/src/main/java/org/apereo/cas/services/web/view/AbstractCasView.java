@@ -151,7 +151,7 @@ public abstract class AbstractCasView extends AbstractView {
     }
 
     protected void prepareCasResponseAttributesForViewModel(final Map<String, Object> model) {
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             val service = authenticationRequestServiceSelectionStrategies.resolveService(getServiceFrom(model));
             val registeredService = servicesManager.findServiceBy(service);
 

@@ -6,14 +6,11 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
+import tools.jackson.databind.ObjectMapper;
 import java.nio.file.Files;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,16 +27,19 @@ class PasswordExpiringWarningMessageDescriptorTests {
 
     @Test
     void verifyOperation() {
-        val d = new PasswordExpiringWarningMessageDescriptor("DefaultMessage", 30);
-        assertEquals(30, d.getDaysToExpiration());
-        assertEquals("DefaultMessage", d.getDefaultMessage());
+        val descriptor = new PasswordExpiringWarningMessageDescriptor("DefaultMessage", 30);
+        assertEquals(30, descriptor.getDaysToExpiration());
+        assertEquals("DefaultMessage", descriptor.getDefaultMessage());
     }
 
     @Test
     void verifySerialization() throws Throwable {
-        val d = new PasswordExpiringWarningMessageDescriptor("DefaultMessage", 30);
+        val descriptor = new PasswordExpiringWarningMessageDescriptor("DefaultMessage", 30);
+        val json = MAPPER.writeValueAsString(descriptor);
+        val descriptorRead = MAPPER.readValue(json, PasswordExpiringWarningMessageDescriptor.class);
+        assertEquals(descriptor, descriptorRead);
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        handler.addMessageDescriptor(d);
+        handler.addMessageDescriptor(descriptor);
         val credential = new UsernamePasswordCredential("casuser", "resusac");
         val result = handler.authenticate(credential, mock(Service.class));
         assertNotNull(result);

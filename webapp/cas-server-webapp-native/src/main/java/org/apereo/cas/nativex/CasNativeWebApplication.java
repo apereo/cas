@@ -7,12 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.val;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.groovy.template.GroovyTemplateAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -27,14 +21,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @since 7.0.0
  */
 @EnableDiscoveryClient
-@SpringBootApplication(proxyBeanMethods = false, exclude = {
-    GroovyTemplateAutoConfiguration.class,
-    DataSourceAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    HibernateJpaAutoConfiguration.class,
-    MongoAutoConfiguration.class,
-    MongoDataAutoConfiguration.class
-})
+@SpringBootApplication(proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableTransactionManagement(proxyTargetClass = false)

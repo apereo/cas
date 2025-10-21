@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.StartsWithRegisteredServiceMatchingStrategy;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
@@ -77,6 +78,9 @@ class WsFederationAuthenticationConfiguration {
                 service.setName(service.getClass().getSimpleName());
                 service.setDescription("WS-Federation Authentication Request");
                 service.setServiceId("^".concat(casProperties.getServer().getPrefix()).concat(".+"));
+                val matchingStrategy = new StartsWithRegisteredServiceMatchingStrategy()
+                    .setExpectedUrl(casProperties.getServer().getPrefix());
+                service.setMatchingStrategy(matchingStrategy);
                 plan.registerServiceRegistry(new WSFederationAuthenticationServiceRegistry(applicationContext, service));
             };
         }

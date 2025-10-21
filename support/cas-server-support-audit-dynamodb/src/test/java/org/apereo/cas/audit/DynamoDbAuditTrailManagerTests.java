@@ -27,8 +27,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
         "cas.audit.dynamo-db.endpoint=http://localhost:8000",
         "cas.audit.dynamo-db.drop-tables-on-startup=true",
         "cas.audit.dynamo-db.local-instance=true",
-        "cas.audit.dynamo-db.region=us-east-1",
-        "cas.audit.dynamo-db.asynchronous=false"
+        "cas.audit.dynamo-db.region=us-east-1"
     }
 )
 @Tag("DynamoDb")

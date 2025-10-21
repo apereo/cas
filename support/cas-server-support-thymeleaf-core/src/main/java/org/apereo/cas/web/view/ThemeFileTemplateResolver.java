@@ -2,12 +2,12 @@ package org.apereo.cas.web.view;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.web.theme.ThemeResolver;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.servlet.ThemeResolver;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresource.ITemplateResource;

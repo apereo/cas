@@ -24,7 +24,7 @@ dependencies {
     implementation libraries.aws
     implementation libraries.awsverifiedpermissions
 
-    testImplementation libraries.springboottomcat
+
     
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-person-directory")

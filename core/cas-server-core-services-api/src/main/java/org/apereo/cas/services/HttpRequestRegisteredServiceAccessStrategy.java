@@ -5,6 +5,8 @@ import org.apereo.cas.util.RegexUtils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,6 +50,7 @@ public class HttpRequestRegisteredServiceAccessStrategy extends BaseRegisteredSe
     private String userAgent;
 
     @JsonProperty("headers")
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, String> headers = new TreeMap<>();
 
     @Override

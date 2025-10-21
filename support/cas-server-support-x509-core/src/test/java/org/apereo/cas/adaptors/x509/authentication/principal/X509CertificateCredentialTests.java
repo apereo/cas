@@ -2,17 +2,13 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
+import tools.jackson.databind.ObjectMapper;
 import java.io.File;
-import java.io.IOException;
 import java.security.cert.X509Certificate;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,8 +24,7 @@ class X509CertificateCredentialTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    void verifySerializeAX509CertificateCredentialToJson() throws IOException {
-        MAPPER.findAndRegisterModules();
+    void verifySerializeAX509CertificateCredentialToJson() {
         val certificate = new CasX509Certificate(true);
         val credentialWritten = new X509CertificateCredential(new X509Certificate[]{certificate});
 

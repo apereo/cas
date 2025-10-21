@@ -81,5 +81,6 @@ ci/tests/oidc/keycloak/server.*
 support/cas-server-support-palantir/src/main/resources/static/assets
 cas/lib
 *.jsa
+*.aot
 ci/tests/keycloak/data/server.*
 ci/docs/package-lock.json

@@ -75,7 +75,9 @@
             </div>
         </div>
 
-        <div id="webauthnContainer" class="d-flex justify-content-center flex-column mdc-card card p-4 m-auto">
+        <div id="webauthnContainer"
+             class="text-justify d-flex justify-content-center flex-column p-4 m-auto"
+             th:classappend="${#cas.isTrue(primaryAuthentication) ? '' : 'mdc-card card'}">
             <div class="d-flex justify-content-center flex-column align-items-center">
                 <h2 id="status" th:text="#{screen.authentication.webauthn.login.title}" />
             </div>
@@ -152,7 +154,11 @@
                                 },
                                 error: xhr => {
                                     const errorResponse = JSON.parse(xhr.responseText);
-                                    console.error(`Error: ${xhr.status} ${errorResponse.message}`);
+                                    if (xhr.status === 422) {
+                                        console.info(`${xhr.status} ${errorResponse.message}`);
+                                    } else {
+                                        console.error(`${xhr.status} ${errorResponse.message}`);
+                                    }
                                     setTimeout(verifyAuthenticationStatus, interval);
                                 }
                             });

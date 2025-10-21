@@ -279,7 +279,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
      * Make sure we shutdown HazelCast when the context is destroyed.
      */
     public void shutdown() {
-        FunctionUtils.doAndHandle(__ -> {
+        FunctionUtils.doAndHandle(_ -> {
             LOGGER.info("Shutting down Hazelcast instance [{}]", hazelcastInstance.getConfig().getInstanceName());
             hazelcastInstance.shutdown();
         });

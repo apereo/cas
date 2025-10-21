@@ -46,7 +46,7 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
     @Override
     protected Event doPreExecute(final RequestContext requestContext) throws Exception {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
-        FunctionUtils.doIfNotNull(applicationContext, __ ->
+        FunctionUtils.doIfNotNull(applicationContext, _ ->
             BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, WebflowDecorator.class)
                 .values()
                 .stream()
@@ -79,7 +79,7 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
     }
 
     @Override
-    protected void doPostExecute(final RequestContext requestContext) throws Exception {
+    protected void doPostExecute(final RequestContext requestContext) {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val clientInfo = ClientInfoHolder.getClientInfo();
         val scope = new HashMap<>(requestContext.getConversationScope().asMap());

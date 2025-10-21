@@ -43,7 +43,7 @@ class DefaultCipherExecutorResolverTests {
     private TenantExtractor tenantExtractor;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.12");
         request.setLocalAddr("185.88.151.11");

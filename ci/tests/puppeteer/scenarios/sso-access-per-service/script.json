@@ -1,11 +1,18 @@
 {
-  "dependencies": "core",
+  "dependencies": "scripting,reports",
   "conditions": {
     "docker": "true"
   },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
+
+    "--cas.authn.accept.users=casuser::Mellon,casuser2::Mellon",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+    
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
