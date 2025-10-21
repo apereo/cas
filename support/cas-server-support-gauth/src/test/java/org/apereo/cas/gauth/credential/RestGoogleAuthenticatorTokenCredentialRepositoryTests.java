@@ -45,7 +45,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     private CasGoogleAuthenticator googleAuthenticatorInstance;
 
     @Test
-    void verifyFailOps() throws Throwable {
+    void verifyFailOps() {
         val entity = MAPPER.writeValueAsString(List.of("----"));
         try (val webServer = new MockWebServer(entity)) {
             val props = new GoogleAuthenticatorMultifactorProperties();
@@ -63,7 +63,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyLoad() throws Throwable {
+    void verifyLoad() {
         try (val webServer = new MockWebServer()) {
             val props = new GoogleAuthenticatorMultifactorProperties();
             props.getRest().setUrl("http://localhost:" + webServer.getPort());
@@ -94,7 +94,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGet() throws Throwable {
+    void verifyGet() {
         try (val webServer = new MockWebServer()) {
             val props = new GoogleAuthenticatorMultifactorProperties();
             props.getRest().setUrl("http://localhost:" + webServer.getPort());
@@ -108,7 +108,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGetById() throws Throwable {
+    void verifyGetById() {
         try (val webServer = new MockWebServer()) {
             val props = new GoogleAuthenticatorMultifactorProperties();
             props.getRest().setUrl("http://localhost:" + webServer.getPort());
@@ -123,7 +123,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGetByIdAndUser() throws Throwable {
+    void verifyGetByIdAndUser() {
         try (val webServer = new MockWebServer()) {
             val props = new GoogleAuthenticatorMultifactorProperties();
             props.getRest().setUrl("http://localhost:" + webServer.getPort());
@@ -161,7 +161,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifySave() throws Throwable {
+    void verifySave() {
         try (val webServer = new MockWebServer()) {
             val props = new GoogleAuthenticatorMultifactorProperties();
             props.getRest().setUrl("http://localhost:" + webServer.getPort());
@@ -198,7 +198,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifySaveRequestSendsRequiredHeaders() throws Throwable {
+    void verifySaveRequestSendsRequiredHeaders() {
         try (val webServer = new MockWebServer()) {
             val props = new GoogleAuthenticatorMultifactorProperties();
             props.getRest().setUrl("http://localhost:" + webServer.getPort());
