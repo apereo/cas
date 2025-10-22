@@ -28,6 +28,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ApplicationContext;
@@ -102,6 +103,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     @Override
+    public long deleteTicketsFor(final String principalId) {
+        return getTickets(ticket -> ticket instanceof final AuthenticationAwareTicket aat
+            && Strings.CI.equals(aat.getAuthentication().getPrincipal().getId(), principalId))
+            .mapToLong(ticket -> FunctionUtils.doAndHandle(() -> deleteTicket(ticket)))
+            .sum();
+    }
+
+    @Override
     public Ticket addTicket(final Ticket ticket) throws Exception {
         return ticket != null && !ticket.isExpired() ? addSingleTicket(ticket) : null;
     }
@@ -147,7 +156,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
         if (!clazz.isAssignableFrom(ticket.getClass())) {
             throw new ClassCastException("Ticket [" + ticket.getId() + " is of type "
-                                         + ticket.getClass() + " when we were expecting " + clazz);
+                + ticket.getClass() + " when we were expecting " + clazz);
         }
         return clazz.cast(ticket);
     }
@@ -171,7 +180,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         val count = new AtomicLong(0);
         if (ticket instanceof final TicketGrantingTicket tgt) {
             LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
-            count.getAndAdd(deleteChildren(tgt));
+            count.getAndAdd(deleteServiceTickets(tgt));
             if (ticket instanceof final ProxyGrantingTicket pgt) {
                 deleteProxyGrantingTicketFromParent(pgt);
             } else {
@@ -189,7 +198,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return tgtStream.count();
         } catch (final Exception t) {
             LOGGER.trace("sessionCount() operation is not implemented by the ticket registry instance [{}]. "
-                         + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
+                + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
             return Long.MIN_VALUE;
         }
     }
@@ -200,7 +209,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return stStream.count();
         } catch (final Exception t) {
             LOGGER.trace("serviceTicketCount() operation is not implemented by the ticket registry instance [{}]. "
-                         + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
+                + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
             return Long.MIN_VALUE;
         }
     }
@@ -299,7 +308,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @param ticket the ticket
      * @return the count of tickets that were removed including child tickets and zero if the ticket was not deleted
      */
-    protected int deleteChildren(final TicketGrantingTicket ticket) {
+    protected int deleteServiceTickets(final TicketGrantingTicket ticket) {
         val count = new AtomicLong(0);
         val services = ticket.getServices();
         if (services != null && !services.isEmpty()) {
