@@ -250,4 +250,12 @@ public interface TicketRegistry {
      * @return the cipher executor
      */
     CipherExecutor getCipherExecutor();
+
+    /**
+     * Delete tickets for given principal.
+     *
+     * @param principalId the principal id
+     * @return deleted tickets count
+     */
+    long deleteTicketsFor(String principalId);
 }

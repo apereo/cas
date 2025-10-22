@@ -129,17 +129,11 @@ Support for [Spring Cloud Configuration ZooKeeper](../configuration/Configuratio
 is not yet compatible with Spring Boot `4`. We plan to re-add support for Spring Cloud Configuration ZooKeeper
 in the future once compatibility is restored.
 
-#### Spring Cloud Bus
-
-Support for [Spring Cloud Configuration Bus](../configuration/Configuration-Management-Clustered-AMQP.html)
-is not yet compatible with Spring Boot `4`. We plan to re-add support for this feature
-in the future once compatibility is restored.
-
 #### Jackson & JSON Processing
 
 The Jackson library, responsible for JSON processing and parsing in CAS, is upgraded to `3.x` version. 
 This is a major upgrade that brings in many significant changes to the way JSON is processed in CAS. Almost all 
-such changes are internal and **SHOULD NOT** affect CAS configuration, application 
+such changes are internal and **SHOULD NOT** affect how CAS configuration, application 
 records, etc are processed and loaded.
 
 ## Other Stuff
