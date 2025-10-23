@@ -262,7 +262,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     public long deleteTicketsFor(final String principalId) {
         val window = 1000;
         val delChunk = 1000;
-        val deleted = new AtomicLong();
+        var deleted = 0L;
         val target = digestIdentifier(principalId);
         val principalFieldSerializer = new StringRedisSerializer();
 
@@ -305,12 +305,12 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                         });
 
                     if (!result.isEmpty() && result.getFirst() instanceof final Long count) {
-                        deleted.addAndGet(count);
+                       deleted += count;
                     }
                 }
             }
         }
-        return deleted.get();
+        return deleted;
     }
 
     @Override
