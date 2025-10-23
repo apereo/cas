@@ -264,9 +264,12 @@
                         </p>
 
                         <script type="text/javascript">
-                            let client = new ClientJS();
-                            let fingerprint = client.getFingerprint();
-                            $("[name=\"deviceFingerprint\"]").val(fingerprint);
+                            (async () => {
+                                const fp = await FingerprintJS.load();
+                                const result = await fp.get();
+                                const fingerprint = result.visitorId;
+                                $("[name=\"deviceFingerprint\"]").val(fingerprint);
+                            })();
                         </script>
                     </section>
 

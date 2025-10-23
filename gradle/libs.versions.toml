@@ -31,7 +31,6 @@ cbor = "4.5.6"
 chartJs = "4.5.1"
 checkstyle = "12.0.1"
 classgraph = "4.8.184"
-clientJs = "0.2.1"
 commonsBeans = "1.11.0"
 commonsCli = "1.10.0"
 commonsCodec = "1.19.0"
@@ -60,6 +59,7 @@ eclipseLink = "4.0.8"
 elasticApm = "1.55.1"
 errorprone = "2.42.0"
 eurekaClient = "2.0.5"
+fingerprintJs = "3.4.2"
 firebaseAdmin = "9.7.0"
 fluentd = "0.3.4"
 fluentdLog4j = "1.0.0"
@@ -314,7 +314,6 @@ cbor = { module = "com.upokecenter:cbor", version.ref = "cbor" }
 chart-js = { module = "org.webjars.npm:chart.js", version.ref = "chartJs" }
 classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph" }
 client = { module = "com.nexmo:client", version.ref = "nexmo" }
-clientjs = { module = "org.webjars.npm:clientjs", version.ref = "clientJs" }
 clouddirectory = { module = "software.amazon.awssdk:clouddirectory", version.ref = "amazonSdk" }
 cloudwatch = { module = "software.amazon.awssdk:cloudwatch", version.ref = "amazonSdk" }
 cloudwatchlogs = { module = "software.amazon.awssdk:cloudwatchlogs", version.ref = "amazonSdk" }
@@ -362,6 +361,7 @@ elasticache-java-cluster-client = { module = "com.amazonaws:elasticache-java-clu
 eureka-client = { module = "com.netflix.eureka:eureka-client", version.ref = "eurekaClient" }
 expressly = { module = "org.glassfish.expressly:expressly", version.ref = "jakartaElImpl" }
 fediz-core = { module = "org.apache.cxf.fediz:fediz-core", version.ref = "apacheFediz" }
+fingerprintjs = { module = "org.webjars.npm:fingerprintjs__fingerprintjs", version.ref = "fingerprintJs" }
 firebase-admin = { module = "com.google.firebase:firebase-admin", version.ref = "firebaseAdmin" }
 firehose = { module = "software.amazon.awssdk:firehose", version.ref = "amazonSdk" }
 fluent-logger = { module = "org.fluentd:fluent-logger", version.ref = "fluentd" }
