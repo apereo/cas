@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry.key;
 
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import lombok.Getter;
@@ -72,13 +74,22 @@ public class DefaultRedisKeyGenerator implements RedisKeyGenerator {
     }
 
     /**
+     * For tickets redis key generator.
+     *
+     * @param ticketCatalog the ticket catalog
+     * @return the redis key generator
+     */
+    public static RedisKeyGenerator forTickets(final TicketCatalog ticketCatalog) {
+        return new DefaultRedisKeyGenerator(ticketCatalog, REDIS_NAMESPACE_TICKETS, Ticket.class.getName());
+    }
+
+    /**
      * For principals redis key generator.
      *
      * @param ticketCatalog the ticket catalog
-     * @param type          the type
      * @return the redis key generator
      */
-    public static RedisKeyGenerator forPrincipal(final TicketCatalog ticketCatalog, final String type) {
-        return new DefaultRedisKeyGenerator(ticketCatalog, REDIS_NAMESPACE_PRINCIPALS, type);
+    public static RedisKeyGenerator forPrincipals(final TicketCatalog ticketCatalog) {
+        return new DefaultRedisKeyGenerator(ticketCatalog, REDIS_NAMESPACE_PRINCIPALS, Principal.class.getName());
     }
 }
