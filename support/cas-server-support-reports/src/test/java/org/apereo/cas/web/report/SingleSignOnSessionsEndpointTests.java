@@ -3,7 +3,6 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -44,11 +43,7 @@ class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
-    private SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor;
-
+    
     @Autowired
     @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
