@@ -3,7 +3,6 @@ package org.apereo.cas.logging;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -22,7 +21,6 @@ import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
@@ -152,7 +150,7 @@ public class SQSAppender extends AbstractAppender implements Serializable {
             .messageBody(message)
             .messageAttributes(context)
             .build();
-        FunctionUtils.doUnchecked(__ -> sqsAsyncClient.sendMessage(request).get());
+        FunctionUtils.doUnchecked(_ -> sqsAsyncClient.sendMessage(request).get());
     }
 
     @Override

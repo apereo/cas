@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.codahale.metrics.MetricRegistry;
 import lombok.Getter;
 import lombok.NonNull;
@@ -54,7 +53,7 @@ public class DefaultOpenSamlConfigBean implements OpenSamlConfigBean {
         this.velocityEngine = velocityEngine;
         this.applicationContext = applicationContext;
         
-        FunctionUtils.doUnchecked(__ -> {
+        FunctionUtils.doUnchecked(_ -> {
             LOGGER.trace("Initializing OpenSaml configuration...");
             InitializationService.initialize();
         });

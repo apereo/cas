@@ -8,8 +8,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +21,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import tools.jackson.core.util.MinimalPrettyPrinter;
+import tools.jackson.databind.ObjectMapper;
 import java.io.Serial;
 import java.io.StringWriter;
 import java.net.URL;
@@ -66,7 +66,7 @@ public class RestfulRegisteredServiceProxyPolicy implements RegisteredServicePro
     public boolean isAllowedProxyCallbackUrl(final RegisteredService registeredService, final URL pgtUrl) {
         HttpResponse response = null;
         try (val writer = new StringWriter()) {
-            MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, registeredService);
+            MAPPER.writer().with(new MinimalPrettyPrinter()).writeValue(writer, registeredService);
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .headers(headers)

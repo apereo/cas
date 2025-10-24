@@ -1,12 +1,11 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.ticket.registry.TicketRegistry;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.health.AbstractHealthIndicator;
-import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.health.contributor.AbstractHealthIndicator;
+import org.springframework.boot.health.contributor.Health;
 
 /**
  * Monitors the status of a {@link TicketRegistry}

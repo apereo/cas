@@ -116,11 +116,11 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
             if (splitAddress.size() == 2) {
                 val network = splitAddress.getFirst().trim();
                 val netmask = splitAddress.get(1).trim();
-                FunctionUtils.doAndHandle(__ -> {
+                FunctionUtils.doAndHandle(_ -> {
                     this.inetNetworkRange = InetAddress.getByName(network);
                     LOGGER.debug("InetAddress network: [{}]", this.inetNetworkRange.toString());
                 });
-                FunctionUtils.doAndHandle(__ -> {
+                FunctionUtils.doAndHandle(_ -> {
                     this.inetNetmask = InetAddress.getByName(netmask);
                     LOGGER.debug("InetAddress netmask: [{}]", this.inetNetmask.toString());
                 });

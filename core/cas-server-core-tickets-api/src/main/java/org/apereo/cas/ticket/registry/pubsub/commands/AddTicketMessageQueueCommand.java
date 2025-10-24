@@ -32,11 +32,11 @@ public class AddTicketMessageQueueCommand extends BaseMessageQueueCommand implem
     private final Ticket ticket;
 
     @JsonCreator
-    public AddTicketMessageQueueCommand(@JsonProperty("id")
-                                        final PublisherIdentifier id,
+    public AddTicketMessageQueueCommand(@JsonProperty("publisherIdentifier")
+                                        final PublisherIdentifier publisherIdentifier,
                                         @JsonProperty("ticket")
                                         final Ticket ticket) {
-        super(id);
+        super(publisherIdentifier);
         this.ticket = ticket;
     }
 

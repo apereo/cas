@@ -40,8 +40,10 @@ import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceiver;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.ticket.tracking.AllProxyGrantingTicketsTrackingPolicy;
 import org.apereo.cas.ticket.tracking.AllServicesSessionTrackingPolicy;
 import org.apereo.cas.ticket.tracking.DefaultDescendantTicketsTrackingPolicy;
+import org.apereo.cas.ticket.tracking.MostRecentProxyGrantingTicketTrackingPolicy;
 import org.apereo.cas.ticket.tracking.MostRecentServiceSessionTrackingPolicy;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
@@ -109,10 +111,21 @@ class CasCoreTicketsConfiguration {
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
-            val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
-            return onlyTrackMostRecentSession
-                ? new MostRecentServiceSessionTrackingPolicy(ticketRegistry)
-                : new AllServicesSessionTrackingPolicy(ticketRegistry);
+            return switch (casProperties.getTicket().getTgt().getCore().getServiceTrackingPolicy()) {
+                case ALL -> new AllServicesSessionTrackingPolicy(ticketRegistry);
+                case MOST_RECENT -> new MostRecentServiceSessionTrackingPolicy(ticketRegistry);
+            };
+        }
+
+        @ConditionalOnMissingBean(name = TicketTrackingPolicy.BEAN_NAME_PROXY_GRANTING_TICKET_TRACKING)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public TicketTrackingPolicy proxyGrantingTicketTrackingPolicy(
+            final CasConfigurationProperties casProperties) {
+            return switch (casProperties.getTicket().getSt().getProxyGrantingTicketTrackingPolicy()) {
+                case ALL -> AllProxyGrantingTicketsTrackingPolicy.INSTANCE;
+                case MOST_RECENT -> MostRecentProxyGrantingTicketTrackingPolicy.INSTANCE;
+            };
         }
 
         @ConditionalOnMissingBean(name = TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
@@ -232,7 +245,7 @@ class CasCoreTicketsConfiguration {
         public PublisherIdentifier messageQueueTicketRegistryIdentifier(final CasConfigurationProperties casProperties) {
             val bean = new PublisherIdentifier();
             val core = casProperties.getTicket().getRegistry().getCore();
-            FunctionUtils.doIfNotBlank(core.getQueueIdentifier(), __ -> bean.setId(core.getQueueIdentifier()));
+            FunctionUtils.doIfNotBlank(core.getQueueIdentifier(), _ -> bean.setId(core.getQueueIdentifier()));
             return bean;
         }
 
@@ -469,12 +482,14 @@ class CasCoreTicketsConfiguration {
             @Qualifier("protocolTicketCipherExecutor")
             final CipherExecutor protocolTicketCipherExecutor,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) {
+            final ServicesManager servicesManager,
+            @Qualifier(TicketTrackingPolicy.BEAN_NAME_PROXY_GRANTING_TICKET_TRACKING)
+            final TicketTrackingPolicy proxyGrantingTicketTrackingPolicy) {
             return new DefaultProxyGrantingTicketFactory(
                 proxyGrantingTicketUniqueIdGenerator,
                 proxyGrantingTicketExpirationPolicy,
                 protocolTicketCipherExecutor,
-                servicesManager);
+                servicesManager, proxyGrantingTicketTrackingPolicy);
         }
     }
 

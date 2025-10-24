@@ -10,7 +10,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -20,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import tools.jackson.databind.ObjectMapper;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,7 +45,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     private CasGoogleAuthenticator googleAuthenticatorInstance;
 
     @Test
-    void verifyFailOps() throws Throwable {
+    void verifyFailOps() {
         val entity = MAPPER.writeValueAsString(List.of("----"));
         try (val webServer = new MockWebServer(entity)) {
             val props = new GoogleAuthenticatorMultifactorProperties();
@@ -62,7 +63,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyLoad() throws Throwable {
+    void verifyLoad() {
         try (val webServer = new MockWebServer()) {
             val props = new GoogleAuthenticatorMultifactorProperties();
             props.getRest().setUrl("http://localhost:" + webServer.getPort());
@@ -93,7 +94,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGet() throws Throwable {
+    void verifyGet() {
         try (val webServer = new MockWebServer()) {
             val props = new GoogleAuthenticatorMultifactorProperties();
             props.getRest().setUrl("http://localhost:" + webServer.getPort());
@@ -107,7 +108,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGetById() throws Throwable {
+    void verifyGetById() {
         try (val webServer = new MockWebServer()) {
             val props = new GoogleAuthenticatorMultifactorProperties();
             props.getRest().setUrl("http://localhost:" + webServer.getPort());
@@ -122,7 +123,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifyGetByIdAndUser() throws Throwable {
+    void verifyGetByIdAndUser() {
         try (val webServer = new MockWebServer()) {
             val props = new GoogleAuthenticatorMultifactorProperties();
             props.getRest().setUrl("http://localhost:" + webServer.getPort());
@@ -160,7 +161,7 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     }
 
     @Test
-    void verifySave() throws Throwable {
+    void verifySave() {
         try (val webServer = new MockWebServer()) {
             val props = new GoogleAuthenticatorMultifactorProperties();
             props.getRest().setUrl("http://localhost:" + webServer.getPort());
@@ -193,6 +194,32 @@ class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
             webServer.start();
             assertNull(repo.update(account));
+        }
+    }
+
+    @Test
+    void verifySaveRequestSendsRequiredHeaders() {
+        try (val webServer = new MockWebServer()) {
+            val props = new GoogleAuthenticatorMultifactorProperties();
+            props.getRest().setUrl("http://localhost:" + webServer.getPort());
+            val repo = buildRepositoryInstance(props);
+
+            val account = repo.create(UUID.randomUUID().toString());
+            val entity = MAPPER.writeValueAsString(account);
+
+            val capturedHeaders = new HashMap<String, String>();
+            webServer.headersConsumer(capturedHeaders::putAll);
+            webServer.responseBody(entity);
+            webServer.start();
+
+            val savedAccount = repo.save(account);
+
+            assertNotNull(savedAccount);
+            assertEquals(account.getName(), capturedHeaders.get("name"));
+            assertEquals(account.getUsername(), capturedHeaders.get("username"));
+            assertEquals(account.getSecretKey(), capturedHeaders.get("secretKey"));
+            assertEquals(String.valueOf(account.getValidationCode()), capturedHeaders.get("validationCode"));
+            assertNotNull(capturedHeaders.get("scratchCodes"));
         }
     }
 

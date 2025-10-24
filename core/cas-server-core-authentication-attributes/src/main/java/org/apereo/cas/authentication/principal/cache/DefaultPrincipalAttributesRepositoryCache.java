@@ -59,7 +59,7 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
 
     @Override
     public void invalidate() {
-        lock.tryLock(__ -> registeredServicesCache.values().forEach(Cache::invalidateAll));
+        lock.tryLock(_ -> registeredServicesCache.values().forEach(Cache::invalidateAll));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
                                                      final Principal principal) {
         return lock.tryLock(() -> {
             val cache = getRegisteredServiceCacheInstance(registeredService, repository);
-            return cache.get(principal.getId(), __ -> {
+            return cache.get(principal.getId(), _ -> {
                 LOGGER.debug("No cached attributes could be found for [{}]", principal.getId());
                 return new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
             });
@@ -79,7 +79,7 @@ public class DefaultPrincipalAttributesRepositoryCache implements PrincipalAttri
     public void putAttributes(final RegisteredService registeredService,
                               final RegisteredServicePrincipalAttributesRepository repository,
                               final String id, final Map<String, List<Object>> attributes) {
-        lock.tryLock(__ -> {
+        lock.tryLock(_ -> {
             val cache = getRegisteredServiceCacheInstance(registeredService, repository);
             cache.put(id, attributes);
         });

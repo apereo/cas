@@ -1,15 +1,14 @@
 package org.apereo.cas.oidc.discovery;
 
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.Strings;
+import tools.jackson.databind.ObjectMapper;
 import java.util.Set;
 
 /**
@@ -240,6 +239,6 @@ public class OidcServerDiscoverySettings {
      */
     @JsonIgnore
     public String toJson() {
-        return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(this));
+        return MAPPER.writeValueAsString(this);
     }
 }

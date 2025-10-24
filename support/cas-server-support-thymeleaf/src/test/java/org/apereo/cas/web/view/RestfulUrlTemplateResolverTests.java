@@ -2,6 +2,7 @@ package org.apereo.cas.web.view;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.web.theme.FixedThemeResolver;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -11,7 +12,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.theme.FixedThemeResolver;
 import org.thymeleaf.IEngineConfiguration;
 import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.*;

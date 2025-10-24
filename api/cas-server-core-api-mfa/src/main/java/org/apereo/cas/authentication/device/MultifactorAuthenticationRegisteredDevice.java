@@ -11,7 +11,6 @@ import lombok.ToString;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;

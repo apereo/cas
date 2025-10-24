@@ -4,7 +4,6 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apache.commons.lang3.Strings;
-import org.springframework.core.io.Resource;
 import java.util.Optional;
 
 /**
@@ -60,7 +59,5 @@ public interface SamlIdPMetadataGenerator {
     default String getAppliesToFor(final Optional<SamlRegisteredService> result) {
         return SamlIdPUtils.getSamlIdPMetadataOwner(result);
     }
-
-    record CertificateAndKey(Resource certificate, Resource key) {
-    }
+    
 }

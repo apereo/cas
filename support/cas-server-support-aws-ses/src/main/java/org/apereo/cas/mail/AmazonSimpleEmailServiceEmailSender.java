@@ -52,7 +52,7 @@ public class AmazonSimpleEmailServiceEmailSender implements EmailSender {
             .message(message);
 
         FunctionUtils.doIfNotBlank(emailProperties.getReplyTo(),
-            __ -> emailRequestBuilder.replyToAddresses(emailProperties.getReplyTo()));
+            _ -> emailRequestBuilder.replyToAddresses(emailProperties.getReplyTo()));
 
         val sendEmailResult = sesClient.sendEmail(emailRequestBuilder.build());
         return EmailCommunicationResult.builder()

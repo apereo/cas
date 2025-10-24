@@ -44,7 +44,7 @@ dependencies {
     runtimeOnly libraries.webjars
     runtimeOnly libraries.webjarspalantir
 
-    testImplementation libraries.springboottomcat
+
 
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")

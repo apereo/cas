@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.oidc.assurance.AssuranceVerifiedClaimsProducer;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.JsonUtils;
 import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -64,7 +66,12 @@ public class OidcSimpleIdTokenClaimCollector implements OidcIdTokenClaimCollecto
 
     protected void collectClaim(final JwtClaims claims, final String name, final Object finalValue) {
         LOGGER.debug("Collecting ID token claim [{}] with value(s) [{}]", name, finalValue);
-        claims.setClaim(name, finalValue);
+        if (JsonUtils.isValidJsonObject(finalValue.toString())) {
+            val jsonValue = JsonUtils.parse(finalValue.toString(), Map.class);
+            claims.setClaim(name, jsonValue);
+        } else {
+            claims.setClaim(name, finalValue);
+        }
     }
 
     protected void collectStructuredClaim(final JwtClaims claims, final OidcAttributeDefinition definition,

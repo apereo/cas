@@ -45,7 +45,7 @@ class OidcServicesManagerTests {
                 val oauthService = getOAuthRegisteredService(UUID.randomUUID().toString(), redirectUri).setId(i);
                 servicesManager.save(oauthService, oidcService, casService);
             }
-            IntStream.range(0, 100).parallel().forEach(__ ->
+            IntStream.range(0, 100).parallel().forEach(_ ->
                 assertFalse(servicesManager.getAllServices().isEmpty()));
         }
     }

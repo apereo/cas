@@ -29,7 +29,7 @@ env:
   TERM: xterm-256color
   JDK_CURRENT: 25
   JDK_DISTRIBUTION: "corretto"
-  NODE_CURRENT: '24.9.0'
+  NODE_CURRENT: '24.10.0'
   MAX_ATTEMPTS: 1
   RETRY_MINUTES: 20
   SCENARIO_REGEX: ".*"
@@ -123,7 +123,7 @@ jobs:
           cache: 'gradle'
           set-java-home: 'true'
       - name: Set up Nodejs
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
@@ -179,7 +179,7 @@ jobs:
           cache: 'gradle'
           set-java-home: 'true'
       - name: Set up Nodejs
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
@@ -236,7 +236,7 @@ jobs:
           cache: 'gradle'
           set-java-home: 'true'
       - name: Set up Nodejs
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
         with:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}

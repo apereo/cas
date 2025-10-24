@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoints.web.exposure.include=*",
         "management.endpoint.webAuthnDevices.access=UNRESTRICTED"
     })
-@Tag("MFAProvider")
+@Tag("ActuatorEndpoint")
 @ExtendWith(CasTestExtension.class)
 class WebAuthnRegisteredDevicesEndpointTests {
     @Autowired

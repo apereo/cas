@@ -75,7 +75,7 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
 
     protected void buildGroovyAccessStrategyInstanceIfNeeded() {
         if (watchableScript == null) {
-            FunctionUtils.doAndHandle(__ -> {
+            FunctionUtils.doAndHandle(_ -> {
                 val location = SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript);
                 val groovyResource = ResourceUtils.getResourceFrom(location);
                 val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();

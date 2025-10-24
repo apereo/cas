@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -26,9 +25,9 @@ import org.pac4j.saml.context.SAML2MessageContext;
 import org.pac4j.saml.sso.impl.SAML2AuthnRequestBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
+import tools.jackson.databind.ObjectMapper;
 import jakarta.validation.constraints.NotNull;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,7 +59,7 @@ class AuthnRequestRequesterIdAttributeReleasePolicyTests extends BaseSamlIdPConf
 
     
     @Test
-    void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() {
         val filter = new AuthnRequestRequesterIdAttributeReleasePolicy();
         filter.setRequesterIdPattern("sp-entity-id");
         MAPPER.writeValue(JSON_FILE, filter);

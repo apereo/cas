@@ -33,11 +33,11 @@ public class UpdateTicketMessageQueueCommand extends BaseMessageQueueCommand imp
 
     @JsonCreator
     public UpdateTicketMessageQueueCommand(
-        @JsonProperty("id")
-        final PublisherIdentifier id,
+        @JsonProperty("publisherIdentifier")
+        final PublisherIdentifier publisherIdentifier,
         @JsonProperty("ticket")
         final Ticket ticket) {
-        super(id);
+        super(publisherIdentifier);
         this.ticket = ticket;
     }
 

@@ -5,9 +5,12 @@ import org.apereo.cas.authentication.principal.ChainingPrincipalAttributesReposi
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.consent.ChainingRegisteredServiceConsentPolicy;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -35,11 +38,13 @@ import java.util.stream.Collectors;
 @Getter
 @Slf4j
 @EqualsAndHashCode
+@NoArgsConstructor
 public class ChainingAttributeReleasePolicy implements RegisteredServiceChainingAttributeReleasePolicy {
 
     @Serial
     private static final long serialVersionUID = 3795054936775326709L;
 
+    @JsonSetter(nulls = Nulls.DEFAULT)
     private List<RegisteredServiceAttributeReleasePolicy> policies = new ArrayList<>();
 
     private PrincipalAttributesCoreProperties.MergingStrategyTypes mergingPolicy =

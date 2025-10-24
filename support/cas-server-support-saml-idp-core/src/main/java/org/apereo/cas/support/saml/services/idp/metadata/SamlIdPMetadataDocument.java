@@ -40,8 +40,7 @@ public class SamlIdPMetadataDocument implements Serializable {
     @Column(name = "id", columnDefinition = "BIGINT")
     @JsonProperty
     @Transient
-    @Builder.Default
-    private long id = -1;
+    private long id;
 
     @Column(name = "appliesTo", unique = true, length = 512)
     @JsonProperty
