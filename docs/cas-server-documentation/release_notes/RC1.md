@@ -92,6 +92,18 @@ particularly if the codes are set to be encrypted.
 <div class="alert alert-warning">:warning: <strong>Breaking Change</strong><p>
 This may be a breaking change. You will need to adjust your database schema based on the notes above.</p></div>
 
+### Single SignOn Sessions Per User
+                
+Many of the ticket registry implementations (i.e. MongoDb, Redis, JPA, etc) are extended to allow for removal of all tickets that were issued for a given
+principal based on the ticket's attached authentication attempt. The `ssoSessions` endpoint is also modified
+to support removing all such tickets when a single sign-on session is terminated for a user.
+
+This allows for child/descendant tickets of a `ticket-granting-ticket` to be cleaned up 
+when an SSO session is terminated for a user forcefully, specially when such tickets are not explicitly tracked by
+the parent `ticket-granting-ticket` and are configured to outlive the parent ticket's lifetime. A practical example
+of this, relevant configuration options permitting and activated, is OAuth2 refresh tokens that may 
+continue to perform even after the user logs out and terminates their SSO session.
+
 ### Spring Boot 4
 
 CAS is now built with Spring Boot `4.x`. This is a major platform upgrade that affects almost all aspects of the codebase
@@ -143,4 +155,5 @@ records, etc are processed and loaded.
 - PostgreSQL `18` is now the default PostgreSQL version for integration tests.
 - A large number of deprecated classes, methods and configuration properties have been removed.
 - Attribute values that are presented as valid JSON documents will be formatted as nested claims when collected into an [OpenID Connect ID token](../authentication/OIDC-Authentication-Claims.html).
+- The ability to prepend a *launch script* to the CAS WAR overlay distribution and have it run in a fully standalone mode is removed from Spring Boot and thus has been removed from CAS as well.
 
