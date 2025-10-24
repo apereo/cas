@@ -65,9 +65,6 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                         "Implementation-Version": project.version)
             }
             from "${project.layout.buildDirectory.getAsFile().get().path}/resources/main", { into "WEB-INF/classes" }
-            if (!rootProject.skipBootifulLaunchScript) {
-                launchScript()
-            }
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
 
@@ -78,9 +75,6 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                 archiveFileName = project.ext.archiveFileName
             }
             from "${project.layout.buildDirectory.getAsFile().get().path}/resources/main", { into "WEB-INF/classes" }
-            if (!rootProject.skipBootifulLaunchScript) {
-                launchScript()
-            }
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
 
