@@ -227,7 +227,7 @@ public abstract class BaseTicketRegistryTests {
         val count = ticketRegistry.getTickets().stream().filter(ticket -> ticket instanceof final AuthenticationAwareTicket aat
                 && aat.getAuthentication().getPrincipal().getId().equals(originalAuthn.getPrincipal().getId()))
             .count();
-//        assertEquals(0, count);
+        assertEquals(0, count);
     }
 
     @RepeatedTest(2)

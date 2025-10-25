@@ -134,8 +134,7 @@ public class CasDocumentationApplication {
         var ui = new Option("ui", "userinterface", true, "Generate data for CAS user interface and templates");
         ui.setRequired(false);
         options.addOption(ui);
-
-
+        
         HelpFormatter.builder().get().printHelp("-- Review Required Options --",
             "ApereoCAS Documentation", options, "Apereo CAS Documentation", true);
         var cmd = new DefaultParser().parse(options, args);

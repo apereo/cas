@@ -3662,20 +3662,20 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                 }
         ],
-        springsessionhazelcast     : [
-                dependencies.create(libs.spring.session.hazelcast.get()) {
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-context")
-                },
-                dependencies.create(libs.spring.boot.session.hazelcast.get()) {
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-context")
-                }
-        ],
+//        springsessionhazelcast     : [
+//                dependencies.create(libs.spring.session.hazelcast.get()) {
+//                    exclude(group: "org.springframework", module: "spring-web")
+//                    exclude(group: "org.springframework", module: "spring-core")
+//                    exclude(group: "org.springframework", module: "spring-webmvc")
+//                    exclude(group: "org.springframework", module: "spring-context")
+//                },
+//                dependencies.create(libs.spring.boot.session.hazelcast.get()) {
+//                    exclude(group: "org.springframework", module: "spring-web")
+//                    exclude(group: "org.springframework", module: "spring-core")
+//                    exclude(group: "org.springframework", module: "spring-webmvc")
+//                    exclude(group: "org.springframework", module: "spring-context")
+//                }
+//        ],
         springsessionjdbc          : [
                 dependencies.create(libs.spring.session.jdbc.get()) {
                     exclude(group: "org.springframework", module: "spring-web")
@@ -3704,21 +3704,21 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                 }
         ],
-        springsessionmongo         : [
-                dependencies.create(libs.spring.session.data.mongodb.get()) {
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework.session", module: "spring-session")
-                },
-                dependencies.create(libs.spring.boot.session.mongodb.get()) {
-                    exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-webmvc")
-                    exclude(group: "org.springframework", module: "spring-context")
-                }
-        ],
+//        springsessionmongo         : [
+//                dependencies.create(libs.spring.session.data.mongodb.get()) {
+//                    exclude(group: "org.springframework", module: "spring-web")
+//                    exclude(group: "org.springframework", module: "spring-core")
+//                    exclude(group: "org.springframework", module: "spring-webmvc")
+//                    exclude(group: "org.springframework", module: "spring-context")
+//                    exclude(group: "org.springframework.session", module: "spring-session")
+//                },
+//                dependencies.create(libs.spring.boot.session.mongodb.get()) {
+//                    exclude(group: "org.springframework", module: "spring-web")
+//                    exclude(group: "org.springframework", module: "spring-core")
+//                    exclude(group: "org.springframework", module: "spring-webmvc")
+//                    exclude(group: "org.springframework", module: "spring-context")
+//                }
+//        ],
 
         springshell                : [
                 dependencies.create(libs.spring.shell.starter.get()) {
