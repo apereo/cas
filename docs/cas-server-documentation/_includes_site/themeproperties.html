@@ -19,7 +19,7 @@
                     <code>{{ config.value }}</code>
                 </td>
                 <td>
-                    {{ config.description }}
+                    {{ config.description || markdownify }}
                 </td>
             </tr>
             {%- endfor -%}
