@@ -871,7 +871,6 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
             -Dlog.console.stacktraces=true \
             -DaotSpringActiveProfiles=none \
             $systemProperties \
-            --cas.http-client.allow-local-urls=true \
             --spring.main.lazy-initialization=false \
             --spring.devtools.restart.enabled=false \
             --management.endpoints.web.discovery.enabled=true \
@@ -915,7 +914,6 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
               -Dcom.sun.net.ssl.checkRevocation=false \
               --spring.main.lazy-initialization=false \
               --spring.profiles.active=none \
-              --cas.http-client.allow-local-urls=true \
               --spring.devtools.restart.enabled=false \
               --management.endpoints.web.discovery.enabled=true \
               --cas.audit.engine.enabled=true \
@@ -930,7 +928,6 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
               -Dcom.sun.net.ssl.checkRevocation=false \
               --server.port=${serverPort} \
               --spring.main.lazy-initialization=false \
-              --cas.http-client.allow-local-urls=true \
               --spring.profiles.active=none \
               --spring.devtools.restart.enabled=false \
               --management.endpoints.web.discovery.enabled=true \
