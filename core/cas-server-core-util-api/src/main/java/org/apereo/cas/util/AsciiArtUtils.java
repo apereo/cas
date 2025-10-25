@@ -54,12 +54,10 @@ public class AsciiArtUtils {
      */
     public static void printAsciiArtWarning(final Logger out, final String additional) {
         val ascii = """
-
              ____  ____  __  ____\s
             / ___)(_  _)/  \\(  _ \\
             \\___ \\  )( (  O )) __/
             (____/ (__) \\__/(__) \s
-            
             """;
         out.warn(ANSI_BOLD);
         out.warn(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
@@ -75,7 +73,6 @@ public class AsciiArtUtils {
      */
     public static void printAsciiArtReady(final Logger out, final String additional) {
         val ascii = """
-            
              ____  ____   __   ____  _  _\s
             (  _ \\(  __) / _\\ (    \\( \\/ )
              )   / ) _) /    \\ ) D ( )  /\s

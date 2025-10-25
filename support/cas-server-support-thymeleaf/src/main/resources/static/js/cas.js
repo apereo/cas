@@ -320,6 +320,18 @@ function resourceLoadedSuccessfully() {
     });
 }
 
+function captureFingerprint(fieldName = "deviceFingerprint") {
+    if (typeof FingerprintJS !== 'undefined') {
+        (async () => {
+            const fp = await FingerprintJS.load();
+            const result = await fp.get();
+            const fingerprint = result.visitorId;
+            console.log("Captured device fingerprint:", fingerprint);
+            $(`[name="${fieldName}"]`).val(fingerprint);
+        })();
+    }
+}
+
 function autoHideElement(id, timeout = 1500) {
     let elementToFadeOut = document.getElementById(id);
 

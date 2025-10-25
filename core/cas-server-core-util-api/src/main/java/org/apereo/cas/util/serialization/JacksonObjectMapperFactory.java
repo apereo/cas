@@ -13,8 +13,8 @@ import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.jackson.JsonComponentModule;
-import org.springframework.boot.jackson.JsonMixinModule;
+import org.springframework.boot.jackson.JacksonComponentModule;
+import org.springframework.boot.jackson.JacksonMixinModule;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.ReflectionUtils;
@@ -216,8 +216,8 @@ public class JacksonObjectMapperFactory {
                 .withIsGetterVisibility(JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC))
             .findAndAddModules()
             .addModules(this.modules)
-            .addModule(new JsonComponentModule())
-            .addModule(new JsonMixinModule())
+            .addModule(new JacksonComponentModule())
+            .addModule(new JacksonMixinModule())
             .addModule(getCasJacksonModule());
 
         if (jsonFactory instanceof JsonFactory) {

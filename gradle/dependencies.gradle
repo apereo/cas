@@ -1714,6 +1714,35 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
                 },
+                dependencies.create(libs.spring.boot.micrometer.tracing.test.get()) {
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                },
+                dependencies.create(libs.spring.boot.micrometer.metrics.test.get()) {
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                },
+                dependencies.create(libs.spring.boot.webmvc.test.get()) {
+                    exclude(group: "org.hamcrest", module: "hamcrest-core")
+                    exclude(group: "junit", module: "junit")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.jboss.logging", module: "jboss-logging")
+                    exclude(group: "com.fasterxml", module: "classmate")
+                    exclude(group: "org.hibernate.validator", module: "hibernate-validator")
+                    exclude(group: "org.objenesis", module: "objenesis")
+                    exclude(group: "org.springframework", module: "spring-test")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-context-support")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.skyscreamer", module: "jsonassert")
+                    exclude(group: "org.ow2.asm", module: "asm")
+                    exclude(group: "org.mockito", module: "mockito-all")
+                    exclude(group: "org.mockito", module: "mockito-core")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                },
                 dependencies.create(libs.hsqldb.get()),
                 dependencies.create(libs.jsonassert.get()) {
                     exclude(group: "org.json", module: "json")
@@ -2747,7 +2776,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-aop")
                 },
-                dependencies.create(libs.spring.boot.webmvc.get()) {
+                dependencies.create(libs.spring.boot.webmvc.core.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
@@ -2844,6 +2873,40 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                     exclude(group: "com.h2database", module: "h2")
+                },
+                dependencies.create(libs.spring.boot.starter.jackson.get()) {
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                },
+                dependencies.create(libs.spring.boot.jackson.get()) {
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
                 },
                 dependencies.create(libs.spring.boot.cache.get()) {
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
