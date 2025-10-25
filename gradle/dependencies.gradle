@@ -4096,8 +4096,7 @@ ext.libraries = [
                 dependencies.create(libs.base64.js.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
-                dependencies.create(libs.clientjs.get()) {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
+                dependencies.create(libs.fingerprintjs.get()) {
                 }
         ]
 ]
