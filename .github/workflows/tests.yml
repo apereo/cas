@@ -176,7 +176,7 @@ jobs:
           verbose: true
           fail_ci_if_error: false
       - name: Upload Coverage Report
-        uses: "actions/upload-artifact@v4"
+        uses: "actions/upload-artifact@v5"
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
         with:
           name: "cas-tests-${{ matrix.category }}.coverage"
@@ -199,7 +199,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Download coverage files
-        uses: "actions/download-artifact@v5"
+        uses: "actions/download-artifact@v6"
         with:
           path: "reports"
       - name: Collect Coverage Files
