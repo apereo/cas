@@ -897,9 +897,9 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
             printgreen "The scenario ${scenarioName} will run with AOT"
             rm -rf ${PWD}/cas 2>/dev/null
             printcyan "Extracting CAS to ${PWD}/cas"
-            java ${runArgs} -Djarmode=tools -jar "$PWD"/cas.${projectType} extract >/dev/null 2>&1
+            java ${runArgs//suspend=y/suspend=n} -Djarmode=tools -jar "$PWD"/cas.${projectType} extract >/dev/null 2>&1
             printcyan "Launching CAS from ${PWD}/cas/cas.${projectType} to perform a training run"
-            java ${runArgs} -XX:AOTCacheOutput=${PWD}/cas/cas.aot -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType} >/dev/null 2>&1
+            java ${runArgs//suspend=y/suspend=n} -XX:AOTCacheOutput=${PWD}/cas/cas.aot -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType} >/dev/null 2>&1
             printcyan "Generated archive cache file ${PWD}/cas/cas.aot"
             runArgs="${runArgs} -XX:AOTCache=${PWD}/cas/cas.aot"
             casArtifactToRun="${PWD}/cas/cas.${projectType}"
