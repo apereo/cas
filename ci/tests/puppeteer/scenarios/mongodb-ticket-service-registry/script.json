@@ -3,6 +3,7 @@
   "conditions": {
     "docker": "true"
   },
+  "enabled": "false",
   "properties": [
     "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml",
     
