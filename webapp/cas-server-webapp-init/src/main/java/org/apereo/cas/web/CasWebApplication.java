@@ -41,7 +41,7 @@ public class CasWebApplication {
      *
      * @param args the args
      */
-    public static void main(final String[] args) {
+    void main(final String[] args) {
         val applicationClasses = getApplicationSources(args);
         new SpringApplicationBuilder()
             .sources(applicationClasses.toArray(ArrayUtils.EMPTY_CLASS_ARRAY))
