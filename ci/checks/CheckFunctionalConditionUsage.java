@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * @since 7.0.0
  */
 public class CheckFunctionalConditionUsage {
-    public static void main(final String[] args) throws Exception {
+    void main(final String[] args) throws Exception {
         checkPattern(args[0]);
     }
 

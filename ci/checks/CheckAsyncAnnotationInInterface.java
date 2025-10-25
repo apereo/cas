@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 6.5.0
  */
 public class CheckAsyncAnnotationInInterface {
-    public static void main(final String[] args) throws Exception {
+    void main(final String[] args) throws Exception {
         checkPattern(args[0]);
     }
 

@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * @since 6.3.0
  */
 public class CheckSpringConfigurationConditionals {
-    public static void main(final String[] args) throws Exception {
+    void main(final String[] args) throws Exception {
         checkPattern(args[0]);
         checkDuplicateConfigurationNames(args[0]);
     }

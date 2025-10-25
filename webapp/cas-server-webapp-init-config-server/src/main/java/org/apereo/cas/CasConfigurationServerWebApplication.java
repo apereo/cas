@@ -31,7 +31,7 @@ public class CasConfigurationServerWebApplication {
      *
      * @param args the args
      */
-    public static void main(final String[] args) {
+    void main(final String[] args) {
         new SpringApplicationBuilder(CasConfigurationServerWebApplication.class)
             .banner(new CasConfigurationServerBanner())
             .bannerMode(Banner.Mode.CONSOLE)

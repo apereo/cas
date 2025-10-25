@@ -84,7 +84,7 @@ import java.util.stream.Collectors;
 public class CasDocumentationApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasDocumentationApplication.class);
 
-    public static void main(final String[] args) throws Exception {
+    void main(final String[] args) throws Exception {
         var options = new Options();
 
         var dt = new Option("d", "data", true, "Data directory");

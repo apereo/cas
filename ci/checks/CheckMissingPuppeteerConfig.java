@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 6.5.0
  */
 public class CheckMissingPuppeteerConfig {
-    public static void main(final String[] args) throws Exception {
+    void main(final String[] args) throws Exception {
         checkFiles(args[0]);
     }
 
