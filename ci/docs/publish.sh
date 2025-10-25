@@ -79,7 +79,7 @@ while (("$#")); do
     buildFeatures=false
     shellCommands=false
     dependencyVersions=false
-    userinterface=false
+    userinterface=true
     ;;
   --branch)
     branchVersion=$2
@@ -285,11 +285,11 @@ if [[ $generateData == "true" ]]; then
   chmod +x ${docgen}
   dataDir=$(echo "$branchVersion" | sed 's/\.//g')
   printgreen "Generating documentation data at $PWD/gh-pages/_data/$dataDir with filter $propFilter..."
-  ${docgen} -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" \
+  java -jar ${docgen} -d "$PWD/gh-pages/_data" -v "$dataDir" -r "$PWD" \
     -f "$propFilter" -a "$actuators" -tp "$thirdParty" \
     -sp "$serviceProps" -ft "$buildFeatures" -csh "$shellCommands" \
     -aud "$audit" -ver "$dependencyVersions" -ui "$userinterface"
-  if [ $? -eq 1 ]; then
+  if [ $? -ne 0 ]; then
     printred "Unable to generate documentation data. Aborting..."
     exit 1
   fi
