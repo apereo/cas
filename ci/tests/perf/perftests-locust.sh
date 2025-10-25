@@ -56,7 +56,6 @@ if [ $retVal == 0 ]; then
   cmd="java -jar webapp/cas-server-webapp-${webAppServerType}/build/libs/cas.war \\
       --spring.profiles.active=none \\
       --server.ssl.key-store=${keystore} \\
-      --cas.http-client.allow-local-urls=true \\
       --cas.service-registry.core.init-from-json=true \\
       --logging.level.org.apereo.cas=info"
   #    exec $cmd > ${casOutput} 2>&1 &
