@@ -208,6 +208,8 @@ public abstract class BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     void verifyDeleteTicketsForPrincipal() throws Exception {
+        assumeTrue(canTicketRegistryIterate());
+        assumeTrue(canTicketRegistryDelete());
         val originalAuthn = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
         val ticketGrantingTicket = new TicketGrantingTicketImpl(
             TestTicketIdentifiers.generate().ticketGrantingTicketId(),

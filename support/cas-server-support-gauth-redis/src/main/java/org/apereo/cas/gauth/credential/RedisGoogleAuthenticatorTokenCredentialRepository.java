@@ -143,8 +143,7 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     @Override
     public long count() {
         val redisKeyPattern = RedisCompositeKey.forAccounts().toKeyPattern();
-        val accounts = Objects.requireNonNull(casRedisTemplates.getAccountsRedisTemplate().keys(redisKeyPattern));
-        return accounts.isEmpty() ? 0 : casRedisTemplates.getAccountsRedisTemplate().countExistingKeys(accounts);
+        return casRedisTemplates.getAccountsRedisTemplate().count(redisKeyPattern);
     }
 
     @Override

@@ -250,6 +250,7 @@ tasks.withType(Test).configureEach {
     failFast = true
 
     def list = []
+    list.add("--enable-native-access=ALL-UNNAMED")
     list.add("--add-modules")
     list.add("java.se")
 
