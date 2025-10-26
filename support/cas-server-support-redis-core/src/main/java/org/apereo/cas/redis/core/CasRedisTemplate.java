@@ -3,7 +3,6 @@ package org.apereo.cas.redis.core;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisOperations;
 
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**

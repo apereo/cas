@@ -33,7 +33,7 @@ public class CasNativeWebApplication {
      *
      * @param args the input arguments
      */
-    void main(final String[] args) {
+    public static void main(final String[] args) {
         val banner = CasBanner.getInstance();
         new SpringApplicationBuilder(CasNativeWebApplication.class)
             .banner(banner)

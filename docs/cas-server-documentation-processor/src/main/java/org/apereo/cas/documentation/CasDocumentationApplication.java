@@ -84,7 +84,7 @@ import java.util.stream.Collectors;
 public class CasDocumentationApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasDocumentationApplication.class);
 
-    void main(final String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         var options = new Options();
 
         var dt = new Option("d", "data", true, "Data directory");
@@ -136,7 +136,7 @@ public class CasDocumentationApplication {
         options.addOption(ui);
         
         HelpFormatter.builder().get().printHelp("-- Review Required Options --",
-            "ApereoCAS Documentation", options, "Apereo CAS Documentation", true);
+            "Apereo CAS Documentation", options, "Apereo CAS Documentation", true);
         var cmd = new DefaultParser().parse(options, args);
 
         var dataDirectory = cmd.getOptionValue("data");

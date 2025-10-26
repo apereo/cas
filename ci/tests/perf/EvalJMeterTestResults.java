@@ -3,7 +3,7 @@ import java.nio.file.*;
 import java.util.regex.*;
 
 public class EvalJMeterTestResults {
-    void main(final String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         var content = new String(Files.readAllBytes(Paths.get(args[0])), StandardCharsets.UTF_8);
         System.out.format("JMeter results from %s: ", args[0]);
         System.out.println(content);

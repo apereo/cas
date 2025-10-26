@@ -21,7 +21,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -192,22 +191,6 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     }
 
     @Override
-    public long deleteTicketsFor(final String principalId) {
-//        if (properties.getCore().isEnableJet()) {
-//            ticketCatalog.findAll().forEach(ticketDefinition -> {
-//
-//            });
-//            val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
-//            val sql = String.format("DELETE FROM %s WHERE principal=?", md.getProperties().getStorageName());
-//            LOGGER.debug("Executing SQL query [{}]", sql);
-//            try (val results = hazelcastInstance.getSql().execute(sql, digestIdentifier(principalId))) {
-//                return results.getUpdateCount();
-//            }
-//        }
-        return super.deleteTicketsFor(principalId);
-    }
-
-    @Override
     public long sessionCount() {
         if (properties.getCore().isEnableJet()) {
             val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
@@ -290,7 +273,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             .limit(criteria.getCount())
             .map(this::decodeTicket);
     }
-    
+
     /**
      * Make sure we shutdown HazelCast when the context is destroyed.
      */
@@ -318,7 +301,8 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     }
 
     private IMap<String, HazelcastTicketDocument> getTicketMapInstance(
-        @NonNull final String mapName) {
+        @NonNull
+        final String mapName) {
         return FunctionUtils.doAndHandle(() -> {
             val inst = hazelcastInstance.<String, HazelcastTicketDocument>getMap(mapName);
             LOGGER.debug("Located Hazelcast map instance [{}]", mapName);
