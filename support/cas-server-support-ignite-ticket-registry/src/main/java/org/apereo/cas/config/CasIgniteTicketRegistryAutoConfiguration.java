@@ -129,6 +129,8 @@ public class CasIgniteTicketRegistryAutoConfiguration {
         final CasConfigurationProperties casProperties) {
         val ignite = casProperties.getTicket().getRegistry().getIgnite();
         val config = new IgniteConfiguration();
+        config.setConsistentId(ignite.getConsistentId());
+        
         val spi = new TcpDiscoverySpi();
         if (StringUtils.hasLength(ignite.getLocalAddress())) {
             spi.setLocalAddress(ignite.getLocalAddress());
@@ -154,6 +156,7 @@ public class CasIgniteTicketRegistryAutoConfiguration {
             config.setSslContextFactory(factory);
         }
         val dataStorageConfiguration = new DataStorageConfiguration();
+        
         val dataRegionConfiguration = new DataRegionConfiguration();
         dataRegionConfiguration.setName("DefaultRegion");
         dataRegionConfiguration.setMaxSize(ignite.getDefaultRegionMaxSize());

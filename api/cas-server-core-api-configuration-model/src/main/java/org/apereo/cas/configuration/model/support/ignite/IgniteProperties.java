@@ -4,12 +4,10 @@ import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJ
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
@@ -121,6 +119,18 @@ public class IgniteProperties implements Serializable {
      * no non-loopback address available, then {@code InetAddress.getLocalHost()} will be used.
      */
     private String localAddress;
+
+    /**
+     * This ID is used to uniquely identify each node in the cluster.
+     * It is important to set this ID explicitly and ensure its uniqueness across all nodes
+     * in the cluster especially when any of the following features are used:
+     * <ul>
+     *     <li>Persistent storage</li>
+     *     <li>Baseline topology</li>
+     *     <li>Cluster management</li>
+     * </ul>
+     */
+    private String consistentId = "cas-node-1";
 
     /**
      * Sets local port to listen to.
