@@ -139,7 +139,13 @@ We plan to re-add support for JavaMelody in the future once compatibility is res
 
 Support for [Spring Boot Admin](../monitoring/Configuring-SpringBootAdmin.html) is not yet compatible with Spring Boot `4`.
 We plan to re-add support for Spring Boot Admin in the future once compatibility is restored.
- 
+      
+#### Spring Session 
+
+[Spring Session with MongoDb](../webflow/Webflow-Customization-Sessions-ServerSide-MongoDb.html) 
+and [Spring Session with Hazelcast](../webflow/Webflow-Customization-Sessions-ServerSide-Hazelcast.html) are
+not yet compatible with Spring Boot `4`. We plan to re-add support for these features in the future once compatibility is restored.
+
 #### Spring Cloud Configuration ZooKeeper
 
 Support for [Spring Cloud Configuration ZooKeeper](../configuration/Configuration-Server-Management-SpringCloud-ZooKeeper.html)
