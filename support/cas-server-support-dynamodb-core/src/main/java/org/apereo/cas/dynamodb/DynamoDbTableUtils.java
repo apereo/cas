@@ -51,10 +51,11 @@ public class DynamoDbTableUtils {
      *
      * @param dynamo    the dynamo
      * @param tableName the table name
+     * @return the table description
      * @throws Exception the exception
      */
-    public static void waitUntilActive(final DynamoDbClient dynamo, final String tableName) throws Exception {
-        waitUntilActive(dynamo, tableName, DEFAULT_WAIT_TIMEOUT, DEFAULT_WAIT_INTERVAL);
+    public static TableDescription waitUntilActive(final DynamoDbClient dynamo, final String tableName) throws Exception {
+        return waitUntilActive(dynamo, tableName, DEFAULT_WAIT_TIMEOUT, DEFAULT_WAIT_INTERVAL);
     }
 
     /**
@@ -64,15 +65,17 @@ public class DynamoDbTableUtils {
      * @param tableName the table name
      * @param timeout   the timeout
      * @param interval  the interval
+     * @return the table description
      * @throws Exception the exception
      */
-    public static void waitUntilActive(final DynamoDbClient dynamo, final String tableName, final int timeout,
+    public static TableDescription waitUntilActive(final DynamoDbClient dynamo, final String tableName, final int timeout,
                                        final int interval) throws Exception {
         val table = waitForTableDescription(dynamo, tableName, TableStatus.ACTIVE, timeout, interval);
 
         if (table == null || !table.tableStatusAsString().equals(TableStatus.ACTIVE.toString())) {
             throw new TableNeverTransitionedToStateException(tableName, TableStatus.ACTIVE);
         }
+        return table;
     }
 
     /**
@@ -128,19 +131,13 @@ public class DynamoDbTableUtils {
                                                final List<AttributeDefinition> attributeDefinitions,
                                                final List<KeySchemaElement> keySchemaElements) throws Exception {
 
-        val billingMode = BillingMode.fromValue(dynamoDbProperties.getBillingMode().name());
-        val provisionedThroughput = billingMode == BillingMode.PROVISIONED
-            ? ProvisionedThroughput.builder()
-                .readCapacityUnits(dynamoDbProperties.getReadCapacity())
-                .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
-                .build()
-            : null;
+        val provisionedThroughput = getProvisionedThroughput(dynamoDbProperties);
         val request = CreateTableRequest.builder()
             .attributeDefinitions(attributeDefinitions)
             .keySchema(keySchemaElements)
             .provisionedThroughput(provisionedThroughput)
             .tableName(tableName)
-            .billingMode(billingMode)
+            .billingMode(BillingMode.fromValue(dynamoDbProperties.getBillingMode().name()))
             .build();
 
         if (deleteTable) {
@@ -157,6 +154,16 @@ public class DynamoDbTableUtils {
         val tableDescription = dynamoDbClient.describeTable(describeTableRequest).table();
         LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
         return tableDescription;
+    }
+
+    private static ProvisionedThroughput getProvisionedThroughput(final AbstractDynamoDbProperties dynamoDbProperties) {
+        val billingMode = BillingMode.fromValue(dynamoDbProperties.getBillingMode().name());
+        return billingMode == BillingMode.PROVISIONED
+            ? ProvisionedThroughput.builder()
+                .readCapacityUnits(dynamoDbProperties.getReadCapacity())
+                .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
+                .build()
+            : null;
     }
 
     /**

@@ -192,6 +192,22 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     }
 
     @Override
+    public long deleteTicketsFor(final String principalId) {
+//        if (properties.getCore().isEnableJet()) {
+//            ticketCatalog.findAll().forEach(ticketDefinition -> {
+//
+//            });
+//            val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
+//            val sql = String.format("DELETE FROM %s WHERE principal=?", md.getProperties().getStorageName());
+//            LOGGER.debug("Executing SQL query [{}]", sql);
+//            try (val results = hazelcastInstance.getSql().execute(sql, digestIdentifier(principalId))) {
+//                return results.getUpdateCount();
+//            }
+//        }
+        return super.deleteTicketsFor(principalId);
+    }
+
+    @Override
     public long sessionCount() {
         if (properties.getCore().isEnableJet()) {
             val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);

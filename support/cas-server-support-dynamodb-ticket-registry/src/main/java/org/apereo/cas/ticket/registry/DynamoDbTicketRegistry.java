@@ -162,6 +162,11 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public long deleteTicketsFor(final String principalId) {
+        return dbTableService.deleteTicketsFor(digestIdentifier(principalId));
+    }
+
+    @Override
     public long sessionCount() {
         return dbTableService.countTickets(TicketGrantingTicket.class, TicketGrantingTicket.PREFIX);
     }
