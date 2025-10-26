@@ -4,6 +4,8 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.apache.commons.lang3.ClassUtils;
+import org.jooq.lambda.Unchecked;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,14 +55,17 @@ public class ReflectionUtils {
      */
     public Collection<Class<?>> findClassesWithAnnotationsInPackage(final Collection<Class<? extends Annotation>> annotations,
                                                                     final String... packageName) {
+        val contextClassLoader = Thread.currentThread().getContextClassLoader();
         try (val scanResult = new ClassGraph()
+            .overrideClassLoaders(contextClassLoader)
             .acceptPackages(packageName)
             .enableAnnotationInfo()
             .scan()) {
             return annotations
                 .stream()
-                .map(annotation -> scanResult.getClassesWithAnnotation(annotation).loadClasses())
+                .map(annotation -> scanResult.getClassesWithAnnotation(annotation).getNames())
                 .flatMap(List::stream)
+                .map(Unchecked.function(name -> ClassUtils.getClass(contextClassLoader, name)))
                 .collect(Collectors.toList());
         }
     }
