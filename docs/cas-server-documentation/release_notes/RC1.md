@@ -72,7 +72,12 @@ features and capabilities.
 CAS configuration properties, specifically those that belong to the `cas` namespace and begin with `cas.`
 are now strictly and forcefully validated at startup to reject any unknown properties.
 This is done to prevent misconfigurations and typos in property names that would otherwise go unnoticed.
- 
+
+<div class="alert alert-warning">:warning: <strong>Pay Attention</strong><p>
+Unknown configuration properties that are rejected will prevent CAS from starting up. Take time to
+go through the list of unknown settings and make adjustments. If you are using the <code>cas</code>
+configuration namespaces for custom extensions, those most likely will need to be moved and reworked.</p></div>
+
 ### Project Leyden & AOT Caching
 
 Functional tests are updated to use Project Leyden, AOT compilation and caching techniques that are offered
@@ -156,4 +161,5 @@ records, etc are processed and loaded.
 - A large number of deprecated classes, methods and configuration properties have been removed.
 - Attribute values that are presented as valid JSON documents will be formatted as nested claims when collected into an [OpenID Connect ID token](../authentication/OIDC-Authentication-Claims.html).
 - The ability to prepend a *launch script* to the CAS WAR overlay distribution and have it run in a fully standalone mode is removed from Spring Boot and thus has been removed from CAS as well.
+- Most Redis operations that rely on the `KEYS` command have been replaced with `SCAN` operations to avoid performance issues on large datasets.
 
