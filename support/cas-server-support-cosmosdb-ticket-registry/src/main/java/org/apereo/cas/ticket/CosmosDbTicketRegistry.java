@@ -33,8 +33,10 @@ import java.util.stream.StreamSupport;
  *
  * @author Misagh Moayyed
  * @since 7.0.0
+ * @deprecated Since 8.0.0
  */
 @Slf4j
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     /**
      * Partition key.

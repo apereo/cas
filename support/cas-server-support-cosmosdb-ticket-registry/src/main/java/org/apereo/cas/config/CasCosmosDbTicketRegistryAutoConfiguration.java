@@ -27,11 +27,13 @@ import org.springframework.context.annotation.ScopedProxyMode;
  *
  * @author Misagh Moayyed
  * @since 7.0.0
+ * @deprecated Since 8.0.0
  */
 @Slf4j
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "cosmosdb")
 @AutoConfiguration
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class CasCosmosDbTicketRegistryAutoConfiguration {
 
     @ConditionalOnMissingBean(name = "cosmosDbTicketCatalogConfigurationValuesProvider")

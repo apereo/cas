@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 7.0.0
+ * @deprecated Since 8.0.0
  */
 @Tag("Azure")
 @ImportAutoConfiguration(CasCosmosDbTicketRegistryAutoConfiguration.class)
@@ -52,7 +53,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Execution(ExecutionMode.SAME_THREAD)
 @EnabledIfEnvironmentVariable(named = "COSMOS_DB_URL", matches = ".+")
 @EnabledIfEnvironmentVariable(named = "COSMOS_DB_KEY", matches = ".+")
+@Deprecated(since = "8.0.0", forRemoval = true)
 class CosmosDbTicketRegistryTests extends BaseTicketRegistryTests {
+
     private static final int COUNT = 10;
 
     @Autowired
