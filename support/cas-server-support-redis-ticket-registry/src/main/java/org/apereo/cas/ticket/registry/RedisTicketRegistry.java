@@ -305,7 +305,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                         });
 
                     if (!result.isEmpty() && result.getFirst() instanceof final Long count) {
-                       deleted += count;
+                        deleted += count;
                     }
                 }
             }
@@ -453,9 +453,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         return fetchKeysForTickets(redisKey);
     }
 
-    private Stream<String> fetchKeysForTickets(final String key) {
-        LOGGER.debug("Loading keys for pattern [{}]", key);
-        return Objects.requireNonNull(casRedisTemplates.getTicketsRedisTemplate().keys(key)).parallelStream();
+    private Stream<String> fetchKeysForTickets(final String keyPattern) {
+        LOGGER.debug("Loading keys for pattern [{}]", keyPattern);
+        return Objects.requireNonNull(casRedisTemplates.getTicketsRedisTemplate().keys(keyPattern)).parallelStream();
     }
 
     protected RedisTicketDocument buildTicketAsDocument(final Ticket ticket) {
