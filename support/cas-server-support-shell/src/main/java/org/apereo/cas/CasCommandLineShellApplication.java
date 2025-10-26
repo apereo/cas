@@ -30,7 +30,7 @@ public class CasCommandLineShellApplication {
      *
      * @param args the args
      */
-    void main(final String[] args) {
+    public static void main(final String[] args) {
         val applicationContext = new SpringApplicationBuilder(CasCommandLineShellApplication.class)
             .banner(new DefaultCasBanner())
             .bannerMode(Banner.Mode.CONSOLE)

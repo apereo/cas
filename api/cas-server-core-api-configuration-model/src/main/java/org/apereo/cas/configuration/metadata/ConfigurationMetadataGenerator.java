@@ -104,7 +104,7 @@ public class ConfigurationMetadataGenerator {
      * @param args the args
      * @throws Exception the exception
      */
-    static void main(final String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         if (args.length != 2) {
             throw new IllegalArgumentException("Usage: ConfigurationMetadataGenerator <input-file> <output-file>");
         }
