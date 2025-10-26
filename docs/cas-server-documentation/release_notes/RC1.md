@@ -168,4 +168,5 @@ records, etc are processed and loaded.
 - Attribute values that are presented as valid JSON documents will be formatted as nested claims when collected into an [OpenID Connect ID token](../authentication/OIDC-Authentication-Claims.html).
 - The ability to prepend a *launch script* to the CAS WAR overlay distribution and have it run in a fully standalone mode is removed from Spring Boot and thus has been removed from CAS as well.
 - Most Redis operations that rely on the `KEYS` command have been replaced with `SCAN` operations to avoid performance issues on large datasets.
+- A new theme option is now available to control whether client-side device fingerprinting is activated during authentication.
 
