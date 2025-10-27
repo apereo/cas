@@ -1,6 +1,5 @@
 {
   "dependencies": "configuration-cloud-zookeeper",
-  "enabled": "false",
   "conditions": {
     "docker": "true"
   },

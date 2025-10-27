@@ -34,6 +34,9 @@ public class CassandraTicketHolder implements Serializable {
     @JsonProperty("id")
     private String id;
 
+    @JsonProperty("principal")
+    private String principal;
+
     @JsonProperty("data")
     private String data;
 

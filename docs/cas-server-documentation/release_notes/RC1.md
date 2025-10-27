@@ -72,7 +72,12 @@ features and capabilities.
 CAS configuration properties, specifically those that belong to the `cas` namespace and begin with `cas.`
 are now strictly and forcefully validated at startup to reject any unknown properties.
 This is done to prevent misconfigurations and typos in property names that would otherwise go unnoticed.
- 
+
+<div class="alert alert-warning">:warning: <strong>Pay Attention</strong><p>
+Unknown configuration properties that are rejected will prevent CAS from starting up. Take time to
+go through the list of unknown settings and make adjustments. If you are using the <code>cas</code>
+configuration namespaces for custom extensions, those most likely will need to be moved and reworked.</p></div>
+
 ### Project Leyden & AOT Caching
 
 Functional tests are updated to use Project Leyden, AOT compilation and caching techniques that are offered
@@ -91,6 +96,18 @@ particularly if the codes are set to be encrypted.
 
 <div class="alert alert-warning">:warning: <strong>Breaking Change</strong><p>
 This may be a breaking change. You will need to adjust your database schema based on the notes above.</p></div>
+
+### Single SignOn Sessions Per User
+                
+Many of the ticket registry implementations (i.e. MongoDb, Redis, JPA, etc) are extended to allow for removal of all tickets that were issued for a given
+principal based on the ticket's attached authentication attempt. The `ssoSessions` endpoint is also modified
+to support removing all such tickets when a single sign-on session is terminated for a user.
+
+This allows for child/descendant tickets of a `ticket-granting-ticket` to be cleaned up 
+when an SSO session is terminated for a user forcefully, specially when such tickets are not explicitly tracked by
+the parent `ticket-granting-ticket` and are configured to outlive the parent ticket's lifetime. A practical example
+of this, relevant configuration options permitting and activated, is OAuth2 refresh tokens that may 
+continue to perform even after the user logs out and terminates their SSO session.
 
 ### Spring Boot 4
 
@@ -122,24 +139,18 @@ We plan to re-add support for JavaMelody in the future once compatibility is res
 
 Support for [Spring Boot Admin](../monitoring/Configuring-SpringBootAdmin.html) is not yet compatible with Spring Boot `4`.
 We plan to re-add support for Spring Boot Admin in the future once compatibility is restored.
- 
-#### Spring Cloud Configuration ZooKeeper
+      
+#### Spring Session 
 
-Support for [Spring Cloud Configuration ZooKeeper](../configuration/Configuration-Server-Management-SpringCloud-ZooKeeper.html)
-is not yet compatible with Spring Boot `4`. We plan to re-add support for Spring Cloud Configuration ZooKeeper
-in the future once compatibility is restored.
-
-#### Spring Cloud Bus
-
-Support for [Spring Cloud Configuration Bus](../configuration/Configuration-Management-Clustered-AMQP.html)
-is not yet compatible with Spring Boot `4`. We plan to re-add support for this feature
-in the future once compatibility is restored.
+[Spring Session with MongoDb](../webflow/Webflow-Customization-Sessions-ServerSide-MongoDb.html) 
+and [Spring Session with Hazelcast](../webflow/Webflow-Customization-Sessions-ServerSide-Hazelcast.html) are
+not yet compatible with Spring Boot `4`. We plan to re-add support for these features in the future once compatibility is restored.
 
 #### Jackson & JSON Processing
 
 The Jackson library, responsible for JSON processing and parsing in CAS, is upgraded to `3.x` version. 
 This is a major upgrade that brings in many significant changes to the way JSON is processed in CAS. Almost all 
-such changes are internal and **SHOULD NOT** affect CAS configuration, application 
+such changes are internal and **SHOULD NOT** affect how CAS configuration, application 
 records, etc are processed and loaded.
 
 ## Other Stuff
@@ -149,4 +160,8 @@ records, etc are processed and loaded.
 - PostgreSQL `18` is now the default PostgreSQL version for integration tests.
 - A large number of deprecated classes, methods and configuration properties have been removed.
 - Attribute values that are presented as valid JSON documents will be formatted as nested claims when collected into an [OpenID Connect ID token](../authentication/OIDC-Authentication-Claims.html).
+- The ability to prepend a *launch script* to the CAS WAR overlay distribution and have it run in a fully standalone mode is removed from Spring Boot and thus has been removed from CAS as well.
+- Most Redis operations that rely on the `KEYS` command have been replaced with `SCAN` operations to avoid performance issues on large datasets.
+- A new theme option is now available to control whether client-side device fingerprinting is activated during authentication.
+- [CosmosDb Ticket Registry](../ticketing/CosmosDb-Ticket-Registry.html) is deprecated and will be removed in a future release.
 

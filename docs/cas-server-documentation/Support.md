@@ -55,7 +55,7 @@ Commercial support for CAS is provided by the following entities:
       </td>
     
       <td>
-        <a href="https://www.tirasa.net/">
+        <a href="https://www.tirasa.net/en">
           <img id="tirasaImage" valign="middle" width="180" src="https://user-images.githubusercontent.com/1205228/54271312-81d4b300-453e-11e9-82fe-6749b09a6446.png">
         </a>
       </td>

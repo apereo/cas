@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports,mongo-ticket-registry,mongo-service-registry,mongo-monitor,session-mongo",
+  "dependencies": "reports,mongo-ticket-registry,mongo-service-registry,mongo-monitor",
   "conditions": {
     "docker": "true"
   },
@@ -46,17 +46,7 @@
     "--cas.monitor.mongo[1].host=localhost",
     "--cas.monitor.mongo[1].port=27017",
     "--cas.monitor.mongo[1].authentication-database-name=admin",
-    "--cas.monitor.mongo[1].database-name=service-registry",
-
-    "--spring.session.store-type=MONGODB",
-    "--spring.session.mongodb.collection-name=MongoDbSessionRepository",
-
-    "--spring.mongodb.host=localhost",
-    "--spring.mongodb.port=27017",
-    "--spring.mongodb.database=sessions",
-    "--spring.mongodb.username=root",
-    "--spring.mongodb.password=secret",
-    "--spring.mongodb.authentication-database=admin"
+    "--cas.monitor.mongo[1].database-name=service-registry"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }
