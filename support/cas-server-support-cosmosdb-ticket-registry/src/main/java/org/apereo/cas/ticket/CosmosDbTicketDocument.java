@@ -13,11 +13,13 @@ import java.io.Serializable;
  *
  * @author Misagh Moayyed
  * @since 7.0.0
+ * @deprecated Since 8.0.0
  */
 @Getter
 @Setter
 @SuperBuilder
 @NoArgsConstructor
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class CosmosDbTicketDocument implements Serializable {
     @Serial
     private static final long serialVersionUID = -1741535838543052903L;

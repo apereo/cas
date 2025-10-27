@@ -9,11 +9,15 @@ import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutureCallback;
+import com.google.api.core.ApiFutures;
 import com.google.cloud.firestore.Filter;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -21,16 +25,18 @@ import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -140,7 +146,7 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
             .skip(criteria.getFrom())
             .limit(criteria.getCount());
     }
-    
+
     @Override
     public Ticket updateTicket(final Ticket ticket) {
         FunctionUtils.doAndHandle(_ -> {
@@ -171,6 +177,48 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Deleted ticket [{}] from [{}] @ [{}]", ticketToDelete.getId(), collectionName, updateTime);
             return 1;
         });
+    }
+
+    @Override
+    public long deleteTicketsFor(final String principalId) {
+        val ticketDefinitions = ticketCatalog.findAll();
+        return ticketDefinitions
+            .stream()
+            .mapToLong(Unchecked.toLongFunction(definition -> {
+                val collection = getTicketCollectionInstanceByMetadata(definition);
+                val query = firestore.collection(collection)
+                    .whereEqualTo("principal", digestIdentifier(principalId))
+                    .get()
+                    .get();
+                val documents = query.getDocuments();
+
+                val count = new AtomicInteger();
+                val futures = new ArrayList<ApiFuture<WriteResult>>();
+                try (val bw = firestore.bulkWriter()) {
+                    for (val doc : documents) {
+                        val deleteTask = bw.delete(doc.getReference());
+                        futures.add(deleteTask);
+                        ApiFutures.addCallback(
+                            deleteTask,
+                            new ApiFutureCallback<>() {
+                                @Override
+                                public void onSuccess(final WriteResult r) {
+                                    count.incrementAndGet();
+                                }
+
+                                @Override
+                                public void onFailure(final Throwable t) {
+                                    LoggingUtils.error(LOGGER, t);
+                                }
+                            },
+                            Executors.newVirtualThreadPerTaskExecutor()
+                        );
+                    }
+                }
+                ApiFutures.allAsList(futures).get();
+                return count.get();
+            }))
+            .sum();
     }
 
     @Override

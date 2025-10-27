@@ -2,7 +2,7 @@
 aceEditor = "1.41.0"
 acmeClient = "3.5.1"
 amazonDax = "2.0.6"
-amazonSdk = "2.35.11"
+amazonSdk = "2.36.2"
 azureInsights = "3.7.5"
 azureKustoLog4j = "1.0.0"
 animateCss = "4.1.1"
@@ -29,7 +29,7 @@ caffeine = "3.2.2"
 casClient = "4.0.4"
 cbor = "4.5.6"
 chartJs = "4.5.1"
-checkstyle = "12.0.1"
+checkstyle = "12.1.1"
 classgraph = "4.8.184"
 commonsBeans = "1.11.0"
 commonsCli = "1.10.0"
@@ -44,7 +44,7 @@ commonsLang2 = "2.6"
 commonsPool = "2.12.1"
 commonsText = "1.14.0"
 commonsValidator = "1.10.0"
-cosmosdb = "4.74.0"
+cosmosdb = "4.75.0"
 cqEngine = "3.6.0"
 cryptacular = "1.2.7"
 curator = "5.9.0"
@@ -57,9 +57,9 @@ duoUniversalSdk = "1.3.1"
 eclipseAngusMail = "2.0.5"
 eclipseLink = "4.0.8"
 elasticApm = "1.55.1"
-errorprone = "2.42.0"
+errorprone = "2.43.0"
 eurekaClient = "2.0.5"
-fingerprintJs = "3.4.2"
+fingerprintJs = "4.6.2"
 firebaseAdmin = "9.7.0"
 fluentd = "0.3.4"
 fluentdLog4j = "1.0.0"
@@ -93,11 +93,11 @@ httpCore4 = "4.4.16"
 httpclient = "5.5.1"
 httpclient4 = "4.5.14"
 hypersistence = "3.11.0"
-influxDb = "1.4.0"
+influxDb = "1.5.0"
 ipGeoLocation = "2.0.1"
 jackson2 = "2.20.0"
 jackson = "3.0.1"
-jacksonAnnotations = "3.0-rc5"
+jacksonAnnotations = "2.20"
 jacksonAsl = "1.9.13"
 jacksonDataBind = "3.0.1"
 jacoco = "0.8.14"
@@ -196,7 +196,7 @@ saajImpl = "3.0.4"
 scimSdkClient = "1.28.0"
 semver = "3.1.0"
 sendGrid = "4.10.3"
-sentry = "8.24.0-alpha.2"
+sentry = "8.24.0"
 shibbolethUtilJavaSupport = "9.1.6"
 slackClient = "1.45.4"
 slf4j = "2.0.17"
@@ -228,7 +228,7 @@ springSecurity = "7.0.0-RC1"
 springSecurityRsa = "1.1.5"
 springSession = "4.0.0-RC1"
 springSessionMongo = "4.0.0-M2"
-springShell = "3.4.1"
+springShell = "4.0.0-M1"
 springWebflow = "3.0.1"
 springWs = "5.0.0-RC1"
 spymemcached = "2.12.3"
@@ -265,7 +265,7 @@ gradleLombok = "9.0.0"
 gradleDependencyVersions = "0.53.0"
 gradleErrorProne = "4.3.0"
 gradleGraalVmNative = "0.11.2"
-gradleSonarqube = "7.0.0.6105"
+gradleSonarqube = "7.0.1.6134"
 gradleNmcpPublishing = "1.2.0"
 gradleJib = "3.4.6"
 
@@ -613,25 +613,29 @@ spring-boot-actuator = { module = "org.springframework.boot:spring-boot-actuator
 spring-boot-amqp = { module = "org.springframework.boot:spring-boot-amqp", version.ref = "springBoot" }
 spring-boot-health = { module = "org.springframework.boot:spring-boot-health", version.ref = "springBoot" }
 spring-boot-integration = { module = "org.springframework.boot:spring-boot-integration", version.ref = "springBoot" }
+spring-boot-jackson = { module = "org.springframework.boot:spring-boot-jackson", version.ref = "springBoot" }
 spring-boot-jdbc = { module = "org.springframework.boot:spring-boot-jdbc", version.ref = "springBoot" }
 spring-boot-kafka = { module = "org.springframework.boot:spring-boot-kafka", version.ref = "springBoot" }
 spring-boot-mail = { module = "org.springframework.boot:spring-boot-mail", version.ref = "springBoot" }
+spring-boot-micrometer-metrics-test = { module = "org.springframework.boot:spring-boot-micrometer-metrics-test", version.ref = "springBoot" }
+spring-boot-micrometer-tracing-test = { module = "org.springframework.boot:spring-boot-micrometer-tracing-test", version.ref = "springBoot" }
 spring-boot-mustache = { module = "org.springframework.boot:spring-boot-mustache", version.ref = "springBoot" }
 spring-boot-restclient = { module = "org.springframework.boot:spring-boot-restclient", version.ref = "springBoot" }
 spring-boot-security = { module = "org.springframework.boot:spring-boot-security", version.ref = "springBoot" }
 spring-boot-sendgrid = { module = "org.springframework.boot:spring-boot-sendgrid", version.ref = "springBoot" }
 spring-boot-servlet = { module = "org.springframework.boot:spring-boot-servlet", version.ref = "springBoot" }
 spring-boot-session-core = { module = "org.springframework.boot:spring-boot-session", version.ref = "springBoot" }
-spring-boot-session-hazelcast = { module = "org.springframework.boot:spring-boot-session-hazelcast", version.ref = "springBoot" }
+#spring-boot-session-hazelcast = { module = "org.springframework.boot:spring-boot-session-hazelcast", version.ref = "springBoot" }
 spring-boot-session-jdbc = { module = "org.springframework.boot:spring-boot-session-jdbc", version.ref = "springBoot" }
-spring-boot-session-mongodb = { module = "org.springframework.boot:spring-boot-session-data-mongodb", version.ref = "springBoot" }
+#spring-boot-session-mongodb = { module = "org.springframework.boot:spring-boot-session-data-mongodb", version.ref = "springBoot" }
 spring-boot-session-redis = { module = "org.springframework.boot:spring-boot-session-data-redis", version.ref = "springBoot" }
 spring-boot-sql = { module = "org.springframework.boot:spring-boot-sql", version.ref = "springBoot" }
 spring-boot-thymeleaf = { module = "org.springframework.boot:spring-boot-thymeleaf", version.ref = "springBoot" }
-spring-boot-tx = { module = "org.springframework.boot:spring-boot-tx", version.ref = "springBoot" }
+spring-boot-transaction = { module = "org.springframework.boot:spring-boot-transaction", version.ref = "springBoot" }
 spring-boot-quartz = { module = "org.springframework.boot:spring-boot-quartz", version.ref = "springBoot" }
 spring-boot-web-server = { module = "org.springframework.boot:spring-boot-web-server", version.ref = "springBoot" }
-spring-boot-webmvc = { module = "org.springframework.boot:spring-boot-webmvc", version.ref = "springBoot" }
+spring-boot-webmvc-core = { module = "org.springframework.boot:spring-boot-webmvc", version.ref = "springBoot" }
+spring-boot-webmvc-test = { module = "org.springframework.boot:spring-boot-webmvc-test", version.ref = "springBoot" }
 spring-boot-websocket = { module = "org.springframework.boot:spring-boot-websocket", version.ref = "springBoot" }
 spring-boot-admin-starter-client = { module = "de.codecentric:spring-boot-admin-starter-client", version.ref = "springBootAdmin" }
 spring-boot-admin-starter-server = { module = "de.codecentric:spring-boot-admin-starter-server", version.ref = "springBootAdmin" }
@@ -646,6 +650,7 @@ spring-boot-starter-amqp = { module = "org.springframework.boot:spring-boot-star
 spring-boot-starter-aspectj = { module = "org.springframework.boot:spring-boot-starter-aspectj", version.ref = "springBoot" }
 spring-boot-starter-data-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc", version.ref = "springBoot" }
 spring-boot-starter-data-mongodb = { module = "org.springframework.boot:spring-boot-starter-data-mongodb", version.ref = "springBoot" }
+spring-boot-starter-jackson = { module = "org.springframework.boot:spring-boot-starter-jackson", version.ref = "springBoot" }
 spring-boot-starter-jetty = { module = "org.springframework.boot:spring-boot-starter-jetty", version.ref = "springBoot" }
 spring-boot-starter-log4j2 = { module = "org.springframework.boot:spring-boot-starter-log4j2", version.ref = "springBoot" }
 spring-boot-starter-logging = { module = "org.springframework.boot:spring-boot-starter-logging", version.ref = "springBoot" }
@@ -717,9 +722,9 @@ spring-security-rsa = { module = "org.springframework.security:spring-security-r
 spring-security-test = { module = "org.springframework.security:spring-security-test", version.ref = "springSecurity" }
 spring-security-web = { module = "org.springframework.security:spring-security-web", version.ref = "springSecurity" }
 spring-session-core = { module = "org.springframework.session:spring-session-core", version.ref = "springSession" }
-spring-session-data-mongodb = { module = "org.springframework.session:spring-session-data-mongodb", version.ref = "springSessionMongo" }
+#spring-session-data-mongodb = { module = "org.springframework.session:spring-session-data-mongodb", version.ref = "springSessionMongo" }
 spring-session-data-redis = { module = "org.springframework.session:spring-session-data-redis", version.ref = "springSession" }
-spring-session-hazelcast = { module = "org.springframework.session:spring-session-hazelcast", version.ref = "springSession" }
+#spring-session-hazelcast = { module = "org.springframework.session:spring-session-hazelcast", version.ref = "springSession" }
 spring-session-jdbc = { module = "org.springframework.session:spring-session-jdbc", version.ref = "springSession" }
 spring-shell-starter = { module = "org.springframework.shell:spring-shell-starter", version.ref = "springShell" }
 spring-test = { module = "org.springframework:spring-test", version.ref = "spring" }
