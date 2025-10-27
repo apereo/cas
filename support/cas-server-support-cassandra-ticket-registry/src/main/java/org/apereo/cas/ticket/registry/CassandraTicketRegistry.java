@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.CassandraTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -14,6 +15,8 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
+import com.datastax.oss.driver.api.querybuilder.relation.Relation;
+import com.datastax.oss.driver.api.querybuilder.term.Term;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -148,9 +151,45 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
+    public long deleteTicketsFor(final String principalId) {
+        return ticketCatalog
+            .findAll()
+            .parallelStream()
+            .mapToLong(definition -> {
+                val builder = QueryBuilder.selectFrom(properties.getKeyspace(), definition.getProperties().getStorageName())
+                    .column("id")
+                    .whereColumn("principal").isEqualTo(QueryBuilder.literal(digestIdentifier(principalId)));
+                val select = builder
+                    .build()
+                    .setConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getConsistencyLevel()))
+                    .setSerialConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getSerialConsistencyLevel()))
+                    .setTimeout(Beans.newDuration(properties.getTimeout()));
+                val matchingTickets = cassandraSessionFactory.getCqlTemplate()
+                    .queryForList(select)
+                    .parallelStream()
+                    .map(row -> row.get("id").toString())
+                    .map(QueryBuilder::literal)
+                    .toArray(Term[]::new);
+
+                if (matchingTickets.length > 0) {
+                    val delete = QueryBuilder
+                        .deleteFrom(properties.getKeyspace(), definition.getProperties().getStorageName())
+                        .where(Relation.column("id").in(matchingTickets))
+                        .build()
+                        .setConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getConsistencyLevel()))
+                        .setSerialConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getSerialConsistencyLevel()))
+                        .setTimeout(Beans.newDuration(properties.getTimeout()));
+                    cassandraSessionFactory.getCqlTemplate().execute(delete);
+                }
+                return matchingTickets.length;
+            })
+            .sum();
+    }
+
+    @Override
     public long deleteAll() {
         ticketCatalog.findAll()
-            .stream()
+            .parallelStream()
             .map(definition -> QueryBuilder
                 .truncate(properties.getKeyspace(), definition.getProperties().getStorageName())
                 .build()
@@ -255,31 +294,48 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
                     LOGGER.trace("Dropping Cassandra table with query [{}]", drop);
                     cassandraSessionFactory.getCqlTemplate().execute(drop);
                 }
-                val createTable = "CREATE TABLE IF NOT EXISTS %s.%s(id text,type text,prefix text,attributes map<text, text>,data text, PRIMARY KEY(id,type));"
+                val createTable = """
+                    CREATE TABLE IF NOT EXISTS %s.%s(
+                        id text,
+                        type text,
+                        principal text,
+                        prefix text,attributes map<text, text>,
+                        data text,
+                        PRIMARY KEY(id,type));
+                    """
+                    .stripIndent()
+                    .stripLeading()
+                    .stripTrailing()
+                    .trim()
                     .formatted(properties.getKeyspace(), metadata.getProperties().getStorageName());
                 LOGGER.trace("Creating Cassandra table with query [{}]", createTable);
                 cassandraSessionFactory.getCqlTemplate().execute(createTable);
 
                 cassandraSessionFactory.getCqlTemplate().execute("DROP INDEX IF EXISTS " + metadata.getProperties().getStorageName() + "_entries_index");
-                val createIndexAttributeNames = "CREATE INDEX " + metadata.getProperties().getStorageName() + "_entries_index ON "
-                                                + properties.getKeyspace() + '.' + metadata.getProperties().getStorageName() + " (ENTRIES(attributes));";
-                LOGGER.trace("Creating Cassandra index with query [{}]", createIndexAttributeNames);
-                cassandraSessionFactory.getCqlTemplate().execute(createIndexAttributeNames);
+                var createIndex = "CREATE INDEX " + metadata.getProperties().getStorageName() + "_entries_index ON "
+                    + properties.getKeyspace() + '.' + metadata.getProperties().getStorageName() + " (ENTRIES(attributes));";
+                LOGGER.trace("Creating Cassandra index with query [{}]", createIndex);
+                cassandraSessionFactory.getCqlTemplate().execute(createIndex);
 
                 cassandraSessionFactory.getCqlTemplate().execute("DROP INDEX IF EXISTS " + metadata.getProperties().getStorageName() + "_values_index");
-                val createIndexAttributeValues = "CREATE INDEX " + metadata.getProperties().getStorageName() + "_values_index ON "
-                                                 + properties.getKeyspace() + '.' + metadata.getProperties().getStorageName() + " (VALUES(attributes));";
-                LOGGER.trace("Creating Cassandra index with query [{}]", createIndexAttributeValues);
-                cassandraSessionFactory.getCqlTemplate().execute(createIndexAttributeValues);
+                createIndex = "CREATE INDEX " + metadata.getProperties().getStorageName() + "_values_index ON "
+                    + properties.getKeyspace() + '.' + metadata.getProperties().getStorageName() + " (VALUES(attributes));";
+                LOGGER.trace("Creating Cassandra index with query [{}]", createIndex);
+                cassandraSessionFactory.getCqlTemplate().execute(createIndex);
 
                 cassandraSessionFactory.getCqlTemplate().execute("DROP INDEX IF EXISTS " + metadata.getProperties().getStorageName() + "_keys_index");
-                val createIndexAttributeNames3 = "CREATE INDEX " + metadata.getProperties().getStorageName() + "_keys_index ON "
-                                                 + properties.getKeyspace() + '.' + metadata.getProperties().getStorageName() + " (KEYS(attributes));";
-                LOGGER.trace("Creating Cassandra index with query [{}]", createIndexAttributeNames3);
-                cassandraSessionFactory.getCqlTemplate().execute(createIndexAttributeNames3);
+                createIndex = "CREATE INDEX " + metadata.getProperties().getStorageName() + "_keys_index ON "
+                    + properties.getKeyspace() + '.' + metadata.getProperties().getStorageName() + " (KEYS(attributes));";
+                LOGGER.trace("Creating Cassandra index with query [{}]", createIndex);
+                cassandraSessionFactory.getCqlTemplate().execute(createIndex);
+
+                cassandraSessionFactory.getCqlTemplate().execute("DROP INDEX IF EXISTS " + metadata.getProperties().getStorageName() + "_principal_index");
+                createIndex = "CREATE INDEX " + metadata.getProperties().getStorageName() + "_principal_index ON "
+                    + properties.getKeyspace() + '.' + metadata.getProperties().getStorageName() + " (principal);";
+                LOGGER.trace("Creating Cassandra index with query [{}]", createIndex);
+                cassandraSessionFactory.getCqlTemplate().execute(createIndex);
             });
     }
-
 
     private Ticket addTicketToCassandra(final Ticket ticket, final boolean inserting) throws Exception {
         LOGGER.debug("Adding ticket [{}]", ticket.getId());
@@ -301,6 +357,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
             })
             .collect(Collectors.toMap(Pair::getKey, v -> v.getValue().toString()));
 
+        val principal = StringUtils.defaultIfBlank(getPrincipalIdFrom(ticket), NullPrincipal.getInstance().getId());
         if (inserting) {
             val document = CassandraTicketHolder.builder()
                 .id(encTicket.getId())
@@ -308,6 +365,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
                 .prefix(ticket.getPrefix())
                 .type(encTicket.getClass().getName())
                 .attributes(attributesEncoded)
+                .principal(digestIdentifier(principal))
                 .build();
             val json = MAPPER.writeValueAsString(document);
             statement = QueryBuilder.insertInto(properties.getKeyspace(), metadata.getProperties().getStorageName())
@@ -319,6 +377,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
                 .usingTtl(ttl)
                 .setColumn("data", QueryBuilder.literal(data))
                 .setColumn("attributes", QueryBuilder.literal(attributesEncoded))
+                .setColumn("principal", QueryBuilder.literal(digestIdentifier(principal)))
                 .whereColumn("id").isEqualTo(QueryBuilder.literal(encTicket.getId()))
                 .whereColumn("type").isEqualTo(QueryBuilder.literal(encTicket.getClass().getName()))
                 .build();

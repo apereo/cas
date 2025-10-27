@@ -363,7 +363,7 @@ curl -k -u "username:password" \
 {% capture epc %}
 
 ```properties
-management.endpoint.{{ cfg.name }}.enabled=true
+management.endpoint.{{ cfg.name }}.access=UNRESTRICTED
 management.endpoints.web.exposure.include={{ cfg.name }}
 
 # Choose the proper security access level...
