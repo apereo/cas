@@ -30,6 +30,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -79,11 +81,14 @@ class DelegatedAuthenticationOidcConfiguration {
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry,
         @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
-        final SingleLogoutRequestExecutor singleLogoutRequestExecutor) {
+        final SingleLogoutRequestExecutor singleLogoutRequestExecutor,
+        @Qualifier("ticketTransactionManager")
+        final PlatformTransactionManager ticketTransactionManager) {
         return WebflowActionBeanSupplier.builder()
             .withApplicationContext(applicationContext)
             .withProperties(casProperties)
-            .withAction(() -> new DelegatedClientOidcLogoutAction(ticketRegistry, singleLogoutRequestExecutor))
+            .withAction(() -> new DelegatedClientOidcLogoutAction(ticketRegistry, singleLogoutRequestExecutor,
+                new TransactionTemplate(ticketTransactionManager)))
             .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_OIDC_CLIENT_LOGOUT)
             .build()
             .get();
