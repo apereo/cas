@@ -75,6 +75,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import java.util.List;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * This this {@link CasReportsAutoConfiguration}.
@@ -163,9 +165,11 @@ public class CasReportsAutoConfiguration {
             final ObjectProvider<@NonNull TicketRegistry> ticketRegistry,
             @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
             final ObjectProvider<@NonNull SingleLogoutRequestExecutor> defaultSingleLogoutRequestExecutor,
+            @Qualifier("ticketTransactionManager")
+            final PlatformTransactionManager ticketTransactionManager,
             final CasConfigurationProperties casProperties) {
             return new SingleSignOnSessionsEndpoint(ticketRegistry, applicationContext,
-                casProperties, defaultSingleLogoutRequestExecutor);
+                casProperties, defaultSingleLogoutRequestExecutor, new TransactionTemplate(ticketTransactionManager));
         }
 
         @Bean

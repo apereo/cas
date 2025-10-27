@@ -76,7 +76,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.webflow.execution.Action;
 import java.util.List;
@@ -206,7 +208,7 @@ public class CasSupportActionsAutoConfiguration {
                 .build()
                 .get();
         }
-        
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "singleSignOnNotificationLogoutTicketJwtBuilder")
@@ -225,7 +227,7 @@ public class CasSupportActionsAutoConfiguration {
                 servicesManager, defaultPrincipalResolver,
                 casProperties, webApplicationServiceFactory);
         }
-        
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_NOTIFY_SINGLE_SIGNON_EVENT)
         @Bean
@@ -247,7 +249,7 @@ public class CasSupportActionsAutoConfiguration {
                 .build()
                 .get();
         }
-        
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET)
         @Bean
@@ -729,6 +731,8 @@ public class CasSupportActionsAutoConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
+            @Qualifier("ticketTransactionManager")
+            final PlatformTransactionManager ticketTransactionManager,
             final CasConfigurationProperties casProperties) {
 
             return WebflowActionBeanSupplier.builder()
@@ -736,7 +740,8 @@ public class CasSupportActionsAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new PrepareAccountProfileViewAction(ticketRegistry,
                     servicesManager, casProperties, auditTrailExecutionPlan,
-                    geoLocationService.getIfAvailable(), principalAccessStrategyEnforcer))
+                    geoLocationService.getIfAvailable(), principalAccessStrategyEnforcer,
+                    new TransactionTemplate(ticketTransactionManager)))
                 .withId(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE)
                 .build()
                 .get();

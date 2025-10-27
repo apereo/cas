@@ -20,6 +20,7 @@ import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.pac4j.saml.credentials.SAML2Credentials;
 import org.springframework.http.HttpMethod;
+import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,16 +47,19 @@ import java.util.Objects;
 public class DelegatedSaml2ClientLogoutAction extends BaseCasWebflowAction {
     private final TicketRegistry ticketRegistry;
     private final SingleLogoutRequestExecutor singleLogoutRequestExecutor;
+    private final TransactionOperations transactionTemplate;
 
     private void removeSsoSessionsForSessionIndexes(final HttpServletRequest request,
                                                     final HttpServletResponse response,
                                                     final LogoutRequest logoutRequest) {
-        logoutRequest.getSessionIndexes().forEach(sessionIndex -> ticketRegistry
-            .getSessionsWithAttributes(Map.of("sessionindex", List.of(Objects.requireNonNull(sessionIndex.getValue()))))
-            .filter(ticket -> !ticket.isExpired())
-            .map(TicketGrantingTicket.class::cast)
-            .findFirst()
-            .ifPresent(ticket -> singleLogoutRequestExecutor.execute(ticket.getId(), request, response)));
+        transactionTemplate.executeWithoutResult(_ -> {
+            logoutRequest.getSessionIndexes().forEach(sessionIndex -> ticketRegistry
+                .getSessionsWithAttributes(Map.of("sessionindex", List.of(Objects.requireNonNull(sessionIndex.getValue()))))
+                .filter(ticket -> !ticket.isExpired())
+                .map(TicketGrantingTicket.class::cast)
+                .findFirst()
+                .ifPresent(ticket -> singleLogoutRequestExecutor.execute(ticket.getId(), request, response)));
+        });
     }
 
     @Override
