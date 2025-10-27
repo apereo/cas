@@ -136,11 +136,20 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .filter(StringUtils::isNotBlank)
-            .mapToLong(collectionName -> {
-                val countTickets = mongoTemplate.count(query, collectionName);
-                mongoTemplate.remove(query, collectionName);
-                return countTickets;
-            })
+            .mapToLong(collectionName -> mongoTemplate.remove(query, collectionName).getDeletedCount())
+            .sum();
+    }
+
+    @Override
+    public long deleteTicketsFor(final String principalId) {
+        val query = isCipherExecutorEnabled()
+            ? new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_PRINCIPAL).is(digestIdentifier(principalId)))
+            : new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_PRINCIPAL).regex(principalId, "i"));
+        return ticketCatalog.findAll()
+            .stream()
+            .map(this::getTicketCollectionInstanceByMetadata)
+            .filter(StringUtils::isNotBlank)
+            .mapToLong(collectionName -> mongoTemplate.remove(query, collectionName).getDeletedCount())
             .sum();
     }
 
