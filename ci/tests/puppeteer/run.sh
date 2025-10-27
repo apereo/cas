@@ -635,7 +635,7 @@ function buildAndRun() {
     BUILD_COMMAND=$(printf '%s' \
       "./gradlew ${BUILD_TASKS} -DskipSpringBootDevTools=true -DskipNestedConfigMetadataGen=true \
 -x check -x test -x javadoc --build-cache --configure-on-demand --parallel\
-${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=true \
+${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
 -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS:+ $BUILDFLAGS}")
     printcyan "Executing build command in the ${BUILD_SPAWN}:\n➡️  ${BUILD_COMMAND}"
 
@@ -871,7 +871,6 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
             -Dlog.console.stacktraces=true \
             -DaotSpringActiveProfiles=none \
             $systemProperties \
-            --cas.http-client.allow-local-urls=true \
             --spring.main.lazy-initialization=false \
             --spring.devtools.restart.enabled=false \
             --management.endpoints.web.discovery.enabled=true \
@@ -897,9 +896,9 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
             printgreen "The scenario ${scenarioName} will run with AOT"
             rm -rf ${PWD}/cas 2>/dev/null
             printcyan "Extracting CAS to ${PWD}/cas"
-            java ${runArgs} -Djarmode=tools -jar "$PWD"/cas.${projectType} extract >/dev/null 2>&1
+            java ${runArgs//suspend=y/suspend=n} -Djarmode=tools -jar "$PWD"/cas.${projectType} extract >/dev/null 2>&1
             printcyan "Launching CAS from ${PWD}/cas/cas.${projectType} to perform a training run"
-            java ${runArgs} -XX:AOTCacheOutput=${PWD}/cas/cas.aot -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType} >/dev/null 2>&1
+            java ${runArgs//suspend=y/suspend=n} -XX:AOTCacheOutput=${PWD}/cas/cas.aot -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType} >/dev/null 2>&1
             printcyan "Generated archive cache file ${PWD}/cas/cas.aot"
             runArgs="${runArgs} -XX:AOTCache=${PWD}/cas/cas.aot"
             casArtifactToRun="${PWD}/cas/cas.${projectType}"
@@ -915,7 +914,6 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
               -Dcom.sun.net.ssl.checkRevocation=false \
               --spring.main.lazy-initialization=false \
               --spring.profiles.active=none \
-              --cas.http-client.allow-local-urls=true \
               --spring.devtools.restart.enabled=false \
               --management.endpoints.web.discovery.enabled=true \
               --cas.audit.engine.enabled=true \
@@ -930,7 +928,6 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} -DskipBootifulLaunchScript=tr
               -Dcom.sun.net.ssl.checkRevocation=false \
               --server.port=${serverPort} \
               --spring.main.lazy-initialization=false \
-              --cas.http-client.allow-local-urls=true \
               --spring.profiles.active=none \
               --spring.devtools.restart.enabled=false \
               --management.endpoints.web.discovery.enabled=true \

@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
@@ -239,7 +238,8 @@ public class CasRedisTicketRegistryAutoConfiguration {
             val factory = new RedisKeyGeneratorFactory();
             ticketCatalog.findAll().forEach(ticketDefinition ->
                 factory.registerRedisKeyGenerator(DefaultRedisKeyGenerator.forTicket(ticketCatalog, ticketDefinition)));
-            factory.registerRedisKeyGenerator(DefaultRedisKeyGenerator.forPrincipal(ticketCatalog, Principal.class.getName()));
+            factory.registerRedisKeyGenerator(DefaultRedisKeyGenerator.forPrincipals(ticketCatalog));
+            factory.registerRedisKeyGenerator(DefaultRedisKeyGenerator.forTickets(ticketCatalog));
             return factory;
         }
 

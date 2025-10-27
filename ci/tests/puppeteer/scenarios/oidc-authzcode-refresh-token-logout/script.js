@@ -1,4 +1,3 @@
-
 const cas = require("../../cas.js");
 const assert = require("assert");
 
@@ -30,7 +29,7 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
     const accessTokenUrl = `https://localhost:8443/cas/oidc/token?${accessTokenParams}&code=${code}`;
     await cas.doPost(accessTokenUrl, "", {"Content-Type": "application/json"},
         (res) => {
-            
+
             assert(res.data.access_token !== undefined);
             assert(res.data.refresh_token !== undefined);
 
@@ -68,15 +67,21 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
 }
 
 (async () => {
+    const baseUrl = "https://localhost:8443/cas/actuator";
+
+    await cas.logg("Removing all SSO Sessions");
+    await cas.doDelete(`${baseUrl}/ssoSessions?type=ALL&from=1&count=1000`);
+
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
+    await cas.gotoLogout(page);
 
     await cas.logg("Fetching first refresh token");
     const redirectUrl1 = "https://localhost:9859/anything/cas";
     const refreshToken1 = await fetchRefreshToken(page, "client", redirectUrl1);
 
     await cas.log("**********************************************");
-    
+
     await cas.logg("Fetching second refresh token");
     const redirectUrl2 = "https://localhost:9859/anything/sample";
     const refreshToken2 = await fetchRefreshToken(page, "client2", redirectUrl2);
@@ -107,5 +112,41 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
             throw "Operation should not fail";
         });
 
+    await cas.doDelete(`${baseUrl}/ssoSessions/users/casuser`, 200,
+        async (res) => {
+            await cas.log(res.data);
+            assert(res.status === 200);
+            assert(res.data.deleted === 6);
+        },
+        async (err) => {
+            throw err;
+        }, {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
+        });
+
+    await cas.doGet(`${baseUrl}/ticketRegistry/query?type=RT&id=${refreshToken1}&decode=false`,
+        async (res) => {
+            assert(res.status === 200);
+            assert(res.data.length === 0);
+        },
+        async (err) => {
+            throw err;
+        }, {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
+        });
+
+    await cas.doGet(`${baseUrl}/ticketRegistry/query?type=RT&id=${refreshToken2}&decode=false`,
+        async (res) => {
+            assert(res.status === 200);
+            assert(res.data.length === 0);
+        },
+        async (err) => {
+            throw err;
+        }, {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
+        });
     await cas.closeBrowser(browser);
 })();
