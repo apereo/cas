@@ -146,12 +146,6 @@ We plan to re-add support for Spring Boot Admin in the future once compatibility
 and [Spring Session with Hazelcast](../webflow/Webflow-Customization-Sessions-ServerSide-Hazelcast.html) are
 not yet compatible with Spring Boot `4`. We plan to re-add support for these features in the future once compatibility is restored.
 
-#### Spring Cloud Configuration ZooKeeper
-
-Support for [Spring Cloud Configuration ZooKeeper](../configuration/Configuration-Server-Management-SpringCloud-ZooKeeper.html)
-is not yet compatible with Spring Boot `4`. We plan to re-add support for Spring Cloud Configuration ZooKeeper
-in the future once compatibility is restored.
-
 #### Jackson & JSON Processing
 
 The Jackson library, responsible for JSON processing and parsing in CAS, is upgraded to `3.x` version. 
