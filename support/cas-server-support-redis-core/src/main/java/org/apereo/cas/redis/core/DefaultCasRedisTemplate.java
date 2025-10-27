@@ -6,8 +6,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -19,7 +21,12 @@ import java.util.stream.StreamSupport;
  */
 public class DefaultCasRedisTemplate<K, V> extends RedisTemplate<K, V> implements CasRedisTemplate<K, V> {
     @Override
-    public Stream<String> scan(final String pattern, final Long count) {
+    public Set<K> keys(final K pattern) {
+        return scan(pattern.toString()).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Stream<K> scan(final String pattern, final Long count) {
         var scanOptions = ScanOptions.scanOptions().match(pattern);
         if (count != null && count > 0) {
             scanOptions = scanOptions.count(count);
@@ -32,7 +39,7 @@ public class DefaultCasRedisTemplate<K, V> extends RedisTemplate<K, V> implement
                 IOUtils.closeQuietly(cursor);
                 connection.close();
             })
-            .map(key -> (String) getKeySerializer().deserialize(key))
+            .map(key -> (K) getKeySerializer().deserialize(key))
             .distinct();
         if (count != null && count > 0) {
             resultingStream = resultingStream.limit(count);

@@ -21,7 +21,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -218,6 +217,23 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     }
 
     @Override
+    public long deleteTicketsFor(final String principalId) {
+        if (properties.getCore().isEnableJet()) {
+            return ticketCatalog.findAll()
+                .stream()
+                .mapToLong(ticketDefinition -> {
+                    val sql = String.format("DELETE FROM %s WHERE principal=?", ticketDefinition.getProperties().getStorageName());
+                    LOGGER.debug("Executing SQL query [{}]", sql);
+                    try (val _ = hazelcastInstance.getSql().execute(sql, digestIdentifier(principalId))) {
+                        return 1;
+                    }
+                })
+                .sum();
+        }
+        return super.deleteTicketsFor(principalId);
+    }
+
+    @Override
     public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
         if (properties.getCore().isEnableJet()) {
             val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
@@ -274,7 +290,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             .limit(criteria.getCount())
             .map(this::decodeTicket);
     }
-    
+
     /**
      * Make sure we shutdown HazelCast when the context is destroyed.
      */
@@ -302,7 +318,8 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     }
 
     private IMap<String, HazelcastTicketDocument> getTicketMapInstance(
-        @NonNull final String mapName) {
+        @NonNull
+        final String mapName) {
         return FunctionUtils.doAndHandle(() -> {
             val inst = hazelcastInstance.<String, HazelcastTicketDocument>getMap(mapName);
             LOGGER.debug("Located Hazelcast map instance [{}]", mapName);
