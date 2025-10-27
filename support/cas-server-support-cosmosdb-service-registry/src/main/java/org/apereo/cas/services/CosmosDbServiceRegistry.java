@@ -23,8 +23,10 @@ import java.util.Collection;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 8.0.0
  */
 @Slf4j
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     /**
      * Partition key.

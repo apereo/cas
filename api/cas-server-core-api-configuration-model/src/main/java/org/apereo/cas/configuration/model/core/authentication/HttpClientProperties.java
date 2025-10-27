@@ -71,7 +71,7 @@ public class HttpClientProperties implements Serializable {
      * Whether CAS should accept local URLs.
      * For example {@code http(s)://localhost/logout}.
      */
-    private boolean allowLocalUrls;
+    private boolean allowLocalUrls = true;
 
     /**
      * If specified the regular expression will be used to validate the url's authority.

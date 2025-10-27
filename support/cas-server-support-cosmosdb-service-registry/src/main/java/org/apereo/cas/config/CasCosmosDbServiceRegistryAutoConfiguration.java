@@ -28,10 +28,12 @@ import java.util.Optional;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 8.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "cosmosdb")
 @AutoConfiguration
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class CasCosmosDbServiceRegistryAutoConfiguration {
 
     @ConditionalOnMissingBean(name = "cosmosDbObjectFactory")

@@ -26,6 +26,7 @@ import org.springframework.context.event.DefaultEventListenerFactory;
 import org.springframework.context.event.EventListenerMethodProcessor;
 import org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor;
 import org.springframework.web.cors.CorsConfigurationSource;
+import tools.jackson.databind.jsontype.NamedType;
 import java.lang.module.Configuration;
 import java.lang.module.ResolvedModule;
 import java.math.BigDecimal;
@@ -163,6 +164,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
         ));
 
         registerReflectionHintsForPublicElements(hints, List.of(
+            NamedType.class,
             TypeReference.of("java.util.LinkedHashMap$Entry"),
             TypeReference.of("java.util.TreeMap$Entry")
         ));
