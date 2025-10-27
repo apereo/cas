@@ -262,15 +262,9 @@
                                 </span>
                             </span>
                         </p>
-
-                        <script type="text/javascript">
-                            (async () => {
-                                const fp = await FingerprintJS.load();
-                                const result = await fp.get();
-                                const fingerprint = result.visitorId;
-                                $("[name=\"deviceFingerprint\"]").val(fingerprint);
-                            })();
-                        </script>
+                        <script
+                                th:if="${#cas.isTrue(#cas.theme('cas.login-form.device-fingerprint.enabled'))}"
+                                type="text/javascript">captureFingerprint();</script>
                     </section>
 
                     <p id="fieldsLegend"

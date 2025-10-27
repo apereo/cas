@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 7.0.0
  */
 public class CheckNativeRuntimeHints {
-    public static void main(final String[] args) throws Exception {
+    void main(final String[] args) throws Exception {
         checkRuntimeHintsConfigurations(args[0]);
     }
 

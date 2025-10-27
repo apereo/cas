@@ -66,8 +66,6 @@ dependencies {
     testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-person-directory")
 
-
-    
     testImplementation project(path: ":support:cas-server-support-oidc", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 

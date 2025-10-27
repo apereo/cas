@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  * @since 6.3.0
  */
 public class CheckRedundantTestConfigurationInheritance {
-    public static void main(final String[] args) throws Exception {
+    void main(final String[] args) throws Exception {
         var patternBootTestClasses = Pattern.compile("@SpringBootTest\\(classes\\s*=\\s*\\{(.*?)\\}", Pattern.DOTALL);
         var patternBootTestClass = Pattern.compile("@SpringBootTest\\(classes\\s*=\\s*(.*)");
         var importedTestClasses = Pattern.compile("@Import\\(\\{(.*?)\\}\\)", Pattern.DOTALL);

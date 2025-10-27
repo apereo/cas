@@ -71,7 +71,7 @@ jobs:
             -DgradleReleaseChannel=current --max-workers=8 -DreportfileName=dependencies \
             -DoutputFormatter=json,plain -DoutputDir=./build/reports/dependency-updates
       - name: Upload Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: dependency-updates
           path: ./build/reports/dependency-updates/dependencies.json
@@ -111,7 +111,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Run Renovate
-        uses: renovatebot/github-action@v43.0.18
+        uses: renovatebot/github-action@v43.0.19
         with:
           token: ${{ secrets.RENOVATE_TOKEN }}
           configurationFile: .github/renovate.json

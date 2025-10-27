@@ -24,7 +24,6 @@ import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import javax.cache.Cache;
 import javax.cache.expiry.Duration;
 import javax.cache.expiry.ExpiryPolicy;
@@ -62,9 +61,12 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
     private Ignite ignite;
 
-    public IgniteTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
-                                final TicketCatalog ticketCatalog, final ConfigurableApplicationContext applicationContext,
-                                final IgniteConfiguration igniteConfiguration, final IgniteProperties properties) {
+    public IgniteTicketRegistry(final CipherExecutor cipherExecutor,
+                                final TicketSerializationManager ticketSerializationManager,
+                                final TicketCatalog ticketCatalog,
+                                final ConfigurableApplicationContext applicationContext,
+                                final IgniteConfiguration igniteConfiguration,
+                                final IgniteProperties properties) {
         super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.igniteConfiguration = igniteConfiguration;
         this.properties = properties;
@@ -212,6 +214,27 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
             .map(entries -> (IgniteTicketDocument) entries.getFirst())
             .map(object -> decodeTicket(object.getTicket()))
             .filter(Objects::nonNull);
+    }
+
+    @Override
+    public long deleteTicketsFor(final String principalId) {
+        return ticketCatalog.findAll()
+            .stream()
+            .mapToLong(ticketDefinition -> {
+                val cacheInstance = getIgniteCacheFromMetadata(ticketDefinition);
+                cacheInstance.getConfiguration(CacheConfiguration.class)
+                    .getQueryEntities()
+                    .stream()
+                    .findFirst()
+                    .ifPresent(entity -> {
+                        val queryEntity = (QueryEntity) entity;
+                        val query = new SqlFieldsQuery("DELETE FROM " + queryEntity.getTableName() + " WHERE principal=?;")
+                            .setArgs(digestIdentifier(principalId));
+                        cacheInstance.query(query);
+                    });
+                return 1;
+            })
+            .sum();
     }
 
     @Override
