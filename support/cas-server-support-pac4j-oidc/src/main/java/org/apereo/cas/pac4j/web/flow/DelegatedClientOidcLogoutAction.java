@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.credentials.SessionKeyCredentials;
+import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,18 +37,21 @@ import java.util.Objects;
 public class DelegatedClientOidcLogoutAction extends BaseCasWebflowAction {
     private final TicketRegistry ticketRegistry;
     private final SingleLogoutRequestExecutor singleLogoutRequestExecutor;
+    private final TransactionOperations transactionTemplate;
 
     private void removeSsoSessionsForSessionIndexes(final HttpServletRequest request,
                                                     final HttpServletResponse response,
                                                     final SessionKeyCredentials sessionKeyCredentials) {
-        val sessionKey = sessionKeyCredentials.getSessionKey();
-        LOGGER.debug("Destroying SSO session for OIDC authn delegation for session key: [{}]", sessionKey);
-        ticketRegistry
-            .getSessionsWithAttributes(Map.of("sid", List.of(Objects.requireNonNull(sessionKey))))
-            .filter(ticket -> !ticket.isExpired())
-            .map(TicketGrantingTicket.class::cast)
-            .findFirst()
-            .ifPresent(ticket -> singleLogoutRequestExecutor.execute(ticket.getId(), request, response));
+        transactionTemplate.executeWithoutResult(_ -> {
+            val sessionKey = sessionKeyCredentials.getSessionKey();
+            LOGGER.debug("Destroying SSO session for OIDC authn delegation for session key: [{}]", sessionKey);
+            ticketRegistry
+                .getSessionsWithAttributes(Map.of("sid", List.of(Objects.requireNonNull(sessionKey))))
+                .filter(ticket -> !ticket.isExpired())
+                .map(TicketGrantingTicket.class::cast)
+                .findFirst()
+                .ifPresent(ticket -> singleLogoutRequestExecutor.execute(ticket.getId(), request, response));
+        });
     }
 
     @Override

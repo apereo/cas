@@ -208,37 +208,40 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .map(BaseTicketEntity.class::cast)
             .map(factory::toTicket)
             .map(this::decodeTicket)
-            .filter(ticket -> !ticket.isExpired());
+            .filter(ticket -> !ticket.isExpired())
+            .toList().stream();
     }
 
     @Override
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
-        val factory = getJpaTicketEntityFactory();
-        var sql = String.format("SELECT t FROM %s t WHERE t.type=:type", factory.getEntityName());
-        if (StringUtils.isNotBlank(criteria.getId())) {
-            sql = sql.concat(" AND t.id = :id");
-        }
-        val definition = ticketCatalog.find(criteria.getType());
-        val query = entityManager.createQuery(sql, factory.getType());
-        query.setParameter("type", getTicketTypeName(definition.getApiClass()));
-        if (StringUtils.isNotBlank(criteria.getId())) {
-            query.setParameter("id", digestIdentifier(criteria.getId()));
-        }
-        if (criteria.getCount() > 0) {
-            query.setMaxResults(Long.valueOf(criteria.getCount()).intValue());
-        }
-        query.setLockMode(LockModeType.NONE);
+        return transactionTemplate.execute(callback -> {
+            val factory = getJpaTicketEntityFactory();
+            var sql = String.format("SELECT t FROM %s t WHERE t.type=:type", factory.getEntityName());
+            if (StringUtils.isNotBlank(criteria.getId())) {
+                sql = sql.concat(" AND t.id = :id");
+            }
+            val definition = ticketCatalog.find(criteria.getType());
+            val query = entityManager.createQuery(sql, factory.getType());
+            query.setParameter("type", getTicketTypeName(definition.getApiClass()));
+            if (StringUtils.isNotBlank(criteria.getId())) {
+                query.setParameter("id", digestIdentifier(criteria.getId()));
+            }
+            if (criteria.getCount() > 0) {
+                query.setMaxResults(Long.valueOf(criteria.getCount()).intValue());
+            }
+            query.setLockMode(LockModeType.NONE);
 
-        return jpaBeanFactory
-            .streamQuery(query)
-            .map(BaseTicketEntity.class::cast)
-            .map(factory::toTicket)
-            .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
-            .filter(ticket -> StringUtils.isBlank(criteria.getPrincipal())
-                || (ticket instanceof final AuthenticationAwareTicket aat
-                && Strings.CI.equals(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+            return jpaBeanFactory
+                .streamQuery(query)
+                .map(BaseTicketEntity.class::cast)
+                .map(factory::toTicket)
+                .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
+                .filter(ticket -> StringUtils.isBlank(criteria.getPrincipal())
+                                  || (ticket instanceof final AuthenticationAwareTicket aat
+                                      && Strings.CI.equals(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        });
     }
 
     @Override
@@ -295,7 +298,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             .map(BaseTicketEntity.class::cast)
             .map(factory::toTicket)
             .map(this::decodeTicket)
-            .filter(ticket -> !ticket.isExpired());
+            .filter(ticket -> !ticket.isExpired())
+            .toList().stream();
     }
 
     @Override
@@ -355,7 +359,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 .setAttributes(collectAndDigestTicketAttributes(ticket));
         });
     }
-    
+
     protected JpaTicketEntityFactory getJpaTicketEntityFactory() {
         val jpa = casProperties.getTicket().getRegistry().getJpa();
         return new JpaTicketEntityFactory(jpa.getDialect());
