@@ -106,7 +106,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     public long deleteTicketsFor(final String principalId) {
         return getTickets(ticket -> ticket instanceof final AuthenticationAwareTicket aat
             && Strings.CI.equals(aat.getAuthentication().getPrincipal().getId(), principalId))
-            .mapToLong(ticket -> FunctionUtils.doAndHandle(() -> deleteTicket(ticket)))
+            .mapToLong(ticket -> FunctionUtils.doAndHandle(() -> deleteTicket(ticket), t -> 0).get())
             .sum();
     }
 

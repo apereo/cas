@@ -32,8 +32,10 @@ import java.util.stream.Collectors;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 8.0.0
  */
 @Slf4j
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class CosmosDbObjectFactory {
     private final BaseCosmosDbProperties properties;
 
