@@ -111,7 +111,7 @@ continue to perform even after the user logs out and terminates their SSO sessio
 
 ### Spring Boot 4
 
-CAS is now built with Spring Boot `4.x`. This is a major platform upgrade that affects almost all aspects of the codebase
+CAS is now built with Spring Boot `4.0.x`. This is a major platform upgrade that affects almost all aspects of the codebase
 including many of the third-party core libraries used by CAS as well as some CAS functionality. The following
 notable changes are worth mentioning.
 
@@ -148,7 +148,7 @@ not yet compatible with Spring Boot `4`. We plan to re-add support for these fea
 
 #### Jackson & JSON Processing
 
-The Jackson library, responsible for JSON processing and parsing in CAS, is upgraded to `3.x` version. 
+The Jackson library, responsible for JSON processing and parsing in CAS, is upgraded to its `3.x` version. 
 This is a major upgrade that brings in many significant changes to the way JSON is processed in CAS. Almost all 
 such changes are internal and **SHOULD NOT** affect how CAS configuration, application 
 records, etc are processed and loaded.
@@ -164,4 +164,6 @@ records, etc are processed and loaded.
 - Most Redis operations that rely on the `KEYS` command have been replaced with `SCAN` operations to avoid performance issues on large datasets.
 - A new theme option is now available to control whether client-side device fingerprinting is activated during authentication.
 - [CosmosDb Ticket Registry](../ticketing/CosmosDb-Ticket-Registry.html) is deprecated and will be removed in a future release.
+- [CosmosDb Service Registry](../services/CosmosDb-Service-Management.html) is deprecated and will be removed in a future release.
+- The order of authentication handlers is now correctly preserved when authentication handlers are registered with the authentication plan.
 
