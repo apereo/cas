@@ -72,6 +72,12 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
             return false;
         }
 
+        if (!isDynamicClientRegistrationEnabled() && (isClientConfigurationRequest(request.getRequestURI()) || isDynamicClientRegistrationRequest(request.getRequestURI()))) {
+            LOGGER.debug("Dynamic client registration is disabled. OIDC request at [{}] is rejected.", request.getRequestURI());
+            response.setStatus(HttpStatus.SC_NOT_IMPLEMENTED);
+            return false;
+        }
+        
         if (isPushedAuthorizationRequest(request.getRequestURI())) {
             LOGGER.trace("OIDC pushed authorization request is protected at [{}]", request.getRequestURI());
             return requiresAuthenticationAccessTokenInterceptor.getObject().preHandle(request, response, handler);
@@ -158,13 +164,12 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
         return urls;
     }
 
-    /**
-     * Is dynamic client registration request protected?
-     *
-     * @return true/false
-     */
-    private boolean isDynamicClientRegistrationRequestProtected() {
+    protected boolean isDynamicClientRegistrationRequestProtected() {
         val oidc = casProperties.getAuthn().getOidc();
         return oidc.getRegistration().getDynamicClientRegistrationMode().isProtected();
+    }
+
+    protected Boolean isDynamicClientRegistrationEnabled() {
+        return casProperties.getAuthn().getOidc().getRegistration().isDynamicClientRegistrationEnabled();
     }
 }

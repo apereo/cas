@@ -8,7 +8,6 @@ import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
@@ -64,10 +62,6 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         @RequestParam(name = OAuth20Constants.CLIENT_ID)
         final String clientId,
         final HttpServletRequest request, final HttpServletResponse response) {
-        if(!getConfigurationContext().getCasProperties().getAuthn().getOidc().getRegistration().getDynamicClientRegistrationEnabled()) {
-            LOGGER.debug("Client configuration endpoint disabled: GET request rejected for clientId=[{}]", clientId);
-            return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-        }
 
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.CLIENT_CONFIGURATION_URL))) {
@@ -115,11 +109,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         @RequestBody(required = false)
         final String jsonInput,
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        if(!getConfigurationContext().getCasProperties().getAuthn().getOidc().getRegistration().getDynamicClientRegistrationEnabled()) {
-            LOGGER.debug("Client configuration endpoint disabled: PATCH request rejected for clientId=[{}]", clientId);
-            return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-        }
-            
+
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.CLIENT_CONFIGURATION_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
@@ -144,7 +134,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
                 service.setClientSecret(getConfigurationContext().getClientSecretGenerator().getNewString());
                 LOGGER.debug("Client secret shall expire at [{}] while now is [{}]", expirationDate, currentTime);
             }
-            
+
             val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(service,
                 getConfigurationContext().getCasProperties().getServer().getPrefix());
             return new ResponseEntity<>(clientResponse, HttpStatus.OK);
