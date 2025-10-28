@@ -270,22 +270,11 @@ class DefaultAuthenticationEventExecutionPlanTests {
 
     @Nested
     class OrderingTests extends BaseTests {
-        static class OrderedHandler extends SimpleTestUsernamePasswordAuthenticationHandler {
-            private final int order;
-            public OrderedHandler(String name, int order) {
-                super(name);
-                this.order = order;
-            }
-            @Override
-            public int getOrder() {
-                return order;
-            }
-        }
         @Test
         void verifyOrderIsCorrect() {
-            authenticationEventExecutionPlan.registerAuthenticationHandler(new OrderedHandler("o3", 3));
-            authenticationEventExecutionPlan.registerAuthenticationHandler(new OrderedHandler("o2", 2));
-            authenticationEventExecutionPlan.registerAuthenticationHandler(new OrderedHandler("o1", 1));
+            authenticationEventExecutionPlan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("o3", 3));
+            authenticationEventExecutionPlan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("o2", 2));
+            authenticationEventExecutionPlan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("o1", 1));
             var sortedHandlers = authenticationEventExecutionPlan.resolveAuthenticationHandlers().stream().toList();
             assertEquals("o1", sortedHandlers.get(0).getName());
             assertEquals("o2", sortedHandlers.get(1).getName());
