@@ -283,11 +283,13 @@ class DefaultAuthenticationEventExecutionPlanTests {
         }
         @Test
         void verifyOrderIsCorrect() {
-            authenticationEventExecutionPlan.registerAuthenticationHandler(new OrderedHandler("h1", 2));
-            authenticationEventExecutionPlan.registerAuthenticationHandler(new OrderedHandler("h2", 1));
-            var sortedHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers().stream().toList();
-            assertEquals("h2", sortedHandlers.get(0).getName());
-            assertEquals("h1", sortedHandlers.get(1).getName());
+            authenticationEventExecutionPlan.registerAuthenticationHandler(new OrderedHandler("o3", 3));
+            authenticationEventExecutionPlan.registerAuthenticationHandler(new OrderedHandler("o2", 2));
+            authenticationEventExecutionPlan.registerAuthenticationHandler(new OrderedHandler("o1", 1));
+            var sortedHandlers = authenticationEventExecutionPlan.resolveAuthenticationHandlers().stream().toList();
+            assertEquals("o1", sortedHandlers.get(0).getName());
+            assertEquals("o2", sortedHandlers.get(1).getName());
+            assertEquals("o3", sortedHandlers.get(2).getName());
         }
     }
 
