@@ -238,7 +238,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
         }
 
         AnnotationAwareOrderComparator.sort(handlers);
-        return Set.copyOf(handlers);
+        return new LinkedHashSet<>(handlers);
     }
 
     @Override
