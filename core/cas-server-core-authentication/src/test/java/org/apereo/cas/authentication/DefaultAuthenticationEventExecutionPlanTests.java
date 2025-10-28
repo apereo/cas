@@ -268,6 +268,20 @@ class DefaultAuthenticationEventExecutionPlanTests {
         }
     }
 
+    @Nested
+    class OrderingTests extends BaseTests {
+        @Test
+        void verifyOrderIsCorrect() {
+            authenticationEventExecutionPlan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("o3", 3));
+            authenticationEventExecutionPlan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("o2", 2));
+            authenticationEventExecutionPlan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("o1", 1));
+            var sortedHandlers = authenticationEventExecutionPlan.resolveAuthenticationHandlers().stream().toList();
+            assertEquals("o1", sortedHandlers.get(0).getName());
+            assertEquals("o2", sortedHandlers.get(1).getName());
+            assertEquals("o3", sortedHandlers.get(2).getName());
+        }
+    }
+
     @TestConfiguration(value = "AuthenticationPlanTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class AuthenticationPlanTestConfiguration {
