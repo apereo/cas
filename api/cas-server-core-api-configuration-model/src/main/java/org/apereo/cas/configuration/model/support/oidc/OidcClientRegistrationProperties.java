@@ -51,7 +51,7 @@ public class OidcClientRegistrationProperties implements Serializable {
     /**
      * Whether dynamic client registration is enabled or not.
      */
-    private Boolean dynamicClientRegistrationEnabled = true;
+    private boolean dynamicClientRegistrationEnabled = true;
     
     /**
      * The password used in a basic-auth scheme to request an initial access token

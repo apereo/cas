@@ -71,10 +71,6 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
         final String jsonInput,
         final HttpServletRequest request,
         final HttpServletResponse response) {
-        if(!getConfigurationContext().getCasProperties().getAuthn().getOidc().getRegistration().getDynamicClientRegistrationEnabled()) {
-            LOGGER.debug("Dynamic client registration is disabled. Registration request rejected.");
-            return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
-        }
 
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.REGISTRATION_URL))) {
