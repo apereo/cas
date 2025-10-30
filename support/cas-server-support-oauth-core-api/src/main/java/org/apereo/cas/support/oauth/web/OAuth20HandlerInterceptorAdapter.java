@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
@@ -130,7 +131,8 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
             request.setAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_ACCESS_TOKEN_REQUEST, Boolean.TRUE);
             if (extractor.isPresent()) {
                 val ext = extractor.get();
-                return ext.getResponseType() != OAuth20ResponseTypes.DEVICE_CODE;
+                return ext.getResponseType() != OAuth20ResponseTypes.DEVICE_CODE
+                    && ext.getGrantType() != OAuth20GrantTypes.JWT_BEARER;
             }
             return true;
         }

@@ -15,7 +15,6 @@ import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import com.google.common.base.Supplier;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -163,8 +162,9 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
     private record AccessTokenExceptionResponses(String code, String message) {
     }
 
-    private AccessTokenRequestContext examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
-                                                                               final HttpServletResponse response) throws Throwable {
+    private AccessTokenRequestContext examineAndExtractAccessTokenGrantRequest(
+        final HttpServletRequest request,
+        final HttpServletResponse response) throws Throwable {
         val audit = AuditableContext
             .builder()
             .httpRequest(request)
@@ -176,14 +176,19 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             () -> new UnsupportedOperationException("Access token request is not supported"));
     }
 
-    private boolean verifyAccessTokenRequest(final WebContext context) throws Throwable {
+    protected boolean verifyAccessTokenRequest(final WebContext context) throws Throwable {
         val validators = getConfigurationContext().getAccessTokenGrantRequestValidators().getObject();
         return validators
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .filter(Unchecked.predicate(ext -> ext.supports(context)))
             .findFirst()
-            .orElseThrow((Supplier<RuntimeException>) () -> new UnsupportedOperationException("Access token request is not supported"))
+            .orElseThrow(() -> new UnsupportedOperationException(
+                """
+                        Access token request is not supported. The authentication request is malformed or
+                        the request cannot be processed by any of the configured access token request validators.
+                        Review the request and ensure it matches one of the supported grant/response types and parameters.
+                    """.stripIndent().strip().trim()))
             .validate(context);
     }
 }

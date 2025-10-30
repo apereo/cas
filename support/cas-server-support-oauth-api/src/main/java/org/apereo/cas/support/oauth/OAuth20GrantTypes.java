@@ -26,6 +26,10 @@ public enum OAuth20GrantTypes {
      */
     AUTHORIZATION_CODE("authorization_code"),
     /**
+     * For the JWT bearer grant type.
+     */
+    JWT_BEARER("urn:ietf:params:oauth:grant-type:jwt-bearer"),
+    /**
      * For the resource owner password grant type.
      */
     PASSWORD("password"),

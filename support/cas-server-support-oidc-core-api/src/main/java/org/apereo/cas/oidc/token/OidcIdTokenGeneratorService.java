@@ -87,8 +87,13 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                 OidcConstants.StandardScopes.OPENID.getScope());
             return null;
         }
+        if (context.getGrantType() == OAuth20GrantTypes.JWT_BEARER
+            && !getConfigurationContext().getCasProperties().getAuthn().getOidc().getIdToken().isGenerateForJwtBearerGrantType()) {
+            LOGGER.debug("ID token generation for grant type [{}] is disabled. Skipping ID token generation.", OAuth20GrantTypes.JWT_BEARER);
+            return null;
+        }
+        
         val claims = buildJwtClaims(context);
-
         var deviceSecret = StringUtils.EMPTY;
         if (context.getGrantType() == OAuth20GrantTypes.AUTHORIZATION_CODE
             && context.getAccessToken().getScopes().contains(OidcConstants.StandardScopes.DEVICE_SSO.getScope())

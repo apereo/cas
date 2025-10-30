@@ -7,9 +7,12 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.oidc.OidcConfigurationContext;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.nativesso.DefaultOidcDeviceSecretGenerator;
 import org.apereo.cas.oidc.nativesso.OidcDeviceSecretGenerator;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestValidator;
+import org.apereo.cas.oidc.token.OidcAccessTokenJwtBearerGrantRequestExtractor;
+import org.apereo.cas.oidc.token.OidcAccessTokenJwtBearerGrantRequestValidator;
 import org.apereo.cas.oidc.token.OidcAccessTokenTokenExchangeGrantRequestExtractor;
 import org.apereo.cas.oidc.token.OidcIdTokenExpirationPolicyBuilder;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
@@ -44,6 +47,8 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.idtoken.IdTokenGeneratorService;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -52,6 +57,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import java.util.Optional;
 
 /**
  * This is {@link OidcResponseConfiguration}.
@@ -76,6 +82,17 @@ class OidcResponseConfiguration {
             final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcAccessTokenResponseGenerator(oidcConfigurationContext);
         }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AccessTokenGrantRequestExtractor accessTokenJwtBearerGrantRequestExtractor(
+            @Qualifier("oidcServiceJsonWebKeystoreCache")
+            final ObjectProvider<LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCache,
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            return new OidcAccessTokenJwtBearerGrantRequestExtractor(
+                oidcConfigurationContext, oidcServiceJsonWebKeystoreCache);
+        }
         
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -91,6 +108,14 @@ class OidcResponseConfiguration {
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcTokenExchangeGrantTypeTokenRequestValidator(oidcConfigurationContext);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OAuth20TokenRequestValidator oidcAccessTokenJwtBearerGrantTypeTokenRequestValidator(
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            return new OidcAccessTokenJwtBearerGrantRequestValidator(oidcConfigurationContext);
         }
     }
 

@@ -41,8 +41,8 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
         val service = configurationContext.getAuthenticationBuilder().buildService(registeredService, context, false);
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
-        val authentication = configurationContext.getAuthenticationBuilder().build(new AnonymousProfile(),
-            registeredService, context, service);
+        val authentication = configurationContext.getAuthenticationBuilder()
+            .build(new AnonymousProfile(), registeredService, context, service);
 
         val audit = AuditableContext.builder()
             .service(service)

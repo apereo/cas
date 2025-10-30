@@ -55,4 +55,11 @@ public class OidcIdTokenProperties implements Serializable {
      * in future CAS releases.
      */
     private boolean includeIdTokenClaims = true;
+
+    /**
+     * Flag to indicate whether the JWT bearer grant type is supported
+     * for the purposes of requesting ID tokens. Setting this to true
+     * will force to generate ID tokens when the JWT bearer grant type is used.
+     */
+    private boolean generateForJwtBearerGrantType;
 }

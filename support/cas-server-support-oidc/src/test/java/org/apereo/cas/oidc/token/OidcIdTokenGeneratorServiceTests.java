@@ -301,13 +301,35 @@ class OidcIdTokenGeneratorServiceTests {
             val profile = new CommonProfile();
             profile.setClientName("OIDC");
             profile.setId(authentication.getPrincipal().getId());
-
-
+            
             val idTokenContext = IdTokenGenerationContext.builder()
                 .accessToken(accessToken)
                 .userProfile(profile)
                 .responseType(OAuth20ResponseTypes.ID_TOKEN)
                 .grantType(OAuth20GrantTypes.NONE)
+                .registeredService(registeredService)
+                .build();
+            val idToken = oidcIdTokenGenerator.generate(idTokenContext);
+            assertNull(idToken);
+        }
+
+        @Test
+        void verifyNoIdTokenForJwtBearer() throws Throwable {
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+            val tgt = new MockTicketGrantingTicket(authentication);
+            val accessToken = buildAccessToken(tgt, Set.of(EMAIL.getScope(), OPENID.getScope()));
+
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
+            servicesManager.save(registeredService);
+            val profile = new CommonProfile();
+            profile.setClientName("OIDC");
+            profile.setId(authentication.getPrincipal().getId());
+
+            val idTokenContext = IdTokenGenerationContext.builder()
+                .accessToken(accessToken)
+                .userProfile(profile)
+                .responseType(OAuth20ResponseTypes.NONE)
+                .grantType(OAuth20GrantTypes.JWT_BEARER)
                 .registeredService(registeredService)
                 .build();
             val idToken = oidcIdTokenGenerator.generate(idTokenContext);
@@ -349,7 +371,6 @@ class OidcIdTokenGeneratorServiceTests {
             registeredService.setIdTokenIssuer(UUID.randomUUID().toString());
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
             servicesManager.save(registeredService);
-
 
             val idTokenContext = IdTokenGenerationContext.builder()
                 .accessToken(accessToken)
