@@ -31,7 +31,6 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.spec.ECParameterSpec;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -207,35 +206,31 @@ public class OidcJsonWebKeyStoreUtils {
      */
     public static PublicJsonWebKey generateJsonWebKey(final String jwksType, final int jwksKeySize,
                                                       final OidcJsonWebKeyUsage usage) {
-        switch (jwksType.trim().toLowerCase(Locale.ENGLISH)) {
-            case "ec" -> {
-                if (jwksKeySize == JWK_EC_P384_SIZE) {
-                    val jwk = generateJsonWebKeyEC(EllipticCurves.P384);
-                    jwk.setKeyId(UUID.randomUUID().toString());
-                    jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384);
-                    usage.assignTo(jwk);
-                    return jwk;
-                }
-                if (jwksKeySize == JWK_EC_P512_SIZE) {
-                    val jwk = generateJsonWebKeyEC(EllipticCurves.P521);
-                    jwk.setKeyId(UUID.randomUUID().toString());
-                    jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
-                    usage.assignTo(jwk);
-                    return jwk;
-                }
-                val jwk = generateJsonWebKeyEC(EllipticCurves.P256);
+        if ("ec".equalsIgnoreCase(jwksType.trim())) {
+            if (jwksKeySize == JWK_EC_P384_SIZE) {
+                val jwk = generateJsonWebKeyEC(EllipticCurves.P384);
+                jwk.setKeyId(UUID.randomUUID().toString());
+                jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384);
+                usage.assignTo(jwk);
+                return jwk;
+            }
+            if (jwksKeySize == JWK_EC_P512_SIZE) {
+                val jwk = generateJsonWebKeyEC(EllipticCurves.P521);
                 jwk.setKeyId(UUID.randomUUID().toString());
                 jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
                 usage.assignTo(jwk);
                 return jwk;
             }
-            default -> {
-                val newJwk = FunctionUtils.doUnchecked(() -> RsaJwkGenerator.generateJwk(jwksKeySize));
-                newJwk.setKeyId(UUID.randomUUID().toString());
-                usage.assignTo(newJwk);
-                return newJwk;
-            }
+            val jwk = generateJsonWebKeyEC(EllipticCurves.P256);
+            jwk.setKeyId(UUID.randomUUID().toString());
+            jwk.setAlgorithm(AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
+            usage.assignTo(jwk);
+            return jwk;
         }
+        val newJwk = FunctionUtils.doUnchecked(() -> RsaJwkGenerator.generateJwk(jwksKeySize));
+        newJwk.setKeyId(UUID.randomUUID().toString());
+        usage.assignTo(newJwk);
+        return newJwk;
     }
 
 

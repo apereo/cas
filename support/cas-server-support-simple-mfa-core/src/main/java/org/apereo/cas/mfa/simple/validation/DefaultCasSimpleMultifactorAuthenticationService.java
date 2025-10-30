@@ -2,6 +2,7 @@ package org.apereo.cas.mfa.simple.validation;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
@@ -13,6 +14,8 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
+import jakarta.annotation.Nonnull;
+import javax.security.auth.login.FailedLoginException;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
@@ -29,15 +32,22 @@ public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSim
     private static final int MAX_ATTEMPTS = 5;
 
     protected final TicketFactory ticketFactory;
+    protected final BucketConsumer bucketConsumer;
     protected final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider;
 
     public DefaultCasSimpleMultifactorAuthenticationService(
+        @Nonnull
         final TicketRegistry ticketRegistry,
+        @Nonnull
         final TicketFactory ticketFactory,
-        final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider) {
+        @Nonnull
+        final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider,
+        @Nonnull
+        final BucketConsumer bucketConsumer) {
         super(ticketRegistry);
         this.ticketFactory = ticketFactory;
         this.accountServiceProvider = accountServiceProvider;
+        this.bucketConsumer = bucketConsumer;
     }
 
     @Override
@@ -85,6 +95,10 @@ public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSim
     @Override
     public Principal validate(final Principal resolvedPrincipal,
                               final CasSimpleMultifactorTokenCredential credential) throws Exception {
+        val result = bucketConsumer.consume(resolvedPrincipal.getId());
+        if (!result.isConsumed()) {
+            throw new FailedLoginException("Validation attempt for principal " + resolvedPrincipal.getId() + " is throttled");
+        }
         val acct = getMultifactorAuthenticationTicket(credential);
         LOGGER.debug("Received token [{}] and principal id [{}]", acct, resolvedPrincipal.getId());
         val principal = validateTokenForPrincipal(resolvedPrincipal, acct);

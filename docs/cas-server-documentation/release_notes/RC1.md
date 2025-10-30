@@ -103,6 +103,11 @@ CAS now supports the [JWT Authorization Grant](../authentication/OIDC-Authentica
 (also known as JWT Bearer Token grant identified as `urn:ietf:params:oauth:client-assertion-type:jwt-bearer`) as a new grant type
 that allows a client application to obtain an access token by presenting a JWT assertion to the CAS server,
 instead of using a username/password or client credentials.
+ 
+### Simple Multifactor Authentication & Rate Limiting
+
+Rate limiting for [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication-RateLimiting.html) 
+is now extended to support token validation attempts in addition to token generation requests.
 
 ### Single SignOn Sessions Per User
                 
