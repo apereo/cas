@@ -143,7 +143,7 @@ public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTok
                 LOGGER.trace("Successfully verified JWT assertion with key id [{}]", jsonWebKey.getKeyId());
                 return verifiedAssertion;
             } catch (final Exception e) {
-                LOGGER.debug("Failed to verify JWT assertion via key id [{}]: {}. Moving on to the next key",
+                LOGGER.debug("Failed to verify JWT assertion via key id [{}]: [{}]. Moving on to the next key",
                     jsonWebKey.getKeyId(), e.getMessage());
             }
         }
