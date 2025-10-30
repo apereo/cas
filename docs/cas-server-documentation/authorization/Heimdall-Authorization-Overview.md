@@ -464,10 +464,10 @@ The following settings are available:
 
 The SQL query is preprocessed to receive the following named parameters:
 
-- `:method` from the authorization request.
-- `:uri` from the authorization request.
-- `:namespace` from the authorization request.
-- `:principal` from the authorization request.
+- `method` from the authorization request.
+- `uri` from the authorization request.
+- `namespace` from the authorization request.
+- `principal` from the authorization request.
 
 Furthermore, all context attributes from the authorization request as well as all principal attributes are passed as named parameters
 and can be used and referenced in the query.
