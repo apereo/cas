@@ -7,7 +7,6 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
-import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -25,7 +24,6 @@ import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
@@ -33,7 +31,6 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import java.nio.charset.StandardCharsets;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,8 +51,8 @@ public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTok
     public OidcAccessTokenJwtBearerGrantRequestExtractor(
         final ObjectProvider<OidcConfigurationContext> config,
         final ObjectProvider<LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCache) {
-        this.oidcServiceJsonWebKeystoreCacheProvider = oidcServiceJsonWebKeystoreCache;
         super(config);
+        this.oidcServiceJsonWebKeystoreCacheProvider = oidcServiceJsonWebKeystoreCache;
     }
 
     @Override
@@ -120,8 +117,8 @@ public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTok
     }
 
     protected JwtClaims extractAssertionClaims(final OidcRegisteredService registeredService, final String assertion) throws Exception {
-        val jsonWebKey = getJsonWebKeyToVerifyAssertion(registeredService);
-        val verifiedAssertion = new String(EncodingUtils.verifyJwsSignature(jsonWebKey.getPublicKey(), assertion), StandardCharsets.UTF_8);
+        val jsonWebKeys = getJsonWebKeyToVerifyAssertion(registeredService);
+        val verifiedAssertion = verifyAssertion(assertion, jsonWebKeys);
         val claims = JwtClaims.parse(verifiedAssertion);
 
         val baseOidcUrl = getConfigurationContext().getObject().getCasProperties().getServer().getPrefix() + '/' + OidcConstants.BASE_OIDC_URL + '/';
@@ -136,6 +133,21 @@ public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTok
             Set.of());
         jwtClaimsSetVerifier.verify(JWTClaimsSet.parse(claims.getClaimsMap()), new SimpleSecurityContext());
         return claims;
+    }
+
+    protected String verifyAssertion(final String assertion, final List<PublicJsonWebKey> jsonWebKeys) {
+        for (val jsonWebKey : jsonWebKeys) {
+            try {
+                val verified = EncodingUtils.verifyJwsSignature(jsonWebKey.getPublicKey(), assertion);
+                val verifiedAssertion = new String(verified, StandardCharsets.UTF_8);
+                LOGGER.trace("Successfully verified JWT assertion with key id [{}]", jsonWebKey.getKeyId());
+                return verifiedAssertion;
+            } catch (final Exception e) {
+                LOGGER.debug("Failed to verify JWT assertion via key id [{}]: {}. Moving on to the next key",
+                    jsonWebKey.getKeyId(), e.getMessage());
+            }
+        }
+        throw new IllegalArgumentException("Unable to verify JWT assertion with any of the configured JSON web keys");
     }
 
     protected AccessTokenRequestContext extractInternal(
@@ -167,17 +179,16 @@ public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTok
         return OAuth20ResponseTypes.NONE;
     }
 
-    protected PublicJsonWebKey getJsonWebKeyToVerifyAssertion(final OAuthRegisteredService registeredService) {
-        val result = oidcServiceJsonWebKeystoreCacheProvider.getObject().get(new OidcJsonWebKeyCacheKey(registeredService, OidcJsonWebKeyUsage.SIGNING));
-        val jsonWebKey = Objects.requireNonNull(result)
+    protected List<PublicJsonWebKey> getJsonWebKeyToVerifyAssertion(final OAuthRegisteredService registeredService) {
+        val result = oidcServiceJsonWebKeystoreCacheProvider.getObject()
+            .get(new OidcJsonWebKeyCacheKey(registeredService, OidcJsonWebKeyUsage.SIGNING));
+        return Objects.requireNonNull(result)
             .stream()
             .map(JsonWebKeySet::getJsonWebKeys)
             .flatMap(List::stream)
-            .filter(key -> OidcJsonWebKeystoreRotationService.JsonWebKeyLifecycleStates.getJsonWebKeyState(key).isCurrent())
-            .min(Comparator.comparing(JsonWebKey::getKeyId))
-            .orElseThrow(() -> new IllegalArgumentException("Cannot locate current JSON web key to verify assertion"));
-        LOGGER.debug("Found JSON web key: [{}]", jsonWebKey);
-        Objects.requireNonNull(jsonWebKey.getKey(), "JSON web key used to verify assertions has no associated public key");
-        return (PublicJsonWebKey) jsonWebKey;
+            .filter(PublicJsonWebKey.class::isInstance)
+            .filter(key -> key.getKey() != null)
+            .map(PublicJsonWebKey.class::cast)
+            .toList();
     }
 }
