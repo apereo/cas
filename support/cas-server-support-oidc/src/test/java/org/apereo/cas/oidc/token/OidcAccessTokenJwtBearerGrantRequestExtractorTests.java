@@ -11,11 +11,9 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
@@ -51,11 +49,7 @@ class OidcAccessTokenJwtBearerGrantRequestExtractorTests extends AbstractOidcTes
     @Autowired
     @Qualifier("accessTokenJwtBearerGrantRequestExtractor")
     private AccessTokenGrantRequestExtractor extractor;
-
-    @Autowired
-    @Qualifier("oidcServiceJsonWebKeystoreCache")
-    private LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcServiceJsonWebKeystoreCache;
-
+    
     private WebContext webContext;
     private MockHttpServletRequest request;
     private OidcRegisteredService registeredService;
@@ -89,7 +83,7 @@ class OidcAccessTokenJwtBearerGrantRequestExtractorTests extends AbstractOidcTes
         val claims = JWTClaimsSet.parse(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()));
         val assertion = JwtBuilder.buildPlain(claims, Optional.of(registeredService));
         request.setParameter(OAuth20Constants.ASSERTION, assertion);
-        assertThrowsWithRootCause(Exception.class, InvalidAlgorithmException.class, () -> extractor.extract(webContext));
+        assertThrows(IllegalArgumentException.class, () -> extractor.extract(webContext));
     }
 
     @Test
