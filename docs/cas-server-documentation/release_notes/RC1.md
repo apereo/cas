@@ -97,6 +97,13 @@ particularly if the codes are set to be encrypted.
 <div class="alert alert-warning">:warning: <strong>Breaking Change</strong><p>
 This may be a breaking change. You will need to adjust your database schema based on the notes above.</p></div>
 
+### OpenID Connect JWT Authorization Grant
+
+CAS now supports the [JWT Authorization Grant](../authentication/OIDC-Authentication-JWT-Bearer.html)
+(also known as JWT Bearer Token grant identified as `urn:ietf:params:oauth:client-assertion-type:jwt-bearer`) as a new grant type
+that allows a client application to obtain an access token by presenting a JWT assertion to the CAS server,
+instead of using a username/password or client credentials.
+
 ### Single SignOn Sessions Per User
                 
 Many of the ticket registry implementations (i.e. MongoDb, Redis, JPA, etc) are extended to allow for removal of all tickets that were issued for a given
