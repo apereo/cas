@@ -177,7 +177,7 @@ function preserveAnchorTagOnForm() {
         if (action === undefined) {
             action = location.href;
         } else {
-            action += location.search + encodeURIComponent(location.hash);
+            action += location.search + location.hash;
         }
         // console.log(`Preserving URL fragment in form action: ${action}`);
         $("#fm1").attr("action", action);
