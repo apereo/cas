@@ -453,12 +453,12 @@ The query is expected to return an `authorized` column of a `boolean` type.
 
 The following settings are available:
 
-| Parameter  | Description                                                                                |
-|------------|--------------------------------------------------------------------------------------------|
-| `query`    | The SQL query that is executed. Supports named parameters such as `:parameter`. See below. |
-| `url`      | <sup>[1]</sup> The database connection string, i.e. `jdbc:mysql://localhost:3306/cas`      |
-| `username` | <sup>[1]</sup> The username when building a database connection.                           |
-| `password` | <sup>[1]</sup> The password when building a database connection.                           |
+| Parameter  | Description                                                                               |
+|------------|-------------------------------------------------------------------------------------------|
+| `query`    | The SQL query that is executed. Supports named parameters such as `parameter`. See below. |
+| `url`      | <sup>[1]</sup> The database connection string, i.e. `jdbc:mysql://localhost:3306/cas`     |
+| `username` | <sup>[1]</sup> The username when building a database connection.                          |
+| `password` | <sup>[1]</sup> The password when building a database connection.                          |
 
 <sub><i>[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.</i></sub>
 
