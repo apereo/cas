@@ -80,6 +80,10 @@ public class SpnegoNegotiateCredentialsAction extends BaseCasWebflowAction {
             || !authorizationHeader.startsWith(SpnegoConstants.NEGOTIATE)
             || authorizationHeader.length() <= SpnegoConstants.NEGOTIATE.length()) {
 
+            if ("POST".equalsIgnoreCase(request.getMethod())) {
+                return error();
+            }
+
             LOGGER.debug("Authorization header not found or does not match the message prefix [{}]. Sending [{}] header [{}]",
                 SpnegoConstants.NEGOTIATE, SpnegoConstants.HEADER_AUTHENTICATE, SpnegoConstants.NEGOTIATE);
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, SpnegoConstants.NEGOTIATE);
