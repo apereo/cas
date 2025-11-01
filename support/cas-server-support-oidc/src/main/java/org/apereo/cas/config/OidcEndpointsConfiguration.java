@@ -388,7 +388,8 @@ class OidcEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "oidcDynamicClientRegistrationEndpointController")
         public OidcDynamicClientRegistrationEndpointController oidcDynamicClientRegistrationEndpointController(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final OidcConfigurationContext oidcConfigurationContext) {
+            final OidcConfigurationContext oidcConfigurationContext,
+            final ConfigurableApplicationContext applicationContext) {
             return new OidcDynamicClientRegistrationEndpointController(oidcConfigurationContext);
         }
 
@@ -397,7 +398,8 @@ class OidcEndpointsConfiguration {
         @Bean
         public OidcClientConfigurationEndpointController oidcClientConfigurationEndpointController(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final OidcConfigurationContext oidcConfigurationContext) {
+            final OidcConfigurationContext oidcConfigurationContext,
+            final ConfigurableApplicationContext applicationContext) {
             return new OidcClientConfigurationEndpointController(oidcConfigurationContext);
         }
 
@@ -406,7 +408,8 @@ class OidcEndpointsConfiguration {
         @Bean
         public OidcInitialAccessTokenController oidcInitialAccessTokenController(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final OidcConfigurationContext oidcConfigurationContext) {
+            final OidcConfigurationContext oidcConfigurationContext,
+            final ConfigurableApplicationContext applicationContext) {
             return new OidcInitialAccessTokenController(oidcConfigurationContext);
         }
 

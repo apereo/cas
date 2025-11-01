@@ -89,7 +89,7 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle OIDC initial access token request")
     public ModelAndView handleRequestInternal(
-        final HttpServletRequest request, final HttpServletResponse response) {
+        final HttpServletRequest request, final HttpServletResponse response) {   
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
