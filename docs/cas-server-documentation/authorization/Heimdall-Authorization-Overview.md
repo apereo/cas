@@ -131,7 +131,8 @@ The authorization header value can be *one* of the following:
 - An OpenID Connect **ID token**, passed as a `Bearer` token, produced by CAS when acting as a [OpenID Connect Provider](../authentication/OIDC-Authentication.html).
 - A **JWT access token**, passed as a `Bearer` token, produced by CAS when acting as an [OAuth](../authentication/OAuth-Authentication.html) or [OpenID Connect](../authentication/OIDC-Authentication.html) identity provider.
 - An **opaque access token** (i.e. `AT-1-...`), passed as a `Bearer` token, produced by CAS when acting an [OAuth](../authentication/OAuth-Authentication.html) or [OpenID Connect](../authentication/OIDC-Authentication.html) identity provider.
-- A valid Base64-encoded `username:password`, passed as a `Basic` token, that can be accepted by the CAS authentication engine.
+- A **JWT bearer token** passed as a `Bearer` token and one that follows the semantics of the [JWT Authorization grant](../authentication/OIDC-Authentication-JWT-Bearer.html).
+- A valid base64-encoded `username:password`, passed as a `Basic` token, that can be accepted by the CAS authentication engine.
 
 Claims or attributes from all token types are extracted and attached to the final principal, which is then
 passed to the authorization policy engine to make decisions. However, when using OpenID Connect ID AuthZEN protocol

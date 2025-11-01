@@ -102,7 +102,8 @@ This may be a breaking change. You will need to adjust your database schema base
 CAS now supports the [JWT Authorization Grant](../authentication/OIDC-Authentication-JWT-Bearer.html)
 (also known as JWT Bearer Token grant identified as `urn:ietf:params:oauth:client-assertion-type:jwt-bearer`) as a new grant type
 that allows a client application to obtain an access token by presenting a JWT assertion to the CAS server,
-instead of using a username/password or client credentials.
+instead of using a username/password or client credentials. This functionality is also supported by the
+[Heimdall authorization engine](../authorization/Heimdall-Authorization-Overview.html).
  
 ### Simple Multifactor Authentication & Rate Limiting
 
@@ -146,6 +147,12 @@ We will consider re-adding support for Undertow once it is compatible with our v
 
 Support for [JavaMelody](../monitoring/Configuring-Monitoring-JavaMelody.html) is not yet compatible with Spring Boot `4`. 
 We plan to re-add support for JavaMelody in the future once compatibility is restored.
+
+#### Google Cloud Platform
+
+Almost all functionality that builds on top of Google Cloud platform is not yet compatible with Spring Boot `4`.
+We plan to re-add support for Google Cloud features in the future once the `spring-cloud-gcp` library is compatible
+with Spring Boot `4`.
 
 #### SpringBoot Admin
 

@@ -10,28 +10,45 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.heimdall.AuthorizationRequest;
+import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.base.Splitter;
+import com.nimbusds.jose.proc.SimpleSecurityContext;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.proc.DefaultJWTClaimsVerifier;
 import com.nimbusds.jwt.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
+import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jwk.PublicJsonWebKey;
+import org.jose4j.jwt.JwtClaims;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpHeaders;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is {@link DefaultAuthorizationPrincipalParser}.
@@ -47,6 +64,7 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
     protected final ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
     protected final ObjectProvider<OAuth20TokenSigningAndEncryptionService> oidcTokenSigningAndEncryptionService;
     protected final AuthenticationSystemSupport authenticationSystemSupport;
+    private final ObjectProvider<LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCacheProvider;
 
     @Override
     public Principal parse(final String authorizationHeader, final AuthorizationRequest authorizationRequest) throws Throwable {
@@ -70,10 +88,43 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
             val claims = parseOidcIdToken(token)
                 .or(() -> parseJwtAccessToken(token))
                 .or(() -> getJwtClaimsSetFromAccessToken(token))
-                .orElseThrow(() -> new AuthenticationException("Unable to parse token"));
+                .or(() -> parseJwtAuthorization(token))
+                .orElseThrow(() -> new AuthenticationException("Unable to parse and verify token"));
             return validateClaims(claims);
         }
         throw new AuthenticationException("Unknown authorization header type");
+    }
+
+    protected Optional<JWTClaimsSet> parseJwtAuthorization(final String token){
+        try {
+            val clientIdInAssertion = OAuth20Utils.extractClientIdFromToken(token);
+            LOGGER.debug("Client id retrieved from ID token is [{}]", clientIdInAssertion);
+            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+                accessTokenJwtBuilder.getObject().getServicesManager(),
+                clientIdInAssertion, OidcRegisteredService.class);
+
+            val jsonWebKeys = getJsonWebKeyToVerifyAssertion(registeredService);
+            val verifiedAssertion = verifyAssertion(token, jsonWebKeys);
+            val claims = JwtClaims.parse(verifiedAssertion);
+
+            val baseOidcUrl = accessTokenJwtBuilder.getObject().getCasProperties()
+                .getServer().getPrefix() + '/' + OidcConstants.BASE_OIDC_URL + '/';
+            val jwtClaimsSetVerifier = new DefaultJWTClaimsVerifier<>(
+                CollectionUtils.wrapSet(
+                    baseOidcUrl + OAuth20Constants.ACCESS_TOKEN_URL,
+                    baseOidcUrl + OAuth20Constants.TOKEN_URL,
+                    baseOidcUrl + OidcConstants.ACCESS_TOKEN_URL,
+                    baseOidcUrl + OidcConstants.TOKEN_URL),
+                JWTClaimsSet.parse(Map.of(OidcConstants.ISS, registeredService.getClientId())),
+                Set.of(OidcConstants.ISS, OidcConstants.AUD, OAuth20Constants.CLAIM_SUB, OAuth20Constants.CLAIM_EXP),
+                Set.of());
+            val claimSet = JWTClaimsSet.parse(claims.getClaimsMap());
+            jwtClaimsSetVerifier.verify(claimSet, new SimpleSecurityContext());
+            return Optional.of(claimSet);
+        } catch (final Throwable e) {
+            LOGGER.debug(e.getMessage(), LOGGER.isTraceEnabled() ? e : null);
+            return Optional.empty();
+        }
     }
 
     protected JWTClaimsSet buildClaimSetFromAuthentication(final String token) throws Throwable {
@@ -152,5 +203,34 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
             LOGGER.debug(e.getMessage(), LOGGER.isTraceEnabled() ? e : null);
             return Optional.empty();
         }
+    }
+
+    protected List<PublicJsonWebKey> getJsonWebKeyToVerifyAssertion(final OAuthRegisteredService registeredService) {
+        return oidcServiceJsonWebKeystoreCacheProvider
+            .stream()
+            .map(provider -> provider.get(new OidcJsonWebKeyCacheKey(registeredService, OidcJsonWebKeyUsage.SIGNING)))
+            .filter(Objects::nonNull)
+            .flatMap(Optional::stream)
+            .map(JsonWebKeySet::getJsonWebKeys)
+            .flatMap(List::stream)
+            .filter(PublicJsonWebKey.class::isInstance)
+            .filter(key -> key.getKey() != null)
+            .map(PublicJsonWebKey.class::cast)
+            .toList();
+    }
+
+    protected String verifyAssertion(final String assertion, final List<PublicJsonWebKey> jsonWebKeys) {
+        for (val jsonWebKey : jsonWebKeys) {
+            try {
+                val verified = EncodingUtils.verifyJwsSignature(jsonWebKey.getPublicKey(), assertion);
+                val verifiedAssertion = new String(verified, StandardCharsets.UTF_8);
+                LOGGER.trace("Successfully verified JWT assertion with key id [{}]", jsonWebKey.getKeyId());
+                return verifiedAssertion;
+            } catch (final Exception e) {
+                LOGGER.debug("Failed to verify JWT assertion via key id [{}]: [{}]. Moving on to the next key",
+                    jsonWebKey.getKeyId(), e.getMessage());
+            }
+        }
+        throw new IllegalArgumentException("Unable to verify JWT assertion with any of the configured JSON web keys");
     }
 }
