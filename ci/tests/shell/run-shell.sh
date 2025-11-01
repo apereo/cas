@@ -31,12 +31,18 @@ java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-$
   --spring.shell.noninteractive.enabled=false \
   --spring.shell.script.enabled=true > cas-shell.out &
 pid=$!
+tail -F cas-shell.out &
 printgreen "Launched CAS command-line shell under process id ${pid}. Waiting for commands to finish..."
 sleep 8
 exitRequest="org.springframework.shell.ExitRequest"
 while :; do
     if grep -q "APPLICATION FAILED TO START" "cas-shell.out"; then
         printred "CAS command-line shell failed to start successfully"
+        kill -9 ${pid} &> /dev/null
+        exit 1
+    fi
+    if grep -q "Caused by: " "cas-shell.out"; then
+        printred "CAS command-line shell encountered an error during execution"
         kill -9 ${pid} &> /dev/null
         exit 1
     fi
