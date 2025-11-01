@@ -80,6 +80,7 @@ gson = "2.13.2"
 guava = "33.5.0-jre"
 h2 = "1.4.197"
 hazelcast = "5.6.0"
+hazelcastSession = "4.0.0-SNAPSHOT"
 hazelcastJClouds = "3.7.2"
 hazelcastZooKeeper = "4.0.2"
 hibernate = "7.1.5.Final"
@@ -382,6 +383,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
 hazelcast-sdk = { module = "com.hazelcast:hazelcast", version.ref = "hazelcast" }
+hazelcast-spring-session = { module = "com.hazelcast.spring:hazelcast-spring-session", version.ref = "hazelcastSession" }
 hazelcast-jclouds = { module = "com.hazelcast:hazelcast-jclouds", version.ref = "hazelcastJClouds" }
 hazelcast-sql = { module = "com.hazelcast:hazelcast-sql", version.ref = "hazelcast" }
 hazelcast-zookeeper = { module = "com.hazelcast:hazelcast-zookeeper", version.ref = "hazelcastZooKeeper" }
@@ -625,7 +627,6 @@ spring-boot-security = { module = "org.springframework.boot:spring-boot-security
 spring-boot-sendgrid = { module = "org.springframework.boot:spring-boot-sendgrid", version.ref = "springBoot" }
 spring-boot-servlet = { module = "org.springframework.boot:spring-boot-servlet", version.ref = "springBoot" }
 spring-boot-session-core = { module = "org.springframework.boot:spring-boot-session", version.ref = "springBoot" }
-#spring-boot-session-hazelcast = { module = "org.springframework.boot:spring-boot-session-hazelcast", version.ref = "springBoot" }
 spring-boot-session-jdbc = { module = "org.springframework.boot:spring-boot-session-jdbc", version.ref = "springBoot" }
 #spring-boot-session-mongodb = { module = "org.springframework.boot:spring-boot-session-data-mongodb", version.ref = "springBoot" }
 spring-boot-session-redis = { module = "org.springframework.boot:spring-boot-session-data-redis", version.ref = "springBoot" }
@@ -724,7 +725,6 @@ spring-security-web = { module = "org.springframework.security:spring-security-w
 spring-session-core = { module = "org.springframework.session:spring-session-core", version.ref = "springSession" }
 #spring-session-data-mongodb = { module = "org.springframework.session:spring-session-data-mongodb", version.ref = "springSessionMongo" }
 spring-session-data-redis = { module = "org.springframework.session:spring-session-data-redis", version.ref = "springSession" }
-#spring-session-hazelcast = { module = "org.springframework.session:spring-session-hazelcast", version.ref = "springSession" }
 spring-session-jdbc = { module = "org.springframework.session:spring-session-jdbc", version.ref = "springSession" }
 spring-shell-starter = { module = "org.springframework.shell:spring-shell-starter", version.ref = "springShell" }
 spring-test = { module = "org.springframework:spring-test", version.ref = "spring" }

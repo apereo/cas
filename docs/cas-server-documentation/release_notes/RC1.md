@@ -162,8 +162,8 @@ We plan to re-add support for Spring Boot Admin in the future once compatibility
 #### Spring Session 
 
 [Spring Session with MongoDb](../webflow/Webflow-Customization-Sessions-ServerSide-MongoDb.html) 
-and [Spring Session with Hazelcast](../webflow/Webflow-Customization-Sessions-ServerSide-Hazelcast.html) are
-not yet compatible with Spring Boot `4`. We plan to re-add support for these features in the future once compatibility is restored.
+is not yet compatible with Spring Boot `4`. We plan to re-add support for these features 
+in the future once compatibility is restored.
 
 #### Jackson & JSON Processing
 

@@ -177,7 +177,7 @@ ext.createPomRepositories = { node ->
 
     repository = repositories.appendNode("repository")
     repository.appendNode("id", "sonatype-snapshot")
-    repository.appendNode("url", "https://oss.sonatype.org/content/repositories/snapshots")
+    repository.appendNode("url", "https://central.sonatype.com/repository/maven-snapshots")
     repository.appendNode("snapshots").appendNode("enabled", "true")
     repository.appendNode("releases").appendNode("enabled", "false")
 

@@ -3662,20 +3662,14 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                 }
         ],
-//        springsessionhazelcast     : [
-//                dependencies.create(libs.spring.session.hazelcast.get()) {
-//                    exclude(group: "org.springframework", module: "spring-web")
-//                    exclude(group: "org.springframework", module: "spring-core")
-//                    exclude(group: "org.springframework", module: "spring-webmvc")
-//                    exclude(group: "org.springframework", module: "spring-context")
-//                },
-//                dependencies.create(libs.spring.boot.session.hazelcast.get()) {
-//                    exclude(group: "org.springframework", module: "spring-web")
-//                    exclude(group: "org.springframework", module: "spring-core")
-//                    exclude(group: "org.springframework", module: "spring-webmvc")
-//                    exclude(group: "org.springframework", module: "spring-context")
-//                }
-//        ],
+        springsessionhazelcast     : [
+                dependencies.create(libs.hazelcast.spring.session.get()) {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
+                }
+        ],
         springsessionjdbc          : [
                 dependencies.create(libs.spring.session.jdbc.get()) {
                     exclude(group: "org.springframework", module: "spring-web")

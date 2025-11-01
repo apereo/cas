@@ -1,9 +1,8 @@
-package org.springframework.web.servlet.theme;
+package org.apereo.cas.web.support;
 
+import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
-import org.apereo.cas.web.support.CookieThemeResolver;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

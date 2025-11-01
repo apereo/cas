@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.session.MapSession;
+import org.springframework.session.SessionRepository;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -38,11 +39,24 @@ class HazelcastSessionConfigurationTests {
     @Qualifier("hazelcastInstance")
     private HazelcastInstance hazelcastInstance;
 
+    @Autowired
+    @Qualifier("sessionRepository")
+    private SessionRepository sessionRepository;
+
     @Test
     void verifyOperation() {
         assertNotNull(hazelcastInstance);
         val extractor = new HazelcastSessionPrincipalNameExtractor();
         assertDoesNotThrow(() -> extractor.extract(new MapSession(), "casuser", mock(ValueCollector.class)));
+        assertNotNull(sessionRepository);
+        val session = sessionRepository.createSession();
+        assertNotNull(session);
+        sessionRepository.save(session);
+        val result = sessionRepository.findById(session.getId());
+        assertNotNull(result);
+        sessionRepository.deleteById(session.getId());
+        val deleted = sessionRepository.findById(session.getId());
+        assertNull(deleted);
     }
 
     @AfterEach

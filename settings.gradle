@@ -67,7 +67,7 @@ dependencyResolutionManagement {
             }
         }
         maven {
-            url = "https://oss.sonatype.org/content/repositories/snapshots"
+            url = "https://central.sonatype.com/repository/maven-snapshots"
             mavenContent { snapshotsOnly() }
         }
         maven {
@@ -436,7 +436,7 @@ include "support:cas-server-support-sentry"
 include "support:cas-server-support-service-registry-stream"
 include "support:cas-server-support-service-registry-stream-hazelcast"
 include "support:cas-server-support-service-registry-stream-kafka"
-//include "support:cas-server-support-session-hazelcast"
+include "support:cas-server-support-session-hazelcast"
 include "support:cas-server-support-session-jdbc"
 //include "support:cas-server-support-session-mongo"
 include "support:cas-server-support-session-redis"

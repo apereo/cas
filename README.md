@@ -108,7 +108,6 @@ Commercial support options may be [found here][cassupport].
 [gettingstarted]: https://apereo.github.io/cas/development/planning/Getting-Started.html
 [overlay]: https://apereo.github.io/cas/development/installation/WAR-Overlay-Installation.html
 [contribute]: https://apereo.github.io/cas/developer/Contributor-Guidelines.html
-[cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/apereo/cas/
 [casmavencentral]: https://search.maven.org/search?q=g:org.apereo.cas
 [releasenotes]: https://github.com/apereo/cas/releases
 [cassupport]: https://apereo.github.io/cas/Support.html
