@@ -38,8 +38,8 @@
     "yaml": "2.8.1"
   },
   "devDependencies": {
-    "@eslint/js": "9.39.0",
-    "eslint": "9.39.0",
+    "@eslint/js": "9.39.1",
+    "eslint": "9.39.1",
     "globals": "16.5.0"
   }
 }
