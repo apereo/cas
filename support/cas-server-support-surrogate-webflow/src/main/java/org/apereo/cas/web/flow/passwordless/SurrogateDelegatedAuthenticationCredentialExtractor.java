@@ -39,8 +39,8 @@ public class SurrogateDelegatedAuthenticationCredentialExtractor extends Default
             if (passwordlessRequest.getProperties().containsKey(SurrogatePasswordlessAuthenticationRequestParser.PROPERTY_SURROGATE_USERNAME)) {
                 val surrogateUsername = passwordlessRequest.getProperties().get(SurrogatePasswordlessAuthenticationRequestParser.PROPERTY_SURROGATE_USERNAME);
                 clientCredential.get().getCredentialMetadata().addTrait(new SurrogateCredentialTrait(surrogateUsername));
-                return clientCredential;
             }
+            return clientCredential;
         }
         return Optional.empty();
     }
