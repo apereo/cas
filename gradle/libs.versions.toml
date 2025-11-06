@@ -205,7 +205,7 @@ snakeYaml = "2.5"
 socketJsClient = "1.5.1"
 splunkLogging = "1.11.8"
 spring = "7.0.0-RC3"
-springBoot = "4.0.0-RC1"
+springBoot = "4.0.0-RC2"
 springBootAdmin = "3.5.6"
 springCloudAzure = "6.0.0"
 springCloudBus = "5.0.0-M4"
@@ -620,6 +620,7 @@ spring-boot-jdbc = { module = "org.springframework.boot:spring-boot-jdbc", versi
 spring-boot-kafka = { module = "org.springframework.boot:spring-boot-kafka", version.ref = "springBoot" }
 spring-boot-mail = { module = "org.springframework.boot:spring-boot-mail", version.ref = "springBoot" }
 spring-boot-micrometer-metrics-test = { module = "org.springframework.boot:spring-boot-micrometer-metrics-test", version.ref = "springBoot" }
+spring-boot-micrometer-tracing-sdk = { module = "org.springframework.boot:spring-boot-micrometer-tracing", version.ref = "springBoot" }
 spring-boot-micrometer-tracing-test = { module = "org.springframework.boot:spring-boot-micrometer-tracing-test", version.ref = "springBoot" }
 spring-boot-mustache = { module = "org.springframework.boot:spring-boot-mustache", version.ref = "springBoot" }
 spring-boot-restclient = { module = "org.springframework.boot:spring-boot-restclient", version.ref = "springBoot" }
