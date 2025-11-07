@@ -36,12 +36,6 @@ configurations {
             }
         }
         /*
-         * Micrometer support for Java 21's virtual threads is disabled,
-         * because: java.lang.IllegalArgumentException:
-         *  jdk.management.VirtualThreadSchedulerMXBean is not a platform management interface
-         */
-        exclude(group: "io.micrometer", module: "micrometer-java21")
-        /*
             DevTools and Spring Cloud Bootstrap do not support native images.
          */
         exclude(group: "org.springframework.boot", module: "spring-boot-devtools")
