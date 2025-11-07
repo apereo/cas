@@ -15,4 +15,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-tracing-zipkin" %}
 
-{% include_cached casproperties.html thirdPartyStartsWith="management.zipkin.tracing" %}
+{% include_cached casproperties.html thirdPartyStartsWith="management.tracing.export.zipkin" %}
