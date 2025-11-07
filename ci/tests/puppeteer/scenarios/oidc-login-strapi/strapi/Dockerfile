@@ -1,8 +1,16 @@
 FROM node:20
-RUN apt-get update > /dev/null && apt-get install iproute2 iputils-ping -y > /dev/null
+RUN apt-get update > /dev/null \
+    && apt-get install git patch iproute2 iputils-ping -y > /dev/null \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+RUN corepack enable
 
 RUN mkdir /srv/app && chown 1000:1000 -R /srv/app
 WORKDIR /srv/app
+ENV NODE_ENV=development
+
+RUN npm i -g patch-package
 
 RUN npx create-strapi@5.6.0 . \
             --no-run \
