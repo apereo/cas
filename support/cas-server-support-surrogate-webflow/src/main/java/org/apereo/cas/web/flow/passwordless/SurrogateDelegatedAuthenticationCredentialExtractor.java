@@ -1,16 +1,16 @@
 package org.apereo.cas.web.flow.passwordless;
 
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
+import org.apereo.cas.authentication.principal.BaseDelegatedAuthenticationCredentialExtractor;
 import org.apereo.cas.authentication.principal.ClientCredential;
-import org.apereo.cas.authentication.principal.DefaultDelegatedAuthenticationCredentialExtractor;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
+import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.Credentials;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
@@ -23,7 +23,7 @@ import java.util.Optional;
  */
 @Getter
 @Setter
-public class SurrogateDelegatedAuthenticationCredentialExtractor extends DefaultDelegatedAuthenticationCredentialExtractor {
+public class SurrogateDelegatedAuthenticationCredentialExtractor extends BaseDelegatedAuthenticationCredentialExtractor {
     private int order = Ordered.HIGHEST_PRECEDENCE;
 
     public SurrogateDelegatedAuthenticationCredentialExtractor(final SessionStore sessionStore) {
@@ -31,17 +31,23 @@ public class SurrogateDelegatedAuthenticationCredentialExtractor extends Default
     }
 
     @Override
-    protected Optional<ClientCredential> buildClientCredential(final BaseClient client, final RequestContext requestContext, final Credentials credential) {
-        val clientCredential = super.buildClientCredential(client, requestContext, credential);
+    public Optional<ClientCredential> extract(final BaseClient client, final RequestContext requestContext) {
         val passwordlessRequestResult = Optional.ofNullable(PasswordlessWebflowUtils.getPasswordlessAuthenticationRequest(requestContext, PasswordlessAuthenticationRequest.class));
-        if (clientCredential.isPresent() && passwordlessRequestResult.isPresent()) {
-            val passwordlessRequest = passwordlessRequestResult.get();
-            if (passwordlessRequest.getProperties().containsKey(SurrogatePasswordlessAuthenticationRequestParser.PROPERTY_SURROGATE_USERNAME)) {
+        return passwordlessRequestResult
+            .filter(passwordlessRequest -> passwordlessRequest.getProperties().containsKey(SurrogatePasswordlessAuthenticationRequestParser.PROPERTY_SURROGATE_USERNAME))
+            .flatMap(passwordlessRequest -> {
                 val surrogateUsername = passwordlessRequest.getProperties().get(SurrogatePasswordlessAuthenticationRequestParser.PROPERTY_SURROGATE_USERNAME);
-                clientCredential.get().getCredentialMetadata().addTrait(new SurrogateCredentialTrait(surrogateUsername));
-                return clientCredential;
-            }
-        }
-        return Optional.empty();
+                return getCredentialsFromDelegatedClient(requestContext, client)
+                    .map(credentials -> {
+                        val clientCredential = buildClientCredential(client, requestContext, credentials);
+                        clientCredential.ifPresent(clientCred -> {
+                            clientCred.getCredentialMetadata().addTrait(new SurrogateCredentialTrait(surrogateUsername));
+                            WebUtils.putCredential(requestContext, clientCred);
+                        });
+                        return clientCredential;
+                    });
+            })
+            .filter(Optional::isPresent)
+            .map(Optional::get);
     }
 }
