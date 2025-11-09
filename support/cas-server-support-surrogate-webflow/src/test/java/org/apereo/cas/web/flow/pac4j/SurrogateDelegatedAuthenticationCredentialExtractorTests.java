@@ -48,16 +48,16 @@ class SurrogateDelegatedAuthenticationCredentialExtractorTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    void verifyClientCredentialExtracted() throws Throwable {
+    void verifyExtractionWithSurrogate() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         val client = mock(BaseClient.class);
 
         val uid = UUID.randomUUID().toString();
         val passwordlessRequest = PasswordlessAuthenticationRequest
-            .builder()
-            .properties(Map.of(SurrogatePasswordlessAuthenticationRequestParser.PROPERTY_SURROGATE_USERNAME, "cassurrogate"))
-            .username(uid)
-            .build();
+                .builder()
+                .properties(Map.of(SurrogatePasswordlessAuthenticationRequestParser.PROPERTY_SURROGATE_USERNAME, "cassurrogate"))
+                .username(uid)
+                .build();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(context, passwordlessRequest);
 
         val tokenCredentials = new TokenCredentials(uid);
@@ -69,6 +69,35 @@ class SurrogateDelegatedAuthenticationCredentialExtractorTests {
         val trait = credentials.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class);
         assertTrue(trait.isPresent());
         assertEquals("cassurrogate", trait.get().getSurrogateUsername());
+    }
+
+    @Test
+    void verifyExtractionWithoutSurrogate() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        val client = mock(BaseClient.class);
+
+        val uid = UUID.randomUUID().toString();
+        val passwordlessRequest = PasswordlessAuthenticationRequest
+                .builder()
+                .username(uid)
+                .build();
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(context, passwordlessRequest);
+
+        val tokenCredentials = new TokenCredentials(uid);
+        when(client.getCredentials(any())).thenReturn(Optional.of(tokenCredentials));
+        when(client.validateCredentials(any(), any())).thenReturn(Optional.of(tokenCredentials));
+
+        val credentials = delegatedAuthenticationCredentialExtractor.extract(client, context).get();
+        assertNotNull(credentials);
+        val trait = credentials.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class);
+        assertTrue(trait.isEmpty());
+    }
+
+    @Test
+    void verifyExtractionWithoutClientCredential() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        val client = mock(BaseClient.class);
+
         when(client.getCredentials(any())).thenReturn(Optional.empty());
         assertTrue(delegatedAuthenticationCredentialExtractor.extract(client, context).isEmpty());
     }
