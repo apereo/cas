@@ -104,23 +104,23 @@ function publish {
         links+=( "[RC$i](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC$i.html)" )
       done
       changelog=$(printf '%s\n' "${links[*]// /,}")
-    fi
-
-    if [[ -n "${changelog}" ]]; then
       changelog="- Changelog: ${changelog}"
     fi
-    
+
+
     currentCommit=$(git rev-parse HEAD)
     printgreen "Current commit is ${currentCommit}"
 
     previousTag=$(git describe --tags --abbrev=0 "${releaseTag}^")
     echo "Looking at commits in range: $previousTag..$releaseTag" >&2
 
-    contributors=$(gh api repos/apereo/cas/compare/$previousTag...$releaseTag \
-      --jq '.commits[].author.login // .commits[].commit.author.name' \
-      | sort -u \
-      | sed 's/.*/- @&/')
-    printgreen "Contributors: ${contributors}"
+    if [[ -n "${previousTag}" && -n "${releaseTag}" ]]; then
+      contributors=$(gh api repos/apereo/cas/compare/$previousTag...$releaseTag \
+        --jq '.commits[].author.login // .commits[].commit.author.name' \
+        | sort -u \
+        | sed 's/.*/- @&/')
+      printgreen "Contributors: ${contributors}"
+    fi
     if [[ -z "${contributors}" ]]; then
       contributors="- No contributors found."
     fi
@@ -133,7 +133,7 @@ function publish {
 - [Maintenance Policy](https://apereo.github.io/cas/developer/Maintenance-Policy.html)
 - [Release Policy](https://apereo.github.io/cas/developer/Release-Policy.html)
 - [Release Schedule](https://github.com/apereo/cas/milestones)
-- Changelog: ${changelog}
+${changelog}
 
 # :couple: Contributions
 
