@@ -11,10 +11,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pm.PasswordHistoryService;
+import org.apereo.cas.pm.PasswordManagementExecutionPlan;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
 import org.apereo.cas.pm.PasswordValidationService;
+import org.apereo.cas.pm.impl.ChainingPasswordManagementService;
 import org.apereo.cas.pm.impl.DefaultPasswordResetUrlBuilder;
 import org.apereo.cas.pm.impl.DefaultPasswordValidationService;
 import org.apereo.cas.pm.impl.GroovyResourcePasswordManagementService;
@@ -28,11 +30,11 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.spring.CasApplicationReadyListener;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -52,6 +54,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 /**
  * This is {@link CasPasswordManagementAutoConfiguration}.
@@ -164,6 +167,7 @@ public class CasPasswordManagementAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public PasswordManagementService passwordChangeService(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("passwordManagementCipherExecutor")
             final CipherExecutor passwordManagementCipherExecutor,
@@ -171,26 +175,73 @@ public class CasPasswordManagementAutoConfiguration {
             final PasswordHistoryService passwordHistoryService) {
             val pm = casProperties.getAuthn().getPm();
             if (pm.getCore().isEnabled()) {
-                val location = pm.getJson().getLocation();
-                if (location != null) {
-                    LOGGER.debug("Configuring password management based on JSON resource [{}]", location);
-                    return new JsonResourcePasswordManagementService(passwordManagementCipherExecutor,
-                        casProperties, location, passwordHistoryService);
-                }
-                val groovyScript = pm.getGroovy().getLocation();
-                if (groovyScript != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
-                    LOGGER.debug("Configuring password management based on Groovy resource [{}]", groovyScript);
-                    return new GroovyResourcePasswordManagementService(passwordManagementCipherExecutor,
-                        casProperties, groovyScript, passwordHistoryService);
+                val plans = applicationContext.getBeansOfType(PasswordManagementExecutionPlan.class).values();
+                val registeredServices = plans
+                    .stream()
+                    .filter(BeanSupplier::isNotProxy)
+                    .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                    .map(PasswordManagementExecutionPlan::registerPasswordManagementService)
+                    .filter(BeanSupplier::isNotProxy)
+                    .toList();
+                if (!registeredServices.isEmpty()) {
+                    return new ChainingPasswordManagementService(registeredServices);
                 }
                 LOGGER.warn("No storage service is configured to handle the account update and password service operations. "
                     + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
-                    + "To explicitly disable the password management, add 'cas.authn.pm.core.enabled=false' to the CAS configuration");
+                    + "To explicitly disable password management, add 'cas.authn.pm.core.enabled=false' to the CAS configuration");
             } else {
                 LOGGER.debug("Password management is disabled. To enable the password management functionality, "
                     + "add 'cas.authn.pm.core.enabled=true' to the CAS configuration and then configure storage options for account updates");
             }
             return new NoOpPasswordManagementService(passwordManagementCipherExecutor, casProperties);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "groovyPasswordChangeService")
+        @ConditionalOnMissingGraalVMNativeImage
+        public PasswordManagementExecutionPlan groovyPasswordChangeService(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("passwordManagementCipherExecutor")
+            final CipherExecutor passwordManagementCipherExecutor,
+            @Qualifier(PasswordHistoryService.BEAN_NAME)
+            final PasswordHistoryService passwordHistoryService,
+            final CasConfigurationProperties casProperties) {
+
+            return () -> BeanSupplier.of(PasswordManagementService.class)
+                .when(BeanCondition.on("cas.authn.pm.groovy.location").exists().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val pm = casProperties.getAuthn().getPm();
+                    val groovyScript = pm.getGroovy().getLocation();
+                    LOGGER.debug("Configuring password management based on Groovy resource [{}]", groovyScript);
+                    return new GroovyResourcePasswordManagementService(passwordManagementCipherExecutor,
+                        casProperties, groovyScript, passwordHistoryService);
+                })
+                .otherwiseProxy()
+                .get();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "jsonPasswordChangeService")
+        public PasswordManagementExecutionPlan jsonPasswordChangeService(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("passwordManagementCipherExecutor")
+            final CipherExecutor passwordManagementCipherExecutor,
+            @Qualifier(PasswordHistoryService.BEAN_NAME)
+            final PasswordHistoryService passwordHistoryService,
+            final CasConfigurationProperties casProperties) {
+            val pm = casProperties.getAuthn().getPm();
+            val location = pm.getJson().getLocation();
+            return () -> BeanSupplier.of(PasswordManagementService.class)
+                .when(BeanCondition.on("cas.authn.pm.json.location").exists().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    LOGGER.debug("Configuring password management based on JSON resource [{}]", location);
+                    return new JsonResourcePasswordManagementService(passwordManagementCipherExecutor,
+                        casProperties, location, passwordHistoryService);
+                })
+                .otherwiseProxy()
+                .get();
         }
 
         @Bean
