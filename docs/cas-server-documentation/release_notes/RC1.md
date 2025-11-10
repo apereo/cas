@@ -150,8 +150,8 @@ We plan to re-add support for JavaMelody in the future once compatibility is res
 
 #### Google Cloud Platform
 
-Almost all functionality that builds on top of Google Cloud platform is not yet compatible with Spring Boot `4`.
-We plan to re-add support for Google Cloud features in the future once the `spring-cloud-gcp` library is compatible
+Almost all functionality that builds on top of Google Cloud platform is not yet **fully** compatible with Spring Boot `4`.
+YMMV. We plan to re-add support for Google Cloud features in the future once the `spring-cloud-gcp` library is compatible
 with Spring Boot `4`.
 
 #### SpringBoot Admin

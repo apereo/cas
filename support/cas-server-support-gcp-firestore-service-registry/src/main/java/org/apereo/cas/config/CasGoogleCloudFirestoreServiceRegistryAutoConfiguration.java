@@ -7,9 +7,13 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ExcludeInnerAutoConfigurationBeanDefinitionPostProcessor;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.spring.autoconfigure.firestore.GcpFirestoreAutoConfiguration;
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,6 +35,14 @@ import java.util.List;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ServiceRegistry, module = "gcp-firestore")
 @AutoConfiguration
 public class CasGoogleCloudFirestoreServiceRegistryAutoConfiguration {
+
+    @Bean
+    @Deprecated(since = "8.0.0", forRemoval = true)
+    public static BeanDefinitionRegistryPostProcessor internalRemoveFirestoreServiceRegistryReactiveAutoConfiguration() {
+        val autoConfiguration = GcpFirestoreAutoConfiguration.class.getName() + "$FirestoreReactiveAutoConfiguration";
+        return new ExcludeInnerAutoConfigurationBeanDefinitionPostProcessor(autoConfiguration);
+    }
+
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "gcpFirestoreServiceRegistry")
