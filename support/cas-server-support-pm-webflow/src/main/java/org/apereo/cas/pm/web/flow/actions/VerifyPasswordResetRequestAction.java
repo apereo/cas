@@ -95,7 +95,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
             .ifPresent(token -> FunctionUtils.doAndHandle(__ -> ticketRegistrySupport.getTicketRegistry().deleteTicket(token)));
     }
 
-    private PasswordResetRequest getPasswordResetRequestFrom(final String tgt) {
+    protected PasswordResetRequest getPasswordResetRequestFrom(final String tgt) {
         val principal = ticketRegistrySupport.getAuthenticatedPrincipalFrom(tgt);
         return PasswordResetRequest.builder().username(principal.getId()).build();
     }
