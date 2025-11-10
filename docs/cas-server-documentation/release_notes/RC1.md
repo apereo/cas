@@ -109,10 +109,18 @@ instead of using a username/password or client credentials. This functionality i
 
 Rate limiting for [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication-RateLimiting.html) 
 is now extended to support token validation attempts in addition to token generation requests.
+ 
+### Password Management
+
+[Password management operations](../password_management/Password-Management.html) are internally 
+modified to support multiple backend account management systems. 
+This means that you may enable multiple password management modules backed by different account stores such as 
+LDAP and JDBC at the same time and CAS would force a chain to validate password policies across all such systems.
 
 ### Single SignOn Sessions Per User
                 
-Many of the ticket registry implementations (i.e. MongoDb, Redis, JPA, etc) are extended to allow for removal of all tickets that were issued for a given
+Many of the ticket registry implementations (i.e. MongoDb, Redis, JPA, etc) are 
+extended to allow for removal of all tickets that were issued for a given
 principal based on the ticket's attached authentication attempt. The `ssoSessions` endpoint is also modified
 to support removing all such tickets when a single sign-on session is terminated for a user.
 
