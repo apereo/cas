@@ -120,6 +120,8 @@ function publish {
         | sort -u \
         | sed 's/.*/- @&/')
       printgreen "Contributors: ${contributors}"
+    else
+      printyellow "Previous or current tag is missing; skipping contributor lookup."
     fi
     if [[ -z "${contributors}" ]]; then
       contributors="- No contributors found."
@@ -152,6 +154,15 @@ ${contributors}
         printred "Creating GitHub Release for CAS version ${casVersion} failed."
         exit 1
     fi
+
+    echo -e "Closing release milestone for ${casVersion}..."
+    gh milestone close "${casVersion}" --repo "apereo/cas"
+    if [ $? -ne 0 ]; then
+        printred "Closing GitHub milestone for CAS version ${casVersion} failed."
+        exit 1
+    fi
+    printgreen "Release process for Apereo CAS ${casVersion} completed successfully!"
+    exit 0
 }
 
 function finished {
