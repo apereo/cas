@@ -12,7 +12,7 @@
     "express": "5.1.0",
     "figlet": "1.9.3",
     "http-cas-client": "0.4.3",
-    "jose": "6.1.0",
+    "jose": "6.1.1",
     "jsonpath-plus": "10.3.0",
     "jsonwebtoken": "9.0.2",
     "jsqr": "1.4.0",
@@ -33,7 +33,7 @@
     "sockjs-client": "1.6.1",
     "speakeasy": "2.0.0",
     "unzipper": "0.12.3",
-    "wait-on": "9.0.1",
+    "wait-on": "9.0.3",
     "xml2js": "0.6.2",
     "yaml": "2.8.1"
   },
