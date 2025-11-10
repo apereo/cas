@@ -24,7 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("ActiveDirectory")
 @TestPropertySource(properties = {
-    "cas.authn.pm.reset.sms.attributeName=telephoneNumber",
+    "cas.authn.pm.reset.sms.attribute-name=telephoneNumber",
+    "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.ldap[0].ldap-url=ldaps://localhost:10636",
     "cas.authn.pm.ldap[0].bind-dn=CN=admin,CN=Users,DC=cas,DC=example,DC=org",
     "cas.authn.pm.ldap[0].bind-credential=P@ssw0rd",
