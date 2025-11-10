@@ -1,10 +1,19 @@
 package org.apereo.cas.nativex;
 
+import org.apereo.cas.pm.PasswordManagementExecutionPlan;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.springframework.aot.hint.RuntimeHints;
+
 /**
  * This is {@link PasswordManagementRuntimeHints}.
  *
  * @author Misagh Moayyed
  * @since 8.0.0
  */
-public class PasswordManagementRuntimeHints {
+public class PasswordManagementRuntimeHints implements CasRuntimeHintsRegistrar {
+    @Override
+    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+        registerSpringProxyHints(hints, PasswordManagementExecutionPlan.class);
+    }
 }
+

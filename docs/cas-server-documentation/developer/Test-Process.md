@@ -139,7 +139,7 @@ npm install
 
 <div class="alert alert-info">:information_source: <strong>Usage</strong><p>
 The above step is not strictly necessary. CAS will automatically attempt to install 
-Puppeteer when necessary when you run test scenarios. See the parameger list below for details. </p></div>
+Puppeteer when necessary when you run test scenarios. See the parameter list below for details. </p></div>
 
 To help simplify the testing process, you may use the following bash function in your `~/.profile`:
 
