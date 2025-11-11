@@ -10,22 +10,22 @@ import com.hazelcast.config.MapConfig;
 import com.hazelcast.config.SerializerConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
+import com.hazelcast.spring.session.HazelcastIndexedSessionRepository;
+import com.hazelcast.spring.session.HazelcastSessionSerializer;
+import com.hazelcast.spring.session.config.annotation.SpringSessionHazelcastInstance;
+import com.hazelcast.spring.session.config.annotation.web.http.EnableHazelcastHttpSession;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.session.autoconfigure.SessionProperties;
-import org.springframework.boot.session.hazelcast.autoconfigure.HazelcastSessionProperties;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.session.MapSession;
-import org.springframework.session.hazelcast.HazelcastIndexedSessionRepository;
-import org.springframework.session.hazelcast.HazelcastSessionSerializer;
-import org.springframework.session.hazelcast.config.annotation.web.http.EnableHazelcastHttpSession;
 
 /**
  * This is {@link CasHazelcastSessionAutoConfiguration}.
@@ -34,28 +34,16 @@ import org.springframework.session.hazelcast.config.annotation.web.http.EnableHa
  * @since 5.0.0
  */
 @EnableHazelcastHttpSession
-@EnableConfigurationProperties({CasConfigurationProperties.class,
-    SessionProperties.class, HazelcastSessionProperties.class, ServerProperties.class})
+@EnableConfigurationProperties({CasConfigurationProperties.class, SessionProperties.class, ServerProperties.class})
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SessionManagement, module = "hazelcast")
 @AutoConfiguration
 public class CasHazelcastSessionAutoConfiguration {
 
-    /**
-     * Hazelcast instance that is used by the spring session
-     * repository to broadcast session events. The name
-     * of this bean must be left untouched.
-     *
-     * @param casProperties              the cas properties
-     * @param hazelcastSessionProperties the hazelcast session properties
-     * @param sessionProperties          the session properties
-     * @param serverProperties           the server properties
-     * @return the hazelcast instance
-     */
     @Bean(destroyMethod = "shutdown")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @SpringSessionHazelcastInstance
     public HazelcastInstance hazelcastInstance(final CasConfigurationProperties casProperties,
-                                               final HazelcastSessionProperties hazelcastSessionProperties,
                                                final SessionProperties sessionProperties,
                                                final ServerProperties serverProperties) {
         val hz = casProperties.getWebflow().getSession().getServer().getHazelcast();
@@ -69,7 +57,7 @@ public class CasHazelcastSessionAutoConfiguration {
 
         val hazelcastInstance = HazelcastInstanceFactory.getOrCreateHazelcastInstance(config);
         val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hz,
-            hazelcastSessionProperties.getMapName(), duration.toSeconds());
+            HazelcastIndexedSessionRepository.DEFAULT_SESSION_MAP_NAME, duration.toSeconds());
         if (mapConfig instanceof final MapConfig finalConfig) {
             val attributeConfig = new AttributeConfig();
             attributeConfig.setName(HazelcastIndexedSessionRepository.PRINCIPAL_NAME_ATTRIBUTE);

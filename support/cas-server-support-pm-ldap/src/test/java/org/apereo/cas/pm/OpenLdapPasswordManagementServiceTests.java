@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Ldap")
 @TestPropertySource(properties = {
     "cas.authn.pm.reset.sms.attribute-name=telephoneNumber",
+    "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.ldap[0].ldap-url=ldap://localhost:11389",
     "cas.authn.pm.ldap[0].bind-dn=cn=admin,dc=example,dc=org",
     "cas.authn.pm.ldap[0].bind-credential=P@ssw0rd",

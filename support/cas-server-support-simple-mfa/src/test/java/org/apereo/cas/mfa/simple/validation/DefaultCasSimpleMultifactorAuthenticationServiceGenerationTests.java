@@ -2,6 +2,7 @@ package org.apereo.cas.mfa.simple.validation;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
@@ -12,6 +13,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.AllArgsConstructor;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +57,8 @@ class DefaultCasSimpleMultifactorAuthenticationServiceGenerationTests {
     public void setUp() {
         ticketRegistry.deleteAll();
         val ticketFactory = new MockCasSimpleMultifactorAuthenticationTicketFactory(1);
-        customService = new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry, ticketFactory, null);
+        customService = new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry,
+            ticketFactory, DirectObjectProvider.empty(), BucketConsumer.permitAll());
     }
 
     @Test

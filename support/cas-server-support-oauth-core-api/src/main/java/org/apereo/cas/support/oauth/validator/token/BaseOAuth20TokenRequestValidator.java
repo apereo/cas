@@ -23,6 +23,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * This is {@link BaseOAuth20TokenRequestValidator}.
@@ -60,7 +61,7 @@ public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20Configur
         }
 
         val manager = new ProfileManager(context, getConfigurationContext().getObject().getSessionStore());
-        val profile = manager.getProfile();
+        val profile = extractUserProfile(context, manager);
         if (profile.isEmpty()) {
             LOGGER.warn("Could not locate authenticated profile for this request. Request is not authenticated");
             return false;
@@ -71,6 +72,10 @@ public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20Configur
         }
         val userProfile = profile.get();
         return validateInternal(context, grantType, manager, userProfile);
+    }
+
+    protected Optional<UserProfile> extractUserProfile(final WebContext context, final ProfileManager manager) {
+        return manager.getProfile();
     }
 
     @Override

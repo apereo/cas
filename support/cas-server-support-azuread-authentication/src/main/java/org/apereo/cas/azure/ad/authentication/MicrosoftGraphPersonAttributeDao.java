@@ -108,7 +108,7 @@ public class MicrosoftGraphPersonAttributeDao extends BasePersonAttributeDao {
                 return new SimplePersonAttributes(uid, PersonAttributeDao.stuffAttributesIntoList(attributes));
             }
             try (val errorBody = userCallResult.errorBody()) {
-                throw new RuntimeException("error requesting token (" + userCallResult.code() + "): " + errorBody);
+                throw new RuntimeException("error requesting token (" + userCallResult.code() + "): " + errorBody.string());
             }
         });
     }
