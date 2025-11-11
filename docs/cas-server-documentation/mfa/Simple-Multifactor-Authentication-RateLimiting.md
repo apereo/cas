@@ -13,5 +13,7 @@ algorithm, via the [Bucket4j](https://bucket4j.com/) project. This means that to
 a time window may either be blocked or _throttled_ to slow down. This is done to
 protect the system from overloading, allowing you to introduce a scenario to allow CAS `120` token requests per minute with a refill rate of `10` requests per
 second that would continually increase in the capacity bucket. Please note that the bucket allocation strategy is specific to the client IP address.
+                 
+The rate limiting functionality described here applies to both token generation and token validation operations.
 
 {% include_cached casproperties.html properties="cas.authn.mfa.simple.bucket4j" %}

@@ -21,8 +21,7 @@ public record DirectObjectProvider<T>(T object) implements ObjectProvider<T> {
     }
 
     @Override
-    public T getObject(
-        @Nonnull final Object... objects) throws BeansException {
+    public T getObject(@Nonnull final Object... objects) throws BeansException {
         return object;
     }
 
@@ -41,5 +40,14 @@ public record DirectObjectProvider<T>(T object) implements ObjectProvider<T> {
         return object == null
             ? Stream.empty()
             : Stream.of(object);
+    }
+
+    /**
+     * Empty direct object provider.
+     *
+     * @return the direct object provider
+     */
+    public static DirectObjectProvider empty() {
+        return new DirectObjectProvider<>(null);
     }
 }
