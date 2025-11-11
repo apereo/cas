@@ -118,7 +118,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
     public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
         val rest = casProperties.getAuthn().getPm().getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlSecurityQuestions())) {
-            return null;
+            return Map.of();
         }
 
         val url = UriComponentsBuilder.fromUriString(rest.getEndpointUrlSecurityQuestions())
@@ -129,7 +129,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         if (result.getStatusCode().value() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();
         }
-        return null;
+        return Map.of();
     }
 
     @Override
