@@ -11,8 +11,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketFactory;
-import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationAccountService;
-import org.apereo.cas.mfa.simple.validation.DefaultCasSimpleMultifactorAuthenticationService;
+import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketFactory;
@@ -22,7 +21,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -63,8 +61,8 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier(CasSimpleMultifactorAuthenticationAccountService.BEAN_NAME)
-    private ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountService;
+    @Qualifier(CasSimpleMultifactorAuthenticationService.BEAN_NAME)
+    private CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService;
 
     @Test
     void verifyFailsToFindToken() {
@@ -109,9 +107,8 @@ class CasSimpleMultifactorAuthenticationHandlerTests {
         val credential = new CasSimpleMultifactorTokenCredential(ticket.getId());
         ticket.markTicketExpired();
 
-        val mfaService = new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry, defaultTicketFactory, accountService);
         val handler = new CasSimpleMultifactorAuthenticationHandler(casProperties.getAuthn().getMfa().getSimple(),
-            applicationContext, PrincipalFactoryUtils.newPrincipalFactory(), mfaService,
+            applicationContext, PrincipalFactoryUtils.newPrincipalFactory(), casSimpleMultifactorAuthenticationService,
             new DirectObjectProvider<>(mock(MultifactorAuthenticationProvider.class)));
         assertThrows(MultifactorAuthenticationFailedException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }

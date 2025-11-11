@@ -4,8 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.pm.LdapPasswordManagementService;
 import org.apereo.cas.pm.PasswordHistoryService;
+import org.apereo.cas.pm.PasswordManagementExecutionPlan;
 import org.apereo.cas.pm.PasswordManagementService;
-import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -38,14 +38,14 @@ public class CasLdapPasswordManagementAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "ldapPasswordChangeService")
-    public PasswordManagementService passwordChangeService(
+    public PasswordManagementExecutionPlan ldapPasswordChangeService(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("passwordManagementCipherExecutor")
         final CipherExecutor passwordManagementCipherExecutor,
         @Qualifier(PasswordHistoryService.BEAN_NAME)
         final PasswordHistoryService passwordHistoryService) {
-        return BeanSupplier.of(PasswordManagementService.class)
+        return () -> BeanSupplier.of(PasswordManagementService.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val connectionFactoryMap = new ConcurrentHashMap<String, ConnectionFactory>();
@@ -57,7 +57,7 @@ public class CasLdapPasswordManagementAutoConfiguration {
                     casProperties, passwordHistoryService,
                     connectionFactoryMap);
             })
-            .otherwise(() -> new NoOpPasswordManagementService(passwordManagementCipherExecutor, casProperties))
+            .otherwiseProxy()
             .get();
     }
 }

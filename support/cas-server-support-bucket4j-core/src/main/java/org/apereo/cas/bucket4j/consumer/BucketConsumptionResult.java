@@ -23,6 +23,10 @@ public class BucketConsumptionResult implements Serializable {
 
     private final boolean consumed;
 
+    private final long tokensRemaining;
+
+    private final long retryAfterSeconds;
+
     @Builder.Default
     private final Map<String, String> headers = new LinkedHashMap<>();
 }
