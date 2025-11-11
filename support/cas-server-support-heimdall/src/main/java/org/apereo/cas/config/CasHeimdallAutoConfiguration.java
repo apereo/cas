@@ -13,13 +13,16 @@ import org.apereo.cas.heimdall.engine.AuthorizationEngine;
 import org.apereo.cas.heimdall.engine.AuthorizationPrincipalParser;
 import org.apereo.cas.heimdall.engine.DefaultAuthorizationEngine;
 import org.apereo.cas.heimdall.engine.DefaultAuthorizationPrincipalParser;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -31,6 +34,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link CasHeimdallAutoConfiguration}.
@@ -47,6 +51,8 @@ public class CasHeimdallAutoConfiguration {
     @ConditionalOnMissingBean(name = "authorizationPrincipalParser")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthorizationPrincipalParser authorizationPrincipalParser(
+        @Qualifier("oidcServiceJsonWebKeystoreCache")
+        final ObjectProvider<LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCache,
         @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
         final AuthenticationSystemSupport authenticationSystemSupport,
         final CasConfigurationProperties casProperties,
@@ -57,7 +63,8 @@ public class CasHeimdallAutoConfiguration {
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {
         return new DefaultAuthorizationPrincipalParser(ticketRegistry, casProperties,
-            accessTokenJwtBuilder, oidcTokenSigningAndEncryptionService, authenticationSystemSupport);
+            accessTokenJwtBuilder, oidcTokenSigningAndEncryptionService,
+            authenticationSystemSupport, oidcServiceJsonWebKeystoreCache);
     }
 
     @Bean

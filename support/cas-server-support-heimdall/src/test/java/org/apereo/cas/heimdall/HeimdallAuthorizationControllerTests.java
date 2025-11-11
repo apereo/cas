@@ -7,9 +7,12 @@ import org.apereo.cas.heimdall.authzen.AuthZenAction;
 import org.apereo.cas.heimdall.authzen.AuthZenResource;
 import org.apereo.cas.heimdall.authzen.AuthZenSubject;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
+import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.test.CasTestExtension;
@@ -23,7 +26,11 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockWebServer;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
+import org.jose4j.jwk.JsonWebKeySet;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,11 +43,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -86,8 +97,51 @@ class HeimdallAuthorizationControllerTests {
     private JwtBuilder accessTokenJwtBuilder;
 
     @Autowired
+    @Qualifier("oidcServiceJsonWebKeystoreCache")
+    private LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> oidcServiceJsonWebKeystoreCache;
+    
+    @Autowired
     @Qualifier("oidcIdTokenGenerator")
     private IdTokenGeneratorService oidcIdTokenGenerator;
+
+    @Test
+    void verifyJwtBearerToken() throws Throwable {
+        val registeredService = newOidcRegisteredService(UUID.randomUUID().toString());
+        registeredService.setJwks("classpath:keystore.jwks");
+        servicesManager.save(registeredService);
+
+        val claims = JWTClaimsSet.parse(Map.of(
+            "memberOf", "my-admin",
+            OAuth20Constants.CLAIM_EXP, LocalDateTime.now(Clock.systemUTC()).plusDays(1).toEpochSecond(ZoneOffset.UTC),
+            OAuth20Constants.CLAIM_SUB, "casuser",
+            OidcConstants.ISS, registeredService.getClientId(),
+            OAuth20Constants.CLIENT_ID, registeredService.getClientId(),
+            OidcConstants.AUD, casProperties.getServer().getPrefix() + '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL
+        ));
+        val jsonWebKey = (PublicJsonWebKey) oidcServiceJsonWebKeystoreCache
+            .get(new OidcJsonWebKeyCacheKey(registeredService, OidcJsonWebKeyUsage.SIGNING))
+            .orElseThrow()
+            .getJsonWebKeys()
+            .getFirst();
+        val signAssertion = EncodingUtils.signJwsRSASha512(jsonWebKey.getPrivateKey(),
+            claims.toString().getBytes(StandardCharsets.UTF_8), Map.of());
+        val bearerToken = new String(signAssertion, StandardCharsets.UTF_8);
+
+        mockMvc.perform(post("/heimdall/authorize")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(AuthorizationRequest.builder()
+                .uri("/api/users")
+                .method("POST")
+                .namespace("API_USERS")
+                .build()
+                .toJson()
+            )
+            .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(bearerToken))
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+
+    }
+
 
     @Test
     void verifyIdToken() throws Throwable {

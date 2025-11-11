@@ -97,9 +97,30 @@ particularly if the codes are set to be encrypted.
 <div class="alert alert-warning">:warning: <strong>Breaking Change</strong><p>
 This may be a breaking change. You will need to adjust your database schema based on the notes above.</p></div>
 
+### OpenID Connect JWT Authorization Grant
+
+CAS now supports the [JWT Authorization Grant](../authentication/OIDC-Authentication-JWT-Bearer.html)
+(also known as JWT Bearer Token grant identified as `urn:ietf:params:oauth:client-assertion-type:jwt-bearer`) as a new grant type
+that allows a client application to obtain an access token by presenting a JWT assertion to the CAS server,
+instead of using a username/password or client credentials. This functionality is also supported by the
+[Heimdall authorization engine](../authorization/Heimdall-Authorization-Overview.html).
+ 
+### Simple Multifactor Authentication & Rate Limiting
+
+Rate limiting for [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication-RateLimiting.html) 
+is now extended to support token validation attempts in addition to token generation requests.
+ 
+### Password Management
+
+[Password management operations](../password_management/Password-Management.html) are internally 
+modified to support multiple backend account management systems. 
+This means that you may enable multiple password management modules backed by different account stores such as 
+LDAP and JDBC at the same time and CAS would force a chain to validate password policies across all such systems.
+
 ### Single SignOn Sessions Per User
                 
-Many of the ticket registry implementations (i.e. MongoDb, Redis, JPA, etc) are extended to allow for removal of all tickets that were issued for a given
+Many of the ticket registry implementations (i.e. MongoDb, Redis, JPA, etc) are 
+extended to allow for removal of all tickets that were issued for a given
 principal based on the ticket's attached authentication attempt. The `ssoSessions` endpoint is also modified
 to support removing all such tickets when a single sign-on session is terminated for a user.
 
@@ -135,6 +156,12 @@ We will consider re-adding support for Undertow once it is compatible with our v
 Support for [JavaMelody](../monitoring/Configuring-Monitoring-JavaMelody.html) is not yet compatible with Spring Boot `4`. 
 We plan to re-add support for JavaMelody in the future once compatibility is restored.
 
+#### Google Cloud Platform
+
+Almost all functionality that builds on top of Google Cloud platform is not yet **fully** compatible with Spring Boot `4`.
+YMMV. We plan to re-add support for Google Cloud features in the future once the `spring-cloud-gcp` library is compatible
+with Spring Boot `4`.
+
 #### SpringBoot Admin
 
 Support for [Spring Boot Admin](../monitoring/Configuring-SpringBootAdmin.html) is not yet compatible with Spring Boot `4`.
@@ -143,8 +170,8 @@ We plan to re-add support for Spring Boot Admin in the future once compatibility
 #### Spring Session 
 
 [Spring Session with MongoDb](../webflow/Webflow-Customization-Sessions-ServerSide-MongoDb.html) 
-and [Spring Session with Hazelcast](../webflow/Webflow-Customization-Sessions-ServerSide-Hazelcast.html) are
-not yet compatible with Spring Boot `4`. We plan to re-add support for these features in the future once compatibility is restored.
+is not yet compatible with Spring Boot `4`. We plan to re-add support for these features 
+in the future once compatibility is restored.
 
 #### Jackson & JSON Processing
 
