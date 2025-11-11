@@ -1,0 +1,12 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": ".*",
+  "name": "Sample",
+  "id": 1,
+  "description": "Sample Service",
+  "jwks": "file:${#environmentVars['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVars['SCENARIO']}/keystore.json",
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile", "email" ] ],
+  "generateRefreshToken": true
+}

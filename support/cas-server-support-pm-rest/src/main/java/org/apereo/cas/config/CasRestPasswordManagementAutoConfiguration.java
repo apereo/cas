@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.pm.PasswordHistoryService;
-import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordManagementExecutionPlan;
 import org.apereo.cas.pm.rest.RestPasswordManagementService;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -38,7 +38,7 @@ public class CasRestPasswordManagementAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "restPasswordChangeService")
-    public PasswordManagementService passwordChangeService(
+    public PasswordManagementExecutionPlan restPasswordChangeService(
         @Qualifier("passwordChangeServiceRestTemplate")
         final RestTemplate passwordChangeServiceRestTemplate,
         final CasConfigurationProperties casProperties,
@@ -46,7 +46,7 @@ public class CasRestPasswordManagementAutoConfiguration {
         final CipherExecutor passwordManagementCipherExecutor,
         @Qualifier(PasswordHistoryService.BEAN_NAME)
         final PasswordHistoryService passwordHistoryService) {
-        return new RestPasswordManagementService(passwordManagementCipherExecutor,
+        return () -> new RestPasswordManagementService(passwordManagementCipherExecutor,
             casProperties, passwordChangeServiceRestTemplate, passwordHistoryService);
     }
 

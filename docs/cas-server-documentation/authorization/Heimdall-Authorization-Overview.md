@@ -131,7 +131,8 @@ The authorization header value can be *one* of the following:
 - An OpenID Connect **ID token**, passed as a `Bearer` token, produced by CAS when acting as a [OpenID Connect Provider](../authentication/OIDC-Authentication.html).
 - A **JWT access token**, passed as a `Bearer` token, produced by CAS when acting as an [OAuth](../authentication/OAuth-Authentication.html) or [OpenID Connect](../authentication/OIDC-Authentication.html) identity provider.
 - An **opaque access token** (i.e. `AT-1-...`), passed as a `Bearer` token, produced by CAS when acting an [OAuth](../authentication/OAuth-Authentication.html) or [OpenID Connect](../authentication/OIDC-Authentication.html) identity provider.
-- A valid Base64-encoded `username:password`, passed as a `Basic` token, that can be accepted by the CAS authentication engine.
+- A **JWT bearer token** passed as a `Bearer` token and one that follows the semantics of the [JWT Authorization grant](../authentication/OIDC-Authentication-JWT-Bearer.html).
+- A valid base64-encoded `username:password`, passed as a `Basic` token, that can be accepted by the CAS authentication engine.
 
 Claims or attributes from all token types are extracted and attached to the final principal, which is then
 passed to the authorization policy engine to make decisions. However, when using OpenID Connect ID AuthZEN protocol
@@ -453,21 +454,21 @@ The query is expected to return an `authorized` column of a `boolean` type.
 
 The following settings are available:
 
-| Parameter  | Description                                                                                |
-|------------|--------------------------------------------------------------------------------------------|
-| `query`    | The SQL query that is executed. Supports named parameters such as `:parameter`. See below. |
-| `url`      | <sup>[1]</sup> The database connection string, i.e. `jdbc:mysql://localhost:3306/cas`      |
-| `username` | <sup>[1]</sup> The username when building a database connection.                           |
-| `password` | <sup>[1]</sup> The password when building a database connection.                           |
+| Parameter  | Description                                                                               |
+|------------|-------------------------------------------------------------------------------------------|
+| `query`    | The SQL query that is executed. Supports named parameters such as `parameter`. See below. |
+| `url`      | <sup>[1]</sup> The database connection string, i.e. `jdbc:mysql://localhost:3306/cas`     |
+| `username` | <sup>[1]</sup> The username when building a database connection.                          |
+| `password` | <sup>[1]</sup> The password when building a database connection.                          |
 
 <sub><i>[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.</i></sub>
 
 The SQL query is preprocessed to receive the following named parameters:
 
-- `:method` from the authorization request.
-- `:uri` from the authorization request.
-- `:namespace` from the authorization request.
-- `:principal` from the authorization request.
+- `method` from the authorization request.
+- `uri` from the authorization request.
+- `namespace` from the authorization request.
+- `principal` from the authorization request.
 
 Furthermore, all context attributes from the authorization request as well as all principal attributes are passed as named parameters
 and can be used and referenced in the query.

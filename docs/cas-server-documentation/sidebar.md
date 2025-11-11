@@ -592,6 +592,7 @@ layout: null
             *   [DPoP](/cas/{{ version }}/authentication/OIDC-Authentication-DPoP.html)
             *   [Token Authentication](/cas/{{ version }}/authentication/OIDC-Authentication-AccessToken-AuthMethods.html)
             *   [CIBA](/cas/{{ version }}/authentication/OIDC-Authentication-CIBA.html)
+            *   [JWT Authorization](/cas/{{ version }}/authentication/OIDC-Authentication-JWT-Bearer.html)
             *   [JWKS](#oidcjwksmenu)
                 *   [Overview](/cas/{{ version }}/authentication/OIDC-Authentication-JWKS.html)
                 *   [Storage](#oidcjwksstorage)
