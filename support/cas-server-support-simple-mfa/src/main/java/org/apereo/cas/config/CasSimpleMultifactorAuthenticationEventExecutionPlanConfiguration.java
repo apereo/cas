@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderM
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationHandler;
@@ -53,6 +54,8 @@ class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasSimpleMultifactorAuthenticationService casSimpleMultifactorAuthenticationService(
+        @Qualifier("mfaSimpleMultifactorBucketConsumer")
+        final BucketConsumer mfaSimpleMultifactorBucketConsumer,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier(TicketFactory.BEAN_NAME)
@@ -65,7 +68,8 @@ class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         return BeanSupplier.of(CasSimpleMultifactorAuthenticationService.class)
             .when(BeanCondition.on("cas.authn.mfa.simple.token.rest.url").isUrl().given(applicationContext.getEnvironment()))
             .supply(() -> new RestfulCasSimpleMultifactorAuthenticationService(ticketRegistry, simple.getToken().getRest(), ticketFactory))
-            .otherwise(() -> new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry, ticketFactory, accountService))
+            .otherwise(() -> new DefaultCasSimpleMultifactorAuthenticationService(ticketRegistry,
+                ticketFactory, accountService, mfaSimpleMultifactorBucketConsumer))
             .get();
     }
 

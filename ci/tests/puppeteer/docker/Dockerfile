@@ -28,6 +28,6 @@ RUN chmod +x /cas-server/entrypoint.sh
 
 EXPOSE 8080 $SERVER_PORT 5005
 
-ENV PATH $PATH:$JAVA_HOME/bin:.
+ENV PATH=$PATH:$JAVA_HOME/bin:.
 WORKDIR cas-server
 ENTRYPOINT ["/cas-server/entrypoint.sh"]

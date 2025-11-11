@@ -4,6 +4,13 @@ docker stop strapi-server || true && docker rm strapi-server || true
 
 echo "Building Strapi docker container"
 docker build ci/tests/puppeteer/scenarios/oidc-login-strapi/strapi -t cas/strapi:latest
+retVal=$?
+if [ $retVal == 0 ]; then
+    echo "Strapi docker image is built successfully."
+else
+    echo "Failed to build Strapi docker image."
+    exit $retVal
+fi
 
 docker run -d -p 1337:1337 \
   --add-host host.docker.internal:host-gateway \
