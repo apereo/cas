@@ -9,9 +9,12 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.util.spring.boot.ExcludeInnerAutoConfigurationBeanDefinitionPostProcessor;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.spring.autoconfigure.firestore.GcpFirestoreAutoConfiguration;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,6 +39,13 @@ import java.util.function.Function;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "gcp-firestore")
 @AutoConfiguration
 public class CasGoogleCloudFirestoreTicketRegistryAutoConfiguration {
+    @Bean
+    @Deprecated(since = "8.0.0", forRemoval = true)
+    public static BeanDefinitionRegistryPostProcessor internalRemoveFirestoreTicketRegistryReactiveAutoConfiguration() {
+        val autoConfiguration = GcpFirestoreAutoConfiguration.class.getName() + "$FirestoreReactiveAutoConfiguration";
+        return new ExcludeInnerAutoConfigurationBeanDefinitionPostProcessor(autoConfiguration);
+    }
+    
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public TicketRegistry ticketRegistry(
