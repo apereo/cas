@@ -2999,6 +2999,16 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                     exclude(group: "tools.jackson.module", module: "jackson-module-jaxb-annotations")
                 },
+                dependencies.create(libs.spring.boot.micrometer.tracing.sdk.get()) {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                },
                 dependencies.create(libs.spring.boot.health.get()) {
                     exclude(group: "tools.jackson.core", module: "jackson-annotations")
                     exclude(group: "tools.jackson.core", module: "jackson-databind")
@@ -3662,20 +3672,14 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                 }
         ],
-//        springsessionhazelcast     : [
-//                dependencies.create(libs.spring.session.hazelcast.get()) {
-//                    exclude(group: "org.springframework", module: "spring-web")
-//                    exclude(group: "org.springframework", module: "spring-core")
-//                    exclude(group: "org.springframework", module: "spring-webmvc")
-//                    exclude(group: "org.springframework", module: "spring-context")
-//                },
-//                dependencies.create(libs.spring.boot.session.hazelcast.get()) {
-//                    exclude(group: "org.springframework", module: "spring-web")
-//                    exclude(group: "org.springframework", module: "spring-core")
-//                    exclude(group: "org.springframework", module: "spring-webmvc")
-//                    exclude(group: "org.springframework", module: "spring-context")
-//                }
-//        ],
+        springsessionhazelcast     : [
+                dependencies.create(libs.hazelcast.spring.session.get()) {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
+                }
+        ],
         springsessionjdbc          : [
                 dependencies.create(libs.spring.session.jdbc.get()) {
                     exclude(group: "org.springframework", module: "spring-web")
