@@ -104,23 +104,25 @@ function publish {
         links+=( "[RC$i](https://apereo.github.io/cas/${documentationBranch}/release_notes/RC$i.html)" )
       done
       changelog=$(printf '%s\n' "${links[*]// /,}")
-    fi
-
-    if [[ -n "${changelog}" ]]; then
       changelog="- Changelog: ${changelog}"
     fi
-    
+
+
     currentCommit=$(git rev-parse HEAD)
     printgreen "Current commit is ${currentCommit}"
 
     previousTag=$(git describe --tags --abbrev=0 "${releaseTag}^")
     echo "Looking at commits in range: $previousTag..$releaseTag" >&2
 
-    contributors=$(gh api repos/apereo/cas/compare/$previousTag...$releaseTag \
-      --jq '.commits[].author.login // .commits[].commit.author.name' \
-      | sort -u \
-      | sed 's/.*/- @&/')
-    printgreen "Contributors: ${contributors}"
+    if [[ -n "${previousTag}" && -n "${releaseTag}" ]]; then
+      contributors=$(gh api repos/apereo/cas/compare/$previousTag...$releaseTag \
+        --jq '.commits[].author.login // .commits[].commit.author.name' \
+        | sort -u \
+        | sed 's/.*/- @&/')
+      printgreen "Contributors: ${contributors}"
+    else
+      printyellow "Previous or current tag is missing; skipping contributor lookup."
+    fi
     if [[ -z "${contributors}" ]]; then
       contributors="- No contributors found."
     fi
@@ -133,7 +135,7 @@ function publish {
 - [Maintenance Policy](https://apereo.github.io/cas/developer/Maintenance-Policy.html)
 - [Release Policy](https://apereo.github.io/cas/developer/Release-Policy.html)
 - [Release Schedule](https://github.com/apereo/cas/milestones)
-- Changelog: ${changelog}
+${changelog}
 
 # :couple: Contributions
 
@@ -152,6 +154,15 @@ ${contributors}
         printred "Creating GitHub Release for CAS version ${casVersion} failed."
         exit 1
     fi
+
+    echo -e "Closing release milestone for ${casVersion}..."
+    gh milestone close "${casVersion}" --repo "apereo/cas"
+    if [ $? -ne 0 ]; then
+        printred "Closing GitHub milestone for CAS version ${casVersion} failed."
+        exit 1
+    fi
+    printgreen "Release process for Apereo CAS ${casVersion} completed successfully!"
+    exit 0
 }
 
 function finished {

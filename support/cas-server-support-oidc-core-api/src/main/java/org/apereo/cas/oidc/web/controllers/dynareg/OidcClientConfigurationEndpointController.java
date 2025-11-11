@@ -8,7 +8,6 @@ import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
@@ -60,7 +58,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         "/**/" + OidcConstants.CLIENT_CONFIGURATION_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Handle client configuration request", parameters = @Parameter(name = OAuth20Constants.CLIENT_ID, description = "Client ID", required = true))
-    public ResponseEntity handleRequestInternal(
+    public ResponseEntity<?> handleRequestInternal(
         @RequestParam(name = OAuth20Constants.CLIENT_ID)
         final String clientId,
         final HttpServletRequest request, final HttpServletResponse response) {
@@ -105,12 +103,13 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
             )
         )
     )
-    public ResponseEntity handleUpdates(
+    public ResponseEntity<?> handleUpdates(
         @RequestParam(name = OAuth20Constants.CLIENT_ID)
         final String clientId,
         @RequestBody(required = false)
         final String jsonInput,
         final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.CLIENT_CONFIGURATION_URL))) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
@@ -135,7 +134,7 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
                 service.setClientSecret(getConfigurationContext().getClientSecretGenerator().getNewString());
                 LOGGER.debug("Client secret shall expire at [{}] while now is [{}]", expirationDate, currentTime);
             }
-            
+
             val clientResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(service,
                 getConfigurationContext().getCasProperties().getServer().getPrefix());
             return new ResponseEntity<>(clientResponse, HttpStatus.OK);

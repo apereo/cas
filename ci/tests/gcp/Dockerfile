@@ -1,4 +1,4 @@
-FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:544.0.0-alpine
+FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:546.0.0-alpine
 ARG GCLOUD_COMPONENT
 
 RUN apk add --update --no-cache openjdk21
@@ -8,13 +8,13 @@ RUN gcloud components update
 
 COPY entrypoint.sh .
 
-ENV FIRESTORE_PORT 9980
+ENV FIRESTORE_PORT=9980
 #EXPOSE "$FIRESTORE_PORT"
 
-ENV PUBSUB_PORT 8085
+ENV PUBSUB_PORT=8085
 #EXPOSE "$PUBSUB_PORT"
 
-ENV GCP_PROJECT_ID "apereo-cas-gcp"
-ENV GCLOUD_COMPONENT $GCLOUD_COMPONENT
+ENV GCP_PROJECT_ID="apereo-cas-gcp"
+ENV GCLOUD_COMPONENT=$GCLOUD_COMPONENT
 
 ENTRYPOINT ["./entrypoint.sh"]

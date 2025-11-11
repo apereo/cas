@@ -2,7 +2,7 @@
 aceEditor = "1.41.0"
 acmeClient = "3.5.1"
 amazonDax = "2.0.6"
-amazonSdk = "2.36.3"
+amazonSdk = "2.38.3"
 azureInsights = "3.7.6"
 azureKustoLog4j = "1.0.0"
 animateCss = "4.1.1"
@@ -29,15 +29,15 @@ caffeine = "3.2.3"
 casClient = "4.0.4"
 cbor = "4.5.6"
 chartJs = "4.5.1"
-checkstyle = "12.1.1"
+checkstyle = "12.1.2"
 classgraph = "4.8.184"
 commonsBeans = "1.11.0"
 commonsCli = "1.10.0"
-commonsCodec = "1.19.0"
+commonsCodec = "1.20.0"
 commonsCollections = "4.5.0"
 commonsCollections3 = "3.2.2"
 commonsCompress = "1.28.0"
-commonsIo = "2.20.0"
+commonsIo = "2.21.0"
 commonsJexl = "3.5.0"
 commonsLang = "3.19.0"
 commonsLang2 = "2.6"
@@ -57,7 +57,7 @@ duoUniversalSdk = "1.3.1"
 eclipseAngusMail = "2.0.5"
 eclipseLink = "4.0.8"
 elasticApm = "1.55.1"
-errorprone = "2.43.0"
+errorprone = "2.44.0"
 eurekaClient = "2.0.5"
 fingerprintJs = "4.6.2"
 firebaseAdmin = "9.7.0"
@@ -73,17 +73,18 @@ googleCloudSdk = "7.4.1"
 googleMapsGeoCoding = "2.2.0"
 googleZxing = "3.5.3"
 graalVm = "25.0.1"
-graalVmMetadataRepository = "0.3.27"
+graalVmMetadataRepository = "0.3.30"
 groovy = "5.0.2"
 grouper = "5.22.3"
 gson = "2.13.2"
 guava = "33.5.0-jre"
 h2 = "1.4.197"
 hazelcast = "5.6.0"
+hazelcastSession = "4.0.0-SNAPSHOT"
 hazelcastJClouds = "3.7.2"
 hazelcastZooKeeper = "4.0.2"
 hibernate = "7.1.7.Final"
-hibernateValidator = "9.0.1.Final"
+hibernateValidator = "9.1.0.Final"
 highlightJs = "11.11.1"
 hikari = "7.0.2"
 hjson = "3.1.0"
@@ -172,11 +173,11 @@ mysql = "9.5.0"
 netflixEventBus = "0.3.0"
 netty = "4.2.7.Final"
 nexmo = "5.6.0"
-nimbusJose = "10.5"
-nimbusOidc = "11.30"
+nimbusJose = "10.6"
+nimbusOidc = "11.30.1"
 normalize = "8.0.1"
 notyf = "3.10.0"
-okhttp3 = "5.2.1"
+okhttp3 = "5.3.0"
 okio = "3.16.2"
 okioHttp = "2.7.5"
 oktaHttpClient = "8.2.5"
@@ -184,8 +185,8 @@ oktaSdk = "3.0.0"
 opensaml = "5.1.6"
 oracleJdbc = "23.26.0.0.0"
 oshi = "6.9.1"
-otel = "1.55.0"
-pac4j = "6.2.2"
+otel = "1.56.0"
+pac4j = "6.3.0"
 permitio = "2.2.1"
 postgresql = "42.7.8"
 pushy = "0.15.4"
@@ -196,9 +197,9 @@ saajImpl = "3.0.4"
 scimSdkClient = "1.28.1"
 semver = "3.1.0"
 sendGrid = "4.10.3"
-sentry = "8.24.0"
+sentry = "8.25.0"
 shibbolethUtilJavaSupport = "9.1.6"
-slackClient = "1.45.4"
+slackClient = "1.46.0"
 slf4j = "2.0.17"
 snakeYaml = "2.5"
 socketJsClient = "1.5.1"
@@ -261,7 +262,7 @@ zxcvbn = "4.4.2"
 # This section handles Gradle build classpath dependency versions
 #################################################################
 gradleGit = "1.0.0"
-gradleLombok = "9.0.0"
+gradleLombok = "9.1.0"
 gradleDependencyVersions = "0.53.0"
 gradleErrorProne = "4.3.0"
 gradleGraalVmNative = "0.11.3"
@@ -382,6 +383,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 h2 = { module = "com.h2database:h2", version.ref = "h2" }
 hazelcast-sdk = { module = "com.hazelcast:hazelcast", version.ref = "hazelcast" }
+hazelcast-spring-session = { module = "com.hazelcast.spring:hazelcast-spring-session", version.ref = "hazelcastSession" }
 hazelcast-jclouds = { module = "com.hazelcast:hazelcast-jclouds", version.ref = "hazelcastJClouds" }
 hazelcast-sql = { module = "com.hazelcast:hazelcast-sql", version.ref = "hazelcast" }
 hazelcast-zookeeper = { module = "com.hazelcast:hazelcast-zookeeper", version.ref = "hazelcastZooKeeper" }
@@ -618,6 +620,7 @@ spring-boot-jdbc = { module = "org.springframework.boot:spring-boot-jdbc", versi
 spring-boot-kafka = { module = "org.springframework.boot:spring-boot-kafka", version.ref = "springBoot" }
 spring-boot-mail = { module = "org.springframework.boot:spring-boot-mail", version.ref = "springBoot" }
 spring-boot-micrometer-metrics-test = { module = "org.springframework.boot:spring-boot-micrometer-metrics-test", version.ref = "springBoot" }
+spring-boot-micrometer-tracing-sdk = { module = "org.springframework.boot:spring-boot-micrometer-tracing", version.ref = "springBoot" }
 spring-boot-micrometer-tracing-test = { module = "org.springframework.boot:spring-boot-micrometer-tracing-test", version.ref = "springBoot" }
 spring-boot-mustache = { module = "org.springframework.boot:spring-boot-mustache", version.ref = "springBoot" }
 spring-boot-restclient = { module = "org.springframework.boot:spring-boot-restclient", version.ref = "springBoot" }
@@ -625,7 +628,6 @@ spring-boot-security = { module = "org.springframework.boot:spring-boot-security
 spring-boot-sendgrid = { module = "org.springframework.boot:spring-boot-sendgrid", version.ref = "springBoot" }
 spring-boot-servlet = { module = "org.springframework.boot:spring-boot-servlet", version.ref = "springBoot" }
 spring-boot-session-core = { module = "org.springframework.boot:spring-boot-session", version.ref = "springBoot" }
-#spring-boot-session-hazelcast = { module = "org.springframework.boot:spring-boot-session-hazelcast", version.ref = "springBoot" }
 spring-boot-session-jdbc = { module = "org.springframework.boot:spring-boot-session-jdbc", version.ref = "springBoot" }
 #spring-boot-session-mongodb = { module = "org.springframework.boot:spring-boot-session-data-mongodb", version.ref = "springBoot" }
 spring-boot-session-redis = { module = "org.springframework.boot:spring-boot-session-data-redis", version.ref = "springBoot" }
@@ -724,7 +726,6 @@ spring-security-web = { module = "org.springframework.security:spring-security-w
 spring-session-core = { module = "org.springframework.session:spring-session-core", version.ref = "springSession" }
 #spring-session-data-mongodb = { module = "org.springframework.session:spring-session-data-mongodb", version.ref = "springSessionMongo" }
 spring-session-data-redis = { module = "org.springframework.session:spring-session-data-redis", version.ref = "springSession" }
-#spring-session-hazelcast = { module = "org.springframework.session:spring-session-hazelcast", version.ref = "springSession" }
 spring-session-jdbc = { module = "org.springframework.session:spring-session-jdbc", version.ref = "springSession" }
 spring-shell-starter = { module = "org.springframework.shell:spring-shell-starter", version.ref = "springShell" }
 spring-test = { module = "org.springframework:spring-test", version.ref = "spring" }
