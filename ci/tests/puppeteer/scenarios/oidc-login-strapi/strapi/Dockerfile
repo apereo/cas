@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:24
 RUN apt-get update > /dev/null \
     && apt-get install git patch iproute2 iputils-ping -y > /dev/null \
     && rm -rf /var/lib/apt/lists/*
