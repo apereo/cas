@@ -9,7 +9,17 @@ buildscript {
         gradlePluginPortal()
         maven {
             url = "https://repo.spring.io/milestone"
+            content {
+                includeGroupByRegex ".*springframework.*"
+            }
             mavenContent { releasesOnly() }
+        }
+        maven {
+            url = "https://repo.spring.io/snapshot"
+            content {
+                includeGroupByRegex ".*springframework.*"
+            }
+            mavenContent { snapshotsOnly() }
         }
     }
 
