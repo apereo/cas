@@ -489,7 +489,7 @@ public class FunctionUtils {
      * @throws Exception the exception
      */
     public static <T> T doAndRetry(final Retryable<T> callback) throws Exception {
-        return doAndRetry(callback, RetryPolicy.Builder.DEFAULT_MAX_ATTEMPTS);
+        return doAndRetry(callback, RetryPolicy.Builder.DEFAULT_MAX_RETRIES);
     }
 
     /**
@@ -504,9 +504,7 @@ public class FunctionUtils {
     public static <T> T doAndRetry(final Retryable<T> callback,
                                    final long maximumAttempts) throws Exception {
         val retryTemplate = new RetryTemplate();
-        val defaultRetryPolicy = RetryPolicy.builder()
-            .maxAttempts(Math.max(maximumAttempts, 0))
-            .build();
+        val defaultRetryPolicy = RetryPolicy.withMaxRetries(Math.max(maximumAttempts, 0));
         retryTemplate.setRetryPolicy(defaultRetryPolicy);
         return retryTemplate.execute(callback);
     }
