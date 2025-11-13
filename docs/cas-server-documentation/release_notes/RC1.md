@@ -164,7 +164,7 @@ with Spring Boot `4`.
 
 #### SpringBoot Admin
 
-Support for [Spring Boot Admin](../monitoring/Configuring-SpringBootAdmin.html) is not yet compatible with Spring Boot `4`.
+Support for [SpringBoot Admin](../monitoring/Configuring-SpringBootAdmin.html) is not yet compatible with Spring Boot `4`.
 We plan to re-add support for Spring Boot Admin in the future once compatibility is restored.
       
 #### Spring Session 
@@ -182,7 +182,7 @@ records, etc are processed and loaded.
 
 ## Other Stuff
 
-- [JPA Ticket Registry](../ticketing/JPA-Ticket-Registry.html) will lowercase all tables names to avoid issues with
+- [JPA Ticket Registry](../ticketing/JPA-Ticket-Registry.html) will lowercase all table names to avoid issues with
   case sensitivity in certain database engines, namely MariaDb.
 - PostgreSQL `18` is now the default PostgreSQL version for integration tests.
 - A large number of deprecated classes, methods and configuration properties have been removed.
