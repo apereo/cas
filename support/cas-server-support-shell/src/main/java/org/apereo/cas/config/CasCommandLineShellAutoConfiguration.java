@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
-import org.apereo.cas.shell.commands.cipher.GenerateCryptoKeysCommand;
 import org.apereo.cas.shell.commands.cipher.StringableCipherExecutorCommand;
 import org.apereo.cas.shell.commands.db.GenerateDdlCommand;
 import org.apereo.cas.shell.commands.jasypt.JasyptDecryptPropertyCommand;
@@ -24,12 +23,9 @@ import org.apereo.cas.shell.commands.services.ValidateRegisteredServiceCommand;
 import org.apereo.cas.shell.commands.util.ValidateEndpointCommand;
 import org.apereo.cas.shell.commands.util.ValidateLdapConnectionCommand;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStyle;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.shell.jline.PromptProvider;
 
 /**
  * This is {@link CasCommandLineShellAutoConfiguration}.
@@ -42,16 +38,7 @@ import org.springframework.shell.jline.PromptProvider;
 @AutoConfiguration
 public class CasCommandLineShellAutoConfiguration {
 
-    @Bean
-    public PromptProvider shellPromptProvider() {
-        return () -> new AttributedString("cas>", AttributedStyle.DEFAULT.foreground(AttributedStyle.GREEN));
-    }
-
-    @Bean
-    public GenerateCryptoKeysCommand generateCryptoKeysCommand() {
-        return new GenerateCryptoKeysCommand();
-    }
-
+    
     @Bean
     public StringableCipherExecutorCommand stringableCipherExecutorCommand() {
         return new StringableCipherExecutorCommand();

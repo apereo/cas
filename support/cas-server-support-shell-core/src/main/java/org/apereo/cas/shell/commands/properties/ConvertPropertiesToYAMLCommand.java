@@ -4,10 +4,8 @@ import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import java.io.FileInputStream;
@@ -23,8 +21,6 @@ import java.util.TreeMap;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@ShellCommandGroup("CAS Properties")
-@ShellComponent
 @Slf4j
 public class ConvertPropertiesToYAMLCommand {
     /**
@@ -33,10 +29,10 @@ public class ConvertPropertiesToYAMLCommand {
      * @param propertiesFile the properties file
      * @throws Exception the exception
      */
-    @ShellMethod(key = "convert-props", value = "Convert CAS properties to YAML file at the same location.")
+    @Command(group = "CAS Properties", name = "convert-props", description =  "Convert CAS properties to YAML file at the same location.")
     public void convertProperties(
-        @ShellOption(value = {"properties", "--properties"},
-            help = "Path to a properties file that contains CAS settings",
+        @Option(
+            description = "Path to a properties file that contains CAS settings",
             defaultValue = "/etc/cas/config/cas.properties") final String propertiesFile) throws Exception {
         val output = FilenameUtils.removeExtension(propertiesFile) + ".yml";
         convertAndSaveToYaml(loadProperties(propertiesFile), output);

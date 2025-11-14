@@ -9,11 +9,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.jooq.lambda.Unchecked;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
-
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 import java.io.File;
 import java.io.Writer;
 import java.nio.charset.Charset;
@@ -25,8 +22,6 @@ import java.nio.file.Files;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@ShellCommandGroup("CAS Properties")
-@ShellComponent
 @Slf4j
 public class ExportPropertiesCommand {
     private static final int WRAP_LENGTH = 80;
@@ -68,10 +63,10 @@ public class ExportPropertiesCommand {
      * @param dir the directory for the configuration export
      * @throws Exception the exception
      */
-    @ShellMethod(key = "export-props", value = "Export CAS properties and settings from configuration metadata.")
+    @Command(group = "CAS Properties", name = "export-props", description =  "Export CAS properties and settings from configuration metadata.")
     public void exportProperties(
-        @ShellOption(value = {"dir", "--dir"},
-            help = "Path to a directory where reference configuration files would be exported.",
+        @Option(
+            description = "Path to a directory where reference configuration files would be exported.",
             defaultValue = "./etc/cas/config")
         final String dir) throws Exception {
 
