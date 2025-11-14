@@ -2,17 +2,13 @@ package org.apereo.cas.shell.commands.jasypt;
 
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.registry.AlgorithmRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-
+import org.springframework.shell.core.command.annotation.Command;
 import java.security.NoSuchAlgorithmException;
 
 /**
@@ -21,9 +17,7 @@ import java.security.NoSuchAlgorithmException;
  * @author Hal Deadman
  * @since 5.3.0
  */
-@ShellCommandGroup("Jasypt")
 @Slf4j
-@ShellComponent
 public class JasyptTestAlgorithmsCommand {
 
     @Autowired
@@ -32,7 +26,7 @@ public class JasyptTestAlgorithmsCommand {
     /**
      * List algorithms you can use Jasypt.
      */
-    @ShellMethod(key = "jasypt-test-algorithms", value = "Test encryption algorithms you can use with Jasypt to make sure encryption and decryption both work")
+    @Command(group = "Jasypt", name = "jasypt-test-algorithms", description =  "Test encryption algorithms you can use with Jasypt to make sure encryption and decryption both work")
     public void validateAlgorithms() {
         val providers = new String[]{BouncyCastleProvider.PROVIDER_NAME, "SunJCE"};
         LOGGER.info("==== JASYPT Password Based Encryption Algorithms ====\n");

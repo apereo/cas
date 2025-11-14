@@ -2,15 +2,12 @@ package org.apereo.cas.shell.commands.oidc;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorService;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
 /**
  * This is {@link GenerateOidcJsonWebKeystoreCommand}.
@@ -18,8 +15,6 @@ import org.springframework.shell.standard.ShellOption;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@ShellCommandGroup("OIDC")
-@ShellComponent
 @Slf4j
 public class GenerateOidcJsonWebKeystoreCommand {
     @Autowired
@@ -34,22 +29,22 @@ public class GenerateOidcJsonWebKeystoreCommand {
      * @param jwksKeyType the jwks key type
      * @throws Exception the exception
      */
-    @ShellMethod(key = "generate-oidc-jwks", value = "Generate OIDC JSON Web Keystore")
+    @Command(group = "OIDC", name = "generate-oidc-jwks", description = "Generate OIDC JSON Web Keystore")
     public void generate(
-        @ShellOption(value = {"jwksFile", "--jwksFile"},
-            help = "Location of the JSON web keystore file.",
+        @Option(
+            description = "Location of the JSON web keystore file.",
             defaultValue = "/etc/cas/config/keystore.jwks")
         final String jwksFile,
-        @ShellOption(value = {"jwksKeyId", "--jwksKeyId"},
-            help = "The key identifier to set for the generated key in the keystore.",
+        @Option(
+            description = "The key identifier to set for the generated key in the keystore.",
             defaultValue = "cas")
         final String jwksKeyId,
-        @ShellOption(value = {"jwksKeySize", "--jwksKeySize"},
-            help = "The key size (an algorithm-specific) for the generated jwks.",
+        @Option(
+            description = "The key size (an algorithm-specific) for the generated jwks.",
             defaultValue = "2048")
         final int jwksKeySize,
-        @ShellOption(value = {"jwksKeyType", "--jwksKeyType"},
-            help = "The type of the JWKS used to handle signing/encryption of authentication tokens.",
+        @Option(
+            description = "The type of the JWKS used to handle signing/encryption of authentication tokens.",
             defaultValue = "RSA")
         final String jwksKeyType) throws Exception {
         val properties = new OidcProperties();

@@ -17,10 +17,8 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 import tools.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -32,8 +30,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
-@ShellCommandGroup("JWT")
-@ShellComponent
 @Slf4j
 public class GenerateFullJwtCommand {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -51,19 +47,19 @@ public class GenerateFullJwtCommand {
      * @return the string
      * @throws Exception the exception
      */
-    @ShellMethod(key = "generate-full-jwt", value = "Generate JWT and sign it using a given keystore")
+    @Command(group = "JWT", name = "generate-full-jwt", description =  "Generate JWT and sign it using a given keystore")
     public String generateKey(
-        @ShellOption(value = {"jwks", "--jwks"}, defaultValue = StringUtils.EMPTY, help = "Path to the JWKS file used to sign the token")
+        @Option( defaultValue = StringUtils.EMPTY, description = "Path to the JWKS file used to sign the token")
         final String jwks,
-        @ShellOption(value = {"iss", "--iss"}, defaultValue = "https://localhost:8443/cas/oidc", help = "Issuer")
+        @Option( defaultValue = "https://localhost:8443/cas/oidc", description = "Issuer")
         final String iss,
-        @ShellOption(value = {"claims", "--claims"}, defaultValue = "{}", help = "JWT claims as JSON")
+        @Option( defaultValue = "{}", description = "JWT claims as JSON")
         final String claims,
-        @ShellOption(value = {"aud", "--aud"}, defaultValue = "CAS", help = "Audience")
+        @Option( defaultValue = "CAS", description = "Audience")
         final String aud,
-        @ShellOption(value = {"exp", "--exp"}, defaultValue = "300", help = "Expiration in seconds")
+        @Option( defaultValue = "300", description = "Expiration in seconds")
         final String exp,
-        @ShellOption(value = {"sub", "--sub"}, help = "Subject")
+        @Option( description = "Subject")
         final String sub) throws Exception {
 
         val jwtClaims = new JwtClaims();

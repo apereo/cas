@@ -1,7 +1,6 @@
 package org.apereo.cas.shell.commands.jasypt;
 
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -11,11 +10,8 @@ import org.jasypt.iv.NoIvGenerator;
 import org.jasypt.iv.RandomIvGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
-
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -26,8 +22,6 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@ShellCommandGroup("CAS Properties")
-@ShellComponent
 @Slf4j
 public class JasyptEncryptPropertyCommand {
     @Autowired
@@ -45,33 +39,21 @@ public class JasyptEncryptPropertyCommand {
      * @param iterations the iterations - defaults to {@value StandardPBEByteEncryptor#DEFAULT_KEY_OBTENTION_ITERATIONS}
      * @throws Exception the exception
      */
-    @ShellMethod(key = "encrypt-value", value = "Encrypt a CAS property value/setting via Jasypt")
+    @Command(group = "CAS Properties", name = "encrypt-value", description = "Encrypt a CAS property value/setting via Jasypt")
     public void encryptValue(
-        @ShellOption(value = {"value", "--value"},
-            defaultValue = ShellOption.NULL,
-            help = "Value to encrypt")
+        @Option(description = "Value to encrypt")
         final String value,
-        @ShellOption(value = {"file", "--file"},
-            defaultValue = ShellOption.NULL,
-            help = "File to encrypt")
+        @Option(description = "File to encrypt")
         final String file,
-        @ShellOption(defaultValue = ShellOption.NULL,
-            value = {"alg", "--alg"},
-            help = "Algorithm to use to encrypt")
+        @Option(description = "Algorithm to use to encrypt")
         final String alg,
-        @ShellOption(defaultValue = ShellOption.NULL,
-            value = {"provider", "--provider"},
-            help = "Security provider to use to encrypt")
+        @Option(description = "Security provider to use to encrypt")
         final String provider,
-        @ShellOption(value = {"password", "--password"},
-            help = "Password (encryption key) to encrypt")
+        @Option(description = "Password (encryption key) to encrypt")
         final String password,
-        @ShellOption(value = {"initvector", "--initvector", "iv", "--iv"},
-            help = "Use initialization vector to encrypt", defaultValue = "false")
+        @Option(description = "Use initialization vector to encrypt", defaultValue = "false")
         final Boolean initVector,
-        @ShellOption(value = {"iterations", "--iterations"},
-            defaultValue = ShellOption.NULL,
-            help = "Key obtention iterations to encrypt, default 1000")
+        @Option(description = "Key obtention iterations to encrypt, default 1000")
         final String iterations) throws Exception {
 
         val cipher = new CasConfigurationJasyptCipherExecutor(environment);

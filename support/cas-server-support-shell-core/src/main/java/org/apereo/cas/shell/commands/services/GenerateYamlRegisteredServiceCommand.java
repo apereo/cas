@@ -8,10 +8,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
 import java.io.File;
 import java.io.StringWriter;
@@ -24,8 +22,6 @@ import java.nio.file.attribute.BasicFileAttributes;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@ShellCommandGroup("Registered Services")
-@ShellComponent
 @Slf4j
 public class GenerateYamlRegisteredServiceCommand {
     private static final int SEP_LINE_LENGTH = 70;
@@ -41,13 +37,13 @@ public class GenerateYamlRegisteredServiceCommand {
      * @param destination the destination
      * @return the file
      */
-    @ShellMethod(key = "generate-yaml", value = "Generate a YAML registered service definition")
+    @Command(group = "Registered Services", name = "generate-yaml", description = "Generate a YAML registered service definition")
     public File generateYaml(
-        @ShellOption(value = {"file", "--file"},
-            help = "Path to the JSON service definition file")
+        @Option(longName = "file",
+            description = "Path to the JSON service definition file")
         final String file,
-        @ShellOption(value = {"destination", "--destination"},
-            help = "Path to the destination YAML service definition file")
+        @Option(longName = "destination",
+            description = "Path to the destination YAML service definition file")
         final String destination) {
         val filePath = new File(file);
         val result = StringUtils.isBlank(destination) ? null : new File(destination);

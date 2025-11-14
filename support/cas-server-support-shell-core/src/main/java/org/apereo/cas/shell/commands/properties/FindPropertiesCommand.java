@@ -9,10 +9,8 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -24,8 +22,6 @@ import java.util.stream.StreamSupport;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@ShellCommandGroup("CAS Properties")
-@ShellComponent
 @Slf4j
 public class FindPropertiesCommand {
 
@@ -38,16 +34,16 @@ public class FindPropertiesCommand {
      * @param strict  the strict match
      * @param summary the summary
      */
-    @ShellMethod(key = "find", value = "Look up properties associated with a CAS group/module.")
+    @Command(group = "CAS Properties", name = "find", description =  "Look up properties associated with a CAS group/module.")
     public void find(
-        @ShellOption(value = { "name", "--name" },
-            help = "Property name regex pattern",
+        @Option(
+            description = "Property name regex pattern",
             defaultValue = ".+") final String name,
-        @ShellOption(value = { "strict-match", "--strict-match" },
-            help = "Whether pattern should be done in strict-mode which means "
+        @Option(
+            description = "Whether pattern should be done in strict-mode which means "
                 + "the matching engine tries to match the entire region for the query.") final boolean strict,
-        @ShellOption(value = { "summary", "--summary" },
-            help = "Whether results should be presented in summarized mode") final boolean summary) {
+        @Option(
+            description = "Whether results should be presented in summarized mode") final boolean summary) {
 
         val results = find(strict, RegexUtils.createPattern(name));
 

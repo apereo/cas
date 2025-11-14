@@ -3,11 +3,8 @@ package org.apereo.cas.shell.commands.jasypt;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
-
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 import java.security.Provider;
 import java.security.Security;
 
@@ -17,9 +14,7 @@ import java.security.Security;
  * @author Hal Deadman
  * @since 5.3.0
  */
-@ShellCommandGroup("Jasypt")
 @Slf4j
-@ShellComponent
 public class JasyptListProvidersCommand {
 
     /**
@@ -27,9 +22,9 @@ public class JasyptListProvidersCommand {
      *
      * @param includeBC whether to include the BouncyCastle provider
      */
-    @ShellMethod(key = "jasypt-list-providers", value = "List encryption providers with PBE Ciphers you can use with Jasypt")
-    public void listProviders(@ShellOption(value = {"includeBC", "--includeBC"},
-        help = "Include Bouncy Castle provider", defaultValue = "false") final Boolean includeBC) {
+    @Command(group = "Jasypt", name = "jasypt-list-providers", description =  "List encryption providers with PBE Ciphers you can use with Jasypt")
+    public void listProviders(@Option(
+        description = "Include Bouncy Castle provider", defaultValue = "false") final Boolean includeBC) {
         if (includeBC) {
             Security.addProvider(new BouncyCastleProvider());
         } else {
