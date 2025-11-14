@@ -112,13 +112,14 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
         ));
         val sql = sub.replace(initialSql);
         LOGGER.debug("Executing SQL query [{}]", sql);
-        try (val rows = influxDbConnectionFactory.query(MEASUREMENT, sql)) {
-            return rows.map(row -> new CasEventAggregate(
+        val rows = influxDbConnectionFactory.query(MEASUREMENT, sql);
+        return rows
+            .map(row -> new CasEventAggregate(
                 row.getField("window", LocalDateTime.class),
                 row.getTag("type"),
                 row.getIntegerField("count"),
                 row.getTag("tenant")
-            ));
-        }
+            ))
+            .onClose(rows::close);
     }
 }
