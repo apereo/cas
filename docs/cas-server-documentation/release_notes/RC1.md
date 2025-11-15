@@ -129,6 +129,13 @@ when an SSO session is terminated for a user forcefully, specially when such tic
 the parent `ticket-granting-ticket` and are configured to outlive the parent ticket's lifetime. A practical example
 of this, relevant configuration options permitting and activated, is OAuth2 refresh tokens that may 
 continue to perform even after the user logs out and terminates their SSO session.
+ 
+### JSpecify & NullAway
+
+CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations to indicate nullness contracts on method parameters,
+return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
+and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
+during compile time.
 
 ### Spring Boot 4
 

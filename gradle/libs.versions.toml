@@ -267,6 +267,7 @@ gradleGit = "1.0.0"
 gradleLombok = "9.1.0"
 gradleDependencyVersions = "0.53.0"
 gradleErrorProne = "4.3.0"
+gradleNullAway = "2.3.0"
 gradleGraalVmNative = "0.11.3"
 gradleSonarqube = "7.0.1.6134"
 gradleNmcpPublishing = "1.2.1"
@@ -365,6 +366,7 @@ eclipse-jgit-http-apache = { module = "org.eclipse.jgit:org.eclipse.jgit.http.ap
 eclipse-jgit-ssh-jsch = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.jsch", version.ref = "jgit" }
 eclipse-persistence-jpa = { module = "org.eclipse.persistence:org.eclipse.persistence.jpa", version.ref = "eclipseLink" }
 elasticache-java-cluster-client = { module = "com.amazonaws:elasticache-java-cluster-client", version.ref = "awsmemcached" }
+errorprone = { module = "com.google.errorprone:error_prone_core", version.ref = "errorprone" }
 eureka-client = { module = "com.netflix.eureka:eureka-client", version.ref = "eurekaClient" }
 expressly = { module = "org.glassfish.expressly:expressly", version.ref = "jakartaElImpl" }
 fediz-core = { module = "org.apache.cxf.fediz:fediz-core", version.ref = "apacheFediz" }
@@ -555,6 +557,7 @@ netty-transport = { module = "io.netty:netty-transport", version.ref = "netty" }
 nimbus-jose-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbusJose" }
 normalize-css = { module = "org.webjars.npm:normalize.css", version.ref = "normalize" }
 notyf = { module = "org.webjars.npm:notyf", version.ref = "notyf" }
+nullaway = { module = "com.uber.nullaway:nullaway", version.ref = "nullaway" }
 oauth2-oidc-sdk = { module = "com.nimbusds:oauth2-oidc-sdk", version.ref = "nimbusOidc" }
 ojdbc11 = { module = "com.oracle.database.jdbc:ojdbc11", version.ref = "oracleJdbc" }
 okhttp3 = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp3" }
@@ -793,6 +796,7 @@ gradle-plugin-lombok = { module = "io.freefair.gradle:lombok-plugin", version.re
 gradle-plugin-versions = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "gradleDependencyVersions" }
 gradle-plugin-native = { module = "org.graalvm.buildtools:native-gradle-plugin", version.ref = "gradleGraalVmNative" }
 gradle-plugin-errorprone = { module = "net.ltgt.gradle:gradle-errorprone-plugin", version.ref = "gradleErrorProne" }
+gradle-plugin-nullaway = { module = "net.ltgt.nullaway:net.ltgt.nullaway.gradle.plugin", version.ref = "gradleNullAway" }
 gradle-plugin-sonarqube = { module = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin", version.ref = "gradleSonarqube" }
 gradle-plugin-nmcp = { module = "com.gradleup.nmcp.aggregation:com.gradleup.nmcp.aggregation.gradle.plugin", version.ref = "gradleNmcpPublishing" }
 gradle-plugin-jib = { module = "com.google.cloud.tools.jib:com.google.cloud.tools.jib.gradle.plugin", version.ref = "gradleJib" }

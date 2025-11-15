@@ -12,9 +12,9 @@ import lombok.ToString;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.profile.UserProfile;
 import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * This is {@link IdTokenGenerationContext}.

@@ -9,11 +9,8 @@ import org.apereo.cas.authentication.PrePostAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
-
-import lombok.NonNull;
-
+import org.jspecify.annotations.NonNull;
 import javax.security.auth.login.FailedLoginException;
-
 import java.util.ArrayList;
 import java.util.List;
 

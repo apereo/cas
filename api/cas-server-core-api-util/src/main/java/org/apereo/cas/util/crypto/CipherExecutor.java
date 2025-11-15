@@ -2,6 +2,7 @@ package org.apereo.cas.util.crypto;
 
 import org.apereo.cas.util.NamedObject;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import org.jspecify.annotations.Nullable;
 import java.io.Serializable;
 import java.security.Key;
 
@@ -85,7 +86,7 @@ public interface CipherExecutor<I, O> extends EncodableCipher<I, O>, DecodableCi
      *
      * @return key instance
      */
-    default Key getSigningKey() {
+    default @Nullable Key getSigningKey() {
         return null;
     }
 

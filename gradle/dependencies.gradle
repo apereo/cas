@@ -681,6 +681,10 @@ ext.libraries = [
                 dependencies.create(libs.orgjson.get()) {
                 }
         ],
+        jspecify                     : [
+                dependencies.create(libs.jspecify.get()) {
+                }
+        ],
         okhttp                     : [
                 dependencies.create(libs.okhttp.urlconnection.get()) {
                     exclude(group: "com.squareup.okio", module: "okio")

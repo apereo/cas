@@ -7,7 +7,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import org.jspecify.annotations.NonNull;
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
