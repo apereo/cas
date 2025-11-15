@@ -3,17 +3,15 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.DateTimeUtils;
-
 import com.github.benmanes.caffeine.cache.Expiry;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;

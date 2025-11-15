@@ -30,6 +30,7 @@ buildscript {
         classpath libs.gradle.plugin.versions
         classpath libs.gradle.plugin.native
         classpath libs.gradle.plugin.errorprone
+        classpath libs.gradle.plugin.nullaway
         classpath libs.gradle.plugin.sonarqube
         classpath libs.gradle.plugin.nmcp
     }
@@ -55,6 +56,7 @@ ext {
 
     skipArtifactSigning = providers.systemProperty("skipArtifactSigning").present
     terminateCompilerOnWarning = providers.systemProperty("terminateCompilerOnWarning").getOrElse("true") == "true"
+    skipNullAway = providers.systemProperty("skipNullAway").getOrElse("true") == "true"
 
     enableRemoteDebugging = providers.systemProperty("enableRemoteDebugging").present
     remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend").getOrElse("false") == "true" ? "y" : "n"
@@ -211,6 +213,7 @@ subprojects {
 
     if (!rootProject.skipErrorProneCompiler) {
         apply plugin: "net.ltgt.errorprone"
+        apply plugin: "net.ltgt.nullaway"
     }
     apply from: rootProject.file("gradle/tests.gradle")
 
@@ -349,10 +352,20 @@ subprojects {
                                                     '-Xep:StringConcatToTextBlock:OFF',
                                                     '-Xep:AddressSelection:OFF'
                                                    ]
-
-            it.options.errorprone.error("NullAway")
-            it.options.errorprone.option("NullAway:OnlyNullMarked", "true")
-            it.options.errorprone.option("NullAway:JSpecifyMode", "true")
+            it.options.errorprone.nullaway {
+                if (rootProject.skipNullAway) {
+                    disable()
+                } else {
+                    jspecifyMode = true
+                    handleTestAssertionLibraries = true
+                    suggestSuppressions = true
+                    if (rootProject.ext.terminateCompilerOnWarning) {
+                        error()
+                    } else {
+                        warn()
+                    }
+                }
+            }
 
             casCompilerArgs.add("-XDcompilePolicy=byfile")
             casCompilerArgs.add("-XDshould-stop.ifError=FLOW")
@@ -436,8 +449,8 @@ subprojects {
         annotationProcessor libraries.springindexer
 
         if (!providers.systemProperty("skipErrorProneCompiler").present) {
-            errorprone "com.google.errorprone:error_prone_core:${libs.versions.errorprone.get()}"
-            errorprone "com.uber.nullaway:nullaway:${libs.versions.nullaway.get()}"
+            errorprone libs.errorprone
+            errorprone libs.nullaway
         }
 
         testImplementation libraries.tests
@@ -457,6 +470,15 @@ subprojects {
         }
 
         javadocClasspath project(path: project.path, configuration: 'compileClasspath')
+    }
+
+    if (!providers.systemProperty("skipErrorProneCompiler").present) {
+        nullaway {
+            onlyNullMarked = false
+            annotatedPackages = [
+                "org.apereo.cas"
+            ]
+        }
     }
 }
 
