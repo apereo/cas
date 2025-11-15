@@ -132,7 +132,7 @@ public class MonitoredRepository {
     }
 
     public Optional<DependencyRange> extractBotDependencyRange(final PullRequest pr) {
-        if (pr.getTitle().startsWith("chore(deps): bump") && pr.getTitle().endsWith("-SNAPSHOT")) {
+        if (pr.isBot() && pr.getTitle().toUpperCase().endsWith("-SNAPSHOT")) {
             log.debug("Ignoring SNAPSHOT dependency upgrade {}", pr);
             labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
             close(pr);
