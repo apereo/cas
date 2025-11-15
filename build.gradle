@@ -347,7 +347,13 @@ subprojects {
                                                     '-Xep:JavaUtilDate:OFF',
                                                     '-Xep:BooleanLiteral:OFF',
                                                     '-Xep:StringConcatToTextBlock:OFF',
-                                                    '-Xep:AddressSelection:OFF']
+                                                    '-Xep:AddressSelection:OFF'
+                                                   ]
+
+            it.options.errorprone.error("NullAway")
+            it.options.errorprone.option("NullAway:OnlyNullMarked", "true")
+            it.options.errorprone.option("NullAway:JSpecifyMode", "true")
+
             casCompilerArgs.add("-XDcompilePolicy=byfile")
             casCompilerArgs.add("-XDshould-stop.ifError=FLOW")
         }
@@ -423,6 +429,7 @@ subprojects {
         api libraries.springintegration
         api libraries.springwebflow
         api libraries.jakarta
+        api libraries.jspecify
         
         compileOnly libraries.jakartapersistence
 
@@ -430,6 +437,7 @@ subprojects {
 
         if (!providers.systemProperty("skipErrorProneCompiler").present) {
             errorprone "com.google.errorprone:error_prone_core:${libs.versions.errorprone.get()}"
+            errorprone "com.uber.nullaway:nullaway:${libs.versions.nullaway.get()}"
         }
 
         testImplementation libraries.tests
