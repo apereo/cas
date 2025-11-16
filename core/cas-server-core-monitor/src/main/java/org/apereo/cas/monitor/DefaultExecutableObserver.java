@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import java.util.Map;
 
@@ -22,7 +21,7 @@ import java.util.Map;
 public class DefaultExecutableObserver implements ExecutableObserver {
     private static final KeyValue[] EMPTY_KEY_VALUES_ARRAY = {};
 
-    private final ObjectProvider<@NonNull ObservationRegistry> observationRegistry;
+    private final ObjectProvider<ObservationRegistry> observationRegistry;
 
     @Override
     public void run(final MonitorableTask task, final Runnable runnable) {

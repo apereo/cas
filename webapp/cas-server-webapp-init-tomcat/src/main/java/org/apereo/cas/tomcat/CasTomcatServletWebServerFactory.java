@@ -35,7 +35,6 @@ import org.apache.catalina.webresources.ExtractingRoot;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
-import org.jspecify.annotations.NonNull;
 import org.springframework.boot.tomcat.TomcatWebServer;
 import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
@@ -86,9 +85,8 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         context.setResources(webResourceRoot);
     }
 
-    @NonNull
     @Override
-    protected TomcatWebServer getTomcatWebServer(@NonNull final Tomcat tomcat) {
+    protected TomcatWebServer getTomcatWebServer(final Tomcat tomcat) {
         configureSessionClustering(tomcat);
         return super.getTomcatWebServer(tomcat);
     }
