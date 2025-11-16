@@ -359,6 +359,7 @@ subprojects {
                     jspecifyMode = true
                     handleTestAssertionLibraries = true
                     suggestSuppressions = true
+                    checkOptionalEmptiness = true
                     if (rootProject.ext.terminateCompilerOnWarning) {
                         error()
                     } else {

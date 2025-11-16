@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serial;
@@ -41,22 +42,22 @@ public class ClientInfo implements Serializable {
      * IP Address of the client (Remote).
      */
     @JsonProperty("clientIpAddress")
-    private String clientIpAddress;
+    private @Nullable String clientIpAddress;
 
     /**
      * IP Address of the server (local).
      */
     @JsonProperty("serverIpAddress")
-    private String serverIpAddress;
+    private @Nullable String serverIpAddress;
 
     @JsonProperty("geoLocation")
-    private String geoLocation;
+    private @Nullable String geoLocation;
 
     @JsonProperty("userAgent")
-    private String userAgent;
+    private @Nullable String userAgent;
 
     @JsonProperty("deviceFingerprint")
-    private String deviceFingerprint;
+    private @Nullable String deviceFingerprint;
 
     @JsonProperty("headers")
     private Map<String, String> headers = new HashMap<>();
@@ -65,11 +66,11 @@ public class ClientInfo implements Serializable {
     private Map<String, Serializable> extraInfo = new HashMap<>();
 
     @JsonProperty("locale")
-    private Locale locale;
+    private @Nullable Locale locale;
 
     @JsonProperty("tenant")
     @Getter
-    private String tenant;
+    private @Nullable String tenant;
 
     public ClientInfo(final String clientIpAddress, final String serverIpAddress,
                       final String userAgent, final String geoLocation) {
@@ -209,7 +210,7 @@ public class ClientInfo implements Serializable {
      * @return the tenant id
      */
     @CanIgnoreReturnValue
-    public ClientInfo setTenant(final String tenant) {
+    public ClientInfo setTenant(final @Nullable String tenant) {
         this.tenant = tenant;
         return this;
     }

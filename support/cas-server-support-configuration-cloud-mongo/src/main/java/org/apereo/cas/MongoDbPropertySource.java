@@ -29,9 +29,7 @@ public class MongoDbPropertySource extends EnumerablePropertySource<@NonNull Mon
     }
 
     @Override
-    public Object getProperty(
-        @NonNull
-        final String s) {
+    public Object getProperty(@NonNull final String s) {
         return list.stream()
             .filter(prop -> prop.getName().equals(s))
             .findFirst()

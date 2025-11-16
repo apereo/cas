@@ -52,6 +52,7 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
+import org.jspecify.annotations.Nullable;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
@@ -444,8 +445,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 Optional.of(serviceTicket.getService()));
     }
 
-    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
-                                                                       final TicketGrantingTicket ticketGrantingTicket) {
+    private static @Nullable Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
+                                                                                 final TicketGrantingTicket ticketGrantingTicket) {
         if (context == null) {
             LOGGER.warn("Provided authentication result is undefined to evaluate for mixed principals");
             return null;
