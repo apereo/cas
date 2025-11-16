@@ -63,16 +63,15 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     }
 
     private static CasEvent extractCasEventFromPointValues(final PointValues pointValues) {
-        val event = new CasEvent();
-        event.assignIdIfNecessary();
+        val event = new CasEvent().assignIdIfNecessary();
 
         val geoLocation = pointValues.getTag("geoLocation");
         val geo = MAPPER.readValue(geoLocation, GeoLocationRequest.class);
         event.putGeoLocation(geo);
 
-        event.setPrincipalId(pointValues.getTag("principalId"));
-        event.setType(pointValues.getTag("type"));
-        event.setCreationTime(Instant.ofEpochMilli(Long.parseLong(pointValues.getTag("creationTime"))));
+        event.setPrincipalId(Objects.requireNonNull(pointValues.getTag("principalId")));
+        event.setType(Objects.requireNonNull(pointValues.getTag("type")));
+        event.setCreationTime(Instant.ofEpochMilli(Long.parseLong(Objects.requireNonNull(pointValues.getTag("creationTime")))));
         event.putClientIpAddress(pointValues.getTag("clientIpAddress"));
         event.putServerIpAddress(pointValues.getTag("serverIpAddress"));
         event.putEventId(pointValues.getStringField("value"));

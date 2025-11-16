@@ -12,6 +12,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.Id;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -141,7 +142,7 @@ public class CasEvent implements Serializable {
      * @param eventId the id
      * @return the cas event
      */
-    public CasEvent putEventId(final String eventId) {
+    public CasEvent putEventId(final @Nullable String eventId) {
         return put(FIELD_EVENT_ID, eventId);
     }
 
@@ -151,7 +152,7 @@ public class CasEvent implements Serializable {
      * @param loc the loc
      * @return the cas event
      */
-    public CasEvent putClientIpAddress(final String loc) {
+    public CasEvent putClientIpAddress(final @Nullable String loc) {
         return put(FIELD_CLIENT_IP, loc);
     }
 
@@ -161,7 +162,7 @@ public class CasEvent implements Serializable {
      * @param loc the loc
      * @return the cas event
      */
-    public CasEvent putServerIpAddress(final String loc) {
+    public CasEvent putServerIpAddress(final @Nullable String loc) {
         return put(FIELD_SERVER_IP, loc);
     }
 
@@ -181,7 +182,7 @@ public class CasEvent implements Serializable {
      * @param tenant the tenant
      * @return the cas event
      */
-    public CasEvent putTenant(final String tenant) {
+    public CasEvent putTenant(final @Nullable String tenant) {
         return put(FIELD_TENANT, tenant);
     }
 

@@ -27,7 +27,7 @@ public class GroovyCasEventRepositoryFilter implements CasEventRepositoryFilter,
     @Override
     public boolean shouldSaveEvent(final CasEvent event) throws Throwable {
         val args = new Object[]{event, LOGGER};
-        return watchableScript.execute("shouldSaveEvent", Boolean.class, args);
+        return Boolean.TRUE.equals(watchableScript.execute("shouldSaveEvent", Boolean.class, args));
     }
 
     @Override
