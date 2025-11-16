@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,7 +23,6 @@ import java.util.function.Supplier;
 @Slf4j
 @SuperBuilder
 public class SmsBodyBuilder implements Supplier<String> {
-    @NonNull
     private final SmsProperties properties;
 
     @Builder.Default
