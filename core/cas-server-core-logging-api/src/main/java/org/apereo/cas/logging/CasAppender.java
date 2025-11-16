@@ -15,6 +15,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.jspecify.annotations.Nullable;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
@@ -41,7 +42,7 @@ public class CasAppender extends AbstractAppender {
     }
 
     public CasAppender(final String name, final Configuration config, final AppenderRef appenderRef,
-                       final Filter filter, final int maxEntries) {
+                       @Nullable final Filter filter, final int maxEntries) {
         super(name, filter, PatternLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY);
         this.config = config;
         this.appenderRef = appenderRef;

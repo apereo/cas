@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  */
 @Plugin(name = "CloudWatchAppender", category = "Core", elementType = "appender", printObject = true)
 @Slf4j
-@SuppressWarnings("java:S2055")
+@SuppressWarnings({"java:S2055", "NullAway.Init"})
 public class CloudWatchAppender extends AbstractAppender implements Serializable {
     @Serial
     private static final long serialVersionUID = 1044758913028847477L;
@@ -200,9 +200,9 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
             StringUtils.defaultIfBlank(credentialSecretKey, System.getProperty("AWS_SECRET_KEY")),
             StringUtils.defaultIfBlank(awsLogRegionName, System.getProperty("AWS_REGION_NAME")),
             layout,
-            StringUtils.isBlank(createIfNeeded) ? null : BooleanUtils.toBoolean(createIfNeeded),
-            StringUtils.isBlank(createLogGroupIfNeeded) ? null : BooleanUtils.toBoolean(createLogGroupIfNeeded),
-            StringUtils.isBlank(createLogStreamIfNeeded) ? null : BooleanUtils.toBoolean(createLogStreamIfNeeded));
+            StringUtils.isBlank(createIfNeeded) ? Boolean.FALSE : BooleanUtils.toBoolean(createIfNeeded),
+            StringUtils.isBlank(createLogGroupIfNeeded) ? Boolean.FALSE : BooleanUtils.toBoolean(createLogGroupIfNeeded),
+            StringUtils.isBlank(createLogStreamIfNeeded) ? Boolean.FALSE : BooleanUtils.toBoolean(createLogStreamIfNeeded));
     }
 
     @Override
