@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -93,7 +94,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
             throw new IllegalArgumentException("Must specify proxiedBy when providing parent ticket-granting ticket");
         }
         this.ticketGrantingTicket = ticketGrantingTicket;
-        this.authentication = authentication;
+        this.authentication = Objects.requireNonNull(authentication);
         this.proxiedBy = proxiedBy;
     }
 
