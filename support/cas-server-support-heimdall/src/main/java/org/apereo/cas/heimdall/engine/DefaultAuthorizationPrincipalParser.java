@@ -39,6 +39,7 @@ import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpHeaders;
 import java.nio.charset.StandardCharsets;
@@ -61,10 +62,10 @@ import java.util.Set;
 public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincipalParser {
     protected final TicketRegistry ticketRegistry;
     protected final CasConfigurationProperties casProperties;
-    protected final ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
-    protected final ObjectProvider<OAuth20TokenSigningAndEncryptionService> oidcTokenSigningAndEncryptionService;
+    protected final ObjectProvider<@NonNull JwtBuilder> accessTokenJwtBuilder;
+    protected final ObjectProvider<@NonNull OAuth20TokenSigningAndEncryptionService> oidcTokenSigningAndEncryptionService;
     protected final AuthenticationSystemSupport authenticationSystemSupport;
-    private final ObjectProvider<LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCacheProvider;
+    private final ObjectProvider<@NonNull LoadingCache<@NonNull OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCacheProvider;
 
     @Override
     public Principal parse(final String authorizationHeader, final AuthorizationRequest authorizationRequest) throws Throwable {

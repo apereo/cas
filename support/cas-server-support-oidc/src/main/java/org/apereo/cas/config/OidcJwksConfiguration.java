@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -138,7 +139,7 @@ class OidcJwksConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcDefaultJsonWebKeystoreCacheLoader")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CacheLoader<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCacheLoader(
+        public CacheLoader<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCacheLoader(
             @Qualifier("oidcJsonWebKeystoreGeneratorService")
             final OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService) {
             return new OidcDefaultJsonWebKeystoreCacheLoader(oidcJsonWebKeystoreGeneratorService);
@@ -150,16 +151,16 @@ class OidcJwksConfiguration {
         @Lazy(false)
         public OidcJsonWebKeyStoreListener oidcJsonWebKeyStoreListener(
             @Qualifier("oidcDefaultJsonWebKeystoreCache")
-            final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache) {
+            final LoadingCache<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache) {
             return new OidcDefaultJsonWebKeyStoreListener(oidcDefaultJsonWebKeystoreCache);
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "oidcDefaultJsonWebKeystoreCache")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache(
+        public LoadingCache<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCache(
             @Qualifier("oidcDefaultJsonWebKeystoreCacheLoader")
-            final CacheLoader<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCacheLoader,
+            final CacheLoader<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcDefaultJsonWebKeystoreCacheLoader,
             final CasConfigurationProperties casProperties) {
             val oidc = casProperties.getAuthn().getOidc();
 

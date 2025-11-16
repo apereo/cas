@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -28,13 +29,13 @@ import java.util.List;
 @Endpoint(id = "throttles", defaultAccess = Access.NONE)
 public class ThrottledSubmissionHandlerEndpoint extends BaseCasRestActuatorEndpoint {
 
-    private final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;
-    private final ObjectProvider<ThrottledSubmissionsStore> throttledSubmissionsStore;
+    private final ObjectProvider<@NonNull AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;
+    private final ObjectProvider<@NonNull ThrottledSubmissionsStore> throttledSubmissionsStore;
 
     public ThrottledSubmissionHandlerEndpoint(final CasConfigurationProperties casProperties,
                                               final ConfigurableApplicationContext applicationContext,
-                                              final ObjectProvider<AuthenticationThrottlingExecutionPlan> executionPlan,
-                                              final ObjectProvider<ThrottledSubmissionsStore> throttledSubmissionsStore) {
+                                              final ObjectProvider<@NonNull AuthenticationThrottlingExecutionPlan> executionPlan,
+                                              final ObjectProvider<@NonNull ThrottledSubmissionsStore> throttledSubmissionsStore) {
         super(casProperties, applicationContext);
         this.authenticationThrottlingExecutionPlan = executionPlan;
         this.throttledSubmissionsStore = throttledSubmissionsStore;

@@ -32,6 +32,7 @@ import org.apache.coyote.http2.Http2Protocol;
 import org.apache.tomcat.util.descriptor.web.LoginConfig;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.tomcat.autoconfigure.TomcatServerProperties;
 import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
@@ -98,7 +99,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
     }
 
     @Override
-    public void customize(final ConfigurableServletWebServerFactory factory) {
+    public void customize(final @NonNull ConfigurableServletWebServerFactory factory) {
         if (factory instanceof final TomcatServletWebServerFactory tomcat) {
             configureAjp(tomcat);
             configureHttp(tomcat);

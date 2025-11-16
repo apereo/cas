@@ -12,14 +12,13 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.jradius.dictionary.Attr_State;
 import net.jradius.packet.attribute.value.AttributeValue;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
-
 import javax.security.auth.login.FailedLoginException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,7 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
 
     private final boolean failoverOnAuthenticationFailure;
 
-    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    private final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
 
     public RadiusTokenAuthenticationHandler(final String name,
@@ -51,7 +50,7 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
                                             final boolean failoverOnException,
                                             final boolean failoverOnAuthenticationFailure,
                                             final Integer order,
-                                            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+                                            final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(name, principalFactory, order);
         this.servers = servers;
         this.failoverOnException = failoverOnException;

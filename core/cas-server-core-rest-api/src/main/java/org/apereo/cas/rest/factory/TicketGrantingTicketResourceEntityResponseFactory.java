@@ -1,9 +1,8 @@
 package org.apereo.cas.rest.factory;
 
 import org.apereo.cas.ticket.Ticket;
-
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -23,5 +22,5 @@ public interface TicketGrantingTicketResourceEntityResponseFactory {
      * @return the response entity
      * @throws Throwable the throwable
      */
-    ResponseEntity<String> build(Ticket ticketGrantingTicket, HttpServletRequest request) throws Throwable;
+    ResponseEntity<@NonNull String> build(Ticket ticketGrantingTicket, HttpServletRequest request) throws Throwable;
 }

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.util.MultiValueMap;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHtt
     private int order = Integer.MIN_VALUE;
 
     @Override
-    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) throws Throwable {
+    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<@NonNull String, String> requestBody) throws Throwable {
         if (requestBody == null || requestBody.isEmpty()) {
             LOGGER.debug("Skipping [{}] because the requestBody is null or empty", getClass().getSimpleName());
             return new ArrayList<>();

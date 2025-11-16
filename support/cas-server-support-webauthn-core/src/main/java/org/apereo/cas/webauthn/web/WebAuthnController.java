@@ -60,14 +60,14 @@ public class WebAuthnController extends BaseWebAuthnController {
 
     private final WebAuthnServer server;
 
-    private static ResponseEntity<Object> startResponse(final Object request) throws Exception {
+    private static ResponseEntity<@NonNull Object> startResponse(final Object request) throws Exception {
         val json = writeJson(request);
         LOGGER.trace("Start: [{}]", json);
         return ResponseEntity.ok(json);
     }
 
-    private static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result,
-                                                         final String responseJson) throws Exception {
+    private static ResponseEntity<@NonNull Object> finishResponse(final Either<List<String>, ?> result,
+                                                                  final String responseJson) throws Exception {
         if (result.isRight()) {
             LOGGER.trace("Received: [{}]", responseJson);
             val json = writeJson(result.right().orElseThrow());
@@ -77,11 +77,11 @@ public class WebAuthnController extends BaseWebAuthnController {
         return messagesJson(ResponseEntity.badRequest(), result.left().orElseThrow());
     }
 
-    private static ResponseEntity<Object> messagesJson(final ResponseEntity.BodyBuilder response, final String message) {
+    private static ResponseEntity<@NonNull Object> messagesJson(final ResponseEntity.BodyBuilder response, final String message) {
         return messagesJson(response, List.of(message));
     }
 
-    private static ResponseEntity<Object> messagesJson(final ResponseEntity.BodyBuilder response, final List<String> messages) {
+    private static ResponseEntity<@NonNull Object> messagesJson(final ResponseEntity.BodyBuilder response, final List<String> messages) {
         return response.body(Map.of("messages", messages));
     }
 
@@ -114,7 +114,7 @@ public class WebAuthnController extends BaseWebAuthnController {
                 schema = @Schema(implementation = RegistrationRequest.class)
             )
         ))
-    public ResponseEntity<Object> startRegistration(
+    public ResponseEntity<@NonNull Object> startRegistration(
         @NonNull
         @RequestParam("displayName")
         final String displayName,
@@ -154,7 +154,7 @@ public class WebAuthnController extends BaseWebAuthnController {
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Finish registration")
-    public ResponseEntity<Object> finishRegistration(
+    public ResponseEntity<@NonNull Object> finishRegistration(
         final HttpServletRequest request,
         @RequestBody
         final String responseJson) throws Exception {
@@ -170,7 +170,7 @@ public class WebAuthnController extends BaseWebAuthnController {
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_AUTHENTICATE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Start authentication")
-    public ResponseEntity<Object> startAuthentication(
+    public ResponseEntity<@NonNull Object> startAuthentication(
         final HttpServletRequest request,
         final Principal authenticatedPrincipal) throws Exception {
 
@@ -190,7 +190,7 @@ public class WebAuthnController extends BaseWebAuthnController {
      */
     @PostMapping(value = WEBAUTHN_ENDPOINT_AUTHENTICATE + WEBAUTHN_ENDPOINT_FINISH, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Finish authentication")
-    public ResponseEntity<Object> finishAuthentication(
+    public ResponseEntity<@NonNull Object> finishAuthentication(
         final HttpServletRequest request,
         @RequestBody
         final String responseJson) throws Exception {

@@ -28,9 +28,9 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -145,7 +145,7 @@ class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "radiusTokenAuthenticationHandler")
         public AuthenticationHandler radiusTokenAuthenticationHandler(
             @Qualifier("radiusMultifactorAuthenticationProvider")
-            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
+            final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("radiusTokenPrincipalFactory")
@@ -181,7 +181,7 @@ class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier("radiusMultifactorAuthenticationProvider")
-            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+            final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
             val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
             return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
                 multifactorAuthenticationProvider, servicesManager);

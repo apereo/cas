@@ -2,6 +2,7 @@ package org.apereo.cas.monitor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.health.contributor.AbstractHealthIndicator;
 import org.springframework.boot.health.contributor.Health;
@@ -19,7 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SystemMonitorHealthIndicator extends AbstractHealthIndicator {
 
-    private final ObjectProvider<MetricsEndpoint> metrics;
+    private final ObjectProvider<@NonNull MetricsEndpoint> metrics;
 
     private final int threshold;
 

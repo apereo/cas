@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.health.contributor.AbstractHealthIndicator;
 import org.springframework.boot.health.contributor.Health;
 import org.springframework.boot.health.contributor.Status;
@@ -28,7 +29,7 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
     private final long threshold;
 
     @Override
-    protected void doHealthCheck(final Health.Builder builder) {
+    protected void doHealthCheck(final Health.@NonNull Builder builder) {
         FunctionUtils.doAndHandle(bldr -> {
             val statistics = getStatistics();
             bldr.withDetail("name", getName());

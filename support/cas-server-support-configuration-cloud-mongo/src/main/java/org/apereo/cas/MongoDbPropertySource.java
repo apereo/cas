@@ -1,10 +1,9 @@
 package org.apereo.cas;
 
 import lombok.EqualsAndHashCode;
+import org.jspecify.annotations.NonNull;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.data.mongodb.core.MongoOperations;
-
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -14,7 +13,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @EqualsAndHashCode(callSuper = true)
-public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperations> {
+public class MongoDbPropertySource extends EnumerablePropertySource<@NonNull MongoOperations> {
 
     private final List<MongoDbProperty> list;
 
@@ -23,15 +22,15 @@ public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperati
         list = getSource().findAll(MongoDbProperty.class, MongoDbProperty.class.getSimpleName());
     }
 
-    @Nonnull
+    @NonNull
     @Override
-    public String[] getPropertyNames() {
+    public String @NonNull [] getPropertyNames() {
         return list.stream().map(MongoDbProperty::getName).toArray(String[]::new);
     }
 
     @Override
     public Object getProperty(
-        @Nonnull
+        @NonNull
         final String s) {
         return list.stream()
             .filter(prop -> prop.getName().equals(s))

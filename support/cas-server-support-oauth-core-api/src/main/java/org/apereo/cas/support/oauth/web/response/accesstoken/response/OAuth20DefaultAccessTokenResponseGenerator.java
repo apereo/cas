@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -36,7 +37,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator<T extends OAuth20Configu
     private static final JsonMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toJsonMapper();
 
-    protected final ObjectProvider<T> configurationContext;
+    protected final ObjectProvider<@NonNull T> configurationContext;
 
     private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
         val generatedToken = result.getGeneratedToken();

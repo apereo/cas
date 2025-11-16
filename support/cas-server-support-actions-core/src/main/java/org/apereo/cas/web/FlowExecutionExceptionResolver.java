@@ -5,16 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
-
-import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.HashMap;
 
 /**
@@ -45,11 +43,11 @@ public class FlowExecutionExceptionResolver implements HandlerExceptionResolver 
      */
     @Override
     public ModelAndView resolveException(
-        @Nonnull
+        @NonNull
         final HttpServletRequest request,
-        @Nonnull
+        @NonNull
         final HttpServletResponse response, final Object handler,
-        @Nonnull
+        @NonNull
         final Exception exception) {
 
         if (!(exception instanceof FlowExecutionRepositoryException) || exception instanceof BadlyFormattedFlowExecutionKeyException) {

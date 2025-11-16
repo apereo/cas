@@ -5,6 +5,7 @@ import groovy.lang.Script;
 import org.codehaus.groovy.runtime.BytecodeInterface8;
 import org.codehaus.groovy.transform.StaticTypesTransformation;
 import org.codehaus.groovy.transform.sc.StaticCompileTransformation;
+import org.jspecify.annotations.NonNull;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.List;
@@ -20,7 +21,7 @@ public class CasGroovyRuntimeHints implements CasRuntimeHintsRegistrar {
     private static final int GROOVY_DGM_CLASS_COUNTER = 1500;
     
     @Override
-    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
         registerReflectionHints(hints, List.of(
             StaticCompileTransformation.class,
             StaticTypesTransformation.class,

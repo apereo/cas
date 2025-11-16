@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import java.io.Serial;
 import java.util.Comparator;
 
@@ -36,7 +36,7 @@ public class DefaultTicketDefinition implements TicketDefinition {
     private final int order;
 
     @Override
-    public int compareTo(@Nonnull final TicketDefinition definition) {
+    public int compareTo(@NonNull final TicketDefinition definition) {
         return Comparator
             .comparing(TicketDefinition::getPrefix)
             .thenComparing(TicketDefinition::getImplementationClass, Comparator.comparing(Class::getName))

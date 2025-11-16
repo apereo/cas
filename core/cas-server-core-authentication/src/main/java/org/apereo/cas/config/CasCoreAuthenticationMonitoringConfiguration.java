@@ -14,6 +14,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,21 +43,21 @@ class CasCoreAuthenticationMonitoringConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "authenticationManagerMonitoringAspect")
     public AuthenticationManagerMonitoringAspect authenticationManagerMonitoringAspect(
-        final ObjectProvider<ExecutableObserver> observer) {
+        final ObjectProvider<@NonNull ExecutableObserver> observer) {
         return new AuthenticationManagerMonitoringAspect(observer);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "authenticationHandlerMonitoringAspect")
     public AuthenticationHandlerMonitoringAspect authenticationHandlerMonitoringAspect(
-        final ObjectProvider<ExecutableObserver> observer) {
+        final ObjectProvider<@NonNull ExecutableObserver> observer) {
         return new AuthenticationHandlerMonitoringAspect(observer);
     }
 
     @Aspect
     @Slf4j
     @SuppressWarnings("UnusedMethod")
-    record AuthenticationManagerMonitoringAspect(ObjectProvider<ExecutableObserver> observerProvider) {
+    record AuthenticationManagerMonitoringAspect(ObjectProvider<@NonNull ExecutableObserver> observerProvider) {
 
         @Around("allComponentsInAuthenticationManagementNamespace()")
         public Object aroundAuthenticationManagementOperations(final ProceedingJoinPoint joinPoint) throws Throwable {
@@ -71,7 +72,7 @@ class CasCoreAuthenticationMonitoringConfiguration {
     @Aspect
     @Slf4j
     @SuppressWarnings("UnusedMethod")
-    record AuthenticationHandlerMonitoringAspect(ObjectProvider<ExecutableObserver> observerProvider) {
+    record AuthenticationHandlerMonitoringAspect(ObjectProvider<@NonNull ExecutableObserver> observerProvider) {
 
         @Around("allComponentsInAuthenticationHandlerNamespace()")
         public Object aroundAuthenticationHandlerOperations(final ProceedingJoinPoint joinPoint) throws Throwable {

@@ -15,6 +15,7 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -44,7 +45,7 @@ class CasEmbeddedContainerTomcatFiltersConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "tomcatSessionInitializerFilter")
-    public FilterRegistrationBean<SessionInitializerFilter> tomcatSessionInitializerFilter(
+    public FilterRegistrationBean<@NonNull SessionInitializerFilter> tomcatSessionInitializerFilter(
         final CasConfigurationProperties casProperties) {
         val bean = new FilterRegistrationBean();
         bean.setFilter(new SessionInitializerFilter());
@@ -59,7 +60,7 @@ class CasEmbeddedContainerTomcatFiltersConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "tomcatCsrfPreventionFilter")
-    public FilterRegistrationBean<CsrfPreventionFilter> tomcatCsrfPreventionFilter(
+    public FilterRegistrationBean<@NonNull CsrfPreventionFilter> tomcatCsrfPreventionFilter(
         final CasConfigurationProperties casProperties) {
         val bean = new FilterRegistrationBean();
         bean.setFilter(new CsrfPreventionFilter());
@@ -73,7 +74,7 @@ class CasEmbeddedContainerTomcatFiltersConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "tomcatRemoteAddressFilter")
-    public FilterRegistrationBean<Filter> tomcatRemoteAddressFilter(final CasConfigurationProperties casProperties) {
+    public FilterRegistrationBean<@NonNull Filter> tomcatRemoteAddressFilter(final CasConfigurationProperties casProperties) {
         val bean = new FilterRegistrationBean();
         val addr = casProperties.getServer().getTomcat().getRemoteAddr();
         val filter = new ClientInfoRemoteAddrFilter();
@@ -91,7 +92,7 @@ class CasEmbeddedContainerTomcatFiltersConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     @ConditionalOnMissingBean(name = "tomcatAsyncRequestsFilter")
-    public FilterRegistrationBean<Filter> tomcatAsyncRequestsFilter(final CasConfigurationProperties casProperties) {
+    public FilterRegistrationBean<@NonNull Filter> tomcatAsyncRequestsFilter(final CasConfigurationProperties casProperties) {
         val bean = new FilterRegistrationBean();
         val filter = new Filter() {
             @Override

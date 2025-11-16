@@ -27,10 +27,10 @@ import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 import org.apereo.cas.web.support.mgmr.EncryptedCookieValueManager;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -43,7 +43,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -232,7 +231,7 @@ class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(GeoLocationService.BEAN_NAME)
-            final ObjectProvider<GeoLocationService> geoLocationService) {
+            final ObjectProvider<@NonNull GeoLocationService> geoLocationService) {
             return BeanSupplier.of(DeviceFingerprintExtractor.class)
                 .when(BeanCondition.on("cas.authn.mfa.trusted.device-fingerprint.geolocation.enabled").isTrue()
                     .given(applicationContext.getEnvironment()))

@@ -1,16 +1,13 @@
 package org.apereo.cas.util.spring.beans;
 
 import org.apereo.cas.util.ResourceUtils;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
-
-import jakarta.annotation.Nonnull;
-
+import org.jspecify.annotations.NonNull;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -190,7 +187,7 @@ public interface BeanSupplier<T> extends Supplier<T> {
 
     @RequiredArgsConstructor
     class DefaultBeanSupplier<T> implements BeanSupplier<T> {
-        @Nonnull
+        @NonNull
         private final Class<T> clazz;
 
         private final List<Supplier<Boolean>> conditionSuppliers = new ArrayList<>();

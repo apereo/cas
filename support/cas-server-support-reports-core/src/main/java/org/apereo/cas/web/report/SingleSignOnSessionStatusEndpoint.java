@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -29,14 +30,14 @@ import java.util.Map;
 @Endpoint(id = "sso", defaultAccess = Access.NONE)
 public class SingleSignOnSessionStatusEndpoint extends BaseCasRestActuatorEndpoint {
 
-    private final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGeneratorProvider;
+    private final ObjectProvider<@NonNull CasCookieBuilder> ticketGrantingTicketCookieGeneratorProvider;
 
-    private final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider;
+    private final ObjectProvider<@NonNull TicketRegistrySupport> ticketRegistrySupportProvider;
 
     public SingleSignOnSessionStatusEndpoint(final CasConfigurationProperties casProperties,
                                              final ConfigurableApplicationContext applicationContext,
-                                             final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGeneratorProvider,
-                                             final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider) {
+                                             final ObjectProvider<@NonNull CasCookieBuilder> ticketGrantingTicketCookieGeneratorProvider,
+                                             final ObjectProvider<@NonNull TicketRegistrySupport> ticketRegistrySupportProvider) {
         super(casProperties, applicationContext);
         this.ticketGrantingTicketCookieGeneratorProvider = ticketGrantingTicketCookieGeneratorProvider;
         this.ticketRegistrySupportProvider = ticketRegistrySupportProvider;
@@ -54,7 +55,7 @@ public class SingleSignOnSessionStatusEndpoint extends BaseCasRestActuatorEndpoi
         @Parameter(name = "tgc", required = false, description = "The ticket-granting ticket cookie value"),
         @Parameter(name = "request", required = false, description = "The HTTP request")
     })
-    public ResponseEntity<Map<?, ?>> ssoStatus(
+    public ResponseEntity<@NonNull Map<?, ?>> ssoStatus(
         @RequestParam(name = "tgc", required = false, defaultValue = StringUtils.EMPTY) final String tgc,
         final HttpServletRequest request) {
 

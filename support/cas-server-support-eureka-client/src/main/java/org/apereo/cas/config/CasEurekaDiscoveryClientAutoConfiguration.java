@@ -6,6 +6,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.netflix.discovery.AbstractDiscoveryClientOptionalArgs;
 import com.netflix.discovery.shared.transport.jersey.TransportClientFactories;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -37,7 +38,7 @@ public class CasEurekaDiscoveryClientAutoConfiguration {
         final TimeoutProperties restTemplateTimeoutProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
-        final ObjectProvider<RestClient.Builder> restClientBuilderProvider) throws Exception {
+        final ObjectProvider<RestClient.@NonNull Builder> restClientBuilderProvider) throws Exception {
         val customizers = new HashSet<>(applicationContext.getBeansOfType(
             EurekaClientHttpRequestFactorySupplier.RequestConfigCustomizer.class).values());
         val factorySupplier = new DefaultEurekaClientHttpRequestFactorySupplier(restTemplateTimeoutProperties, customizers);

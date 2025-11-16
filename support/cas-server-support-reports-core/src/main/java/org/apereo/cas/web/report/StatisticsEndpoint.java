@@ -3,16 +3,15 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-
 import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -30,9 +29,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
     private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
-    private final ObjectProvider<TicketRegistry> ticketRegistry;
+    private final ObjectProvider<@NonNull TicketRegistry> ticketRegistry;
 
-    public StatisticsEndpoint(final ObjectProvider<TicketRegistry> ticketRegistry,
+    public StatisticsEndpoint(final ObjectProvider<@NonNull TicketRegistry> ticketRegistry,
                               final CasConfigurationProperties casProperties) {
         super(casProperties);
         this.ticketRegistry = ticketRegistry;

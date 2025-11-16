@@ -6,13 +6,11 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.credential.AbstractCredential;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.util.http.HttpRequestUtils;
-
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.core.Ordered;
 import org.springframework.util.MultiValueMap;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +41,7 @@ public interface RestHttpRequestCredentialFactory extends Ordered {
      * @return Credential instance(s)
      * @throws Throwable the throwable
      */
-    List<Credential> fromRequest(HttpServletRequest request, MultiValueMap<String, String> requestBody) throws Throwable;
+    List<Credential> fromRequest(HttpServletRequest request, MultiValueMap<@NonNull String, String> requestBody) throws Throwable;
 
     @Override
     default int getOrder() {
@@ -60,7 +58,7 @@ public interface RestHttpRequestCredentialFactory extends Ordered {
      * @return the list
      */
     default List<Credential> fromAuthentication(final HttpServletRequest request,
-                                                final MultiValueMap<String, String> requestBody,
+                                                final MultiValueMap<@NonNull String, String> requestBody,
                                                 final Authentication authentication,
                                                 final MultifactorAuthenticationProvider provider) {
         return new ArrayList<>();

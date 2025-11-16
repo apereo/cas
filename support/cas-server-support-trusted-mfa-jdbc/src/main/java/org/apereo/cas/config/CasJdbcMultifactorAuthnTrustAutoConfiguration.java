@@ -14,6 +14,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -119,7 +120,7 @@ public class CasJdbcMultifactorAuthnTrustAutoConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FactoryBean<EntityManagerFactory> mfaTrustedAuthnEntityManagerFactory(
+        public FactoryBean<@NonNull EntityManagerFactory> mfaTrustedAuthnEntityManagerFactory(
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceMfaTrustedAuthn") final DataSource dataSourceMfaTrustedAuthn,
             @Qualifier("jpaMfaTrustedAuthnPackagesToScan") final BeanContainer<String> jpaMfaTrustedAuthnPackagesToScan,

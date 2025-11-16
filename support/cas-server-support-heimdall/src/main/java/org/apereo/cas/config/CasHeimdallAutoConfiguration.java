@@ -23,6 +23,7 @@ import org.apereo.cas.web.CasWebSecurityConfigurer;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -52,14 +53,14 @@ public class CasHeimdallAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthorizationPrincipalParser authorizationPrincipalParser(
         @Qualifier("oidcServiceJsonWebKeystoreCache")
-        final ObjectProvider<LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCache,
+        final ObjectProvider<@NonNull LoadingCache<@NonNull OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCache,
         @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
         final AuthenticationSystemSupport authenticationSystemSupport,
         final CasConfigurationProperties casProperties,
         @Qualifier("oidcTokenSigningAndEncryptionService")
-        final ObjectProvider<OAuth20TokenSigningAndEncryptionService> oidcTokenSigningAndEncryptionService,
+        final ObjectProvider<@NonNull OAuth20TokenSigningAndEncryptionService> oidcTokenSigningAndEncryptionService,
         @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
-        final ObjectProvider<JwtBuilder> accessTokenJwtBuilder,
+        final ObjectProvider<@NonNull JwtBuilder> accessTokenJwtBuilder,
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {
         return new DefaultAuthorizationPrincipalParser(ticketRegistry, casProperties,

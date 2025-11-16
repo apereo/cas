@@ -8,10 +8,10 @@ import lombok.val;
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategySnakeCaseImpl;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import jakarta.annotation.Nonnull;
 
 /**
  * This is {@link CasHibernatePhysicalNamingStrategy}.
@@ -60,7 +60,7 @@ public class CasHibernatePhysicalNamingStrategy extends PhysicalNamingStrategySn
     }
 
     @Override
-    public void setApplicationContext(@Nonnull final ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@NonNull final ApplicationContext applicationContext) throws BeansException {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
 }

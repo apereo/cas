@@ -4,13 +4,13 @@ import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.web.AbstractController;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.http.HttpHeaders;
@@ -43,7 +43,7 @@ public class DelegatedSaml2ClientMetadataController extends AbstractController {
 
     private final OpenSamlConfigBean openSamlConfigBean;
 
-    private static ResponseEntity<String> getSaml2ClientServiceProviderMetadataResponseEntity(final SAML2Client saml2Client) {
+    private static ResponseEntity<@NonNull String> getSaml2ClientServiceProviderMetadataResponseEntity(final SAML2Client saml2Client) {
         val headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
         saml2Client.init();
@@ -51,7 +51,7 @@ public class DelegatedSaml2ClientMetadataController extends AbstractController {
         return new ResponseEntity<>(md, headers, HttpStatus.OK);
     }
 
-    private static ResponseEntity<String> getNotAcceptableResponseEntity() {
+    private static ResponseEntity<@NonNull String> getNotAcceptableResponseEntity() {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
@@ -64,8 +64,8 @@ public class DelegatedSaml2ClientMetadataController extends AbstractController {
         consumes = MediaType.ALL_VALUE,
         produces = MediaType.APPLICATION_XML_VALUE)
     @Operation(summary = "Get service provider metadata")
-    public ResponseEntity<String> getFirstServiceProviderMetadata(final HttpServletRequest request,
-                                                                  final HttpServletResponse response) {
+    public ResponseEntity<@NonNull String> getFirstServiceProviderMetadata(final HttpServletRequest request,
+                                                                           final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);
         val saml2Client = identityProviders.findAllClients(webContext)
             .stream()
@@ -85,8 +85,8 @@ public class DelegatedSaml2ClientMetadataController extends AbstractController {
     @GetMapping(path = BASE_ENDPOINT_SERVICE_PROVIDER + "/idp/metadata", consumes = MediaType.ALL_VALUE,
         produces = MediaType.APPLICATION_XML_VALUE)
     @Operation(summary = "Get identity provider metadata")
-    public ResponseEntity<String> getFirstIdentityProviderMetadata(final HttpServletRequest request,
-                                                                   final HttpServletResponse response) {
+    public ResponseEntity<@NonNull String> getFirstIdentityProviderMetadata(final HttpServletRequest request,
+                                                                            final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);
         val saml2Client = identityProviders.findAllClients(webContext)
             .stream()
@@ -106,7 +106,7 @@ public class DelegatedSaml2ClientMetadataController extends AbstractController {
         produces = MediaType.APPLICATION_XML_VALUE)
     @Operation(summary = "Get service provider metadata by name",
         parameters = @Parameter(name = "client", in = ParameterIn.PATH, required = true, description = "The client name"))
-    public ResponseEntity<String> getServiceProviderMetadataByName(
+    public ResponseEntity<@NonNull String> getServiceProviderMetadataByName(
         @PathVariable("client") final String client,
         final HttpServletRequest request, final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);
@@ -125,7 +125,7 @@ public class DelegatedSaml2ClientMetadataController extends AbstractController {
         produces = MediaType.APPLICATION_XML_VALUE)
     @Operation(summary = "Get identity provider metadata by name",
         parameters = @Parameter(name = "client", in = ParameterIn.PATH, required = true, description = "The client name"))
-    public ResponseEntity<String> getIdentityProviderMetadataByName(
+    public ResponseEntity<@NonNull String> getIdentityProviderMetadataByName(
         @PathVariable("client")
         final String client,
         final HttpServletRequest request, final HttpServletResponse response) {
@@ -135,7 +135,7 @@ public class DelegatedSaml2ClientMetadataController extends AbstractController {
             .orElseGet(DelegatedSaml2ClientMetadataController::getNotAcceptableResponseEntity);
     }
 
-    private ResponseEntity<String> getSaml2ClientIdentityProviderMetadataResponseEntity(final SAML2Client saml2Client) {
+    private ResponseEntity<@NonNull String> getSaml2ClientIdentityProviderMetadataResponseEntity(final SAML2Client saml2Client) {
         val headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
         saml2Client.init();

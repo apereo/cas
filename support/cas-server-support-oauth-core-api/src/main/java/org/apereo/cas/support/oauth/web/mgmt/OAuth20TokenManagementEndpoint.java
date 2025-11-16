@@ -8,18 +8,17 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
-
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -34,13 +33,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
 
-    private final ObjectProvider<TicketRegistry> ticketRegistry;
+    private final ObjectProvider<@NonNull TicketRegistry> ticketRegistry;
 
-    private final ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
+    private final ObjectProvider<@NonNull JwtBuilder> accessTokenJwtBuilder;
 
     public OAuth20TokenManagementEndpoint(final CasConfigurationProperties casProperties,
-                                          final ObjectProvider<TicketRegistry> ticketRegistry,
-                                          final ObjectProvider<JwtBuilder> accessTokenJwtBuilder) {
+                                          final ObjectProvider<@NonNull TicketRegistry> ticketRegistry,
+                                          final ObjectProvider<@NonNull JwtBuilder> accessTokenJwtBuilder) {
         super(casProperties);
         this.ticketRegistry = ticketRegistry;
         this.accessTokenJwtBuilder = accessTokenJwtBuilder;

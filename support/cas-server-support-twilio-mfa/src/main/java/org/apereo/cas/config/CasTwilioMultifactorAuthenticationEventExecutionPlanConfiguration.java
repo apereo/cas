@@ -19,6 +19,7 @@ import org.apereo.cas.mfa.twilio.CasTwilioMultifactorAuthenticationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -57,7 +58,7 @@ class CasTwilioMultifactorAuthenticationEventExecutionPlanConfiguration {
         final CasTwilioMultifactorAuthenticationService casTwilioMultifactorAuthenticationService,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("casTwilioMultifactorAuthenticationProvider")
-        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
+        final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
         @Qualifier("casTwilioMultifactorPrincipalFactory")
         final PrincipalFactory casTwilioMultifactorPrincipalFactory,
         @Qualifier(ServicesManager.BEAN_NAME)
@@ -112,7 +113,7 @@ class CasTwilioMultifactorAuthenticationEventExecutionPlanConfiguration {
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
         @Qualifier("casTwilioMultifactorAuthenticationProvider")
-        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+        final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
         return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
             multifactorAuthenticationProvider, servicesManager);

@@ -18,6 +18,7 @@ import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -113,9 +114,9 @@ class CasOAuth20EndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenManagementEndpoint oauth20TokenManagementEndpoint(
             @Qualifier(TicketRegistry.BEAN_NAME)
-            final ObjectProvider<TicketRegistry> ticketRegistry,
+            final ObjectProvider<@NonNull TicketRegistry> ticketRegistry,
             @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
-            final ObjectProvider<JwtBuilder> accessTokenJwtBuilder,
+            final ObjectProvider<@NonNull JwtBuilder> accessTokenJwtBuilder,
             final CasConfigurationProperties casProperties) {
             return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry, accessTokenJwtBuilder);
         }

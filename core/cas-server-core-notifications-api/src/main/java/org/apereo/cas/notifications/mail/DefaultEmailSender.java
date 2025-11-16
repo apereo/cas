@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.mail.autoconfigure.MailProperties;
 import org.springframework.boot.ssl.SslBundles;
@@ -40,7 +41,7 @@ public class DefaultEmailSender implements EmailSender {
 
     private final MailProperties mailProperties;
 
-    private final ObjectProvider<SslBundles> sslBundles;
+    private final ObjectProvider<@NonNull SslBundles> sslBundles;
 
     private final TenantExtractor tenantExtractor;
 

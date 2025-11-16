@@ -29,10 +29,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.jspecify.annotations.NonNull;
 import org.opensaml.core.xml.XMLObject;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.context.ApplicationContext;
-import jakarta.annotation.Nonnull;
 
 /**
  * This is {@link SamlProfileHandlerConfigurationContext}.
@@ -46,91 +46,91 @@ import jakarta.annotation.Nonnull;
 @SuperBuilder
 public class SamlProfileHandlerConfigurationContext {
 
-    @Nonnull
+    @NonNull
     private final SamlIdPObjectSigner samlObjectSigner;
 
-    @Nonnull
+    @NonNull
     private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
-    @Nonnull
+    @NonNull
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
-    @Nonnull
+    @NonNull
     private final ServicesManager servicesManager;
 
-    @Nonnull
+    @NonNull
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
-    @Nonnull
+    @NonNull
     private final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
-    @Nonnull
+    @NonNull
     private final OpenSamlConfigBean openSamlConfigBean;
 
-    @Nonnull
+    @NonNull
     private SamlProfileObjectBuilder<? extends XMLObject> responseBuilder;
 
-    @Nonnull
+    @NonNull
     private final Saml20ObjectBuilder logoutResponseBuilder;
 
-    @Nonnull
+    @NonNull
     private final CasConfigurationProperties casProperties;
 
-    @Nonnull
+    @NonNull
     private SamlObjectSignatureValidator samlObjectSignatureValidator;
 
-    @Nonnull
+    @NonNull
     private final Service callbackService;
 
-    @Nonnull
+    @NonNull
     @Deprecated(since = "7.3.0", forRemoval = true)
     private final CasCookieBuilder samlDistributedSessionCookieGenerator;
 
-    @Nonnull
+    @NonNull
     private SSOSamlHttpRequestExtractor samlHttpRequestExtractor;
 
-    @Nonnull
+    @NonNull
     private XMLMessageDecodersMap samlMessageDecoders;
 
-    @Nonnull
+    @NonNull
     private SamlProfileObjectBuilder<? extends XMLObject> samlFaultResponseBuilder;
 
-    @Nonnull
+    @NonNull
     private final TicketValidator ticketValidator;
 
-    @Nonnull
+    @NonNull
     private final TicketRegistry ticketRegistry;
 
-    @Nonnull
+    @NonNull
     private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
-    @Nonnull
+    @NonNull
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
 
-    @Nonnull
+    @NonNull
     private final SessionStore sessionStore;
 
-    @Nonnull
+    @NonNull
     private final TicketRegistrySupport ticketRegistrySupport;
 
-    @Nonnull
+    @NonNull
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
-    @Nonnull
+    @NonNull
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
-    @Nonnull
+    @NonNull
     private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
-    @Nonnull
+    @NonNull
     private final TicketFactory ticketFactory;
 
-    @Nonnull
+    @NonNull
     private final PersonAttributeDao attributeRepository;
 
-    @Nonnull
+    @NonNull
     private final ApplicationContext applicationContext;
 
-    @Nonnull
+    @NonNull
     private final PersistentIdGenerator persistentIdGenerator;
 }

@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @Slf4j
-public record SamlRegisteredServiceMetadataExpirationPolicy(Duration defaultExpiration) implements Expiry<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> {
+public record SamlRegisteredServiceMetadataExpirationPolicy(Duration defaultExpiration) implements Expiry<@NonNull SamlRegisteredServiceCacheKey, @NonNull CachedMetadataResolverResult> {
     @Override
     public long expireAfterCreate(
         final @NonNull SamlRegisteredServiceCacheKey cacheKey,

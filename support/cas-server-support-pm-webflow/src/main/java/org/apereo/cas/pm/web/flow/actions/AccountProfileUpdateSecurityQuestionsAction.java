@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -50,7 +51,7 @@ public class AccountProfileUpdateSecurityQuestionsAction extends BaseCasWebflowA
                 .distinct().toList();
             FunctionUtils.throwIf(questions.size() != answers.size(),
                 () -> new IllegalArgumentException("Security questions do not match the given answers"));
-            val securityQuestions = new LinkedMultiValueMap<String, String>();
+            val securityQuestions = new LinkedMultiValueMap<@NonNull String, @NonNull String>();
             for (var i = 0; i < questions.size(); i++) {
                 val question = questions.get(i).trim();
                 val answer = answers.get(i).trim();

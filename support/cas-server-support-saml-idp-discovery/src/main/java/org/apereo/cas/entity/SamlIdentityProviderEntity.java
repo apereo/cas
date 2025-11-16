@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class SamlIdentityProviderEntity implements Serializable, Comparable<Saml
     private String entityID;
 
     @Override
-    public int compareTo(@Nonnull final SamlIdentityProviderEntity entity) {
+    public int compareTo(@NonNull final SamlIdentityProviderEntity entity) {
         return Comparator.comparing(SamlIdentityProviderEntity::getEntityID).compare(this, entity);
     }
 }
