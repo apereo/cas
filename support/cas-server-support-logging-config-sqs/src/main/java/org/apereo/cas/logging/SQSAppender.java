@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
  * @since 6.4.0
  */
 @Plugin(name = "SQSAppender", category = "Core", elementType = "appender", printObject = true)
+@SuppressWarnings("NullAway.Init")
 public class SQSAppender extends AbstractAppender implements Serializable {
     @Serial
     private static final long serialVersionUID = 1144758913028847477L;
