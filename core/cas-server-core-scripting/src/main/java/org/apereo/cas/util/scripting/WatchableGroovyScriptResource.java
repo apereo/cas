@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
 
 /**
@@ -27,8 +28,10 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
 
     private final Resource resource;
 
+    @Nullable
     private FileWatcherService watcherService;
 
+    @Nullable
     private GroovyObject compiledScript;
 
     @Setter
@@ -56,7 +59,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
     }
 
     @Override
-    public <T> T execute(final Object[] args, final Class<T> clazz) throws Throwable {
+    public <T> @Nullable T execute(final Object[] args, final Class<T> clazz) throws Throwable {
         return execute(args, clazz, failOnError);
     }
 
@@ -66,12 +69,12 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
     }
 
     @Override
-    public <T> T execute(final String methodName, final Class<T> clazz, final Object... args) throws Throwable {
+    public <T> @Nullable T execute(final String methodName, final Class<T> clazz, final Object... args) throws Throwable {
         return execute(methodName, clazz, failOnError, args);
     }
 
     @Override
-    public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
+    public <T> @Nullable T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
         return lock.tryLock(() -> {
             try {
                 LOGGER.trace("Beginning to execute script [{}]", this);
@@ -94,7 +97,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
      * @param args        the args
      * @return the t
      */
-    public <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError,
+    public <T> @Nullable T execute(final String methodName, final Class<T> clazz, final boolean failOnError,
                          final Object... args) {
         return lock.tryLock(() -> {
             try {
