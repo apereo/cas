@@ -39,13 +39,13 @@ public class DynamoDbCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type,
-                                                                      final String principal) {
+                                                                  final String principal) {
         return dbCasEventsFacilitator.getEventsOfTypeForPrincipal(type, principal);
     }
 
     @Override
     public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal,
-                                                                      final ZonedDateTime dateTime) {
+                                                                  final ZonedDateTime dateTime) {
         return dbCasEventsFacilitator.getEventsOfTypeForPrincipal(type, principal, dateTime);
     }
 

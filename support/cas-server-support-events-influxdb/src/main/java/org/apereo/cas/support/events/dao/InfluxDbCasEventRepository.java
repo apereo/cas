@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import tools.jackson.databind.ObjectMapper;
 import java.time.Duration;
@@ -44,8 +45,8 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     public CasEvent saveInternal(final CasEvent event) {
         event.assignIdIfNecessary();
         val tags = Map.of(
-            "serverIpAddress", event.getServerIpAddress(),
-            "clientIpAddress", event.getClientIpAddress(),
+            "serverIpAddress", Objects.requireNonNull(event.getServerIpAddress()),
+            "clientIpAddress", Objects.requireNonNull(event.getClientIpAddress()),
             "principalId", event.getPrincipalId(),
             "geoLocation", MAPPER.writeValueAsString(event.getGeoLocation()),
             "creationTime", String.valueOf(event.getCreationTime().toEpochMilli()),
@@ -86,7 +87,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     }
 
     @Override
-    public Stream<CasEventAggregate> aggregate(final Class type, final Duration start) {
+    public Stream<CasEventAggregate> aggregate(@Nullable final Class type, final Duration start) {
         val initialSql = """
             SELECT
                 DATE_BIN(INTERVAL '1 hour', time) AS window,

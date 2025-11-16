@@ -32,7 +32,7 @@ public class CasGroovyRuntimeHints implements CasRuntimeHintsRegistrar {
         registerGroovyDGMClasses(hints, classLoader);
     }
 
-    private static void registerGroovyDGMClasses(final RuntimeHints hints, final ClassLoader classLoader) {
+    private static void registerGroovyDGMClasses(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         IntStream.range(1, GROOVY_DGM_CLASS_COUNTER).forEach(idx ->
             hints.reflection().registerTypeIfPresent(classLoader,
                 "org.codehaus.groovy.runtime.dgm$" + idx,

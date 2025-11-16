@@ -27,6 +27,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link CasEvent}, which represents a single event stored in the events repository.
@@ -41,6 +42,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Accessors(chain = true)
 @AllArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class CasEvent implements Serializable {
 
     /**
@@ -188,31 +190,31 @@ public class CasEvent implements Serializable {
 
     @JsonIgnore
     public Long getTimestamp() {
-        return Long.valueOf(get(FIELD_TIMESTAMP));
+        return Long.valueOf(Objects.requireNonNull(get(FIELD_TIMESTAMP)));
     }
 
     @JsonIgnore
-    public String getAgent() {
+    public @Nullable String getAgent() {
         return get(FIELD_AGENT);
     }
 
     @JsonIgnore
-    public String getEventId() {
+    public @Nullable String getEventId() {
         return get(FIELD_EVENT_ID);
     }
 
     @JsonIgnore
-    public String getClientIpAddress() {
+    public @Nullable String getClientIpAddress() {
         return get(FIELD_CLIENT_IP);
     }
 
     @JsonIgnore
-    public String getServerIpAddress() {
+    public @Nullable String getServerIpAddress() {
         return get(FIELD_SERVER_IP);
     }
 
     @JsonIgnore
-    public String getTenant() {
+    public @Nullable String getTenant() {
         return get(FIELD_TENANT);
     }
 
@@ -224,7 +226,7 @@ public class CasEvent implements Serializable {
      * @return the cas event
      */
     @CanIgnoreReturnValue
-    public CasEvent put(final String key, final String value) {
+    public CasEvent put(final String key, @Nullable final String value) {
         if (StringUtils.isBlank(value)) {
             this.properties.remove(key);
         } else {
@@ -239,7 +241,7 @@ public class CasEvent implements Serializable {
      * @param key the key
      * @return the string
      */
-    public String get(final String key) {
+    public @Nullable String get(final String key) {
         return this.properties.get(key);
     }
 
@@ -266,7 +268,7 @@ public class CasEvent implements Serializable {
      * @return the cas event
      */
     @CanIgnoreReturnValue
-    public CasEvent putGeoAddress(final String address) {
+    public CasEvent putGeoAddress(@Nullable final String address) {
         return put(FIELD_GEO_ADDRESS, address);
     }
 
@@ -276,7 +278,7 @@ public class CasEvent implements Serializable {
      * @param value the value
      * @return the cas event
      */
-    public CasEvent putDeviceFingerprint(final String value) {
+    public CasEvent putDeviceFingerprint(@Nullable final String value) {
         return put(FIELD_DEVICE_FINGERPRINT, value);
     }
 
@@ -285,7 +287,7 @@ public class CasEvent implements Serializable {
      *
      * @return the device fingerprint
      */
-    public String getDeviceFingerprint() {
+    public @Nullable String getDeviceFingerprint() {
         return get(FIELD_DEVICE_FINGERPRINT);
     }
 
@@ -304,19 +306,19 @@ public class CasEvent implements Serializable {
         return request;
     }
 
-    private CasEvent putGeoLatitude(final String s) {
+    private CasEvent putGeoLatitude(@Nullable final String s) {
         return put(FIELD_GEO_LATITUDE, s);
     }
 
-    private CasEvent putGeoLongitude(final String s) {
+    private CasEvent putGeoLongitude(@Nullable final String s) {
         return put(FIELD_GEO_LONGITUDE, s);
     }
 
-    private CasEvent putGeoAccuracy(final String s) {
+    private CasEvent putGeoAccuracy(@Nullable final String s) {
         return put(FIELD_GEO_ACCURACY, s);
     }
 
-    private CasEvent putGeoTimestamp(final String s) {
+    private CasEvent putGeoTimestamp(@Nullable final String s) {
         return put(FIELD_GEO_TIMESTAMP, s);
     }
 

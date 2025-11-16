@@ -25,7 +25,6 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsRe
 import software.amazon.awssdk.services.cloudwatchlogs.model.InputLogEvent;
 import software.amazon.awssdk.services.cloudwatchlogs.model.InvalidSequenceTokenException;
 import software.amazon.awssdk.services.cloudwatchlogs.model.PutLogEventsRequest;
-import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -45,10 +44,7 @@ import java.util.stream.Collectors;
 @Plugin(name = "CloudWatchAppender", category = "Core", elementType = "appender", printObject = true)
 @Slf4j
 @SuppressWarnings({"java:S2055", "NullAway.Init"})
-public class CloudWatchAppender extends AbstractAppender implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1044758913028847477L;
-
+public class CloudWatchAppender extends AbstractAppender {
     private static final int AWS_DRAIN_LIMIT = 256;
 
     private static final int AWS_LOG_STREAM_MAX_QUEUE_DEPTH = 10000;

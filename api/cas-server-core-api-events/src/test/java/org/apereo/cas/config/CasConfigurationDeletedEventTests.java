@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.support.events.config.CasConfigurationDeletedEvent;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
