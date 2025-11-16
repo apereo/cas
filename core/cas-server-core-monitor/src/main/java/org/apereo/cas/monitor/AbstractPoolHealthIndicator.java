@@ -60,7 +60,7 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
             LOGGER.trace(e.getMessage(), e);
         }
         poolBuilder
-            .withDetail("message", message)
+            .withDetail("message", StringUtils.defaultIfBlank(message, "N/A"))
             .withDetail("name", getClass().getSimpleName())
             .withDetail("activeCount", getActiveCount())
             .withDetail("idleCount", getIdleCount());

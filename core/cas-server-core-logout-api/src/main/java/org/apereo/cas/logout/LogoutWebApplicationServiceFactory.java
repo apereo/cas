@@ -9,6 +9,7 @@ import org.apereo.cas.web.UrlValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -32,7 +33,7 @@ public class LogoutWebApplicationServiceFactory extends WebApplicationServiceFac
     }
 
     @Override
-    protected String getRequestedService(final HttpServletRequest request) {
+    protected @Nullable String getRequestedService(final HttpServletRequest request) {
         if (request.getRequestURI().endsWith(CasProtocolConstants.ENDPOINT_LOGOUT)) {
             val service = logoutProperties.getRedirectParameter()
                 .stream()
