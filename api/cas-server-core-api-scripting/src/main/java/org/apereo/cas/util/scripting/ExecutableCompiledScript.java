@@ -1,5 +1,6 @@
 package org.apereo.cas.util.scripting;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public interface ExecutableCompiledScript extends AutoCloseable {
      * @param clazz the clazz
      * @return the t
      */
-    <T> T execute(Object[] args, Class<T> clazz) throws Throwable;
+    <T> @Nullable T execute(Object[] args, Class<T> clazz) throws Throwable;
 
     /**
      * Execute.
@@ -37,7 +38,7 @@ public interface ExecutableCompiledScript extends AutoCloseable {
      * @param failOnError the fail on error
      * @return the t
      */
-    <T> T execute(Object[] args, Class<T> clazz, boolean failOnError);
+    <T> @Nullable T execute(Object[] args, Class<T> clazz, boolean failOnError);
 
     /**
      * Execute t.
@@ -48,7 +49,7 @@ public interface ExecutableCompiledScript extends AutoCloseable {
      * @param args       the args
      * @return the t
      */
-    <T> T execute(String methodName, Class<T> clazz, Object... args) throws Throwable;
+    <T> @Nullable T execute(String methodName, Class<T> clazz, Object... args) throws Throwable;
 
     /**
      * Sets binding.

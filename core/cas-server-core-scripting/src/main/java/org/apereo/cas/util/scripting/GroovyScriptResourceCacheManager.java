@@ -12,6 +12,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import java.util.Set;
 
 /**
@@ -75,7 +76,7 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
     }
 
     @Override
-    public ExecutableCompiledScript resolveScriptableResource(
+    public @Nullable ExecutableCompiledScript resolveScriptableResource(
         final String scriptResource,
         final String... keys) {
 
