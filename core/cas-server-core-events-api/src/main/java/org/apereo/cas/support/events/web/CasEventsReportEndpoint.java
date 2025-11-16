@@ -10,7 +10,6 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -46,11 +45,11 @@ import java.util.zip.ZipInputStream;
 public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private final ObjectProvider<@NonNull CasEventRepository> eventRepositoryProvider;
+    private final ObjectProvider<CasEventRepository> eventRepositoryProvider;
 
     public CasEventsReportEndpoint(final CasConfigurationProperties casProperties,
                                    final ConfigurableApplicationContext applicationContext,
-                                   final ObjectProvider<@NonNull CasEventRepository> eventRepositoryProvider) {
+                                   final ObjectProvider<CasEventRepository> eventRepositoryProvider) {
         super(casProperties, applicationContext);
         this.eventRepositoryProvider = eventRepositoryProvider;
     }
@@ -157,7 +156,7 @@ public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
         return importSingleEvent(request);
     }
 
-    private ResponseEntity<@NonNull CasEvent> importSingleEvent(final HttpServletRequest request) throws Throwable {
+    private ResponseEntity<CasEvent> importSingleEvent(final HttpServletRequest request) throws Throwable {
         val eventRepository = eventRepositoryProvider.getObject();
         try (val in = request.getInputStream()) {
             val requestBody = IOUtils.toString(in, StandardCharsets.UTF_8);
@@ -167,7 +166,7 @@ public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
         }
     }
 
-    private ResponseEntity<@NonNull CasEvent> importEventsAsStream(final HttpServletRequest request) throws Throwable {
+    private ResponseEntity<CasEvent> importEventsAsStream(final HttpServletRequest request) throws Throwable {
         try (val bais = new ByteArrayInputStream(IOUtils.toByteArray(request.getInputStream()));
              val zipIn = new ZipInputStream(bais)) {
             var entry = zipIn.getNextEntry();

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.actuate.audit.listener.AuditApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
@@ -45,6 +46,7 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
     private final CasEventRepositoryFilter eventRepositoryFilter;
 
     @Setter
+    @Nullable
     private ApplicationEventPublisher applicationEventPublisher;
 
     private static ZonedDateTime convertEventCreationTime(final CasEvent event) {
@@ -119,12 +121,5 @@ public abstract class AbstractCasEventRepository implements CasEventRepository, 
             });
     }
     
-    /**
-     * Save internal.
-     *
-     * @param event the event
-     * @return saved cas event
-     * @throws Exception the exception
-     */
-    public abstract CasEvent saveInternal(CasEvent event) throws Exception;
+    protected abstract CasEvent saveInternal(CasEvent event) throws Exception;
 }
