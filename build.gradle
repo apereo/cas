@@ -352,8 +352,9 @@ subprojects {
                                                     '-Xep:StringConcatToTextBlock:OFF',
                                                     '-Xep:AddressSelection:OFF'
                                                    ]
+            def taskName = it.name
             it.options.errorprone.nullaway {
-                if (rootProject.skipNullAway) {
+                if (rootProject.skipNullAway || taskName.equals("compileTestJava")) {
                     disable()
                 } else {
                     jspecifyMode = true

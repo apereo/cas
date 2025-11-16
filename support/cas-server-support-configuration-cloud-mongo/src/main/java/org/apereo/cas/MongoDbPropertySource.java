@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import lombok.EqualsAndHashCode;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.data.mongodb.core.MongoOperations;
 import java.util.List;
@@ -29,9 +30,10 @@ public class MongoDbPropertySource extends EnumerablePropertySource<@NonNull Mon
     }
 
     @Override
-    public Object getProperty(@NonNull final String s) {
-        return list.stream()
-            .filter(prop -> prop.getName().equals(s))
+    public @Nullable Object getProperty(@NonNull final String name) {
+        return list
+            .stream()
+            .filter(prop -> prop.getName().equals(name))
             .findFirst()
             .map(MongoDbProperty::getValue)
             .orElse(null);

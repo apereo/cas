@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
@@ -52,7 +53,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
-import org.jspecify.annotations.Nullable;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
@@ -246,7 +246,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                                 .formatted(serviceTicket.getTenantId(), serviceTicketId));
                         }
                     }
-                    
+
                     serviceTicket.update();
                     if (!serviceTicket.isStateless()) {
                         configurationContext.getTicketRegistry().updateTicket(serviceTicket);
@@ -445,11 +445,12 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 Optional.of(serviceTicket.getService()));
     }
 
-    private static @Nullable Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
-                                                                                 final TicketGrantingTicket ticketGrantingTicket) {
+    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
+                                                                       final TicketGrantingTicket ticketGrantingTicket) {
         if (context == null) {
-            LOGGER.warn("Provided authentication result is undefined to evaluate for mixed principals");
-            return null;
+            val error = "Provided authentication result is undefined to evaluate for mixed principals";
+            LOGGER.warn(error);
+            throw new AuthenticationException(error);
         }
         val currentAuthentication = context.getAuthentication();
         if (currentAuthentication != null) {
