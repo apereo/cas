@@ -15,6 +15,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.jspecify.annotations.Nullable;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.CreateLogGroupRequest;
@@ -78,9 +79,9 @@ public class CloudWatchAppender extends AbstractAppender {
 
     private volatile boolean queueFull;
 
-    private boolean createLogGroupIfNeeded;
+    private final boolean createLogGroupIfNeeded;
 
-    private boolean createLogStreamIfNeeded;
+    private final boolean createLogStreamIfNeeded;
 
     public CloudWatchAppender(final String name,
                               final String endpoint,
@@ -91,9 +92,9 @@ public class CloudWatchAppender extends AbstractAppender {
                               final String credentialSecretKey,
                               final String awsLogRegionName,
                               final Layout<Serializable> layout,
-                              final Boolean createIfNeeded,
-                              final Boolean createLogGroupIfNeeded,
-                              final Boolean createLogStreamIfNeeded) {
+                              @Nullable final Boolean createIfNeeded,
+                              @Nullable final Boolean createLogGroupIfNeeded,
+                              @Nullable final Boolean createLogStreamIfNeeded) {
         this(name, awsLogGroupName, awsLogStreamName, awsLogStreamFlushPeriodInSeconds, layout,
             createIfNeeded, createLogGroupIfNeeded, createLogStreamIfNeeded);
 
@@ -131,9 +132,9 @@ public class CloudWatchAppender extends AbstractAppender {
                                final String awsLogStreamName,
                                final String awsLogStreamFlushPeriodInSeconds,
                                final Layout<Serializable> layout,
-                               final Boolean createIfNeeded,
-                               final Boolean createLogGroupIfNeeded,
-                               final Boolean createLogStreamIfNeeded) {
+                               @Nullable final Boolean createIfNeeded,
+                               @Nullable final Boolean createLogGroupIfNeeded,
+                               @Nullable final Boolean createLogStreamIfNeeded) {
         super(name, null, layout == null
             ? PatternLayout.createDefaultLayout()
             : layout, false, Property.EMPTY_ARRAY);
@@ -196,9 +197,9 @@ public class CloudWatchAppender extends AbstractAppender {
             StringUtils.defaultIfBlank(credentialSecretKey, System.getProperty("AWS_SECRET_KEY")),
             StringUtils.defaultIfBlank(awsLogRegionName, System.getProperty("AWS_REGION_NAME")),
             layout,
-            StringUtils.isBlank(createIfNeeded) ? Boolean.FALSE : BooleanUtils.toBoolean(createIfNeeded),
-            StringUtils.isBlank(createLogGroupIfNeeded) ? Boolean.FALSE : BooleanUtils.toBoolean(createLogGroupIfNeeded),
-            StringUtils.isBlank(createLogStreamIfNeeded) ? Boolean.FALSE : BooleanUtils.toBoolean(createLogStreamIfNeeded));
+            StringUtils.isBlank(createIfNeeded) ? null : BooleanUtils.toBoolean(createIfNeeded),
+            StringUtils.isBlank(createLogGroupIfNeeded) ? null : BooleanUtils.toBoolean(createLogGroupIfNeeded),
+            StringUtils.isBlank(createLogStreamIfNeeded) ? null : BooleanUtils.toBoolean(createLogStreamIfNeeded));
     }
 
     @Override
