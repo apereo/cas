@@ -1,12 +1,10 @@
-package org.apereo.cas.config;
+package org.apereo.cas.support.events.config;
 
 import org.apereo.cas.support.events.AbstractCasEvent;
-
 import lombok.Getter;
 import lombok.ToString;
-import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
-
+import org.jspecify.annotations.Nullable;
 import java.io.Serial;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
@@ -24,13 +22,16 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
     @Serial
     private static final long serialVersionUID = -5738763037210896455L;
 
-    private static final Pattern CONFIG_FILE_PATTERN = Pattern.compile("\\.(properties|yml)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CONFIG_FILE_PATTERN = Pattern.compile("\\.(properties|yml|yaml)", Pattern.CASE_INSENSITIVE);
 
+    @Nullable
     private final transient Path file;
 
     private final boolean override;
 
-    public CasConfigurationModifiedEvent(final Object source, final Path file, final ClientInfo clientInfo) {
+    public CasConfigurationModifiedEvent(final Object source,
+                                         @Nullable
+                                         final Path file, final ClientInfo clientInfo) {
         this(source, file, false, clientInfo);
     }
 
@@ -38,7 +39,9 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
         this(source, null, override, clientInfo);
     }
 
-    public CasConfigurationModifiedEvent(final Object source, final Path file, final boolean override, final ClientInfo clientInfo) {
+    public CasConfigurationModifiedEvent(final Object source,
+                                         @Nullable
+                                         final Path file, final boolean override, final ClientInfo clientInfo) {
         super(source, clientInfo);
         this.file = file;
         this.override = override;
@@ -53,7 +56,6 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
         if (this.override) {
             return true;
         }
-        val fileName = getFile().toFile().getName();
-        return CONFIG_FILE_PATTERN.matcher(fileName).find();
+        return getFile() != null && CONFIG_FILE_PATTERN.matcher(getFile().toFile().getName()).find();
     }
 }

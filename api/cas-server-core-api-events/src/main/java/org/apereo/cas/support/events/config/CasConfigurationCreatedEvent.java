@@ -1,4 +1,4 @@
-package org.apereo.cas.config;
+package org.apereo.cas.support.events.config;
 
 import org.apereo.cas.support.events.AbstractCasEvent;
 
@@ -24,12 +24,6 @@ public class CasConfigurationCreatedEvent extends AbstractCasEvent {
 
     private final transient Path file;
 
-    /**
-     * Instantiates a new Abstract cas sso event.
-     *
-     * @param source the source
-     * @param file   the file
-     */
     public CasConfigurationCreatedEvent(final Object source, final Path file, final ClientInfo clientInfo) {
         super(source, clientInfo);
         this.file = file;
