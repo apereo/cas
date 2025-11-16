@@ -16,7 +16,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -37,7 +38,6 @@ import java.util.function.Supplier;
 @Slf4j
 @SuperBuilder
 public class EmailMessageBodyBuilder implements Supplier<String> {
-    @NonNull
     private final EmailProperties properties;
 
     @Builder.Default
@@ -61,7 +61,7 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
     }
 
     @Override
-    public String get() {
+    public @Nullable String get() {
         if (StringUtils.isBlank(properties.getText())) {
             LOGGER.warn("No email body is defined");
             return StringUtils.EMPTY;
@@ -78,7 +78,7 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
                         : CollectionUtils.<String, Object>wrap("parameters", this.parameters);
                     args.put("logger", LOGGER);
                     locale.ifPresent(loc -> args.put("locale", loc));
-                    script.setBinding(args);
+                    Objects.requireNonNull(script).setBinding(args);
                     return script.execute(args.values().toArray(), String.class);
                 }
             }
@@ -87,7 +87,7 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
             LOGGER.debug("Using email template resource at [{}]", templateResource);
             try (val is = templateResource.getInputStream()) {
                 val contents = IOUtils.toString(is, StandardCharsets.UTF_8);
-                if (scriptFactoryInstance.isPresent() && templateResource.getFilename().endsWith(".gtemplate")) {
+                if (scriptFactoryInstance.isPresent() && Objects.requireNonNull(templateResource.getFilename()).endsWith(".gtemplate")) {
                     val templateParams = new LinkedHashMap<>(this.parameters);
                     locale.ifPresent(loc -> templateParams.put("locale", loc));
                     return scriptFactoryInstance.get().createTemplate(contents, templateParams);
