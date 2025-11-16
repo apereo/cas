@@ -18,7 +18,7 @@ import java.io.Serializable;
  */
 @Getter
 @AllArgsConstructor(onConstructor_ = @JsonCreator)
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"code", "defaultMessage"})
 public class DefaultMessageDescriptor implements MessageDescriptor {
 
     @Serial

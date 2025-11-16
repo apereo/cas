@@ -66,7 +66,7 @@ public class ServiceTicketImpl extends AbstractTicket
         @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
         this.ticketGrantingTicket = ticket;
-        this.service = service;
+        this.service = Objects.requireNonNull(service);
         this.fromNewLogin = credentialProvided || (ticket != null && ticket.getCountOfUses() == 0);
     }
 

@@ -29,7 +29,7 @@ public abstract class BaseJoinPointArgumentAuditPrincipalIdProvider<T> implement
     }
 
     @Override
-    @Nullable 
+    @Nullable
     public String resolveFrom(final JoinPoint auditTarget, final Exception exception) {
         if (argumentPosition >= 0
             && argumentPosition > auditTarget.getArgs().length - 1

@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
 import java.io.File;
-import java.io.IOException;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,7 +45,7 @@ class ServiceTicketImplTests extends BaseTicketFactoryTests {
     }
 
     @Test
-    void verifySerializeToJson() throws IOException {
+    void verifySerializeToJson() {
         val stWritten = new ServiceTicketImpl(ST_ID, tgt, RegisteredServiceTestUtils.getService(), true, NeverExpiresExpirationPolicy.INSTANCE);
         MAPPER.writeValue(ST_JSON_FILE, stWritten);
         val stRead = MAPPER.readValue(ST_JSON_FILE, ServiceTicketImpl.class);
