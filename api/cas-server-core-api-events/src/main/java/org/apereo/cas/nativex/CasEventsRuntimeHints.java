@@ -4,6 +4,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.context.ApplicationEventPublisherAware;
 
@@ -15,7 +16,7 @@ import org.springframework.context.ApplicationEventPublisherAware;
  */
 public class CasEventsRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerSpringProxyHints(hints, CasEventRepository.class, ApplicationEventPublisherAware.class);
         registerSerializationHints(hints, findSubclassesOf(AbstractCasEvent.class));
     }

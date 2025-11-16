@@ -7,6 +7,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import com.duosecurity.Client;
 import com.duosecurity.client.Http;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 
 /**
@@ -17,7 +18,7 @@ import org.springframework.aot.hint.RuntimeHints;
  */
 public class DuoSecurityRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerReflectionHints(hints,
             DuoSecurityUniversalPromptCredential.class,
             DuoSecurityPasscodeCredential.class,

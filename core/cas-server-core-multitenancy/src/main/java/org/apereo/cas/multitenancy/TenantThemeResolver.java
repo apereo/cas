@@ -6,7 +6,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.theme.AbstractThemeResolver;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -18,17 +18,16 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 @RequiredArgsConstructor
 public class TenantThemeResolver extends AbstractThemeResolver {
-    protected final ObjectProvider<@NonNull TenantExtractor> tenantExtractor;
+    protected final ObjectProvider<TenantExtractor> tenantExtractor;
 
-    protected final ObjectProvider<@NonNull ServicesManager> servicesManager;
+    protected final ObjectProvider<ServicesManager> servicesManager;
 
-    protected final ObjectProvider<@NonNull AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
+    protected final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
-    protected final ObjectProvider<@NonNull CasConfigurationProperties> casProperties;
+    protected final ObjectProvider<CasConfigurationProperties> casProperties;
 
-    @NonNull
     @Override
-    public String resolveThemeName(final HttpServletRequest request) {
+    public String resolveThemeName(final @Nullable HttpServletRequest request) {
         return tenantExtractor.getObject()
             .extract(request)
             .map(TenantDefinition::getUserInterfacePolicy)

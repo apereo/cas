@@ -4,6 +4,7 @@ import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public class SpnegoRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerSerializationHints(hints, SpnegoCredential.class);
 
         registerReflectionHints(hints, List.of(

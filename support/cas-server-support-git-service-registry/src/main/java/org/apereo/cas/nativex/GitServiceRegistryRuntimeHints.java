@@ -6,6 +6,7 @@ import org.eclipse.jgit.internal.JGitText;
 import org.eclipse.jgit.lib.CoreConfig;
 import org.eclipse.jgit.transport.HttpConfig;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 @SuppressWarnings("removal")
 public class GitServiceRegistryRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerReflectionHints(hints, List.of(
             HttpConfig.HttpRedirectMode.class,
             DirCache.DirCacheVersion.class,
