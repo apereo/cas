@@ -40,6 +40,7 @@ import org.springframework.boot.tomcat.TomcatWebServer;
 import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * A {@link CasTomcatServletWebServerFactory} that will configure Tomcat with clustering support based on the
@@ -58,7 +59,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
 
     public CasTomcatServletWebServerFactory(final CasConfigurationProperties casProperties,
                                             final ServerProperties serverProperties) {
-        super(serverProperties.getPort());
+        super(Objects.requireNonNullElse(serverProperties.getPort(), 0));
         if (StringUtils.isNotBlank(serverProperties.getServlet().getContextPath())) {
             setContextPath(serverProperties.getServlet().getContextPath());
         }
