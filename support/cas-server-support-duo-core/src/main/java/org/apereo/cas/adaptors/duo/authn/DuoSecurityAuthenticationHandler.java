@@ -11,12 +11,11 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
-
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -34,14 +33,14 @@ import java.util.List;
 public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler
     implements MultifactorAuthenticationHandler {
     @Getter
-    private final ObjectProvider<? extends DuoSecurityMultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    private final ObjectProvider<? extends @NonNull DuoSecurityMultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
     private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
 
     public DuoSecurityAuthenticationHandler(final String name,
 
                                             final PrincipalFactory principalFactory,
-                                            final ObjectProvider<DuoSecurityMultifactorAuthenticationProvider> multifactorAuthenticationProvider,
+                                            final ObjectProvider<@NonNull DuoSecurityMultifactorAuthenticationProvider> multifactorAuthenticationProvider,
                                             final Integer order,
                                             final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
         super(name, principalFactory, order);

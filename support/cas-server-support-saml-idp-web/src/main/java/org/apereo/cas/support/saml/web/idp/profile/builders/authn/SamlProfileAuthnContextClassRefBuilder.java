@@ -16,6 +16,7 @@ import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jspecify.annotations.NonNull;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
@@ -43,12 +44,12 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
 
     private final CasConfigurationProperties casProperties;
 
-    private final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager;
+    private final ObjectProvider<@NonNull ScriptResourceCacheManager> scriptResourceCacheManager;
 
     public SamlProfileAuthnContextClassRefBuilder(final OpenSamlConfigBean configBean,
                                                   final MetadataResolver samlIdPMetadataResolver,
                                                   final CasConfigurationProperties casProperties,
-                                                  final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager) {
+                                                  final ObjectProvider<@NonNull ScriptResourceCacheManager> scriptResourceCacheManager) {
         super(configBean);
         this.samlIdPMetadataResolver = samlIdPMetadataResolver;
         this.casProperties = casProperties;

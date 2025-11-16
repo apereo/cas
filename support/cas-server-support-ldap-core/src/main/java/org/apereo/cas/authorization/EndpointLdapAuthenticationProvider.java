@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.Credential;
 import org.ldaptive.ReturnAttributes;
@@ -65,7 +66,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
     }
 
     @Override
-    public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(final @NonNull Authentication authentication) throws AuthenticationException {
         try {
             val username = authentication.getPrincipal().toString();
             val credentials = authentication.getCredentials();
@@ -119,7 +120,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
     }
 
     @Override
-    public boolean supports(final Class<?> aClass) {
+    public boolean supports(final @NonNull Class<?> aClass) {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(aClass);
     }
 

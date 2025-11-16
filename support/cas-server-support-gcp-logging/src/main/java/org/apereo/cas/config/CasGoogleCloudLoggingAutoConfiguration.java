@@ -10,6 +10,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import com.google.cloud.logging.Logging;
 import com.google.cloud.logging.LoggingOptions;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -23,7 +24,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import jakarta.annotation.Nonnull;
 
 /**
  * This is {@link CasGoogleCloudLoggingAutoConfiguration}.
@@ -46,11 +46,11 @@ public class CasGoogleCloudLoggingAutoConfiguration {
     @ConditionalOnMissingBean(name = "googleCloudLoggingWebMvcConfigurer")
     public WebMvcConfigurer googleCloudLoggingWebMvcConfigurer(
         @Qualifier("googleCloudLoggingInterceptor")
-        final ObjectProvider<HandlerInterceptor> googleCloudLoggingInterceptor) {
+        final ObjectProvider<@NonNull HandlerInterceptor> googleCloudLoggingInterceptor) {
         return new WebMvcConfigurer() {
             @Override
             public void addInterceptors(
-                @Nonnull
+                @NonNull
                 final InterceptorRegistry registry) {
                 registry.addInterceptor(new RefreshableHandlerInterceptor(googleCloudLoggingInterceptor)).addPathPatterns("/**");
             }
@@ -62,7 +62,7 @@ public class CasGoogleCloudLoggingAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public CasWebflowExecutionPlanConfigurer googleCloudWebflowExecutionPlanConfigurer(
         @Qualifier("googleCloudLoggingInterceptor")
-        final ObjectProvider<HandlerInterceptor> googleCloudLoggingInterceptor) {
+        final ObjectProvider<@NonNull HandlerInterceptor> googleCloudLoggingInterceptor) {
         return plan -> plan.registerWebflowInterceptor(new RefreshableHandlerInterceptor(googleCloudLoggingInterceptor));
     }
 

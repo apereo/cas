@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.RegexValidator;
 import org.apache.commons.validator.routines.UrlValidator;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.FactoryBean;
 
 
@@ -14,7 +15,7 @@ import org.springframework.beans.factory.FactoryBean;
  * @author swoeste
  * @since 5.2.0
  */
-public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas.web.UrlValidator> {
+public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas.web.@NonNull UrlValidator> {
 
     private static final UrlValidator URL_VALIDATOR_ALLOW_LOCAL_URLS = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
 

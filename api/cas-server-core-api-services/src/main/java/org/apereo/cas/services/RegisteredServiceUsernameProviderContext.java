@@ -2,14 +2,12 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationContext;
-
-import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +30,6 @@ public class RegisteredServiceUsernameProviderContext {
 
     private final Map<String, List<Object>> releasingAttributes;
 
-    @Nonnull
+    @NonNull
     private final ApplicationContext applicationContext;
 }

@@ -11,8 +11,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -49,7 +49,7 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
      * Yubikey secret key.
      */
     @RequiredProperty
-    @Nonnull
+    @NonNull
     private String secretKey = StringUtils.EMPTY;
 
     /**

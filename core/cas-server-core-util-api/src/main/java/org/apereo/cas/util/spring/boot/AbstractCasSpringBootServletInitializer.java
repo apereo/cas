@@ -1,16 +1,15 @@
 package org.apereo.cas.util.spring.boot;
 
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.core.metrics.ApplicationStartup;
-
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.SessionTrackingMode;
-
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +34,7 @@ public abstract class AbstractCasSpringBootServletInitializer extends SpringBoot
     }
 
     @Override
-    protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
+    protected @NonNull SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
         return builder
             .web(WebApplicationType.SERVLET)
             .sources(sources.toArray(Class[]::new))

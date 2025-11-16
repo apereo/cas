@@ -1,15 +1,14 @@
 package org.apereo.cas.util.spring.boot;
 
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.boot.diagnostics.AbstractFailureAnalyzer;
 import org.springframework.boot.diagnostics.FailureAnalysis;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -20,7 +19,7 @@ import java.io.StringWriter;
  * @since 6.4.0
  */
 @Slf4j
-public class BeanDefinitionStoreFailureAnalyzer extends AbstractFailureAnalyzer<BeanDefinitionStoreException> {
+public class BeanDefinitionStoreFailureAnalyzer extends AbstractFailureAnalyzer<@NonNull BeanDefinitionStoreException> {
 
     private static final String ANALYSIS = "Review the properties available for the configuration. Enable debug logging on "
                                            + BeanDefinitionStoreFailureAnalyzer.class.getName() + " to see exception stack trace";
@@ -45,7 +44,7 @@ public class BeanDefinitionStoreFailureAnalyzer extends AbstractFailureAnalyzer<
     }
 
     @Override
-    protected FailureAnalysis analyze(final Throwable rootFailure, final BeanDefinitionStoreException cause) {
+    protected FailureAnalysis analyze(final @NonNull Throwable rootFailure, final BeanDefinitionStoreException cause) {
         if (LOGGER.isDebugEnabled()) {
             LoggingUtils.error(LOGGER, getDescription(cause), cause);
         }

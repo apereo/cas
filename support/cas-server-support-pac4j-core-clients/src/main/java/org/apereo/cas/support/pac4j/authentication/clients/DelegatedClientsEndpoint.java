@@ -6,6 +6,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.client.BaseClient;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
@@ -26,12 +27,12 @@ import java.util.TreeMap;
 @Slf4j
 @Endpoint(id = "delegatedClients", defaultAccess = Access.NONE)
 public class DelegatedClientsEndpoint extends BaseCasActuatorEndpoint {
-    private final ObjectProvider<DelegatedIdentityProviderFactory> clientFactory;
-    private final ObjectProvider<List<DelegatedClientsEndpointContributor>> delegatedClientsEndpointContributors;
+    private final ObjectProvider<@NonNull DelegatedIdentityProviderFactory> clientFactory;
+    private final ObjectProvider<@NonNull List<DelegatedClientsEndpointContributor>> delegatedClientsEndpointContributors;
 
     public DelegatedClientsEndpoint(final CasConfigurationProperties casProperties,
-                                    final ObjectProvider<DelegatedIdentityProviderFactory> clientFactory,
-                                    final ObjectProvider<List<DelegatedClientsEndpointContributor>> delegatedClientsEndpointContributors) {
+                                    final ObjectProvider<@NonNull DelegatedIdentityProviderFactory> clientFactory,
+                                    final ObjectProvider<@NonNull List<DelegatedClientsEndpointContributor>> delegatedClientsEndpointContributors) {
         super(casProperties);
         this.clientFactory = clientFactory;
         this.delegatedClientsEndpointContributors = delegatedClientsEndpointContributors;

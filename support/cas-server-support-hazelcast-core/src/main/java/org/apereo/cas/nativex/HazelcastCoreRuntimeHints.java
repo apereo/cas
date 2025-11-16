@@ -76,6 +76,7 @@ import com.hazelcast.spi.properties.HazelcastProperty;
 import com.hazelcast.sql.SqlService;
 import com.hazelcast.sql.impl.type.converter.Converter;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.AbstractQueue;
 import java.util.List;
@@ -88,7 +89,7 @@ import java.util.List;
  */
 public class HazelcastCoreRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
         registerReflectionHints(hints,
             List.of(
                 HazelcastProperty.class,

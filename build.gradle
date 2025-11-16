@@ -56,7 +56,7 @@ ext {
 
     skipArtifactSigning = providers.systemProperty("skipArtifactSigning").present
     terminateCompilerOnWarning = providers.systemProperty("terminateCompilerOnWarning").getOrElse("true") == "true"
-    skipNullAway = providers.systemProperty("skipNullAway").getOrElse("true") == "true"
+    skipNullAway = providers.systemProperty("skipNullAway").getOrElse("false") == "true"
 
     enableRemoteDebugging = providers.systemProperty("enableRemoteDebugging").present
     remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend").getOrElse("false") == "true" ? "y" : "n"
@@ -474,10 +474,7 @@ subprojects {
 
     if (!providers.systemProperty("skipErrorProneCompiler").present) {
         nullaway {
-            onlyNullMarked = false
-            annotatedPackages = [
-                "org.apereo.cas"
-            ]
+            onlyNullMarked = true
         }
     }
 }

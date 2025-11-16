@@ -5,6 +5,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.webmvc.autoconfigure.error.DefaultErrorViewResolver;
 import org.springframework.context.ApplicationContext;
@@ -38,9 +39,9 @@ public class MappedExceptionErrorViewResolver extends DefaultErrorViewResolver {
     }
 
     @Override
-    public ModelAndView resolveErrorView(final HttpServletRequest request,
-                                         final HttpStatus status,
-                                         final Map<String, Object> map) {
+    public ModelAndView resolveErrorView(final @NonNull HttpServletRequest request,
+                                         final @NonNull HttpStatus status,
+                                         final @NonNull Map<String, Object> map) {
         val errorContext = new ErrorContext(request, status, map);
         val defaultModelAndView = defaultFallback.apply(errorContext)
             .orElseGet(() -> super.resolveErrorView(request, status, map));

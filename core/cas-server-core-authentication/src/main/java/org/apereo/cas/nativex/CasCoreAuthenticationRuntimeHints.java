@@ -30,6 +30,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.validation.ValidationResponseType;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.beans.factory.DisposableBean;
 import java.util.List;
@@ -42,7 +43,7 @@ import java.util.List;
  */
 public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
         registerSerializationHints(hints, List.of(
             IPAddressIntelligenceResponse.class,
             GeoLocationRequest.class,

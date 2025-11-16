@@ -15,6 +15,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Objects;
@@ -33,14 +34,14 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
 
     private final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator;
 
-    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    private final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
     public GoogleAuthenticatorAuthenticationHandler(
         final String name,
 
         final PrincipalFactory principalFactory,
         final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator,
-        final Integer order, final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+        final Integer order, final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(name, principalFactory, order);
         this.validator = validator;
         this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;

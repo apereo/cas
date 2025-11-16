@@ -15,6 +15,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.NumericDate;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -60,18 +61,18 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
         return super.renderProfileForModel(userProfile, accessToken, response);
     }
 
-    protected ResponseEntity<String> buildPlainUserProfileClaims(final Map<String, Object> userProfile,
-                                                                 final HttpServletResponse response,
-                                                                 final OidcRegisteredService registeredService) {
+    protected ResponseEntity<@NonNull String> buildPlainUserProfileClaims(final Map<String, Object> userProfile,
+                                                                          final HttpServletResponse response,
+                                                                          final OidcRegisteredService registeredService) {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         val claims = convertUserProfileIntoClaims(userProfile);
         return buildResponseEntity(claims.toJson(), response, registeredService);
     }
     
 
-    protected ResponseEntity<String> signAndEncryptUserProfileClaims(final Map<String, Object> userProfile,
-                                                                     final HttpServletResponse response,
-                                                                     final OidcRegisteredService registeredService) throws Throwable {
+    protected ResponseEntity<@NonNull String> signAndEncryptUserProfileClaims(final Map<String, Object> userProfile,
+                                                                              final HttpServletResponse response,
+                                                                              final OidcRegisteredService registeredService) throws Throwable {
         val claims = convertUserProfileIntoClaims(userProfile);
         claims.setAudience(registeredService.getClientId());
         claims.setIssuedAt(NumericDate.now());
@@ -86,8 +87,8 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
         return buildResponseEntity(result, response, registeredService);
     }
 
-    private static ResponseEntity<String> buildResponseEntity(final String result, final HttpServletResponse response,
-                                                              final OidcRegisteredService registeredService) {
+    private static ResponseEntity<@NonNull String> buildResponseEntity(final String result, final HttpServletResponse response,
+                                                                       final OidcRegisteredService registeredService) {
         val context = Map.<String, Object>of(
             "Client ID", registeredService.getClientId(),
             "Service", registeredService.getName(),

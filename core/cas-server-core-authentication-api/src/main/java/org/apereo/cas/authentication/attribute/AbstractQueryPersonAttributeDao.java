@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -193,7 +194,7 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
     protected final PersonAttributes mapPersonAttributes(final PersonAttributes person) {
         var personAttributes = person.getAttributes();
 
-        val mappedAttributes = new LinkedCaseInsensitiveMap<List<Object>>();
+        val mappedAttributes = new LinkedCaseInsensitiveMap<@NonNull List<Object>>();
         if (resultAttributeMapping == null) {
             if (caseInsensitiveResultAttributes != null && !caseInsensitiveResultAttributes.isEmpty()) {
                 for (val attribute : personAttributes.entrySet()) {

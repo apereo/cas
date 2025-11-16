@@ -3,6 +3,7 @@ package org.apereo.cas.monitor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.health.contributor.AbstractHealthIndicator;
 import org.springframework.boot.health.contributor.Health;
@@ -21,7 +22,7 @@ public class TicketRegistryHealthIndicator extends AbstractHealthIndicator {
     /**
      * Ticket registry instance that exposes state info.
      */
-    private final ObjectProvider<TicketRegistry> ticketRegistryProvider;
+    private final ObjectProvider<@NonNull TicketRegistry> ticketRegistryProvider;
 
     /**
      * Threshold above which warnings are issued for service ticket count.

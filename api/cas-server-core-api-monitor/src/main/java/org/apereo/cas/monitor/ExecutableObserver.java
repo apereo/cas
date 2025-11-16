@@ -3,6 +3,7 @@ package org.apereo.cas.monitor;
 import lombok.val;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -51,7 +52,7 @@ public interface ExecutableObserver {
      * @param observerProvider the observer provider
      * @param task             the task
      */
-    static void observe(final ObjectProvider<ExecutableObserver> observerProvider, final MonitorableTask task) {
+    static void observe(final ObjectProvider<@NonNull ExecutableObserver> observerProvider, final MonitorableTask task) {
         observerProvider.ifAvailable(observer -> observer.run(task, () -> {
         }));
     }
@@ -64,7 +65,7 @@ public interface ExecutableObserver {
      * @return the object
      * @throws Throwable the throwable
      */
-    static Object observe(final ObjectProvider<ExecutableObserver> observerProvider,
+    static Object observe(final ObjectProvider<@NonNull ExecutableObserver> observerProvider,
                           final ProceedingJoinPoint joinPoint,
                           final Function<MonitorableTask, MonitorableTask> taskCustomizer) throws Throwable {
         val observer = observerProvider.getIfAvailable();
@@ -83,7 +84,7 @@ public interface ExecutableObserver {
      * @return the object
      * @throws Throwable the throwable
      */
-    static Object observe(final ObjectProvider<ExecutableObserver> observerProvider,
+    static Object observe(final ObjectProvider<@NonNull ExecutableObserver> observerProvider,
                           final ProceedingJoinPoint joinPoint) throws Throwable {
         return observe(observerProvider, joinPoint, Function.identity());
     }

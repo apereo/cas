@@ -35,6 +35,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -84,7 +85,7 @@ public class CasRedisTicketRegistryAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "redisTicketRegistryCache")
-        public Cache<String, Ticket> redisTicketRegistryCache(final CasConfigurationProperties casProperties) {
+        public Cache<@NonNull String, Ticket> redisTicketRegistryCache(final CasConfigurationProperties casProperties) {
             val redis = casProperties.getTicket().getRegistry().getRedis();
             return Beans.newCache(redis.getCache(), new CachedTicketExpirationPolicy());
         }
@@ -96,9 +97,9 @@ public class CasRedisTicketRegistryAutoConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketRegistry.BEAN_NAME)
-            final ObjectProvider<TicketRegistry> ticketRegistry,
+            final ObjectProvider<@NonNull TicketRegistry> ticketRegistry,
             @Qualifier("redisTicketRegistryCache")
-            final ObjectProvider<Cache<String, Ticket>> redisTicketRegistryCache) {
+            final ObjectProvider<@NonNull Cache<@NonNull String, Ticket>> redisTicketRegistryCache) {
             return new RedisTicketRegistryCacheEndpoint(casProperties, applicationContext,
                 ticketRegistry, redisTicketRegistryCache);
         }
@@ -147,12 +148,12 @@ public class CasRedisTicketRegistryAutoConfiguration {
             @Qualifier("redisTicketRegistryMessageIdentifier")
             final PublisherIdentifier redisTicketRegistryMessageIdentifier,
             @Qualifier("redisTicketRegistryCache")
-            final Cache<String, Ticket> redisTicketRegistryCache) {
+            final Cache<@NonNull String, Ticket> redisTicketRegistryCache) {
             val adapter = new MessageListenerAdapter(
                 new DefaultRedisTicketRegistryMessageListener(redisTicketRegistryMessageIdentifier,
                     redisKeyGeneratorFactory, redisTicketRegistryCache));
             adapter.setSerializer(ticketRedisTemplate.getValueSerializer());
-            adapter.setStringSerializer((RedisSerializer<String>) ticketRedisTemplate.getKeySerializer());
+            adapter.setStringSerializer((RedisSerializer<@NonNull String>) ticketRedisTemplate.getKeySerializer());
             return adapter;
         }
 
@@ -257,11 +258,11 @@ public class CasRedisTicketRegistryAutoConfiguration {
             @Qualifier(TicketSerializationManager.BEAN_NAME)
             final TicketSerializationManager ticketSerializationManager,
             @Qualifier("redisTicketRegistryCache")
-            final ObjectProvider<Cache<String, Ticket>> redisTicketRegistryCache,
+            final ObjectProvider<@NonNull Cache<@NonNull String, Ticket>> redisTicketRegistryCache,
             @Qualifier("redisTicketRegistryMessagePublisher")
-            final ObjectProvider<RedisTicketRegistryMessagePublisher> redisTicketRegistryMessagePublisher,
+            final ObjectProvider<@NonNull RedisTicketRegistryMessagePublisher> redisTicketRegistryMessagePublisher,
             @Qualifier(RedisModulesOperations.BEAN_NAME)
-            final ObjectProvider<RedisModulesOperations> redisModulesOperations,
+            final ObjectProvider<@NonNull RedisModulesOperations> redisModulesOperations,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(TicketRegistry.class)

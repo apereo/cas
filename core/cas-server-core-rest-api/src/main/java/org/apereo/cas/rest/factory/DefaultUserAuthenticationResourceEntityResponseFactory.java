@@ -2,6 +2,7 @@ package org.apereo.cas.rest.factory;
 
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import tools.jackson.databind.ObjectMapper;
@@ -19,8 +20,8 @@ public class DefaultUserAuthenticationResourceEntityResponseFactory implements U
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Override
-    public ResponseEntity<String> build(final AuthenticationResult result,
-                                        final HttpServletRequest request) throws Exception {
+    public ResponseEntity<@NonNull String> build(final AuthenticationResult result,
+                                                 final HttpServletRequest request) throws Exception {
         return new ResponseEntity<>(MAPPER.writeValueAsString(result), HttpStatus.OK);
     }
 }

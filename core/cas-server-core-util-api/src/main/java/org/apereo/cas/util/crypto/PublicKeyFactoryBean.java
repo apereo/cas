@@ -6,12 +6,10 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.util.io.pem.PemReader;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
-
-import jakarta.annotation.Nonnull;
 import javax.crypto.Cipher;
-
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
@@ -29,7 +27,7 @@ import java.security.spec.X509EncodedKeySpec;
 @ToString(callSuper = true)
 @Getter
 @RequiredArgsConstructor
-public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
+public class PublicKeyFactoryBean extends AbstractFactoryBean<@NonNull PublicKey> {
     private final Resource resource;
 
     private final String algorithm;
@@ -60,7 +58,7 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
         return PublicKey.class;
     }
 
-    @Nonnull
+    @NonNull
     @Override
     protected PublicKey createInstance() throws Exception {
         var key = readPemPublicKey();

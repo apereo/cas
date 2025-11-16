@@ -4,6 +4,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import com.mongodb.ReadConcern;
 import com.mongodb.WriteConcern;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public class MongoCoreRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
         val entries = List.<Class>of(WriteConcern.class, ReadConcern.class, AggregationOperation.class);
         registerReflectionHints(hints, entries);
     }

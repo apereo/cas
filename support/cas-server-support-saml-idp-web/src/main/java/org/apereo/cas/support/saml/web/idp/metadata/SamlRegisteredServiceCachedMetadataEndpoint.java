@@ -25,6 +25,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.criterion.SatisfyAnyCriterion;
@@ -57,20 +58,20 @@ import java.util.stream.StreamSupport;
 @Slf4j
 @Endpoint(id = "samlIdPRegisteredServiceMetadataCache", defaultAccess = Access.NONE)
 public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActuatorEndpoint {
-    private final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver;
+    private final ObjectProvider<@NonNull SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver;
 
-    private final ObjectProvider<ServicesManager> servicesManager;
+    private final ObjectProvider<@NonNull ServicesManager> servicesManager;
 
-    private final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
+    private final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
-    private final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
+    private final ObjectProvider<@NonNull OpenSamlConfigBean> openSamlConfigBean;
 
     public SamlRegisteredServiceCachedMetadataEndpoint(
         final CasConfigurationProperties casProperties,
-        final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver,
-        final ObjectProvider<ServicesManager> servicesManager,
-        final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
-        final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean) {
+        final ObjectProvider<@NonNull SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver,
+        final ObjectProvider<@NonNull ServicesManager> servicesManager,
+        final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer,
+        final ObjectProvider<@NonNull OpenSamlConfigBean> openSamlConfigBean) {
         super(casProperties, openSamlConfigBean.getObject().getApplicationContext());
         this.cachingMetadataResolver = cachingMetadataResolver;
         this.servicesManager = servicesManager;
@@ -140,7 +141,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
             @Parameter(in = ParameterIn.QUERY, name = "entityId", description = "The entity id"),
             @Parameter(in = ParameterIn.QUERY, name = "includeMetadata", description = "Whether to include the XML metadata in the response")
         })
-    public ResponseEntity<? extends Map> getCachedMetadataObject(
+    public ResponseEntity<? extends @NonNull Map> getCachedMetadataObject(
         @RequestParam final String serviceId,
         @RequestParam(required = false, defaultValue = "true") final boolean includeMetadata,
         @Nullable

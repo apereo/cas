@@ -29,6 +29,7 @@ import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
 import org.hjson.JsonValue;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
@@ -56,7 +57,7 @@ public class OidcDefaultClientRegistrationRequestTranslator implements OidcClien
 
     private static final int GENERATED_CLIENT_NAME_LENGTH = 8;
 
-    private final ObjectProvider<OidcConfigurationContext> configurationContext;
+    private final ObjectProvider<@NonNull OidcConfigurationContext> configurationContext;
 
     @Override
     public OidcRegisteredService translate(

@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
@@ -159,7 +159,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     }
 
     @Override
-    public int compareTo(@Nonnull final AttributeDefinition definition) {
+    public int compareTo(@NonNull final AttributeDefinition definition) {
         return Comparator.comparing(AttributeDefinition::getKey).compare(this, definition);
     }
     

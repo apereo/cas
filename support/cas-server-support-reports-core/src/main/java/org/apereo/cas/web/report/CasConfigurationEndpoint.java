@@ -5,6 +5,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -41,7 +42,7 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
         consumes = MediaType.TEXT_PLAIN_VALUE)
     @Operation(summary = "Encrypt configuration value",
         parameters = @Parameter(name = "value", required = true, description = "The value to encrypt"))
-    public ResponseEntity<String> encrypt(@RequestBody final String value) {
+    public ResponseEntity<@NonNull String> encrypt(@RequestBody final String value) {
         return ResponseEntity.ok(casConfigurationCipherExecutor.encode(value));
     }
 
@@ -56,7 +57,7 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
         consumes = MediaType.TEXT_PLAIN_VALUE)
     @Operation(summary = "Decrypt configuration value",
         parameters = @Parameter(name = "value", required = true, description = "The value to decrypt"))
-    public ResponseEntity<String> decrypt(@RequestBody final String value) {
+    public ResponseEntity<@NonNull String> decrypt(@RequestBody final String value) {
         return ResponseEntity.ok(casConfigurationCipherExecutor.decode(value));
     }
 }

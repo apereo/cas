@@ -20,6 +20,7 @@ import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -50,7 +51,7 @@ public class CasCoreCookieAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CookieValueManager cookieValueManager(
             @Qualifier(GeoLocationService.BEAN_NAME)
-            final ObjectProvider<GeoLocationService> geoLocationService,
+            final ObjectProvider<@NonNull GeoLocationService> geoLocationService,
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties,

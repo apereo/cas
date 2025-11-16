@@ -15,6 +15,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
 import java.io.Serializable;
@@ -29,7 +30,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class AccessTokenTokenExchangeGrantRequestExtractor<T extends OAuth20ConfigurationContext> extends BaseAccessTokenGrantRequestExtractor<T> {
-    public AccessTokenTokenExchangeGrantRequestExtractor(final ObjectProvider<T> configurationContext) {
+    public AccessTokenTokenExchangeGrantRequestExtractor(final ObjectProvider<@NonNull T> configurationContext) {
         super(configurationContext);
     }
 

@@ -4,18 +4,16 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.ticket.Ticket;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.net.URI;
 
 /**
@@ -63,7 +61,7 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
         resourceResolverName = AuditResourceResolvers.REST_API_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER)
     @Override
     @SuppressWarnings("JdkObsolete")
-    public ResponseEntity<String> build(final Ticket ticketGrantingTicket, final HttpServletRequest request) throws Throwable {
+    public ResponseEntity<@NonNull String> build(final Ticket ticketGrantingTicket, final HttpServletRequest request) throws Throwable {
         val ticketReference = new URI(request.getRequestURL().toString() + '/' + ticketGrantingTicket.getId());
         val headers = new HttpHeaders();
         headers.setLocation(ticketReference);

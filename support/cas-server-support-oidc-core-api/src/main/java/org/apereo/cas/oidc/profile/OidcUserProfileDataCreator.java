@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.Map;
  */
 @Slf4j
 public class OidcUserProfileDataCreator extends DefaultOAuth20UserProfileDataCreator<OidcConfigurationContext> {
-    public OidcUserProfileDataCreator(final ObjectProvider<OidcConfigurationContext> configurationContext) {
+    public OidcUserProfileDataCreator(final ObjectProvider<@NonNull OidcConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 

@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import java.util.UUID;
  */
 @Slf4j
 public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<UmaConfigurationContext> {
-    public UmaIdTokenGeneratorService(final ObjectProvider<UmaConfigurationContext> configurationContext) {
+    public UmaIdTokenGeneratorService(final ObjectProvider<@NonNull UmaConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 

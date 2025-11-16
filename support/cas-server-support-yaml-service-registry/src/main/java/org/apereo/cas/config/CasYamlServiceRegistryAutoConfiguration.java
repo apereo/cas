@@ -12,6 +12,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -50,7 +51,7 @@ public class CasYamlServiceRegistryAutoConfiguration {
             final CasConfigurationProperties casProperties,
             @Qualifier("registeredServiceReplicationStrategy")
             final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
-            final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners) throws Exception {
+            final ObjectProvider<@NonNull List<ServiceRegistryListener>> serviceRegistryListeners) throws Exception {
 
             val registry = casProperties.getServiceRegistry();
             val yaml = new YamlServiceRegistry(registry.getYaml().getLocation(),

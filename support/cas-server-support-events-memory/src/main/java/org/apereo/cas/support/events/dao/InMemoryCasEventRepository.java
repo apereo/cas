@@ -2,6 +2,7 @@ package org.apereo.cas.support.events.dao;
 
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import org.jspecify.annotations.NonNull;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -12,10 +13,10 @@ import java.util.stream.Stream;
  * @since 5.1.0
  */
 public class InMemoryCasEventRepository extends AbstractCasEventRepository {
-    private final LoadingCache<String, CasEvent> cache;
+    private final LoadingCache<@NonNull String, CasEvent> cache;
 
     public InMemoryCasEventRepository(final CasEventRepositoryFilter eventRepositoryFilter,
-                                      final LoadingCache<String, CasEvent> cache) {
+                                      final LoadingCache<@NonNull String, CasEvent> cache) {
         super(eventRepositoryFilter);
         this.cache = cache;
     }

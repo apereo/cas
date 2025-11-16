@@ -4,10 +4,10 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -26,8 +26,8 @@ public class CasProtocolServiceTicketResourceEntityResponseFactory implements Se
     protected final CentralAuthenticationService centralAuthenticationService;
 
     @Override
-    public ResponseEntity<String> build(final String ticketGrantingTicket, final WebApplicationService webApplicationService,
-                                        final AuthenticationResult authenticationResult) throws Throwable {
+    public ResponseEntity<@NonNull String> build(final String ticketGrantingTicket, final WebApplicationService webApplicationService,
+                                                 final AuthenticationResult authenticationResult) throws Throwable {
         val serviceTicketId = grantServiceTicket(ticketGrantingTicket, webApplicationService, authenticationResult);
         return new ResponseEntity<>(serviceTicketId, HttpStatus.OK);
     }

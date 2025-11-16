@@ -83,6 +83,7 @@ import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.List;
 
@@ -94,7 +95,7 @@ import java.util.List;
  */
 public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
         registerProxyHints(hints, List.of(
             PrincipalProvisioner.class,
             ServiceRegistryInitializer.class,

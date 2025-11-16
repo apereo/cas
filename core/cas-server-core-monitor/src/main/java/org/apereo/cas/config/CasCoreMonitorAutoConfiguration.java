@@ -19,6 +19,7 @@ import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.ObservationTextPublisher;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -55,12 +56,12 @@ public class CasCoreMonitorAutoConfiguration {
         @ConditionalOnMissingBean(name = ExecutableObserver.BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ExecutableObserver defaultExecutableObserver(final ObjectProvider<ObservationRegistry> observationRegistry) {
+        public ExecutableObserver defaultExecutableObserver(final ObjectProvider<@NonNull ObservationRegistry> observationRegistry) {
             return new DefaultExecutableObserver(observationRegistry);
         }
 
         @Bean
-        public ObservationHandler<Observation.Context> observationTextPublisher() {
+        public ObservationHandler<Observation.@NonNull Context> observationTextPublisher() {
             return new ObservationTextPublisher();
         }
     }
@@ -87,7 +88,7 @@ public class CasCoreMonitorAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HealthIndicator sessionHealthIndicator(
             @Qualifier(TicketRegistry.BEAN_NAME)
-            final ObjectProvider<TicketRegistry> ticketRegistry,
+            final ObjectProvider<@NonNull TicketRegistry> ticketRegistry,
             final CasConfigurationProperties casProperties) {
             val warnSt = casProperties.getMonitor().getSt().getWarn();
             val warnTgt = casProperties.getMonitor().getTgt().getWarn();
@@ -108,7 +109,7 @@ public class CasCoreMonitorAutoConfiguration {
         @ConditionalOnAvailableEndpoint(endpoint = MetricsEndpoint.class)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HealthIndicator systemHealthIndicator(
-            @Qualifier("metricsEndpoint") final ObjectProvider<MetricsEndpoint> metricsEndpoint,
+            @Qualifier("metricsEndpoint") final ObjectProvider<@NonNull MetricsEndpoint> metricsEndpoint,
             final CasConfigurationProperties casProperties) {
             val warnLoad = casProperties.getMonitor().getLoad().getWarn();
             return new SystemMonitorHealthIndicator(metricsEndpoint, warnLoad.getThreshold());
@@ -125,7 +126,7 @@ public class CasCoreMonitorAutoConfiguration {
                 .publishPercentileHistogram()
                 .register(meterRegistry);
             val filter = new SlowRequestsFilter(slowRequestTimer);
-            val bean = new FilterRegistrationBean<SlowRequestsFilter>();
+            val bean = new FilterRegistrationBean<@NonNull SlowRequestsFilter>();
             bean.setFilter(filter);
             bean.setAsyncSupported(true);
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));

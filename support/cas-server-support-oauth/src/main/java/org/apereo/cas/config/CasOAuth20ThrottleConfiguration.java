@@ -15,8 +15,8 @@ import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.SecurityLogicInterceptor;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.DirectClient;
 import org.pac4j.core.config.Config;
@@ -35,13 +35,9 @@ import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import jakarta.annotation.Nonnull;
-
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.apereo.cas.support.oauth.OAuth20Constants.*;
+import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 
 /**
  * This is {@link CasOAuth20ThrottleConfiguration}.
@@ -61,11 +57,11 @@ class CasOAuth20ThrottleConfiguration {
         @ConditionalOnMissingBean(name = "oauthThrottleWebMvcConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebMvcConfigurer oauthThrottleWebMvcConfigurer(
-            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME) final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
+            @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME) final ObjectProvider<@NonNull AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(
-                    @Nonnull final InterceptorRegistry registry) {
+                    @NonNull final InterceptorRegistry registry) {
                     authenticationThrottlingExecutionPlan.ifAvailable(plan -> {
                         val handler = new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors);
                         registry.addInterceptor(handler)
@@ -85,13 +81,13 @@ class CasOAuth20ThrottleConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor oauthHandlerInterceptorAdapter(
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final ObjectProvider<OAuth20RequestParameterResolver> oauthRequestParameterResolver,
-            @Qualifier("requiresAuthenticationAuthorizeInterceptor") final ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
-            @Qualifier("requiresAuthenticationAccessTokenInterceptor") final ObjectProvider<HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor,
-            final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
-            final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
-            @Qualifier("oauthDistributedSessionStore") final ObjectProvider<SessionStore> oauthDistributedSessionStore,
-            @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<ServicesManager> servicesManager) {
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final ObjectProvider<@NonNull OAuth20RequestParameterResolver> oauthRequestParameterResolver,
+            @Qualifier("requiresAuthenticationAuthorizeInterceptor") final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
+            @Qualifier("requiresAuthenticationAccessTokenInterceptor") final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor,
+            final ObjectProvider<@NonNull List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
+            final ObjectProvider<@NonNull List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
+            @Qualifier("oauthDistributedSessionStore") final ObjectProvider<@NonNull SessionStore> oauthDistributedSessionStore,
+            @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<@NonNull ServicesManager> servicesManager) {
             return new OAuth20HandlerInterceptorAdapter(
                 requiresAuthenticationAccessTokenInterceptor,
                 requiresAuthenticationAuthorizeInterceptor,
@@ -106,11 +102,11 @@ class CasOAuth20ThrottleConfiguration {
         @ConditionalOnMissingBean(name = "oauthWebMvcConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public WebMvcConfigurer oauthWebMvcConfigurer(
-            @Qualifier("oauthHandlerInterceptorAdapter") final ObjectProvider<HandlerInterceptor> oauthHandlerInterceptorAdapter) {
+            @Qualifier("oauthHandlerInterceptorAdapter") final ObjectProvider<@NonNull HandlerInterceptor> oauthHandlerInterceptorAdapter) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(
-                    @Nonnull final InterceptorRegistry registry) {
+                    @NonNull final InterceptorRegistry registry) {
                     val handler = new RefreshableHandlerInterceptor(oauthHandlerInterceptorAdapter);
                     registry
                         .addInterceptor(handler)

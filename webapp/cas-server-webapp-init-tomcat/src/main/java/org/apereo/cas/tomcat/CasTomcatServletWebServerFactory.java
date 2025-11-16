@@ -35,10 +35,10 @@ import org.apache.catalina.webresources.ExtractingRoot;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.tomcat.TomcatWebServer;
 import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
-import jakarta.annotation.Nonnull;
 import java.util.Locale;
 
 /**
@@ -85,9 +85,9 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         context.setResources(webResourceRoot);
     }
 
-    @Nonnull
+    @NonNull
     @Override
-    protected TomcatWebServer getTomcatWebServer(@Nonnull final Tomcat tomcat) {
+    protected TomcatWebServer getTomcatWebServer(@NonNull final Tomcat tomcat) {
         configureSessionClustering(tomcat);
         return super.getTomcatWebServer(tomcat);
     }

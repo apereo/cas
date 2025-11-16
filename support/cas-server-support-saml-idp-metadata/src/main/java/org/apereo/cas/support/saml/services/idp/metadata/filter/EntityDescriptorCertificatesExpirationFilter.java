@@ -3,14 +3,14 @@ package org.apereo.cas.support.saml.services.idp.metadata.filter;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.metadata.resolver.filter.AbstractMetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.FilterException;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.security.x509.X509Support;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.security.cert.CertificateException;
 
 /**
@@ -23,11 +23,8 @@ import java.security.cert.CertificateException;
 public class EntityDescriptorCertificatesExpirationFilter extends AbstractMetadataFilter {
 
     @Override
-    public XMLObject filter(
-        @Nullable
-        final XMLObject metadata,
-        @Nonnull
-        final MetadataFilterContext context) throws FilterException {
+    public XMLObject filter(@Nullable final XMLObject metadata,
+                            @NonNull final MetadataFilterContext context) throws FilterException {
 
         if (metadata instanceof final EntityDescriptor ed) {
             for (val role : ed.getRoleDescriptors()) {

@@ -17,6 +17,7 @@ import org.apache.commons.lang3.Strings;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jspecify.annotations.NonNull;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -37,8 +38,8 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
     private final OidcServerDiscoverySettings discoverySettings;
 
     public OidcUserProfileSigningAndEncryptionService(
-        final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache,
-        final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache,
+        final LoadingCache<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache,
+        final LoadingCache<@NonNull OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache,
         final OidcIssuerService issuerService,
         final OidcServerDiscoverySettings discoverySettings,
         final CasConfigurationProperties casProperties) {

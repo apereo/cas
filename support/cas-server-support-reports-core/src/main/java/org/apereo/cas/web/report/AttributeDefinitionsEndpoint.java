@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -19,10 +20,10 @@ import java.util.Collection;
  */
 @Endpoint(id = "attributeDefinitions", defaultAccess = Access.NONE)
 public class AttributeDefinitionsEndpoint extends BaseCasActuatorEndpoint {
-    private final ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore;
+    private final ObjectProvider<@NonNull AttributeDefinitionStore> attributeDefinitionStore;
 
     public AttributeDefinitionsEndpoint(final CasConfigurationProperties casProperties,
-                                        final ObjectProvider<AttributeDefinitionStore> attributeDefinitionStore) {
+                                        final ObjectProvider<@NonNull AttributeDefinitionStore> attributeDefinitionStore) {
         super(casProperties);
         this.attributeDefinitionStore = attributeDefinitionStore;
     }

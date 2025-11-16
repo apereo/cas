@@ -6,9 +6,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.theme.AbstractThemeResolver;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import jakarta.servlet.http.HttpServletRequest;
-import javax.annotation.Nonnull;
 
 /**
  * This is {@link TenantThemeResolver}.
@@ -18,15 +18,15 @@ import javax.annotation.Nonnull;
  */
 @RequiredArgsConstructor
 public class TenantThemeResolver extends AbstractThemeResolver {
-    protected final ObjectProvider<TenantExtractor> tenantExtractor;
+    protected final ObjectProvider<@NonNull TenantExtractor> tenantExtractor;
 
-    protected final ObjectProvider<ServicesManager> servicesManager;
+    protected final ObjectProvider<@NonNull ServicesManager> servicesManager;
 
-    protected final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
+    protected final ObjectProvider<@NonNull AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
-    protected final ObjectProvider<CasConfigurationProperties> casProperties;
+    protected final ObjectProvider<@NonNull CasConfigurationProperties> casProperties;
 
-    @Nonnull
+    @NonNull
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
         return tenantExtractor.getObject()

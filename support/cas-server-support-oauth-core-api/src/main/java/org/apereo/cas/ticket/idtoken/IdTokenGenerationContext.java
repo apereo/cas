@@ -12,9 +12,9 @@ import lombok.ToString;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.pac4j.core.profile.UserProfile;
-import jakarta.annotation.Nonnull;
 
 /**
  * This is {@link IdTokenGenerationContext}.
@@ -29,18 +29,18 @@ import jakarta.annotation.Nonnull;
 @With
 @AllArgsConstructor
 public class IdTokenGenerationContext {
-    @Nonnull
+    @NonNull
     private final OAuth20AccessToken accessToken;
     @Nullable
     private final OAuth20RefreshToken refreshToken;
     @Nullable
     private final UserProfile userProfile;
-    @Nonnull
+    @NonNull
     @Builder.Default
     private final OAuth20ResponseTypes responseType = OAuth20ResponseTypes.NONE;
-    @Nonnull
+    @NonNull
     @Builder.Default
     private final OAuth20GrantTypes grantType = OAuth20GrantTypes.NONE;
-    @Nonnull
+    @NonNull
     private final OAuthRegisteredService registeredService;
 }

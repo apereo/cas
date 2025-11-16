@@ -3,18 +3,17 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.http.MediaType;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
@@ -30,11 +29,11 @@ import java.util.stream.Collectors;
 @Endpoint(id = "authenticationPolicies", defaultAccess = Access.NONE)
 public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEndpoint {
 
-    private final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
+    private final ObjectProvider<@NonNull AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;
 
     public RegisteredAuthenticationPoliciesEndpoint(
         final CasConfigurationProperties casProperties,
-        final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan) {
+        final ObjectProvider<@NonNull AuthenticationEventExecutionPlan> authenticationEventExecutionPlan) {
 
         super(casProperties);
         this.authenticationEventExecutionPlan = authenticationEventExecutionPlan;

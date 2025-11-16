@@ -8,10 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.support.RequestContextUtils;
-import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -26,11 +26,11 @@ import java.util.Locale;
  */
 @RequiredArgsConstructor
 public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
-    protected final ObjectProvider<CasConfigurationProperties> casProperties;
+    protected final ObjectProvider<@NonNull CasConfigurationProperties> casProperties;
 
-    protected final ObjectProvider<ArgumentExtractor> argumentExtractor;
+    protected final ObjectProvider<@NonNull ArgumentExtractor> argumentExtractor;
 
-    protected final ObjectProvider<ServicesManager> servicesManager;
+    protected final ObjectProvider<@NonNull ServicesManager> servicesManager;
 
     @Setter
     private List<String> supportedFlows = new ArrayList<>();
@@ -58,8 +58,8 @@ public class CasLocaleChangeInterceptor extends LocaleChangeInterceptor {
 
     @Override
     public boolean preHandle(final HttpServletRequest request,
-                             @Nonnull final HttpServletResponse response,
-                             @Nonnull final Object handler) {
+                             @NonNull final HttpServletResponse response,
+                             @NonNull final Object handler) {
         val requestUrl = request.getRequestURL().toString();
         if (casProperties.getObject().getLocale().isForceDefaultLocale()) {
             val locale = Locale.forLanguageTag(casProperties.getObject().getLocale().getDefaultValue());

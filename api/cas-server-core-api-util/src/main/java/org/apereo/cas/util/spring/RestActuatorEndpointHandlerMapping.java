@@ -2,13 +2,13 @@ package org.apereo.cas.util.spring;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.actuate.endpoint.web.EndpointMapping;
 import org.springframework.core.Ordered;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.util.pattern.PathPattern;
-import jakarta.annotation.Nonnull;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -50,7 +50,7 @@ public class RestActuatorEndpointHandlerMapping extends RequestMappingHandlerMap
     }
 
     @Override
-    protected void registerHandlerMethod(@Nonnull final Object handler, @Nonnull final Method method, @Nonnull final RequestMappingInfo mapping) {
+    protected void registerHandlerMethod(@NonNull final Object handler, @NonNull final Method method, @NonNull final RequestMappingInfo mapping) {
         val endpoint = this.handlers.get(handler);
         val mappingWithPatterns = withEndpointMappedPatterns(endpoint, mapping);
         super.registerHandlerMethod(handler, method, mappingWithPatterns);
@@ -73,14 +73,14 @@ public class RestActuatorEndpointHandlerMapping extends RequestMappingHandlerMap
     }
 
     @Override
-    protected boolean hasCorsConfigurationSource(@Nonnull final Object handler) {
+    protected boolean hasCorsConfigurationSource(@NonNull final Object handler) {
         return this.corsConfiguration != null;
     }
 
     @Override
-    protected CorsConfiguration initCorsConfiguration(@Nonnull final Object handler,
-                                                      @Nonnull final Method method,
-                                                      @Nonnull final RequestMappingInfo mapping) {
+    protected CorsConfiguration initCorsConfiguration(@NonNull final Object handler,
+                                                      @NonNull final Method method,
+                                                      @NonNull final RequestMappingInfo mapping) {
         return this.corsConfiguration;
     }
 }

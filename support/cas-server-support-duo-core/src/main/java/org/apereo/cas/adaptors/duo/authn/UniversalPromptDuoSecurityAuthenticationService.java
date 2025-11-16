@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
         final HttpClient httpClient,
         final DuoSecurityClient duoClient,
         final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
-        final Cache<String, DuoSecurityUserAccount> userAccountCache,
+        final Cache<@NonNull String, DuoSecurityUserAccount> userAccountCache,
         final TenantExtractor tenantExtractor) {
         super(duoProperties, httpClient, tenantExtractor, multifactorAuthenticationPrincipalResolver, userAccountCache);
         this.duoClient = duoClient;

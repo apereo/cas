@@ -14,11 +14,11 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
@@ -34,7 +34,7 @@ import org.springframework.core.Ordered;
 public class DefaultTicketCatalogConfigurer extends BaseTicketCatalogConfigurer {
     protected final CasConfigurationProperties casProperties;
     protected final ConfigurableApplicationContext applicationContext;
-    private final ObjectProvider<CasTicketCatalogConfigurationValuesProvider> configurationValuesProvider;
+    private final ObjectProvider<@NonNull CasTicketCatalogConfigurationValuesProvider> configurationValuesProvider;
     @Getter
     private final int order = Ordered.HIGHEST_PRECEDENCE;
     

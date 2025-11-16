@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -135,7 +136,7 @@ public class HeimdallAuthorizationController {
         return requestToAuthorize;
     }
 
-    protected ResponseEntity<AuthorizationResponse> buildResponse(
+    protected ResponseEntity<@NonNull AuthorizationResponse> buildResponse(
         final AuthorizationResponse authorizationResponse) {
         authorizationResponse.log();
         return ResponseEntity

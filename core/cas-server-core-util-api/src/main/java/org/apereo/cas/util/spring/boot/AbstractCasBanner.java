@@ -3,11 +3,10 @@ package org.apereo.cas.util.spring.boot;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.SystemUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.core.env.Environment;
-
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Formatter;
@@ -29,7 +28,7 @@ public abstract class AbstractCasBanner implements CasBanner {
         Collections.nCopies(SEPARATOR_REPEAT_COUNT, SEPARATOR_CHAR));
 
     @Override
-    public void printBanner(final Environment environment, final Class<?> sourceClass, final PrintStream out) {
+    public void printBanner(final @NonNull Environment environment, final Class<?> sourceClass, final @NonNull PrintStream out) {
         AsciiArtUtils.printAsciiArt(out, getTitle(), collectEnvironmentInfo(environment, sourceClass));
     }
 

@@ -30,6 +30,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.StatelessTicketRegistryWebflowConfigurer;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -125,7 +126,7 @@ public class CasStatelessTicketRegistryAutoConfiguration {
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory serviceFactory,
         @Qualifier(TicketFactory.BEAN_NAME)
-        final ObjectProvider<TicketFactory> ticketFactory) {
+        final ObjectProvider<@NonNull TicketFactory> ticketFactory) {
         return new ProxyGrantingTicketCompactor(ticketFactory, serviceFactory, principalFactory);
     }
 
@@ -138,7 +139,7 @@ public class CasStatelessTicketRegistryAutoConfiguration {
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory serviceFactory,
         @Qualifier(TicketFactory.BEAN_NAME)
-        final ObjectProvider<TicketFactory> ticketFactory) {
+        final ObjectProvider<@NonNull TicketFactory> ticketFactory) {
         return new ServiceTicketCompactor(ticketFactory, serviceFactory, principalFactory);
     }
 
@@ -151,7 +152,7 @@ public class CasStatelessTicketRegistryAutoConfiguration {
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory serviceFactory,
         @Qualifier(TicketFactory.BEAN_NAME)
-        final ObjectProvider<TicketFactory> ticketFactory) {
+        final ObjectProvider<@NonNull TicketFactory> ticketFactory) {
         return new ProxyTicketCompactor(ticketFactory, serviceFactory, principalFactory);
     }
 
@@ -162,7 +163,7 @@ public class CasStatelessTicketRegistryAutoConfiguration {
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
         final ServiceFactory serviceFactory,
         @Qualifier(TicketFactory.BEAN_NAME)
-        final ObjectProvider<TicketFactory> ticketFactory) {
+        final ObjectProvider<@NonNull TicketFactory> ticketFactory) {
         return new TransientSessionTicketCompactor(ticketFactory, serviceFactory);
     }
 

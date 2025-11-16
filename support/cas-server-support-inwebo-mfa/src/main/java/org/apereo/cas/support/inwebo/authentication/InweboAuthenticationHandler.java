@@ -9,13 +9,12 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties;
 import org.apereo.cas.support.inwebo.service.InweboService;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
-
 import javax.security.auth.login.FailedLoginException;
 
 /**
@@ -30,13 +29,13 @@ public class InweboAuthenticationHandler extends AbstractPreAndPostProcessingAut
 
     private final InweboService service;
 
-    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    private final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
     public InweboAuthenticationHandler(
         final PrincipalFactory principalFactory,
         final InweboMultifactorAuthenticationProperties inweboProperties,
         final InweboService service,
-        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+        final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(inweboProperties.getName(), principalFactory, inweboProperties.getOrder());
         this.service = service;
         this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;

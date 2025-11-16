@@ -4,6 +4,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apache.arrow.memory.AllocationManager;
 import org.apache.arrow.memory.netty.DefaultAllocationManagerFactory;
 import org.apache.arrow.memory.netty.NettyAllocationManager;
+import org.jspecify.annotations.NonNull;
 import org.springframework.aot.hint.RuntimeHints;
 
 /**
@@ -14,7 +15,7 @@ import org.springframework.aot.hint.RuntimeHints;
  */
 public class InfluxDbRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
         registerReflectionHints(hints,
             AllocationManager.Factory.class,
             DefaultAllocationManagerFactory.class,

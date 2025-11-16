@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.web.filter.OncePerRequestFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,8 +24,8 @@ public class SlowRequestsFilter extends OncePerRequestFilter {
     private final Timer slowRequestTimer;
 
     @Override
-    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response,
-                                    final FilterChain filterChain) {
+    protected void doFilterInternal(final @NonNull HttpServletRequest request, final @NonNull HttpServletResponse response,
+                                    final @NonNull FilterChain filterChain) {
         slowRequestTimer.record(Unchecked.runnable(() -> {
             val startTime = System.currentTimeMillis();
             filterChain.doFilter(request, response);

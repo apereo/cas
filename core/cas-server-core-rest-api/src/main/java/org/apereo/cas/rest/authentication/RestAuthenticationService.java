@@ -1,12 +1,10 @@
 package org.apereo.cas.rest.authentication;
 
 import org.apereo.cas.authentication.AuthenticationResult;
-
+import org.jspecify.annotations.NonNull;
 import org.springframework.util.MultiValueMap;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Optional;
 
 /**
@@ -32,6 +30,6 @@ public interface RestAuthenticationService {
      * @return the optional
      * @throws Throwable the throwable
      */
-    Optional<AuthenticationResult> authenticate(MultiValueMap<String, String> requestBody,
+    Optional<AuthenticationResult> authenticate(MultiValueMap<@NonNull String, String> requestBody,
                                                 HttpServletRequest request, HttpServletResponse response) throws Throwable;
 }

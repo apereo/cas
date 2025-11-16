@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +20,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -86,26 +86,26 @@ class RefreshableHandlerInterceptorTests {
             return new HandlerInterceptor() {
                 @Override
                 public boolean preHandle(
-                    @Nonnull final HttpServletRequest request,
-                    @Nonnull final HttpServletResponse response,
-                    @Nonnull final Object handler) {
+                    @NonNull final HttpServletRequest request,
+                    @NonNull final HttpServletResponse response,
+                    @NonNull final Object handler) {
                     request.setAttribute("preHandle", true);
                     return true;
                 }
 
                 @Override
                 public void postHandle(
-                    @Nonnull final HttpServletRequest request,
-                    @Nonnull final HttpServletResponse response,
-                    @Nonnull final Object handler, final ModelAndView modelAndView) {
+                    @NonNull final HttpServletRequest request,
+                    @NonNull final HttpServletResponse response,
+                    @NonNull final Object handler, final ModelAndView modelAndView) {
                     request.setAttribute("postHandle", true);
                 }
 
                 @Override
                 public void afterCompletion(
-                    @Nonnull final HttpServletRequest request,
-                    @Nonnull final HttpServletResponse response,
-                    @Nonnull final Object handler, final Exception ex) {
+                    @NonNull final HttpServletRequest request,
+                    @NonNull final HttpServletResponse response,
+                    @NonNull final Object handler, final Exception ex) {
                     request.setAttribute("afterCompletion", true);
                 }
             };

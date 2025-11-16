@@ -5,6 +5,7 @@ import io.lettuce.core.cluster.api.sync.RedisClusterCommands;
 import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4FastDecompressor;
 import net.jpountz.lz4.LZ4SafeDecompressor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public class RedisCoreRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
         registerProxyHints(hints, RedisConnectionFactory.class);
         registerReflectionHints(hints, List.of(
             RedisClusterCommands.class,

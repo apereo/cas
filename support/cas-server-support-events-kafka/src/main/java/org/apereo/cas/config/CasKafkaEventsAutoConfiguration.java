@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -50,7 +51,7 @@ public class CasKafkaEventsAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "kafkaEventRepositoryTemplate")
-    public KafkaOperations<String, CasEvent> kafkaEventRepositoryTemplate(
+    public KafkaOperations<@NonNull String, @NonNull CasEvent> kafkaEventRepositoryTemplate(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val kafka = casProperties.getEvents().getKafka();
@@ -90,7 +91,7 @@ public class CasKafkaEventsAutoConfiguration {
         @Qualifier("kafkaEventRepositoryFilter")
         final CasEventRepositoryFilter kafkaEventRepositoryFilter,
         @Qualifier("kafkaEventRepositoryTemplate")
-        final KafkaOperations<String, CasEvent> kafkaEventRepositoryTemplate,
+        final KafkaOperations<@NonNull String, @NonNull CasEvent> kafkaEventRepositoryTemplate,
         final CasConfigurationProperties casProperties) {
         return new KafkaCasEventRepository(kafkaEventRepositoryFilter,
             kafkaEventRepositoryTemplate, casProperties);

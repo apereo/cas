@@ -13,9 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.core.Ordered;
-import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.util.Comparator;
 import java.util.regex.Pattern;
@@ -103,7 +103,7 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
 
 
     @Override
-    public int compareTo(@Nonnull final ConfigurationMetadataSearchResult result) {
+    public int compareTo(@NonNull final ConfigurationMetadataSearchResult result) {
         return Comparator.comparingInt(ConfigurationMetadataSearchResult::getOrder)
             .thenComparing(ConfigurationMetadataSearchResult::getName)
             .thenComparing(ConfigurationMetadataSearchResult::getGroup)

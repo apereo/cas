@@ -8,6 +8,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.security.core.context.SecurityContext;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 @Slf4j
 @RequiredArgsConstructor
 public class PopulateSpringSecurityContextAction extends BaseCasWebflowAction {
-    private final ObjectProvider<SecurityContextRepository> securityContextRepository;
+    private final ObjectProvider<@NonNull SecurityContextRepository> securityContextRepository;
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {

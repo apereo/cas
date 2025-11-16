@@ -30,6 +30,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -50,7 +51,6 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -180,7 +180,7 @@ public class CasQRAuthenticationAutoConfiguration {
         public QRAuthenticationDeviceRepositoryEndpoint qrAuthenticationDeviceRepositoryEndpoint(
             final CasConfigurationProperties casProperties,
             @Qualifier("qrAuthenticationDeviceRepository")
-            final ObjectProvider<QRAuthenticationDeviceRepository> qrAuthenticationDeviceRepository) {
+            final ObjectProvider<@NonNull QRAuthenticationDeviceRepository> qrAuthenticationDeviceRepository) {
             return new QRAuthenticationDeviceRepositoryEndpoint(casProperties, qrAuthenticationDeviceRepository);
         }
     }
@@ -209,7 +209,7 @@ public class CasQRAuthenticationAutoConfiguration {
             return new WebSocketMessageBrokerConfigurer() {
                 @Override
                 public void registerStompEndpoints(
-                    @Nonnull
+                    @NonNull
                     final StompEndpointRegistry registry) {
                     registry.addEndpoint(ENDPOINT_QR_WEBSOCKET)
                         .setAllowedOrigins(casProperties.getAuthn().getQr().getAllowedOrigins().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
@@ -219,7 +219,7 @@ public class CasQRAuthenticationAutoConfiguration {
 
                 @Override
                 public void configureMessageBroker(
-                    @Nonnull
+                    @NonNull
                     final MessageBrokerRegistry config) {
                     config.enableSimpleBroker(QRAuthenticationConstants.QR_SIMPLE_BROKER_DESTINATION_PREFIX);
                     config.setApplicationDestinationPrefixes("/qr");

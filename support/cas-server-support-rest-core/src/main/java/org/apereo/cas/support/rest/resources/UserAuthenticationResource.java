@@ -5,7 +5,6 @@ import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.rest.factory.UserAuthenticationResourceEntityResponseFactory;
 import org.apereo.cas.util.LoggingUtils;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.text.StringEscapeUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,7 +21,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import javax.security.auth.login.FailedLoginException;
@@ -65,9 +64,9 @@ public class UserAuthenticationResource {
         })
     @Operation(summary = "Authenticate user credentials",
         parameters = @Parameter(name = "requestBody", required = true, description = "Username and password values"))
-    public ResponseEntity<String> authenticateRequest(@RequestBody final MultiValueMap<String, String> requestBody,
-                                                      final HttpServletRequest request,
-                                                      final HttpServletResponse response) throws Throwable {
+    public ResponseEntity<@NonNull String> authenticateRequest(@RequestBody final MultiValueMap<@NonNull String, String> requestBody,
+                                                               final HttpServletRequest request,
+                                                               final HttpServletResponse response) throws Throwable {
         try {
             val authenticationResult = authenticationService.authenticate(requestBody, request, response);
             val result = authenticationResult.orElseThrow(FailedLoginException::new);

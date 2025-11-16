@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.MultiValueMap;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,7 +51,7 @@ public class DefaultRestAuthenticationService implements RestAuthenticationServi
     private final ConfigurableApplicationContext applicationContext;
 
     @Override
-    public Optional<AuthenticationResult> authenticate(final MultiValueMap<String, String> requestBody,
+    public Optional<AuthenticationResult> authenticate(final MultiValueMap<@NonNull String, String> requestBody,
                                                        final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val credentials = credentialFactory.fromRequest(request, requestBody);
         if (credentials == null || credentials.isEmpty()) {

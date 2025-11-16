@@ -17,6 +17,7 @@ import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.decorator.WebflowDecorator;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -111,11 +112,11 @@ public class CasCoreMultitenancyAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "tenantRoutingFilter")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public FilterRegistrationBean<TenantRoutingFilter> tenantRoutingFilter(
+    public FilterRegistrationBean<@NonNull TenantRoutingFilter> tenantRoutingFilter(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(TenantExtractor.BEAN_NAME)
         final TenantExtractor tenantExtractor) {
-        val fr = new FilterRegistrationBean<TenantRoutingFilter>();
+        val fr = new FilterRegistrationBean<@NonNull TenantRoutingFilter>();
         fr.setFilter(new TenantRoutingFilter(tenantExtractor));
         fr.addUrlPatterns("/*");
         fr.setOrder(Ordered.HIGHEST_PRECEDENCE + 2);
