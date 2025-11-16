@@ -15,6 +15,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.thread.Cleanable;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.integration.support.locks.LockRegistry;
@@ -27,7 +28,7 @@ import org.springframework.integration.support.locks.LockRegistry;
  */
 public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerProxyHints(hints, TicketSerializationExecutionPlanConfigurer.class, TicketFactoryExecutionPlanConfigurer.class);
         registerProxyHints(hints, CipherExecutor.class);
 

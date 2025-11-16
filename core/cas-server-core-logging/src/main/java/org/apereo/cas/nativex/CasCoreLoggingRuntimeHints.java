@@ -4,6 +4,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import org.apache.logging.log4j.core.async.AsyncLoggerContextSelector;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 public class CasCoreLoggingRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         val entries = List.<Class>of(
             AsyncLoggerContextSelector.class,
             RuntimeMXBean.class

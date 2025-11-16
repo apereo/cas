@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearing
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public class TrustedAuthenticationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerSerializationHints(hints, PrincipalBearingCredential.class);
 
         registerReflectionHints(hints, List.of(

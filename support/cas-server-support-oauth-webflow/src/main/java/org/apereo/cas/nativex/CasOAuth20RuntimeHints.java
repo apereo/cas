@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.device.OAuth20DefaultDeviceUserCode;
 import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshToken;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.List;
 
@@ -24,7 +25,7 @@ import java.util.List;
  */
 public class CasOAuth20RuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final @NonNull RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerSerializationHints(hints,
             OAuthRegisteredService.class,
             BaseOAuth20Token.class,
