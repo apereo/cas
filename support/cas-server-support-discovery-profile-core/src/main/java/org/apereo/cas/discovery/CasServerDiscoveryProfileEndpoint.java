@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -22,11 +23,11 @@ import java.util.Map;
  */
 @Endpoint(id = "discoveryProfile", defaultAccess = Access.NONE)
 public class CasServerDiscoveryProfileEndpoint extends BaseCasRestActuatorEndpoint {
-    private final ObjectProvider<CasServerProfileRegistrar> casServerProfileRegistrar;
+    private final ObjectProvider<@NonNull CasServerProfileRegistrar> casServerProfileRegistrar;
 
     public CasServerDiscoveryProfileEndpoint(final CasConfigurationProperties casProperties,
                                              final ConfigurableApplicationContext applicationContext,
-                                             final ObjectProvider<CasServerProfileRegistrar> casServerProfileRegistrar) {
+                                             final ObjectProvider<@NonNull CasServerProfileRegistrar> casServerProfileRegistrar) {
         super(casProperties, applicationContext);
         this.casServerProfileRegistrar = casServerProfileRegistrar;
     }

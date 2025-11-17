@@ -8,6 +8,7 @@ import org.apache.commons.text.StringSubstitutor;
 import org.springframework.context.MessageSource;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * This is {@link EmailSender}.
@@ -60,8 +61,8 @@ public interface EmailSender {
             if (emailRequest.getPrincipal() != null) {
                 args.add(emailRequest.getPrincipal().getId());
             }
-            return messageSource.getMessage(matcher.group(1), args.toArray(),
-                "Email Subject", ObjectUtils.getIfNull(emailRequest.getLocale(), Locale.getDefault()));
+            return Objects.requireNonNull(messageSource.getMessage(matcher.group(1), args.toArray(),
+                "Email Subject", ObjectUtils.getIfNull(emailRequest.getLocale(), Locale.getDefault())));
         }
         return SpringExpressionLanguageValueResolver.getInstance().resolve(subject);
     }

@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logging.CloudWatchLogsEndpoint;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -47,7 +48,7 @@ class CasAmazonCloudWatchLoggingConfiguration {
     public CloudWatchLogsEndpoint cloudWatchLogsEndpoint(final CasConfigurationProperties casProperties,
                                                          final ConfigurableApplicationContext applicationContext,
                                                          @Qualifier("cloudWatchLogsClient")
-                                                         final ObjectProvider<CloudWatchLogsClient> cloudWatchLogsClient) {
+                                                         final ObjectProvider<@NonNull CloudWatchLogsClient> cloudWatchLogsClient) {
         val cloudwatch = casProperties.getLogging().getCloudwatch();
         Assert.hasText(cloudwatch.getLogGroupName(), "CloudWatch log group name cannot be blank");
         Assert.hasText(cloudwatch.getLogStreamName(), "CloudWatch log stream name cannot be blank");

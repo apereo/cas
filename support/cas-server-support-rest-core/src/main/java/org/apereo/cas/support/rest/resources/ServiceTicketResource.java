@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -20,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
@@ -86,10 +85,10 @@ public class ServiceTicketResource {
             @Parameter(name = "tgtId", required = true, in = ParameterIn.PATH, description = "Ticket-granting ticket id"),
             @Parameter(name = "requestBody", required = false, description = "Request body containing credentials")
         })
-    public ResponseEntity<String> createServiceTicket(
+    public ResponseEntity<@NonNull String> createServiceTicket(
         final HttpServletRequest httpServletRequest,
         @RequestBody(required = false)
-        final MultiValueMap<String, String> requestBody,
+        final MultiValueMap<@NonNull String, String> requestBody,
         @PathVariable("tgtId")
         final String tgtId) {
         try {

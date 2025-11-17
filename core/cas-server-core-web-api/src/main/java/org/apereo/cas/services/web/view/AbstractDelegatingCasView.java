@@ -10,10 +10,10 @@ import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.web.servlet.View;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
-import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -49,9 +49,9 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
     }
 
     @Override
-    protected void renderMergedOutputModel(final Map<String, Object> model,
-                                           @Nonnull final HttpServletRequest request,
-                                           @Nonnull final HttpServletResponse response) {
+    protected void renderMergedOutputModel(final @NonNull Map<String, Object> model,
+                                           @NonNull final HttpServletRequest request,
+                                           @NonNull final HttpServletResponse response) {
         FunctionUtils.doAndHandle(_ -> {
             val requestWrapper = new ContentCachingRequestWrapper(request, 0);
             val responseWrapper = new ContentCachingResponseWrapper(response);

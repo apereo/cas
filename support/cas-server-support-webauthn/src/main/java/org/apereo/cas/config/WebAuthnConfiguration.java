@@ -68,6 +68,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -328,7 +329,7 @@ class WebAuthnConfiguration {
             @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
             final WebAuthnCredentialRepository webAuthnCredentialRepository,
             @Qualifier("webAuthnMultifactorAuthenticationProvider")
-            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
+            final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider,
             @Qualifier(SessionManager.BEAN_NAME)
             final SessionManager webAuthnSessionManager,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -358,7 +359,7 @@ class WebAuthnConfiguration {
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier("webAuthnMultifactorAuthenticationProvider")
-            final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+            final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
             val authenticationContextAttribute = casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute();
             return new MultifactorAuthenticationProviderMetadataPopulator(authenticationContextAttribute,
                 multifactorAuthenticationProvider, servicesManager);
@@ -445,7 +446,7 @@ class WebAuthnConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationDeviceManager webAuthnMultifactorAuthenticationDeviceManager(
             @Qualifier("webAuthnMultifactorAuthenticationProvider")
-            final ObjectProvider<MultifactorAuthenticationProvider> webAuthnMultifactorAuthenticationProvider,
+            final ObjectProvider<@NonNull MultifactorAuthenticationProvider> webAuthnMultifactorAuthenticationProvider,
             @Qualifier("webAuthnCredentialRepository")
             final WebAuthnCredentialRepository webAuthnCredentialRepository) {
             return new WebAuthnMultifactorAuthenticationDeviceManager(
@@ -495,7 +496,7 @@ class WebAuthnConfiguration {
                 final ConfigurableApplicationContext applicationContext,
                 final CasConfigurationProperties casProperties,
                 @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
-                final ObjectProvider<WebAuthnCredentialRepository> webAuthnCredentialRepository) {
+                final ObjectProvider<@NonNull WebAuthnCredentialRepository> webAuthnCredentialRepository) {
                 return new WebAuthnRegisteredDevicesEndpoint(casProperties, applicationContext, webAuthnCredentialRepository);
             }
 
@@ -583,7 +584,7 @@ class WebAuthnConfiguration {
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             public CasWebSecurityConfigurer<HttpSecurity> webAuthnProtocolEndpointConfigurer(
                 @Qualifier("webAuthnCsrfTokenRepository")
-                final ObjectProvider<CsrfTokenRepository> webAuthnCsrfTokenRepository) {
+                final ObjectProvider<@NonNull CsrfTokenRepository> webAuthnCsrfTokenRepository) {
                 return new CasWebSecurityConfigurer<>() {
                     @Override
                     @CanIgnoreReturnValue

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.apache.commons.lang3.ArrayUtils;
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -17,7 +18,7 @@ import java.io.Serializable;
  */
 @Getter
 @AllArgsConstructor(onConstructor_ = @JsonCreator)
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"code", "defaultMessage"})
 public class DefaultMessageDescriptor implements MessageDescriptor {
 
     @Serial
@@ -30,7 +31,7 @@ public class DefaultMessageDescriptor implements MessageDescriptor {
     private final Serializable[] params;
 
     public DefaultMessageDescriptor(final String code) {
-        this(code, code, null);
+        this(code, code, ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
 

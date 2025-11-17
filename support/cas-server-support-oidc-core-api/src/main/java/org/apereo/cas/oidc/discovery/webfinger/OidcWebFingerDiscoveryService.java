@@ -1,9 +1,8 @@
 package org.apereo.cas.oidc.discovery.webfinger;
 
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
-
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
-
 import java.util.Map;
 
 /**
@@ -21,7 +20,7 @@ public interface OidcWebFingerDiscoveryService {
      * @return the response entity
      * @throws Throwable the throwable
      */
-    ResponseEntity<Map> handleRequest(String resource, String rel) throws Throwable;
+    ResponseEntity<@NonNull Map> handleRequest(String resource, String rel) throws Throwable;
 
     /**
      * Gets discovery settings.

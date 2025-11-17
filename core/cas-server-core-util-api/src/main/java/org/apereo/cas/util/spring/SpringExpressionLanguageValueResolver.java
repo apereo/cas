@@ -6,6 +6,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.common.TemplateParserContext;
@@ -13,7 +14,6 @@ import org.springframework.expression.spel.SpelCompilerMode;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import jakarta.annotation.Nonnull;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -132,7 +132,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
     private <T> T resolve(final String value, final Map<String, Object> variables, final Class<T> clazz) {
         val activeContext = new StandardEvaluationContext() {
             @Override
-            public Object lookupVariable(@Nonnull final String name) {
+            public Object lookupVariable(@NonNull final String name) {
                 return variables.containsKey(name) ? variables.get(name) : super.lookupVariable(name);
             }
         };

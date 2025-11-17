@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
@@ -27,7 +28,7 @@ import org.springframework.core.Ordered;
 @RequiredArgsConstructor
 public class OidcAccessTokenJwtBearerGrantRequestValidator implements OAuth20TokenRequestValidator {
     private int order = Ordered.LOWEST_PRECEDENCE;
-    private final ObjectProvider<OidcConfigurationContext> configurationContext;
+    private final ObjectProvider<@NonNull OidcConfigurationContext> configurationContext;
 
     @Override
     public boolean validate(final WebContext context) throws Throwable {

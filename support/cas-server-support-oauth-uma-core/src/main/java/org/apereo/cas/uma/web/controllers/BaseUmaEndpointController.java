@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
@@ -56,11 +57,11 @@ public abstract class BaseUmaEndpointController extends AbstractController {
         return profile;
     }
 
-    protected MultiValueMap<String, Object> buildResponseEntityErrorModel(final InvalidResourceSetException e) {
+    protected MultiValueMap<@NonNull String, Object> buildResponseEntityErrorModel(final InvalidResourceSetException e) {
         return buildResponseEntityErrorModel(e.getStatus(), e.getMessage());
     }
 
-    protected MultiValueMap<String, Object> buildResponseEntityErrorModel(final HttpStatus code, final String message) {
+    protected MultiValueMap<@NonNull String, Object> buildResponseEntityErrorModel(final HttpStatus code, final String message) {
         return CollectionUtils.asMultiValueMap("code",
             code.value(),
             "message", message);

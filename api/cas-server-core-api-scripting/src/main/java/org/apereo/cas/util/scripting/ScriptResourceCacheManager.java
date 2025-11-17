@@ -1,6 +1,7 @@
 package org.apereo.cas.util.scripting;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import java.util.Set;
 
@@ -91,7 +92,7 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
      * @param keys           the keys
      * @return the executable compiled groovy script
      */
-    ExecutableCompiledScript resolveScriptableResource(String scriptResource, String... keys);
+    @Nullable ExecutableCompiledScript resolveScriptableResource(String scriptResource, String... keys);
 
     /**
      * Compute key.

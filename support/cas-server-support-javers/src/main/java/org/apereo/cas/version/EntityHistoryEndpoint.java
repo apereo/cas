@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -28,13 +29,13 @@ import java.util.List;
 @Slf4j
 @Endpoint(id = "entityHistory", defaultAccess = Access.NONE)
 public class EntityHistoryEndpoint extends BaseCasRestActuatorEndpoint {
-    private final ObjectProvider<EntityHistoryRepository> objectVersionRepository;
-    private final ObjectProvider<ServicesManager> servicesManager;
+    private final ObjectProvider<@NonNull EntityHistoryRepository> objectVersionRepository;
+    private final ObjectProvider<@NonNull ServicesManager> servicesManager;
 
     public EntityHistoryEndpoint(final CasConfigurationProperties casProperties,
                                  final ConfigurableApplicationContext applicationContext,
-                                 final ObjectProvider<EntityHistoryRepository> objectVersionRepository,
-                                 final ObjectProvider<ServicesManager> servicesManager) {
+                                 final ObjectProvider<@NonNull EntityHistoryRepository> objectVersionRepository,
+                                 final ObjectProvider<@NonNull ServicesManager> servicesManager) {
         super(casProperties, applicationContext);
         this.objectVersionRepository = objectVersionRepository;
         this.servicesManager = servicesManager;

@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @SuppressWarnings("EnumOrdinal")
 public class OAuth20RefreshTokenCompactor implements TicketCompactor<OAuth20RefreshToken> {
-    private final ObjectProvider<TicketFactory> ticketFactory;
+    private final ObjectProvider<@NonNull TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;
     private final PrincipalFactory principalFactory;
 

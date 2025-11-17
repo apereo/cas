@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.text.StringEscapeUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -64,7 +65,7 @@ public class TicketGrantingTicketResource {
      * @return the response entity
      */
     @GetMapping(RestProtocolConstants.ENDPOINT_TICKETS)
-    public ResponseEntity<String> rejectGetResponse() {
+    public ResponseEntity<@NonNull String> rejectGetResponse() {
         return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
@@ -91,9 +92,9 @@ public class TicketGrantingTicketResource {
         })
     @Operation(summary = "Create ticket-granting ticket",
         parameters = @Parameter(name = "requestBody", required = false, description = "Username and password data"))
-    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody(required = false) final MultiValueMap<String, String> requestBody,
-                                                             final HttpServletRequest request,
-                                                             final HttpServletResponse response) {
+    public ResponseEntity<@NonNull String> createTicketGrantingTicket(@RequestBody(required = false) final MultiValueMap<@NonNull String, String> requestBody,
+                                                                      final HttpServletRequest request,
+                                                                      final HttpServletResponse response) {
         try {
             val tgtId = createTicketGrantingTicketForRequest(requestBody, request, response);
             return createResponseEntityForTicket(request, tgtId);
@@ -120,18 +121,18 @@ public class TicketGrantingTicketResource {
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Delete ticket-granting ticket",
         parameters = @Parameter(name = "tgtId", in = ParameterIn.PATH, required = true, description = "Ticket-granting ticket id"))
-    public ResponseEntity<List<SingleLogoutRequestContext>> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId,
-                                                                                       final HttpServletRequest request,
-                                                                                       final HttpServletResponse response) {
+    public ResponseEntity<@NonNull List<SingleLogoutRequestContext>> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId,
+                                                                                                final HttpServletRequest request,
+                                                                                                final HttpServletResponse response) {
         val requests = singleLogoutRequestExecutor.execute(tgtId, request, response);
         return new ResponseEntity<>(requests, HttpStatus.OK);
     }
 
-    protected ResponseEntity<String> createResponseEntityForTicket(final HttpServletRequest request, final Ticket tgtId) throws Throwable {
+    protected ResponseEntity<@NonNull String> createResponseEntityForTicket(final HttpServletRequest request, final Ticket tgtId) throws Throwable {
         return ticketGrantingTicketResourceEntityResponseFactory.build(tgtId, request);
     }
 
-    protected Ticket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
+    protected Ticket createTicketGrantingTicketForRequest(final MultiValueMap<@NonNull String, String> requestBody,
                                                           final HttpServletRequest request,
                                                           final HttpServletResponse response) throws Throwable {
         val authenticationResult = authenticationService.authenticate(requestBody, request, response);

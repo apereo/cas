@@ -3,17 +3,16 @@ package org.apereo.cas.support.oauth.web.response.callback.mode;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeBuilder;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
+import org.jspecify.annotations.NonNull;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,7 +46,7 @@ public class OAuth20ResponseModeFragmentBuilder implements OAuth20ResponseModeBu
             .map(entry -> entry.getKey() + '=' + entry.getValue())
             .collect(Collectors.joining("&"));
 
-        val queryParams = new LinkedMultiValueMap<String, String>(currentParams.size());
+        val queryParams = new LinkedMultiValueMap<@NonNull String, @NonNull String>(currentParams.size());
         currentParams.forEach(param -> queryParams.put(param.getName(), List.of(param.getValue())));
         
         val resultUrl = UriComponentsBuilder.fromUriString(redirectUrl)

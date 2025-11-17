@@ -29,7 +29,7 @@ public interface OidcConstants {
      */
     String CLIENT_NOTIFICATION_TOKEN = "client_notification_token";
     /**
-     * Id token hint specified in CIBA requests.
+     * Id token hint specified in authn requests.
      */
     String ID_TOKEN_HINT = "id_token_hint";
     /**

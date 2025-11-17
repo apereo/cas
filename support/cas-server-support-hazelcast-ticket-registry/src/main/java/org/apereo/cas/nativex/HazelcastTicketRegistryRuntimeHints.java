@@ -3,6 +3,8 @@ package org.apereo.cas.nativex;
 import org.apereo.cas.ticket.registry.HazelcastTicketDocument;
 import org.apereo.cas.ticket.registry.MapAttributeValueExtractor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.List;
 
@@ -14,7 +16,7 @@ import java.util.List;
  */
 public class HazelcastTicketRegistryRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerReflectionHints(hints, List.of(MapAttributeValueExtractor.class));
         registerSerializationHints(hints, List.of(HazelcastTicketDocument.class));
     }

@@ -29,9 +29,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yubico.webauthn.AssertionRequest;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.PublicKeyCredentialRequestOptions;
-import lombok.NonNull;
 import lombok.Value;
-
+import org.jspecify.annotations.NonNull;
 import java.util.Optional;
 
 @Value

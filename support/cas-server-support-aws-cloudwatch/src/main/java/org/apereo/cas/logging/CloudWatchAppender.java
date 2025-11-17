@@ -15,6 +15,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.jspecify.annotations.Nullable;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.CreateLogGroupRequest;
@@ -25,7 +26,6 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsRe
 import software.amazon.awssdk.services.cloudwatchlogs.model.InputLogEvent;
 import software.amazon.awssdk.services.cloudwatchlogs.model.InvalidSequenceTokenException;
 import software.amazon.awssdk.services.cloudwatchlogs.model.PutLogEventsRequest;
-import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -44,11 +44,8 @@ import java.util.stream.Collectors;
  */
 @Plugin(name = "CloudWatchAppender", category = "Core", elementType = "appender", printObject = true)
 @Slf4j
-@SuppressWarnings("java:S2055")
-public class CloudWatchAppender extends AbstractAppender implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1044758913028847477L;
-
+@SuppressWarnings({"java:S2055", "NullAway.Init"})
+public class CloudWatchAppender extends AbstractAppender {
     private static final int AWS_DRAIN_LIMIT = 256;
 
     private static final int AWS_LOG_STREAM_MAX_QUEUE_DEPTH = 10000;
@@ -82,9 +79,9 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
 
     private volatile boolean queueFull;
 
-    private boolean createLogGroupIfNeeded;
+    private final boolean createLogGroupIfNeeded;
 
-    private boolean createLogStreamIfNeeded;
+    private final boolean createLogStreamIfNeeded;
 
     public CloudWatchAppender(final String name,
                               final String endpoint,
@@ -95,9 +92,9 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
                               final String credentialSecretKey,
                               final String awsLogRegionName,
                               final Layout<Serializable> layout,
-                              final Boolean createIfNeeded,
-                              final Boolean createLogGroupIfNeeded,
-                              final Boolean createLogStreamIfNeeded) {
+                              @Nullable final Boolean createIfNeeded,
+                              @Nullable final Boolean createLogGroupIfNeeded,
+                              @Nullable final Boolean createLogStreamIfNeeded) {
         this(name, awsLogGroupName, awsLogStreamName, awsLogStreamFlushPeriodInSeconds, layout,
             createIfNeeded, createLogGroupIfNeeded, createLogStreamIfNeeded);
 
@@ -135,9 +132,9 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
                                final String awsLogStreamName,
                                final String awsLogStreamFlushPeriodInSeconds,
                                final Layout<Serializable> layout,
-                               final Boolean createIfNeeded,
-                               final Boolean createLogGroupIfNeeded,
-                               final Boolean createLogStreamIfNeeded) {
+                               @Nullable final Boolean createIfNeeded,
+                               @Nullable final Boolean createLogGroupIfNeeded,
+                               @Nullable final Boolean createLogStreamIfNeeded) {
         super(name, null, layout == null
             ? PatternLayout.createDefaultLayout()
             : layout, false, Property.EMPTY_ARRAY);

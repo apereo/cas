@@ -12,6 +12,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.TrustedAuthenticationWebflowConfigurer;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -64,7 +65,7 @@ public class CasTrustedAuthenticationWebflowAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casRequestHeaderAuthenticationFilter")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FilterRegistrationBean<RequestHeaderAuthenticationFilter> casRequestHeaderAuthenticationFilter(
+        public FilterRegistrationBean<@NonNull RequestHeaderAuthenticationFilter> casRequestHeaderAuthenticationFilter(
             final CasConfigurationProperties casProperties) {
             val valve = casProperties.getServer().getTomcat().getRemoteUserValve();
             val filter = new RequestHeaderAuthenticationFilter();

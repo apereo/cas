@@ -9,6 +9,7 @@ import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.micrometer.metrics.autoconfigure.export.ConditionalOnEnabledMetricsExport;
@@ -69,7 +70,7 @@ class CasAmazonCloudWatchMetricsConfiguration {
         @Qualifier("cloudWatchClient") final CloudWatchAsyncClient cloudWatchClient) {
         val cloudWatchConfig = new CloudWatchConfig() {
             @Override
-            public String get(final String key) {
+            public String get(final @NonNull String key) {
                 return CLOUDWATCH_CONFIGURATION.get(key);
             }
         };

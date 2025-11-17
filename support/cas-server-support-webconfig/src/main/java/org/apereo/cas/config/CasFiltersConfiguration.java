@@ -19,6 +19,7 @@ import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
@@ -52,9 +53,9 @@ class CasFiltersConfiguration {
     static class CasFiltersBaseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public FilterRegistrationBean<CharacterEncodingFilter> characterEncodingFilter(
+        public FilterRegistrationBean<@NonNull CharacterEncodingFilter> characterEncodingFilter(
             final CasConfigurationProperties casProperties) {
-            val bean = new FilterRegistrationBean<CharacterEncodingFilter>();
+            val bean = new FilterRegistrationBean<@NonNull CharacterEncodingFilter>();
             val web = casProperties.getHttpWebRequest().getWeb();
             bean.setFilter(new CharacterEncodingFilter(web.getEncoding(), web.isForceEncoding()));
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
@@ -70,8 +71,8 @@ class CasFiltersConfiguration {
     static class CasFiltersResponseHeadersConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public FilterRegistrationBean<AddResponseHeadersFilter> responseHeadersFilter(final CasConfigurationProperties casProperties) {
-            val bean = new FilterRegistrationBean<AddResponseHeadersFilter>();
+        public FilterRegistrationBean<@NonNull AddResponseHeadersFilter> responseHeadersFilter(final CasConfigurationProperties casProperties) {
+            val bean = new FilterRegistrationBean<@NonNull AddResponseHeadersFilter>();
             val filter = new AddResponseHeadersFilter();
             filter.setHeadersMap(casProperties.getHttpWebRequest().getCustomHeaders());
             bean.setFilter(filter);
@@ -83,16 +84,16 @@ class CasFiltersConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public FilterRegistrationBean<RegisteredServiceResponseHeadersEnforcementFilter> responseHeadersSecurityFilter(
+        public FilterRegistrationBean<@NonNull RegisteredServiceResponseHeadersEnforcementFilter> responseHeadersSecurityFilter(
             final CasConfigurationProperties casProperties,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ObjectProvider<ArgumentExtractor> argumentExtractor,
+            final ObjectProvider<@NonNull ArgumentExtractor> argumentExtractor,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ObjectProvider<ServicesManager> servicesManager,
+            final ObjectProvider<@NonNull ServicesManager> servicesManager,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
+            final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-            final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies,
+            final ObjectProvider<@NonNull AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies,
             final WebEndpointProperties properties) {
             val header = casProperties.getHttpWebRequest().getHeader();
             val initParams = new HashMap<String, String>();
@@ -109,7 +110,7 @@ class CasFiltersConfiguration {
                 initParams.put(ResponseHeadersEnforcementFilter.INIT_PARAM_CONTENT_SECURITY_POLICY,
                     SpringExpressionLanguageValueResolver.getInstance().resolve(header.getContentSecurityPolicy()));
             }
-            val bean = new FilterRegistrationBean<RegisteredServiceResponseHeadersEnforcementFilter>();
+            val bean = new FilterRegistrationBean<@NonNull RegisteredServiceResponseHeadersEnforcementFilter>();
             val filter = new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager,
                 argumentExtractor, authenticationRequestServiceSelectionStrategies,
                 registeredServiceAccessStrategyEnforcer, properties);
@@ -124,7 +125,7 @@ class CasFiltersConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public FilterRegistrationBean<RequestParameterPolicyEnforcementFilter> requestParameterSecurityFilter(
+        public FilterRegistrationBean<@NonNull RequestParameterPolicyEnforcementFilter> requestParameterSecurityFilter(
             final CasConfigurationProperties casProperties) {
             val httpWebRequest = casProperties.getHttpWebRequest();
             val initParams = new HashMap<String, String>();
@@ -144,7 +145,7 @@ class CasFiltersConfiguration {
                     httpWebRequest.getPatternToBlock());
             }
 
-            val bean = new FilterRegistrationBean<RequestParameterPolicyEnforcementFilter>();
+            val bean = new FilterRegistrationBean<@NonNull RequestParameterPolicyEnforcementFilter>();
             bean.setFilter(new RequestParameterPolicyEnforcementFilter());
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setName("requestParameterSecurityFilter");
