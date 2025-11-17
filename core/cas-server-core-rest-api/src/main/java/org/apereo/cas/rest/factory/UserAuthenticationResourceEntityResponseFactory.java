@@ -1,7 +1,6 @@
 package org.apereo.cas.rest.factory;
 
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -22,5 +21,5 @@ public interface UserAuthenticationResourceEntityResponseFactory {
      * @return the response entity
      * @throws Exception the exception
      */
-    ResponseEntity<@NonNull String> build(AuthenticationResult result, HttpServletRequest request) throws Exception;
+    ResponseEntity<String> build(AuthenticationResult result, HttpServletRequest request) throws Exception;
 }

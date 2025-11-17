@@ -2,7 +2,6 @@ package org.apereo.cas.rest.factory;
 
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.jspecify.annotations.NonNull;
 import org.springframework.core.Ordered;
 import org.springframework.http.ResponseEntity;
 
@@ -23,9 +22,9 @@ public interface ServiceTicketResourceEntityResponseFactory extends Ordered {
      * @return the response entity
      * @throws Throwable the throwable
      */
-    ResponseEntity<@NonNull String> build(String ticketGrantingTicket,
-                                          WebApplicationService service,
-                                          AuthenticationResult authenticationResult) throws Throwable;
+    ResponseEntity<String> build(String ticketGrantingTicket,
+                                 WebApplicationService service,
+                                 AuthenticationResult authenticationResult) throws Throwable;
 
     /**
      * Supports boolean.

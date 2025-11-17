@@ -77,7 +77,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements CasP
 
     @Override
     public void reset() {
-        setRenew(false);
+        renew = false;
     }
 
     /**
