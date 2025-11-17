@@ -78,7 +78,7 @@ public enum TriStateBoolean {
      *
      * @return true/false
      */
-    public Boolean toBoolean() {
+    public @Nullable Boolean toBoolean() {
         return state;
     }
 
