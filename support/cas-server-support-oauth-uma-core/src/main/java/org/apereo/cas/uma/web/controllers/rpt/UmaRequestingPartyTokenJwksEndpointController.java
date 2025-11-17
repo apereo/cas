@@ -5,7 +5,6 @@ import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +13,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
@@ -47,7 +46,7 @@ public class UmaRequestingPartyTokenJwksEndpointController extends BaseUmaEndpoi
     @Operation(
         summary = "Get JWKS used to sign RPTs",
         description = "Returns the JWKS used to sign RPTs")
-    public ResponseEntity<String> getKeys(final HttpServletRequest request, final HttpServletResponse response) {
+    public ResponseEntity<@NonNull String> getKeys(final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val jwks = getUmaConfigurationContext().getCasProperties().getAuthn()
                 .getOauth().getUma().getRequestingPartyToken().getJwksFile().getLocation();

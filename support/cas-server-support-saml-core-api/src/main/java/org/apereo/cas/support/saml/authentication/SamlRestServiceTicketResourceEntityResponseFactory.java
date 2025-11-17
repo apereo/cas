@@ -6,9 +6,9 @@ import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -23,9 +23,9 @@ public class SamlRestServiceTicketResourceEntityResponseFactory implements Servi
     private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
     @Override
-    public ResponseEntity<String> build(final String ticketGrantingTicket,
-                                        final WebApplicationService service,
-                                        final AuthenticationResult authenticationResult) throws Throwable {
+    public ResponseEntity<@NonNull String> build(final String ticketGrantingTicket,
+                                                 final WebApplicationService service,
+                                                 final AuthenticationResult authenticationResult) throws Throwable {
         val serviceTicketId = uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX);
         return new ResponseEntity<>(serviceTicketId, HttpStatus.OK);
     }

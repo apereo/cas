@@ -18,6 +18,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -128,7 +129,7 @@ public class CasJpaServiceRegistryAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "serviceEntityManagerFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FactoryBean<EntityManagerFactory> serviceEntityManagerFactory(
+        public FactoryBean<@NonNull EntityManagerFactory> serviceEntityManagerFactory(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("dataSourceService") final DataSource dataSourceService,
@@ -219,7 +220,7 @@ public class CasJpaServiceRegistryAutoConfiguration {
         @ConditionalOnMissingBean(name = "jpaServiceRegistry")
         public ServiceRegistry jpaServiceRegistry(
             final ConfigurableApplicationContext applicationContext,
-            final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
+            final ObjectProvider<@NonNull List<ServiceRegistryListener>> serviceRegistryListeners,
             @Qualifier("jdbcServiceRegistryTransactionTemplate")
             final TransactionOperations jdbcServiceRegistryTransactionTemplate) {
             return BeanSupplier.of(ServiceRegistry.class)

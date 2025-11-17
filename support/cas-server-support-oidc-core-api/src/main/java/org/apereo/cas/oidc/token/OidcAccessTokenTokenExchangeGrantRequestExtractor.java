@@ -17,6 +17,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
@@ -32,7 +33,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class OidcAccessTokenTokenExchangeGrantRequestExtractor extends AccessTokenTokenExchangeGrantRequestExtractor<OidcConfigurationContext> {
-    public OidcAccessTokenTokenExchangeGrantRequestExtractor(final ObjectProvider<OidcConfigurationContext> configurationContext) {
+    public OidcAccessTokenTokenExchangeGrantRequestExtractor(final ObjectProvider<@NonNull OidcConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 

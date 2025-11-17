@@ -129,6 +129,13 @@ when an SSO session is terminated for a user forcefully, specially when such tic
 the parent `ticket-granting-ticket` and are configured to outlive the parent ticket's lifetime. A practical example
 of this, relevant configuration options permitting and activated, is OAuth2 refresh tokens that may 
 continue to perform even after the user logs out and terminates their SSO session.
+ 
+### JSpecify & NullAway
+
+CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations to indicate nullness contracts on method parameters,
+return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
+and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
+during compile time.
 
 ### Spring Boot 4
 
@@ -164,7 +171,7 @@ with Spring Boot `4`.
 
 #### SpringBoot Admin
 
-Support for [Spring Boot Admin](../monitoring/Configuring-SpringBootAdmin.html) is not yet compatible with Spring Boot `4`.
+Support for [SpringBoot Admin](../monitoring/Configuring-SpringBootAdmin.html) is not yet compatible with Spring Boot `4`.
 We plan to re-add support for Spring Boot Admin in the future once compatibility is restored.
       
 #### Spring Session 
@@ -182,7 +189,7 @@ records, etc are processed and loaded.
 
 ## Other Stuff
 
-- [JPA Ticket Registry](../ticketing/JPA-Ticket-Registry.html) will lowercase all tables names to avoid issues with
+- [JPA Ticket Registry](../ticketing/JPA-Ticket-Registry.html) will lowercase all table names to avoid issues with
   case sensitivity in certain database engines, namely MariaDb.
 - PostgreSQL `18` is now the default PostgreSQL version for integration tests.
 - A large number of deprecated classes, methods and configuration properties have been removed.

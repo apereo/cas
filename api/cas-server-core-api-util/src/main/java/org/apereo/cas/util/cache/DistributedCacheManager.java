@@ -3,6 +3,7 @@ package org.apereo.cas.util.cache;
 import org.apereo.cas.util.NamedObject;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Closeable;
 import java.io.Serializable;
@@ -41,7 +42,7 @@ public interface DistributedCacheManager<K extends Serializable, V extends Seria
      * @param key the key
      * @return the item or null if not found.
      */
-    default V get(final K key) {
+    default @Nullable V get(final K key) {
         return null;
     }
 

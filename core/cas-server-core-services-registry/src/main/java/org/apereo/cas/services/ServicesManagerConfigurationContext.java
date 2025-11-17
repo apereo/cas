@@ -8,10 +8,8 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import jakarta.annotation.Nonnull;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,31 +30,31 @@ public class ServicesManagerConfigurationContext {
      */
     public static final String BEAN_NAME = "servicesManagerConfigurationContext";
 
-    @Nonnull
+    @NonNull
     private final ServiceRegistry serviceRegistry;
 
-    @Nonnull
+    @NonNull
     private final ConfigurableApplicationContext applicationContext;
 
     @Builder.Default
     private final Set<String> environments = new HashSet<>();
 
-    @Nonnull
-    private final Cache<Long, RegisteredService> servicesCache;
+    @NonNull
+    private final Cache<@NonNull Long, RegisteredService> servicesCache;
 
     @Builder.Default
     private final List<ServicesManagerRegisteredServiceLocator> registeredServiceLocators = new ArrayList<>();
 
-    @Nonnull
+    @NonNull
     private final RegisteredServicesTemplatesManager registeredServicesTemplatesManager;
 
-    @Nonnull
+    @NonNull
     private final CasConfigurationProperties casProperties;
 
-    @Nonnull
+    @NonNull
     private final TenantExtractor tenantExtractor;
 
-    @Nonnull
+    @NonNull
     private final ServiceFactory<WebApplicationService> serviceFactory;
 
     private final RegisteredServiceIndexService registeredServiceIndexService;

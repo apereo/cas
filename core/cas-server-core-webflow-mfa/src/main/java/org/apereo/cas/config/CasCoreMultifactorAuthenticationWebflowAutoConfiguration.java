@@ -61,6 +61,7 @@ import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.mgmr.NoOpCookieValueManager;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -331,7 +332,7 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationTrigger adaptiveMultifactorAuthenticationTrigger(
             @Qualifier(GeoLocationService.BEAN_NAME)
-            final ObjectProvider<GeoLocationService> geoLocationService,
+            final ObjectProvider<@NonNull GeoLocationService> geoLocationService,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return new AdaptiveMultifactorAuthenticationTrigger(geoLocationService.getIfAvailable(), casProperties, applicationContext);
@@ -513,7 +514,7 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
             @Qualifier("restEndpointAuthenticationPolicyWebflowEventResolver")
             final CasWebflowEventResolver restEndpointAuthenticationPolicyWebflowEventResolver,
             @Qualifier("groovyScriptAuthenticationPolicyWebflowEventResolver")
-            final ObjectProvider<CasWebflowEventResolver> groovyScriptAuthenticationPolicyWebflowEventResolver,
+            final ObjectProvider<@NonNull CasWebflowEventResolver> groovyScriptAuthenticationPolicyWebflowEventResolver,
             @Qualifier("scriptedRegisteredServiceAuthenticationPolicyWebflowEventResolver")
             final CasWebflowEventResolver scriptedRegisteredServiceAuthenticationPolicyWebflowEventResolver,
             @Qualifier("registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")

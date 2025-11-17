@@ -14,6 +14,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -30,7 +31,7 @@ public class CasTwilioMultifactorAuthenticationHandler extends AbstractPreAndPos
 
     private final CasTwilioMultifactorAuthenticationService casTwilioMultifactorAuthenticationService;
 
-    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    private final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
     private final ConfigurableApplicationContext applicationContext;
 
@@ -40,7 +41,7 @@ public class CasTwilioMultifactorAuthenticationHandler extends AbstractPreAndPos
         final ConfigurableApplicationContext applicationContext,
 
         final PrincipalFactory principalFactory,
-        final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
+        final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(properties.getName(), principalFactory, properties.getOrder());
         this.casTwilioMultifactorAuthenticationService = casTwilioMultifactorAuthenticationService;
         this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;

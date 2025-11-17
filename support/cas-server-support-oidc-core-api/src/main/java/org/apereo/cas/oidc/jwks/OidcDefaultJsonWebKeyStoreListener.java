@@ -1,11 +1,11 @@
 package org.apereo.cas.oidc.jwks;
 
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreModifiedEvent;
-
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This is {@link OidcDefaultJsonWebKeyStoreListener}.
@@ -16,7 +16,7 @@ import org.jose4j.jwk.JsonWebKeySet;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcDefaultJsonWebKeyStoreListener implements OidcJsonWebKeyStoreListener {
-    private final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcJsonWebKeystoreCache;
+    private final LoadingCache<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> oidcJsonWebKeystoreCache;
 
     @Override
     public void handleOidcJsonWebKeystoreModifiedEvent(final OidcJsonWebKeystoreModifiedEvent event) {

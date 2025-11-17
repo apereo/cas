@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +26,7 @@ public interface ServiceFactory<T extends Service> extends Ordered {
      * @param request the request
      * @return the service
      */
-    T createService(HttpServletRequest request);
+    @Nullable T createService(HttpServletRequest request);
 
     /**
      * Create service t.
@@ -34,7 +35,7 @@ public interface ServiceFactory<T extends Service> extends Ordered {
      * @param request the request
      * @return the t
      */
-    T createService(String id, HttpServletRequest request);
+    @Nullable T createService(String id, HttpServletRequest request);
 
     /**
      * Create service based on an identifier.
@@ -42,7 +43,7 @@ public interface ServiceFactory<T extends Service> extends Ordered {
      * @param id the id
      * @return the service object
      */
-    T createService(String id);
+    @Nullable T createService(String id);
 
     /**
      * Create the service object based on an identifier.
@@ -54,7 +55,7 @@ public interface ServiceFactory<T extends Service> extends Ordered {
      * @param clazz the clazz
      * @return the t
      */
-    <T extends Service> T createService(String id, Class<T> clazz);
+    <T extends Service> @Nullable T createService(String id, Class<T> clazz);
 
     /**
      * Create service based on the given parameters provided by the http request.
@@ -66,6 +67,6 @@ public interface ServiceFactory<T extends Service> extends Ordered {
      * @param clazz   the clazz
      * @return the t
      */
-    <T extends Service> T createService(HttpServletRequest request, Class<T> clazz);
+    <T extends Service> @Nullable T createService(HttpServletRequest request, Class<T> clazz);
 
 }

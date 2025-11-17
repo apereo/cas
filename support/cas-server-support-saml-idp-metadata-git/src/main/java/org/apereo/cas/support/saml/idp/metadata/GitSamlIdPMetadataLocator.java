@@ -5,16 +5,15 @@ import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadat
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +30,7 @@ public class GitSamlIdPMetadataLocator extends FileSystemSamlIdPMetadataLocator 
     private final GitRepository gitRepository;
 
     public GitSamlIdPMetadataLocator(final GitRepository gitRepository,
-                                     final Cache<String, SamlIdPMetadataDocument> metadataCache,
+                                     final Cache<@NonNull String, SamlIdPMetadataDocument> metadataCache,
                                      final CipherExecutor cipherExecutor,
                                      final ConfigurableApplicationContext applicationContext) {
         super(cipherExecutor, gitRepository.getRepositoryDirectory(), metadataCache, applicationContext);

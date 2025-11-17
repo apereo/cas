@@ -2,10 +2,8 @@ package org.apereo.cas.util.io;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.core.io.FileSystemResource;
-
-import jakarta.annotation.Nonnull;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.FilterInputStream;
@@ -28,7 +26,7 @@ public class TemporaryFileSystemResource extends FileSystemResource {
         super(file);
     }
 
-    @Nonnull
+    @NonNull
     @Override
     public InputStream getInputStream() throws IOException {
         return new FilterInputStream(super.getInputStream()) {
@@ -46,7 +44,7 @@ public class TemporaryFileSystemResource extends FileSystemResource {
         return false;
     }
 
-    @Nonnull
+    @NonNull
     @Override
     public ReadableByteChannel readableChannel() throws IOException {
         val readableChannel = super.readableChannel();

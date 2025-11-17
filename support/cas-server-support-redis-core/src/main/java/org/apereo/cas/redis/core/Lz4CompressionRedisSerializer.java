@@ -4,6 +4,7 @@ import lombok.val;
 import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4FastDecompressor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
 import java.nio.ByteBuffer;
@@ -15,17 +16,17 @@ import java.util.Arrays;
  * @author Misagh Moayyed
  * @since 7.3.0
  */
-public class Lz4CompressionRedisSerializer<T> implements RedisSerializer<T> {
+public class Lz4CompressionRedisSerializer<T> implements RedisSerializer<@NonNull T> {
     /**
      * Bytes reserved to store original length.
      */
     private static final int HEADER_LENGTH = Integer.BYTES;
 
-    private final RedisSerializer<T> delegate;
+    private final RedisSerializer<@NonNull T> delegate;
     private final LZ4Compressor compressor;
     private final LZ4FastDecompressor decompressor;
 
-    public Lz4CompressionRedisSerializer(final RedisSerializer<T> delegate) {
+    public Lz4CompressionRedisSerializer(final RedisSerializer<@NonNull T> delegate) {
         this.delegate = delegate;
         val factory = LZ4Factory.fastestInstance();
         this.compressor = factory.highCompressor();
@@ -33,7 +34,7 @@ public class Lz4CompressionRedisSerializer<T> implements RedisSerializer<T> {
     }
 
     @Override
-    public byte[] serialize(final T value) throws SerializationException {
+    public byte @NonNull [] serialize(final T value) throws SerializationException {
         val raw = delegate.serialize(value);
         if (raw == null || raw.length == 0) {
             return raw;
@@ -49,7 +50,7 @@ public class Lz4CompressionRedisSerializer<T> implements RedisSerializer<T> {
     }
 
     @Override
-    public T deserialize(final byte[] bytes) throws SerializationException {
+    public T deserialize(final byte @NonNull [] bytes) throws SerializationException {
         if (bytes == null || bytes.length <= HEADER_LENGTH) {
             return delegate.deserialize(bytes);
         }

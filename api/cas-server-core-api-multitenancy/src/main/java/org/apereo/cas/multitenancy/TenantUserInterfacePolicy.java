@@ -1,6 +1,7 @@
 package org.apereo.cas.multitenancy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.jspecify.annotations.Nullable;
 import java.io.Serializable;
 
 /**
@@ -18,5 +19,5 @@ public interface TenantUserInterfacePolicy extends Serializable {
      *
      * @return the theme name
      */
-    String getThemeName();
+    @Nullable String getThemeName();
 }
