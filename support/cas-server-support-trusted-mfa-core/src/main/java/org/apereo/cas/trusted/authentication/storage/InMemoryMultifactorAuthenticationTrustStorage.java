@@ -9,6 +9,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
@@ -25,11 +26,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-    private final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage;
+    private final LoadingCache<@NonNull String, MultifactorAuthenticationTrustRecord> storage;
 
     public InMemoryMultifactorAuthenticationTrustStorage(final TrustedDevicesMultifactorProperties properties,
                                                          final CipherExecutor<Serializable, String> cipherExecutor,
-                                                         final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage,
+                                                         final LoadingCache<@NonNull String, MultifactorAuthenticationTrustRecord> storage,
                                                          final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy) {
         super(properties, cipherExecutor, keyGenerationStrategy);
         this.storage = storage;

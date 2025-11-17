@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,12 +12,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
+import org.jspecify.annotations.NonNull;
 import java.io.Serial;
 import java.util.Objects;
 
@@ -68,7 +66,7 @@ public class ServiceTicketImpl extends AbstractTicket
         @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
         this.ticketGrantingTicket = ticket;
-        this.service = service;
+        this.service = Objects.requireNonNull(service);
         this.fromNewLogin = credentialProvided || (ticket != null && ticket.getCountOfUses() == 0);
     }
 

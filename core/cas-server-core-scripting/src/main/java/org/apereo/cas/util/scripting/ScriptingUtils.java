@@ -22,6 +22,7 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ASTTransformationCustomizer;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -108,7 +109,7 @@ public class ScriptingUtils {
      * @param clazz  the clazz
      * @return the t
      */
-    public static <T> T executeGroovyShellScript(final Script script,
+    public static <T> @Nullable T executeGroovyShellScript(final Script script,
                                                  final Class<T> clazz) {
         return executeGroovyShellScript(script, new HashMap<>(), clazz);
     }
@@ -122,9 +123,9 @@ public class ScriptingUtils {
      * @param clazz     the clazz
      * @return the t
      */
-    public static <T> T executeGroovyShellScript(final Script script,
-                                                 final Map<String, Object> variables,
-                                                 final Class<T> clazz) {
+    public static <T> @Nullable T executeGroovyShellScript(final Script script,
+                                                           final Map<String, Object> variables,
+                                                           final Class<T> clazz) {
         try {
             val binding = script.getBinding();
             if (!binding.hasVariable("logger")) {
@@ -155,7 +156,7 @@ public class ScriptingUtils {
      * @return the result
      * @throws Throwable the exception
      */
-    public static <T> T executeGroovyScript(final GroovyObject groovyObject,
+    public static <T> @Nullable T executeGroovyScript(final GroovyObject groovyObject,
                                             final Object[] args, final Class<T> clazz,
                                             final boolean failOnError) throws Throwable {
         return executeGroovyScript(groovyObject, "run", args, clazz, failOnError);
@@ -171,7 +172,7 @@ public class ScriptingUtils {
      * @param args         the args
      * @return the type to return
      */
-    public static <T> T executeGroovyScript(final Resource groovyScript,
+    public static <T> @Nullable T executeGroovyScript(final Resource groovyScript,
                                             final String methodName,
                                             final Class<T> clazz,
                                             final Object... args) {
@@ -187,7 +188,7 @@ public class ScriptingUtils {
      * @param clazz        the clazz
      * @return the t
      */
-    public static <T> T executeGroovyScript(final Resource groovyScript,
+    public static <T> @Nullable T executeGroovyScript(final Resource groovyScript,
                                             final String methodName,
                                             final Class<T> clazz) {
         return executeGroovyScript(groovyScript, methodName, ArrayUtils.EMPTY_OBJECT_ARRAY, clazz, false);
@@ -204,7 +205,7 @@ public class ScriptingUtils {
      * @param failOnError  the fail on error
      * @return the t
      */
-    public static <T> T executeGroovyScript(final Resource groovyScript,
+    public static <T> @Nullable T executeGroovyScript(final Resource groovyScript,
                                             final String methodName,
                                             final Object[] args,
                                             final Class<T> clazz,
@@ -235,7 +236,7 @@ public class ScriptingUtils {
      * @return the t
      * @throws Throwable the throwable
      */
-    public static <T> T executeGroovyScript(final GroovyObject groovyObject,
+    public static <T> @Nullable T executeGroovyScript(final GroovyObject groovyObject,
                                             final String methodName,
                                             final Object[] args,
                                             final Class<T> clazz,
@@ -282,7 +283,7 @@ public class ScriptingUtils {
      * @param script the script
      * @return the script
      */
-    public static Script parseGroovyShellScript(final String script) {
+    public static @Nullable Script parseGroovyShellScript(final String script) {
         return StringUtils.isNotBlank(script) ? parseGroovyShellScript(Map.of(), script) : null;
     }
 
@@ -293,7 +294,7 @@ public class ScriptingUtils {
      * @param failOnError  the fail on error
      * @return the groovy object
      */
-    public static GroovyObject parseGroovyScript(final Resource groovyScript,
+    public static @Nullable GroovyObject parseGroovyScript(final Resource groovyScript,
                                                  final boolean failOnError) {
         try (val loader = newGroovyClassLoader()) {
             val groovyClass = loadGroovyClass(groovyScript, loader);
@@ -320,7 +321,7 @@ public class ScriptingUtils {
         return new GroovyClassLoader(ScriptingUtils.class.getClassLoader(), createCompilerConfiguration());
     }
 
-    private Class loadGroovyClass(final Resource groovyScript,
+    private @Nullable Class loadGroovyClass(final Resource groovyScript,
                                   final GroovyClassLoader loader) throws IOException {
         if (ResourceUtils.isJarResource(groovyScript)) {
             try (val groovyReader = new BufferedReader(new InputStreamReader(groovyScript.getInputStream(), StandardCharsets.UTF_8))) {
@@ -335,7 +336,7 @@ public class ScriptingUtils {
         return null;
     }
 
-    private static <T> T getGroovyResult(final Resource groovyScript,
+    private static <T> @Nullable T getGroovyResult(final Resource groovyScript,
                                          final String methodName,
                                          final Object[] args,
                                          final Class<T> clazz,
@@ -373,7 +374,7 @@ public class ScriptingUtils {
      * @param expectedType    the expected type
      * @return the object instance from groovy resource
      */
-    public static <T> T getObjectInstanceFromGroovyResource(final Resource resource,
+    public static <T> @Nullable T getObjectInstanceFromGroovyResource(final Resource resource,
                                                             final Class[] constructorArgs,
                                                             final Object[] args,
                                                             final Class<T> expectedType) {
@@ -466,6 +467,8 @@ public class ScriptingUtils {
 
             "com.fasterxml.jackson",
             "com.fasterxml.jackson.databind",
+            "tools.jackson",
+            "tools.jackson.databind",
 
             "org.apereo.cas",
             "org.apereo.cas.api",

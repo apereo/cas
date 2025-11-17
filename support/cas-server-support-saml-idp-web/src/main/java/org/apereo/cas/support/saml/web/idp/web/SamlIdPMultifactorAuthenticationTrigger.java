@@ -17,6 +17,7 @@ import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -36,7 +37,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 public class SamlIdPMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
-    private final ObjectProvider<SamlProfileHandlerConfigurationContext> contextProvider;
+    private final ObjectProvider<@NonNull SamlProfileHandlerConfigurationContext> contextProvider;
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,

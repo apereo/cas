@@ -24,7 +24,7 @@ public class GroovySmsSender implements SmsSender, DisposableBean {
 
     @Override
     public boolean send(final String from, final String to, final String message) throws Throwable {
-        return watchableScript.execute(new Object[]{from, to, message, LOGGER}, Boolean.class);
+        return Boolean.TRUE.equals(watchableScript.execute(new Object[]{from, to, message, LOGGER}, Boolean.class));
     }
 
     @Override

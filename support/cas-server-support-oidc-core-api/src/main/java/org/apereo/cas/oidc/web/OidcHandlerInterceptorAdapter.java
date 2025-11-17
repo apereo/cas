@@ -8,16 +8,15 @@ import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -30,23 +29,23 @@ import java.util.List;
  */
 @Slf4j
 public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdapter {
-    private final ObjectProvider<HandlerInterceptor> requiresAuthenticationDynamicRegistrationInterceptor;
+    private final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationDynamicRegistrationInterceptor;
 
-    private final ObjectProvider<HandlerInterceptor> requiresAuthenticationClientConfigurationInterceptor;
+    private final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationClientConfigurationInterceptor;
 
     private final CasConfigurationProperties casProperties;
 
     public OidcHandlerInterceptorAdapter(
-        final ObjectProvider<HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor,
-        final ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
-        final ObjectProvider<HandlerInterceptor> requiresAuthenticationDynamicRegistrationInterceptor,
-        final ObjectProvider<HandlerInterceptor> requiresAuthenticationClientConfigurationInterceptor,
+        final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor,
+        final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
+        final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationDynamicRegistrationInterceptor,
+        final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationClientConfigurationInterceptor,
         final CasConfigurationProperties casProperties,
-        final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
-        final ObjectProvider<ServicesManager> servicesManager,
-        final ObjectProvider<SessionStore> sessionStore,
-        final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
-        final ObjectProvider<OAuth20RequestParameterResolver> oauthRequestParameterResolver) {
+        final ObjectProvider<@NonNull List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
+        final ObjectProvider<@NonNull ServicesManager> servicesManager,
+        final ObjectProvider<@NonNull SessionStore> sessionStore,
+        final ObjectProvider<@NonNull List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
+        final ObjectProvider<@NonNull OAuth20RequestParameterResolver> oauthRequestParameterResolver) {
         super(requiresAuthenticationAccessTokenInterceptor, requiresAuthenticationAuthorizeInterceptor,
             accessTokenGrantRequestExtractors, servicesManager, sessionStore, oauthAuthorizationRequestValidators,
             oauthRequestParameterResolver);
@@ -57,8 +56,8 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
     }
 
     @Override
-    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
-                             final Object handler) throws Exception {
+    public boolean preHandle(final @NonNull HttpServletRequest request, final @NonNull HttpServletResponse response,
+                             final @NonNull Object handler) throws Exception {
 
         LOGGER.trace("Attempting to pre-handle OIDC request at [{}] with parameters [{}]",
             request.getRequestURI(), request.getParameterMap().keySet());

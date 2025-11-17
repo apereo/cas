@@ -9,7 +9,17 @@ buildscript {
         gradlePluginPortal()
         maven {
             url = "https://repo.spring.io/milestone"
+            content {
+                includeGroupByRegex ".*springframework.*"
+            }
             mavenContent { releasesOnly() }
+        }
+        maven {
+            url = "https://repo.spring.io/snapshot"
+            content {
+                includeGroupByRegex ".*springframework.*"
+            }
+            mavenContent { snapshotsOnly() }
         }
     }
 
@@ -20,6 +30,7 @@ buildscript {
         classpath libs.gradle.plugin.versions
         classpath libs.gradle.plugin.native
         classpath libs.gradle.plugin.errorprone
+        classpath libs.gradle.plugin.nullaway
         classpath libs.gradle.plugin.sonarqube
         classpath libs.gradle.plugin.nmcp
     }
@@ -45,6 +56,7 @@ ext {
 
     skipArtifactSigning = providers.systemProperty("skipArtifactSigning").present
     terminateCompilerOnWarning = providers.systemProperty("terminateCompilerOnWarning").getOrElse("true") == "true"
+    skipNullAway = providers.systemProperty("skipNullAway").getOrElse("false") == "true"
 
     enableRemoteDebugging = providers.systemProperty("enableRemoteDebugging").present
     remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend").getOrElse("false") == "true" ? "y" : "n"
@@ -201,6 +213,7 @@ subprojects {
 
     if (!rootProject.skipErrorProneCompiler) {
         apply plugin: "net.ltgt.errorprone"
+        apply plugin: "net.ltgt.nullaway"
     }
     apply from: rootProject.file("gradle/tests.gradle")
 
@@ -326,7 +339,7 @@ subprojects {
 
         def casCompilerArgs = ["-parameters", '-Xlint:-removal']
         if (rootProject.ext.terminateCompilerOnWarning) {
-//            casCompilerArgs.add("-Werror")
+            casCompilerArgs.add("-Werror")
         }
 
         if (!rootProject.skipErrorProneCompiler) {
@@ -337,7 +350,25 @@ subprojects {
                                                     '-Xep:JavaUtilDate:OFF',
                                                     '-Xep:BooleanLiteral:OFF',
                                                     '-Xep:StringConcatToTextBlock:OFF',
-                                                    '-Xep:AddressSelection:OFF']
+                                                    '-Xep:AddressSelection:OFF'
+                                                   ]
+            def taskName = it.name
+            it.options.errorprone.nullaway {
+                if (rootProject.skipNullAway || taskName.equals("compileTestJava")) {
+                    disable()
+                } else {
+                    jspecifyMode = true
+                    handleTestAssertionLibraries = true
+                    suggestSuppressions = true
+                    checkOptionalEmptiness = true
+                    if (rootProject.ext.terminateCompilerOnWarning) {
+                        error()
+                    } else {
+                        warn()
+                    }
+                }
+            }
+
             casCompilerArgs.add("-XDcompilePolicy=byfile")
             casCompilerArgs.add("-XDshould-stop.ifError=FLOW")
         }
@@ -413,13 +444,15 @@ subprojects {
         api libraries.springintegration
         api libraries.springwebflow
         api libraries.jakarta
+        api libraries.jspecify
         
         compileOnly libraries.jakartapersistence
 
         annotationProcessor libraries.springindexer
 
         if (!providers.systemProperty("skipErrorProneCompiler").present) {
-            errorprone "com.google.errorprone:error_prone_core:${libs.versions.errorprone.get()}"
+            errorprone libs.errorprone
+            errorprone libs.nullaway
         }
 
         testImplementation libraries.tests
@@ -439,6 +472,12 @@ subprojects {
         }
 
         javadocClasspath project(path: project.path, configuration: 'compileClasspath')
+    }
+
+    if (!providers.systemProperty("skipErrorProneCompiler").present) {
+        nullaway {
+            onlyNullMarked = true
+        }
     }
 }
 

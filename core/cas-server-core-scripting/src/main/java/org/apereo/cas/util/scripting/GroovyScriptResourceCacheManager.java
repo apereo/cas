@@ -11,6 +11,8 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import java.util.Set;
 
 /**
@@ -23,7 +25,7 @@ import java.util.Set;
 public class GroovyScriptResourceCacheManager implements ScriptResourceCacheManager<String, ExecutableCompiledScript> {
     private final CasReentrantLock lock = new CasReentrantLock();
 
-    private final Cache<String, ExecutableCompiledScript> cache;
+    private final Cache<@NonNull String, ExecutableCompiledScript> cache;
 
     public GroovyScriptResourceCacheManager(final ExpiringSimpleCacheProperties properties) {
         this.cache = Beans.newCacheBuilder(properties).build();
@@ -74,7 +76,7 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
     }
 
     @Override
-    public ExecutableCompiledScript resolveScriptableResource(
+    public @Nullable ExecutableCompiledScript resolveScriptableResource(
         final String scriptResource,
         final String... keys) {
 

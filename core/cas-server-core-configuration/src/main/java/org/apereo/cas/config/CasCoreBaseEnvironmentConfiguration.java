@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
@@ -49,7 +50,7 @@ class CasCoreBaseEnvironmentConfiguration {
     static class CasCoreEnvironmentFactoryConfiguration {
         @ConfigurationPropertiesBinding
         @Bean
-        public Converter<String, List<Class<? extends Throwable>>> commaSeparatedStringToThrowablesCollection() {
+        public Converter<@NonNull String, @NonNull List<Class<? extends Throwable>>> commaSeparatedStringToThrowablesCollection() {
             return new CommaSeparatedStringToThrowablesConverter();
         }
 

@@ -49,6 +49,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -79,7 +80,7 @@ class OidcResponseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            final ObjectProvider<@NonNull OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcAccessTokenResponseGenerator(oidcConfigurationContext);
         }
 
@@ -87,9 +88,9 @@ class OidcResponseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenJwtBearerGrantRequestExtractor(
             @Qualifier("oidcServiceJsonWebKeystoreCache")
-            final ObjectProvider<LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCache,
+            final ObjectProvider<@NonNull LoadingCache<@NonNull OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCache,
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            final ObjectProvider<@NonNull OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcAccessTokenJwtBearerGrantRequestExtractor(
                 oidcConfigurationContext, oidcServiceJsonWebKeystoreCache);
         }
@@ -98,7 +99,7 @@ class OidcResponseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AccessTokenGrantRequestExtractor accessTokenTokenExchangeGrantRequestExtractor(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            final ObjectProvider<@NonNull OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcAccessTokenTokenExchangeGrantRequestExtractor(oidcConfigurationContext);
         }
 
@@ -106,7 +107,7 @@ class OidcResponseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oauthTokenExchangeGrantTypeTokenRequestValidator(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            final ObjectProvider<@NonNull OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcTokenExchangeGrantTypeTokenRequestValidator(oidcConfigurationContext);
         }
 
@@ -114,7 +115,7 @@ class OidcResponseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oidcAccessTokenJwtBearerGrantTypeTokenRequestValidator(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            final ObjectProvider<@NonNull OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcAccessTokenJwtBearerGrantRequestValidator(oidcConfigurationContext);
         }
     }
@@ -217,7 +218,7 @@ class OidcResponseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20TokenRequestValidator oidcAccessTokenCibaGrantRequestValidator(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            final ObjectProvider<@NonNull OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcAccessTokenCibaGrantRequestValidator(oidcConfigurationContext);
         }
     }
@@ -279,7 +280,7 @@ class OidcResponseConfiguration {
         @Bean
         public OAuth20IntrospectionResponseGenerator oidcIntrospectionResponseGenerator(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            final ObjectProvider<@NonNull OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcIntrospectionResponseGenerator(oidcConfigurationContext);
         }
 
@@ -288,7 +289,7 @@ class OidcResponseConfiguration {
         @Bean
         public IdTokenGeneratorService oidcIdTokenGenerator(
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
-            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            final ObjectProvider<@NonNull OidcConfigurationContext> oidcConfigurationContext) {
             return new OidcIdTokenGeneratorService(oidcConfigurationContext);
         }
 
@@ -337,7 +338,7 @@ class OidcResponseConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcCibaAccessTokenGrantRequestExtractor")
         public AccessTokenGrantRequestExtractor oidcCibaAccessTokenGrantRequestExtractor(
-            @Qualifier(OidcConfigurationContext.BEAN_NAME) final ObjectProvider<OidcConfigurationContext> context) {
+            @Qualifier(OidcConfigurationContext.BEAN_NAME) final ObjectProvider<@NonNull OidcConfigurationContext> context) {
             return new AccessTokenCibaGrantRequestExtractor(context);
         }
     }

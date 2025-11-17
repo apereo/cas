@@ -68,6 +68,8 @@ The following commandline boolean flags are supported by the build and can be pa
 | `skipNestedConfigMetadataGen` | Skip generating configuration metadata for nested properties and generic collections.                |
 | `skipSonarqube`               | Ignore reporting results to Sonarqube.                                                               |
 | `skipErrorProneCompiler`      | Skip running the `error-prone` static-analysis compiler.                                             |
+| `skipNullAway`                | Skip running the `nullaway` static-analysis checks to ensure `null` correctness.                     |
+| `skipArtifactSigning`         | Skip signing artifacts when publishing modules, primarily for `SNAPSHOT` artifacts.                  |
 | `skipBootifulArtifact`        | Do not apply the Spring Boot plugin to bootify application artifacts.                                |
 | `skipAot`                     | Skip running AOT processes when building Graal VM native images.                                     |
 | `aotSpringActiveProfiles`     | List of spring active profiles to use when building Graal VM native images.                          |
@@ -78,6 +80,8 @@ The following commandline boolean flags are supported by the build and can be pa
 | `buildScript`                 | Build fragment to include when building the project. Typically used by and during integration tests. |
 | `generateGitProperties`       | Include Git information in the final web application artifact.                                       |
 | `generateTimestamps`          | Include the build timestamp in the final web application artifact.                                   |
+| `terminateCompilerOnWarning`  | Decide whether the build process should fail, should any compiler warnings are found.                |
+| `skipSpringBootDevTools`      | Skip the Spring Boot DevTools module in the final packaging of the CAS server web application.       |
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.

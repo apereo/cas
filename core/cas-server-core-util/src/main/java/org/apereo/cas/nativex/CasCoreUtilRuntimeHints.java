@@ -13,6 +13,7 @@ import org.apereo.cas.util.thread.Cleanable;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
@@ -91,7 +92,7 @@ import java.util.function.Supplier;
 public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
 
     @Override
-    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         hints.resources().registerType(CasVersion.class);
 
         registerProxyHints(hints, List.of(

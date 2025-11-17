@@ -2,6 +2,7 @@ package org.apereo.cas.web;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.adapter.FrameworkAdapter;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
 import org.pac4j.core.config.Config;
@@ -23,7 +24,7 @@ public class SecurityLogicInterceptor implements HandlerInterceptor {
     private final String clientNames;
 
     @Override
-    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) {
+    public boolean preHandle(final @NonNull HttpServletRequest request, final @NonNull HttpServletResponse response, final @NonNull Object handler) {
         FrameworkAdapter.INSTANCE.applyDefaultSettingsIfUndefined(this.config);
         val result = config.getSecurityLogic().perform(this.config, (ctx, session, profiles) -> true,
             this.clientNames, DefaultAuthorizers.IS_FULLY_AUTHENTICATED, DefaultMatchers.SECURITYHEADERS, new JEEFrameworkParameters(request, response));

@@ -10,14 +10,11 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
-
 import com.google.common.base.Splitter;
 import jcifs.spnego.Authentication;
 import jcifs.spnego.AuthenticationException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.security.auth.login.FailedLoginException;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +32,6 @@ import java.util.regex.Pattern;
  * @author Marvin S. Addison
  * @since 3.1
  */
-@NotThreadSafe
 @Slf4j
 public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
@@ -130,7 +126,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     public boolean supports(final Class<? extends Credential> clazz) {
         return SpnegoCredential.class.isAssignableFrom(clazz);
     }
-    
+
     protected Principal getPrincipal(final String name, final boolean isNtlm) throws Throwable {
         if (spnegoProperties.isPrincipalWithDomainName()) {
             return this.principalFactory.createPrincipal(name);

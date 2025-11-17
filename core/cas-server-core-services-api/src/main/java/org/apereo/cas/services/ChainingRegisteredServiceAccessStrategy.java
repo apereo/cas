@@ -3,18 +3,16 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-
+import org.jspecify.annotations.NonNull;
 import java.io.Serial;
 import java.net.URI;
 import java.util.ArrayList;

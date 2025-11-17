@@ -9,7 +9,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.socket.LayeredConnectionSocketFactory;
@@ -19,6 +18,7 @@ import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.message.BasicHeader;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -29,9 +29,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-
 import javax.net.ssl.HostnameVerifier;
-
 import java.util.ArrayList;
 
 /**
@@ -135,7 +133,7 @@ class CasCoreHttpConfiguration {
         @ConditionalOnMissingBean(name = HttpClient.BEAN_NAME_HTTPCLIENT)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FactoryBean<SimpleHttpClient> httpClient(
+        public FactoryBean<@NonNull SimpleHttpClient> httpClient(
             @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
             @Qualifier("trustStoreSslSocketFactory") final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
             final CasConfigurationProperties casProperties) {

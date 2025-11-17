@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -254,8 +255,8 @@ public class CasThymeleafAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SpringTemplateEngine templateEngine(final ThymeleafProperties thymeleafProperties,
-                                                   final ObjectProvider<ITemplateResolver> templateResolvers,
-                                                   final ObjectProvider<IDialect> dialects) {
+                                                   final ObjectProvider<@NonNull ITemplateResolver> templateResolvers,
+                                                   final ObjectProvider<@NonNull IDialect> dialects) {
             val engine = new SpringTemplateEngine();
             engine.setEnableSpringELCompiler(thymeleafProperties.isEnableSpringElCompiler());
             engine.setRenderHiddenMarkersBeforeCheckboxes(thymeleafProperties.isRenderHiddenMarkersBeforeCheckboxes());
@@ -338,7 +339,7 @@ public class CasThymeleafAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public IDialect casThymeleafExpressionDialect(
             @Qualifier("casThymeleafTemplatesDirector")
-            final ObjectProvider<CasThymeleafTemplatesDirector> casThymeleafTemplatesDirector) {
+            final ObjectProvider<@NonNull CasThymeleafTemplatesDirector> casThymeleafTemplatesDirector) {
             return new CasThymeleafExpressionDialect(casThymeleafTemplatesDirector);
         }
 

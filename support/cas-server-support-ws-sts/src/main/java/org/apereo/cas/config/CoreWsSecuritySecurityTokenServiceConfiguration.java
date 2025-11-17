@@ -69,6 +69,7 @@ import org.apache.cxf.ws.security.sts.provider.operation.ValidateOperation;
 import org.apache.cxf.ws.security.tokenstore.MemoryTokenStore;
 import org.apache.cxf.ws.security.tokenstore.TokenStore;
 import org.apache.wss4j.dom.validate.Validator;
+import org.jspecify.annotations.NonNull;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -403,7 +404,7 @@ class CoreWsSecuritySecurityTokenServiceConfiguration {
     static class CoreWsSecuritySecurityTokenServiceWebConfiguration {
         @ConditionalOnMissingBean(name = "cxfServlet")
         @Bean
-        public ServletRegistrationBean<CXFServlet> cxfServlet() {
+        public ServletRegistrationBean<@NonNull CXFServlet> cxfServlet() {
             val bean = new ServletRegistrationBean();
             bean.setEnabled(true);
             bean.setName("cxfServletSecurityTokenService");

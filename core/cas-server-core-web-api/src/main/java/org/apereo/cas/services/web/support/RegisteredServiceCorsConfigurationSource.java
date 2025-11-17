@@ -4,16 +4,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.ArgumentExtractor;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-
-import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -34,7 +31,7 @@ public class RegisteredServiceCorsConfigurationSource implements CorsConfigurati
 
     @Override
     public CorsConfiguration getCorsConfiguration(
-        @Nonnull final HttpServletRequest request) {
+        @NonNull final HttpServletRequest request) {
         val cors = casProperties.getHttpWebRequest().getCors();
         val config = new CorsConfiguration();
 

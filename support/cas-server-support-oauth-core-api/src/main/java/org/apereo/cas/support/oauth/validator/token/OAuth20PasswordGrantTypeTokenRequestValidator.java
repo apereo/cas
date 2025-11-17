@@ -8,6 +8,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -22,7 +23,7 @@ import org.springframework.beans.factory.ObjectProvider;
  */
 @Slf4j
 public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator<OAuth20ConfigurationContext> {
-    public OAuth20PasswordGrantTypeTokenRequestValidator(final ObjectProvider<OAuth20ConfigurationContext> configurationContext) {
+    public OAuth20PasswordGrantTypeTokenRequestValidator(final ObjectProvider<@NonNull OAuth20ConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 

@@ -681,6 +681,10 @@ ext.libraries = [
                 dependencies.create(libs.orgjson.get()) {
                 }
         ],
+        jspecify                     : [
+                dependencies.create(libs.jspecify.get()) {
+                }
+        ],
         okhttp                     : [
                 dependencies.create(libs.okhttp.urlconnection.get()) {
                     exclude(group: "com.squareup.okio", module: "okio")
@@ -1328,6 +1332,10 @@ ext.libraries = [
         ],
         jackson                    : [
                 dependencies.create(libs.jackson.databind2.get()) {
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                },
+                dependencies.create(libs.jackson.dataformat.xml2.get()) {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                 },
