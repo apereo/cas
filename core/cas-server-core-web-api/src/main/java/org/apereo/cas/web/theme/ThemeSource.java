@@ -1,6 +1,6 @@
 package org.apereo.cas.web.theme;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link ThemeSource}.

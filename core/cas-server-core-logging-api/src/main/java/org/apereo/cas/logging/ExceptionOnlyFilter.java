@@ -36,10 +36,7 @@ public class ExceptionOnlyFilter extends AbstractFilter {
 
     @Override
     public Result filter(final LogEvent event) {
-        if (event.getThrown() != null) {
-            return getOnMatch();
-        }
-        return getOnMismatch();
+        return event.getThrown() != null ? getOnMatch() : getOnMismatch();
     }
 
     @Override

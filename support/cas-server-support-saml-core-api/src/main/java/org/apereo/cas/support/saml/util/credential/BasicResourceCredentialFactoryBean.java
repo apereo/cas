@@ -7,6 +7,7 @@ import lombok.val;
 import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.cryptacular.util.KeyPairUtil;
+import org.jspecify.annotations.NonNull;
 import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.crypto.KeySupport;
@@ -14,7 +15,6 @@ import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.core.io.Resource;
-
 import javax.crypto.SecretKey;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -27,7 +27,7 @@ import java.security.PublicKey;
  */
 @Getter
 @Setter
-public class BasicResourceCredentialFactoryBean implements FactoryBean<BasicCredential> {
+public class BasicResourceCredentialFactoryBean implements FactoryBean<@NonNull BasicCredential> {
     /**
      * The SecretKey algorithm.
      */

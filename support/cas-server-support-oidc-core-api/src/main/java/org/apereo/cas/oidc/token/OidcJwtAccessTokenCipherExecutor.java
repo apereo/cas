@@ -2,9 +2,9 @@ package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
-
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This is {@link OidcJwtAccessTokenCipherExecutor}.
@@ -14,7 +14,7 @@ import org.jose4j.jwk.JsonWebKeySet;
  */
 public class OidcJwtAccessTokenCipherExecutor extends BaseOidcJwtCipherExecutor {
 
-    public OidcJwtAccessTokenCipherExecutor(final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache,
+    public OidcJwtAccessTokenCipherExecutor(final LoadingCache<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache,
                                             final OidcIssuerService oidcIssuerService) {
         super(defaultJsonWebKeystoreCache, oidcIssuerService);
     }

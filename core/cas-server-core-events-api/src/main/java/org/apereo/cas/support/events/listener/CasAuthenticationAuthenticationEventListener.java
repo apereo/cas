@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
+import org.jspecify.annotations.Nullable;
 import java.time.Instant;
 
 /**
@@ -43,6 +44,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
 
     private final MessageSanitizer messageSanitizer;
 
+    @Nullable
     private final GeoLocationService geoLocationService;
 
     private final LogoutManager logoutManager;

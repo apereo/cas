@@ -10,7 +10,7 @@ import org.apereo.cas.ticket.Ticket;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import org.jspecify.annotations.NonNull;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.Map;

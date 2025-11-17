@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -20,7 +21,7 @@ import org.springframework.beans.factory.ObjectProvider;
  */
 @RequiredArgsConstructor
 public class OAuth20DeviceUserCodeCompactor implements TicketCompactor<OAuth20DeviceUserCode> {
-    private final ObjectProvider<TicketFactory> ticketFactory;
+    private final ObjectProvider<@NonNull TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;
 
     @Getter

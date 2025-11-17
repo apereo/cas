@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
@@ -32,7 +33,7 @@ public class DelegatedClientOidcSessionManager implements DelegatedClientSession
 
     private static final List<String> SESSION_KEYS = List.of(OIDC_CLIENT_ID_SESSION_KEY, OAUTH20_CLIENT_ID_SESSION_KEY);
 
-    private final ObjectProvider<DelegatedClientAuthenticationConfigurationContext> contextProvider;
+    private final ObjectProvider<@NonNull DelegatedClientAuthenticationConfigurationContext> contextProvider;
 
     @Override
     public void trackIdentifier(final WebContext webContext, final TransientSessionTicket ticket, final Client client) {

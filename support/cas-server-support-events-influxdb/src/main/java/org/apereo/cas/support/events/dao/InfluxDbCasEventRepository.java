@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import tools.jackson.databind.ObjectMapper;
 import java.time.Duration;
@@ -44,8 +45,8 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     public CasEvent saveInternal(final CasEvent event) {
         event.assignIdIfNecessary();
         val tags = Map.of(
-            "serverIpAddress", event.getServerIpAddress(),
-            "clientIpAddress", event.getClientIpAddress(),
+            "serverIpAddress", Objects.requireNonNull(event.getServerIpAddress()),
+            "clientIpAddress", Objects.requireNonNull(event.getClientIpAddress()),
             "principalId", event.getPrincipalId(),
             "geoLocation", MAPPER.writeValueAsString(event.getGeoLocation()),
             "creationTime", String.valueOf(event.getCreationTime().toEpochMilli()),
@@ -63,16 +64,15 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     }
 
     private static CasEvent extractCasEventFromPointValues(final PointValues pointValues) {
-        val event = new CasEvent();
-        event.assignIdIfNecessary();
+        val event = new CasEvent().assignIdIfNecessary();
 
         val geoLocation = pointValues.getTag("geoLocation");
         val geo = MAPPER.readValue(geoLocation, GeoLocationRequest.class);
         event.putGeoLocation(geo);
 
-        event.setPrincipalId(pointValues.getTag("principalId"));
-        event.setType(pointValues.getTag("type"));
-        event.setCreationTime(Instant.ofEpochMilli(Long.parseLong(pointValues.getTag("creationTime"))));
+        event.setPrincipalId(Objects.requireNonNull(pointValues.getTag("principalId")));
+        event.setType(Objects.requireNonNull(pointValues.getTag("type")));
+        event.setCreationTime(Instant.ofEpochMilli(Long.parseLong(Objects.requireNonNull(pointValues.getTag("creationTime")))));
         event.putClientIpAddress(pointValues.getTag("clientIpAddress"));
         event.putServerIpAddress(pointValues.getTag("serverIpAddress"));
         event.putEventId(pointValues.getStringField("value"));
@@ -87,7 +87,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     }
 
     @Override
-    public Stream<CasEventAggregate> aggregate(final Class type, final Duration start) {
+    public Stream<CasEventAggregate> aggregate(@Nullable final Class type, final Duration start) {
         val initialSql = """
             SELECT
                 DATE_BIN(INTERVAL '1 hour', time) AS window,
@@ -112,13 +112,14 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
         ));
         val sql = sub.replace(initialSql);
         LOGGER.debug("Executing SQL query [{}]", sql);
-        try (val rows = influxDbConnectionFactory.query(MEASUREMENT, sql)) {
-            return rows.map(row -> new CasEventAggregate(
+        val rows = influxDbConnectionFactory.query(MEASUREMENT, sql);
+        return rows
+            .map(row -> new CasEventAggregate(
                 row.getField("window", LocalDateTime.class),
                 row.getTag("type"),
                 row.getIntegerField("count"),
                 row.getTag("tenant")
-            ));
-        }
+            ))
+            .onClose(rows::close);
     }
 }

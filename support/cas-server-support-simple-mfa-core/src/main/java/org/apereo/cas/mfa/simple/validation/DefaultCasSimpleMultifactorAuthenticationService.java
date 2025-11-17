@@ -13,8 +13,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
-import jakarta.annotation.Nonnull;
 import javax.security.auth.login.FailedLoginException;
 import java.io.Serializable;
 import java.util.Map;
@@ -33,16 +33,16 @@ public class DefaultCasSimpleMultifactorAuthenticationService extends BaseCasSim
 
     protected final TicketFactory ticketFactory;
     protected final BucketConsumer bucketConsumer;
-    protected final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider;
+    protected final ObjectProvider<@NonNull CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider;
 
     public DefaultCasSimpleMultifactorAuthenticationService(
-        @Nonnull
+        @NonNull
         final TicketRegistry ticketRegistry,
-        @Nonnull
+        @NonNull
         final TicketFactory ticketFactory,
-        @Nonnull
-        final ObjectProvider<CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider,
-        @Nonnull
+        @NonNull
+        final ObjectProvider<@NonNull CasSimpleMultifactorAuthenticationAccountService> accountServiceProvider,
+        @NonNull
         final BucketConsumer bucketConsumer) {
         super(ticketRegistry);
         this.ticketFactory = ticketFactory;

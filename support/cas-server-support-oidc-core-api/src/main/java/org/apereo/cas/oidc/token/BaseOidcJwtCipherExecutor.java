@@ -5,7 +5,6 @@ import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 import org.apereo.cas.util.cipher.BasicIdentifiableKey;
-
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,7 @@ import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
-
+import org.jspecify.annotations.NonNull;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -36,7 +35,7 @@ public abstract class BaseOidcJwtCipherExecutor extends BaseStringCipherExecutor
     /**
      * The default keystore for OIDC tokens.
      */
-    protected final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache;
+    protected final LoadingCache<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache;
 
     /**
      * OIDC issuer.

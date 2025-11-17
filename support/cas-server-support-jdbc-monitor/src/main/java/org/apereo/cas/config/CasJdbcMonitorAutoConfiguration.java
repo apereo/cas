@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.monitor.JdbcDataSourceHealthIndicator;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -33,7 +34,7 @@ public class CasJdbcMonitorAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public FactoryBean<ExecutorService> pooledJdbcMonitorExecutorService(final CasConfigurationProperties casProperties) {
+    public FactoryBean<@NonNull ExecutorService> pooledJdbcMonitorExecutorService(final CasConfigurationProperties casProperties) {
         return Beans.newThreadPoolExecutorFactoryBean(casProperties.getMonitor().getJdbc().getPool());
     }
 

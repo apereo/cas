@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -36,22 +37,22 @@ import java.util.Optional;
  */
 @Endpoint(id = "tokenAuth", defaultAccess = Access.NONE)
 public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
-    private final ObjectProvider<PrincipalResolver> principalResolver;
-    private final ObjectProvider<ServicesManager> servicesManager;
+    private final ObjectProvider<@NonNull PrincipalResolver> principalResolver;
+    private final ObjectProvider<@NonNull ServicesManager> servicesManager;
 
-    private final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
+    private final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
-    private final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory;
+    private final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> serviceFactory;
 
-    private final ObjectProvider<PrincipalFactory> principalFactory;
+    private final ObjectProvider<@NonNull PrincipalFactory> principalFactory;
 
     public TokenAuthenticationEndpoint(
-        final ObjectProvider<CasConfigurationProperties> casProperties,
-        final ObjectProvider<PrincipalResolver> principalResolver,
-        final ObjectProvider<ServicesManager> servicesManager,
-        final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
-        final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory,
-        final ObjectProvider<PrincipalFactory> principalFactory) {
+        final ObjectProvider<@NonNull CasConfigurationProperties> casProperties,
+        final ObjectProvider<@NonNull PrincipalResolver> principalResolver,
+        final ObjectProvider<@NonNull ServicesManager> servicesManager,
+        final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer,
+        final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> serviceFactory,
+        final ObjectProvider<@NonNull PrincipalFactory> principalFactory) {
         super(casProperties.getObject());
         this.principalResolver = principalResolver;
         this.servicesManager = servicesManager;

@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.util;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.saml1.binding.encoding.impl.HTTPSOAP11Encoder;
@@ -10,8 +11,6 @@ import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.util.SOAPConstants;
-
-import jakarta.annotation.Nonnull;
 
 /**
  * Override OpenSAML {@link HTTPSOAP11Encoder} such that SOAP-ENV XML namespace prefix is used for SOAP envelope
@@ -27,7 +26,7 @@ public class CasHttpSoap11Encoder extends HTTPSOAP11Encoder {
 
     @Override
     protected void buildAndStoreSOAPMessage(
-        @Nonnull
+        @NonNull
         final XMLObject payload) {
         val builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 

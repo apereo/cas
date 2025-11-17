@@ -14,8 +14,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.annotation.Id;
-import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -105,7 +105,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     @Override
     public int compareTo(
-        @Nonnull
+        @NonNull
         final RegisteredService other) {
         return Comparator
             .comparingInt(RegisteredService::getEvaluationPriority)

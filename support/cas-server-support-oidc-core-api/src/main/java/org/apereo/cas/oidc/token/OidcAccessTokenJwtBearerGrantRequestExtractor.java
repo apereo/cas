@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.ObjectProvider;
@@ -46,11 +47,11 @@ import java.util.Set;
  */
 @Slf4j
 public class OidcAccessTokenJwtBearerGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor<OidcConfigurationContext> {
-    private final ObjectProvider<LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCacheProvider;
+    private final ObjectProvider<@NonNull LoadingCache<@NonNull OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCacheProvider;
 
     public OidcAccessTokenJwtBearerGrantRequestExtractor(
-        final ObjectProvider<OidcConfigurationContext> config,
-        final ObjectProvider<LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCache) {
+        final ObjectProvider<@NonNull OidcConfigurationContext> config,
+        final ObjectProvider<@NonNull LoadingCache<@NonNull OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>>> oidcServiceJsonWebKeystoreCache) {
         super(config);
         this.oidcServiceJsonWebKeystoreCacheProvider = oidcServiceJsonWebKeystoreCache;
     }

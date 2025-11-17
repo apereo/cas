@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -49,14 +50,14 @@ public class AttributeConsentReportEndpoint extends BaseCasRestActuatorEndpoint 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final ObjectProvider<ConsentRepository> consentRepository;
+    private final ObjectProvider<@NonNull ConsentRepository> consentRepository;
 
-    private final ObjectProvider<ConsentEngine> consentEngine;
+    private final ObjectProvider<@NonNull ConsentEngine> consentEngine;
 
     public AttributeConsentReportEndpoint(final CasConfigurationProperties casProperties,
                                           final ConfigurableApplicationContext applicationContext,
-                                          final ObjectProvider<ConsentRepository> consentRepository,
-                                          final ObjectProvider<ConsentEngine> consentEngine) {
+                                          final ObjectProvider<@NonNull ConsentRepository> consentRepository,
+                                          final ObjectProvider<@NonNull ConsentEngine> consentEngine) {
         super(casProperties, applicationContext);
         this.consentRepository = consentRepository;
         this.consentEngine = consentEngine;
@@ -115,7 +116,7 @@ public class AttributeConsentReportEndpoint extends BaseCasRestActuatorEndpoint 
     @GetMapping(path = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     @Operation(summary = "Export consent decisions as a zip file")
-    public ResponseEntity<Resource> export() {
+    public ResponseEntity<@NonNull Resource> export() {
         val accounts = consentRepository.getObject().findConsentDecisions();
         val resource = CompressionUtils.toZipFile(accounts.stream(),
             Unchecked.function(entry -> {

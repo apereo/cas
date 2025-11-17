@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.redis.connection.DataType;
@@ -76,9 +77,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     private final CasRedisTemplates casRedisTemplates;
 
-    private final ObjectProvider<Cache<String, Ticket>> ticketCache;
+    private final ObjectProvider<@NonNull Cache<@NonNull String, Ticket>> ticketCache;
 
-    private final ObjectProvider<RedisTicketRegistryMessagePublisher> messagePublisher;
+    private final ObjectProvider<@NonNull RedisTicketRegistryMessagePublisher> messagePublisher;
 
     private final Optional<RedisModulesOperations> redisModulesOperations;
 
@@ -93,8 +94,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                                final TicketCatalog ticketCatalog,
                                final ConfigurableApplicationContext applicationContext,
                                final CasRedisTemplates casRedisTemplates,
-                               final ObjectProvider<Cache<String, Ticket>> ticketCache,
-                               final ObjectProvider<RedisTicketRegistryMessagePublisher> messagePublisher,
+                               final ObjectProvider<@NonNull Cache<@NonNull String, Ticket>> ticketCache,
+                               final ObjectProvider<@NonNull RedisTicketRegistryMessagePublisher> messagePublisher,
                                final Optional<RedisModulesOperations> redisModulesOperations,
                                final RedisKeyGeneratorFactory redisKeyGeneratorFactory,
                                final RedisKeyValueAdapter redisKeyValueAdapter,

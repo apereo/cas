@@ -17,6 +17,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessToken
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.beans.factory.ObjectProvider;
@@ -30,7 +31,7 @@ import java.util.Locale;
  */
 @Slf4j
 public class AccessTokenCibaGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor<OidcConfigurationContext> {
-    public AccessTokenCibaGrantRequestExtractor(final ObjectProvider<OidcConfigurationContext> configurationContext) {
+    public AccessTokenCibaGrantRequestExtractor(final ObjectProvider<@NonNull OidcConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 

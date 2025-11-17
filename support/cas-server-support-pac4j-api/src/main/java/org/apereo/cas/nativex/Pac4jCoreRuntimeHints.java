@@ -11,6 +11,8 @@ import org.apereo.cas.pac4j.client.DelegatedClientNameExtractor;
 import org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryProviderLocator;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.client.config.BaseClientConfiguration;
 import org.pac4j.core.credentials.Credentials;
@@ -25,7 +27,7 @@ import java.util.List;
  */
 public class Pac4jCoreRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerSerializationHints(hints, Credentials.class,
             DelegatedClientIdentityProviderConfiguration.class,
             DelegatedAuthenticationCandidateProfile.class);

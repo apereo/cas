@@ -16,6 +16,7 @@ import org.apache.commons.lang3.Strings;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.MediaType;
 import java.util.Map;
 import java.util.Optional;
@@ -32,8 +33,8 @@ public class OidcTokenIntrospectionSigningAndEncryptionService extends BaseOidcJ
     private final OidcServerDiscoverySettings discoverySettings;
 
     public OidcTokenIntrospectionSigningAndEncryptionService(
-        final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache,
-        final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache,
+        final LoadingCache<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache,
+        final LoadingCache<@NonNull OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> serviceJsonWebKeystoreCache,
         final OidcIssuerService issuerService,
         final OidcServerDiscoverySettings discoverySettings,
         final CasConfigurationProperties casProperties) {

@@ -8,6 +8,7 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.AbstractResourceBasedMessageSource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -41,7 +42,7 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
     }
 
     @Override
-    protected String getMessageInternal(final String code, final Object[] args, final Locale locale) {
+    protected String getMessageInternal(final String code, final Object @NonNull [] args, final Locale locale) {
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (clientInfo != null && StringUtils.isNotBlank(clientInfo.getTenant())) {
             val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(clientInfo.getTenant()).orElseThrow();

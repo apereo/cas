@@ -6,6 +6,7 @@ import org.apereo.cas.monitor.HazelcastHealthIndicator;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,7 +35,7 @@ public class CasHazelcastMonitorAutoConfiguration {
     public HealthIndicator hazelcastHealthIndicator(
         final CasConfigurationProperties casProperties,
         @Qualifier("casTicketRegistryHazelcastInstance")
-        final ObjectProvider<HazelcastInstance> casTicketRegistryHazelcastInstance) {
+        final ObjectProvider<@NonNull HazelcastInstance> casTicketRegistryHazelcastInstance) {
         val warn = casProperties.getMonitor().getWarn();
         return new HazelcastHealthIndicator(warn.getEvictionThreshold(),
             warn.getThreshold(), casTicketRegistryHazelcastInstance);

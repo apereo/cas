@@ -3,11 +3,11 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionCompletedEvent;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 

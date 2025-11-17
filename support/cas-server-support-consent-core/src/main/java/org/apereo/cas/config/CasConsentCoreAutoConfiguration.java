@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -183,9 +184,9 @@ public class CasConsentCoreAutoConfiguration {
         public AttributeConsentReportEndpoint attributeConsentReportEndpoint(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(ConsentEngine.BEAN_NAME)
-            final ObjectProvider<ConsentEngine> consentEngine,
+            final ObjectProvider<@NonNull ConsentEngine> consentEngine,
             @Qualifier(ConsentRepository.BEAN_NAME)
-            final ObjectProvider<ConsentRepository> consentRepository,
+            final ObjectProvider<@NonNull ConsentRepository> consentRepository,
             final CasConfigurationProperties casProperties) {
             return new AttributeConsentReportEndpoint(casProperties, applicationContext, consentRepository, consentEngine);
         }

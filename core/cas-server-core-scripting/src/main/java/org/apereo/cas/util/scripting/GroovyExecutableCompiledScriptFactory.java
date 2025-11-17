@@ -3,6 +3,7 @@ package org.apereo.cas.util.scripting;
 import groovy.lang.GroovyClassLoader;
 import groovy.text.GStringTemplateEngine;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
 import java.io.File;
 import java.net.URLClassLoader;
@@ -44,7 +45,7 @@ public class GroovyExecutableCompiledScriptFactory implements ExecutableCompiled
     }
 
     @Override
-    public <T> T newObjectInstance(final Resource resource, final Class[] ctorParameters, final Object[] args, final Class<T> clazz) {
+    public <T> @Nullable T newObjectInstance(final Resource resource, final Class[] ctorParameters, final Object[] args, final Class<T> clazz) {
         return ScriptingUtils.getObjectInstanceFromGroovyResource(resource, ctorParameters, args, clazz);
     }
 

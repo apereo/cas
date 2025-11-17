@@ -4,7 +4,7 @@ import org.apereo.cas.audit.AuditableEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.jose4j.jwt.JwtClaims;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This is {@link OidcIdToken}.
@@ -13,7 +13,7 @@ import jakarta.annotation.Nonnull;
  * @since 7.0.0
  */
 public record OidcIdToken(String token, JwtClaims claims, String deviceSecret) implements AuditableEntity {
-    @Nonnull
+    @NonNull
     @Override
     public String toString() {
         return this.token;

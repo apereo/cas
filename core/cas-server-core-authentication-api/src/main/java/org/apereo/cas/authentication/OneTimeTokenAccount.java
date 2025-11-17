@@ -18,8 +18,8 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import tools.jackson.databind.ObjectMapper;
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -125,7 +125,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     private String tenant;
 
     @Override
-    public int compareTo(@Nonnull final OneTimeTokenAccount tokenAccount) {
+    public int compareTo(@NonNull final OneTimeTokenAccount tokenAccount) {
         return Comparator
             .comparing((OneTimeTokenAccount account) -> account.getScratchCodes().toArray(),
                 Comparator.comparing(Arrays::toString))

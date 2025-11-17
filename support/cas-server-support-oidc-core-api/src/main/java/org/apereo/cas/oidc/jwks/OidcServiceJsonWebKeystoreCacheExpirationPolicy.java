@@ -3,14 +3,13 @@ package org.apereo.cas.oidc.jwks;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.OidcRegisteredService;
-
 import com.github.benmanes.caffeine.cache.Expiry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
-
+import org.jspecify.annotations.NonNull;
 import java.util.Optional;
 
 /**
@@ -22,7 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class OidcServiceJsonWebKeystoreCacheExpirationPolicy
-    implements Expiry<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> {
+    implements Expiry<@NonNull OidcJsonWebKeyCacheKey, @NonNull Optional<JsonWebKeySet>> {
     private final CasConfigurationProperties casProperties;
 
     @Override

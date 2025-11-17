@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,18 +46,6 @@ import java.util.Optional;
 @EnableConfigurationProperties(GcpSecretManagerProperties.class)
 public class CasGoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration {
 
-    /**
-     * Google cloud secrets manager property source.
-     * The implementation here overrides the property fetching mechanism to
-     * convert the final secret into a String. Otherwise, the actual
-     * value of the secret is passed back to the environment
-     * as {@code ByteString@abcdefg size=19 contents=...}.
-     * This could possibly be a bug in Spring Cloud GCP where
-     * {@link com.google.cloud.spring.autoconfigure.secretmanager.GcpSecretManagerEnvironmentPostProcessor}
-     * is not doing its job correctly.
-     * @param properties the properties
-     * @return the property source locator
-     */
     @Bean
     @ConditionalOnMissingBean(name = "googleCloudSecretsManagerPropertySourceLocator")
     public PropertySourceLocator googleCloudSecretsManagerPropertySourceLocator(
@@ -67,7 +56,7 @@ public class CasGoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration {
             val projectIdProvider = getProjectIdProvider(properties);
             return new SecretManagerPropertySource(getClass().getSimpleName(), googleCloudSecretsManagerTemplate, projectIdProvider) {
                 @Override
-                public Object getProperty(final String name) {
+                public @Nullable Object getProperty(final String name) {
                     var propertyValue = FunctionUtils.doAndHandle(() -> super.getProperty(name), e -> null).get();
                     return Optional.ofNullable(propertyValue)
                         .map(ByteString.class::cast)
