@@ -25,6 +25,7 @@ import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
 import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
 import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -87,7 +88,7 @@ public class CasJdbcAuditAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "inspektrAuditEntityManagerFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FactoryBean<EntityManagerFactory> inspektrAuditEntityManagerFactory(
+        public FactoryBean<@NonNull EntityManagerFactory> inspektrAuditEntityManagerFactory(
             @Qualifier("jpaAuditTrailEntityFactory")
             final JpaEntityFactory<AuditTrailEntity> jpaAuditTrailEntityFactory,
             @Qualifier("inspektrAuditJpaVendorAdapter")

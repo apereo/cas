@@ -14,6 +14,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -58,9 +59,9 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     }
 
     @Override
-    public final boolean preHandle(final HttpServletRequest request,
-                                   final HttpServletResponse response,
-                                   final Object handler) {
+    public final boolean preHandle(final @NonNull HttpServletRequest request,
+                                   final @NonNull HttpServletResponse response,
+                                   final @NonNull Object handler) {
         if (isRequestIgnoredForThrottling(request, response)) {
             LOGGER.trace("Letting the request through without throttling; No request filters support it");
             return true;
@@ -78,8 +79,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     }
 
     @Override
-    public final void postHandle(final HttpServletRequest request, final HttpServletResponse response,
-                                 final Object handler, final ModelAndView modelAndView) {
+    public final void postHandle(final @NonNull HttpServletRequest request, final @NonNull HttpServletResponse response,
+                                 final @NonNull Object handler, final ModelAndView modelAndView) {
         if (isRequestIgnoredForThrottling(request, response)) {
             LOGGER.trace("Skipping authentication throttling for requests; no filters support it.");
             return;
@@ -96,8 +97,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
     }
 
     @Override
-    public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response,
-                                final Object handler, final Exception e) {
+    public void afterCompletion(final @NonNull HttpServletRequest request, final @NonNull HttpServletResponse response,
+                                final @NonNull Object handler, final Exception e) {
         if (!isRequestIgnoredForThrottling(request, response) && shouldResponseBeRecordedAsFailure(response)) {
             recordSubmissionFailure(request);
         }

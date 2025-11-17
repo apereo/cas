@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import lombok.ToString;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,7 +67,7 @@ public class MockPersonAttributeDao implements PersonAttributeDao {
     }
 
     @Override
-    public int compareTo(@Nonnull final PersonAttributeDao o) {
+    public int compareTo(@NonNull final PersonAttributeDao o) {
         return 0;
     }
 }

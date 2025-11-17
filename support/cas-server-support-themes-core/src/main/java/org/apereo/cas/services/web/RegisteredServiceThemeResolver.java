@@ -26,13 +26,13 @@ import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.webflow.execution.RequestContextHolder;
-import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
@@ -62,13 +62,13 @@ import java.util.Locale;
 @Slf4j
 @RequiredArgsConstructor
 public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
-    protected final ObjectProvider<ServicesManager> servicesManager;
+    protected final ObjectProvider<@NonNull ServicesManager> servicesManager;
 
-    protected final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
+    protected final ObjectProvider<@NonNull AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
-    protected final ObjectProvider<CasConfigurationProperties> casProperties;
+    protected final ObjectProvider<@NonNull CasConfigurationProperties> casProperties;
 
-    @Nonnull
+    @NonNull
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
         val context = RequestContextHolder.getRequestContext();

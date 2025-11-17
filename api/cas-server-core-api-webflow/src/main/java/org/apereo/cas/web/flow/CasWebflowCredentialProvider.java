@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.Credential;
+import org.jspecify.annotations.NonNull;
 import org.springframework.webflow.execution.RequestContext;
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -25,6 +25,6 @@ public interface CasWebflowCredentialProvider {
      * @param requestContext the request context
      * @return the list
      */
-    @Nonnull
+    @NonNull
     List<Credential> extract(RequestContext requestContext);
 }

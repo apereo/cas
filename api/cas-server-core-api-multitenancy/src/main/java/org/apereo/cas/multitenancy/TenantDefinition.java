@@ -31,6 +31,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@SuppressWarnings("NullAway.Init")
 public class TenantDefinition implements Serializable {
     @Serial
     private static final long serialVersionUID = -9012299259747093234L;

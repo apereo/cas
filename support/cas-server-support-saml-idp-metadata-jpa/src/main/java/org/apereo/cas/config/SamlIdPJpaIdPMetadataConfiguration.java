@@ -24,6 +24,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -192,7 +193,7 @@ class SamlIdPJpaIdPMetadataConfiguration {
         public SamlIdPMetadataLocator samlIdPMetadataLocator(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("samlIdPMetadataCache")
-            final Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache,
+            final Cache<@NonNull String, SamlIdPMetadataDocument> samlIdPMetadataCache,
             @Qualifier("samlIdPMetadataGeneratorCipherExecutor")
             final CipherExecutor samlIdPMetadataGeneratorCipherExecutor) {
             return BeanSupplier.of(SamlIdPMetadataLocator.class)

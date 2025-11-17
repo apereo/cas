@@ -10,6 +10,7 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -20,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,7 +55,7 @@ public class CasAmazonS3ServiceRegistryAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "amazonS3ServiceRegistry")
     public ServiceRegistry amazonS3ServiceRegistry(
-        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
+        final ObjectProvider<@NonNull List<ServiceRegistryListener>> serviceRegistryListeners,
         @Qualifier("amazonS3ServiceRegistryClient")
         final S3Client amazonS3ServiceRegistryClient, final ConfigurableApplicationContext applicationContext) {
         return new AmazonS3ServiceRegistry(applicationContext,

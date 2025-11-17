@@ -61,6 +61,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.boot.context.properties.bind.BindContext;
@@ -449,8 +450,8 @@ public class CasConfigurationProperties implements Serializable {
         private final Map<String, ConfigurationPropertyBindingResult> bindingResults;
         
         @Override
-        public void onFinish(final ConfigurationPropertyName name, final Bindable<?> target,
-                             final BindContext context, final Object result) {
+        public void onFinish(final @NonNull ConfigurationPropertyName name, final @NonNull Bindable<?> target,
+                             final @NonNull BindContext context, final Object result) {
             if (result != null) {
                 val field = ReflectionUtils.findField(context.getClass(), "dataObjectBindings");
                 Objects.requireNonNull(field).trySetAccessible();

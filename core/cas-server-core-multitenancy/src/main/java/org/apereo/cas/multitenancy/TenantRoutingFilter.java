@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -52,7 +53,7 @@ public class TenantRoutingFilter implements Filter {
         chain.doFilter(request, response);
     }
 
-    private static String extractTenantHost(final ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext) {
+    private static @Nullable String extractTenantHost(final ConfigurationPropertiesBindingContext<CasConfigurationProperties> bindingContext) {
         if (bindingContext.containsBindingFor("cas.server.name")) {
             return FunctionUtils.doUnchecked(() -> {
                 val serverName = bindingContext.value().getServer().getName();

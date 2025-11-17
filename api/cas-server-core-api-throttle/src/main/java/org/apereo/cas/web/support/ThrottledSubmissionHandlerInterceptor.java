@@ -1,10 +1,9 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.util.NamedObject;
+import org.jspecify.annotations.NonNull;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-
-import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -64,32 +63,32 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
 
     @Override
     default boolean preHandle(
-        final HttpServletRequest request,
-        final HttpServletResponse response,
-        final Object handler) {
+        final @NonNull HttpServletRequest request,
+        final @NonNull HttpServletResponse response,
+        final @NonNull Object handler) {
         return true;
     }
 
     @Override
     default void postHandle(
-        final HttpServletRequest request,
-        final HttpServletResponse response,
-        final Object handler,
+        final @NonNull HttpServletRequest request,
+        final @NonNull HttpServletResponse response,
+        final @NonNull Object handler,
         final ModelAndView modelAndView) {
     }
 
     @Override
     default void afterCompletion(
-        final HttpServletRequest request,
-        final HttpServletResponse response,
-        final Object handler,
+        final @NonNull HttpServletRequest request,
+        final @NonNull HttpServletResponse response,
+        final @NonNull Object handler,
         final Exception e) {
     }
 
     @Override
     default void afterConcurrentHandlingStarted(
-        @Nonnull final HttpServletRequest request,
-        @Nonnull final HttpServletResponse response,
-        @Nonnull final Object handler) {
+        @NonNull final HttpServletRequest request,
+        @NonNull final HttpServletResponse response,
+        @NonNull final Object handler) {
     }
 }

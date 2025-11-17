@@ -20,11 +20,12 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import jakarta.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,13 +42,13 @@ import java.util.Optional;
 public class TicketExpirationPoliciesEndpoint extends BaseCasActuatorEndpoint {
     private final List<ExpirationPolicyBuilder> expirationPolicyBuilders;
 
-    private final ObjectProvider<ServicesManager> servicesManagerProvider;
+    private final ObjectProvider<@NonNull ServicesManager> servicesManagerProvider;
 
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     public TicketExpirationPoliciesEndpoint(final CasConfigurationProperties casProperties,
                                             final List<ExpirationPolicyBuilder> expirationPolicyBuilders,
-                                            final ObjectProvider<ServicesManager> servicesManager,
+                                            final ObjectProvider<@NonNull ServicesManager> servicesManager,
                                             final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
         super(casProperties);
         this.expirationPolicyBuilders = expirationPolicyBuilders;

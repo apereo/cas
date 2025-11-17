@@ -34,6 +34,7 @@ import org.apereo.cas.web.saml2.DelegatedClientSaml2SessionManager;
 import org.apereo.cas.web.saml2.DelegatedClientsSaml2EndpointContributor;
 import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataController;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -211,7 +212,7 @@ class DelegatedAuthenticationSaml2Configuration {
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean configBean,
             @Qualifier(DelegatedIdentityProviderFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
-            final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory,
+            final ObjectProvider<@NonNull SAMLMessageStoreFactory> samlMessageStoreFactory,
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext) {
             return new DelegatedClientSaml2Builder(casSslContext, samlMessageStoreFactory, configBean);
@@ -222,7 +223,7 @@ class DelegatedAuthenticationSaml2Configuration {
         @ConditionalOnMissingBean(name = "delegatedClientSaml2SessionManager")
         public DelegatedClientSessionManager delegatedClientSaml2SessionManager(
             @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
-            final ObjectProvider<DelegatedClientAuthenticationConfigurationContext> contextProvider) {
+            final ObjectProvider<@NonNull DelegatedClientAuthenticationConfigurationContext> contextProvider) {
             return new DelegatedClientSaml2SessionManager(contextProvider);
         }
     }

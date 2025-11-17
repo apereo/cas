@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.hjson.JsonValue;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
@@ -33,6 +34,7 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean, In
 
     private final Resource jsonResource;
 
+    @Nullable
     private WatcherService watcherService;
 
     private final List<TenantDefinition> tenantDefinitionList = new ArrayList<>();

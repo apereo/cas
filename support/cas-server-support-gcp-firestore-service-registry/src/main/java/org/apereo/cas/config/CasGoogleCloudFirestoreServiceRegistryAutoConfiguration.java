@@ -11,6 +11,7 @@ import org.apereo.cas.util.spring.boot.ExcludeInnerAutoConfigurationBeanDefiniti
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.spring.autoconfigure.firestore.GcpFirestoreAutoConfiguration;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
@@ -50,7 +51,7 @@ public class CasGoogleCloudFirestoreServiceRegistryAutoConfiguration {
         final CasConfigurationProperties casProperties,
         @Qualifier("firestore")
         final Firestore firestore,
-        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
+        final ObjectProvider<@NonNull List<ServiceRegistryListener>> serviceRegistryListeners,
         final ConfigurableApplicationContext applicationContext) {
         return new GoogleCloudFirestoreServiceRegistry(applicationContext, serviceRegistryListeners.getObject(),
             firestore, casProperties.getServiceRegistry().getGoogleCloudFirestore().getCollection());

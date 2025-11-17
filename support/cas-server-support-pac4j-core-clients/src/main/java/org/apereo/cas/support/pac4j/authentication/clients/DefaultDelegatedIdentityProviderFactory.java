@@ -3,6 +3,7 @@ package org.apereo.cas.support.pac4j.authentication.clients;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import com.github.benmanes.caffeine.cache.Cache;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.client.BaseClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.util.Collection;
@@ -20,7 +21,7 @@ public class DefaultDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
         final CasConfigurationProperties casProperties,
         final Collection<DelegatedClientFactoryCustomizer> customizers,
         final CasSSLContext casSSLContext,
-        final Cache<String, List<BaseClient>> clientsCache,
+        final Cache<@NonNull String, List<BaseClient>> clientsCache,
         final ConfigurableApplicationContext applicationContext) {
         super(casProperties, customizers, casSSLContext, clientsCache, applicationContext);
     }

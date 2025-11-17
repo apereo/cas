@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
+import org.jspecify.annotations.NonNull;
 import java.util.Optional;
 
 /**
@@ -31,12 +32,12 @@ public class OidcRegisteredServiceJwtAccessTokenCipherExecutor extends OAuth20Re
     /**
      * The default keystore for OIDC tokens.
      */
-    protected final LoadingCache<OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache;
+    protected final LoadingCache<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> defaultJsonWebKeystoreCache;
 
     /**
      * The service keystore for OIDC tokens.
      */
-    protected final LoadingCache<OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> registeredServiceJsonWebKeystoreCache;
+    protected final LoadingCache<@NonNull OidcJsonWebKeyCacheKey, Optional<JsonWebKeySet>> registeredServiceJsonWebKeystoreCache;
 
     /**
      * OIDC issuer.

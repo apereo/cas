@@ -20,6 +20,7 @@ import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.common.web.ClientInfoExtractionOptions;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,7 +70,6 @@ import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.executor.FlowExecutor;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
-import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -106,7 +106,7 @@ class CasWebSecurityConfiguration {
             return new WebMvcConfigurer() {
                 @Override
                 public void addViewControllers(
-                    @Nonnull
+                    @NonNull
                     final ViewControllerRegistry registry) {
                     if (casProperties.getMonitor().getEndpoints().isFormLoginEnabled()) {
                         registry.addViewController(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN)
@@ -140,11 +140,11 @@ class CasWebSecurityConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "casClientInfoLoggingFilter")
-        public FilterRegistrationBean<ClientInfoThreadLocalFilter> casClientInfoLoggingFilter(
+        public FilterRegistrationBean<@NonNull ClientInfoThreadLocalFilter> casClientInfoLoggingFilter(
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,
             final CasConfigurationProperties casProperties) {
-            val bean = new FilterRegistrationBean<ClientInfoThreadLocalFilter>();
+            val bean = new FilterRegistrationBean<@NonNull ClientInfoThreadLocalFilter>();
             val audit = casProperties.getAudit().getEngine();
             val options = ClientInfoExtractionOptions.builder()
                 .alternateLocalAddrHeaderName(audit.getAlternateClientAddrHeaderName())
@@ -161,10 +161,10 @@ class CasWebSecurityConfiguration {
         }
 
         @Bean
-        public FilterRegistrationBean<SecurityContextHolderFilter> securityContextHolderFilter(
+        public FilterRegistrationBean<@NonNull SecurityContextHolderFilter> securityContextHolderFilter(
             @Qualifier("securityContextRepository")
             final SecurityContextRepository securityContextRepository) {
-            val bean = new FilterRegistrationBean<SecurityContextHolderFilter>();
+            val bean = new FilterRegistrationBean<@NonNull SecurityContextHolderFilter>();
             bean.setFilter(new SecurityContextHolderFilter(securityContextRepository));
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setName("Spring Security Context Holder Filter");
@@ -178,7 +178,7 @@ class CasWebSecurityConfiguration {
         public WebSecurityCustomizer casWebSecurityCustomizer(
             @Qualifier("securityContextRepository")
             final SecurityContextRepository securityContextRepository,
-            final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
+            final ObjectProvider<@NonNull PathMappedEndpoints> pathMappedEndpoints,
             final List<CasWebSecurityConfigurer> configurersList,
             final WebEndpointProperties webEndpointProperties,
             final ManagementServerProperties managementServerProperties,
@@ -198,7 +198,7 @@ class CasWebSecurityConfiguration {
             @Qualifier("securityContextRepository")
             final SecurityContextRepository securityContextRepository,
             final HttpSecurity http,
-            final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
+            final ObjectProvider<@NonNull PathMappedEndpoints> pathMappedEndpoints,
             final List<CasWebSecurityConfigurer> configurersList,
             final WebEndpointProperties webEndpointProperties,
             final ManagementServerProperties managementServerProperties,

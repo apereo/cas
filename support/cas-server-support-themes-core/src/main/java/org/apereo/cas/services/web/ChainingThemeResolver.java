@@ -5,7 +5,7 @@ import org.apereo.cas.web.theme.ThemeResolver;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -33,7 +33,7 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
         return this;
     }
 
-    @Nonnull
+    @NonNull
     @Override
     public String resolveThemeName(
         final HttpServletRequest httpServletRequest) {

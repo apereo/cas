@@ -32,14 +32,14 @@ chartJs = "4.5.1"
 checkstyle = "12.1.2"
 classgraph = "4.8.184"
 commonsBeans = "1.11.0"
-commonsCli = "1.10.0"
+commonsCli = "1.11.0"
 commonsCodec = "1.20.0"
 commonsCollections = "4.5.0"
 commonsCollections3 = "3.2.2"
 commonsCompress = "1.28.0"
 commonsIo = "2.21.0"
-commonsJexl = "3.5.0"
-commonsLang = "3.19.0"
+commonsJexl = "3.6.0"
+commonsLang = "3.20.0"
 commonsLang2 = "2.6"
 commonsPool = "2.12.1"
 commonsText = "1.14.0"
@@ -68,12 +68,12 @@ geode = "1.15.2"
 googleApiClient = "2.8.1"
 googleAuth = "1.5.0"
 googleCloudLogging = "3.23.8"
-googleCloudMonitor = "3.79.0"
+googleCloudMonitor = "3.81.0"
 googleCloudSdk = "7.4.1"
 googleMapsGeoCoding = "2.2.0"
 googleZxing = "3.5.4"
 graalVm = "25.0.1"
-graalVmMetadataRepository = "0.3.30"
+graalVmMetadataRepository = "0.3.31"
 groovy = "5.0.2"
 grouper = "5.22.3"
 gson = "2.13.2"
@@ -137,6 +137,7 @@ json = "20250517"
 jsonSmart = "2.6.0"
 jsonassert = "1.5.3"
 jsoup = "1.21.2"
+jspecify = "1.0.0"
 jsr305 = "3.0.2"
 jta = "2.0.1"
 jtds = "1.3.1"
@@ -177,8 +178,9 @@ nimbusJose = "10.6"
 nimbusOidc = "11.30.1"
 normalize = "8.0.1"
 notyf = "3.10.0"
-okhttp3 = "5.3.0"
-okio = "3.16.2"
+nullaway = "0.12.12"
+okhttp3 = "5.3.1"
+okio = "3.16.3"
 okioHttp = "2.7.5"
 oktaHttpClient = "8.2.5"
 oktaSdk = "3.0.0"
@@ -197,7 +199,7 @@ saajImpl = "3.0.4"
 scimSdkClient = "1.28.1"
 semver = "3.1.0"
 sendGrid = "4.10.3"
-sentry = "8.25.0"
+sentry = "8.26.0"
 shibbolethUtilJavaSupport = "9.1.6"
 slackClient = "1.46.0"
 slf4j = "2.0.17"
@@ -205,17 +207,17 @@ snakeYaml = "2.5"
 socketJsClient = "1.5.1"
 splunkLogging = "1.11.8"
 spring = "7.0.0"
-springBoot = "4.0.0-RC2"
+springBoot = "4.0.0-SNAPSHOT"
 springBootAdmin = "3.5.6"
 springCloudAzure = "6.0.0"
-springCloudBus = "5.0.0-RC1"
-springCloudCommons = "5.0.0-RC1"
-springCloudConfig = "5.0.0-RC1"
-springCloudConsul = "5.0.0-RC1"
-springCloudEureka = "5.0.0-RC1"
-springCloudKubernetesConfig = "5.0.0-RC1"
-springCloudVault = "5.0.0-RC1"
-springCloudZookeeper = "5.0.0-RC1"
+springCloudBus = "5.0.0-SNAPSHOT"
+springCloudCommons = "5.0.0-SNAPSHOT"
+springCloudConfig = "5.0.0-SNAPSHOT"
+springCloudConsul = "5.0.0-SNAPSHOT"
+springCloudEureka = "5.0.0-SNAPSHOT"
+springCloudKubernetesConfig = "5.0.0-SNAPSHOT"
+springCloudVault = "5.0.0-SNAPSHOT"
+springCloudZookeeper = "5.0.0-SNAPSHOT"
 springDataCassandra = "5.0.0"
 springDataCommons = "4.0.0"
 springDataCosmosDb = "6.0.0"
@@ -223,11 +225,11 @@ springDataMongoDb = "5.0.0"
 springDataRedis = "4.0.0"
 springDoc = "2.8.14"
 springIntegration = "7.0.0-RC2"
-springKafka = "4.0.0-RC1"
-springRabbit = "4.0.0-RC1"
+springKafka = "4.0.0-SNAPSHOT"
+springRabbit = "4.0.0-SNAPSHOT"
 springSecurity = "7.0.0-RC3"
 springSecurityRsa = "1.1.5"
-springSession = "4.0.0-RC1"
+springSession = "4.0.0-M2"
 springSessionMongo = "4.0.0-M2"
 springShell = "4.0.0-M1"
 springWebflow = "3.0.1"
@@ -265,10 +267,11 @@ gradleGit = "1.0.0"
 gradleLombok = "9.1.0"
 gradleDependencyVersions = "0.53.0"
 gradleErrorProne = "4.3.0"
+gradleNullAway = "2.3.0"
 gradleGraalVmNative = "0.11.3"
 gradleSonarqube = "7.0.1.6134"
-gradleNmcpPublishing = "1.2.0"
-gradleJib = "3.4.6"
+gradleNmcpPublishing = "1.2.1"
+gradleJib = "3.5.0"
 
 [libraries]
 ace-builds = { module = "org.webjars.npm:ace-builds", version.ref = "aceEditor" }
@@ -358,7 +361,12 @@ dom4j = { module = "org.dom4j:dom4j", version.ref = "dom4j" }
 duo-client = { module = "com.duosecurity:duo-client", version.ref = "duoClient" }
 duo-universal-sdk = { module = "com.duosecurity:duo-universal-sdk", version.ref = "duoUniversalSdk" }
 dynamodb = { module = "software.amazon.awssdk:dynamodb", version.ref = "amazonSdk" }
+eclipse-jgit-sdk = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
+eclipse-jgit-http-apache = { module = "org.eclipse.jgit:org.eclipse.jgit.http.apache", version.ref = "jgit" }
+eclipse-jgit-ssh-jsch = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.jsch", version.ref = "jgit" }
+eclipse-persistence-jpa = { module = "org.eclipse.persistence:org.eclipse.persistence.jpa", version.ref = "eclipseLink" }
 elasticache-java-cluster-client = { module = "com.amazonaws:elasticache-java-cluster-client", version.ref = "awsmemcached" }
+errorprone = { module = "com.google.errorprone:error_prone_core", version.ref = "errorprone" }
 eureka-client = { module = "com.netflix.eureka:eureka-client", version.ref = "eurekaClient" }
 expressly = { module = "org.glassfish.expressly:expressly", version.ref = "jakartaElImpl" }
 fediz-core = { module = "org.apache.cxf.fediz:fediz-core", version.ref = "apacheFediz" }
@@ -418,6 +426,7 @@ jackson-dataformat-cbor = { module = "tools.jackson.dataformat:jackson-dataforma
 jackson-dataformat-properties = { module = "tools.jackson.dataformat:jackson-dataformat-properties", version.ref = "jackson" }
 jackson-dataformat-smile = { module = "tools.jackson.dataformat:jackson-dataformat-smile", version.ref = "jackson" }
 jackson-dataformat-xml = { module = "tools.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
+jackson-dataformat-xml2 = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
 jackson-dataformat-yaml = { module = "tools.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-datatype-guava = { module = "tools.jackson.datatype:jackson-datatype-guava", version.ref = "jackson" }
 jackson-mapper-asl = { module = "org.codehaus.jackson:jackson-mapper-asl", version.ref = "jacksonAsl" }
@@ -466,10 +475,10 @@ jradius-dictionary = { module = "net.jradius:jradius-dictionary", version.ref = 
 jradius-extended = { module = "net.jradius:jradius-extended", version.ref = "jradius" }
 jradius-extras = { module = "net.jradius:jradius-extras", version.ref = "jradius" }
 jradius-server = { module = "net.jradius:jradius-server", version.ref = "jradius" }
-orgjson = { module = "org.json:json", version.ref = "json" }
 json-smart = { module = "net.minidev:json-smart", version.ref = "jsonSmart" }
 jsonassert = { module = "org.skyscreamer:jsonassert", version.ref = "jsonassert" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 jsr305 = { module = "com.google.code.findbugs:jsr305", version.ref = "jsr305" }
 jtds = { module = "net.sourceforge.jtds:jtds", version.ref = "jtds" }
 jul-to-slf4j = { module = "org.slf4j:jul-to-slf4j", version.ref = "slf4j" }
@@ -548,6 +557,7 @@ netty-transport = { module = "io.netty:netty-transport", version.ref = "netty" }
 nimbus-jose-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbusJose" }
 normalize-css = { module = "org.webjars.npm:normalize.css", version.ref = "normalize" }
 notyf = { module = "org.webjars.npm:notyf", version.ref = "notyf" }
+nullaway = { module = "com.uber.nullaway:nullaway", version.ref = "nullaway" }
 oauth2-oidc-sdk = { module = "com.nimbusds:oauth2-oidc-sdk", version.ref = "nimbusOidc" }
 ojdbc11 = { module = "com.oracle.database.jdbc:ojdbc11", version.ref = "oracleJdbc" }
 okhttp3 = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp3" }
@@ -571,10 +581,7 @@ opensaml-xacml-saml-impl = { module = "org.opensaml:opensaml-xacml-saml-impl", v
 opensaml-xmlsec-impl = { module = "org.opensaml:opensaml-xmlsec-impl", version.ref = "opensaml" }
 opentelemetry-exporter-otlp = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "otel" }
 opentelemetry-sdk-autoconfigure = { module = "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure", version.ref = "otel" }
-eclipse-jgit-sdk = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
-eclipse-jgit-http-apache = { module = "org.eclipse.jgit:org.eclipse.jgit.http.apache", version.ref = "jgit" }
-eclipse-jgit-ssh-jsch = { module = "org.eclipse.jgit:org.eclipse.jgit.ssh.jsch", version.ref = "jgit" }
-eclipse-persistence-jpa = { module = "org.eclipse.persistence:org.eclipse.persistence.jpa", version.ref = "eclipseLink" }
+orgjson = { module = "org.json:json", version.ref = "json" }
 oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshi" }
 pac4j-cas = { module = "org.pac4j:pac4j-cas", version.ref = "pac4j" }
 pac4j-config = { module = "org.pac4j:pac4j-config", version.ref = "pac4j" }
@@ -789,6 +796,7 @@ gradle-plugin-lombok = { module = "io.freefair.gradle:lombok-plugin", version.re
 gradle-plugin-versions = { module = "com.github.ben-manes:gradle-versions-plugin", version.ref = "gradleDependencyVersions" }
 gradle-plugin-native = { module = "org.graalvm.buildtools:native-gradle-plugin", version.ref = "gradleGraalVmNative" }
 gradle-plugin-errorprone = { module = "net.ltgt.gradle:gradle-errorprone-plugin", version.ref = "gradleErrorProne" }
+gradle-plugin-nullaway = { module = "net.ltgt.nullaway:net.ltgt.nullaway.gradle.plugin", version.ref = "gradleNullAway" }
 gradle-plugin-sonarqube = { module = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin", version.ref = "gradleSonarqube" }
 gradle-plugin-nmcp = { module = "com.gradleup.nmcp.aggregation:com.gradleup.nmcp.aggregation.gradle.plugin", version.ref = "gradleNmcpPublishing" }
 gradle-plugin-jib = { module = "com.google.cloud.tools.jib:com.google.cloud.tools.jib.gradle.plugin", version.ref = "gradleJib" }
