@@ -4,15 +4,14 @@ import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.servlet.ModelAndView;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -25,7 +24,7 @@ import java.util.Map;
 @Slf4j
 public class OidcResponseModeFormPostJwtBuilder extends BaseOAuth20JwtResponseModeBuilder {
 
-    public OidcResponseModeFormPostJwtBuilder(final ObjectProvider<OidcConfigurationContext> configurationContext) {
+    public OidcResponseModeFormPostJwtBuilder(final ObjectProvider<@NonNull OidcConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 

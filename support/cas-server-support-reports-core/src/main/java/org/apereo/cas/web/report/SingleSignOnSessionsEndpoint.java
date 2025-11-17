@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -71,15 +72,15 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
             + "ticket registry and store is able to store, maintain and return a collection tickets that represent the single sign-on session. "
             + "You will not be able to collect and review sessions, if the ticket registry does not have this capability";
 
-    private final ObjectProvider<TicketRegistry> ticketRegistryProvider;
+    private final ObjectProvider<@NonNull TicketRegistry> ticketRegistryProvider;
 
-    private final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor;
+    private final ObjectProvider<@NonNull SingleLogoutRequestExecutor> singleLogoutRequestExecutor;
 
     public SingleSignOnSessionsEndpoint(
-        final ObjectProvider<TicketRegistry> ticketRegistry,
+        final ObjectProvider<@NonNull TicketRegistry> ticketRegistry,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor) {
+        final ObjectProvider<@NonNull SingleLogoutRequestExecutor> singleLogoutRequestExecutor) {
         super(casProperties, applicationContext);
         this.ticketRegistryProvider = ticketRegistry;
         this.singleLogoutRequestExecutor = singleLogoutRequestExecutor;

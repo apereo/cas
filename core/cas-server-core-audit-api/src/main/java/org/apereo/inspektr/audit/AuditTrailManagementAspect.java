@@ -16,6 +16,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.jspecify.annotations.NonNull;
 import org.springframework.util.Assert;
 import java.util.List;
 import java.util.Map;
@@ -36,9 +37,9 @@ public class AuditTrailManagementAspect {
 
     private final PrincipalResolver defaultAuditPrincipalResolver;
     private final List<AuditTrailManager> auditTrailManagers;
-    private final Map<String, AuditActionResolver> auditActionResolvers;
-    private final Map<String, AuditResourceResolver> auditResourceResolvers;
-    private final Map<String, PrincipalResolver> auditPrincipalResolvers;
+    private final Map<String, @NonNull AuditActionResolver> auditActionResolvers;
+    private final Map<String, @NonNull AuditResourceResolver> auditResourceResolvers;
+    private final Map<String, @NonNull PrincipalResolver> auditPrincipalResolvers;
     private final AuditTrailManager.AuditFormats auditFormat;
     private final AuditActionDateProvider auditActionDateProvider;
 
@@ -173,7 +174,7 @@ public class AuditTrailManagementAspect {
         return currentPrincipal;
     }
 
-    private void executeAuditCode(final String currentPrincipal, final String[] auditableResources,
+    private void executeAuditCode(@NonNull final String currentPrincipal, final String[] auditableResources,
                                   final ProceedingJoinPoint joinPoint, final Object retVal, final String action) {
         val clientInfo = clientInfoResolver.resolveFrom(joinPoint, retVal);
         val actionDate = auditActionDateProvider.get();

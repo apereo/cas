@@ -7,6 +7,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -26,13 +27,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Endpoint(id = "redisTicketsCache", defaultAccess = Access.NONE)
 public class RedisTicketRegistryCacheEndpoint extends BaseCasRestActuatorEndpoint {
 
-    private final ObjectProvider<TicketRegistry> ticketRegistry;
-    private final ObjectProvider<Cache<String, Ticket>> ticketCache;
+    private final ObjectProvider<@NonNull TicketRegistry> ticketRegistry;
+    private final ObjectProvider<@NonNull Cache<@NonNull String, Ticket>> ticketCache;
 
     public RedisTicketRegistryCacheEndpoint(final CasConfigurationProperties casProperties,
                                             final ConfigurableApplicationContext applicationContext,
-                                            final ObjectProvider<TicketRegistry> ticketRegistry,
-                                            final ObjectProvider<Cache<String, Ticket>> ticketCache) {
+                                            final ObjectProvider<@NonNull TicketRegistry> ticketRegistry,
+                                            final ObjectProvider<@NonNull Cache<@NonNull String, Ticket>> ticketCache) {
         super(casProperties, applicationContext);
         this.ticketRegistry = ticketRegistry;
         this.ticketCache = ticketCache;

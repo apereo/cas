@@ -37,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -51,7 +52,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -131,10 +131,10 @@ public class CasRestAutoConfiguration {
         @ConditionalOnMissingBean(name = "casRestThrottlingWebMvcConfigurer")
         public WebMvcConfigurer casRestThrottlingWebMvcConfigurer(
             @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
-            final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
+            final ObjectProvider<@NonNull AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addInterceptors(@Nonnull final InterceptorRegistry registry) {
+                public void addInterceptors(@NonNull final InterceptorRegistry registry) {
                     authenticationThrottlingExecutionPlan.ifAvailable(plan -> {
                         val handler = new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors);
                         LOGGER.debug("Activating authentication throttling for REST endpoints...");

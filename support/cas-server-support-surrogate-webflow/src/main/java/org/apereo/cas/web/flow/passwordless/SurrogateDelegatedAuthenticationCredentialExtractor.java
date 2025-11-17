@@ -38,7 +38,7 @@ public class SurrogateDelegatedAuthenticationCredentialExtractor extends BaseDel
             .flatMap(passwordlessRequest -> {
                 val surrogateUsername = passwordlessRequest.getProperties().get(SurrogatePasswordlessAuthenticationRequestParser.PROPERTY_SURROGATE_USERNAME);
                 return getCredentialsFromDelegatedClient(requestContext, client)
-                    .map(credentials -> {
+                    .flatMap(credentials -> {
                         val clientCredential = buildClientCredential(client, requestContext, credentials);
                         clientCredential.ifPresent(clientCred -> {
                             clientCred.getCredentialMetadata().addTrait(new SurrogateCredentialTrait(surrogateUsername));
@@ -46,8 +46,6 @@ public class SurrogateDelegatedAuthenticationCredentialExtractor extends BaseDel
                         });
                         return clientCredential;
                     });
-            })
-            .filter(Optional::isPresent)
-            .map(Optional::get);
+            });
     }
 }

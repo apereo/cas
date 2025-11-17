@@ -1,6 +1,7 @@
 package org.apereo.cas.multitenancy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.jspecify.annotations.Nullable;
 import java.io.Serializable;
 import java.util.List;
 
@@ -17,19 +18,19 @@ public interface TenantAuthenticationPolicy extends Serializable {
      *
      * @return the authentication handlers
      */
-    List<String> getAuthenticationHandlers();
+    @Nullable List<String> getAuthenticationHandlers();
 
     /**
      * Gets attribute repositories.
      *
      * @return the attribute repositories
      */
-    List<String> getAttributeRepositories();
+    @Nullable List<String> getAttributeRepositories();
 
     /**
      * Gets authentication protocol policy.
      *
      * @return the authentication protocol policy
      */
-    TenantAuthenticationProtocolPolicy getAuthenticationProtocolPolicy();
+    @Nullable TenantAuthenticationProtocolPolicy getAuthenticationProtocolPolicy();
 }

@@ -6,6 +6,7 @@ import org.apereo.cas.web.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class UmaWellKnownEndpointController extends AbstractController {
     @Operation(
         summary = "Get UMA discovery configuration",
         description = "Returns the UMA discovery configuration")
-    public ResponseEntity<UmaServerDiscoverySettings> getWellKnownDiscoveryConfiguration() {
+    public ResponseEntity<@NonNull UmaServerDiscoverySettings> getWellKnownDiscoveryConfiguration() {
         return new ResponseEntity(this.discovery, HttpStatus.OK);
     }
 }

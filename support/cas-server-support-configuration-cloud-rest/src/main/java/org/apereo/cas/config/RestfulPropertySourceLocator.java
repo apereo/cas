@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
+import org.jspecify.annotations.Nullable;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -47,7 +48,7 @@ public class RestfulPropertySourceLocator implements PropertySourceLocator {
      * @param key         the key
      * @return the property
      */
-    protected String getPropertyFromEnvironment(final Environment environment, final String key) {
+    protected @Nullable String getPropertyFromEnvironment(final Environment environment, final String key) {
         return environment.getProperty(CAS_CONFIGURATION_PREFIX + '.' + key);
     }
 

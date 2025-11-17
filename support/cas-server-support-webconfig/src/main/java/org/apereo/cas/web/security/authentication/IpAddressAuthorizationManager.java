@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
@@ -29,7 +30,7 @@ public class IpAddressAuthorizationManager implements AuthorizationManager<Reque
     private final ActuatorEndpointProperties properties;
 
     @Override
-    public @Nullable AuthorizationResult authorize(final Supplier<? extends Authentication> authentication,
+    public @Nullable AuthorizationResult authorize(final @NonNull Supplier<? extends Authentication> authentication,
                                                    final RequestAuthorizationContext context) {
         val remoteAddr = StringUtils.defaultIfBlank(
             context.getRequest().getHeader(casProperties.getAudit().getEngine().getAlternateClientAddrHeaderName()),

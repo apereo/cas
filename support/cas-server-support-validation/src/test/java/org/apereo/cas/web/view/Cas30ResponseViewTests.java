@@ -27,6 +27,7 @@ import org.apereo.cas.web.v2.ServiceValidateController;
 import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +43,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContext;
-import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import javax.crypto.Cipher;
@@ -107,9 +107,9 @@ class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
             @Override
             public void render(final Map<String, ?> map,
-                               @Nonnull
+                               @NonNull
                                final HttpServletRequest request,
-                               @Nonnull
+                               @NonNull
                                final HttpServletResponse response) {
                 LOGGER.warn("Setting attribute [{}]", map.keySet());
                 map.forEach(request::setAttribute);

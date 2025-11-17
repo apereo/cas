@@ -9,11 +9,9 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
-
-import jakarta.annotation.Nonnull;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +29,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 @Slf4j
 @Getter
 @Setter
-public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
+public class PrivateKeyFactoryBean extends AbstractFactoryBean<@NonNull PrivateKey> {
 
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -46,7 +44,7 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
         return PrivateKey.class;
     }
 
-    @Nonnull
+    @NonNull
     @Override
     protected PrivateKey createInstance() {
         var key = readPemPrivateKey();

@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.util.LinkedCaseInsensitiveMap;
@@ -67,7 +68,7 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
     }
 
     protected Map<String, List<Object>> toMultivaluedMap(final Map<String, Object> seed) {
-        val multiSeed = new LinkedCaseInsensitiveMap<List<Object>>(seed.size());
+        val multiSeed = new LinkedCaseInsensitiveMap<@NonNull List<Object>>(seed.size());
         for (val seedEntry : seed.entrySet()) {
             val seedName = seedEntry.getKey();
             val seedValue = seedEntry.getValue();
@@ -110,7 +111,7 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
      * @return a Map from String to Set of Strings
      */
     public static Map<String, Set<String>> parseAttributeToAttributeMapping(final Map<String, ?> mapping) {
-        val mappedAttributesBuilder = new LinkedCaseInsensitiveMap<Set<String>>();
+        val mappedAttributesBuilder = new LinkedCaseInsensitiveMap<@NonNull Set<String>>();
         for (val mappingEntry : mapping.entrySet()) {
             val sourceAttrName = mappingEntry.getKey();
             val mappedAttribute = mappingEntry.getValue();

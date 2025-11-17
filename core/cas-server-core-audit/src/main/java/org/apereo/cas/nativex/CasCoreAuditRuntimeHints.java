@@ -9,6 +9,8 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
 import java.util.List;
@@ -21,7 +23,7 @@ import java.util.List;
  */
 public class CasCoreAuditRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerProxyHints(hints, List.of(AuditTrailExecutionPlanConfigurer.class));
 
         registerReflectionHints(hints, List.of(

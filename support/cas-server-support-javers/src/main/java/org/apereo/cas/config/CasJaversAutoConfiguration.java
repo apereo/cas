@@ -15,6 +15,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.javers.core.Javers;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -61,10 +62,10 @@ public class CasJaversAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnAvailableEndpoint
         public EntityHistoryEndpoint entityHistoryEndpoint(
-            @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<ServicesManager> servicesManager,
+            @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<@NonNull ServicesManager> servicesManager,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("objectVersionRepository")
-            final ObjectProvider<EntityHistoryRepository> objectVersionRepository,
+            final ObjectProvider<@NonNull EntityHistoryRepository> objectVersionRepository,
             final CasConfigurationProperties casProperties) {
             return new EntityHistoryEndpoint(casProperties, applicationContext, objectVersionRepository, servicesManager);
         }

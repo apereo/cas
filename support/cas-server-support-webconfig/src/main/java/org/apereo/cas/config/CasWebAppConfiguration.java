@@ -10,6 +10,7 @@ import org.apereo.cas.web.support.ThemeChangeInterceptor;
 import org.apereo.cas.web.theme.ThemeResolver;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,7 +29,6 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.mvc.ParameterizableViewController;
 import org.springframework.web.servlet.mvc.UrlFilenameViewController;
 import org.springframework.web.servlet.view.RedirectView;
-import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.time.Duration;
@@ -87,10 +87,10 @@ class CasWebAppConfiguration {
         @Bean
         public WebMvcConfigurer casWebAppWebMvcConfigurer(
             @Qualifier("localeChangeInterceptor")
-            final ObjectProvider<HandlerInterceptor> localeChangeInterceptor) {
+            final ObjectProvider<@NonNull HandlerInterceptor> localeChangeInterceptor) {
             return new WebMvcConfigurer() {
                 @Override
-                public void addInterceptors(@Nonnull final InterceptorRegistry registry) {
+                public void addInterceptors(@NonNull final InterceptorRegistry registry) {
                     val interceptor = new RefreshableHandlerInterceptor(localeChangeInterceptor);
                     registry.addInterceptor(interceptor).addPathPatterns("/**");
                 }
@@ -122,9 +122,9 @@ class CasWebAppConfiguration {
         private static final class RootController extends ParameterizableViewController {
             @Override
             protected ModelAndView handleRequestInternal(
-                @Nonnull
+                @NonNull
                 final HttpServletRequest request,
-                @Nonnull
+                @NonNull
                 final HttpServletResponse response) {
                 val queryString = request.getQueryString();
                 val url = request.getContextPath() + CasProtocolConstants.ENDPOINT_LOGIN

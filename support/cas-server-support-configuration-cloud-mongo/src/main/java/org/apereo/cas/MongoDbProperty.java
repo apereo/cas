@@ -20,6 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EqualsAndHashCode
+@SuppressWarnings("NullAway.Init")
 public class MongoDbProperty implements Serializable {
 
     @Serial
