@@ -170,9 +170,18 @@ public class AttributeBasedCacheKeyGenerator implements CacheKeyGenerator {
         return Objects.requireNonNullElseGet(this.cacheKeyAttributes, () -> Set.of(defaultAttributeName));
     }
 
+    /**
+     * FIXED: Corrected to use attribute name as the key and hash as the value.
+     * Previously used hash as key, causing cache collisions between different users.
+     * Also changed to use static DigestUtils method instead of creating new instance.
+     *
+     * @param cacheKey The cache key map to populate
+     * @param attr The attribute name (e.g., "username")
+     * @param value The attribute value (e.g., "sr12359")
+     */
     protected static void putAttributeInCache(final Map<String, Object> cacheKey, final String attr, final Object value) {
-        val hexed = new DigestUtils(SHA_512).digestAsHex(value.toString());
-        cacheKey.put(hexed, value);
+        val hexed = DigestUtils.sha512Hex(value.toString());
+        cacheKey.put(attr, hexed);
     }
 
     /**
