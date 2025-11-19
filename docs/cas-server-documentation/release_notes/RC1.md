@@ -198,6 +198,7 @@ records, etc are processed and loaded.
 - Most Redis operations that rely on the `KEYS` command have been replaced with `SCAN` operations to avoid performance issues on large datasets.
 - A new theme option is now available to control whether client-side device fingerprinting is activated during authentication.
 - [CosmosDb Ticket Registry](../ticketing/CosmosDb-Ticket-Registry.html) is deprecated and will be removed in a future release.
+- [Apache Ignite Ticket Registry](../ticketing/Ignite-Ticket-Registry.html) is deprecated and will be removed in a future release.
 - [CosmosDb Service Registry](../services/CosmosDb-Service-Management.html) is deprecated and will be removed in a future release.
 - The order of authentication handlers is now correctly preserved when authentication handlers are registered with the authentication plan.
 

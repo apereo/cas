@@ -29,6 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 3.0.0
+ * @deprecated since 8.0.0
  */
 @Tag("Ignite")
 @ImportAutoConfiguration(CasIgniteTicketRegistryAutoConfiguration.class)
@@ -49,6 +50,7 @@ import static org.mockito.Mockito.*;
         "cas.ticket.registry.ignite.trust-store-type=pkcs12"
     })
 @Getter
+@Deprecated(since = "8.0.0", forRemoval = true)
 class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)

@@ -50,10 +50,12 @@ import java.util.stream.Collectors;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated since 8.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "ignite")
 @AutoConfiguration
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class CasIgniteTicketRegistryAutoConfiguration {
 
     private static Collection<CacheConfiguration> buildIgniteTicketCaches(final IgniteProperties ignite, final TicketCatalog ticketCatalog) {
