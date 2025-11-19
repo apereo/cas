@@ -1,5 +1,5 @@
 #!/bin/bash
-export DOCKER_IMAGE="jaegertracing/all-in-one:1.74.0"
+export DOCKER_IMAGE="jaegertracing/all-in-one:1.75.0"
 echo "Running Jaeger docker container..."
 docker stop jaeger-server || true && docker rm jaeger-server || true
 
