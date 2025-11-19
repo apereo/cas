@@ -17,12 +17,14 @@ import java.io.Serializable;
  *
  * @author Misagh Moayyed
  * @since 6.6.0
+ * @deprecated since 8.0.0
  */
 @Getter
 @Setter
 @SuperBuilder
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @EqualsAndHashCode
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class IgniteTicketDocument implements Serializable {
     @Serial
     private static final long serialVersionUID = -4742526828543052903L;

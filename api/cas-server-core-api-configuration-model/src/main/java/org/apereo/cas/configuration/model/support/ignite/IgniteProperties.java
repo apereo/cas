@@ -18,11 +18,13 @@ import java.util.stream.Stream;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated since 8.0.0
  */
 @RequiresModule(name = "cas-server-support-ignite-ticket-registry")
 @Getter
 @Setter
 @Accessors(chain = true)
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class IgniteProperties implements Serializable {
 
     @Serial

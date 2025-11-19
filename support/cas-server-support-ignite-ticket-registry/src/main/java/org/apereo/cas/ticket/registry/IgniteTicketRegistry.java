@@ -51,9 +51,11 @@ import java.util.stream.StreamSupport;
  *
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
+ * @deprecated since 8.0.0
  */
 @Slf4j
 @ToString(callSuper = true)
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class IgniteTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
     private final IgniteConfiguration igniteConfiguration;
 
