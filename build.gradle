@@ -14,13 +14,6 @@ buildscript {
             }
             mavenContent { releasesOnly() }
         }
-        maven {
-            url = "https://repo.spring.io/snapshot"
-            content {
-                includeGroupByRegex ".*springframework.*"
-            }
-            mavenContent { snapshotsOnly() }
-        }
     }
 
     dependencies {
