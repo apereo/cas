@@ -1128,26 +1128,15 @@ ext.libraries = [
         ignite                     : [
                 dependencies.create(libs.ignite.core.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "org.jetbrains", module: "annotations")
                 },
-                dependencies.create(libs.ignite.log4j2.get()) {
+                dependencies.create(libs.ignite.api.get()) {
                     exclude(group: "log4j", module: "log4j")
-                    exclude(group: "org.jetbrains", module: "annotations")
                 },
                 dependencies.create(libs.ignite.indexing.get()) {
                     exclude(group: "log4j", module: "log4j")
-                    exclude(group: "org.jetbrains", module: "annotations")
                 },
-                dependencies.create(libs.ignite.spring.get()) {
+                dependencies.create(libs.ignite.runner.get()) {
                     exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-beans")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework", module: "spring-aop")
-                    exclude(group: "org.springframework", module: "spring-expression")
-                    exclude(group: "org.springframework", module: "spring-jdbc")
-                    exclude(group: "org.springframework", module: "spring-tx")
-                    exclude(group: "org.jetbrains", module: "annotations")
                 }
         ],
         jakartapersistence : [

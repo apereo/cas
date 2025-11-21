@@ -2,6 +2,7 @@ package org.apereo.cas.ticket;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 import java.time.Clock;
@@ -69,7 +70,7 @@ public interface ExpirationPolicy extends Serializable {
      * @param ticketState the ticket state
      * @return the maximum expiration time
      */
-    default ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
+    default @Nullable ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
         return null;
     }
 }

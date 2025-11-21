@@ -364,9 +364,13 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return ticketToProcess;
         }
         LOGGER.debug("Attempting to decode [{}]", ticketToProcess);
-        val ticket = SerializationUtils.decodeAndDeserializeObject(encodedTicket.getEncodedTicket(), this.cipherExecutor, Ticket.class);
+        val ticket = decodeAndDeserialize(encodedTicket.getEncodedTicket());
         LOGGER.debug("Decoded ticket to [{}]", ticket);
         return ticket;
+    }
+
+    protected Ticket decodeAndDeserialize(final byte[] encodedTicket) {
+        return SerializationUtils.decodeAndDeserializeObject(encodedTicket, this.cipherExecutor, Ticket.class);
     }
 
     protected Collection<Ticket> decodeTickets(final Collection<Ticket> items) {
@@ -391,8 +395,12 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     protected Ticket createEncodedTicket(final Ticket ticket) throws Exception {
         LOGGER.debug("Encoding ticket [{}]", ticket);
-        val encodedTicketObject = SerializationUtils.serializeAndEncodeObject(cipherExecutor, ticket);
+        val encodedTicketObject = getSerializeAndEncode(ticket);
         return toEncodedTicket(ticket, encodedTicketObject);
+    }
+
+    protected byte[] getSerializeAndEncode(final Ticket ticket) {
+        return SerializationUtils.serializeAndEncodeObject(cipherExecutor, ticket);
     }
 
     protected Ticket toEncodedTicket(final Ticket ticket, final byte[] encodedTicketObject) throws Exception {

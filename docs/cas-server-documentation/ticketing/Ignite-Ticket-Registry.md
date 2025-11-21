@@ -10,10 +10,6 @@ category: Ticketing
 
 Apache Ignite integration is enabled by including the following dependency in the WAR overlay:
 
-<div class="alert alert-warning">:warning: <strong>Usage</strong>
-<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
-</div>
-
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-ignite-ticket-registry" %}
 
 This registry stores tickets in an [Apache Ignite](http://ignite.apache.org/) instance.

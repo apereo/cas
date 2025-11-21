@@ -76,10 +76,8 @@ public class TicketRegistryProperties implements Serializable {
 
     /**
      * Apache Ignite registry settings.
-     * @deprecated since 8.0.0
      */
     @NestedConfigurationProperty
-    @Deprecated(since = "8.0.0", forRemoval = true)
     private IgniteProperties ignite = new IgniteProperties();
 
     /**

@@ -485,7 +485,7 @@ layout: null
                 *   [Multicast](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Multicast.html)
         *   [~~Memcached~~](/cas/{{ version }}/ticketing/Memcached-Ticket-Registry.html)
         *   [JPA](/cas/{{ version }}/ticketing/JPA-Ticket-Registry.html)
-        *   [~~Apache Ignite~~](/cas/{{ version }}/ticketing/Ignite-Ticket-Registry.html)
+        *   [Apache Ignite](/cas/{{ version }}/ticketing/Ignite-Ticket-Registry.html)
         *   [Apache Geode](/cas/{{ version }}/ticketing/Geode-Ticket-Registry.html)
         *   [~~CosmosDb~~](/cas/{{ version }}/ticketing/CosmosDb-Ticket-Registry.html)
         *   [Redis](#redisticketregistry)

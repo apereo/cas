@@ -9,7 +9,7 @@ animateCss = "4.1.1"
 apacheCassandra = "4.19.2"
 apacheCxf = "4.1.4"
 apacheFediz = "1.7.1"
-apacheIgnite = "2.17.0"
+apacheIgnite = "3.1.0"
 apacheVelocityEngine = "2.4.1"
 apiGuardian = "1.1.2"
 arrow = "18.3.0"
@@ -411,9 +411,9 @@ httpcore = { module = "org.apache.httpcomponents:httpcore", version.ref = "httpC
 httpcore5 = { module = "org.apache.httpcomponents.core5:httpcore5", version.ref = "httpCore" }
 hypersistence-utils-hibernate = { module = "io.hypersistence:hypersistence-utils-hibernate-71", version.ref = "hypersistence" }
 ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "apacheIgnite" }
-ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "apacheIgnite" }
-ignite-log4j2 = { module = "org.apache.ignite:ignite-log4j2", version.ref = "apacheIgnite" }
-ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "apacheIgnite" }
+ignite-api = { module = "org.apache.ignite:ignite-api", version.ref = "apacheIgnite" }
+ignite-indexing = { module = "org.apache.ignite:ignite-index", version.ref = "apacheIgnite" }
+ignite-runner = { module = "org.apache.ignite:ignite-runner", version.ref = "apacheIgnite" }
 influxdb-client-java = { module = "com.influxdb:influxdb3-java", version.ref = "influxDb" }
 ipgeolocation = { module = "io.ipgeolocation:ipgeolocation", version.ref = "ipGeoLocation" }
 jackson-core-lib2 = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson2" }
