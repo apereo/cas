@@ -2,6 +2,7 @@ package org.apereo.cas.web.cookie;
 
 import org.apereo.cas.authentication.RememberMeCredential;
 
+import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -51,7 +52,7 @@ public interface CasCookieBuilder {
      * @param request the request
      * @return the cookie value
      */
-    String retrieveCookieValue(HttpServletRequest request);
+    @Nullable String retrieveCookieValue(HttpServletRequest request);
 
     /**
      * Remove cookie.
