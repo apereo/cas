@@ -25,6 +25,7 @@ import java.io.File;
  */
 @Slf4j
 @RequiredArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class CasConfigurationWatchService implements Closeable, InitializingBean {
     private final ComposableFunction<File, AbstractCasEvent> createConfigurationCreatedEvent = file ->
             new CasConfigurationCreatedEvent(this, file.toPath(), ClientInfoHolder.getClientInfo());
