@@ -35,9 +35,10 @@ jobs:
   initialize:
     if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
     runs-on: ubuntu-latest
+    name: "Initialize Build"
     outputs:
       JDK_CURRENT: ${{ env.JDK_CURRENT }}
-      JDK_LATEST: ${{ env.JDK_LATEST }}
+      JDK_LATEST: ${{ env.JDK_CURRENT == env.JDK_LATEST && '' || env.JDK_LATEST }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -56,6 +57,7 @@ jobs:
   build-pull-request:
     if: ${{ (github.event_name == 'pull_request' && github.event.assignee.login == 'apereocas-bot') }}
     runs-on: ubuntu-latest
+    name: "Build Pull Request"
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -77,12 +79,14 @@ jobs:
     needs: [initialize]
     continue-on-error: false
     runs-on: ubuntu-latest
+    name: "Build"
     strategy:
       fail-fast: false
       matrix:
         jdk:
           - ${{ needs.initialize.outputs.JDK_CURRENT }}
           - ${{ needs.initialize.outputs.JDK_LATEST }}
+    if: ${{ matrix.jdk != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -109,6 +113,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
+    name: "Build Native"
     steps:
       - name: Checkout
         uses: actions/checkout@v6
