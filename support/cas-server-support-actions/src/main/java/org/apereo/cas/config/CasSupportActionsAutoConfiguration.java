@@ -702,13 +702,13 @@ public class CasSupportActionsAutoConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_SINGLE_SIGNON_SESSION)
         public Action accountProfileRemoveSingleSignOnSessionAction(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
+            @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
+            final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor,
             final CasConfigurationProperties casProperties) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new AccountProfileRemoveSingleSignOnSessionAction(ticketRegistry))
+                .withAction(() -> new AccountProfileRemoveSingleSignOnSessionAction(defaultSingleLogoutRequestExecutor))
                 .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_SINGLE_SIGNON_SESSION)
                 .build()
                 .get();
