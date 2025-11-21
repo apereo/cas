@@ -16,13 +16,15 @@
 
 package org.apereo.cas.github;
 
-import org.apereo.cas.Memes;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.net.URIBuilder;
+import org.apereo.cas.Memes;
+import org.jspecify.annotations.Nullable;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +32,7 @@ import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
@@ -38,19 +41,18 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import tools.jackson.databind.json.JsonMapper;
+
 import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -76,35 +78,32 @@ public class GitHubTemplate implements GitHubOperations {
 
     private static final String API_GITHUB_REPOS = "https://api.github.com/repos/";
 
-    private final RestOperations rest;
+    private final RestTemplate rest;
 
     private final LinkParser linkParser;
 
-    public GitHubTemplate(final String token, final LinkParser linkParser) {
-        this(createDefaultRestTemplate(token), linkParser);
-    }
-
-    static RestTemplate createDefaultRestTemplate(final String token) {
-        var rest = new RestTemplate();
+    public GitHubTemplate(final String token, final JsonMapper jsonMapper, final LinkParser linkParser) {
+        this.rest = new RestTemplate();
         rest.setErrorHandler(new DefaultResponseErrorHandler() {
             @Override
-            public void handleError(final ClientHttpResponse response) throws IOException {
+            protected void handleError(ClientHttpResponse response, HttpStatusCode statusCode, @Nullable URI url,
+                                       @Nullable HttpMethod method) throws IOException {
                 if (response.getStatusCode() == HttpStatus.FORBIDDEN && response
-                    .getHeaders().getFirst("X-RateLimit-Remaining").equals("0")) {
+                        .getHeaders().getFirst("X-RateLimit-Remaining").equals("0")) {
                     var dt = new Date(Long.parseLong(response.getHeaders().getFirst("X-RateLimit-Reset")) * 1000);
                     log.warn("Rate limit exceeded. Limit will reset at {}", dt);
                 }
             }
         });
-        var bufferingClient = new BufferingClientHttpRequestFactory(
-            new HttpComponentsClientHttpRequestFactory());
+        var bufferingClient = new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory());
         rest.setRequestFactory(bufferingClient);
-        rest.setInterceptors(Collections
-            .singletonList(new BasicAuthorizationInterceptor(token)));
-        rest.setMessageConverters(
-            Arrays.asList(new ErrorLoggingMappingJackson2HttpMessageConverter()));
-        return rest;
+        rest.setInterceptors(Collections.singletonList(new BasicAuthorizationInterceptor(token)));
+        var converter = new ErrorLoggingMappingJackson2HttpMessageConverter(jsonMapper);
+        rest.setMessageConverters(Arrays.asList(converter));
+        
+        this.linkParser = linkParser;
     }
+
 
     @Override
     public Page<Issue> getIssues(final String organization, final String repository) {
@@ -116,14 +115,14 @@ public class GitHubTemplate implements GitHubOperations {
     public Page<PullRequest> getPullRequests(final String organization, final String repository) {
         val url = API_GITHUB_REPOS + organization + '/' + repository + "/pulls?state=open";
         val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github+json")));
-        return getPage(url, PullRequest[].class, Map.of(), headers);
+        return getPage(url, PullRequest[].class, Map.of(), new HttpHeaders(headers));
     }
 
     @Override
     public PullRequest getPullRequest(final String organization, final String repository, final String number) {
         val url = API_GITHUB_REPOS + organization + '/' + repository + "/pulls/" + number;
         val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github+json")));
-        return getSinglePage(url, PullRequest.class, Map.of(), headers);
+        return getSinglePage(url, PullRequest.class, Map.of(), new HttpHeaders(headers));
     }
 
     @Override
@@ -223,14 +222,14 @@ public class GitHubTemplate implements GitHubOperations {
         urlBuilder.addParameter("page", String.valueOf(page));
 
         val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.v3+json")));
-        return getSinglePage(urlBuilder.toString(), Workflows.class, Map.of(), headers);
+        return getSinglePage(urlBuilder.toString(), Workflows.class, Map.of(), new HttpHeaders(headers));
     }
 
     @Override
     public PullRequestSearchResults searchPullRequests(final String organization, final String repository, final String sha) {
         var url = "https://api.github.com/search/issues?q=" + sha + "+repo:" + organization + '/' + repository + "+type:pr";
         val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.v3+json")));
-        return getSinglePage(url, PullRequestSearchResults.class, Map.of(), headers);
+        return getSinglePage(url, PullRequestSearchResults.class, Map.of(), new HttpHeaders(headers));
     }
 
     @Override
@@ -325,7 +324,7 @@ public class GitHubTemplate implements GitHubOperations {
 //            val params = new HashMap<String, String>();
 //            params.put("expected_head_sha", pr.getHead().getSha());
             val responseEntity = this.rest.exchange(url, HttpMethod.PUT,
-                new HttpEntity<>(new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.lydian-preview+json")))), Map.class);
+                    new HttpEntity<>(new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.lydian-preview+json")))), Map.class);
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 log.info("Merged pull request {} with base", pr);
             } else {
@@ -354,7 +353,7 @@ public class GitHubTemplate implements GitHubOperations {
             log.info("Pull request [{}] is successfully merged with head [{}]", pr, targetBranch);
         } else {
             log.warn("Unable to handle merge with base; message [{}], status [{}]",
-                response.getBody(), response.getStatusCode());
+                    response.getBody(), response.getStatusCode());
         }
         return pr;
     }
@@ -391,8 +390,8 @@ public class GitHubTemplate implements GitHubOperations {
             val uri = URI.create(pr.getLabelsUrl());
             log.info("Adding labels {} to pull request {}", labels, pr);
             var response = this.rest.exchange(
-                new RequestEntity<>(labels, HttpMethod.POST, uri),
-                Label[].class);
+                    new RequestEntity<>(labels, HttpMethod.POST, uri),
+                    Label[].class);
             if (response.getStatusCode() != HttpStatus.OK) {
                 log.warn("Failed to add label to pull request. Response status: {}", response.getStatusCode());
             }
@@ -410,14 +409,14 @@ public class GitHubTemplate implements GitHubOperations {
         var uri = URI.create(issue.getLabelsUrl().replace("{/name}", ""));
         log.info("Adding label {} to {}", labelName, uri);
         var response = this.rest.exchange(
-            new RequestEntity<>(Arrays.asList(labelName), HttpMethod.POST, uri),
-            Label[].class);
+                new RequestEntity<>(Arrays.asList(labelName), HttpMethod.POST, uri),
+                Label[].class);
         if (response.getStatusCode() != HttpStatus.OK) {
             log.warn("Failed to add label to issue. Response status: {}", response.getStatusCode());
         }
         return new Issue(issue.getUrl(), issue.getCommentsUrl(), issue.getEventsUrl(),
-            issue.getLabelsUrl(), issue.getUser(), Arrays.asList(response.getBody()),
-            issue.getMilestone(), issue.getPullRequest());
+                issue.getLabelsUrl(), issue.getUser(), Arrays.asList(response.getBody()),
+                issue.getMilestone(), issue.getPullRequest());
     }
 
     @Override
@@ -444,15 +443,15 @@ public class GitHubTemplate implements GitHubOperations {
         }
         log.info("Removing label {} from issue {}", labelName, issue);
         var response = this.rest.exchange(
-            new RequestEntity<Void>(HttpMethod.DELETE, URI.create(
-                issue.getLabelsUrl().replace("{/name}", '/' + encodedName))),
-            Label[].class);
+                new RequestEntity<Void>(HttpMethod.DELETE, URI.create(
+                        issue.getLabelsUrl().replace("{/name}", '/' + encodedName))),
+                Label[].class);
         if (response.getStatusCode() != HttpStatus.OK) {
             log.warn("Failed to remove label from issue. Response status: {}", response.getStatusCode());
         }
         return new Issue(issue.getUrl(), issue.getCommentsUrl(), issue.getEventsUrl(),
-            issue.getLabelsUrl(), issue.getUser(), Arrays.asList(response.getBody()),
-            issue.getMilestone(), issue.getPullRequest());
+                issue.getLabelsUrl(), issue.getUser(), Arrays.asList(response.getBody()),
+                issue.getMilestone(), issue.getPullRequest());
     }
 
     @Override
@@ -491,7 +490,7 @@ public class GitHubTemplate implements GitHubOperations {
             var response = this.rest.exchange(new RequestEntity<Void>(HttpMethod.DELETE, URI.create(url)), Workflows.WorkflowRun.class);
             if (!response.getStatusCode().is2xxSuccessful()) {
                 log.debug("Failed to remove workflow run {} from {}. Response status: {}",
-                    run.getId(), organization + '/' + name, response.getStatusCode());
+                        run.getId(), organization + '/' + name, response.getStatusCode());
             }
         } catch (final HttpClientErrorException.Forbidden e) {
             log.error("{}: Cannot delete workflow run using {}: {}", e.getStatusText(), url, e.getMessage());
@@ -505,8 +504,8 @@ public class GitHubTemplate implements GitHubOperations {
         var body = new HashMap<>();
         body.put("state", "closed");
         var response = this.rest.exchange(
-            new RequestEntity<>(body, HttpMethod.PATCH, URI.create(issue.getUrl())),
-            Issue.class);
+                new RequestEntity<>(body, HttpMethod.PATCH, URI.create(issue.getUrl())),
+                Issue.class);
         if (response.getStatusCode() != HttpStatus.OK) {
             log.warn("Failed to close issue. Response status: {}", response.getStatusCode());
         }
@@ -532,7 +531,7 @@ public class GitHubTemplate implements GitHubOperations {
         val url = API_GITHUB_REPOS + organization + '/' + repository + "/check-runs";
 
         val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github+json")));
-        val response = this.rest.exchange(new RequestEntity<>(body, headers, HttpMethod.POST, new URI(url)), Map.class);
+        val response = rest.exchange(new RequestEntity<>(body, headers, HttpMethod.POST, new URI(url)), Map.class);
         return response.getStatusCode().is2xxSuccessful();
     }
 
@@ -551,8 +550,8 @@ public class GitHubTemplate implements GitHubOperations {
         if (StringUtils.hasText(filter)) {
             builder.queryParam("filter", filter);
         }
-        return getSinglePage(builder.build().toUriString(), CheckRun.class, Map.of(),
-            new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github+json"))));
+        var headers = new LinkedMultiValueMap<String, String>(Map.of("Accept", List.of("application/vnd.github+json")));
+        return getSinglePage(builder.build().toUriString(), CheckRun.class, Map.of(), new HttpHeaders(headers));
     }
 
     @Override
@@ -574,6 +573,13 @@ public class GitHubTemplate implements GitHubOperations {
     public Page<Branch> getBranches(final String organization, final String name) {
         val url = API_GITHUB_REPOS + organization + '/' + name + "/branches";
         return getPage(url, Branch[].class);
+    }
+
+    @Override
+    public ComparisonResult comparePullRequestWithBase(String organization, String repository, PullRequest pr) {
+        val url = API_GITHUB_REPOS + organization + '/' + repository + "/compare/"
+                + pr.getBase().getRef() + "..." + pr.getHead().getRef();
+        return getSinglePage(url, ComparisonResult.class);
     }
 
     @Override
@@ -612,26 +618,27 @@ public class GitHubTemplate implements GitHubOperations {
     public Workflow getWorkflow(String organization, String repository, long workflowId) {
         val url = API_GITHUB_REPOS + organization + '/' + repository + "/actions/workflows/" + workflowId;
         var builder = UriComponentsBuilder.fromUriString(url);
-        return getSinglePage(builder.build().toUriString(), Workflow.class, Map.of(),
-                new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github+json"))));
+        var headers = new LinkedMultiValueMap<String, String>(Map.of("Accept", List.of("application/vnd.github+json")));
+        return getSinglePage(builder.build().toUriString(), Workflow.class, Map.of(), new HttpHeaders(headers));
     }
 
-    private static final class ErrorLoggingMappingJackson2HttpMessageConverter
-        extends MappingJackson2HttpMessageConverter {
+    private final static class ErrorLoggingMappingJackson2HttpMessageConverter extends JacksonJsonHttpMessageConverter {
 
-        private static final Charset CHARSET_UTF_8 = Charset.forName("UTF-8");
+        private static final Charset CHARSET_UTF_8 = StandardCharsets.UTF_8;
+
+        public ErrorLoggingMappingJackson2HttpMessageConverter(JsonMapper mapper) {
+            super(mapper);
+        }
 
         @Override
-        public Object read(final Type type, final Class<?> contextClass,
-                           final HttpInputMessage inputMessage)
-            throws IOException, HttpMessageNotReadableException {
+        public Object read(ResolvableType type, HttpInputMessage inputMessage, @Nullable Map<String, Object> hints)
+                throws IOException, HttpMessageNotReadableException {
             try {
-                return super.read(type, contextClass, inputMessage);
+                return super.read(type, inputMessage, hints);
             } catch (final IOException ex) {
                 throw ex;
             } catch (final HttpMessageNotReadableException ex) {
-                log.error("Failed to create {} from {}", type.getTypeName(),
-                    read(inputMessage), ex);
+                log.error("Failed to create {} from {}", type, read(inputMessage), ex);
                 throw ex;
             }
         }
@@ -644,7 +651,7 @@ public class GitHubTemplate implements GitHubOperations {
 
     @RequiredArgsConstructor
     private static class BasicAuthorizationInterceptor
-        implements ClientHttpRequestInterceptor {
+            implements ClientHttpRequestInterceptor {
 
         private final String token;
 
@@ -661,7 +668,7 @@ public class GitHubTemplate implements GitHubOperations {
         return getPage(url, type, params, new HttpHeaders());
     }
 
-    private <T> Page<T> getPage(final String url, final Class<T[]> type, final Map params, final MultiValueMap headers) {
+    private <T> Page<T> getPage(final String url, final Class<T[]> type, final Map params, final HttpHeaders headers) {
         try {
             if (!StringUtils.hasText(url)) {
                 return null;
@@ -692,12 +699,12 @@ public class GitHubTemplate implements GitHubOperations {
         return contents.getStatusCode().is2xxSuccessful() ? contents.getBody() : null;
     }
 
-    private <T> T getSinglePage(final String url, final Class<T> type, final Map params, final MultiValueMap headers) {
+    private <T> T getSinglePage(final String url, final Class<T> type, final Map params, final HttpHeaders headers) {
         if (!StringUtils.hasText(url)) {
             return null;
         }
         val hd = new HttpHeaders(headers);
-        final ResponseEntity<T> contents = this.rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
+        final ResponseEntity<T> contents = rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
         return contents.getStatusCode().is2xxSuccessful() ? contents.getBody() : null;
     }
 

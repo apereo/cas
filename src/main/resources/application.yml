@@ -29,3 +29,8 @@ spring:
       roles: ADMIN
   jackson:
     default-property-inclusion: non_null
+    use-jackson2-defaults: true
+    deserialization:
+      fail-on-null-for-primitives: false
+      fail-on-ignored-properties: false
+      fail-on-unknown-properties: false

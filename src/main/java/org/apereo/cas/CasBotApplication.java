@@ -38,6 +38,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import tools.jackson.databind.json.JsonMapper;
+
 import java.util.List;
 
 @SpringBootApplication
@@ -55,8 +57,10 @@ public class CasBotApplication {
     @Configuration(proxyBeanMethods = false)
     static class RepositoryConfiguration {
         @Bean
-        public GitHubOperations gitHubRepositoryTemplate(final GitHubProperties gitHubProperties) {
-            return new GitHubTemplate(gitHubProperties.getRepository().getCredentials().getToken(), new RegexLinkParser());
+        public GitHubOperations gitHubRepositoryTemplate(
+                final JsonMapper jsonMapper,
+                final GitHubProperties gitHubProperties) {
+            return new GitHubTemplate(gitHubProperties.getRepository().getCredentials().getToken(), jsonMapper, new RegexLinkParser());
         }
 
         @Bean
@@ -78,8 +82,10 @@ public class CasBotApplication {
     @ConditionalOnProperty(name = "casbot.github.staging-repository.credentials.token")
     static class StagingRepositoryConfiguration {
         @Bean
-        public GitHubOperations gitHubStagingRepositoryTemplate(final GitHubProperties gitHubProperties) {
-            return new GitHubTemplate(gitHubProperties.getStagingRepository().getCredentials().getToken(), new RegexLinkParser());
+        public GitHubOperations gitHubStagingRepositoryTemplate(
+                final JsonMapper jsonMapper,
+                final GitHubProperties gitHubProperties) {
+            return new GitHubTemplate(gitHubProperties.getStagingRepository().getCredentials().getToken(), jsonMapper, new RegexLinkParser());
         }
 
         @Bean

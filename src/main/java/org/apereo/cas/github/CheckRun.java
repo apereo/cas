@@ -3,8 +3,10 @@ package org.apereo.cas.github;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -15,9 +17,19 @@ import java.util.List;
  */
 @Getter
 public class CheckRun {
-    public static final String TRAVIS_CI = "continuous-integration/travis-ci/pr";
-    public static final String WIP = "WIP";
 
+    @RequiredArgsConstructor
+    @Getter
+    public enum Checks {
+        BUILD_PULL_REQUEST("Build Pull Request");
+
+        private final String name;
+
+        public static boolean isAnyOf(final String name) {
+            return Arrays.stream(Checks.values()).anyMatch(run -> run.getName().equalsIgnoreCase(name));
+        }
+    }
+    
     private final long count;
     private final List<CheckRunDetails> runs;
 

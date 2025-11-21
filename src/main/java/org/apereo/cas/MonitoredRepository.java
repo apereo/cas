@@ -256,7 +256,7 @@ public class MonitoredRepository {
                                     log.info("Assigning dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                                     gitHub.assignPullRequest(getOrganization(), getName(), pr, Users.APEREO_CAS_BOT);
                                 } else if (pr.getAssignee().getLogin().equalsIgnoreCase(Users.APEREO_CAS_BOT)) {
-                                    var checkrun = getLatestCompletedCheckRunsFor(pr, "build-pull-request");
+                                    var checkrun = getLatestCompletedCheckRunsFor(pr, CheckRun.Checks.BUILD_PULL_REQUEST.getName());
                                     if (checkrun == null || checkrun.getCount() == 0) {
                                         log.info("Unassigning and re-assigning dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                                         gitHub.unassignPullRequest(getOrganization(), getName(), pr, Users.APEREO_CAS_BOT);
@@ -280,6 +280,13 @@ public class MonitoredRepository {
                                 log.info("Merging dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                                 labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
                                 return approveAndMergePullRequest(pr, false);
+                            }
+                        }
+
+                        if (stagingRepository) {
+                            var result = gitHub.comparePullRequestWithBase(getOrganization(), getName(), pr);
+                            if (result.shouldUpdate()) {
+                                mergePullRequestWithBase(pr);
                             }
                         }
                     }

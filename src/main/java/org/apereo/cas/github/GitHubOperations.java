@@ -163,4 +163,5 @@ public interface GitHubOperations {
 
     void unassignPullRequest(String organization, String name, PullRequest pr, String... assignee);
 
+    ComparisonResult comparePullRequestWithBase(String organization, String repository, PullRequest pr);
 }
