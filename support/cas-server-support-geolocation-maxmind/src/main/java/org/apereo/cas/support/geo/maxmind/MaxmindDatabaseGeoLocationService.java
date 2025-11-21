@@ -33,6 +33,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @With
+@SuppressWarnings("NullAway.Init")
 public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationService {
     protected final MaxmindProperties properties;
 
