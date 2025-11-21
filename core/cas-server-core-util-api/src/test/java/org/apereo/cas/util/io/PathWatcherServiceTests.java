@@ -6,11 +6,19 @@ import org.apache.commons.io.FileUtils;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -68,5 +76,68 @@ class PathWatcherServiceTests {
         assertTrue(watch2.get());
 
         watcher1.destroy();
+    }
+
+    static class MockWatchService implements WatchService {
+        private WatchKey key;
+        private AtomicInteger count;
+
+        public MockWatchService(WatchKey key) {
+            this.key = key;
+            this.count = new AtomicInteger(0);
+
+            doAnswer(invocation -> {
+                this.count.incrementAndGet();
+                return List.of();
+            })
+                .when(key)
+                .pollEvents();
+        }
+
+        @Override
+        public WatchKey take() {
+            return (count.get() == 0) ? this.key : null;
+        }
+
+        @Override
+        public WatchKey poll() {
+            return null;
+        }
+
+        @Override
+        public WatchKey poll(long timeout, TimeUnit unit) {
+            return null;
+        }
+
+        @Override
+        public void close() {
+            // no-op
+        }
+    }
+
+    static class MockedPathWatcherService extends PathWatcherService {
+        public MockedPathWatcherService(WatchKey key) throws Exception {
+            super(createFile("test.txt").toPath(), x -> {}, x -> {}, x -> {});
+
+            this.watchService = new MockWatchService(key);
+        }
+
+        @Override
+        protected void initializeWatchService(final Path watchablePath) {
+            // no-op
+        }
+    }
+
+    @Test
+    void verifyWatchKeyIsResetOnlyOnceHandled() throws Exception {
+        val mockedKey = mock(WatchKey.class);
+        val service = new MockedPathWatcherService(mockedKey);
+
+        service.run();
+
+        InOrder inOrder = inOrder(mockedKey);
+
+        inOrder.verify(mockedKey, times(1)).pollEvents();
+        inOrder.verify(mockedKey, times(1)).reset();
     }
 }

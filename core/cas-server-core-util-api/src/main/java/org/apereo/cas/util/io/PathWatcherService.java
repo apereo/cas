@@ -36,7 +36,7 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
     private static final WatchEvent.Kind[] KINDS = {ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
 
     @Nullable
-    private WatchService watchService;
+    protected WatchService watchService;
 
     private final CheckedConsumer<File> onCreate;
 
@@ -46,8 +46,6 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
 
     @Nullable
     private Thread thread;
-
-    private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
     public PathWatcherService(final File watchablePath, final CheckedConsumer<File> onModify) {
         this(watchablePath.toPath(),
@@ -69,14 +67,13 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
     }
 
     @Override
-    @SuppressWarnings("FutureReturnValueIgnored")
     public void run() {
         if (shouldEnableWatchService()) {
             try {
                 var key = (WatchKey) null;
                 while ((key = watchService.take()) != null) {
-                    val finalKey = key;
-                    executorService.submit(() -> handleEvent(finalKey));
+                    handleEvent(key);
+
                     val valid = key.reset();
                     if (!valid) {
                         LOGGER.info("Directory key is no longer valid. Quitting watcher service");
@@ -96,7 +93,6 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
         if (this.thread != null) {
             thread.interrupt();
         }
-        executorService.shutdownNow();
         LOGGER.trace("Closed service registry watcher thread");
     }
 
