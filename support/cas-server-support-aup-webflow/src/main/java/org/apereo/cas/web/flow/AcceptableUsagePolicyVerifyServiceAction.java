@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -33,17 +34,16 @@ public class AcceptableUsagePolicyVerifyServiceAction extends BaseCasWebflowActi
         actionResolverName = AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         return verify(requestContext);
     }
 
-    private Event verify(final RequestContext context) throws Throwable {
+    private @Nullable Event verify(final RequestContext context) throws Throwable {
         val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(context);
 
         if (registeredService != null) {
             val authentication = WebUtils.getAuthentication(context);
             val service = WebUtils.getService(context);
-            val eventFactorySupport = eventFactory;
             val audit = AuditableContext.builder()
                 .service(service)
                 .authentication(authentication)
@@ -56,8 +56,8 @@ public class AcceptableUsagePolicyVerifyServiceAction extends BaseCasWebflowActi
                              && registeredService.getAcceptableUsagePolicy().isEnabled();
             val res = ObjectUtils.getIfNull(aupEnabled ? repository.verify(context) : null,
                 AcceptableUsagePolicyStatus.skipped(authentication.getPrincipal()));
-            if (res.isDenied()) {
-                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);
+            if (res != null && res.isDenied()) {
+                return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);
             }
         }
         return null;

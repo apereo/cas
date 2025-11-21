@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
+import javax.net.ssl.X509TrustManager;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -52,7 +53,8 @@ public class TextMagicSmsSender implements SmsSender {
         httpClient.ifPresent(givenClient -> {
             val httpClientFactory = givenClient.httpClientFactory();
             val okHttpClient = new OkHttpClient().newBuilder()
-                .sslSocketFactory(httpClientFactory.getSslContext().getSocketFactory())
+                .sslSocketFactory(httpClientFactory.getSslContext().getSocketFactory(),
+                    (X509TrustManager) httpClientFactory.getTrustManagers()[0])
                 .hostnameVerifier(httpClientFactory.getHostnameVerifier())
                 .connectTimeout(httpClientFactory.getConnectionTimeout(), TimeUnit.SECONDS)
                 .build();

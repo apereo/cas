@@ -116,6 +116,11 @@ is now extended to support token validation attempts in addition to token genera
 modified to support multiple backend account management systems. 
 This means that you may enable multiple password management modules backed by different account stores such as 
 LDAP and JDBC at the same time and CAS would force a chain to validate password policies across all such systems.
+ 
+### Apache Ignite Ticket Registry
+
+[Apache Ignite Ticket Registry](../ticketing/Ignite-Ticket-Registry.html) is now upgraded to support
+the latest version of Apache Ignite, `3.1.x`.
 
 ### Single SignOn Sessions Per User
                 
@@ -198,7 +203,6 @@ records, etc are processed and loaded.
 - Most Redis operations that rely on the `KEYS` command have been replaced with `SCAN` operations to avoid performance issues on large datasets.
 - A new theme option is now available to control whether client-side device fingerprinting is activated during authentication.
 - [CosmosDb Ticket Registry](../ticketing/CosmosDb-Ticket-Registry.html) is deprecated and will be removed in a future release.
-- [Apache Ignite Ticket Registry](../ticketing/Ignite-Ticket-Registry.html) is deprecated and will be removed in a future release.
 - [CosmosDb Service Registry](../services/CosmosDb-Service-Management.html) is deprecated and will be removed in a future release.
 - The order of authentication handlers is now correctly preserved when authentication handlers are registered with the authentication plan.
 
