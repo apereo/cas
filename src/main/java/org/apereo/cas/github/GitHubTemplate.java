@@ -49,6 +49,7 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import tools.jackson.databind.exc.MismatchedInputException;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
@@ -58,6 +59,9 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -638,9 +642,26 @@ public class GitHubTemplate implements GitHubOperations {
             } catch (final IOException ex) {
                 throw ex;
             } catch (final HttpMessageNotReadableException ex) {
-                log.error("Failed to create {} from {}", type, read(inputMessage), ex);
+                var message = getRead(inputMessage);
+                if (message.contains("API rate limit exceeded for user ID")) {
+                    var limit = inputMessage.getHeaders().getFirst("X-RateLimit-Limit");
+                    var reset = Instant.ofEpochSecond(Long.parseLong(inputMessage.getHeaders().getFirst("X-RateLimit-Reset")));
+                    val formattedTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z")
+                            .withZone(ZoneId.systemDefault())
+                            .format(reset);
+                    
+                    var remaining = inputMessage.getHeaders().getFirst("X-RateLimit-Remaining");
+                    log.error("API rate limit of {} requests exceeded. Remaining: {}. Limit will reset {}",
+                            remaining, limit, formattedTime);
+                    throw new HttpClientErrorException(HttpStatus.FORBIDDEN, "API rate limit exceeded");
+                }
+                log.error("Failed to create {} from {}", type, message, ex);
                 throw ex;
             }
+        }
+
+        private String getRead(HttpInputMessage inputMessage) throws IOException {
+            return read(inputMessage);
         }
 
         private String read(final HttpInputMessage inputMessage) throws IOException {
@@ -677,7 +698,7 @@ public class GitHubTemplate implements GitHubOperations {
             var contents = this.rest.exchange(url, HttpMethod.GET, new HttpEntity<>(hd), type, params);
             var body = Arrays.asList(type.cast(contents.getBody()));
             return new StandardPage<>(body, () -> getPage(getNextUrl(contents), type));
-        } catch (final HttpMessageNotReadableException ex) {
+        } catch (final Exception ex) {
             log.error(ex.getMessage(), ex);
         }
         return new StandardPage<>(List.of(), () -> null);
