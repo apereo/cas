@@ -54,7 +54,7 @@ class MaxmindDatabaseGeoLocationServiceTests {
     }
 
     private static CityResponse getCityResponse() {
-        val location = new Location(10, 100, 40.0D, 70.0D, 1, 1, "UTC");
+        val location = new Location(10, 100, 40.0D, 70.0D, 1, "UTC");
         return new CityResponse(new City(), new Continent(), new Country(),
             location, new MaxMind(), new Postal(),
             new Country(), new RepresentedCountry(), new ArrayList<>(), new Traits());
