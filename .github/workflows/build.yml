@@ -86,23 +86,28 @@ jobs:
         jdk:
           - ${{ needs.initialize.outputs.JDK_CURRENT }}
           - ${{ needs.initialize.outputs.JDK_LATEST }}
-    if: ${{ matrix.jdk != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        if: ${{ matrix.jdk != '' }}
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v5
+        if: ${{ matrix.jdk != '' }}
         with:
           java-version: ${{ matrix.jdk }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
+        if: ${{ matrix.jdk != '' }}
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         shell: bash
+        if: ${{ matrix.jdk != '' }}
       - name: Build with JDK ${{ matrix.jdk }}
         run: ./gradlew build -PsourceCompatibility=${{ matrix.jdk }} -PtargetCompatibility=${{ matrix.jdk }} ${{ env.GRADLE_BUILD_OPTIONS }}
+        if: ${{ matrix.jdk != '' }}
       - uses: actions/upload-artifact@v5
+        if: ${{ matrix.jdk != '' }}
         with:
           name: binary-artifacts-${{ matrix.jdk }}
           path: ./**/build/libs/*.*
