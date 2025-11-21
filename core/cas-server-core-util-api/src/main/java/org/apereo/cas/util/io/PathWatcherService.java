@@ -18,8 +18,6 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import static java.nio.file.StandardWatchEventKinds.*;
 
@@ -36,7 +34,7 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
     private static final WatchEvent.Kind[] KINDS = {ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
 
     @Nullable
-    protected WatchService watchService;
+    private WatchService watchService;
 
     private final CheckedConsumer<File> onCreate;
 
@@ -46,6 +44,16 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
 
     @Nullable
     private Thread thread;
+
+    protected PathWatcherService(final WatchService watcherService,
+                                 final CheckedConsumer<File> onModify) {
+        this.watchService = watcherService;
+        this.onCreate = _ -> {
+        };
+        this.onModify = onModify;
+        this.onDelete = _ -> {
+        };
+    }
 
     public PathWatcherService(final File watchablePath, final CheckedConsumer<File> onModify) {
         this(watchablePath.toPath(),
