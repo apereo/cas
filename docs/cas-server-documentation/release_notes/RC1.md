@@ -116,6 +116,11 @@ is now extended to support token validation attempts in addition to token genera
 modified to support multiple backend account management systems. 
 This means that you may enable multiple password management modules backed by different account stores such as 
 LDAP and JDBC at the same time and CAS would force a chain to validate password policies across all such systems.
+ 
+### Apache Ignite Ticket Registry
+
+[Apache Ignite Ticket Registry](../ticketing/Ignite-Ticket-Registry.html) is now upgraded to support
+the latest version of Apache Ignite, `3.1.x`.
 
 ### Single SignOn Sessions Per User
                 

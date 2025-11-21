@@ -23,8 +23,8 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 23 * * *'
-#  push:
-#    branches: [ master ]
+  #  push:
+  #    branches: [ master ]
   pull_request:
     types: [ assigned ]
 #    branches: [ master ]
@@ -35,12 +35,20 @@ jobs:
   initialize:
     if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
     runs-on: ubuntu-latest
+    name: "Initialize Build"
     outputs:
-      JDK_CURRENT: ${{ env.JDK_CURRENT }}
-      JDK_LATEST: ${{ env.JDK_LATEST }}
+      jdks: ${{ steps.determine-jdk.outputs.jdks }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
+      - name: Determine JDKs
+        id: determine-jdk
+        run: |
+            if [ "$JDK_CURRENT" == "$JDK_LATEST" ]; then
+              echo "jdks=[\"$JDK_CURRENT\"]" >> "$GITHUB_OUTPUT"
+            else
+              echo "jdks=[\"$JDK_CURRENT\", \"$JDK_LATEST\"]" >> "$GITHUB_OUTPUT"
+            fi
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -56,9 +64,10 @@ jobs:
   build-pull-request:
     if: ${{ (github.event_name == 'pull_request' && github.event.assignee.login == 'apereocas-bot') }}
     runs-on: ubuntu-latest
+    name: "Build Pull Request"
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -71,21 +80,20 @@ jobs:
       - name: Build with JDK ${{ env.JDK_CURRENT }}
         run: ./gradlew build -PsourceCompatibility=${{ env.JDK_CURRENT }} -PtargetCompatibility=${{ env.JDK_CURRENT }} ${{ env.GRADLE_BUILD_OPTIONS }}
 
-  ##########################################################################
-        
+        ##########################################################################
+
   build:
     needs: [initialize]
     continue-on-error: false
     runs-on: ubuntu-latest
+    name: "Build"
     strategy:
       fail-fast: false
       matrix:
-        jdk:
-          - ${{ needs.initialize.outputs.JDK_CURRENT }}
-          - ${{ needs.initialize.outputs.JDK_LATEST }}
+        jdk: ${{ fromJson(needs.initialize.outputs.jdks) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v5
         with:
@@ -102,16 +110,17 @@ jobs:
         with:
           name: binary-artifacts-${{ matrix.jdk }}
           path: ./**/build/libs/*.*
-          
+
   ##########################################################################
 
   build-graalvm:
     runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
+    name: "Build Native"
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - uses: graalvm/setup-graalvm@v1
         with:
           distribution: 'graalvm'
