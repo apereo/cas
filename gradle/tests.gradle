@@ -49,6 +49,7 @@ enum TestCategories {
     JDBCAuthentication(false, true),
     JMX(true, true),
     Kafka(true, true),
+    Pulsar(true, true),
     LdapAttributes(true, true),
     LdapAuthentication(false, true),
     Ldap(false, true),
