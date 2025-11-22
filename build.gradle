@@ -171,6 +171,7 @@ allprojects {
     java {
         toolchain {
             languageVersion = JavaLanguageVersion.of(project.targetCompatibility)
+            vendor = JvmVendorSpec.JETBRAINS
         }
     }
 
