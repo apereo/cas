@@ -97,6 +97,11 @@ particularly if the codes are set to be encrypted.
 <div class="alert alert-warning">:warning: <strong>Breaking Change</strong><p>
 This may be a breaking change. You will need to adjust your database schema based on the notes above.</p></div>
 
+### Apache Pulsar Ticket Registry
+
+[Apache Pulsar Ticket Registry](../ticketing/Pulsar-Ticket-Registry.html) is now available as a new ticket registry option
+that allows CAS nodes to broadcast ticket operations to other nodes in the cluster using Apache Pulsar topics.
+
 ### OpenID Connect JWT Authorization Grant
 
 CAS now supports the [JWT Authorization Grant](../authentication/OIDC-Authentication-JWT-Bearer.html)

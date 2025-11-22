@@ -1,0 +1,57 @@
+description = "Apereo CAS Pulsar Ticket Registry"
+ext {
+
+    publishMetadata = true
+    projectMetadata = [
+            category: "Ticket Registries",
+            title: "Pulsar Ticket Registry",
+            aliases: ["pulsar-ticket-registry", "pulsar-tickets"]
+    ]
+}
+dependencies {
+    implementation libraries.springbootpulsar
+
+    api project(":api:cas-server-core-api-util")
+
+    implementation project(":core:cas-server-core-logging")
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-web-api")
+
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-audit", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
+    
+    testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
+
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-scripting")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":core:cas-server-core-notifications")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
+    testImplementation project(":core:cas-server-core-webflow")
+
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-reports")
+    testImplementation project(":support:cas-server-support-webconfig")
+    testImplementation project(":support:cas-server-support-validation")
+    testImplementation project(":support:cas-server-support-thymeleaf")
+}
