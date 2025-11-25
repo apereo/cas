@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Kafka Ticket Registry
+title: CAS - Apache Kafka Ticket Registry
 category: Ticketing
 ---
 

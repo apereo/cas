@@ -62,8 +62,8 @@ We recommend that you review [this page][gettingstarted] to get started with you
 
 The following features are supported by the CAS project:
 
-* CAS v1, v2 and v3 Protocol
-* SAML v1 and v2 Protocol
+* CAS v1, v2 and v3 Protocols
+* SAML v1 and v2 Protocols
 * OAuth v2 Protocol
 * OpenID Connect Protocol
 * WS-Federation Passive Requester Protocol

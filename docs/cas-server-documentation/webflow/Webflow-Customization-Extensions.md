@@ -78,61 +78,52 @@ At a minimum, your overlay will need to include the following modules:
 Design your dynamic webflow configuration agent that alters the webflow using the following form:
 
 ```java
-public class SomethingWebflowConfigurer extends AbstractCasWebflowConfigurer {
-    public SomethingWebflowConfigurer(FlowBuilderServices flowBuilderServices,
-                                      FlowDefinitionRegistry flowDefinitionRegistry,
-                                      ApplicationContext applicationContext,
-                                      CasConfigurationProperties casProperties) {
+public class MyWebflowConfigurer extends AbstractCasWebflowConfigurer {
+    public MyWebflowConfigurer(FlowBuilderServices flowBuilderServices,
+                               FlowDefinitionRegistry flowDefinitionRegistry,
+                               ApplicationContext applicationContext,
+                               CasConfigurationProperties casProperties) {
         super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override
     protected void doInitialize() throws Exception {
         var flow = super.getLoginFlow();
-        // Magic happens; Call 'super' to see 
-        // what you have access to and alter the flow.
+        // Call 'super' to see what you have access to and alter the flow.
     }
 }
 ```
 
 The parent class, `AbstractCasWebflowConfigurer`, provides a lot of helper methods and utilities in a *DSL-like*
-fashion to hide the
-complexity of Spring Webflow APIs to make customization easier.
+fashion to hide the complexity of Spring Webflow APIs to make customization easier.
 
 #### Register
 
 You will then need to register your newly-designed component into the CAS application runtime:
 
 ```java
-package org.example.something;
+package org.example;
 
 @AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SomethingConfiguration implements CasWebflowExecutionPlanConfigurer {
+public class MyAutoConfiguration {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
-    private FlowDefinitionRegistry flowDefinitionRegistry;
-
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
-    private FlowBuilderServices flowBuilderServices;
-
-    @ConditionalOnMissingBean(name = "somethingWebflowConfigurer")
     @Bean
-    public CasWebflowConfigurer somethingWebflowConfigurer() {
-        return new SomethingWebflowConfigurer(flowBuilderServices,
+    public CasWebflowConfigurer myWebflowConfigurer(
+        CasConfigurationProperties casProperties,
+        @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_DEFINITION_REGISTRY)
+        FlowDefinitionRegistry flowDefinitionRegistry,
+        ApplicationContext applicationContext,   
+        FlowBuilderServices flowBuilderServices) {
+        return new MyWebflowConfigurer(flowBuilderServices,
             flowDefinitionRegistry, applicationContext, casProperties);
     }
 
-    @Override
-    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
-        plan.registerWebflowConfigurer(somethingWebflowConfigurer());
+    @Bean
+    public CasWebflowExecutionPlanConfigurer myWebflowPlanConfigurer(
+        @Qualifier("myWebflowConfigurer")
+        CasWebflowConfigurer myWebflowConfigurer) {
+        return plan -> plan.registerWebflowConfigurer(myWebflowConfigurer);
     }
 }
 ```

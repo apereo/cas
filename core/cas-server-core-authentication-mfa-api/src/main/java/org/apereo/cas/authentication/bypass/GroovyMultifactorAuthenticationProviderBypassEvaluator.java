@@ -9,6 +9,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serial;
@@ -24,6 +25,7 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluator extends Base
     @Serial
     private static final long serialVersionUID = -4909072898415688377L;
 
+    @Nullable
     private final ExecutableCompiledScript watchableScript;
 
     public GroovyMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
@@ -46,7 +48,7 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluator extends Base
                          + "service [{}] and provider [{}] via Groovy script [{}]",
                 principal.getId(), registeredService, provider, watchableScript);
             val args = new Object[]{authentication, principal, registeredService, provider, LOGGER, request};
-            return watchableScript.execute(args, Boolean.class);
+            return Boolean.TRUE.equals(watchableScript.execute(args, Boolean.class));
         }, e -> true).get();
 
     }
