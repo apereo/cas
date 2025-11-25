@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serial;
 import java.io.Serializable;
@@ -43,7 +44,7 @@ public class EncryptedCookieValueManager implements CookieValueManager {
     }
 
     @Override
-    public String obtainCookieValue(final String cookie, final HttpServletRequest request) {
+    public @Nullable String obtainCookieValue(final String cookie, final HttpServletRequest request) {
         val decoded = determineCipherExecutor(request).decode(cookie, ArrayUtils.EMPTY_OBJECT_ARRAY);
         if (decoded == null) {
             LOGGER.trace("Could not decode cookie value [{}] for cookie", cookie);

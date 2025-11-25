@@ -1,15 +1,13 @@
 services:
   redis-master:
-    image: redis:8.2.3
+    image: redis:8.4.0
     container_name: redis_server_master
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      - REDIS_MASTER_HOST=localhost
-      - REDIS_MASTER_PORT_NUMBER=6379
+    # Bitnami-style envs removed: the official image ignores them anyway.
     ports:
       - "6379:6379"
+
   redis-ssl:
-    image: redis:8.2.3
+    image: redis:8.4.0
     container_name: redis_server_ssl
     command: >
       redis-server
@@ -23,30 +21,37 @@ services:
       - "16669:6669"
     volumes:
       - ./certs:/etc/ssl/certs
+
   redis-master2:
-    image: redis:8.2.3
+    image: redis:8.4.0
     container_name: redis_server_master2
+    # These envs were also Bitnami-specific; kept or removed won't affect tests.
     environment:
       - REDIS_PASSWORD=pAssw0rd123
     ports:
       - "16389:6379"
+
   sentinel_1:
-    image: bitnamilegacy/redis-sentinel:8.2.1
+    build: ./redis-sentinel
+    image: local/redis-sentinel:8.4.0
     container_name: redis_sentinel_1
+    depends_on:
+      - redis-master
     ports:
       - "26379:26379"
     environment:
       - REDIS_MASTER_SET=mymaster
       - REDIS_SENTINEL_QUORUM=2
       - REDIS_MASTER_HOST=localhost
-      - REDIS_PASSWORD=password123
-      - REDIS_SENTINEL_PASSWORD=password456
-    depends_on:
-      - redis-master
+      - REDIS_PASSWORD=password123         # (optional) master password, like before
+      - REDIS_SENTINEL_PASSWORD=password456 # sentinel password (CAS uses this)
 
   sentinel_2:
-    image: bitnamilegacy/redis-sentinel:8.2.1
+    build: ./redis-sentinel
+    image: local/redis-sentinel:8.4.0
     container_name: redis_sentinel_2
+    depends_on:
+      - redis-master
     ports:
       - "26380:26379"
     environment:
@@ -55,12 +60,13 @@ services:
       - REDIS_MASTER_HOST=localhost
       - REDIS_PASSWORD=password123
       - REDIS_SENTINEL_PASSWORD=password456
-    depends_on:
-      - redis-master
 
   sentinel_3:
-    image: bitnamilegacy/redis-sentinel:8.2.1
+    build: ./redis-sentinel
+    image: local/redis-sentinel:8.4.0
     container_name: redis_sentinel_3
+    depends_on:
+      - redis-master
     ports:
       - "26381:26379"
     environment:
@@ -69,5 +75,3 @@ services:
       - REDIS_MASTER_HOST=localhost
       - REDIS_PASSWORD=password123
       - REDIS_SENTINEL_PASSWORD=password456
-    depends_on:
-      - redis-master

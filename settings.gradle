@@ -4,6 +4,7 @@
 plugins {
     id "com.gradle.develocity" version "4.2.2"
     id "com.gradle.common-custom-user-data-gradle-plugin" version "2.4.0"
+    id "org.gradle.toolchains.foojay-resolver-convention" version "1.0.0"
 }
 
 ext.isCiServer = System.getenv().containsKey("CI")
@@ -97,13 +98,6 @@ dependencyResolutionManagement {
                 includeGroupByRegex ".*micrometer.*"
             }
             mavenContent { releasesOnly() }
-        }
-        maven {
-            url = "https://repo.spring.io/snapshot"
-            content {
-                includeGroupByRegex ".*springframework.*"
-            }
-            mavenContent { snapshotsOnly() }
         }
         maven {
             url = "https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates"
@@ -398,6 +392,7 @@ include "support:cas-server-support-pm-jdbc"
 include "support:cas-server-support-pm-ldap"
 include "support:cas-server-support-pm-rest"
 include "support:cas-server-support-pm-webflow"
+include "support:cas-server-support-pulsar-ticket-registry"
 include "support:cas-server-support-qr-authentication"
 include "support:cas-server-support-radius"
 include "support:cas-server-support-radius-core"

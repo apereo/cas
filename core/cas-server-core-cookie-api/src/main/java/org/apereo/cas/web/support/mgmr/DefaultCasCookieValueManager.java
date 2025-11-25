@@ -14,7 +14,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serial;
@@ -43,11 +42,11 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
 
     private final PinnableCookieProperties cookieProperties;
 
-    private final ObjectProvider<@NonNull GeoLocationService> geoLocationService;
+    private final ObjectProvider<GeoLocationService> geoLocationService;
 
     public DefaultCasCookieValueManager(final CipherExecutorResolver cipherExecutorResolver,
                                         final TenantExtractor tenantExtractor,
-                                        final ObjectProvider<@NonNull GeoLocationService> geoLocationService,
+                                        final ObjectProvider<GeoLocationService> geoLocationService,
                                         final CookieSameSitePolicy cookieSameSitePolicy,
                                         final PinnableCookieProperties cookieProperties) {
         super(cipherExecutorResolver, tenantExtractor, cookieSameSitePolicy);
