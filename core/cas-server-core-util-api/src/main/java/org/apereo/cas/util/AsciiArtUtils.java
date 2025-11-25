@@ -59,10 +59,8 @@ public class AsciiArtUtils {
             \\___ \\  )( (  O )) __/
             (____/ (__) \\__/(__) \s
             """;
-        out.warn(ANSI_BOLD);
-        out.warn(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
-        out.warn(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional));
-        out.warn(ASCII_ART_LOGGER_MARKER, ANSI_RESET);
+        val message = ANSI_BOLD + "\n\n".concat(ascii).concat(additional) + ANSI_RESET;
+        out.warn(ASCII_ART_LOGGER_MARKER, message);
     }
 
     /**
@@ -78,10 +76,8 @@ public class AsciiArtUtils {
              )   / ) _) /    \\ ) D ( )  /\s
             (__\\_)(____)\\_/\\_/(____/(__/ \s
             """;
-        out.info(ANSI_BOLD);
-        out.info(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
-        out.info(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional).concat("\n"));
-        out.info(ASCII_ART_LOGGER_MARKER, ANSI_RESET);
+        val message = ANSI_BOLD + "\n\n".concat(ascii).concat(additional).concat("\n") + ANSI_RESET;
+        out.info(ASCII_ART_LOGGER_MARKER, message);
     }
 
 }
