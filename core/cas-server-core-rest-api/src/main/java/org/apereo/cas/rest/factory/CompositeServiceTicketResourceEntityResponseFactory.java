@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
 import java.util.Collection;
 
@@ -27,8 +26,8 @@ public class CompositeServiceTicketResourceEntityResponseFactory implements Serv
         actionResolverName = AuditActionResolvers.REST_API_SERVICE_TICKET_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.REST_API_SERVICE_TICKET_RESOURCE_RESOLVER)
     @Override
-    public ResponseEntity<@NonNull String> build(final String ticketGrantingTicket, final WebApplicationService service,
-                                                 final AuthenticationResult authenticationResult) throws Throwable {
+    public ResponseEntity<String> build(final String ticketGrantingTicket, final WebApplicationService service,
+                                        final AuthenticationResult authenticationResult) throws Throwable {
         val factory = chain.stream()
             .filter(responseFactory -> responseFactory.supports(service, authenticationResult))
             .findFirst()
