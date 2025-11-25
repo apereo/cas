@@ -81,12 +81,10 @@
     },
     {
       "matchPackageNames": ["software.amazon.awssdk:.*"],
-      "matchManagers": ["maven"],
       "matchUpdateTypes": ["major", "minor"]
     },
     {
-      "matchDepNames": ["com.h2database:h2"],
-      "matchManagers": ["maven"],
+      "matchPackageNames": ["com.h2database:h2"],
       "enabled": false
     },
     {
@@ -96,7 +94,6 @@
       "enabled": false
     },
     {
-      "matchManagers": ["gradle"],
       "matchPaths": [".*radius.*/build.gradle"],
       "matchPackageNames": ["org.bouncycastle:bcprov-jdk15on"],
       "enabled": false

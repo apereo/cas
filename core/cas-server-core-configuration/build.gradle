@@ -2,6 +2,7 @@ description = "Apereo CAS Central Configuration"
 dependencies {
     implementation libraries.jasypt
     implementation libraries.bouncycastle
+    implementation libraries.snakeyaml
     
     api project(":api:cas-server-core-api-configuration")
     api project(":api:cas-server-core-api-scripting")

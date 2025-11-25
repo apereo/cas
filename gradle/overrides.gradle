@@ -45,6 +45,9 @@ configurations.configureEach {
                 if (requested.group == "com.google.code.gson") {
                     details.useVersion(libs.gson.get().version)
                 }
+                if (requested.group == "org.apache.pulsar") {
+                    details.useVersion(libs.pulsar.client.api.get().version)
+                }
                 if (requested.name == "hibernate-validator") {
                     details.useVersion(libs.hibernate.validator.get().version)
                 }
@@ -122,9 +125,6 @@ configurations.configureEach {
                 }
                 if (requested.group == "com.github.ben-manes.caffeine") {
                     details.useVersion(libs.caffeine.get().version)
-                }
-                if (requested.group == "org.apache.logging.log4j") {
-                    details.useVersion(libs.log4j.core.get().version)
                 }
                 if (requested.group == "org.apache.groovy") {
                     details.useVersion(libs.apachegroovy.core.get().version)

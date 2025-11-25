@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
+import org.jspecify.annotations.Nullable;
 import java.net.InetAddress;
 
 /**
@@ -21,7 +22,7 @@ public interface GeoLocationService {
      * @return the geo location
      * @throws Throwable the throwable
      */
-    GeoLocationResponse locate(InetAddress address) throws Throwable;
+    @Nullable GeoLocationResponse locate(InetAddress address) throws Throwable;
 
     /**
      * Find a geo location based on an address.
@@ -29,7 +30,7 @@ public interface GeoLocationService {
      * @param ipAddress the address
      * @return the geo location
      */
-    GeoLocationResponse locate(String ipAddress);
+    @Nullable GeoLocationResponse locate(String ipAddress);
 
     /**
      * Find a geo location based on an address.
@@ -39,7 +40,7 @@ public interface GeoLocationService {
      * @return the geo location
      * @throws Throwable the throwable
      */
-    GeoLocationResponse locate(Double latitude, Double longitude) throws Throwable;
+    @Nullable GeoLocationResponse locate(Double latitude, Double longitude) throws Throwable;
 
     /**
      * Locate geo location response.
@@ -49,7 +50,7 @@ public interface GeoLocationService {
      * @return the geo location response
      * @throws Throwable the throwable
      */
-    GeoLocationResponse locate(String ip, GeoLocationRequest request) throws Throwable;
+    @Nullable GeoLocationResponse locate(String ip, GeoLocationRequest request) throws Throwable;
 
     /**
      * Locate geo location response.
@@ -58,5 +59,5 @@ public interface GeoLocationService {
      * @return the geo location response
      * @throws Throwable the throwable
      */
-    GeoLocationResponse locate(GeoLocationRequest request) throws Throwable;
+    @Nullable GeoLocationResponse locate(GeoLocationRequest request) throws Throwable;
 }

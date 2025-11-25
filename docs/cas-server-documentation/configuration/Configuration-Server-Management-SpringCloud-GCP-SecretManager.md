@@ -8,7 +8,7 @@ category: Configuration
 
 # Spring Cloud Configuration Server - GCP Secret Manager
 
-CAS is also able to use [Google Cloud Secret Manager](https://cloud.google.com/secret-manager) to locate properties and settings.
+CAS is also able to use [Google Cloud Secret Manager](https://cloud.google.com/security/products/secret-manager) to locate properties and settings.
 This functionality is delivered to CAS via [Spring Cloud GCP](https://github.com/GoogleCloudPlatform/spring-cloud-gcp).
 
 Support is provided via the following dependency in the WAR overlay:
