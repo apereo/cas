@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.ResponseCookie;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -62,9 +63,9 @@ public class CookieUtils {
      * @param request                             the request
      * @return the ticket granting ticket from request
      */
-    public static TicketGrantingTicket getTicketGrantingTicketFromRequest(final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-                                                                          final TicketRegistry ticketRegistry,
-                                                                          final HttpServletRequest request) {
+    public static @Nullable TicketGrantingTicket getTicketGrantingTicketFromRequest(final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+                                                                                    final TicketRegistry ticketRegistry,
+                                                                                    final HttpServletRequest request) {
         val cookieValue = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         if (StringUtils.isNotBlank(cookieValue)) {
             return FunctionUtils.doAndHandle(() -> {
@@ -182,7 +183,7 @@ public class CookieUtils {
      * @return the string
      */
     public static String createSetCookieHeader(
-        final String cookieValue,
+        @Nullable final String cookieValue,
         final CookieGenerationContext cookieGenerationContext) {
         return ResponseCookie.from(cookieGenerationContext.getName(), StringUtils.trimToNull(cookieValue))
             .domain(StringUtils.trimToNull(cookieGenerationContext.getDomain()))
