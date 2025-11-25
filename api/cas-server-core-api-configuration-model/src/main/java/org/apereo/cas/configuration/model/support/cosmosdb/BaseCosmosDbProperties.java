@@ -144,7 +144,7 @@ public abstract class BaseCosmosDbProperties implements Serializable {
      * <ul>
      *     <li>{@code GATEWAY}: HTTPS over REST. Java HTTPS stack (Apache HttpClient). Generally robust.
      *      Limited bulk support. Works with HTTP proxies. Uses Java’s trust store + hostname verifier.</li>
-     *     <li>{@code DIRECT}: Custom binary protocol over TCP (RNTBD). Netty (manual TLS/SSL context & connections).
+     *     <li>{@code DIRECT}: Custom binary protocol over TCP (RNTBD). Netty (manual TLS/SSL context and connections).
      *      Highly efficient, but sensitive to connection issues. Does not support HTTP proxies. Uses Netty TLS.
      *     </li>
      * </ul>
