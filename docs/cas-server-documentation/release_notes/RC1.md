@@ -97,6 +97,11 @@ particularly if the codes are set to be encrypted.
 <div class="alert alert-warning">:warning: <strong>Breaking Change</strong><p>
 This may be a breaking change. You will need to adjust your database schema based on the notes above.</p></div>
 
+### Apache Pulsar Ticket Registry
+
+[Apache Pulsar Ticket Registry](../ticketing/Pulsar-Ticket-Registry.html) is now available as a new ticket registry option
+that allows CAS nodes to broadcast ticket operations to other nodes in the cluster using Apache Pulsar topics.
+
 ### OpenID Connect JWT Authorization Grant
 
 CAS now supports the [JWT Authorization Grant](../authentication/OIDC-Authentication-JWT-Bearer.html)
@@ -116,6 +121,11 @@ is now extended to support token validation attempts in addition to token genera
 modified to support multiple backend account management systems. 
 This means that you may enable multiple password management modules backed by different account stores such as 
 LDAP and JDBC at the same time and CAS would force a chain to validate password policies across all such systems.
+ 
+### Apache Ignite Ticket Registry
+
+[Apache Ignite Ticket Registry](../ticketing/Ignite-Ticket-Registry.html) is now upgraded to support
+the latest version of Apache Ignite, `3.1.x`.
 
 ### Single SignOn Sessions Per User
                 
@@ -192,6 +202,8 @@ records, etc are processed and loaded.
 - [JPA Ticket Registry](../ticketing/JPA-Ticket-Registry.html) will lowercase all table names to avoid issues with
   case sensitivity in certain database engines, namely MariaDb.
 - PostgreSQL `18` is now the default PostgreSQL version for integration tests.
+- Redis `8.4` is now the default Redis version for integration tests.
+- Bitnami legacy docker images are now replaced with official docker images used for integration tests.
 - A large number of deprecated classes, methods and configuration properties have been removed.
 - Attribute values that are presented as valid JSON documents will be formatted as nested claims when collected into an [OpenID Connect ID token](../authentication/OIDC-Authentication-Claims.html).
 - The ability to prepend a *launch script* to the CAS WAR overlay distribution and have it run in a fully standalone mode is removed from Spring Boot and thus has been removed from CAS as well.
@@ -200,4 +212,5 @@ records, etc are processed and loaded.
 - [CosmosDb Ticket Registry](../ticketing/CosmosDb-Ticket-Registry.html) is deprecated and will be removed in a future release.
 - [CosmosDb Service Registry](../services/CosmosDb-Service-Management.html) is deprecated and will be removed in a future release.
 - The order of authentication handlers is now correctly preserved when authentication handlers are registered with the authentication plan.
-
+- Logging out of [Account Profile](../registration/Account-Management-Overview.html) will now initiate SLO if configured.
+- Memory leak fixes when managing virtual threads responsible for file monitoring features and watch services.

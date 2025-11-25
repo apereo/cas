@@ -2,14 +2,14 @@
 aceEditor = "1.41.0"
 acmeClient = "3.5.1"
 amazonDax = "2.0.6"
-amazonSdk = "2.38.9"
+amazonSdk = "2.39.3"
 azureInsights = "3.7.6"
 azureKustoLog4j = "1.0.0"
 animateCss = "4.1.1"
 apacheCassandra = "4.19.2"
 apacheCxf = "4.1.4"
 apacheFediz = "1.7.1"
-apacheIgnite = "2.17.0"
+apacheIgnite = "3.1.0"
 apacheVelocityEngine = "2.4.1"
 apiGuardian = "1.1.2"
 arrow = "18.3.0"
@@ -78,7 +78,7 @@ groovy = "5.0.2"
 grouper = "5.22.3"
 gson = "2.13.2"
 guava = "33.5.0-jre"
-h2 = "1.4.200"
+h2 = "1.4.197"
 hazelcast = "5.6.0"
 hazelcastSession = "4.0.0-SNAPSHOT"
 hazelcastJClouds = "3.7.2"
@@ -94,7 +94,7 @@ httpCore4 = "4.4.16"
 httpclient = "5.5.1"
 httpclient4 = "4.5.14"
 hypersistence = "3.12.0"
-influxDb = "1.6.0"
+influxDb = "1.7.0"
 ipGeoLocation = "2.0.1"
 jackson2 = "2.20.1"
 jackson = "3.0.2"
@@ -156,11 +156,11 @@ loki = "0.9.41"
 lombok = "1.18.42"
 lucene = "10.3.2"
 lz4 = "1.8.0"
-mailgun = "2.1.0"
+mailgun = "2.1.1"
 mailjet = "6.0.1"
 mariaDb = "3.5.6"
 material = "14.0.0"
-maxmind = "4.4.0"
+maxmind = "5.0.0"
 mdiFont = "7.4.47"
 mermaid = "11.6.0"
 micrometer = "1.16.0"
@@ -168,7 +168,7 @@ micrometerOtel = "1.6.0"
 mockito = "5.20.0"
 mockitoInline = "5.2.0"
 mongoDriver = "5.6.1"
-mssqlServer = "13.2.1.jre11"
+mssqlServer = "13.3.0.jre11-preview"
 mustache = "1.16"
 mysql = "9.5.0"
 netflixEventBus = "0.3.0"
@@ -191,6 +191,7 @@ otel = "1.56.0"
 pac4j = "6.3.0"
 permitio = "2.2.1"
 postgresql = "42.7.8"
+pulsar = "4.1.2"
 pushy = "0.15.4"
 quartz = "2.5.1"
 redisLettuce = "6.8.1.RELEASE"
@@ -199,7 +200,7 @@ saajImpl = "3.0.4"
 scimSdkClient = "1.28.1"
 semver = "3.1.0"
 sendGrid = "4.10.3"
-sentry = "8.26.0"
+sentry = "8.27.1"
 shibbolethUtilJavaSupport = "9.1.6"
 slackClient = "1.46.0"
 slf4j = "2.0.17"
@@ -223,16 +224,16 @@ springDataCommons = "4.0.0"
 springDataCosmosDb = "6.0.0"
 springDataMongoDb = "5.0.0"
 springDataRedis = "4.0.0"
-springDoc = "2.8.14"
+springDoc = "3.0.0"
 springIntegration = "7.0.0"
 springKafka = "4.0.0"
-springRabbit = "4.0.0-SNAPSHOT"
+springRabbit = "4.0.0"
 springSecurity = "7.0.0"
 springSecurityRsa = "1.1.5"
 springSession = "4.0.0"
 springSessionMongo = "4.0.0-M2"
 springShell = "4.0.0-M1"
-springWebflow = "3.0.1"
+springWebflow = "4.0.0-RC1"
 springWs = "5.0.0"
 spymemcached = "2.12.3"
 stompWebSocket = "2.3.4"
@@ -244,7 +245,7 @@ textMagic = "3.0.43863"
 thymeleaf = "3.1.3.RELEASE"
 thymeleafDialect = "3.2.0"
 tomcat = "11.0.14"
-twilio = "11.0.3"
+twilio = "11.1.0"
 unboundid = "7.0.3"
 undertow = "2.3.20.Final"
 whatWgFetch = "3.6.20"
@@ -269,8 +270,8 @@ gradleDependencyVersions = "0.53.0"
 gradleErrorProne = "4.3.0"
 gradleNullAway = "2.3.0"
 gradleGraalVmNative = "0.11.3"
-gradleSonarqube = "7.0.1.6134"
-gradleNmcpPublishing = "1.2.1"
+gradleSonarqube = "7.1.0.6387"
+gradleNmcpPublishing = "1.3.0"
 gradleJib = "3.5.1"
 
 [libraries]
@@ -411,9 +412,9 @@ httpcore = { module = "org.apache.httpcomponents:httpcore", version.ref = "httpC
 httpcore5 = { module = "org.apache.httpcomponents.core5:httpcore5", version.ref = "httpCore" }
 hypersistence-utils-hibernate = { module = "io.hypersistence:hypersistence-utils-hibernate-71", version.ref = "hypersistence" }
 ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "apacheIgnite" }
-ignite-indexing = { module = "org.apache.ignite:ignite-indexing", version.ref = "apacheIgnite" }
-ignite-log4j2 = { module = "org.apache.ignite:ignite-log4j2", version.ref = "apacheIgnite" }
-ignite-spring = { module = "org.apache.ignite:ignite-spring", version.ref = "apacheIgnite" }
+ignite-api = { module = "org.apache.ignite:ignite-api", version.ref = "apacheIgnite" }
+ignite-indexing = { module = "org.apache.ignite:ignite-index", version.ref = "apacheIgnite" }
+ignite-runner = { module = "org.apache.ignite:ignite-runner", version.ref = "apacheIgnite" }
 influxdb-client-java = { module = "com.influxdb:influxdb3-java", version.ref = "influxDb" }
 ipgeolocation = { module = "io.ipgeolocation:ipgeolocation", version.ref = "ipGeoLocation" }
 jackson-core-lib2 = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson2" }
@@ -595,6 +596,7 @@ pac4j-saml = { module = "org.pac4j:pac4j-saml", version.ref = "pac4j" }
 permit-sdk-java = { module = "io.permit:permit-sdk-java", version.ref = "permitio" }
 polyglot = { module = "org.graalvm.polyglot:polyglot", version.ref = "graalVm" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+pulsar-client-api = { module = "org.apache.pulsar:pulsar-client-api", version.ref = "pulsar" }
 pushy = { module = "com.eatthepath:pushy", version.ref = "pushy" }
 quartz = { module = "org.quartz-scheduler:quartz", version.ref = "quartz" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
@@ -667,6 +669,8 @@ spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-star
 spring-boot-starter-mongodb = { module = "org.springframework.boot:spring-boot-starter-mongodb", version.ref = "springBoot" }
 spring-boot-starter-mustache = { module = "org.springframework.boot:spring-boot-starter-mustache", version.ref = "springBoot" }
 spring-boot-starter-opentelemetry = { module = "org.springframework.boot:spring-boot-starter-opentelemetry", version.ref = "springBoot" }
+spring-boot-starter-pulsar-core = { module = "org.springframework.boot:spring-boot-starter-pulsar", version.ref = "springBoot" }
+spring-boot-starter-pulsar-test = { module = "org.springframework.boot:spring-boot-starter-pulsar-test", version.ref = "springBoot" }
 spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
 spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf", version.ref = "springBoot" }
 spring-boot-starter-tomcat = { module = "org.springframework.boot:spring-boot-starter-tomcat", version.ref = "springBoot" }

@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 import org.springframework.util.StringUtils;
@@ -38,7 +37,7 @@ public class Beans {
      * @param config the config
      * @return the thread pool executor factory bean
      */
-    public static FactoryBean<@NonNull ExecutorService> newThreadPoolExecutorFactoryBean(final ConnectionPoolingProperties config) {
+    public static FactoryBean<ExecutorService> newThreadPoolExecutorFactoryBean(final ConnectionPoolingProperties config) {
         val bean = new ThreadPoolExecutorFactoryBean();
         bean.setMaxPoolSize(config.getMaxSize());
         bean.setCorePoolSize(config.getMinSize());
@@ -108,8 +107,8 @@ public class Beans {
      * @param expiryAfter the expiry after
      * @return the cache
      */
-    public static <T, V> Cache<@NonNull T, V> newCache(final SimpleCacheProperties cache,
-                                                       final Expiry<@NonNull T, @NonNull V> expiryAfter) {
+    public static <T, V> Cache<T, V> newCache(final SimpleCacheProperties cache,
+                                              final Expiry<T, V> expiryAfter) {
         return newCacheBuilder(cache)
             .expireAfter(expiryAfter)
             .build();
