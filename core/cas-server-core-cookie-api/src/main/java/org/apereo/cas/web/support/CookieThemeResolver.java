@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.util.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,7 +55,7 @@ public class CookieThemeResolver implements ThemeResolver {
     private final CookieProperties cookieProperties;
 
     @Override
-    public String resolveThemeName(final HttpServletRequest request) {
+    public @Nullable String resolveThemeName(final HttpServletRequest request) {
         var themeName = (String) request.getAttribute(THEME_REQUEST_ATTRIBUTE_NAME);
         if (StringUtils.isNotBlank(themeName)) {
             return themeName;
