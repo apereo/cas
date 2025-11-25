@@ -97,7 +97,7 @@ public class CoreSamlMetadataProperties implements Serializable {
 
     /**
      * When attempting to resolve metadata from sources, particularly URLs,
-     * this setting controls the number of <strong>retry attempts<</strong> that CAS should execute
+     * this setting controls the number of <strong>retry attempts</strong> that CAS should execute
      * when metadata resolution fails. Setting this value to a zero or negative value
      * will disable the retry policy.
      */
