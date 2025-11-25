@@ -49,6 +49,7 @@ enum TestCategories {
     JDBCAuthentication(false, true),
     JMX(true, true),
     Kafka(true, true),
+    Pulsar(true, true),
     LdapAttributes(true, true),
     LdapAuthentication(false, true),
     Ldap(false, true),
@@ -272,7 +273,19 @@ tasks.withType(Test).configureEach {
     list.add("java.base/sun.reflect.generics.reflectiveObjects=ALL-UNNAMED")
 
     list.add("--add-opens")
+    list.add("java.base/jdk.internal.misc=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/jdk.internal.access=ALL-UNNAMED")
+    list.add("--add-opens")
     list.add("java.base/java.lang=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.lang.reflect=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.lang.invoke=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.io=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.math=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("java.base/java.util=ALL-UNNAMED")
     list.add("--add-opens")
@@ -292,9 +305,12 @@ tasks.withType(Test).configureEach {
     list.add("--add-opens")
     list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
 
+    list.add("-Dio.netty.tryReflectionSetAccessible=true")
+    
     list.add("-Xms512m")
     list.add("-Xmx6g")
-
+    
+    
     list.add("-XX:+EnableDynamicAgentLoading")
     jvmArgs = list
 
