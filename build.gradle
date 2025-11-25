@@ -624,6 +624,26 @@ tasks.register('generateProjectModulesMetadata') {
     }
 }
 
+tasks.register('verifyDependencyVersions') { t ->
+    def catalogFile = rootProject.layout.projectDirectory
+            .file('gradle/libs.versions.toml')
+            .asFile
+    inputs.file(catalogFile).withPathSensitivity(PathSensitivity.RELATIVE)
+
+    doLast {
+        def snapshotLines = []
+        catalogFile.eachLine { line, lineNumber ->
+            if (line =~ /(?i)SNAPSHOT/) {
+                snapshotLines << "${lineNumber}: ${line.trim()}"
+            }
+        }
+        if (!snapshotLines.empty) {
+            throw new GradleException("SNAPSHOT versions found in ${catalogFile}:\n" + snapshotLines.collect { "\t - $it" }.join('\n'))
+        }
+    }
+}
+
+
 boolean projectShouldBePublished(Project project) {
     def publishable = project.hasProperty("publishable") ? project.publishable : true
     project.ext.publishable = publishable
