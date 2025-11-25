@@ -1,6 +1,7 @@
 package org.apereo.cas.web.cookie;
 
 import org.apereo.cas.multitenancy.TenantExtractor;
+import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -38,7 +39,7 @@ public interface CookieValueManager extends Serializable {
      * @param request the request
      * @return the string
      */
-    default String obtainCookieValue(final Cookie cookie, final HttpServletRequest request) {
+    default @Nullable String obtainCookieValue(final Cookie cookie, final HttpServletRequest request) {
         return obtainCookieValue(cookie.getValue(), request);
     }
 
@@ -49,7 +50,7 @@ public interface CookieValueManager extends Serializable {
      * @param request the request
      * @return the string
      */
-    String obtainCookieValue(String cookie, HttpServletRequest request);
+    @Nullable String obtainCookieValue(String cookie, HttpServletRequest request);
 
     /**
      * Gets cookie same site policy.

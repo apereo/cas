@@ -483,6 +483,10 @@ while (( "$#" )); do
                 isDockerOnLinux && ./ci/tests/cassandra/run-cassandra-server.sh || exit 1
                 task+="testCassandra "
                 ;;
+            pulsar)
+                isDockerOnLinux && ./ci/tests/pulsar/run-pulsar-server.sh || exit 1
+                task+="testPulsar "
+                ;;
             kafka)
                 isDockerOnLinux && ./ci/tests/kafka/run-kafka-server.sh || exit 1
                 task+="testKafka "
