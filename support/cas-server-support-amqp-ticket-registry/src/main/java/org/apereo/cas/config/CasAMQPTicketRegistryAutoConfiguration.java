@@ -59,7 +59,7 @@ public class CasAMQPTicketRegistryAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public QueueableTicketRegistryMessagePublisher messageQueueTicketRegistryPublisher(
-        @Qualifier("messageQueueTicketRegistryIdentifier")
+        @Qualifier(PublisherIdentifier.DEFAULT_BEAN_NAME)
         final PublisherIdentifier messageQueueTicketRegistryIdentifier,
         @Qualifier("messageQueueTicketRegistryConverter")
         final MessageConverter messageQueueTicketRegistryConverter,
@@ -72,7 +72,7 @@ public class CasAMQPTicketRegistryAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "messageQueueTopicBindings")
     public Declarables messageQueueTopicBindings(
-        @Qualifier("messageQueueTicketRegistryIdentifier")
+        @Qualifier(PublisherIdentifier.DEFAULT_BEAN_NAME)
         final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
         val queue = new Queue(messageQueueTicketRegistryIdentifier.getId(), true, false, true);
         val topicExchange = new TopicExchange(AMQPTicketRegistryQueuePublisher.QUEUE_DESTINATION, true, true);
@@ -83,7 +83,7 @@ public class CasAMQPTicketRegistryAutoConfiguration {
     @ConditionalOnMissingBean(name = "amqpTicketRegistryMessageListenerContainer")
     @Lazy(false)
     public MessageListenerContainer amqpTicketRegistryMessageListenerContainer(
-        @Qualifier("messageQueueTicketRegistryIdentifier")
+        @Qualifier(PublisherIdentifier.DEFAULT_BEAN_NAME)
         final PublisherIdentifier messageQueueTicketRegistryIdentifier,
         @Qualifier("rabbitConnectionFactory")
         final ConnectionFactory connectionFactory,
