@@ -194,7 +194,7 @@ class CasCoreTicketsConfiguration {
             final QueueableTicketRegistryMessagePublisher messageQueueTicketRegistryPublisher,
             @Qualifier(CipherExecutor.BEAN_NAME_TICKET_REGISTRY_CIPHER_EXECUTOR)
             final CipherExecutor defaultTicketRegistryCipherExecutor,
-            @Qualifier("messageQueueTicketRegistryIdentifier")
+            @Qualifier(PublisherIdentifier.DEFAULT_BEAN_NAME)
             final PublisherIdentifier messageQueueTicketRegistryIdentifier,
             @Qualifier(TicketCatalog.BEAN_NAME)
             final TicketCatalog ticketCatalog,
@@ -233,14 +233,14 @@ class CasCoreTicketsConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("messageQueueTicketRegistryIdentifier")
+            @Qualifier(PublisherIdentifier.DEFAULT_BEAN_NAME)
             final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
             return ticketRegistry instanceof final QueueableTicketRegistry queueableTicketRegistry
                 ? new DefaultQueueableTicketRegistryMessageReceiver(queueableTicketRegistry, messageQueueTicketRegistryIdentifier, applicationContext)
                 : QueueableTicketRegistryMessageReceiver.noOp();
         }
 
-        @ConditionalOnMissingBean(name = "messageQueueTicketRegistryIdentifier")
+        @ConditionalOnMissingBean(name = PublisherIdentifier.DEFAULT_BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PublisherIdentifier messageQueueTicketRegistryIdentifier(final CasConfigurationProperties casProperties) {

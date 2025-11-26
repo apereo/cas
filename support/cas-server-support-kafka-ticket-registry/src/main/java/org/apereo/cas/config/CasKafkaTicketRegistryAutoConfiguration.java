@@ -92,7 +92,7 @@ public class CasKafkaTicketRegistryAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
-        @Qualifier("messageQueueTicketRegistryIdentifier")
+        @Qualifier(PublisherIdentifier.DEFAULT_BEAN_NAME)
         final PublisherIdentifier messageQueueTicketRegistryIdentifier,
         @Qualifier("kafkaTicketRegistryTemplate")
         final KafkaOperations<@NonNull String, @NonNull BaseMessageQueueCommand> kafkaTicketRegistryTemplate) {
