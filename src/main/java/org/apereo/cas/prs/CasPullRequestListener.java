@@ -1,17 +1,18 @@
 package org.apereo.cas.prs;
 
-import org.apereo.cas.CasLabels;
-import org.apereo.cas.Memes;
-import org.apereo.cas.MonitoredRepository;
-import org.apereo.cas.PullRequestListener;
-import org.apereo.cas.github.PullRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apereo.cas.CasLabels;
+import org.apereo.cas.Memes;
+import org.apereo.cas.MonitoredRepository;
+import org.apereo.cas.PullRequestListener;
+import org.apereo.cas.github.PullRequest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StringUtils;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -40,16 +41,16 @@ public class CasPullRequestListener implements PullRequestListener {
         removeLabelWorkInProgress(pr);
         checkForPullRequestTestCases(pr);
         checkForPullRequestDescription(pr);
-        
+
         repository.autoMergePullRequest(pr);
     }
 
     private boolean shouldDisregardPullRequest(final PullRequest pr) {
         return processDependencyUpgradesPullRequests(pr)
-            || processLabelSeeMaintenancePolicy(pr)
-            || processInvalidPullRequest(pr);
+               || processLabelSeeMaintenancePolicy(pr)
+               || processInvalidPullRequest(pr);
     }
-    
+
     @SneakyThrows
     private void checkForPullRequestDescription(final PullRequest pr) {
         val committer = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
@@ -66,35 +67,35 @@ public class CasPullRequestListener implements PullRequestListener {
 
     private void processLabelsByChangeset(final PullRequest pr) {
         repository.getPullRequestFiles(pr)
-            .forEach(file -> {
-                var filename = file.getFilename();
-                if (filename.contains("api/cas-server-core-api-configuration-model")) {
-                    repository.labelPullRequestAs(pr, CasLabels.LABEL_CONFIGURATION);
-                }
-                if (filename.contains("cas-server-documentation")) {
-                    repository.labelPullRequestAs(pr, CasLabels.LABEL_DOCUMENTATION);
-                }
-                if (filename.contains("dependencies.gradle")) {
-                    repository.labelPullRequestAs(pr, CasLabels.LABEL_DEPENDENCIES_MODULES);
-                }
-                if (filename.endsWith(".gradle")) {
-                    repository.labelPullRequestAs(pr, CasLabels.LABEL_GRADLE_BUILD_RELEASE);
-                }
-                if (filename.contains("gradle.properties")) {
-                    repository.labelPullRequestAs(pr, CasLabels.LABEL_GRADLE_BUILD_RELEASE);
-                    repository.labelPullRequestAs(pr, CasLabels.LABEL_DEPENDENCIES_MODULES);
-                }
-                if (filename.endsWith(".html") || filename.endsWith(".js") || filename.endsWith(".css")) {
-                    repository.labelPullRequestAs(pr, CasLabels.LABEL_USER_INTERFACE_THEMES);
-                }
-                if (filename.endsWith(".md")) {
-                    repository.labelPullRequestAs(pr, CasLabels.LABEL_DOCUMENTATION);
-                }
-                if (filename.contains("puppeteer") || filename.contains("script.js") || filename.contains("script.json")) {
-                    repository.labelPullRequestAs(pr, CasLabels.LABEL_UNIT_INTEGRATION_TESTS);
-                    repository.labelPullRequestAs(pr, CasLabels.LABEL_PUPPETEER);
-                }
-            });
+                .forEach(file -> {
+                    var filename = file.getFilename();
+                    if (filename.contains("api/cas-server-core-api-configuration-model")) {
+                        repository.labelPullRequestAs(pr, CasLabels.LABEL_CONFIGURATION);
+                    }
+                    if (filename.contains("cas-server-documentation")) {
+                        repository.labelPullRequestAs(pr, CasLabels.LABEL_DOCUMENTATION);
+                    }
+                    if (filename.contains("dependencies.gradle")) {
+                        repository.labelPullRequestAs(pr, CasLabels.LABEL_DEPENDENCIES_MODULES);
+                    }
+                    if (filename.endsWith(".gradle")) {
+                        repository.labelPullRequestAs(pr, CasLabels.LABEL_GRADLE_BUILD_RELEASE);
+                    }
+                    if (filename.contains("gradle.properties")) {
+                        repository.labelPullRequestAs(pr, CasLabels.LABEL_GRADLE_BUILD_RELEASE);
+                        repository.labelPullRequestAs(pr, CasLabels.LABEL_DEPENDENCIES_MODULES);
+                    }
+                    if (filename.endsWith(".html") || filename.endsWith(".js") || filename.endsWith(".css")) {
+                        repository.labelPullRequestAs(pr, CasLabels.LABEL_USER_INTERFACE_THEMES);
+                    }
+                    if (filename.endsWith(".md")) {
+                        repository.labelPullRequestAs(pr, CasLabels.LABEL_DOCUMENTATION);
+                    }
+                    if (filename.contains("puppeteer") || filename.contains("script.js") || filename.contains("script.json")) {
+                        repository.labelPullRequestAs(pr, CasLabels.LABEL_UNIT_INTEGRATION_TESTS);
+                        repository.labelPullRequestAs(pr, CasLabels.LABEL_PUPPETEER);
+                    }
+                });
     }
 
     private void processLabelReadyForContinuousIntegration(final PullRequest pr) {
@@ -145,16 +146,16 @@ public class CasPullRequestListener implements PullRequestListener {
         val files = repository.getPullRequestFiles(pr);
 
         val modifiesJava = files.stream().anyMatch(file ->
-            !file.getFilename().contains("Tests") && file.getFilename().endsWith(".java"));
+                !file.getFilename().contains("Tests") && file.getFilename().endsWith(".java"));
 
         val modifiesUI = files.stream().anyMatch(file ->
-            file.getFilename().endsWith(".css") ||
+                file.getFilename().endsWith(".css") ||
                 file.getFilename().endsWith(".html") ||
                 file.getFilename().endsWith(".js"));
 
         if (modifiesJava || modifiesUI) {
             val hasTests = files.stream().anyMatch(file -> file.getFilename().endsWith("Tests.java")
-                || PATTERN_PUPPETEER.matcher(file.getFilename()).matches());
+                                                           || PATTERN_PUPPETEER.matcher(file.getFilename()).matches());
             if (!hasTests) {
                 var isCommitter = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
                 if (!isCommitter) {
@@ -195,27 +196,40 @@ public class CasPullRequestListener implements PullRequestListener {
             return true;
         }
 
+        if (pr.isBot() && !pr.isDraft() && !pr.isWorkInProgress() && !pr.isUnderReview() && pr.isDirty()) {
+            log.info("Pull request has merge conflicts and cannot be processed: {}", pr);
+            if (pr.isDependaBot() && !pr.getBody().contains("Dependabot is rebasing this PR")) {
+                repository.addComment(pr, "@dependabot recreate");
+                return true;
+            } else if (pr.isRenovateBot()) {
+                repository.removeAllApereoCasBotCommentsFrom(pr);
+                repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
+                repository.close(pr, "Closing pull request as it has merge conflicts. Please resolve conflicts and reopen.");
+                return true;
+            }
+        }
+
         if (!pr.isUnderReview()) {
             var count = repository.getPullRequestFiles(pr).stream()
-                .filter(file -> {
-                    var filename = file.getFilename();
-                    return !filename.contains("src/test/java")
-                        && !filename.endsWith(".html")
-                        && !filename.endsWith(".properties")
-                        && !filename.endsWith(".js")
-                        && !filename.endsWith(".yml")
-                        && !filename.endsWith(".yaml")
-                        && !filename.endsWith(".json")
-                        && !filename.endsWith(".jpg")
-                        && !filename.endsWith(".jpeg")
-                        && !filename.endsWith(".sh")
-                        && !filename.endsWith(".bat")
-                        && !filename.endsWith(".txt")
-                        && !filename.endsWith(".md")
-                        && !filename.endsWith(".gif")
-                        && !filename.endsWith(".css");
-                })
-                .count();
+                    .filter(file -> {
+                        var filename = file.getFilename();
+                        return !filename.contains("src/test/java")
+                               && !filename.endsWith(".html")
+                               && !filename.endsWith(".properties")
+                               && !filename.endsWith(".js")
+                               && !filename.endsWith(".yml")
+                               && !filename.endsWith(".yaml")
+                               && !filename.endsWith(".json")
+                               && !filename.endsWith(".jpg")
+                               && !filename.endsWith(".jpeg")
+                               && !filename.endsWith(".sh")
+                               && !filename.endsWith(".bat")
+                               && !filename.endsWith(".txt")
+                               && !filename.endsWith(".md")
+                               && !filename.endsWith(".gif")
+                               && !filename.endsWith(".css");
+                    })
+                    .count();
 
             if (count >= repository.getGitHubProperties().getMaximumChangedFiles()) {
                 log.info("Closing invalid pull request {} with large number of changes", pr);
@@ -388,7 +402,7 @@ public class CasPullRequestListener implements PullRequestListener {
         val pr = repository.getPullRequest(givenPullRequest.getNumber());
         if (pr.isBot()) {
             repository.labelPullRequestAs(pr, CasLabels.LABEL_BOT, CasLabels.LABEL_RENOVATE,
-                CasLabels.LABEL_GRADLE_BUILD_RELEASE);
+                    CasLabels.LABEL_GRADLE_BUILD_RELEASE);
         }
 
         val title = pr.getTitle().toLowerCase();
@@ -405,7 +419,7 @@ public class CasPullRequestListener implements PullRequestListener {
                 }
                 if (assign) {
                     val ci = l == CasLabels.LABEL_CI
-                        && repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
+                             && repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
                     if (l != CasLabels.LABEL_CI || ci) {
                         log.info("Assigning label {} to pr {}", l, pr);
                         repository.labelPullRequestAs(pr, l);

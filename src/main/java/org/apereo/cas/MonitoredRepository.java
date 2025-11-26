@@ -508,6 +508,11 @@ public class MonitoredRepository {
         this.gitHub.closePullRequest(this.getOrganization(), getName(), pr.getNumber());
     }
 
+    public void close(final PullRequest pr, final String comment) {
+        addComment(pr, comment);
+        close(pr);
+    }
+
     public void open(final PullRequest pr) {
         this.gitHub.openPullRequest(this.getOrganization(), getName(), pr.getNumber());
     }

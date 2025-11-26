@@ -160,7 +160,8 @@ public class PullRequest {
     }
 
     public boolean isRenovateBot() {
-        return user.getLogin().equalsIgnoreCase("renovate[bot]");
+        return user.getLogin().equalsIgnoreCase("renovate[bot]")
+               || isApereoCasBot() && title.startsWith("renovatebot(deps):");
     }
 
     public boolean isDependaBot() {
@@ -186,13 +187,22 @@ public class PullRequest {
     public boolean isBlocked() {
         return "blocked".equalsIgnoreCase(this.mergeableState);
     }
-
     
     public boolean isClean() {
         return "clean".equalsIgnoreCase(this.mergeableState);
     }
     
+    public boolean isDirty() {
+        return "dirty".equalsIgnoreCase(this.mergeableState);
+    }
+
+    public boolean isDraft() {
+        return "draft".equalsIgnoreCase(this.mergeableState);
+    }
+    
     public boolean isBehind() {
         return "behind".equalsIgnoreCase(this.mergeableState);
     }
+
+    
 }
