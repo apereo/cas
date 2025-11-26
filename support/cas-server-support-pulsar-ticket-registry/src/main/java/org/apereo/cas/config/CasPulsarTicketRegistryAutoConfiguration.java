@@ -58,7 +58,7 @@ public class CasPulsarTicketRegistryAutoConfiguration {
         final PulsarAdministration pulsarAdministration,
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
-        @Qualifier("messageQueueTicketRegistryIdentifier")
+        @Qualifier(PublisherIdentifier.DEFAULT_BEAN_NAME)
         final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
         LOGGER.debug("Configuring Pulsar ticket registry with identifier [{}]", messageQueueTicketRegistryIdentifier);
         return new PulsarTicketRegistryPublisher(ticketCatalog, pulsarTemplate);

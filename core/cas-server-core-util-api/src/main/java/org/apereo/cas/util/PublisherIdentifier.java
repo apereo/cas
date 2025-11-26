@@ -26,6 +26,11 @@ import java.util.UUID;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
 public class PublisherIdentifier implements Serializable {
+    /**
+     * Default bean name for publisher identifier.
+     */
+    public static final String DEFAULT_BEAN_NAME = "messageQueueTicketRegistryIdentifier";
+
     @Serial
     private static final long serialVersionUID = -2216572507148074902L;
 
