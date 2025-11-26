@@ -35,7 +35,8 @@ function snapshot() {
     -x test -x javadoc -x check --no-daemon --parallel \
     -DskipAot=true -DpublishSnapshots=true --stacktrace \
     --no-configuration-cache --configure-on-demand \
-    -DrepositoryUsername="$REPOSITORY_USER" -DrepositoryPassword="$REPOSITORY_PWD"
+    -DrepositoryUsername="$REPOSITORY_USER" \
+    -DrepositoryPassword="$REPOSITORY_PWD"
   if [ $? -ne 0 ]; then
       printred "Publishing CAS SNAPSHOTs failed."
       exit 1

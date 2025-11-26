@@ -60,5 +60,7 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure PGP
         run: echo "$PGP_PRIVATE_KEY" | gpg --batch --import
+      - name: Verify
+        run: ./gradlew verifyDependencyVersions -x test -x javadoc -x check --no-daemon --parallel
       - name: Release
         run: chmod +x ./ci/release.sh && ./ci/release.sh
