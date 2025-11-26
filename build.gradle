@@ -89,6 +89,7 @@ if (publishReleases || publishSnapshots) {
             publishingType = "AUTOMATIC"
             validationTimeout.set(Duration.ZERO)
             publishingTimeout.set(Duration.ZERO)
+            uploadSnapshotsParallelism.set(1)
         }
         publishAllProjectsProbablyBreakingProjectIsolation()
     }
