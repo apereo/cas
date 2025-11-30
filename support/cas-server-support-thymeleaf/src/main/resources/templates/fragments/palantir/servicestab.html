@@ -34,11 +34,51 @@
 
                 <div width="10%">
                     <div class="mdc-touch-target-wrapper">
-                        <button name="newService" id="newService" class="mdc-button mdc-button--raised"
-                                aria-label="Create">
-                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus"
-                                                               aria-hidden="true"></i>New</span>
-                        </button>
+                        <span class="mdc-menu-surface--anchor">
+                            <button name="newService" id="newService"
+                                    onclick="cas.openMenu();"
+                                    class="mdc-button mdc-button--raised" aria-label="Create">
+                                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New</span>
+                            </button>
+                            <div class="mdc-menu mdc-menu-surface" style="min-width: max(500px, 50%);)">
+                                <ul class="mdc-list" aria-orientation="vertical"  role="menu" aria-hidden="true" tabindex="-1">
+                                    <li class="mdc-list-item pb-3" role="menuitem">
+                                        <span class="mdc-list-item__ripple"></span>
+                                        <i class="mdi mdi-pencil fas fa-pencil" style="margin-top: 2px;" aria-hidden="true"></i>
+                                        <div class="text-justify">
+                                            <h3>Editor</h3>
+                                            <span>Create a service definition using a plain-text editor where you can directly
+                                                modify the service definition or copy-paste it into the editor from elsewhere.</span>
+                                            <p></p>
+                                            <button name="newServicePlain" id="newServicePlain" class="mdc-button mdc-button--raised"
+                                                    aria-label="Create">
+                                                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus"
+                                                                                   aria-hidden="true"></i>Proceed</span>
+                                            </button>
+                                        </div>
+                                    </li>
+
+                                    <li class="mdc-list-item pb-3" role="menuitem" style="margin-top: 10px;">
+                                        <span class="mdc-list-item__ripple"></span>
+                                        <i class="mdi mdi-wizard-hat" aria-hidden="true"></i>
+                                        <div class="text-justify">
+                                            <h3 style="margin-top: 2px;">Wizard</h3>
+                                            <span>Create a service definition using a step-by-step wizard and form editor, allowing
+                                                you to modify individual settings and policies without prior knowledge of
+                                                the internal service definition model.</span>
+                                            <p></p>
+                                            <button name="newServiceWizard" id="newServiceWizard"
+                                                    class="mdc-button mdc-button--raised"
+                                                    style="margin-bottom: 2px;"
+                                                    aria-label="Create">
+                                                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus"
+                                                                                   aria-hidden="true"></i>Proceed</span>
+                                            </button>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </span>
                         <input type="file" id="serviceFileInput" style="display: none;">
                         <button name="importService" id="importService" class="mdc-button mdc-button--raised"
                                 aria-label="Import">
@@ -61,6 +101,132 @@
                 <div class="mw-20">
                   <canvas id="servicesChart"></canvas>
                 </div>
+
+                <div class="mdc-dialog modal" id="editServiceWizardDialog" role="alertdialog"
+                     aria-modal="true" aria-labelledby="edit-service-dialog-title" aria-describedby="dialog-content">
+                    <div class="mdc-dialog__container w-100 modal-dialog" style="max-height: 70%">
+                        <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
+                            <div class="mdc-dialog__content modal-body" id="edit-service-wizard-dialog-content">
+
+                                <div class="p-4 banner banner-warning"><h4>
+                                    The wizard-based service editor is a work in progress and not all features are supported yet.
+                                    Tread lightly and consider using the plain-text editor for production use cases.
+                                    Verify with release notes for updates on the wizard functionality and feel free to contribute!
+                                </h4></div>
+                                <p>The following application type is chosen:</p>
+                                <pre><code id="serviceClassType" class="border-rounded language-html"></code></pre>
+
+                                 <div id="editServiceWizardMenu" class="jqueryui-accordion">
+                                      <h3>General</h3>
+                                      <div id="editServiceWizardMenuItemGeneral">
+                                          <p>This section defines basic properties and settings that can be assigned to an application.</p>
+                                          
+                                          <div id="editServiceWizardGeneralContainer" class="mdc-input-group-field mdc-input-group-field-append w-100">
+                                            <script type="text/javascript">
+                                                createInputField("Name", "registeredServiceName", "name", true, "editServiceWizardGeneralContainer",
+                                                    "Define a logical name for this application, preferably without spaces or special characters.")
+                                                    .on("input", generateServiceDefinition)
+                                                    .append($("<sub>").text(" (Required)"));
+                                                createInputField("Service ID", "registeredServiceId", "serviceId", true, "editServiceWizardGeneralContainer",
+                                                    "Define a service identifier that determines which requests are mapped to this application. This is typically a URL pattern or regular expression.")
+                                                    .on("input", generateServiceDefinition);
+                                                createInputField("Description", "registeredServiceDescription", "description", false, "editServiceWizardGeneralContainer",
+                                                    "Provide a brief description of the application.")
+                                                    .on("input", generateServiceDefinition);
+                                                createInputField("Numeric Id", "registeredServiceIdentifier", "id", false, "editServiceWizardGeneralContainer",
+                                                    "Define a unique numeric identifier for this application.")
+                                                    .on("input", generateServiceDefinition)
+                                                    .attr("type", "number");
+                                                createInputField("Theme", "registeredServiceTheme", "theme", false, "editServiceWizardGeneralContainer",
+                                                    "Specify a theme to customize the appearance of the login and other user interface pages for this application.")
+                                                    .on("input", generateServiceDefinition);
+                                                createInputField("Locale", "registeredServiceLocale", "locale", false, "editServiceWizardGeneralContainer",
+                                                    "Specify a locale to customize the language and regional settings for this application.")
+                                                    .on("input", generateServiceDefinition);
+                                                createInputField("Information URL", "registeredServiceInformationUrl", "informationUrl", false, "editServiceWizardGeneralContainer",
+                                                    "Provide a URL that points to more information about this application.")
+                                                    .on("input", generateServiceDefinition);
+                                                createInputField("Privacy URL", "registeredServicePrivacyUrl", "privacyUrl", false, "editServiceWizardGeneralContainer",
+                                                    "Provide a URL that points to the privacy policy for this application.")
+                                                    .on("input", generateServiceDefinition);
+                                                createInputField("Template", "registeredServiceTemplate", "templateName", false, "editServiceWizardGeneralContainer",
+                                                    "Specify a template name to apply predefined settings and configurations for this application.")
+                                                    .on("input", generateServiceDefinition);
+                                                createInputField("Evaluation Order", "registeredServiceEvaluationOrder", "evaluationOrder", false, "editServiceWizardGeneralContainer",
+                                                    "Define the order in which this application is evaluated relative to other applications. Lower numbers indicate higher priority.")
+                                                    .on("input", generateServiceDefinition)
+                                                    .attr("type", "number");
+                                                createInputField("Logo", "registeredServiceEvaluationLogo", "logo", false, "editServiceWizardGeneralContainer",
+                                                    "Provide a URL to a logo image that represents this application.")
+                                                    .on("input", generateServiceDefinition);
+                                                createInputField("Logout URL", "registeredServiceEvaluationLogoutUrl", "logoutUrl", false, "editServiceWizardGeneralContainer",
+                                                    "Specify a URL to redirect users to upon logout from this application.")
+                                                    .on("input", generateServiceDefinition);
+                                            </script>
+                                          </div>
+                                      </div>
+                                      <h3>Expiration Policy</h3>
+                                      <div id="editServiceWizardMenuItemExpirationPolicy">
+                                          <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                      </div>
+                                      <h3>Ticket-Granting Ticket Expiration Policy</h3>
+                                      <div id="editServiceWizardMenuItemTGTExpirationPolicy">
+                                         <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                      </div>
+                                      <h3>Username Attribute Provider</h3>
+                                      <div id="editServiceWizardMenuItemUsernameAttribute">
+                                        <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                      </div>
+                                     <h3>Attribute Release Policy</h3>
+                                      <div id="editServiceWizardMenuItemAttributeReleasePolicy">
+                                        <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                      </div>
+                                     <h3>Multifactor Authentication Policy</h3>
+                                      <div id="editServiceWizardMenuItemMfaPolicy">
+                                        <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                      </div>
+                                     <h3>Matching Strategy</h3>
+                                      <div id="editServiceWizardMenuItemMatchingStrategy">
+                                        <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                      </div>
+                                     <h3>Access Strategy</h3>
+                                      <div id="editServiceWizardMenuItemAccessStrategy">
+                                        <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                      </div>
+                                     <h3>Authentication Policy</h3>
+                                      <div id="editServiceWizardMenuItemAuthenticationPolicy">
+                                        <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                      </div>
+                                     <h3>Properties</h3>
+                                      <div id="editServiceWizardMenuItemProperties">
+                                        <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                      </div>
+                                     <h3>Contacts</h3>
+                                      <div id="editServiceWizardMenuItemContacts">
+                                        <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                      </div>
+                                </div>
+                                 <section class="my-3 h-350px">
+                                    <pre class="ace-editor ace-relative w-100 h-100" id="wizardServiceEditor"></pre>
+                                </section>
+
+                            </div>
+
+                            <footer class="mdc-dialog__actions modal-footer pr-4">
+                                <button id="validateServiceWizard" name="validateService" type="button"
+                                        class="mdc-button mdc-button--raised btn mdc-button--lg">
+                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all" aria-hidden="true"></i>Validate</span>
+                                </button>
+                                <button id="saveServiceWizard" name="saveService" type="button"
+                                        class="mdc-button mdc-button--raised btn mdc-button--lg">
+                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-save" aria-hidden="true"></i>Save</span>
+                                </button>
+                            </footer>
+                        </div>
+                    </div>
+                    <div class="mdc-dialog__scrim"></div>
+                </div>
+                
                 <div class="mdc-dialog modal" id="editServiceDialog" role="alertdialog"
                      aria-modal="true" aria-labelledby="edit-service-dialog-title" aria-describedby="dialog-content">
                     <div class="mdc-dialog__container w-100 modal-dialog">
@@ -150,6 +316,6 @@
             </div>
         </div>
     </div>
-</span>
+    </span>
 </body>
 </html>
