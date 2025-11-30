@@ -47,14 +47,17 @@ function generateServiceDefinition() {
     }
 
     $("#editServiceWizardGeneralContainer")
-        .find("input[data-param-name]")
+        .find("input[data-param-name],select[data-param-name]")
         .each(function () {
             const $input = $(this);
             const paramName = $input.data("param-name");
             const value = $input.val();
 
             if (value && value.trim().length > 0) {
-                serviceDefinition[paramName] = value;
+                const renderer = $input.data("renderer");
+                serviceDefinition[paramName] = (typeof renderer === "function")
+                    ? renderer(value, $input, serviceDefinition)
+                    : value;
             }
         });
     
@@ -95,7 +98,7 @@ function createInputField(labelName, name, param, required, containerId, title) 
         const subtitle = $("<sub>", {
             style: "top: -9px; padding-left: 10px"
         })
-            .text(title || "")
+            .html(title || "")
             .prepend($("<span>", {
                 class: "mdi mdi-information-box-outline"
             }));
@@ -242,6 +245,51 @@ function navigateToApplication(serviceIdToFind) {
 }
 
 function initializeFooterButtons() {
+    $("button[name=validateServiceWizard]").off().on("click", () => {
+        const form = document.querySelector("#editServiceWizardForm");
+        const firstInvalid = form.querySelector(":invalid");
+
+        if (firstInvalid) {
+            const $accordion = $("#editServiceWizardMenu");
+            const $panel = $(firstInvalid).closest(".ui-accordion-content");
+            if ($panel.length) {
+                const index = $accordion
+                    .find(".ui-accordion-content")
+                    .index($panel);
+                if (index >= 0) {
+                    $accordion.accordion("option", "active", index);
+                }
+            }
+            setTimeout(() => {
+                form.reportValidity();
+            }, 0);
+            return;
+        }
+        
+        if (actuatorEndpoints.registeredservices) {
+            const editor = initializeAceEditor("wizardServiceEditor");
+            $.ajax({
+                url: `${actuatorEndpoints.registeredservices}/validate`,
+                type: "POST",
+                contentType: "application/json",
+                data: editor.getValue(),
+                success: response => {
+                    const message = `
+                        The given application definition is valid. Please note that validity
+                        does not imply behavioral correctness. It only indicates that the generated
+                        application definition adheres to the expected schema and structure required by CAS
+                        and can be stored successfully.
+                    `;
+                    Swal.fire("Success", message, "info");
+                },
+                error: (xhr, status, error) => {
+                    console.error(`Error: ${status} / ${error} / ${xhr.responseText}`);
+                    displayBanner(xhr);
+                }
+            });
+        }
+    });
+    
     $("button[name=newServiceWizard]").off().on("click", () => {
         let inputOptions = {
             'org.apereo.cas.services.CasRegisteredService': "CAS Client"
@@ -268,14 +316,22 @@ function initializeFooterButtons() {
             editor.setReadOnly(true);
             editor.setValue("");
             editor.gotoLine(1);
+            
+            const className = getLastWord(serviceClass);
+            $("#serviceClassType").text(serviceClass);
+            $("#editServiceWizardForm").data("service-class", serviceClass).data("service-class-name", className);
 
             $("#editServiceWizardMenu")
                 .accordion({
                     collapsible: true,
-                    heightStyle: "content"
+                    heightStyle: "content",
                 });
-            
-            $("#serviceClassType").text(serviceClass);
+
+            $(`.class-${className}`).show();
+            $("[class^='class-']").not(`.class-${className}`).hide();
+
+            $("#editServiceWizardMenu").accordion("refresh");
+
             const editServiceWizardDialogElement = document.getElementById("editServiceWizardDialog");
             let editServiceWizardDialog = window.mdc.dialog.MDCDialog.attachTo(editServiceWizardDialogElement);
             $(editServiceWizardDialogElement).attr("newService", true);
@@ -4195,7 +4251,14 @@ document.addEventListener("DOMContentLoaded", () => {
     $(".jqueryui-tabs").tabs().off().on("click", () => updateNavigationSidebar());
     $(".jqueryui-menu").menu();
     $(".jqueryui-selectmenu").selectmenu({
-        width: '350px'
+        width: '350px',
+        change: function (event, ui) {
+            const $select = $(this);
+            const handlerName = $select.data("change-handler");
+            if (handlerName && typeof window[handlerName] === "function") {
+                window[handlerName]($select, ui);
+            }
+        }
     });
 
     $("nav.sidebar-navigation ul li").off().on("click", function () {
