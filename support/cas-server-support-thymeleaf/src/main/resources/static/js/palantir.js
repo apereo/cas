@@ -40,6 +40,73 @@ const CAS_FEATURES = [];
 
 let notyf = null;
 
+function generateServiceDefinition() {
+    const editor = initializeAceEditor("wizardServiceEditor");
+    let serviceDefinition = {
+        "@class": $("#serviceClassType").text().trim()
+    }
+
+    $("#editServiceWizardGeneralContainer")
+        .find("input[data-param-name]")
+        .each(function () {
+            const $input = $(this);
+            const paramName = $input.data("param-name");
+            const value = $input.val();
+
+            if (value && value.trim().length > 0) {
+                serviceDefinition[paramName] = value;
+            }
+        });
+    
+    editor.setValue(JSON.stringify(serviceDefinition, null, 4));
+}
+
+function createInputField(labelName, name, param, required, containerId, title) {
+    const label = $("<label>", {
+        for: name,
+        class: "mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2"
+    });
+
+    const outline = $("<span>", { class: "mdc-notched-outline" });
+    outline.append($("<span>", { class: "mdc-notched-outline__leading" }));
+
+    const notch = $("<span>", { class: "mdc-notched-outline__notch" });
+    notch.append($("<span>", { class: "mdc-floating-label", text: labelName }));
+
+    outline.append(notch);
+    outline.append($("<span>", { class: "mdc-notched-outline__trailing" }));
+
+    const input = $("<input>", {
+        class: "mdc-text-field__input form-control",
+        type: "text",
+        id: name,
+        name: name,
+        "data-param-name": param,
+        tabindex: 0,
+        size: 50,
+        autocomplete: "off",
+        title: title,
+        required: required
+    });
+
+    label.append(outline, input);
+    
+    if (title !== undefined && title !== null && title.length > 0) {
+        const subtitle = $("<sub>", {
+            style: "top: -9px; padding-left: 10px"
+        })
+            .text(title || "")
+            .prepend($("<span>", {
+                class: "mdi mdi-information-box-outline"
+            }));
+
+        $(`#${containerId}`).append(label, subtitle);
+    } else {
+        $(`#${containerId}`).append(label);
+    }
+    return input;
+}
+
 function fetchServices(callback) {
     if (actuatorEndpoints.registeredservices) {
         $.get(actuatorEndpoints.registeredservices, response => {
@@ -175,11 +242,72 @@ function navigateToApplication(serviceIdToFind) {
 }
 
 function initializeFooterButtons() {
-    $("button[name=newService]").off().on("click", () => {
+    $("button[name=newServiceWizard]").off().on("click", () => {
+        let inputOptions = {
+            'org.apereo.cas.services.CasRegisteredService': "CAS Client"
+        };
+
+        if (CAS_FEATURES.includes("SAMLIdentityProvider")) {
+            inputOptions['org.apereo.cas.support.saml.services.SamlRegisteredService'] = "SAML2 Service Provider";
+        }
+        if (CAS_FEATURES.includes("OpenIDConnect")) {
+            inputOptions['org.apereo.cas.services.OidcRegisteredService'] = "OpenID Connect Relying Party";
+        }
+        if (CAS_FEATURES.includes("OAuth")) {
+            inputOptions['org.apereo.cas.support.oauth.services.OAuthRegisteredService'] = "OAuth2 Relying Party";
+        }
+        if (CAS_FEATURES.includes("WSFederationIdentityProvider")) {
+            inputOptions['org.apereo.cas.ws.idp.services.WSFederationRegisteredService'] = "WS-Fed Service Provider";
+        }
+
+
+        function openWizardDialog(serviceClass) {
+            $("#editServiceWizardGeneralContainer").find("input").val("");
+
+            const editor = initializeAceEditor("wizardServiceEditor");
+            editor.setReadOnly(true);
+            editor.setValue("");
+            editor.gotoLine(1);
+
+            $("#editServiceWizardMenu")
+                .accordion({
+                    collapsible: true,
+                    heightStyle: "content"
+                });
+            
+            $("#serviceClassType").text(serviceClass);
+            const editServiceWizardDialogElement = document.getElementById("editServiceWizardDialog");
+            let editServiceWizardDialog = window.mdc.dialog.MDCDialog.attachTo(editServiceWizardDialogElement);
+            $(editServiceWizardDialogElement).attr("newService", true);
+            $(editServiceWizardDialogElement).attr("serviceClass", serviceClass);
+
+            generateServiceDefinition();
+            editServiceWizardDialog["open"]();
+        }
+
+        if (Object.keys(inputOptions).length === 1) {
+            openWizardDialog(Object.keys(inputOptions)[0]);
+        } else {
+            Swal.fire({
+                title: "What type of application do you want to add?",
+                input: "select",
+                icon: "question",
+                inputOptions: inputOptions,
+                inputPlaceholder: "Select an application type...",
+                showCancelButton: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    openWizardDialog(result.value);
+                }
+            });
+        }
+    });
+
+    $("button[name=newServicePlain]").off().on("click", () => {
         if (actuatorEndpoints.registeredservices) {
             const editServiceDialogElement = document.getElementById("editServiceDialog");
             let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(editServiceDialogElement);
-            const editor = initializeAceEditor("serviceEditor");
+            const editor = initializeAceEditor("serviceEditor", "json");
             editor.setValue("");
             editor.gotoLine(1);
 
@@ -206,8 +334,7 @@ function initializeFooterButtons() {
                             reader.readAsText(file);
                             reader.onload = e => {
                                 const fileContent = e.target.result;
-
-
+                                
                                 $.ajax({
                                     url: `${actuatorEndpoints.registeredservices}`,
                                     type: "PUT",
