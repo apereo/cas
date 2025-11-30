@@ -6,8 +6,10 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CompressionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.io.TemporaryFileSystemResource;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -39,6 +41,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
@@ -325,6 +328,49 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         registeredService.setId(RandomUtils.nextInt());
         val result = servicesManager.getObject().save(registeredService);
         return ResponseEntity.ok(registeredServiceSerializer.toString(result));
+    }
+
+    /**
+     * Validate service response entity.
+     *
+     * @param contentType           the content type
+     * @param registeredServiceBody the registered service body
+     * @return the response entity
+     */
+    @PostMapping(
+        path = "/validate",
+        consumes = {
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_YAML_VALUE,
+            MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+            MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+            MEDIA_TYPE_CAS_YAML
+        }, produces = {
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_YAML_VALUE,
+            MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+            MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+            MEDIA_TYPE_CAS_YAML
+        })
+    @ResponseBody
+    @Operation(summary = "Validate registered service supplied in the request body",
+        parameters = @Parameter(name = "body", required = true, description = "The request body to contain service definition in JSON or YAML format"))
+    public ResponseEntity validateService(
+        @RequestHeader(HttpHeaders.CONTENT_TYPE) final String contentType,
+        @RequestBody
+        final String registeredServiceBody) {
+        try {
+            val isYaml = MediaType.APPLICATION_YAML.isCompatibleWith(MediaType.valueOf(contentType))
+                || MediaType.parseMediaType(MEDIA_TYPE_CAS_YAML).isCompatibleWith(MediaType.valueOf(contentType));
+            val registeredServiceSerializer = isYaml
+                    ? new RegisteredServiceYamlSerializer(applicationContext)
+                    : new RegisteredServiceJsonSerializer(applicationContext);
+            val registeredService = registeredServiceSerializer.from(registeredServiceBody);
+            return ResponseEntity.ok(registeredService != null);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        }
     }
 
 
