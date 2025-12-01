@@ -36,6 +36,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
@@ -113,6 +114,28 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
         assertNotNull(newTicketRegistry.getTicket(token.getId()));
         newTicketRegistry.deleteTicket(token);
         assertNull(newTicketRegistry.getTicket(token.getId()));
+    }
+
+    @RepeatedTest(2)
+    void verifyGetSessionsFor() {
+        val principalId = UUID.randomUUID().toString();
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
+        val ticketGrantingTicketToAdd = Stream.generate(() -> {
+                val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                    .getNewTicketId(TicketGrantingTicket.PREFIX);
+                return new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            })
+            .limit(5);
+        newTicketRegistry.addTicket(ticketGrantingTicketToAdd);
+
+        val criteria1 = new TicketRegistryQueryCriteria()
+            .setCount(5L)
+            .setDecode(Boolean.FALSE)
+            .setType(TicketGrantingTicket.PREFIX);
+        val queryResults1 = newTicketRegistry.query(criteria1);
+        assertEquals(criteria1.getCount(), queryResults1.size());
+
+        assertEquals(5, newTicketRegistry.getSessionsFor(principalId).count());
     }
 
     @RepeatedTest(2)
