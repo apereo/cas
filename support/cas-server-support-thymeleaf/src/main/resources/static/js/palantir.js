@@ -46,22 +46,35 @@ function generateServiceDefinition() {
         "@class": $("#serviceClassType").text().trim()
     }
 
-    $("#editServiceWizardGeneralContainer")
-        .find("input[data-param-name],select[data-param-name]")
+    $("form#editServiceWizardForm")
+        .find("input,select")
         .each(function () {
             const $input = $(this);
             const paramName = $input.data("param-name");
-            const value = $input.val();
+            const skipWhenFalse = $input.data("param-skip-false");
+            let value = $input.val();
+            
+            if (paramName && paramName.trim().length > 0 && value && value.trim().length > 0) {
+                if (skipWhenFalse && (value === "false" || value === false)) {
+                    console.debug(`Skipping parameter ${paramName} because its value is false`);
+                } else {
+                    const renderer = $input.data("renderer");
 
-            if (value && value.trim().length > 0) {
-                const renderer = $input.data("renderer");
-                serviceDefinition[paramName] = (typeof renderer === "function")
-                    ? renderer(value, $input, serviceDefinition)
-                    : value;
+                    if (value === "true") {
+                        value = true;
+                    } else if (value === "false") {
+                        value = false;
+                    }
+                    
+                    serviceDefinition[paramName] = (typeof renderer === "function")
+                        ? renderer(value, $input, serviceDefinition)
+                        : value;
+                }
             }
         });
     
     editor.setValue(JSON.stringify(serviceDefinition, null, 4));
+    editor.gotoLine(1);
 }
 
 function createInputField(labelName, name, param, required, containerId, title) {
