@@ -9,7 +9,7 @@
     "colors": "1.4.0",
     "crypto-js": "4.2.0",
     "dpop": "2.1.1",
-    "express": "5.1.0",
+    "express": "5.2.0",
     "figlet": "1.9.4",
     "http-cas-client": "0.4.3",
     "jose": "6.1.2",
