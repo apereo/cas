@@ -104,7 +104,7 @@
 
                 <div class="mdc-dialog modal" id="editServiceWizardDialog" role="alertdialog"
                      aria-modal="true" aria-labelledby="edit-service-dialog-title" aria-describedby="dialog-content">
-                    <div class="mdc-dialog__container w-100 modal-dialog" style="max-height: 70%">
+                    <div class="mdc-dialog__container w-100 modal-dialog" style="max-height: 85%">
                         <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
                             <div class="mdc-dialog__content modal-body" id="edit-service-wizard-dialog-content">
 
@@ -126,8 +126,7 @@
                                                 <script type="text/javascript">
                                                     createInputField("Name", "registeredServiceName", "name", true, "editServiceWizardGeneralContainer",
                                                         "Define a logical name for this application, preferably without spaces or special characters.")
-                                                        .on("input", generateServiceDefinition)
-                                                        .append($("<sub>").text(" (Required)"));
+                                                        .on("input", generateServiceDefinition);
                                                     createInputField("Service ID", "registeredServiceId", "serviceId", true, "editServiceWizardGeneralContainer",
                                                         "Define a service identifier that determines which requests are mapped to this application. This is typically a URL pattern or regular expression.")
                                                         .on("input", generateServiceDefinition);
@@ -226,8 +225,111 @@
                                                 </div>
                                               </div>
                                           </div>
-                                          <h3>Application Expiration Policy</h3>
-                                          <div id="editServiceWizardMenuItemExpirationPolicy">
+
+
+                                         <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect</h3>
+                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService" id="editServiceWizardMenuItemOAuthOidc">
+                                             <p>This section defines properties and settings applicable to OAuth or OpenID Connect relying parties. </p>
+                                             <div id="editServiceWizardOAuthOidcContainer" class="mdc-input-group-field mdc-input-group-field-append w-100">
+                                                 <script type="text/javascript">
+                                                      createInputField("Client ID", "registeredServiceClientId", "clientId", true, "editServiceWizardOAuthOidcContainer",
+                                                          "Define the client identifier for this OAuth/OpenID Connect relying party.")
+                                                          .on("input", generateServiceDefinition);
+                                                      createInputField("Client Secret", "registeredServiceClientSecret", "clientSecret", false, "editServiceWizardOAuthOidcContainer",
+                                                          "Define the client secret for this OAuth/OpenID Connect relying party.")
+                                                          .attr("type", "password")
+                                                          .on("input", generateServiceDefinition);
+                                                      createInputField("Scope(s)", "registeredServiceScopes", "scopes", false, "editServiceWizardOAuthOidcContainer",
+                                                         "Define the scope(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>openid,profile,email</code>).")
+                                                          .on("input", generateServiceDefinition)
+                                                          .data("renderer", function(value) {
+                                                              return [ "java.util.HashSet", value.split(",") ];
+                                                          });
+                                                      createInputField("Audience(s)", "registeredServiceAudience", "audience", false, "editServiceWizardOAuthOidcContainer",
+                                                          "Define the audience(s) for this OAuth/OpenID Connect relying party, separated by comma.")
+                                                          .on("input", generateServiceDefinition)
+                                                          .data("renderer", function(value) {
+                                                              return [ "java.util.HashSet", value.split(",") ];
+                                                          });
+                                                      createInputField("JWT Access Token Signing Algorithm", "registeredServiceJwtAccessTokenSigningAlg", "jwtAccessTokenSigningAlg", false, "editServiceWizardOAuthOidcContainer",
+                                                          "Define the JWT signing algorithm for access tokens issued to this OAuth/OpenID Connect relying party.")
+                                                          .on("input", generateServiceDefinition);
+                                                 </script>
+
+                                                 <section>
+                                                     <label for="registeredServiceResponseMode">
+                                                        Response Mode:
+                                                        <select id="registeredServiceResponseMode"
+                                                                data-change-handler="generateServiceDefinition"
+                                                                data-param-name="responseMode"
+                                                                class="jqueryui-selectmenu">
+                                                            <option value="" selected>DEFAULT</option>
+                                                            <option value="query">QUERY</option>
+                                                            <option value="query.jwt">QUERY JWT</option>
+                                                            <option value="fragment">FRAGMENT</option>
+                                                            <option value="fragment.jwt">FRAGMENT JWT</option>
+                                                            <option value="form_post">FORM POST</option>
+                                                            <option value="form_post.jwt">FORM POST JWT</option>
+                                                        </select>
+                                                    </label>
+                                                    <div style="padding-left: 10px"><sub><span class="mdi mdi-information-box-outline"></span>
+                                                        Specify the response mode for this OAuth/OpenID Connect relying party.
+                                                    </sub></div>
+                                                 </section>
+
+                                               <section class="pt-2">
+                                                     <label for="registeredServiceUserProfileViewType">
+                                                        User Profile View Type:
+                                                        <select id="registeredServiceUserProfileViewType"
+                                                                data-change-handler="generateServiceDefinition"
+                                                                data-param-name="userProfileViewType"
+                                                                class="jqueryui-selectmenu">
+                                                            <option value="" selected>DEFAULT</option>
+                                                            <option value="NESTED">NESTED</option>
+                                                            <option value="FLAT">FLAT</option>
+                                                        </select>
+                                                    </label>
+                                                    <div style="padding-left: 10px"><sub><span class="mdi mdi-information-box-outline"></span>
+                                                        Specify the user profile view type for this OAuth/OpenID Connect relying party.
+                                                    </sub></div>
+                                                 </section>
+
+
+                                                <div class="pt-2">
+                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassApprovalPrompt', label='#Bypass Approval Prompt')}"/>
+                                                </div>
+                                                <div class="pt-2">
+                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='generateRefreshToken', label='#Generate Refresh Token')}"/>
+                                                </div>
+                                                <div class="pt-2">
+                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='renewRefreshToken', label='#Renew Refresh Token')}"/>
+                                                </div>
+                                                 <div class="pt-2">
+                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtAccessToken', label='#JWT Access Token')}"/>
+                                                </div>
+                                                 <div class="pt-2">
+                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtRefreshToken', label='#JWT Refresh Token')}"/>
+                                                </div>
+
+                                                 <script type="text/javascript">
+                                                     $("#editServiceWizardOAuthOidcContainer input[type=hidden]")
+                                                         .each(function () {
+                                                             const id = this.id;
+                                                             $(`input#${id}`)
+                                                                 .data("param-skip-false", true)
+                                                                 .data("param-name", id);
+                                                             $(`button#${id}Button`).on("click", function(e) {
+                                                                setTimeout(() => generateServiceDefinition(), 0);
+                                                             });
+                                                         })
+                                                 </script>
+                                             </div>
+                                         </div>
+
+
+
+                                         <h3>Application Expiration Policy</h3>
+                                         <div id="editServiceWizardMenuItemExpirationPolicy">
                                               <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
                                           </div>
                                           <h3>Ticket-Granting Ticket Expiration Policy</h3>
@@ -235,24 +337,22 @@
                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
                                           </div>
 
-
-                                            <h3 class="class-CasRegisteredService">Service Ticket Expiration Policy</h3>
-                                            <div class="class-CasRegisteredService" id="editServiceWizardMenuItemSTExpirationPolicy">
-                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
-                                            </div>
-                                            <h3 class="class-CasRegisteredService">Proxy-granting Ticket Expiration Policy</h3>
-                                            <div class="class-CasRegisteredService" id="editServiceWizardMenuItemPGTExpirationPolicy">
-                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
-                                            </div>
-                                            <h3 class="class-CasRegisteredService">Proxy Ticket Expiration Policy</h3>
-                                            <div class="class-CasRegisteredService" id="editServiceWizardMenuItemPTExpirationPolicy">
-                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
-                                            </div>
-                                            <h3 class="class-CasRegisteredService">Proxy Expiration Policy</h3>
-                                            <div class="class-CasRegisteredService" id="editServiceWizardMenuItemProxyExpirationPolicy">
-                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
-                                            </div>
-
+                                         <h3 class="class-CasRegisteredService">Service Ticket Expiration Policy</h3>
+                                         <div class="class-CasRegisteredService" id="editServiceWizardMenuItemSTExpirationPolicy">
+                                          <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                         </div>
+                                         <h3 class="class-CasRegisteredService">Proxy-granting Ticket Expiration Policy</h3>
+                                         <div class="class-CasRegisteredService" id="editServiceWizardMenuItemPGTExpirationPolicy">
+                                          <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                         </div>
+                                         <h3 class="class-CasRegisteredService">Proxy Ticket Expiration Policy</h3>
+                                         <div class="class-CasRegisteredService" id="editServiceWizardMenuItemPTExpirationPolicy">
+                                          <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                         </div>
+                                         <h3 class="class-CasRegisteredService">Proxy Expiration Policy</h3>
+                                         <div class="class-CasRegisteredService" id="editServiceWizardMenuItemProxyExpirationPolicy">
+                                          <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                         </div>
 
                                           <h3>Username Attribute Provider</h3>
                                           <div id="editServiceWizardMenuItemUsernameAttribute">
@@ -313,6 +413,12 @@
                                     </div>
                                     <section class="my-3 h-350px">
                                         <pre class="ace-editor ace-relative w-100 h-100" id="wizardServiceEditor"></pre>
+
+                                        <span style="padding-left: 10px"><sub><span class="mdi mdi-information-box-outline"></span>
+                                            The editor above shows the current state of the service definition as it is being built using the wizard.
+                                            While the chosen format is JSON, the actual format of the entry used when saving may differ based on your registry configuration.
+                                            This is merely a preview of the service definition being constructed and cannot be edited directly.
+                                        </sub></span>
                                     </section>
                                 </form>
                             </div>
