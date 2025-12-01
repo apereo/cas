@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.crypto.DecodableCipher;
 import org.apereo.cas.util.crypto.EncodableCipher;
+import io.github.classgraph.ClassGraph;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,10 @@ class ReflectionUtilsTests {
 
     @Test
     void findSystemClasses() {
-        val utilClasses = ReflectionUtils.findSubclassesInPackage(Clock.class, Clock.class.getPackageName());
+        val utilClasses = ReflectionUtils.findSubclassesInPackage(
+            new ClassGraph().acceptPackages(Clock.class.getPackageName())
+                .enableSystemJarsAndModules().ignoreClassVisibility().enableClassInfo(),
+            Clock.class);
         assertThat(utilClasses).doesNotContain(Clock.class);
         assertThat(utilClasses).hasSizeGreaterThanOrEqualTo(5);
     }
