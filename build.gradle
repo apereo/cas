@@ -343,6 +343,7 @@ subprojects {
             it.options.errorprone.disableWarningsInGeneratedCode = true
             it.options.errorprone.errorproneArgs = [
                                                     '-Xep:JavaUtilDate:OFF',
+                                                    '-Xep:RequireExplicitNullMarking:OFF',
                                                     '-Xep:BooleanLiteral:OFF',
                                                     '-Xep:StringConcatToTextBlock:OFF',
                                                     '-Xep:AddressSelection:OFF'
