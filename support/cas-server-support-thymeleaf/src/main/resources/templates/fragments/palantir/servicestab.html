@@ -699,6 +699,43 @@
                                          </div>
 
 
+                                        <h3 class="class-SamlRegisteredService">SAML2</h3>
+                                        <div class="class-SamlRegisteredService"
+                                             id="editServiceWizardMenuItemSaml">
+                                             <p>This section defines properties and settings applicable to SAML2 service providers. </p>
+                                             <div id="editServiceWizardSamlContainer"
+                                                  class="mdc-input-group-field mdc-input-group-field-append w-100">
+                                                 <script type="text/javascript">
+                                                      createInputField({
+                                                          labelTitle: "Metadata Location",
+                                                          name: "registeredServiceMetadataLocation",
+                                                          paramName: "metadataLocation",
+                                                          required: true,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Define the metadata location (URL, file path, etc) for the SAML2 service provider."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Identity Provider Metadata Location",
+                                                          name: "registeredServiceIdPMetadataLocation",
+                                                          paramName: "idpMetadataLocation",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Directory location of SAML2 identity provider metadata available to CAS as an override."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Metadata Proxy Location",
+                                                          name: "registeredServiceMetadataProxyLocation",
+                                                          paramName: "metadataProxyLocation",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Proxy endpoint (i.e. <code>https://proxy-address:8901</code>) to fetch service metadata from URL resources."
+                                                      }).on("input", generateServiceDefinition);
+                                                 </script>
+                                             </div>
+                                        </div>
+
 
                                          <h3>Application Expiration Policy</h3>
                                          <div id="editServiceWizardMenuItemExpirationPolicy">
