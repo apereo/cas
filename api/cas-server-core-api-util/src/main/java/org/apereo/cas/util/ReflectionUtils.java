@@ -31,28 +31,16 @@ public class ReflectionUtils {
      * @return The - possibly empty - collection of subclasses.
      */
     public <T> Collection<Class<? extends T>> findSubclassesInPackage(final Class<T> superclass, final String... packageName) {
-        return findSubclassesInPackage(
-            new ClassGraph()
-                .acceptPackages(packageName)
-                .enableClassInfo()
-                .enableInterClassDependencies()
-                .ignoreClassVisibility()
-                .enableSystemJarsAndModules()
-                .removeTemporaryFilesAfterScan()
-                .enableAnnotationInfo()
-                .disableModuleScanning(), superclass);
-    }
-
-    /**
-     * Find subclasses in package.
-     *
-     * @param <T>        the type parameter
-     * @param classGraph the class graph
-     * @param superclass the superclass
-     * @return the collection
-     */
-    private <T> Collection<Class<? extends T>> findSubclassesInPackage(final ClassGraph classGraph, final Class<T> superclass) {
-        try (val scanResult = classGraph.scan()) {
+        try (val scanResult = new ClassGraph()
+            .acceptPackages(packageName)
+            .enableClassInfo()
+            .enableInterClassDependencies()
+            .ignoreClassVisibility()
+            .enableSystemJarsAndModules()
+            .removeTemporaryFilesAfterScan()
+            .enableAnnotationInfo()
+            .disableModuleScanning()
+            .scan()) {
             return superclass.isInterface()
                 ? new ArrayList<>(scanResult.getClassesImplementing(superclass).loadClasses(superclass))
                 : new ArrayList<>(scanResult.getSubclasses(superclass).loadClasses(superclass));
