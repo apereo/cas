@@ -471,7 +471,7 @@ form button i.mdi {
 }
 
 .pr-2 {
-    padding-right: 0.8rem;
+    padding-right: 0.8rem !important;
 }
 
 .pr-4 {

@@ -44,7 +44,7 @@ function generateServiceDefinition() {
     const editor = initializeAceEditor("wizardServiceEditor");
     let serviceDefinition = {
         "@class": $("#serviceClassType").text().trim()
-    }
+    };
 
     $("form#editServiceWizardForm")
         .find("input,select")
@@ -54,7 +54,7 @@ function generateServiceDefinition() {
             const skipWhenFalse = $input.data("param-skip-false");
             const skipWhenTrue = $input.data("param-skip-true");
             let value = $input.val();
-            
+
             if (paramName && paramName.trim().length > 0 && value && value.trim().length > 0) {
                 if (skipWhenFalse && (value === "false" || value === false)) {
                     console.debug(`Skipping parameter ${paramName} because its value is false`);
@@ -68,39 +68,95 @@ function generateServiceDefinition() {
                     } else if (value === "false") {
                         value = false;
                     }
-                    
+
                     serviceDefinition[paramName] = (typeof renderer === "function")
                         ? renderer(value, $input, serviceDefinition)
                         : value;
                 }
             }
         });
-    
+
     editor.setValue(JSON.stringify(serviceDefinition, null, 4));
     editor.gotoLine(1);
 }
 
-function createInputField(labelName, name, param, required, containerId, title) {
-    const label = $("<label>", {
-        for: name,
-        class: "mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2"
+function createSelectField(config) {
+    const {
+        containerId,
+        labelTitle,
+        paramName,
+        options,
+        helpText,
+        serviceClass = ""
+    } = config;
+
+    const selectId = `registeredService${capitalize(paramName)}`;
+    const $label = $("<label>")
+        .addClass(serviceClass ?? "")
+        .addClass("pt-2")
+        .css("display", "block")
+        .attr("for", selectId).text(`${labelTitle} `);
+
+    const $select = $("<select>")
+        .attr("id", selectId)
+        .attr("data-change-handler", "generateServiceDefinition")
+        .attr("data-param-name", paramName)
+        .addClass("jqueryui-selectmenu");
+
+    options.forEach(opt => {
+        const $opt = $("<option>")
+            .attr("value", opt.value)
+            .text(opt.text);
+
+        if (opt.selected) {
+            $opt.attr("selected", "selected");
+        }
+
+        $select.append($opt);
     });
 
-    const outline = $("<span>", { class: "mdc-notched-outline" });
-    outline.append($("<span>", { class: "mdc-notched-outline__leading" }));
+    $label.append($select);
+    
+    const $help = $("<div>")
+        .addClass(serviceClass ?? "")
+        .addClass("pb-2")
+        .css("padding-left", "10px")
+        .append($("<sub>").append($("<span>").addClass("mdi mdi-information-box-outline"), ` ${helpText}`)
+        );
+    $(`#${containerId}`).append($label, $help);
+}
 
-    const notch = $("<span>", { class: "mdc-notched-outline__notch" });
-    notch.append($("<span>", { class: "mdc-floating-label", text: labelName }));
+function createInputField(config) {
+    const {
+        labelTitle,
+        name,
+        paramName,
+        required,
+        containerId,
+        title,
+        serviceClass = ""
+    } = config;
+    
+    const label = $("<label>", {
+        for: name,
+        class: `${serviceClass ?? ""} mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2`
+    });
+
+    const outline = $("<span>", {class: "mdc-notched-outline"});
+    outline.append($("<span>", {class: "mdc-notched-outline__leading"}));
+
+    const notch = $("<span>", {class: "mdc-notched-outline__notch"});
+    notch.append($("<span>", {class: "mdc-floating-label", text: labelTitle}));
 
     outline.append(notch);
-    outline.append($("<span>", { class: "mdc-notched-outline__trailing" }));
+    outline.append($("<span>", {class: "mdc-notched-outline__trailing"}));
 
     const input = $("<input>", {
-        class: "mdc-text-field__input form-control",
+        class: `${serviceClass ?? ""} mdc-text-field__input form-control`,
         type: "text",
         id: name,
         name: name,
-        "data-param-name": param,
+        "data-param-name": paramName,
         tabindex: 0,
         size: 50,
         autocomplete: "off",
@@ -109,11 +165,13 @@ function createInputField(labelName, name, param, required, containerId, title) 
     });
 
     label.append(outline, input);
-    
+
     if (title !== undefined && title !== null && title.length > 0) {
         const subtitle = $("<sub>", {
             style: "top: -9px; padding-left: 10px"
         })
+            .addClass(serviceClass ?? "")
+            .addClass("pb-2")
             .html(title || "")
             .prepend($("<span>", {
                 class: "mdi mdi-information-box-outline"
@@ -222,7 +280,7 @@ function fetchServices(callback) {
             applicationsTable.on("draw", () => {
                 initializeServiceButtons();
             });
-            
+
             applicationsTable.search("").draw();
             saml2MetadataProvidersTable.search("").draw();
 
@@ -281,7 +339,7 @@ function initializeFooterButtons() {
             }, 0);
             return;
         }
-        
+
         if (actuatorEndpoints.registeredservices) {
             const editor = initializeAceEditor("wizardServiceEditor");
             $.ajax({
@@ -305,23 +363,23 @@ function initializeFooterButtons() {
             });
         }
     });
-    
+
     $("button[name=newServiceWizard]").off().on("click", () => {
         let inputOptions = {
-            'org.apereo.cas.services.CasRegisteredService': "CAS Client"
+            "org.apereo.cas.services.CasRegisteredService": "CAS Client"
         };
 
         if (CAS_FEATURES.includes("SAMLIdentityProvider")) {
-            inputOptions['org.apereo.cas.support.saml.services.SamlRegisteredService'] = "SAML2 Service Provider";
+            inputOptions["org.apereo.cas.support.saml.services.SamlRegisteredService"] = "SAML2 Service Provider";
         }
         if (CAS_FEATURES.includes("OpenIDConnect")) {
-            inputOptions['org.apereo.cas.services.OidcRegisteredService'] = "OpenID Connect Relying Party";
+            inputOptions["org.apereo.cas.services.OidcRegisteredService"] = "OpenID Connect Relying Party";
         }
         if (CAS_FEATURES.includes("OAuth")) {
-            inputOptions['org.apereo.cas.support.oauth.services.OAuthRegisteredService'] = "OAuth2 Relying Party";
+            inputOptions["org.apereo.cas.support.oauth.services.OAuthRegisteredService"] = "OAuth2 Relying Party";
         }
         if (CAS_FEATURES.includes("WSFederationIdentityProvider")) {
-            inputOptions['org.apereo.cas.ws.idp.services.WSFederationRegisteredService'] = "WS-Fed Service Provider";
+            inputOptions["org.apereo.cas.ws.idp.services.WSFederationRegisteredService"] = "WS-Fed Service Provider";
         }
 
 
@@ -332,7 +390,7 @@ function initializeFooterButtons() {
             editor.setReadOnly(true);
             editor.setValue("");
             editor.gotoLine(1);
-            
+
             const className = getLastWord(serviceClass);
             $("#serviceClassType").text(serviceClass);
             $("#editServiceWizardForm").data("service-class", serviceClass).data("service-class-name", className);
@@ -340,11 +398,11 @@ function initializeFooterButtons() {
             $("#editServiceWizardMenu")
                 .accordion({
                     collapsible: true,
-                    heightStyle: "content",
+                    heightStyle: "content"
                 });
 
             $(`.class-${className}`).show();
-            $("[class^='class-']").not(`.class-${className}`).hide();
+            $("[class*='class-']").not(`.class-${className}`).hide();
 
             $("#editServiceWizardMenu").accordion("refresh");
 
@@ -368,13 +426,13 @@ function initializeFooterButtons() {
 
                         Object.entries(attributes).forEach(([key, value]) => {
                             $(`input#${id}`).data(key, value);
-                        })
+                        });
                     }
-                    $(`button#${id}Button`).on("click", function(e) {
+                    $(`button#${id}Button`).on("click", function (e) {
                         setTimeout(() => generateServiceDefinition(), 0);
                     });
-                })
-            
+                });
+
             generateServiceDefinition();
             editServiceWizardDialog["open"]();
         }
@@ -428,7 +486,7 @@ function initializeFooterButtons() {
                             reader.readAsText(file);
                             reader.onload = e => {
                                 const fileContent = e.target.result;
-                                
+
                                 $.ajax({
                                     url: `${actuatorEndpoints.registeredservices}`,
                                     type: "PUT",
@@ -1499,7 +1557,7 @@ async function initializeCasSpringWebflowOperations() {
                 if (!selectedState) {
                     const allStates = Object.keys(flow.states).sort();
                     $("#webflowStateFilter").empty().append(
-                        $('<option>', {
+                        $("<option>", {
                             value: "all",
                             text: "All",
                             selected: true
@@ -1508,13 +1566,13 @@ async function initializeCasSpringWebflowOperations() {
 
                     $.each(allStates, (idx, item) => {
                         $("#webflowStateFilter").append(
-                            $('<option>', {
+                            $("<option>", {
                                 value: item,
                                 text: item
                             })
                         );
                     });
-                    $("#webflowStateFilter").selectmenu('refresh');
+                    $("#webflowStateFilter").selectmenu("refresh");
                 }
 
                 let diagramDefinition = `stateDiagram-v2\ndirection LR\n`;
@@ -1526,7 +1584,7 @@ async function initializeCasSpringWebflowOperations() {
                         if (action.startsWith("set ")) {
                             action = "Execute";
                         }
-                        
+
                         if (i === 0) {
                             diagramDefinition += `\t\t[*] --> ${action}: Then\n`;
                         } else {
@@ -1545,7 +1603,7 @@ async function initializeCasSpringWebflowOperations() {
                 } else {
                     diagramDefinition += `\t[*] --> ${flow.startState}: Start\n`;
                 }
-                
+
                 for (let entry of Object.keys(flow.states)) {
                     const state = flow.states[entry];
                     entry = entry.trim().replace(/-/g, "_");
@@ -1600,7 +1658,7 @@ async function initializeCasSpringWebflowOperations() {
                                 if (startActionState.startsWith("set ")) {
                                     startActionState = "Execute";
                                 }
-                                
+
                                 for (let i = 0; i < state.actionList.length; i++) {
                                     let action = state.actionList[i];
                                     if (action.startsWith("set ")) {
@@ -1630,7 +1688,7 @@ async function initializeCasSpringWebflowOperations() {
                         }
                     }
                 }
-                
+
                 $("#webflowMarkdownContainer").removeClass("hide");
                 $("#webflowMarkdown").empty().text(diagramDefinition);
                 const {svg, bindFunctions} = await mermaid.render("webflowDiagram", diagramDefinition);
@@ -1656,8 +1714,8 @@ async function initializeCasSpringWebflowOperations() {
             logLevel: 1,
             themeVariables: {
                 primaryColor: "deepskyblue",
-                secondaryColor: '#73e600',
-                lineColor: 'deepskyblue'
+                secondaryColor: "#73e600",
+                lineColor: "deepskyblue"
             }
         });
 
@@ -1670,7 +1728,7 @@ async function initializeCasSpringWebflowOperations() {
         $("#webflowStateFilter").empty().selectmenu({
             change: (event, data) => drawFlowStateDiagram()
         });
-        
+
         $.ajax({
             url: `${actuatorEndpoints.springWebflow}`,
             type: "GET",
@@ -1681,14 +1739,14 @@ async function initializeCasSpringWebflowOperations() {
                 const availableFlows = Object.keys(response);
                 $.each(availableFlows, (idx, item) => {
                     $("#webflowFilter").append(
-                        $('<option>', {
+                        $("<option>", {
                             value: item,
-                            text:  item.toUpperCase(),
+                            text: item.toUpperCase(),
                             selected: idx === 0
                         })
                     );
                 });
-                $("#webflowFilter").selectmenu('refresh');
+                $("#webflowFilter").selectmenu("refresh");
                 drawFlowStateDiagram();
             },
             error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown)
@@ -4289,7 +4347,7 @@ document.addEventListener("DOMContentLoaded", () => {
     $(".jqueryui-tabs").tabs().off().on("click", () => updateNavigationSidebar());
     $(".jqueryui-menu").menu();
     $(".jqueryui-selectmenu").selectmenu({
-        width: '350px',
+        width: "350px",
         change: function (event, ui) {
             const $select = $(this);
             const handlerName = $select.data("change-handler");

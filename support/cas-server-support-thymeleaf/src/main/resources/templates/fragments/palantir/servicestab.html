@@ -38,19 +38,23 @@
                             <button name="newService" id="newService"
                                     onclick="cas.openMenu();"
                                     class="mdc-button mdc-button--raised" aria-label="Create">
-                                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New</span>
+                                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus"
+                                                                   aria-hidden="true"></i>New</span>
                             </button>
                             <div class="mdc-menu mdc-menu-surface" style="min-width: max(500px, 50%);)">
-                                <ul class="mdc-list" aria-orientation="vertical"  role="menu" aria-hidden="true" tabindex="-1">
+                                <ul class="mdc-list" aria-orientation="vertical" role="menu" aria-hidden="true"
+                                    tabindex="-1">
                                     <li class="mdc-list-item pb-3" role="menuitem">
                                         <span class="mdc-list-item__ripple"></span>
-                                        <i class="mdi mdi-pencil fas fa-pencil" style="margin-top: 2px;" aria-hidden="true"></i>
+                                        <i class="mdi mdi-pencil fas fa-pencil" style="margin-top: 2px;"
+                                           aria-hidden="true"></i>
                                         <div class="text-justify">
                                             <h3>Editor</h3>
                                             <span>Create a service definition using a plain-text editor where you can directly
                                                 modify the service definition or copy-paste it into the editor from elsewhere.</span>
                                             <p></p>
-                                            <button name="newServicePlain" id="newServicePlain" class="mdc-button mdc-button--raised"
+                                            <button name="newServicePlain" id="newServicePlain"
+                                                    class="mdc-button mdc-button--raised"
                                                     aria-label="Create">
                                                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus"
                                                                                    aria-hidden="true"></i>Proceed</span>
@@ -122,105 +126,191 @@
                                           <div id="editServiceWizardMenuItemGeneral">
                                               <p>This section defines basic properties and settings that can be assigned to an application.</p>
 
-                                              <div id="editServiceWizardGeneralContainer" class="mdc-input-group-field mdc-input-group-field-append w-100">
+                                              <div id="editServiceWizardGeneralContainer"
+                                                   class="mdc-input-group-field mdc-input-group-field-append w-100">
                                                 <script type="text/javascript">
-                                                    createInputField("Name", "registeredServiceName", "name", true, "editServiceWizardGeneralContainer",
-                                                        "Define a logical name for this application, preferably without spaces or special characters.")
+                                                    createInputField({
+                                                        labelTitle: "Name",
+                                                        name: "registeredServiceName",
+                                                        paramName: "name",
+                                                        required: true,
+                                                        containerId: "editServiceWizardGeneralContainer",
+                                                        title: "Define a logical name for this application, preferably without spaces or special characters."
+                                                    })
                                                         .on("input", generateServiceDefinition);
-                                                    createInputField("Service ID", "registeredServiceId", "serviceId", true, "editServiceWizardGeneralContainer",
-                                                        "Define a service identifier that determines which requests are mapped to this application. This is typically a URL pattern or regular expression.")
-                                                        .on("input", generateServiceDefinition);
-                                                    createInputField("Description", "registeredServiceDescription", "description", false, "editServiceWizardGeneralContainer",
-                                                        "Provide a brief description of the application.")
-                                                        .on("input", generateServiceDefinition);
-                                                    createInputField("Numeric ID", "registeredServiceIdentifier", "id", false, "editServiceWizardGeneralContainer",
-                                                        "Define a unique numeric identifier for this application. Depending on your choice of registry, this ID may be auto-generated.")
-                                                        .on("input", generateServiceDefinition)
+                                                    createInputField({
+                                                        labelTitle: "Service ID",
+                                                        name: "registeredServiceId",
+                                                        paramName: "serviceId",
+                                                        required: true,
+                                                        containerId: "editServiceWizardGeneralContainer",
+                                                        title: "Define a service identifier that determines which requests are mapped to this application. This is typically a URL pattern or regular expression."
+                                                    }).on("input", generateServiceDefinition);
+
+                                                    createInputField({
+                                                        labelTitle: "Description",
+                                                        name: "registeredServiceDescription",
+                                                        paramName: "description",
+                                                        required: false,
+                                                        containerId: "editServiceWizardGeneralContainer",
+                                                        title: "Provide a brief description of the application."
+                                                    }).on("input", generateServiceDefinition);
+
+                                                    createInputField({
+                                                        labelTitle: "Numeric ID",
+                                                        name: "registeredServiceIdentifier",
+                                                        paramName: "id",
+                                                        required: false,
+                                                        containerId: "editServiceWizardGeneralContainer",
+                                                        title: "Define a unique numeric identifier for this application. Depending on your choice of registry, this ID may be auto-generated."
+                                                    }).on("input", generateServiceDefinition)
                                                         .attr("type", "number");
-                                                    createInputField("Theme", "registeredServiceTheme", "theme", false, "editServiceWizardGeneralContainer",
-                                                        "Specify a theme to customize the appearance of the login and other user interface pages for this application.")
-                                                        .on("input", generateServiceDefinition);
-                                                    createInputField("Locale", "registeredServiceLocale", "locale", false, "editServiceWizardGeneralContainer",
-                                                        "Specify a locale to customize the language and regional settings for this application.")
-                                                        .on("input", generateServiceDefinition);
-                                                    createInputField("Information URL", "registeredServiceInformationUrl", "informationUrl", false, "editServiceWizardGeneralContainer",
-                                                        "Provide a URL that points to more information about this application.")
-                                                        .on("input", generateServiceDefinition);
-                                                    createInputField("Privacy URL", "registeredServicePrivacyUrl", "privacyUrl", false, "editServiceWizardGeneralContainer",
-                                                        "Provide a URL that points to the privacy policy for this application.")
-                                                        .on("input", generateServiceDefinition);
-                                                    createInputField("Template", "registeredServiceTemplate", "templateName", false, "editServiceWizardGeneralContainer",
-                                                        "Specify a template name to apply predefined settings and configurations for this application.")
-                                                        .on("input", generateServiceDefinition);
-                                                    createInputField("Evaluation Order", "registeredServiceEvaluationOrder", "evaluationOrder", false, "editServiceWizardGeneralContainer",
-                                                        "Define the order in which this application is evaluated relative to other applications. Lower numbers indicate higher priority.")
-                                                        .on("input", generateServiceDefinition)
+
+                                                    createInputField({
+                                                        labelTitle: "Theme",
+                                                        name: "registeredServiceTheme",
+                                                        paramName: "theme",
+                                                        required: false,
+                                                        containerId: "editServiceWizardGeneralContainer",
+                                                        title: "Specify a theme to customize the appearance of the login and other user interface pages for this application."
+                                                    }).on("input", generateServiceDefinition);
+
+                                                    createInputField({
+                                                        labelTitle: "Locale",
+                                                        name: "registeredServiceLocale",
+                                                        paramName: "locale",
+                                                        required: false,
+                                                        containerId: "editServiceWizardGeneralContainer",
+                                                        title: "Specify a locale to customize the language and regional settings for this application."
+                                                    }).on("input", generateServiceDefinition);
+
+                                                    createInputField({
+                                                        labelTitle: "Information URL",
+                                                        name: "registeredServiceInformationUrl",
+                                                        paramName: "informationUrl",
+                                                        required: false,
+                                                        containerId: "editServiceWizardGeneralContainer",
+                                                        title: "Provide a URL that points to more information about this application."
+                                                    }).on("input", generateServiceDefinition);
+
+                                                    createInputField({
+                                                        labelTitle: "Privacy URL",
+                                                        name: "registeredServicePrivacyUrl",
+                                                        paramName: "privacyUrl",
+                                                        required: false,
+                                                        containerId: "editServiceWizardGeneralContainer",
+                                                        title: "Provide a URL that points to the privacy policy for this application."
+                                                    }).on("input", generateServiceDefinition);
+
+                                                    createInputField({
+                                                        labelTitle: "Template",
+                                                        name: "registeredServiceTemplate",
+                                                        paramName: "templateName",
+                                                        required: false,
+                                                        containerId: "editServiceWizardGeneralContainer",
+                                                        title: "Specify a template name to apply predefined settings and configurations for this application."
+                                                    }).on("input", generateServiceDefinition);
+
+                                                    createInputField({
+                                                        labelTitle: "Evaluation Order",
+                                                        name: "registeredServiceEvaluationOrder",
+                                                        paramName: "evaluationOrder",
+                                                        required: false,
+                                                        containerId: "editServiceWizardGeneralContainer",
+                                                        title: "Define the order in which this application is evaluated relative to other applications. Lower numbers indicate higher priority."
+                                                    }).on("input", generateServiceDefinition)
                                                         .attr("type", "number");
-                                                    createInputField("Logo", "registeredServiceEvaluationLogo", "logo", false, "editServiceWizardGeneralContainer",
-                                                        "Provide a URL to a logo image that represents this application.")
-                                                        .on("input", generateServiceDefinition);
-                                                    createInputField("Logout URL", "registeredServiceEvaluationLogoutUrl", "logoutUrl", false, "editServiceWizardGeneralContainer",
-                                                        "Specify a URL to redirect users to upon logout from this application.")
-                                                        .on("input", generateServiceDefinition);
-                                                    createInputField("Environment(s)", "registeredServiceEnvironments", "environments", false, "editServiceWizardGeneralContainer",
-                                                        "Define the environment(s), separated by comma, in which this application operates (e.g., development, staging, production)")
-                                                        .on("input", generateServiceDefinition)
-                                                        .data("renderer", function(value) {
-                                                            return [ "java.util.HashSet", value.split(",") ];
+
+                                                    createInputField({
+                                                        labelTitle: "Logo",
+                                                        name: "registeredServiceEvaluationLogo",
+                                                        paramName: "logo",
+                                                        required: false,
+                                                        containerId: "editServiceWizardGeneralContainer",
+                                                        title: "Provide a URL to a logo image that represents this application."
+                                                    }).on("input", generateServiceDefinition);
+
+                                                    createInputField({
+                                                        labelTitle: "Logout URL",
+                                                        name: "registeredServiceEvaluationLogoutUrl",
+                                                        paramName: "logoutUrl",
+                                                        required: false,
+                                                        containerId: "editServiceWizardGeneralContainer",
+                                                        title: "Specify a URL to redirect users to upon logout from this application."
+                                                    }).on("input", generateServiceDefinition);
+
+                                                    createInputField({
+                                                        labelTitle: "Environment(s)",
+                                                        name: "registeredServiceEnvironments",
+                                                        paramName: "environments",
+                                                        required: false,
+                                                        containerId: "editServiceWizardGeneralContainer",
+                                                        title: "Define the environment(s), separated by comma, in which this application operates (e.g., development, staging, production)"
+                                                    }).on("input", generateServiceDefinition)
+                                                        .data("renderer", function (value) {
+                                                            return ["java.util.HashSet", value.split(",")];
                                                         });
+
                                                 </script>
 
                                                 <section class="class-CasRegisteredService">
                                                        <script type="text/javascript">
-                                                           createInputField("Redirect URL", "registeredServiceRedirectUrl", "redirectUrl", false, "editServiceWizardGeneralContainer",
-                                                               "Define the URL to which users are redirected after successful authentication for this application.")
-                                                               .on("input", generateServiceDefinition)
-
-                                                           createInputField("Supported Protocol(s)", "registeredServiceSupportedProtocols", "supportedProtocols", false, "editServiceWizardGeneralContainer",
-                                                               "Define the supported protocol(s) for this application, separated by comma (e.g., <code>CAS10,CAS20,CAS30,SAML1</code>).")
-                                                               .on("input", generateServiceDefinition)
-                                                               .data("renderer", function(value) {
-                                                                   return [ "java.util.HashSet", value.split(",") ];
+                                                           createInputField({
+                                                               labelTitle: "Redirect URL",
+                                                               name: "registeredServiceRedirectUrl",
+                                                               paramName: "redirectUrl",
+                                                               required: false,
+                                                               containerId: "editServiceWizardGeneralContainer",
+                                                               title: "Define the URL to which users are redirected after successful authentication for this application."
+                                                           }).on("input", generateServiceDefinition);
+                                                           createInputField({
+                                                               labelTitle: "Supported Protocol(s)",
+                                                               name: "registeredServiceSupportedProtocols",
+                                                               paramName: "supportedProtocols",
+                                                               required: false,
+                                                               containerId: "editServiceWizardGeneralContainer",
+                                                               title: "Define the supported protocol(s) for this application, separated by comma (e.g., <code>CAS10,CAS20,CAS30,SAML1</code>)."
+                                                           }).on("input", generateServiceDefinition)
+                                                               .data("renderer", function (value) {
+                                                                   return ["java.util.HashSet", value.split(",")];
                                                                });
+
                                                        </script>
                                                 </section>
                                                   
                                                 <div>
-                                                    <label for="registeredServiceLogoutType">
-                                                        Logout Type:
-                                                        <select id="registeredServiceLogoutType"
-                                                                data-change-handler="generateServiceDefinition"
-                                                                data-param-name="logoutType"
-                                                                class="jqueryui-selectmenu">
-                                                            <option value="" selected>DEFAULT</option>
-                                                            <option value="BACK_CHANNEL">BACK_CHANNEL</option>
-                                                            <option value="FRONT_CHANNEL">FRONT_CHANNEL</option>
-                                                            <option value="NONE">NONE</option>
-                                                        </select>
-                                                    </label>
-                                                    <div style="padding-left: 10px"><sub><span class="mdi mdi-information-box-outline"></span>
-                                                        Specify the logout type for this application. <code>BACK_CHANNEL</code> indicates server-to-server logout,
-                                                        <code>FRONT_CHANNEL</code> indicates browser-based logout, and <code>NONE</code> indicates no logout handling.
-                                                    </sub></div>
-
+                                                    <script type="text/javascript">
+                                                        createSelectField({
+                                                            containerId: "editServiceWizardGeneralContainer",
+                                                            labelTitle: "Logout Type:",
+                                                            paramName: "logoutType",
+                                                            options: [
+                                                                {value: "", text: "DEFAULT", selected: true},
+                                                                {value: "BACK_CHANNEL", text: "BACK_CHANNEL"},
+                                                                {value: "FRONT_CHANNEL", text: "FRONT_CHANNEL"},
+                                                                {value: "NONE", text: "NONE"}
+                                                            ],
+                                                            helpText: "Specify the logout type for this application. <code>BACK_CHANNEL</code> indicates server-to-server logout, " +
+                                                                "<code>FRONT_CHANNEL</code> indicates browser-based logout, and <code>NONE</code> indicates no logout handling."
+                                                        });
+                                                    </script>
+                                                    
                                                     <section class="class-CasRegisteredService">
-                                                        <label for="registeredServiceResponseType">
-                                                            Response Type:
-                                                            <select id="registeredServiceResponseType"
-                                                                    data-change-handler="generateServiceDefinition"
-                                                                    data-param-name="responseType"
-                                                                    class="jqueryui-selectmenu">
-                                                                <option value="" selected>DEFAULT</option>
-                                                                <option value="POST">POST</option>
-                                                                <option value="REDIRECT">REDIRECT</option>
-                                                                <option value="HEADER">HEADER</option>
-                                                            </select>
-                                                        </label>
-                                                        <div style="padding-left: 10px"><sub><span class="mdi mdi-information-box-outline"></span>
-                                                            Specify the response type for this application. <code>POST</code> indicates form post,
-                                                            <code>REDIRECT</code> indicates HTTP redirect, and <code>HEADER</code> indicates HTTP header-based response.
-                                                        </sub></div>
-                                                        
+                                                        <script type="text/javascript">
+                                                             createSelectField({
+                                                                 containerId: "editServiceWizardGeneralContainer",
+                                                                 labelTitle: "Response Type:",
+                                                                 paramName: "responseType",
+                                                                 options: [
+                                                                     {value: "", text: "DEFAULT", selected: true},
+                                                                     {value: "POST", text: "POST"},
+                                                                     {value: "REDIRECT", text: "REDIRECT"},
+                                                                     {value: "HEADER", text: "HEADER"}
+                                                                 ],
+                                                                 helpText: "Specify the response type for this application. <code>POST</code> indicates form post, " +
+                                                                     "<code>REDIRECT</code> indicates HTTP redirect, and <code>HEADER</code> indicates HTTP header-based response."
+                                                             });
+                                                        </script>
                                                     </section>
                                                 </div>
                                               </div>
@@ -228,127 +318,383 @@
 
 
                                          <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect</h3>
-                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService" id="editServiceWizardMenuItemOAuthOidc">
+                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService"
+                                              id="editServiceWizardMenuItemOAuthOidc">
                                              <p>This section defines properties and settings applicable to OAuth or OpenID Connect relying parties. </p>
-                                             <div id="editServiceWizardOAuthOidcContainer" class="mdc-input-group-field mdc-input-group-field-append w-100">
+                                             <div id="editServiceWizardOAuthOidcContainer"
+                                                  class="mdc-input-group-field mdc-input-group-field-append w-100">
                                                  <script type="text/javascript">
-                                                      createInputField("Client ID", "registeredServiceClientId", "clientId", true, "editServiceWizardOAuthOidcContainer",
-                                                          "Define the client identifier for this OAuth/OpenID Connect relying party.")
+                                                      createInputField({
+                                                          labelTitle: "Client ID",
+                                                          name: "registeredServiceClientId",
+                                                          paramName: "clientId",
+                                                          required: true,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the client identifier for this OAuth/OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Client Secret",
+                                                          name: "registeredServiceClientSecret",
+                                                          paramName: "clientSecret",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the client secret for this OAuth/OpenID Connect relying party."
+                                                      }).attr("type", "password")
                                                           .on("input", generateServiceDefinition);
-                                                      createInputField("Client Secret", "registeredServiceClientSecret", "clientSecret", false, "editServiceWizardOAuthOidcContainer",
-                                                          "Define the client secret for this OAuth/OpenID Connect relying party.")
-                                                          .attr("type", "password")
+
+                                                      createInputField({
+                                                          labelTitle: "Client Secret Expiration",
+                                                          name: "registeredServiceClientSecretExpiration",
+                                                          paramName: "clientSecretExpiration",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          title: "Time, measured in UTC epoch, at which the client secret will expire or 0 if it will not expire."
+                                                      }).attr("type", "number")
                                                           .on("input", generateServiceDefinition);
-                                                      createInputField("Scope(s)", "registeredServiceScopes", "scopes", false, "editServiceWizardOAuthOidcContainer",
-                                                         "Define the scope(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>openid,profile,email</code>).")
-                                                          .on("input", generateServiceDefinition)
-                                                          .data("renderer", function(value) {
-                                                              return [ "java.util.HashSet", value.split(",") ];
+
+                                                      createInputField({
+                                                          labelTitle: "Scope(s)",
+                                                          name: "registeredServiceScopes",
+                                                          paramName: "scopes",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the scope(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>openid,profile,email</code>)."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .data("renderer", function (value) {
+                                                              return ["java.util.HashSet", value.split(",")];
                                                           });
 
-                                                      createInputField("Supported Grant Type(s)", "registeredServiceSupportedGrantTypes", "supportedGrantTypes", false, "editServiceWizardOAuthOidcContainer",
-                                                          "Define the supported grant type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>authorization_code,refresh_token,client_credentials</code>).")
-                                                          .on("input", generateServiceDefinition)
-                                                          .data("renderer", function(value) {
-                                                              return [ "java.util.HashSet", value.split(",") ];
+                                                      createInputField({
+                                                          labelTitle: "Supported Grant Type(s)",
+                                                          name: "registeredServiceSupportedGrantTypes",
+                                                          paramName: "supportedGrantTypes",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the supported grant type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>authorization_code,refresh_token,client_credentials</code>)."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .data("renderer", function (value) {
+                                                              return ["java.util.HashSet", value.split(",")];
                                                           });
 
-                                                      createInputField("Supported Response Type(s)", "registeredServiceSupportedResponseTypes", "supportedResponseTypes", false, "editServiceWizardOAuthOidcContainer",
-                                                         "Define the supported response type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>code,id_token,token</code>).")
-                                                          .on("input", generateServiceDefinition)
-                                                          .data("renderer", function(value) {
-                                                              return [ "java.util.HashSet", value.split(",") ];
+                                                      createInputField({
+                                                          labelTitle: "Supported Response Type(s)",
+                                                          name: "registeredServiceSupportedResponseTypes",
+                                                          paramName: "supportedResponseTypes",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the supported response type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>code,id_token,token</code>)."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .data("renderer", function (value) {
+                                                              return ["java.util.HashSet", value.split(",")];
                                                           });
+
+                                                      createInputField({
+                                                          labelTitle: "Audience(s)",
+                                                          name: "registeredServiceAudience",
+                                                          paramName: "audience",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the audience(s) for this OAuth/OpenID Connect relying party, separated by comma."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .data("renderer", function (value) {
+                                                              return ["java.util.HashSet", value.split(",")];
+                                                          });
+
+                                                      createInputField({
+                                                          labelTitle: "JWKS",
+                                                          name: "registeredServiceJwksUrl",
+                                                          paramName: "jwks",
+                                                          required: false,
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the JSON Web Key Set (JWKS) URL for this OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "JWKS Key ID",
+                                                          name: "registeredServiceJwksUrl",
+                                                          paramName: "jwksKeyId",
+                                                          required: false,
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the JSON Web Key Set (JWKS) Key ID in the keystore for this OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "JWKS Cache Duration",
+                                                          name: "registeredServiceCacheDuration",
+                                                          paramName: "jwksCacheDuration",
+                                                          required: false,
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the cache duration <code>PT5S</code> for the JSON Web Key Set (JWKS) for this OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "ID Token Issuer",
+                                                          name: "registeredServiceIdTokenIssuer",
+                                                          paramName: "idTokenIssuer",
+                                                          required: false,
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the ID token issuer for this OpenID Connect relying party. Override the <code>iss</code> claim in the ID Token, which should only be used in special circumstances. Do NOT use this setting carelessly as the ID token’s issuer MUST ALWAYS match the identity provider’s issuer."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "ID Token Encryption Algorithm",
+                                                          name: "registeredServiceIdTokenEncryptionAlg",
+                                                          paramName: "idTokenEncryptionAlg",
+                                                          required: false,
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the ID token encryption algorithm for this OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "ID Token Encryption Encoding",
+                                                          name: "registeredServiceIdTokenEncryptionEncoding",
+                                                          paramName: "idTokenEncryptionEncoding",
+                                                          required: false,
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the ID token encryption encoding for this OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "ID Token Signing Algorithm",
+                                                          name: "registeredServiceIdTokenSigningAlg",
+                                                          paramName: "idTokenSigningAlg",
+                                                          required: false,
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the ID token signing algorithm for this OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "User Info Signing Algorithm",
+                                                          name: "registeredServiceUserInfoSigningAlg",
+                                                          paramName: "userInfoSigningAlg",
+                                                          required: false,
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the user info signing algorithm for this OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "User Info Encryption Response Algorithm",
+                                                          name: "registeredServiceUserInfoEncryptionResponseAlg",
+                                                          paramName: "userInfoEncryptedResponseAlg",
+                                                          required: false,
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the user info encryption response algorithm for this OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "User Info Encryption Response Encoding",
+                                                          name: "registeredServiceUserInfoEncryptionResponseEncoding",
+                                                          paramName: "userInfoEncryptedResponseEncoding",
+                                                          required: false,
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the user info encryption response encoding for this OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
                                                       
-                                                      createInputField("Audience(s)", "registeredServiceAudience", "audience", false, "editServiceWizardOAuthOidcContainer",
-                                                          "Define the audience(s) for this OAuth/OpenID Connect relying party, separated by comma.")
-                                                          .on("input", generateServiceDefinition)
-                                                          .data("renderer", function(value) {
-                                                              return [ "java.util.HashSet", value.split(",") ];
-                                                          });
-                                                      createInputField("JWT Access Token Signing Algorithm", "registeredServiceJwtAccessTokenSigningAlg", "jwtAccessTokenSigningAlg", false, "editServiceWizardOAuthOidcContainer",
-                                                          "Define the JWT signing algorithm for access tokens issued to this OAuth/OpenID Connect relying party.")
-                                                          .on("input", generateServiceDefinition);
+                                                      createInputField({
+                                                          labelTitle: "JWT Access Token Signing Algorithm",
+                                                          name: "registeredServiceJwtAccessTokenSigningAlg",
+                                                          paramName: "jwtAccessTokenSigningAlg",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the JWT signing algorithm for access tokens issued to this OAuth/OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
 
-                                                      createInputField("Introspection Response Signing Algorithm", "registeredServiceIntrospectionSignedResponseAlg", "introspectionSignedResponseAlg", false, "editServiceWizardOAuthOidcContainer",
-                                                          "Define the signing algorithm for introspection responses issued to this OAuth/OpenID Connect relying party.")
-                                                          .on("input", generateServiceDefinition);
+                                                      createInputField({
+                                                          labelTitle: "Introspection Response Signing Algorithm",
+                                                          name: "registeredServiceIntrospectionSignedResponseAlg",
+                                                          paramName: "introspectionSignedResponseAlg",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the signing algorithm for introspection responses issued to this OAuth/OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
 
-                                                      createInputField("Introspection Response Encryption Algorithm", "registeredServiceIntrospectionEncryptedResponseAlg", "introspectionEncryptedResponseAlg", false, "editServiceWizardOAuthOidcContainer",
-                                                          "Define the encryption algorithm for introspection responses issued to this OAuth/OpenID Connect relying party.")
-                                                          .on("input", generateServiceDefinition);
+                                                      createInputField({
+                                                          labelTitle: "Introspection Response Encryption Algorithm",
+                                                          name: "registeredServiceIntrospectionEncryptedResponseAlg",
+                                                          paramName: "introspectionEncryptedResponseAlg",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the encryption algorithm for introspection responses issued to this OAuth/OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
 
-                                                      createInputField("Introspection Response Encryption Encoding", "registeredServiceIntrospectionEncryptedResponseEncoding", "introspectionEncryptedResponseEncoding", false, "editServiceWizardOAuthOidcContainer",
-                                                          "Define the encryption encoding for introspection responses issued to this OAuth/OpenID Connect relying party.")
-                                                          .on("input", generateServiceDefinition);
+                                                      createInputField({
+                                                          labelTitle: "Introspection Response Encryption Encoding",
+                                                          name: "registeredServiceIntrospectionEncryptedResponseEncoding",
+                                                          paramName: "introspectionEncryptedResponseEncoding",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the encryption encoding for introspection responses issued to this OAuth/OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
 
-                                                      createInputField("Token Endpoint Authentication Method", "registeredServiceTokenEndpointAuthenticationMethod", "tokenEndpointAuthenticationMethod", false, "editServiceWizardOAuthOidcContainer",
-                                                          "Define the token endpoint authentication method for this OAuth/OpenID Connect relying party. Examples include <code>client_secret_basic,client_secret_jwt,etc</code>")
-                                                          .on("input", generateServiceDefinition);
-                                                      
-                                                      createInputField("TLS Client Authentication Subject DN", "registeredServiceTlsClientAuthSubjectDn", "tlsClientAuthSubjectDn", false, "editServiceWizardOAuthOidcContainer",
-                                                          "Define the TLS client authentication subject DN for this OAuth/OpenID Connect relying party.")
-                                                          .on("input", generateServiceDefinition);
-                                                      createInputField("TLS Client Authentication SAN DNS", "registeredServiceTlsClientAuthSanDns", "tlsClientAuthSubjectDn", false, "editServiceWizardOAuthOidcContainer",
-                                                          "Define the TLS client authentication SAN DNS for this OAuth/OpenID Connect relying party.")
-                                                          .on("input", generateServiceDefinition);
-                                                      createInputField("TLS Client Authentication SAN URI", "registeredServiceTlsClientAuthSanUri", "tlsClientAuthSanUri", false, "editServiceWizardOAuthOidcContainer",
-                                                          "Define the TLS client authentication SAN URI for this OAuth/OpenID Connect relying party.")
-                                                          .on("input", generateServiceDefinition);
-                                                      createInputField("TLS Client Authentication SAN IP", "registeredServiceTlsClientAuthSanIP", "tlsClientAuthSanIp", false, "editServiceWizardOAuthOidcContainer",
-                                                          "Define the TLS client authentication SAN IP for this OAuth/OpenID Connect relying party.")
-                                                          .on("input", generateServiceDefinition);
-                                                      createInputField("TLS Client Authentication SAN Email", "registeredServiceTlsClientAuthSanEmail", "tlsClientAuthSanEmail", false, "editServiceWizardOAuthOidcContainer",
-                                                          "Define the TLS client authentication SAN email for this OAuth/OpenID Connect relying party.")
-                                                          .on("input", generateServiceDefinition);
+                                                      createInputField({
+                                                          labelTitle: "Token Endpoint Authentication Method",
+                                                          name: "registeredServiceTokenEndpointAuthenticationMethod",
+                                                          paramName: "tokenEndpointAuthenticationMethod",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the token endpoint authentication method for this OAuth/OpenID Connect relying party. Examples include <code>client_secret_basic,client_secret_jwt,etc</code>"
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "TLS Client Authentication Subject DN",
+                                                          name: "registeredServiceTlsClientAuthSubjectDn",
+                                                          paramName: "tlsClientAuthSubjectDn",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the TLS client authentication subject DN for this OAuth/OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "TLS Client Authentication SAN DNS",
+                                                          name: "registeredServiceTlsClientAuthSanDns",
+                                                          paramName: "tlsClientAuthSubjectDn",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the TLS client authentication SAN DNS for this OAuth/OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "TLS Client Authentication SAN URI",
+                                                          name: "registeredServiceTlsClientAuthSanUri",
+                                                          paramName: "tlsClientAuthSanUri",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the TLS client authentication SAN URI for this OAuth/OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "TLS Client Authentication SAN IP",
+                                                          name: "registeredServiceTlsClientAuthSanIP",
+                                                          paramName: "tlsClientAuthSanIp",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the TLS client authentication SAN IP for this OAuth/OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "TLS Client Authentication SAN Email",
+                                                          name: "registeredServiceTlsClientAuthSanEmail",
+                                                          paramName: "tlsClientAuthSanEmail",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the TLS client authentication SAN email for this OAuth/OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Application Type",
+                                                          name: "registeredServiceApplicationType",
+                                                          paramName: "applicationType",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          title: "Define the application type for this OpenID Connect relying party (e.g., <code>web, native, user_agent</code>)."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Subject Type",
+                                                          name: "registeredServiceSubjectType",
+                                                          paramName: "subjectType",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          title: "Define the subject type for this OpenID Connect relying party (e.g., <code>public,pairwise</code>)."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Sector Identifier URI",
+                                                          name: "registeredServiceSectorIdentifierUri",
+                                                          paramName: "sectorIdentifierUri",
+                                                          required: false,
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          title: "Define the sector identifier URI for this OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createSelectField({
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          labelTitle: "Backchannel Token Delivery Mode:",
+                                                          paramName: "backchannelTokenDeliveryMode",
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          options: [
+                                                              {value: "", text: "DEFAULT", selected: true},
+                                                              {value: "ping", text: "PING"},
+                                                              {value: "push", text: "PUSH"},
+                                                              {value: "pull", text: "POLL"}
+                                                          ],
+                                                          helpText: "Specify the backchannel token delivery mode for this OpenID Connect relying party."
+                                                      });
+
+                                                      createInputField({
+                                                          labelTitle: "Backchannel Client Notification Endpoint",
+                                                          name: "registeredServiceBackchannelClientNotificationEndpoint",
+                                                          paramName: "backchannelClientNotificationEndpoint",
+                                                          required: false,
+                                                          serviceClass: "class-OidcRegisteredService",
+                                                          containerId: "editServiceWizardOAuthOidcContainer",
+                                                          title: "Define the backchannel client notification endpoint for this OpenID Connect relying party."
+                                                      }).on("input", generateServiceDefinition);
                                                  </script>
 
                                                  <section>
-                                                     <label for="registeredServiceResponseMode">
-                                                        Response Mode:
-                                                        <select id="registeredServiceResponseMode"
-                                                                data-change-handler="generateServiceDefinition"
-                                                                data-param-name="responseMode"
-                                                                class="jqueryui-selectmenu">
-                                                            <option value="" selected>DEFAULT</option>
-                                                            <option value="query">QUERY</option>
-                                                            <option value="query.jwt">QUERY JWT</option>
-                                                            <option value="fragment">FRAGMENT</option>
-                                                            <option value="fragment.jwt">FRAGMENT JWT</option>
-                                                            <option value="form_post">FORM POST</option>
-                                                            <option value="form_post.jwt">FORM POST JWT</option>
-                                                        </select>
-                                                    </label>
-                                                    <div style="padding-left: 10px"><sub><span class="mdi mdi-information-box-outline"></span>
-                                                        Specify the response mode for this OAuth/OpenID Connect relying party.
-                                                    </sub></div>
+                                                     <script type="text/javascript">
+                                                         createSelectField({
+                                                             containerId: "editServiceWizardOAuthOidcContainer",
+                                                             labelTitle: "Response Mode:",
+                                                             paramName: "responseMode",
+                                                             options: [
+                                                                 {value: "", text: "DEFAULT", selected: true},
+                                                                 {value: "query", text: "QUERY"},
+                                                                 {value: "query.jwt", text: "QUERY JWT"},
+                                                                 {value: "fragment", text: "FRAGMENT"},
+                                                                 {value: "fragment.jwt", text: "FRAGMENT JWT"},
+                                                                 {value: "form_post", text: "FORM POST"},
+                                                                 {value: "form_post.jwt", text: "FORM POST JWT"}
+                                                             ],
+                                                             helpText: "Specify the response mode for this OAuth/OpenID Connect relying party."
+                                                         });
+                                                     </script>
                                                  </section>
 
                                                <section class="pt-2">
-                                                     <label for="registeredServiceUserProfileViewType">
-                                                        User Profile View Type:
-                                                        <select id="registeredServiceUserProfileViewType"
-                                                                data-change-handler="generateServiceDefinition"
-                                                                data-param-name="userProfileViewType"
-                                                                class="jqueryui-selectmenu">
-                                                            <option value="" selected>DEFAULT</option>
-                                                            <option value="NESTED">NESTED</option>
-                                                            <option value="FLAT">FLAT</option>
-                                                        </select>
-                                                    </label>
-                                                    <div style="padding-left: 10px"><sub><span class="mdi mdi-information-box-outline"></span>
-                                                        Specify the user profile view type for this OAuth/OpenID Connect relying party.
-                                                    </sub></div>
-                                                 </section>
+                                                   <script type="text/javascript">
+                                                       createSelectField({
+                                                           containerId: "editServiceWizardOAuthOidcContainer",
+                                                           labelTitle: "User Profile View Type:",
+                                                           paramName: "userProfileViewType",
+                                                           options: [
+                                                               {value: "", text: "DEFAULT", selected: true},
+                                                               {value: "NESTED", text: "NESTED"},
+                                                               {value: "FLAT", text: "FLAT"}
+                                                           ],
+                                                           helpText: "Specify the user profile view type for this OAuth/OpenID Connect relying party."
+                                                       });
+                                                   </script>
 
+                                                 </section>
 
                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassApprovalPrompt', label='#Bypass Approval Prompt', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='generateRefreshToken', label='#Generate Refresh Token', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='renewRefreshToken', label='#Renew Refresh Token', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtAccessToken', label='#JWT Access Token', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtRefreshToken', label='#JWT Refresh Token', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='signIdToken', label='#Sign ID Tokens', cssClass='class-OidcRegisteredService pt-2', dataAttrs='param-skip-true=true', selected=true)}"/>
                                                  
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='signIdToken', label='#Sign ID Tokens', cssClass='class-OidcRegisteredService pt-2', dataAttrs='param-skip-true=true', selected=true)}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptIdToken', label='#Encrypt ID Tokens', cssClass='class-OidcRegisteredService', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='idTokenEncryptionOptional', label='#Encrypt ID Tokens Optionally', cssClass='class-OidcRegisteredService pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='includeIdTokenClaims', label='#Include Claims in ID Tokens', cssClass='class-OidcRegisteredService', dataAttrs='param-skip-false=true')}"/>
+
                                              </div>
                                          </div>
 
@@ -364,45 +710,60 @@
                                           </div>
 
                                          <h3 class="class-CasRegisteredService">Service Ticket Expiration Policy</h3>
-                                         <div class="class-CasRegisteredService" id="editServiceWizardMenuItemSTExpirationPolicy">
+                                         <div class="class-CasRegisteredService"
+                                              id="editServiceWizardMenuItemSTExpirationPolicy">
                                           <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
                                          </div>
                                          <h3 class="class-CasRegisteredService">Proxy-granting Ticket Expiration Policy</h3>
-                                         <div class="class-CasRegisteredService" id="editServiceWizardMenuItemPGTExpirationPolicy">
+                                         <div class="class-CasRegisteredService"
+                                              id="editServiceWizardMenuItemPGTExpirationPolicy">
                                           <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
                                          </div>
                                          <h3 class="class-CasRegisteredService">Proxy Ticket Expiration Policy</h3>
-                                         <div class="class-CasRegisteredService" id="editServiceWizardMenuItemPTExpirationPolicy">
+                                         <div class="class-CasRegisteredService"
+                                              id="editServiceWizardMenuItemPTExpirationPolicy">
                                           <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
                                          </div>
                                          <h3 class="class-CasRegisteredService">Proxy Expiration Policy</h3>
-                                         <div class="class-CasRegisteredService" id="editServiceWizardMenuItemProxyExpirationPolicy">
+                                         <div class="class-CasRegisteredService"
+                                              id="editServiceWizardMenuItemProxyExpirationPolicy">
                                           <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
                                          </div>
 
                                         
                                          <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Code Expiration Policy</h3>
-                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService" id="editServiceWizardMenuItemOAuthOidcCodeExpirationPolicy">
+                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService"
+                                              id="editServiceWizardMenuItemOAuthOidcCodeExpirationPolicy">
                                               <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
                                          </div>
 
                                         <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Access Token Expiration Policy</h3>
-                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService" id="editServiceWizardMenuItemOAuthOidcATExpirationPolicy">
+                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService"
+                                              id="editServiceWizardMenuItemOAuthOidcATExpirationPolicy">
                                               <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
                                          </div>
 
                                         <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Refresh Token Expiration Policy</h3>
-                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService" id="editServiceWizardMenuItemOAuthOidcRTExpirationPolicy">
+                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService"
+                                              id="editServiceWizardMenuItemOAuthOidcRTExpirationPolicy">
                                               <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
                                          </div>
 
-                                        <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Device Token Expiration Policy</h3>
-                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService" id="editServiceWizardMenuItemOAuthOidcDTExpirationPolicy">
+                                         <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Device Token Expiration Policy</h3>
+                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService"
+                                              id="editServiceWizardMenuItemOAuthOidcDTExpirationPolicy">
+                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                         </div>
+
+                                         <h3 class="class-OidcRegisteredService">OpenID Connect ID Token Expiration Policy</h3>
+                                         <div class="class-OidcRegisteredService"
+                                              id="editServiceWizardMenuItemOAuthOidcITExpirationPolicy">
                                               <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
                                          </div>
 
                                         <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Token Exchange Policy</h3>
-                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService" id="editServiceWizardMenuItemOAuthOidcTokenExchangePolicy">
+                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService"
+                                              id="editServiceWizardMenuItemOAuthOidcTokenExchangePolicy">
                                               <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
                                          </div>
 
@@ -467,7 +828,8 @@
                                     <section class="my-3 h-350px">
                                         <pre class="ace-editor ace-relative w-100 h-100" id="wizardServiceEditor"></pre>
 
-                                        <span style="padding-left: 10px"><sub><span class="mdi mdi-information-box-outline"></span>
+                                        <span style="padding-left: 10px"><sub><span
+                                                class="mdi mdi-information-box-outline"></span>
                                             The editor above shows the current state of the service definition as it is being built using the wizard.
                                             While the chosen format is JSON, the actual format of the entry used when saving may differ based on your registry configuration.
                                             This is merely a preview of the service definition being constructed and cannot be edited directly.
@@ -479,11 +841,13 @@
                             <footer class="mdc-dialog__actions modal-footer pr-4">
                                 <button id="validateServiceWizard" name="validateServiceWizard" type="button"
                                         class="mdc-button mdc-button--raised btn mdc-button--lg">
-                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all" aria-hidden="true"></i>Validate</span>
+                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
+                                                                       aria-hidden="true"></i>Validate</span>
                                 </button>
                                 <button id="saveServiceWizard" name="saveServiceWizard" type="button"
                                         class="mdc-button mdc-button--raised btn mdc-button--lg">
-                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-save" aria-hidden="true"></i>Save</span>
+                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-save"
+                                                                       aria-hidden="true"></i>Save</span>
                                 </button>
                             </footer>
                         </div>
