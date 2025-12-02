@@ -48,6 +48,14 @@ function publish {
         printred "CAS version ${casVersion} cannot be a SNAPSHOT version"
         exit 1
     fi
+
+    printgreen "Verifying dependency versions for CAS release..."
+    ./gradlew verifyDependencyVersions -x test -x javadoc -x check --no-daemon --parallel
+    if [ $? -ne 0 ]; then
+        printred "Dependency version verification failed."
+        exit 1
+    fi
+        
     printgreen "Publishing CAS releases. This might take a while..."
     ./gradlew assemble publishAggregationToCentralPortal \
       --parallel --no-daemon --no-configuration-cache -x test -x check \

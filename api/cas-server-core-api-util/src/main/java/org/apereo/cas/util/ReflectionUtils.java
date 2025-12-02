@@ -51,7 +51,7 @@ public class ReflectionUtils {
      * @param superclass the superclass
      * @return the collection
      */
-    <T> Collection<Class<? extends T>> findSubclassesInPackage(final ClassGraph classGraph, final Class<T> superclass) {
+    private <T> Collection<Class<? extends T>> findSubclassesInPackage(final ClassGraph classGraph, final Class<T> superclass) {
         try (val scanResult = classGraph.scan()) {
             return superclass.isInterface()
                 ? new ArrayList<>(scanResult.getClassesImplementing(superclass).loadClasses(superclass))
