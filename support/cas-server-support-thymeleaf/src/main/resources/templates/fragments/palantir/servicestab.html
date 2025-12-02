@@ -245,6 +245,21 @@
                                                           .data("renderer", function(value) {
                                                               return [ "java.util.HashSet", value.split(",") ];
                                                           });
+
+                                                      createInputField("Supported Grant Type(s)", "registeredServiceSupportedGrantTypes", "supportedGrantTypes", false, "editServiceWizardOAuthOidcContainer",
+                                                          "Define the supported grant type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>authorization_code,refresh_token,client_credentials</code>).")
+                                                          .on("input", generateServiceDefinition)
+                                                          .data("renderer", function(value) {
+                                                              return [ "java.util.HashSet", value.split(",") ];
+                                                          });
+
+                                                      createInputField("Supported Response Type(s)", "registeredServiceSupportedResponseTypes", "supportedResponseTypes", false, "editServiceWizardOAuthOidcContainer",
+                                                         "Define the supported response type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>code,id_token,token</code>).")
+                                                          .on("input", generateServiceDefinition)
+                                                          .data("renderer", function(value) {
+                                                              return [ "java.util.HashSet", value.split(",") ];
+                                                          });
+                                                      
                                                       createInputField("Audience(s)", "registeredServiceAudience", "audience", false, "editServiceWizardOAuthOidcContainer",
                                                           "Define the audience(s) for this OAuth/OpenID Connect relying party, separated by comma.")
                                                           .on("input", generateServiceDefinition)
@@ -253,6 +268,38 @@
                                                           });
                                                       createInputField("JWT Access Token Signing Algorithm", "registeredServiceJwtAccessTokenSigningAlg", "jwtAccessTokenSigningAlg", false, "editServiceWizardOAuthOidcContainer",
                                                           "Define the JWT signing algorithm for access tokens issued to this OAuth/OpenID Connect relying party.")
+                                                          .on("input", generateServiceDefinition);
+
+                                                      createInputField("Introspection Response Signing Algorithm", "registeredServiceIntrospectionSignedResponseAlg", "introspectionSignedResponseAlg", false, "editServiceWizardOAuthOidcContainer",
+                                                          "Define the signing algorithm for introspection responses issued to this OAuth/OpenID Connect relying party.")
+                                                          .on("input", generateServiceDefinition);
+
+                                                      createInputField("Introspection Response Encryption Algorithm", "registeredServiceIntrospectionEncryptedResponseAlg", "introspectionEncryptedResponseAlg", false, "editServiceWizardOAuthOidcContainer",
+                                                          "Define the encryption algorithm for introspection responses issued to this OAuth/OpenID Connect relying party.")
+                                                          .on("input", generateServiceDefinition);
+
+                                                      createInputField("Introspection Response Encryption Encoding", "registeredServiceIntrospectionEncryptedResponseEncoding", "introspectionEncryptedResponseEncoding", false, "editServiceWizardOAuthOidcContainer",
+                                                          "Define the encryption encoding for introspection responses issued to this OAuth/OpenID Connect relying party.")
+                                                          .on("input", generateServiceDefinition);
+
+                                                      createInputField("Token Endpoint Authentication Method", "registeredServiceTokenEndpointAuthenticationMethod", "tokenEndpointAuthenticationMethod", false, "editServiceWizardOAuthOidcContainer",
+                                                          "Define the token endpoint authentication method for this OAuth/OpenID Connect relying party. Examples include <code>client_secret_basic,client_secret_jwt,etc</code>")
+                                                          .on("input", generateServiceDefinition);
+                                                      
+                                                      createInputField("TLS Client Authentication Subject DN", "registeredServiceTlsClientAuthSubjectDn", "tlsClientAuthSubjectDn", false, "editServiceWizardOAuthOidcContainer",
+                                                          "Define the TLS client authentication subject DN for this OAuth/OpenID Connect relying party.")
+                                                          .on("input", generateServiceDefinition);
+                                                      createInputField("TLS Client Authentication SAN DNS", "registeredServiceTlsClientAuthSanDns", "tlsClientAuthSubjectDn", false, "editServiceWizardOAuthOidcContainer",
+                                                          "Define the TLS client authentication SAN DNS for this OAuth/OpenID Connect relying party.")
+                                                          .on("input", generateServiceDefinition);
+                                                      createInputField("TLS Client Authentication SAN URI", "registeredServiceTlsClientAuthSanUri", "tlsClientAuthSanUri", false, "editServiceWizardOAuthOidcContainer",
+                                                          "Define the TLS client authentication SAN URI for this OAuth/OpenID Connect relying party.")
+                                                          .on("input", generateServiceDefinition);
+                                                      createInputField("TLS Client Authentication SAN IP", "registeredServiceTlsClientAuthSanIP", "tlsClientAuthSanIp", false, "editServiceWizardOAuthOidcContainer",
+                                                          "Define the TLS client authentication SAN IP for this OAuth/OpenID Connect relying party.")
+                                                          .on("input", generateServiceDefinition);
+                                                      createInputField("TLS Client Authentication SAN Email", "registeredServiceTlsClientAuthSanEmail", "tlsClientAuthSanEmail", false, "editServiceWizardOAuthOidcContainer",
+                                                          "Define the TLS client authentication SAN email for this OAuth/OpenID Connect relying party.")
                                                           .on("input", generateServiceDefinition);
                                                  </script>
 
@@ -295,34 +342,13 @@
                                                  </section>
 
 
-                                                <div class="pt-2">
-                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassApprovalPrompt', label='#Bypass Approval Prompt')}"/>
-                                                </div>
-                                                <div class="pt-2">
-                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='generateRefreshToken', label='#Generate Refresh Token')}"/>
-                                                </div>
-                                                <div class="pt-2">
-                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='renewRefreshToken', label='#Renew Refresh Token')}"/>
-                                                </div>
-                                                 <div class="pt-2">
-                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtAccessToken', label='#JWT Access Token')}"/>
-                                                </div>
-                                                 <div class="pt-2">
-                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtRefreshToken', label='#JWT Refresh Token')}"/>
-                                                </div>
-
-                                                 <script type="text/javascript">
-                                                     $("#editServiceWizardOAuthOidcContainer input[type=hidden]")
-                                                         .each(function () {
-                                                             const id = this.id;
-                                                             $(`input#${id}`)
-                                                                 .data("param-skip-false", true)
-                                                                 .data("param-name", id);
-                                                             $(`button#${id}Button`).on("click", function(e) {
-                                                                setTimeout(() => generateServiceDefinition(), 0);
-                                                             });
-                                                         })
-                                                 </script>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassApprovalPrompt', label='#Bypass Approval Prompt', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='generateRefreshToken', label='#Generate Refresh Token', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='renewRefreshToken', label='#Renew Refresh Token', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtAccessToken', label='#JWT Access Token', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtRefreshToken', label='#JWT Refresh Token', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='signIdToken', label='#Sign ID Tokens', cssClass='class-OidcRegisteredService pt-2', dataAttrs='param-skip-true=true', selected=true)}"/>
+                                                 
                                              </div>
                                          </div>
 
@@ -354,6 +380,33 @@
                                           <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
                                          </div>
 
+                                        
+                                         <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Code Expiration Policy</h3>
+                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService" id="editServiceWizardMenuItemOAuthOidcCodeExpirationPolicy">
+                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                         </div>
+
+                                        <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Access Token Expiration Policy</h3>
+                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService" id="editServiceWizardMenuItemOAuthOidcATExpirationPolicy">
+                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                         </div>
+
+                                        <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Refresh Token Expiration Policy</h3>
+                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService" id="editServiceWizardMenuItemOAuthOidcRTExpirationPolicy">
+                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                         </div>
+
+                                        <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Device Token Expiration Policy</h3>
+                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService" id="editServiceWizardMenuItemOAuthOidcDTExpirationPolicy">
+                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                         </div>
+
+                                        <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Token Exchange Policy</h3>
+                                         <div class="class-OAuthRegisteredService class-OidcRegisteredService" id="editServiceWizardMenuItemOAuthOidcTokenExchangePolicy">
+                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                         </div>
+
+                                        
                                           <h3>Username Attribute Provider</h3>
                                           <div id="editServiceWizardMenuItemUsernameAttribute">
                                             <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>

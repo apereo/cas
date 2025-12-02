@@ -52,11 +52,14 @@ function generateServiceDefinition() {
             const $input = $(this);
             const paramName = $input.data("param-name");
             const skipWhenFalse = $input.data("param-skip-false");
+            const skipWhenTrue = $input.data("param-skip-true");
             let value = $input.val();
             
             if (paramName && paramName.trim().length > 0 && value && value.trim().length > 0) {
                 if (skipWhenFalse && (value === "false" || value === false)) {
                     console.debug(`Skipping parameter ${paramName} because its value is false`);
+                } else if (skipWhenTrue && (value === "true" || value === true)) {
+                    console.debug(`Skipping parameter ${paramName} because its value is true`);
                 } else {
                     const renderer = $input.data("renderer");
 
@@ -350,6 +353,28 @@ function initializeFooterButtons() {
             $(editServiceWizardDialogElement).attr("newService", true);
             $(editServiceWizardDialogElement).attr("serviceClass", serviceClass);
 
+            $("#editServiceWizardOAuthOidcContainer input[type=hidden]")
+                .each(function () {
+                    const id = this.id;
+
+                    const data = $(`input#${id}`).data("attrs");
+                    if (data && data.length > 0) {
+                        const attributes = Object.fromEntries(
+                            data.split(",").map(pair => {
+                                const [key, val] = pair.split("=");
+                                return [key, val === "true" ? true : val === "false" ? false : val];
+                            })
+                        );
+
+                        Object.entries(attributes).forEach(([key, value]) => {
+                            $(`input#${id}`).data(key, value);
+                        })
+                    }
+                    $(`button#${id}Button`).on("click", function(e) {
+                        setTimeout(() => generateServiceDefinition(), 0);
+                    });
+                })
+            
             generateServiceDefinition();
             editServiceWizardDialog["open"]();
         }
