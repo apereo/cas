@@ -37,6 +37,10 @@ function getLastWord(str) {
     return parts.slice(-1).join(".");
 }
 
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function formatDateYearMonthDayHourMinute(date) {
     const d = new Date(date);
     const year = d.getFullYear();
