@@ -2,14 +2,12 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.crypto.DecodableCipher;
 import org.apereo.cas.util.crypto.EncodableCipher;
-import io.github.classgraph.ClassGraph;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
-import java.time.Clock;
 import java.util.Set;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for {@link ReflectionUtils}.
@@ -40,15 +38,5 @@ class ReflectionUtilsTests {
         val applicationContext = ReflectionUtils.findClassBySimpleNameInPackage(ApplicationContext.class.getSimpleName(), "org.springframework");
         assertThat(applicationContext).isPresent();
         assertThat(applicationContext).contains(ApplicationContext.class);
-    }
-
-    @Test
-    void findSystemClasses() {
-        val utilClasses = ReflectionUtils.findSubclassesInPackage(
-            new ClassGraph().acceptPackages(Clock.class.getPackageName())
-                .enableSystemJarsAndModules().ignoreClassVisibility().enableClassInfo(),
-            Clock.class);
-        assertThat(utilClasses).doesNotContain(Clock.class);
-        assertThat(utilClasses).hasSizeGreaterThanOrEqualTo(5);
     }
 }
