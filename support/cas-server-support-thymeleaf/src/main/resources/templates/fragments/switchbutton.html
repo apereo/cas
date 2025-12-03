@@ -54,7 +54,7 @@
         <div th:id="${id + 'checkBoxPanel'}" class="form-check form-switch"
              th:classappend="${cssClass ?: ''}"
              style="display: none">
-            <input type="checkbox" class="form-check-input" th:id="${id}" th:name="${id}" />
+            <input type="checkbox" class="form-check-input" th:data-attrs="${dataAttrs ?: ''}" th:id="${id}" th:name="${id}" />
             <label class="form-check-label" th:for="${id}" th:id="${id + 'ButtonLabel'}" th:utext="#{${label}}">Switch Me</label>
         </div>
 

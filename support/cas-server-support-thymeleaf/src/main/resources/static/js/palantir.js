@@ -411,7 +411,7 @@ function initializeFooterButtons() {
             $(editServiceWizardDialogElement).attr("newService", true);
             $(editServiceWizardDialogElement).attr("serviceClass", serviceClass);
 
-            $("#editServiceWizardOAuthOidcContainer input[type=hidden]")
+            $("#editServiceWizardForm input[type=hidden]")
                 .each(function () {
                     const id = this.id;
 
@@ -1711,7 +1711,7 @@ async function initializeCasSpringWebflowOperations() {
             startOnLoad: false,
             securityLevel: "loose",
             theme: "base",
-            logLevel: 1,
+            logLevel: 3,
             themeVariables: {
                 primaryColor: "deepskyblue",
                 secondaryColor: "#73e600",
