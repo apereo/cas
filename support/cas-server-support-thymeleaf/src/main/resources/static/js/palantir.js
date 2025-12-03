@@ -41,43 +41,49 @@ const CAS_FEATURES = [];
 let notyf = null;
 
 function generateServiceDefinition() {
-    const editor = initializeAceEditor("wizardServiceEditor");
-    let serviceDefinition = {
-        "@class": $("#serviceClassType").text().trim()
-    };
+    setTimeout(function() {
+        const editor = initializeAceEditor("wizardServiceEditor");
+        let serviceDefinition = {
+            "@class": $("#serviceClassType").text().trim()
+        };
 
-    $("form#editServiceWizardForm")
-        .find("input,select")
-        .each(function () {
-            const $input = $(this);
-            const paramName = $input.data("param-name");
-            const skipWhenFalse = $input.data("param-skip-false");
-            const skipWhenTrue = $input.data("param-skip-true");
-            let value = $input.val();
+        $("form#editServiceWizardForm")
+            .find("input,select")
+            .each(function () {
+                const $input = $(this);
+                const paramName = $input.data("param-name");
+                const skipWhenFalse = $input.data("param-skip-false");
+                const skipWhenTrue = $input.data("param-skip-true");
+                let value = $input.val();
 
-            if (paramName && paramName.trim().length > 0 && value && value.trim().length > 0) {
-                if (skipWhenFalse && (value === "false" || value === false)) {
-                    console.debug(`Skipping parameter ${paramName} because its value is false`);
-                } else if (skipWhenTrue && (value === "true" || value === true)) {
-                    console.debug(`Skipping parameter ${paramName} because its value is true`);
-                } else {
-                    const renderer = $input.data("renderer");
+                if (paramName && paramName.trim().length > 0 && value && value.trim().length > 0) {
+                    if (skipWhenFalse && (value === "false" || value === false)) {
+                        console.debug(`Skipping parameter ${paramName} because its value is false`);
+                    } else if (skipWhenTrue && (value === "true" || value === true)) {
+                        console.debug(`Skipping parameter ${paramName} because its value is true`);
+                    } else {
+                        const renderer = $input.data("renderer");
 
-                    if (value === "true") {
-                        value = true;
-                    } else if (value === "false") {
-                        value = false;
+                        if (value === "true") {
+                            value = true;
+                        } else if (value === "false") {
+                            value = false;
+                        }
+
+                        serviceDefinition[paramName] = (typeof renderer === "function")
+                            ? renderer(value, $input, serviceDefinition)
+                            : value;
                     }
-
-                    serviceDefinition[paramName] = (typeof renderer === "function")
-                        ? renderer(value, $input, serviceDefinition)
-                        : value;
                 }
-            }
-        });
+            });
 
-    editor.setValue(JSON.stringify(serviceDefinition, null, 4));
-    editor.gotoLine(1);
+        if (Object.keys(serviceDefinition).length > 1) {
+            editor.setValue(JSON.stringify(serviceDefinition, null, 4));
+        } else {
+            editor.setValue("");
+        }
+        editor.gotoLine(1);
+    }, 1000);
 }
 
 function createSelectField(config) {
