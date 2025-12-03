@@ -317,7 +317,7 @@
                                           </div>
 
 
-                                         <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect</h3>
+                                         <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Relying Party</h3>
                                          <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                               id="editServiceWizardMenuItemOAuthOidc">
                                              <p>This section defines properties and settings applicable to OAuth or OpenID Connect relying parties. </p>
@@ -699,7 +699,7 @@
                                          </div>
 
 
-                                        <h3 class="class-SamlRegisteredService">SAML2</h3>
+                                        <h3 class="class-SamlRegisteredService">SAML2 Service Provider</h3>
                                         <div class="class-SamlRegisteredService"
                                              id="editServiceWizardMenuItemSaml">
                                              <p>This section defines properties and settings applicable to SAML2 service providers. </p>
@@ -732,7 +732,382 @@
                                                           containerId: "editServiceWizardSamlContainer",
                                                           title: "Proxy endpoint (i.e. <code>https://proxy-address:8901</code>) to fetch service metadata from URL resources."
                                                       }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Metadata Max Validity",
+                                                          name: "registeredServiceMetadataMaxValidity",
+                                                          paramName: "metadataMaxValidity",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines a filter that requires the presence of a <code>ValidUntil</code> attribute on the root element of the metadata document."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .attr("type", "number");
+
+                                                      createInputField({
+                                                          labelTitle: "Metadata Signature Location",
+                                                          name: "registeredServiceMetadataSignatureLocation",
+                                                          paramName: "metadataSignatureLocation",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Location of the metadata signing certificate/public key to validate the metadata which must be defined from system files or classpath. If defined, will enforce the <code>SignatureValidationFilter</code> validation filter on metadata."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .attr("type", "number");
+
+                                                      createInputField({
+                                                          labelTitle: "Required Authentication Context Class",
+                                                          name: "registeredServiceRequiredAuthenticationContextClass",
+                                                          paramName: "requiredAuthenticationContextClass",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "If defined, will specify the SAML authentication context class in the final response."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Required NameID Format",
+                                                          name: "registeredServiceRequiredNameIdFormat",
+                                                          paramName: "requiredNameIdFormat",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "If defined, will force the indicated Name ID format in the final SAML response. "
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "NameID Qualifier",
+                                                          name: "registeredServiceNameIdQualifier",
+                                                          paramName: "nameIdQualifier",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines the NameID qualifier to be used in SAML responses."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Service Provider NameID Qualifier",
+                                                          name: "registeredServiceSPNameIdQualifier",
+                                                          paramName: "serviceProviderNameIdQualifier",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines the Service Provider NameID qualifier to be used in SAML responses."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Issuer Entity ID",
+                                                          name: "registeredServiceIssuerEntityId",
+                                                          paramName: "issuerEntityId",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "If defined, will override the issuer value with the given identity provider entity id. This may be useful in cases where CAS needs to maintain multiple identity provider entity ids."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Subject Locality",
+                                                          name: "registeredServiceSubjectLocality",
+                                                          paramName: "subjectLocality",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "If defined, will overwrite the <code>SubjectLocality</code> attribute of the SAML2 authentication statement."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Logout Response Binding",
+                                                          name: "registeredServiceLogoutResponseBinding",
+                                                          paramName: "logoutResponseBinding",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines the logout response binding to use when sending SAML logout responses to the service provider."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Assertion Audience",
+                                                          name: "registeredServiceAssertionAudience",
+                                                          paramName: "assertionAudiences",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines a comma-separated list of audience values to include in SAML assertions."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Encryptable Attributes",
+                                                          name: "registeredServiceEncryptableAttributes",
+                                                          paramName: "encryptableAttributes",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines a comma-separated list of attribute names that should be encrypted in SAML assertions."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .data("renderer", function (value) {
+                                                              return ["java.util.HashSet", value.split(",")];
+                                                          });
+
+                                                      createInputField({
+                                                          labelTitle: "Skew Allowance",
+                                                          name: "registeredServiceSkewAllowance",
+                                                          paramName: "skewAllowance",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "If defined, indicates number of seconds used to skew authentication dates such as valid-from and valid-until elements, etc."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .attr("type", "number");
+                                                      
+                                                      createInputField({
+                                                          labelTitle: "Signing Signature Reference Digest Methods",
+                                                          name: "registeredServiceSigningSignatureReferenceDigestMethods",
+                                                          paramName: "signingSignatureReferenceDigestMethods",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines a comma-separated list of digest methods to use when signing SAML messages."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .data("renderer", function (value) {
+                                                              return ["java.util.ArrayList", value.split(",")];
+                                                          });
+
+                                                      createInputField({
+                                                          labelTitle: "Signing Signature Algorithms",
+                                                          name: "registeredServiceSigningSignatureAlgorithms",
+                                                          paramName: "signingSignatureAlgorithms",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines a comma-separated list of signature algorithms to use when signing SAML messages."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .data("renderer", function (value) {
+                                                              return ["java.util.ArrayList", value.split(",")];
+                                                          });
+
+                                                      createInputField({
+                                                          labelTitle: "Signing Signature Blacklisted Algorithms",
+                                                          name: "registeredServiceSigningSignatureBlackListedAlgorithms",
+                                                          paramName: "signingSignatureBlackListedAlgorithms",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines a comma-separated list of blacklisted signature algorithms to avoid when signing SAML messages."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .data("renderer", function (value) {
+                                                              return ["java.util.ArrayList", value.split(",")];
+                                                          });
+
+                                                      createInputField({
+                                                          labelTitle: "Signing Signature Whitelisted Algorithms",
+                                                          name: "registeredServiceSigningSignatureWhiteListedAlgorithms",
+                                                          paramName: "signingSignatureBlackListedAlgorithms",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines a comma-separated list of whitelisted signature algorithms to avoid when signing SAML messages."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .data("renderer", function (value) {
+                                                              return ["java.util.ArrayList", value.split(",")];
+                                                          });
+
+                                                      createInputField({
+                                                          labelTitle: "Whitelist/Blacklist Precedence",
+                                                          name: "registeredServiceWhiteListBlackListPrecedence",
+                                                          paramName: "whiteListBlackListPrecedence",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines the precedence of whitelists/blacklists when selecting algorithms for signing/encryption. Accepted values are <code>INCLUDE</code> or <code>EXCLUDE</code>."
+                                                      })
+                                                          .css("text-transform", "uppercase")
+                                                          .on("input", function () {
+                                                              const value = $(this).val().toUpperCase();
+                                                              $(this).val(value);
+                                                          })
+                                                          .on("input", generateServiceDefinition);
+                                                      
+                                                      createInputField({
+                                                          labelTitle: "Encryption Data Algorithms",
+                                                          name: "registeredServiceEncryptionDataAlgorithms",
+                                                          paramName: "encryptionDataAlgorithms",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines a comma-separated list of data encryption algorithms to use when encrypting SAML assertions."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .data("renderer", function (value) {
+                                                              return ["java.util.ArrayList", value.split(",")];
+                                                          });
+
+                                                      createInputField({
+                                                          labelTitle: "Encryption Key Algorithms",
+                                                          name: "registeredServiceEncryptionKeyAlgorithms",
+                                                          paramName: "encryptionKeyAlgorithms",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines a comma-separated list of key encryption algorithms to use when encrypting SAML assertions."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .data("renderer", function (value) {
+                                                              return ["java.util.ArrayList", value.split(",")];
+                                                          });
+
+                                                      createInputField({
+                                                          labelTitle: "Encryption Blacklisted Algorithms",
+                                                          name: "registeredServiceEncryptionBlackListedAlgorithms",
+                                                          paramName: "encryptionBlackListedAlgorithms",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines a comma-separated list of blacklisted algorithms to avoid when encrypting SAML assertions."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .data("renderer", function (value) {
+                                                              return ["java.util.ArrayList", value.split(",")];
+                                                          });
+                                                      createInputField({
+                                                          labelTitle: "Encryption Whitelisted Algorithms",
+                                                          name: "registeredServiceEncryptionWhiteListedAlgorithms",
+                                                          paramName: "encryptionWhiteListedAlgorithms",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines a comma-separated list of whitelisted algorithms to avoid when encrypting SAML assertions."
+                                                      }).on("input", generateServiceDefinition)
+                                                          .data("renderer", function (value) {
+                                                              return ["java.util.ArrayList", value.split(",")];
+                                                          });
+
+
+                                                      createSelectField({
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          labelTitle: "Sign Assertions:",
+                                                          paramName: "signAssertions",
+                                                          options: [
+                                                              {value: "UNDEFINED", text: "UNDEFINED"},
+                                                              {value: "TRUE", text: "TRUE"},
+                                                              {value: "", text: "FALSE", selected: true},
+                                                          ],
+                                                          helpText: "Specify whether SAML assertions should be signed for this service provider."
+                                                      });
+
+                                                      createSelectField({
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          labelTitle: "Sign Responses:",
+                                                          paramName: "signResponses",
+                                                          options: [
+                                                              {value: "UNDEFINED", text: "UNDEFINED"},
+                                                              {value: "", text: "TRUE", selected: true},
+                                                              {value: "FALSE", text: "FALSE"},
+                                                          ],
+                                                          helpText: "Specify whether SAML assertions should be signed for this service provider."
+                                                      });
+
+                                                      createSelectField({
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          labelTitle: "Sign Logout Responses:",
+                                                          paramName: "signLogoutResponse",
+                                                          options: [
+                                                              {value: "", text: "UNDEFINED", selected: true},
+                                                              {value: "TRUE", text: "TRUE"},
+                                                              {value: "FALSE", text: "FALSE"},
+                                                          ],
+                                                          helpText: "Specify whether SAML assertions should be signed for this service provider."
+                                                      });
+
+                                                      createSelectField({
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          labelTitle: "Sign Logout Requests:",
+                                                          paramName: "signLogoutRequest",
+                                                          options: [
+                                                              {value: "", text: "UNDEFINED", selected: true},
+                                                              {value: "TRUE", text: "TRUE"},
+                                                              {value: "FALSE", text: "FALSE"},
+                                                          ],
+                                                          helpText: "Specify whether SAML assertions should be signed for this service provider."
+                                                      });
+
+                                                      createInputField({
+                                                          labelTitle: "Metadata Criteria Direction",
+                                                          name: "registeredServiceMetadataCriteriaDirection",
+                                                          paramName: "metadataCriteriaDirection",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines the metadata criteria direction (e.g. INCLUDE or EXCLUDE)."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Metadata Criteria Pattern",
+                                                          name: "registeredServiceMetadataCriteriaPattern",
+                                                          paramName: "metadataCriteriaPattern",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines the pattern used to filter metadata entities according to the criteria."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Metadata Expiration Duration",
+                                                          name: "registeredServiceMetadataExpirationDuration",
+                                                          paramName: "metadataExpirationDuration",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines how long metadata is considered valid (e.g., an ISO-8601 duration like PT60M)."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Signing Credential Fingerprint",
+                                                          name: "registeredServiceSigningCredentialFingerprint",
+                                                          paramName: "signingCredentialFingerprint",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Specifies the fingerprint of the signing credential used for SAML signing operations."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Signing Key Algorithm",
+                                                          name: "registeredServiceSigningKeyAlgorithm",
+                                                          paramName: "signingKeyAlgorithm",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines the algorithm used for signing keys"
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Metadata Criteria Roles",
+                                                          name: "registeredServiceMetadataCriteriaRoles",
+                                                          paramName: "metadataCriteriaRoles",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines the metadata role(s) used when filtering entities (i.e. `SPSSODescriptor`, `IDPSSODescriptor`)."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Signing Credential Type",
+                                                          name: "registeredServiceSigningCredentialType",
+                                                          paramName: "signingCredentialType",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Specifies the type of signing credential used (e.g., X509, BASIC)."
+                                                      }).on("input", generateServiceDefinition);
+
+                                                      createInputField({
+                                                          labelTitle: "Signature Canonicalization Algorithm",
+                                                          name: "registeredServiceSigningSignatureCanonicalizationAlgorithm",
+                                                          paramName: "signingSignatureCanonicalizationAlgorithm",
+                                                          required: false,
+                                                          containerId: "editServiceWizardSamlContainer",
+                                                          title: "Defines which canonicalization algorithm is used for XML signature processing."
+                                                      }).on("input", generateServiceDefinition);
+
                                                  </script>
+
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='logoutResponseEnabled', label='#Send Logout Response', cssClass='pt-2', selected=true, dataAttrs='param-skip-true=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='requireSignedRoot', label='#Require Metadata Root Signed', cssClass='pt-2', selected=true, dataAttrs='param-skip-true=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='metadataCriteriaRemoveEmptyEntitiesDescriptors', label='#Remove Empty Entities Descriptors', selected=true, cssClass='pt-2', dataAttrs='param-skip-true=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='metadataCriteriaRemoveRolelessEntityDescriptors', label='#Remove Roleless Entity Descriptors', selected=true, cssClass='pt-2', dataAttrs='param-skip-true=true')}"/>
+
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='validateMetadataCertificates', label='#Validate Metadata Certificates', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='signUnsolicitedAuthnRequest', label='#Sign Unsolicited AuthnRequest', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSessionNotOnOrAfter', label='#Skip Generating Session NotOnOrAfter', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingAssertionNameId', label='#Skip Generating Assertion NameID', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationInResponseTo', label='#Skip Generating SubjectConfirmation InResponseTo', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='isSkipGeneratingResponseInResponseTo', label='#Skip Generating Response InResponseTo', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationNotOnOrAfter', label='#Skip Generating SubjectConfirmation NotOnOrAfter', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationRecipient', label='#Skip Generating SubjectConfirmation Recipient', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationAddress', label='#Skip Generating SubjectConfirmation Address', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationNotBefore', label='#Skip Generating SubjectConfirmation NotBefore', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationNameId', label='#Skip Generating SubjectConfirmation NameID', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingNameIdQualifiers', label='#Skip Generating NameID Qualifiers', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingTransientNameId', label='#Skip Generating Transient NameID', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipValidatingAuthnRequest', label='#Skip Validating AuthnRequest', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingServiceProviderNameIdQualifier', label='#Skip Generating SP NameID Qualifier', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingAuthenticatingAuthority', label='#Skip Generating Authenticating Authority', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingNameIdQualifier', label='#Skip Generating NameID Qualifier', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptAssertions', label='#Encrypt Assertions', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptAttributes', label='#Encrypt Attributes', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptionOptional', label='#Encryption Optional', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+
                                              </div>
                                         </div>
 
