@@ -474,6 +474,10 @@ form button i.mdi {
     padding-right: 0.8rem !important;
 }
 
+.pr-3 {
+    padding-right: 1rem !important;
+}
+
 .pr-4 {
     padding-right: 1.2rem;
 }
@@ -628,6 +632,17 @@ span button.toolbar {
 .mdc-button.btn-primary:not(:disabled):hover,
 .mdc-button.btn-primary:not(:disabled):focus-visible {
     background-color: var(--cas-theme-button-bg-hover, dodgerblue);
+}
+
+.mdc-button--round {
+    padding-top: 0px !important;
+    border-radius: 100px !important;
+}
+
+.mdc-button--inline-row {
+    height: 54px !important;
+    border-radius: 0px 9px 0px 0px !important;
+    margin-left: 2px !important;
 }
 
 .mdc-button--lg {
