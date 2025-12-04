@@ -141,13 +141,14 @@
                                                         title: "Define a logical name for this application, preferably without spaces or special characters.",
                                                     })
                                                         .on("input", generateServiceDefinition);
+                                                    
                                                     createInputField({
                                                         labelTitle: "Service ID",
                                                         name: "registeredServiceId",
                                                         paramName: "serviceId",
                                                         required: true,
                                                         containerId: "editServiceWizardGeneralContainer",
-                                                        title: "Define a service identifier that determines which requests are mapped to this application. This is typically a URL pattern or regular expression."
+                                                        title: "Define a pattern that determines which requests are mapped to this application. This is typically a URL pattern or a regular regular expression."
                                                     }).on("input", generateServiceDefinition);
 
                                                     createInputField({
@@ -1432,7 +1433,7 @@
                                           <div id="editServiceWizardMenuItemAttributeReleasePolicy">
 
                                           </div>
-                                         <h3>Multifactor Authentication Policy</h3>
+                                          <h3 id="registeredServiceMfaPolicy">Multifactor Authentication Policy</h3>
                                           <div id="editServiceWizardMenuItemMfaPolicy">
 
                                           </div>
@@ -1460,7 +1461,7 @@
                                           <div id="editServiceWizardMenuItemPublicKey">
 
                                           </div>
-                                        <h3 class="advanced-option">Acceptable Usage Policy</h3>
+                                        <h3 id="registeredServiceAcceptableUsagePolicy" class="advanced-option">Acceptable Usage Policy</h3>
                                           <div id="editServiceWizardMenuItemAUP">
 
                                           </div>
@@ -1468,15 +1469,15 @@
                                           <div id="editServiceWizardMenuItemSSOParticipationPolicy">
 
                                           </div>
-                                        <h3 class="advanced-option">Webflow Interrupt Policy</h3>
+                                        <h3 id="registeredServiceWebflowInterruptPolicy" class="advanced-option">Webflow Interrupt Policy</h3>
                                           <div id="editServiceWizardMenuItemWebflowInterruptPolicy">
 
                                           </div>
-                                        <h3 class="advanced-option">Passwordless Policy</h3>
+                                        <h3 id="registeredServicePasswordlessPolicy"  class="advanced-option">Passwordless Policy</h3>
                                           <div id="editServiceWizardMenuItemPasswordlessPolicy">
 
                                           </div>
-                                        <h3 class="advanced-option">Surrogate (Impersonation) Policy</h3>
+                                        <h3 id="registeredServiceSurrogatePolicy" class="advanced-option">Surrogate (Impersonation) Policy</h3>
                                           <div id="editServiceWizardMenuItemSurrogatePolicy">
                                             
                                           </div>

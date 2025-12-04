@@ -47,6 +47,22 @@ function hideAdvancedRegisteredServiceOptions() {
     } else {
         $("form#editServiceWizardForm .advanced-option").show();
     }
+
+    if (Object.keys(availableMultifactorProviders).length === 0) {
+        $("#registeredServiceMfaPolicy").hide();
+    }
+    if (!CAS_FEATURES.includes("AcceptableUsagePolicy")) {
+        $("#registeredServiceAcceptableUsagePolicy").hide();
+    }
+    if (!CAS_FEATURES.includes("InterruptNotifications")) {
+        $("#registeredServiceWebflowInterruptPolicy").hide();
+    }
+    if (!CAS_FEATURES.includes("PasswordlessAuthn")) {
+        $("#registeredServicePasswordlessPolicy").hide();
+    }
+    if (!CAS_FEATURES.includes("SurrogateAuthentication")) {
+        $("#registeredServiceSurrogatePolicy").hide();
+    }
 }
 
 function generateServiceDefinition() {
@@ -289,6 +305,7 @@ function createInputField(config) {
 
     const label = $("<label>", {
         for: name,
+        id: `${name}Label`,
         class: `${serviceClass ?? ""} mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2 ${cssClasses ?? ""}`
     });
 
@@ -483,9 +500,7 @@ function initializeFooterButtons() {
 
             $("#editServiceWizardForm .ui-accordion-content:visible input:visible").each(function () {
                 const input = $(this);
-                console.log("Checking input:", input);
                 valid = input.get(0).checkValidity();
-                console.log(valid);
                 if (!valid) {
                     input.get(0).reportValidity();
                     return false;
@@ -495,7 +510,6 @@ function initializeFooterButtons() {
                 return false;
             }
         });
-        console.log("Form validity:", valid);
         if (valid) {
             const currentIndex = $("#editServiceWizardMenu").accordion("option", "active");
             if (originalIndex !== currentIndex) {
@@ -524,30 +538,9 @@ function initializeFooterButtons() {
                 });
             }
         }
-
-
-
-
     });
 
     $("button[name=newServiceWizard]").off().on("click", () => {
-        let inputOptions = {
-            "org.apereo.cas.services.CasRegisteredService": "CAS Client"
-        };
-
-        if (CAS_FEATURES.includes("SAMLIdentityProvider")) {
-            inputOptions["org.apereo.cas.support.saml.services.SamlRegisteredService"] = "SAML2 Service Provider";
-        }
-        if (CAS_FEATURES.includes("OpenIDConnect")) {
-            inputOptions["org.apereo.cas.services.OidcRegisteredService"] = "OpenID Connect Relying Party";
-        }
-        if (CAS_FEATURES.includes("OAuth")) {
-            inputOptions["org.apereo.cas.support.oauth.services.OAuthRegisteredService"] = "OAuth2 Relying Party";
-        }
-        if (CAS_FEATURES.includes("WSFederationIdentityProvider")) {
-            inputOptions["org.apereo.cas.ws.idp.services.WSFederationRegisteredService"] = "WS-Fed Service Provider";
-        }
-
 
         function openWizardDialog(serviceClass) {
             $("#editServiceWizardGeneralContainer").find("input").val("");
@@ -605,21 +598,43 @@ function initializeFooterButtons() {
             generateServiceDefinition();
             editServiceWizardDialog["open"]();
 
-            $("#hideAdvancedOptionsButton").click();
+            const value = $("#hideAdvancedOptions").val();
+            if (value === "false" || value === false) {
+                $("#hideAdvancedOptionsButton").click();
+            }
             hideAdvancedRegisteredServiceOptions();
+
+            switch (className) {
+            case "CasRegisteredService":
+                $("#registeredServiceIdLabel span.mdc-floating-label").text("Service ID");
+                break;
+            case "SamlRegisteredService":
+                $("#registeredServiceIdLabel span.mdc-floating-label").text("Entity ID");
+                break;
+            case "OAuthRegisteredService":
+            case "OidcRegisteredService":
+                $("#registeredServiceIdLabel span.mdc-floating-label").text("Redirect URI");
+                break;
+            }
             setTimeout(function () {
                 $("#editServiceWizardForm input:visible:enabled").first().focus();
             }, 200);
         }
 
-        if (Object.keys(inputOptions).length === 1) {
-            openWizardDialog(Object.keys(inputOptions)[0]);
+        if (Object.keys(supportedServiceTypes).length === 1) {
+            openWizardDialog(Object.keys(supportedServiceTypes)[0]);
         } else {
+            const sortedServiceTypes = Object.keys(supportedServiceTypes)
+                .sort()
+                .reduce((acc, key) => {
+                    acc[key] = supportedServiceTypes[key];
+                    return acc;
+                }, {});
             Swal.fire({
                 title: "What type of application do you want to add?",
                 input: "select",
                 icon: "question",
-                inputOptions: inputOptions,
+                inputOptions: sortedServiceTypes,
                 inputPlaceholder: "Select an application type...",
                 showCancelButton: true
             }).then((result) => {
