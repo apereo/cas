@@ -95,14 +95,18 @@ function generateServiceDefinition() {
     }, 250);
 }
 
-function generateMappedFieldValue(sectionId) {
+function generateMappedFieldValue(sectionId, multipleValues = false) {
     const definition = {};
     const inputs = $(`#${sectionId}`).find("input");
     for (let i = 0; i < inputs.length; i += 2) {
         const key = $(inputs[i]).val();
         const value = $(inputs[i + 1]).val();
         if (key && key.trim().length > 0 && value && value.trim().length > 0) {
-            definition[key] = value;
+            if (multipleValues) {
+                definition[key] = ["java.util.ArrayList", value.split(",")];
+            } else {
+                definition[key] = value;
+            }
         }
     }
     return {"@class": "java.util.TreeMap", ...definition};
@@ -115,7 +119,8 @@ function createMappedInputField(config) {
         valueField,
         containerField,
         keyLabel = "",
-        valueLabel = ""
+        valueLabel = "",
+        multipleValues = false
     } = config;
 
     const sectionContainerId = `registeredService${capitalize(keyField)}Container`;
@@ -204,7 +209,7 @@ function createMappedInputField(config) {
 
     function configureInputRenderer() {
         $(`#${sectionContainerId} input`).data("renderer", function () {
-            return generateMappedFieldValue(sectionContainerId);
+            return generateMappedFieldValue(sectionContainerId, multipleValues);
         });
     }
 
