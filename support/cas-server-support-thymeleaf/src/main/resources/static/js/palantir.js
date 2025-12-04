@@ -604,6 +604,8 @@ function initializeFooterButtons() {
 
             generateServiceDefinition();
             editServiceWizardDialog["open"]();
+
+            $("#hideAdvancedOptionsButton").click();
             hideAdvancedRegisteredServiceOptions();
             setTimeout(function () {
                 $("#editServiceWizardForm input:visible:enabled").first().focus();
