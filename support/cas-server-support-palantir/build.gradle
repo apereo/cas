@@ -44,8 +44,6 @@ dependencies {
     runtimeOnly libraries.webjars
     runtimeOnly libraries.webjarspalantir
 
-
-
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-person-directory")
