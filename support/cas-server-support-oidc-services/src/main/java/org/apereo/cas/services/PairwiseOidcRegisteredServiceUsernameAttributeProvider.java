@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import org.springframework.web.util.UriComponentsBuilder;
 import java.io.Serial;
 
@@ -64,7 +65,7 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
         return id;
     }
 
-    private static String getSectorIdentifier(final OidcRegisteredService client) {
+    private static @Nullable String getSectorIdentifier(final OidcRegisteredService client) {
         if (StringUtils.isNotBlank(client.getSectorIdentifierUri())) {
             val uri = UriComponentsBuilder.fromUriString(client.getSectorIdentifierUri()).build();
             return uri.getHost();
