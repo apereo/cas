@@ -29,7 +29,7 @@
         </script>
         <div th:id="${id + 'SwitchButtonPanel'}" th:classappend="${cssClass ?: ''}" style="display: none">
             <button th:id="${id + 'Button'}" th:name="${id + 'Button'}"
-                    class="mdc-switch"
+                    class="mdc-switch" th:title="${title ?: ''}"
                     th:classappend="${#cas.isTrue(selected) ? 'mdc-switch--selected class' : 'mdc-switch--unselected'}"
                     type="button" role="switch" th:aria-checked="${#cas.isTrue(selected) ? 'true' : 'false'}">
                 <div class="mdc-switch__track"></div>

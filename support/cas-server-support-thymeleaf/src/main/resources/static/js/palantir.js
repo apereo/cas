@@ -95,9 +95,22 @@ function generateServiceDefinition() {
                             value = false;
                         }
 
-                        serviceDefinition[paramName] = (typeof renderer === "function")
-                            ? renderer(value, $input, serviceDefinition)
-                            : value;
+                        if (typeof renderer === "function") {
+                            console.debug(`Rendering parameter ${paramName} using custom renderer`);
+                            serviceDefinition[paramName] = renderer(value, $input, serviceDefinition);
+                        } else if (paramName.includes(".")) {
+                            console.log("Processing nested parameter:", paramName);
+                            const parts = paramName.split(".");
+                            let current = serviceDefinition;
+                            parts.forEach((part, index) => {
+                                if (!current[part]) {
+                                    current[part] = (index === parts.length - 1) ? value : {};
+                                }
+                                current = current[part];
+                            });
+                        } else {
+                            serviceDefinition[paramName] = value;
+                        }
                     }
                 }
             });
@@ -108,7 +121,7 @@ function generateServiceDefinition() {
             editor.setValue("");
         }
         editor.gotoLine(1);
-    }, 250);
+    }, 150);
 }
 
 function generateMappedFieldValue(sectionId, multipleValues = false) {
@@ -250,20 +263,22 @@ function createSelectField(config) {
         options,
         helpText,
         serviceClass = "",
-        cssClasses = ""
+        cssClasses = "",
+        changeEventHandlers = "",
     } = config;
 
     const selectId = `registeredService${capitalize(paramName)}`;
     const $label = $("<label>")
         .addClass(serviceClass ?? "")
         .addClass("pt-2")
+        .addClass("mb-2")
         .addClass(cssClasses ?? "")
         .css("display", "block")
         .attr("for", selectId).text(`${labelTitle} `);
 
     const $select = $("<select>")
         .attr("id", selectId)
-        .attr("data-change-handler", "generateServiceDefinition")
+        .attr("data-change-handler", `${changeEventHandlers},generateServiceDefinition`)
         .attr("data-param-name", paramName)
         .addClass("jqueryui-selectmenu");
 
@@ -271,7 +286,11 @@ function createSelectField(config) {
         const $opt = $("<option>")
             .attr("value", opt.value)
             .text(opt.text);
-
+        if (opt.data && Object.keys(opt.data).length > 0) {
+            Object.entries(opt.data).forEach(([key, value]) => {
+                $opt.data(key, value);
+            });
+        }
         if (opt.selected) {
             $opt.attr("selected", "selected");
         }
@@ -280,15 +299,16 @@ function createSelectField(config) {
     });
 
     $label.append($select);
+    
 
-    const $help = $("<div>")
-        .addClass(serviceClass ?? "")
-        .addClass("pb-2")
-        .addClass(cssClasses ?? "")
-        .css("padding-left", "10px")
-        .append($("<sub>").append($("<span>").addClass("mdi mdi-information-box-outline"), ` ${helpText}`)
-        );
-    $(`#${containerId}`).append($label, $help);
+    const container = $("<span>", {
+        id: `${name}SelectContainer`,
+        class: `${serviceClass ?? ""} ${cssClasses ?? ""}`
+    });
+    $(container).append($label);
+    
+    $(`#${containerId}`).append(container);
+    return $select;
 }
 
 function createInputField(config) {
@@ -333,22 +353,13 @@ function createInputField(config) {
 
     label.append(outline, input);
 
-    if (title !== undefined && title !== null && title.length > 0) {
-        const subtitle = $("<sub>", {
-            style: "top: -9px; padding-left: 10px"
-        })
-            .addClass(serviceClass ?? "")
-            .addClass(cssClasses ?? "")
-            .addClass("pb-2")
-            .html(title || "")
-            .prepend($("<span>", {
-                class: "mdi mdi-information-box-outline"
-            }));
-
-        $(`#${containerId}`).append(label, subtitle);
-    } else {
-        $(`#${containerId}`).append(label);
-    }
+    const container = $("<span>", {
+        id: `${name}FieldContainer`,
+        class: `${serviceClass ?? ""} ${cssClasses ?? ""}`
+    });
+    
+    $(container).append(label);
+    $(`#${containerId}`).append(container);
     return input;
 }
 
@@ -4540,9 +4551,15 @@ document.addEventListener("DOMContentLoaded", () => {
         width: "350px",
         change: function (event, ui) {
             const $select = $(this);
-            const handlerName = $select.data("change-handler");
-            if (handlerName && typeof window[handlerName] === "function") {
-                window[handlerName]($select, ui);
+            const handlerNames = $select.data("change-handler").split(",");
+            for (const handlerName of handlerNames) {
+                if (handlerName && handlerName.length > 0 && typeof window[handlerName] === "function") {
+                    console.log("Invoking change handler:", handlerName);
+                    const result = window[handlerName]($select, ui);
+                    if (result !== undefined && result === false) {
+                        break;
+                    }
+                }
             }
         }
     });

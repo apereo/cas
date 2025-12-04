@@ -138,10 +138,10 @@
                                                         paramName: "name",
                                                         required: true,
                                                         containerId: "editServiceWizardGeneralContainer",
-                                                        title: "Define a logical name for this application, preferably without spaces or special characters.",
+                                                        title: "Define a logical name for this application, preferably without spaces or special characters."
                                                     })
                                                         .on("input", generateServiceDefinition);
-                                                    
+
                                                     createInputField({
                                                         labelTitle: "Service ID",
                                                         name: "registeredServiceId",
@@ -768,7 +768,7 @@
                                                           paramName: "idpMetadataLocation",
                                                           required: false,
                                                           containerId: "editServiceWizardSamlContainer",
-                                                          title: "Directory location of SAML2 identity provider metadata available to CAS as an override.",
+                                                          title: "Directory location of SAML2 identity provider metadata available to CAS as an override."
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
@@ -1187,7 +1187,8 @@
                                                  <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptAttributes', label='#Encrypt Attributes', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
                                                  <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptionOptional', label='#Encryption Optional', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
 
-                                                 <section class="pt-4 advanced-option" id="editServiceWizardSamlAttributeNameFormatsContainer">
+                                                 <section class="pt-4 advanced-option"
+                                                          id="editServiceWizardSamlAttributeNameFormatsContainer">
                                                      <h3>Attribute Name Formats</h3>
                                                      <script type="text/javascript">
                                                          createMappedInputField({
@@ -1201,7 +1202,8 @@
                                                      </script>
                                                  </section>
 
-                                                 <section class="pt-4 advanced-option" id="editServiceWizardSamlAttributeFriendlyNamesContainer">
+                                                 <section class="pt-4 advanced-option"
+                                                          id="editServiceWizardSamlAttributeFriendlyNamesContainer">
                                                      <h3>Attribute Friendly Names</h3>
                                                      <script type="text/javascript">
                                                          createMappedInputField({
@@ -1215,7 +1217,8 @@
                                                      </script>
                                                  </section>
 
-                                                 <section class="pt-4 advanced-option" id="editServiceWizardSamlAttributeValueTypesContainer">
+                                                 <section class="pt-4 advanced-option"
+                                                          id="editServiceWizardSamlAttributeValueTypesContainer">
                                                      <h3>Attribute Value Types</h3>
                                                      <script type="text/javascript">
                                                          createMappedInputField({
@@ -1229,7 +1232,8 @@
                                                      </script>
                                                  </section>
 
-                                                 <section class="pt-4 advanced-option" id="editServiceWizardSamlMetadataCriteriaEntityAttributesContainer">
+                                                 <section class="pt-4 advanced-option"
+                                                          id="editServiceWizardSamlMetadataCriteriaEntityAttributesContainer">
                                                      <h3>Metadata Criteria Entity Attributes</h3>
                                                      <script type="text/javascript">
                                                          createMappedInputField({
@@ -1423,11 +1427,149 @@
                                               id="editServiceWizardMenuItemOAuthOidcTokenExchangePolicy">
 
                                          </div>
-
                                         
                                           <h3>Username Attribute Provider</h3>
                                           <div id="editServiceWizardMenuItemUsernameAttribute">
+                                               <script type="text/javascript">
+                                                   function handleUsernameAttributeProviderChange(select) {
+                                                       const type = getLastWord($(select).val());
+                                                       $(`#editServiceWizardMenuItemUsernameAttribute .${type}`).show();
+                                                       $("#editServiceWizardMenuItemUsernameAttribute [id$='FieldContainer']")
+                                                           .not(`.${type}`)
+                                                           .not(".DefaultRegisteredServiceUsernameProvider")
+                                                           .hide();
+                                                       $("#editServiceWizardMenuItemUsernameAttribute [id$='FieldContainer'] input")
+                                                           .val("");
+                                                       
+                                                       const hideDefaults = $(select).find(":selected").data("hideDefaults");
+                                                       if (hideDefaults) {
+                                                           $("#editServiceWizardMenuItemUsernameAttribute .DefaultRegisteredServiceUsernameProvider").hide();
+                                                       } else {
+                                                           $("#editServiceWizardMenuItemUsernameAttribute .DefaultRegisteredServiceUsernameProvider").show();
+                                                       }
+                                                   }
 
+                                                   createSelectField({
+                                                       containerId: "editServiceWizardMenuItemUsernameAttribute",
+                                                       labelTitle: "Type:",
+                                                       paramName: "usernameAttributeProvider",
+                                                       options: [
+                                                           {
+                                                               value: "org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider",
+                                                               text: "DEFAULT",
+                                                               selected: true
+                                                           },
+                                                           {
+                                                               value: "org.apereo.cas.services.StaticRegisteredServiceUsernameProvider",
+                                                               text: "STATIC",
+                                                               data: {
+                                                                   hideDefaults: true
+                                                               }
+                                                           },
+                                                           {
+                                                               value: "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
+                                                               text: "ANONYMOUS",
+                                                               data: {
+                                                                   hideDefaults: true
+                                                               }
+                                                           },
+                                                           {
+                                                               value: "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
+                                                               text: "GROOVY"
+                                                           },
+                                                           {
+                                                               value: "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+                                                               text: "PRINCIPAL ATTRIBUTE"
+                                                           }
+                                                       ],
+                                                       helpText: "Specifies the strategy to determine the username attribute.",
+                                                       changeEventHandlers: "handleUsernameAttributeProviderChange"
+                                                   }).data("renderer", function (value) {
+                                                       return {"@class": value};
+                                                   });
+
+                                                   createInputField({
+                                                       cssClasses: "hide StaticRegisteredServiceUsernameProvider",
+                                                       labelTitle: "Value",
+                                                       name: "registeredServiceUsernameAttributeStaticValue",
+                                                       paramName: "usernameAttributeProvider.value",
+                                                       required: false,
+                                                       containerId: "editServiceWizardMenuItemUsernameAttribute",
+                                                       title: "Specifies the static value to be used as the username."
+
+                                                   }).on("input", generateServiceDefinition);
+
+                                                   createInputField({
+                                                       cssClasses: "hide PrincipalAttributeRegisteredServiceUsernameProvider",
+                                                       labelTitle: "Username Attribute",
+                                                       name: "registeredServiceUsernameAttributeUsernameAttribute",
+                                                       paramName: "usernameAttributeProvider.usernameAttribute",
+                                                       required: false,
+                                                       containerId: "editServiceWizardMenuItemUsernameAttribute",
+                                                       title: "Specifies the principal attribute to be used as the username."
+
+                                                   }).on("input", generateServiceDefinition);
+                                                   
+                                                   createInputField({
+                                                       cssClasses: "hide GroovyRegisteredServiceUsernameProvider",
+                                                       labelTitle: "Groovy Script",
+                                                       name: "registeredServiceUsernameAttributeGroovyValue",
+                                                       paramName: "usernameAttributeProvider.groovyScript",
+                                                       required: false,
+                                                       containerId: "editServiceWizardMenuItemUsernameAttribute",
+                                                       title: "Specifies the Groovy script location, inline or external, to be used to generate the username."
+
+                                                   }).on("input", generateServiceDefinition);
+
+                                                   createInputField({
+                                                       cssClasses: "DefaultRegisteredServiceUsernameProvider",
+                                                       labelTitle: "Scope",
+                                                       name: "registeredServiceUsernameAttributeScope",
+                                                       paramName: "usernameAttributeProvider.scope",
+                                                       required: false,
+                                                       containerId: "editServiceWizardMenuItemUsernameAttribute",
+                                                       title: "Specifies the scope to be appended to the username."
+                                                   }).on("input", generateServiceDefinition);
+
+                                                   createInputField({
+                                                       cssClasses: "DefaultRegisteredServiceUsernameProvider",
+                                                       labelTitle: "Remove Pattern",
+                                                       name: "registeredServiceUsernameAttributeRemovePattern",
+                                                       paramName: "usernameAttributeProvider.removePattern",
+                                                       required: false,
+                                                       containerId: "editServiceWizardMenuItemUsernameAttribute",
+                                                       title: "Specifies a regex pattern to remove from the username."
+                                                   }).on("input", generateServiceDefinition);
+
+                                                   createSelectField({
+                                                       cssClasses: "DefaultRegisteredServiceUsernameProvider",
+                                                       containerId: "editServiceWizardMenuItemUsernameAttribute",
+                                                       labelTitle: "Canonicalization Mode:",
+                                                       paramName: "usernameAttributeProvider.canonicalizationMode",
+                                                       options: [
+                                                           {
+                                                               value: "",
+                                                               text: "NONE",
+                                                               selected: true
+                                                           },
+                                                           {
+                                                               value: "UPPER",
+                                                               text: "UPPER",
+                                                           },
+                                                           {
+                                                               value: "LOWER",
+                                                               text: "LOWER",
+                                                           },
+                                                       ],
+                                                       helpText: "Specifies the canonicalization mode for the username."
+                                                   });
+                                                   
+                                               </script>
+
+                                               <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptUsername',
+                                                    title='Encrypting the username requires a public key to be defined for the registered service',
+                                                    label='#Encrypt Username', cssClass='pt-2,DefaultRegisteredServiceUsernameProvider',
+                                                    dataAttrs='param-skip-false=true,param-name=usernameAttributeProvider.encryptUsername')}"/>
                                           </div>
                                          <h3>Attribute Release Policy</h3>
                                           <div id="editServiceWizardMenuItemAttributeReleasePolicy">
@@ -1473,7 +1615,7 @@
                                           <div id="editServiceWizardMenuItemWebflowInterruptPolicy">
 
                                           </div>
-                                        <h3 id="registeredServicePasswordlessPolicy"  class="advanced-option">Passwordless Policy</h3>
+                                        <h3 id="registeredServicePasswordlessPolicy" class="advanced-option">Passwordless Policy</h3>
                                           <div id="editServiceWizardMenuItemPasswordlessPolicy">
 
                                           </div>
