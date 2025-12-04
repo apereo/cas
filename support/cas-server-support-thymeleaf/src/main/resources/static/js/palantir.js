@@ -40,8 +40,17 @@ const CAS_FEATURES = [];
 
 let notyf = null;
 
+function hideAdvancedRegisteredServiceOptions() {
+    const value = $("#hideAdvancedOptions").val();
+    if (value === "true" || value === true) {
+        $("form#editServiceWizardForm .advanced-option").hide();
+    } else {
+        $("form#editServiceWizardForm .advanced-option").show();
+    }
+}
+
 function generateServiceDefinition() {
-    setTimeout(function() {
+    setTimeout(function () {
         const editor = initializeAceEditor("wizardServiceEditor");
         let serviceDefinition = {
             "@class": $("#serviceClassType").text().trim()
@@ -83,7 +92,133 @@ function generateServiceDefinition() {
             editor.setValue("");
         }
         editor.gotoLine(1);
-    }, 1000);
+    }, 250);
+}
+
+function generateMappedFieldValue(sectionId) {
+    const definition = {};
+    const inputs = $(`#${sectionId}`).find("input");
+    for (let i = 0; i < inputs.length; i += 2) {
+        const key = $(inputs[i]).val();
+        const value = $(inputs[i + 1]).val();
+        if (key && key.trim().length > 0 && value && value.trim().length > 0) {
+            definition[key] = value;
+        }
+    }
+    return {"@class": "java.util.TreeMap", ...definition};
+}
+
+function createMappedInputField(config) {
+    const {
+        containerId,
+        keyField,
+        valueField,
+        containerField,
+        keyLabel = "",
+        valueLabel = ""
+    } = config;
+
+    const sectionContainerId = `registeredService${capitalize(keyField)}Container`;
+    const addButtonId = `registeredService${capitalize(keyField)}AddButton`;
+    const removeButtonId = `registeredService${capitalize(keyField)}RemoveButton`;
+    const mapRowId = `registeredService${capitalize(keyField)}Row`;
+
+    const inputFieldKeyId = `registeredService${capitalize(keyField)}`;
+    const inputFieldValueId = `registeredService${capitalize(valueField)}`;
+    const rowElements = `
+            <div class="d-flex justify-content-between pt-2 ${keyField}-map-row" id="${mapRowId}">
+                <label for="${keyField}"
+                       class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label">
+                    <span class="mdc-notched-outline pr-2">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span class="mdc-floating-label">${keyLabel ?? ""}</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                    <input class="mdc-text-field__input form-control"
+                           id="${inputFieldKeyId}"
+                           name="${inputFieldKeyId}"
+                           size="25"
+                           type="text"
+                           data-param-name="${containerField}"
+                           required="true"/>
+                </label>
+
+                <label for="${valueField}"
+                       class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label">
+                    <span class="mdc-notched-outline">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span class="mdc-floating-label">${valueLabel ?? ""}</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                    <input class="mdc-text-field__input form-control"
+                           id="${inputFieldValueId}"
+                           name="${inputFieldValueId}"
+                           size="25"
+                           type="text"
+                           data-param-name="${containerField}"
+                           required="true"/>
+                </label>
+
+                <button type="button"
+                        id="${removeButtonId}"
+                        name="${removeButtonId}"
+                        class="mdc-button mdc-button--raised btn btn-link mdc-button--inline-row">
+                    <i class="mdi mdi-trash-can" aria-hidden="true"></i>
+                </button>
+            </div>
+    `;
+    const fields = $(`
+        <div id="${sectionContainerId}">
+            ${rowElements}
+        </div>
+        <div class="d-flex pt-2">
+            <button type="button" 
+                    name="${addButtonId}"
+                    id="${addButtonId}"
+                    class="mdc-button mdc-button--raised mdc-button--round add-row">
+                <span class="mdc-button__label">
+                    <i class="mdc-tab__icon mdi mdi-plus-thick" aria-hidden="true"></i>
+                </span>
+            </button>
+        </div>
+    `);
+
+    $(`#${containerId}`).append(fields);
+
+    function configureRemoveMapRowEventHandler() {
+        $(`button[name=${removeButtonId}]`).off().on("click", function () {
+            $(this).closest(`.${keyField}-map-row`).remove();
+            generateServiceDefinition();
+        });
+    }
+
+    function configureInputEventHandler() {
+        $(`#${sectionContainerId} input`).off().on("input", () => {
+            generateServiceDefinition();
+        });
+    }
+
+    function configureInputRenderer() {
+        $(`#${sectionContainerId} input`).data("renderer", function () {
+            return generateMappedFieldValue(sectionContainerId);
+        });
+    }
+
+    $(`button[name=${addButtonId}]`).off().on("click", () => {
+        $(`#${sectionContainerId}`).append(rowElements);
+        configureRemoveMapRowEventHandler();
+        cas.attachFields();
+        configureInputEventHandler();
+        configureInputRenderer();
+    });
+
+    configureRemoveMapRowEventHandler();
+    configureInputEventHandler();
+    configureInputRenderer();
 }
 
 function createSelectField(config) {
@@ -93,13 +228,15 @@ function createSelectField(config) {
         paramName,
         options,
         helpText,
-        serviceClass = ""
+        serviceClass = "",
+        cssClasses = ""
     } = config;
 
     const selectId = `registeredService${capitalize(paramName)}`;
     const $label = $("<label>")
         .addClass(serviceClass ?? "")
         .addClass("pt-2")
+        .addClass(cssClasses ?? "")
         .css("display", "block")
         .attr("for", selectId).text(`${labelTitle} `);
 
@@ -122,10 +259,11 @@ function createSelectField(config) {
     });
 
     $label.append($select);
-    
+
     const $help = $("<div>")
         .addClass(serviceClass ?? "")
         .addClass("pb-2")
+        .addClass(cssClasses ?? "")
         .css("padding-left", "10px")
         .append($("<sub>").append($("<span>").addClass("mdi mdi-information-box-outline"), ` ${helpText}`)
         );
@@ -140,12 +278,13 @@ function createInputField(config) {
         required,
         containerId,
         title,
-        serviceClass = ""
+        serviceClass = "",
+        cssClasses = ""
     } = config;
-    
+
     const label = $("<label>", {
         for: name,
-        class: `${serviceClass ?? ""} mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2`
+        class: `${serviceClass ?? ""} mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2 ${cssClasses ?? ""}`
     });
 
     const outline = $("<span>", {class: "mdc-notched-outline"});
@@ -158,7 +297,7 @@ function createInputField(config) {
     outline.append($("<span>", {class: "mdc-notched-outline__trailing"}));
 
     const input = $("<input>", {
-        class: `${serviceClass ?? ""} mdc-text-field__input form-control`,
+        class: `${serviceClass ?? ""} mdc-text-field__input form-control ${cssClasses ?? ""}`,
         type: "text",
         id: name,
         name: name,
@@ -177,6 +316,7 @@ function createInputField(config) {
             style: "top: -9px; padding-left: 10px"
         })
             .addClass(serviceClass ?? "")
+            .addClass(cssClasses ?? "")
             .addClass("pb-2")
             .html(title || "")
             .prepend($("<span>", {
@@ -326,48 +466,63 @@ function navigateToApplication(serviceIdToFind) {
 
 function initializeFooterButtons() {
     $("button[name=validateServiceWizard]").off().on("click", () => {
-        const form = document.querySelector("#editServiceWizardForm");
-        const firstInvalid = form.querySelector(":invalid");
+        const $accordion = $("#editServiceWizardMenu");
+        let valid = true;
+        const originalIndex = $("#editServiceWizardMenu").accordion("option", "active");
+        $(".ui-accordion-header:visible").each(function () {
+            const $header = $(this);
+            const index = $accordion
+                .find(".ui-accordion-header")
+                .index($header);
+            $accordion.accordion("option", "active", index);
 
-        if (firstInvalid) {
-            const $accordion = $("#editServiceWizardMenu");
-            const $panel = $(firstInvalid).closest(".ui-accordion-content");
-            if ($panel.length) {
-                const index = $accordion
-                    .find(".ui-accordion-content")
-                    .index($panel);
-                if (index >= 0) {
-                    $accordion.accordion("option", "active", index);
-                }
-            }
-            setTimeout(() => {
-                form.reportValidity();
-            }, 0);
-            return;
-        }
-
-        if (actuatorEndpoints.registeredservices) {
-            const editor = initializeAceEditor("wizardServiceEditor");
-            $.ajax({
-                url: `${actuatorEndpoints.registeredservices}/validate`,
-                type: "POST",
-                contentType: "application/json",
-                data: editor.getValue(),
-                success: response => {
-                    const message = `
-                        The given application definition is valid. Please note that validity
-                        does not imply behavioral correctness. It only indicates that the generated
-                        application definition adheres to the expected schema and structure required by CAS
-                        and can be stored successfully.
-                    `;
-                    Swal.fire("Success", message, "info");
-                },
-                error: (xhr, status, error) => {
-                    console.error(`Error: ${status} / ${error} / ${xhr.responseText}`);
-                    displayBanner(xhr);
+            $("#editServiceWizardForm .ui-accordion-content:visible input:visible").each(function () {
+                const input = $(this);
+                console.log("Checking input:", input);
+                valid = input.get(0).checkValidity();
+                console.log(valid);
+                if (!valid) {
+                    input.get(0).reportValidity();
+                    return false;
                 }
             });
+            if (!valid) {
+                return false;
+            }
+        });
+        console.log("Form validity:", valid);
+        if (valid) {
+            const currentIndex = $("#editServiceWizardMenu").accordion("option", "active");
+            if (originalIndex !== currentIndex) {
+                $("#editServiceWizardMenu").accordion("option", "active", originalIndex);
+            }
+            if (actuatorEndpoints.registeredservices) {
+                const editor = initializeAceEditor("wizardServiceEditor");
+                $.ajax({
+                    url: `${actuatorEndpoints.registeredservices}/validate`,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: editor.getValue(),
+                    success: response => {
+                        const message = `
+                            The given application definition is valid. Please note that validity
+                            does not imply behavioral correctness. It only indicates that the generated
+                            application definition adheres to the expected schema and structure required by CAS
+                            and can be stored successfully.
+                        `;
+                        Swal.fire("Success", message, "info");
+                    },
+                    error: (xhr, status, error) => {
+                        console.error(`Error: ${status} / ${error} / ${xhr.responseText}`);
+                        displayBanner(xhr);
+                    }
+                });
+            }
         }
+
+
+
+
     });
 
     $("button[name=newServiceWizard]").off().on("click", () => {
@@ -403,6 +558,7 @@ function initializeFooterButtons() {
 
             $("#editServiceWizardMenu")
                 .accordion({
+                    active: 0,
                     collapsible: true,
                     heightStyle: "content"
                 });
@@ -439,8 +595,14 @@ function initializeFooterButtons() {
                     });
                 });
 
+            $("#editServiceWizardForm input").val("");
+
             generateServiceDefinition();
             editServiceWizardDialog["open"]();
+            hideAdvancedRegisteredServiceOptions();
+            setTimeout(function () {
+                $("#editServiceWizardForm input:visible:enabled").first().focus();
+            }, 200);
         }
 
         if (Object.keys(inputOptions).length === 1) {

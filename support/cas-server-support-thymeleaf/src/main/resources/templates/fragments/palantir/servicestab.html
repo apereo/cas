@@ -120,6 +120,9 @@
                                 <p>The following application type is chosen:</p>
                                 <pre><code id="serviceClassType" class="border-rounded language-html"></code></pre>
 
+                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='hideAdvancedOptions',
+                                    label='#Hide Advanced Options', cssClass='pb-2', selected=true, dataAttrs='changeEventHandler=hideAdvancedRegisteredServiceOptions')}"/>
+                                
                                 <form id="editServiceWizardForm">
                                     <div id="editServiceWizardMenu" class="jqueryui-accordion">
                                           <h3>General</h3>
@@ -135,7 +138,7 @@
                                                         paramName: "name",
                                                         required: true,
                                                         containerId: "editServiceWizardGeneralContainer",
-                                                        title: "Define a logical name for this application, preferably without spaces or special characters."
+                                                        title: "Define a logical name for this application, preferably without spaces or special characters.",
                                                     })
                                                         .on("input", generateServiceDefinition);
                                                     createInputField({
@@ -157,6 +160,7 @@
                                                     }).on("input", generateServiceDefinition);
 
                                                     createInputField({
+                                                        cssClasses: "advanced-option",
                                                         labelTitle: "Numeric ID",
                                                         name: "registeredServiceIdentifier",
                                                         paramName: "id",
@@ -167,6 +171,7 @@
                                                         .attr("type", "number");
 
                                                     createInputField({
+                                                        cssClasses: "advanced-option",
                                                         labelTitle: "Theme",
                                                         name: "registeredServiceTheme",
                                                         paramName: "theme",
@@ -176,6 +181,7 @@
                                                     }).on("input", generateServiceDefinition);
 
                                                     createInputField({
+                                                        cssClasses: "advanced-option",
                                                         labelTitle: "Locale",
                                                         name: "registeredServiceLocale",
                                                         paramName: "locale",
@@ -185,6 +191,7 @@
                                                     }).on("input", generateServiceDefinition);
 
                                                     createInputField({
+                                                        cssClasses: "advanced-option",
                                                         labelTitle: "Information URL",
                                                         name: "registeredServiceInformationUrl",
                                                         paramName: "informationUrl",
@@ -194,6 +201,7 @@
                                                     }).on("input", generateServiceDefinition);
 
                                                     createInputField({
+                                                        cssClasses: "advanced-option",
                                                         labelTitle: "Privacy URL",
                                                         name: "registeredServicePrivacyUrl",
                                                         paramName: "privacyUrl",
@@ -203,6 +211,7 @@
                                                     }).on("input", generateServiceDefinition);
 
                                                     createInputField({
+                                                        cssClasses: "advanced-option",
                                                         labelTitle: "Template",
                                                         name: "registeredServiceTemplate",
                                                         paramName: "templateName",
@@ -212,6 +221,7 @@
                                                     }).on("input", generateServiceDefinition);
 
                                                     createInputField({
+                                                        cssClasses: "advanced-option",
                                                         labelTitle: "Evaluation Order",
                                                         name: "registeredServiceEvaluationOrder",
                                                         paramName: "evaluationOrder",
@@ -222,6 +232,7 @@
                                                         .attr("type", "number");
 
                                                     createInputField({
+                                                        cssClasses: "advanced-option",
                                                         labelTitle: "Logo",
                                                         name: "registeredServiceEvaluationLogo",
                                                         paramName: "logo",
@@ -231,6 +242,7 @@
                                                     }).on("input", generateServiceDefinition);
 
                                                     createInputField({
+                                                        cssClasses: "advanced-option",
                                                         labelTitle: "Logout URL",
                                                         name: "registeredServiceEvaluationLogoutUrl",
                                                         paramName: "logoutUrl",
@@ -240,6 +252,7 @@
                                                     }).on("input", generateServiceDefinition);
 
                                                     createInputField({
+                                                        cssClasses: "advanced-option",
                                                         labelTitle: "Environment(s)",
                                                         name: "registeredServiceEnvironments",
                                                         paramName: "environments",
@@ -256,6 +269,7 @@
                                                 <section class="class-CasRegisteredService">
                                                        <script type="text/javascript">
                                                            createInputField({
+                                                               cssClasses: "advanced-option",
                                                                labelTitle: "Redirect URL",
                                                                name: "registeredServiceRedirectUrl",
                                                                paramName: "redirectUrl",
@@ -264,6 +278,7 @@
                                                                title: "Define the URL to which users are redirected after successful authentication for this application."
                                                            }).on("input", generateServiceDefinition);
                                                            createInputField({
+                                                               cssClasses: "advanced-option",
                                                                labelTitle: "Supported Protocol(s)",
                                                                name: "registeredServiceSupportedProtocols",
                                                                paramName: "supportedProtocols",
@@ -281,6 +296,7 @@
                                                 <div>
                                                     <script type="text/javascript">
                                                         createSelectField({
+                                                            cssClasses: "advanced-option",
                                                             containerId: "editServiceWizardGeneralContainer",
                                                             labelTitle: "Logout Type:",
                                                             paramName: "logoutType",
@@ -298,6 +314,7 @@
                                                     <section class="class-CasRegisteredService">
                                                         <script type="text/javascript">
                                                              createSelectField({
+                                                                 cssClasses: "advanced-option",
                                                                  containerId: "editServiceWizardGeneralContainer",
                                                                  labelTitle: "Response Type:",
                                                                  paramName: "responseType",
@@ -315,7 +332,6 @@
                                                 </div>
                                               </div>
                                           </div>
-
 
                                          <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Relying Party</h3>
                                          <div class="class-OAuthRegisteredService class-OidcRegisteredService"
@@ -344,6 +360,7 @@
                                                           .on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Client Secret Expiration",
                                                           name: "registeredServiceClientSecretExpiration",
                                                           paramName: "clientSecretExpiration",
@@ -367,6 +384,7 @@
                                                           });
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Supported Grant Type(s)",
                                                           name: "registeredServiceSupportedGrantTypes",
                                                           paramName: "supportedGrantTypes",
@@ -379,6 +397,7 @@
                                                           });
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Supported Response Type(s)",
                                                           name: "registeredServiceSupportedResponseTypes",
                                                           paramName: "supportedResponseTypes",
@@ -391,6 +410,7 @@
                                                           });
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Audience(s)",
                                                           name: "registeredServiceAudience",
                                                           paramName: "audience",
@@ -403,6 +423,7 @@
                                                           });
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "JWKS",
                                                           name: "registeredServiceJwksUrl",
                                                           paramName: "jwks",
@@ -413,6 +434,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "JWKS Key ID",
                                                           name: "registeredServiceJwksUrl",
                                                           paramName: "jwksKeyId",
@@ -423,6 +445,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "JWKS Cache Duration",
                                                           name: "registeredServiceCacheDuration",
                                                           paramName: "jwksCacheDuration",
@@ -433,6 +456,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "ID Token Issuer",
                                                           name: "registeredServiceIdTokenIssuer",
                                                           paramName: "idTokenIssuer",
@@ -443,6 +467,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "ID Token Encryption Algorithm",
                                                           name: "registeredServiceIdTokenEncryptionAlg",
                                                           paramName: "idTokenEncryptionAlg",
@@ -453,6 +478,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "ID Token Encryption Encoding",
                                                           name: "registeredServiceIdTokenEncryptionEncoding",
                                                           paramName: "idTokenEncryptionEncoding",
@@ -463,6 +489,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "ID Token Signing Algorithm",
                                                           name: "registeredServiceIdTokenSigningAlg",
                                                           paramName: "idTokenSigningAlg",
@@ -473,6 +500,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "User Info Signing Algorithm",
                                                           name: "registeredServiceUserInfoSigningAlg",
                                                           paramName: "userInfoSigningAlg",
@@ -483,6 +511,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "User Info Encryption Response Algorithm",
                                                           name: "registeredServiceUserInfoEncryptionResponseAlg",
                                                           paramName: "userInfoEncryptedResponseAlg",
@@ -493,6 +522,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "User Info Encryption Response Encoding",
                                                           name: "registeredServiceUserInfoEncryptionResponseEncoding",
                                                           paramName: "userInfoEncryptedResponseEncoding",
@@ -501,8 +531,9 @@
                                                           containerId: "editServiceWizardOAuthOidcContainer",
                                                           title: "Define the user info encryption response encoding for this OpenID Connect relying party."
                                                       }).on("input", generateServiceDefinition);
-                                                      
+
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "JWT Access Token Signing Algorithm",
                                                           name: "registeredServiceJwtAccessTokenSigningAlg",
                                                           paramName: "jwtAccessTokenSigningAlg",
@@ -512,6 +543,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Introspection Response Signing Algorithm",
                                                           name: "registeredServiceIntrospectionSignedResponseAlg",
                                                           paramName: "introspectionSignedResponseAlg",
@@ -521,6 +553,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Introspection Response Encryption Algorithm",
                                                           name: "registeredServiceIntrospectionEncryptedResponseAlg",
                                                           paramName: "introspectionEncryptedResponseAlg",
@@ -530,6 +563,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Introspection Response Encryption Encoding",
                                                           name: "registeredServiceIntrospectionEncryptedResponseEncoding",
                                                           paramName: "introspectionEncryptedResponseEncoding",
@@ -539,6 +573,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Token Endpoint Authentication Method",
                                                           name: "registeredServiceTokenEndpointAuthenticationMethod",
                                                           paramName: "tokenEndpointAuthenticationMethod",
@@ -548,6 +583,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "TLS Client Authentication Subject DN",
                                                           name: "registeredServiceTlsClientAuthSubjectDn",
                                                           paramName: "tlsClientAuthSubjectDn",
@@ -557,6 +593,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "TLS Client Authentication SAN DNS",
                                                           name: "registeredServiceTlsClientAuthSanDns",
                                                           paramName: "tlsClientAuthSubjectDn",
@@ -566,6 +603,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "TLS Client Authentication SAN URI",
                                                           name: "registeredServiceTlsClientAuthSanUri",
                                                           paramName: "tlsClientAuthSanUri",
@@ -575,6 +613,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "TLS Client Authentication SAN IP",
                                                           name: "registeredServiceTlsClientAuthSanIP",
                                                           paramName: "tlsClientAuthSanIp",
@@ -584,6 +623,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "TLS Client Authentication SAN Email",
                                                           name: "registeredServiceTlsClientAuthSanEmail",
                                                           paramName: "tlsClientAuthSanEmail",
@@ -593,6 +633,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Application Type",
                                                           name: "registeredServiceApplicationType",
                                                           paramName: "applicationType",
@@ -603,6 +644,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Subject Type",
                                                           name: "registeredServiceSubjectType",
                                                           paramName: "subjectType",
@@ -613,6 +655,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Sector Identifier URI",
                                                           name: "registeredServiceSectorIdentifierUri",
                                                           paramName: "sectorIdentifierUri",
@@ -623,6 +666,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createSelectField({
+                                                          cssClasses: "advanced-option",
                                                           containerId: "editServiceWizardOAuthOidcContainer",
                                                           labelTitle: "Backchannel Token Delivery Mode:",
                                                           paramName: "backchannelTokenDeliveryMode",
@@ -637,6 +681,7 @@
                                                       });
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Backchannel Client Notification Endpoint",
                                                           name: "registeredServiceBackchannelClientNotificationEndpoint",
                                                           paramName: "backchannelClientNotificationEndpoint",
@@ -650,6 +695,7 @@
                                                  <section>
                                                      <script type="text/javascript">
                                                          createSelectField({
+                                                             cssClasses: "advanced-option",
                                                              containerId: "editServiceWizardOAuthOidcContainer",
                                                              labelTitle: "Response Mode:",
                                                              paramName: "responseMode",
@@ -684,20 +730,19 @@
 
                                                  </section>
 
-                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassApprovalPrompt', label='#Bypass Approval Prompt', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='generateRefreshToken', label='#Generate Refresh Token', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='renewRefreshToken', label='#Renew Refresh Token', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtAccessToken', label='#JWT Access Token', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtRefreshToken', label='#JWT Refresh Token', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassApprovalPrompt', label='#Bypass Approval Prompt', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='generateRefreshToken', label='#Generate Refresh Token', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='renewRefreshToken', label='#Renew Refresh Token', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtAccessToken', label='#JWT Access Token', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtRefreshToken', label='#JWT Refresh Token', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
                                                  
                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='signIdToken', label='#Sign ID Tokens', cssClass='class-OidcRegisteredService pt-2', dataAttrs='param-skip-true=true', selected=true)}"/>
-                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptIdToken', label='#Encrypt ID Tokens', cssClass='class-OidcRegisteredService', dataAttrs='param-skip-false=true')}"/>
-                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='idTokenEncryptionOptional', label='#Encrypt ID Tokens Optionally', cssClass='class-OidcRegisteredService pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='includeIdTokenClaims', label='#Include Claims in ID Tokens', cssClass='class-OidcRegisteredService', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptIdToken', label='#Encrypt ID Tokens', cssClass='class-OidcRegisteredService advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='idTokenEncryptionOptional', label='#Encrypt ID Tokens Optionally', cssClass='class-OidcRegisteredService pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='includeIdTokenClaims', label='#Include Claims in ID Tokens', selected=true, cssClass='class-OidcRegisteredService advanced-option', dataAttrs='param-skip-true=true')}"/>
 
                                              </div>
                                          </div>
-
 
                                         <h3 class="class-SamlRegisteredService">SAML2 Service Provider</h3>
                                         <div class="class-SamlRegisteredService"
@@ -716,15 +761,17 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Identity Provider Metadata Location",
                                                           name: "registeredServiceIdPMetadataLocation",
                                                           paramName: "idpMetadataLocation",
                                                           required: false,
                                                           containerId: "editServiceWizardSamlContainer",
-                                                          title: "Directory location of SAML2 identity provider metadata available to CAS as an override."
+                                                          title: "Directory location of SAML2 identity provider metadata available to CAS as an override.",
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Metadata Proxy Location",
                                                           name: "registeredServiceMetadataProxyLocation",
                                                           paramName: "metadataProxyLocation",
@@ -734,6 +781,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Metadata Max Validity",
                                                           name: "registeredServiceMetadataMaxValidity",
                                                           paramName: "metadataMaxValidity",
@@ -744,6 +792,7 @@
                                                           .attr("type", "number");
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Metadata Signature Location",
                                                           name: "registeredServiceMetadataSignatureLocation",
                                                           paramName: "metadataSignatureLocation",
@@ -754,6 +803,7 @@
                                                           .attr("type", "number");
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Required Authentication Context Class",
                                                           name: "registeredServiceRequiredAuthenticationContextClass",
                                                           paramName: "requiredAuthenticationContextClass",
@@ -763,6 +813,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Required NameID Format",
                                                           name: "registeredServiceRequiredNameIdFormat",
                                                           paramName: "requiredNameIdFormat",
@@ -772,6 +823,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "NameID Qualifier",
                                                           name: "registeredServiceNameIdQualifier",
                                                           paramName: "nameIdQualifier",
@@ -781,6 +833,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Service Provider NameID Qualifier",
                                                           name: "registeredServiceSPNameIdQualifier",
                                                           paramName: "serviceProviderNameIdQualifier",
@@ -790,6 +843,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Issuer Entity ID",
                                                           name: "registeredServiceIssuerEntityId",
                                                           paramName: "issuerEntityId",
@@ -799,6 +853,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Subject Locality",
                                                           name: "registeredServiceSubjectLocality",
                                                           paramName: "subjectLocality",
@@ -808,6 +863,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Logout Response Binding",
                                                           name: "registeredServiceLogoutResponseBinding",
                                                           paramName: "logoutResponseBinding",
@@ -817,6 +873,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Assertion Audience",
                                                           name: "registeredServiceAssertionAudience",
                                                           paramName: "assertionAudiences",
@@ -826,6 +883,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Encryptable Attributes",
                                                           name: "registeredServiceEncryptableAttributes",
                                                           paramName: "encryptableAttributes",
@@ -838,6 +896,7 @@
                                                           });
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Skew Allowance",
                                                           name: "registeredServiceSkewAllowance",
                                                           paramName: "skewAllowance",
@@ -846,8 +905,9 @@
                                                           title: "If defined, indicates number of seconds used to skew authentication dates such as valid-from and valid-until elements, etc."
                                                       }).on("input", generateServiceDefinition)
                                                           .attr("type", "number");
-                                                      
+
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Signing Signature Reference Digest Methods",
                                                           name: "registeredServiceSigningSignatureReferenceDigestMethods",
                                                           paramName: "signingSignatureReferenceDigestMethods",
@@ -860,6 +920,7 @@
                                                           });
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Signing Signature Algorithms",
                                                           name: "registeredServiceSigningSignatureAlgorithms",
                                                           paramName: "signingSignatureAlgorithms",
@@ -872,6 +933,7 @@
                                                           });
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Signing Signature Blacklisted Algorithms",
                                                           name: "registeredServiceSigningSignatureBlackListedAlgorithms",
                                                           paramName: "signingSignatureBlackListedAlgorithms",
@@ -884,6 +946,7 @@
                                                           });
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Signing Signature Whitelisted Algorithms",
                                                           name: "registeredServiceSigningSignatureWhiteListedAlgorithms",
                                                           paramName: "signingSignatureBlackListedAlgorithms",
@@ -896,6 +959,7 @@
                                                           });
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Whitelist/Blacklist Precedence",
                                                           name: "registeredServiceWhiteListBlackListPrecedence",
                                                           paramName: "whiteListBlackListPrecedence",
@@ -909,8 +973,9 @@
                                                               $(this).val(value);
                                                           })
                                                           .on("input", generateServiceDefinition);
-                                                      
+
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Encryption Data Algorithms",
                                                           name: "registeredServiceEncryptionDataAlgorithms",
                                                           paramName: "encryptionDataAlgorithms",
@@ -923,6 +988,7 @@
                                                           });
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Encryption Key Algorithms",
                                                           name: "registeredServiceEncryptionKeyAlgorithms",
                                                           paramName: "encryptionKeyAlgorithms",
@@ -935,6 +1001,7 @@
                                                           });
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Encryption Blacklisted Algorithms",
                                                           name: "registeredServiceEncryptionBlackListedAlgorithms",
                                                           paramName: "encryptionBlackListedAlgorithms",
@@ -946,6 +1013,7 @@
                                                               return ["java.util.ArrayList", value.split(",")];
                                                           });
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Encryption Whitelisted Algorithms",
                                                           name: "registeredServiceEncryptionWhiteListedAlgorithms",
                                                           paramName: "encryptionWhiteListedAlgorithms",
@@ -965,7 +1033,7 @@
                                                           options: [
                                                               {value: "UNDEFINED", text: "UNDEFINED"},
                                                               {value: "TRUE", text: "TRUE"},
-                                                              {value: "", text: "FALSE", selected: true},
+                                                              {value: "", text: "FALSE", selected: true}
                                                           ],
                                                           helpText: "Specify whether SAML assertions should be signed for this service provider."
                                                       });
@@ -977,36 +1045,39 @@
                                                           options: [
                                                               {value: "UNDEFINED", text: "UNDEFINED"},
                                                               {value: "", text: "TRUE", selected: true},
-                                                              {value: "FALSE", text: "FALSE"},
+                                                              {value: "FALSE", text: "FALSE"}
                                                           ],
                                                           helpText: "Specify whether SAML assertions should be signed for this service provider."
                                                       });
 
                                                       createSelectField({
+                                                          cssClasses: "advanced-option",
                                                           containerId: "editServiceWizardSamlContainer",
                                                           labelTitle: "Sign Logout Responses:",
                                                           paramName: "signLogoutResponse",
                                                           options: [
                                                               {value: "", text: "UNDEFINED", selected: true},
                                                               {value: "TRUE", text: "TRUE"},
-                                                              {value: "FALSE", text: "FALSE"},
+                                                              {value: "FALSE", text: "FALSE"}
                                                           ],
                                                           helpText: "Specify whether SAML assertions should be signed for this service provider."
                                                       });
 
                                                       createSelectField({
+                                                          cssClasses: "advanced-option",
                                                           containerId: "editServiceWizardSamlContainer",
                                                           labelTitle: "Sign Logout Requests:",
                                                           paramName: "signLogoutRequest",
                                                           options: [
                                                               {value: "", text: "UNDEFINED", selected: true},
                                                               {value: "TRUE", text: "TRUE"},
-                                                              {value: "FALSE", text: "FALSE"},
+                                                              {value: "FALSE", text: "FALSE"}
                                                           ],
                                                           helpText: "Specify whether SAML assertions should be signed for this service provider."
                                                       });
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Metadata Criteria Direction",
                                                           name: "registeredServiceMetadataCriteriaDirection",
                                                           paramName: "metadataCriteriaDirection",
@@ -1016,6 +1087,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Metadata Criteria Pattern",
                                                           name: "registeredServiceMetadataCriteriaPattern",
                                                           paramName: "metadataCriteriaPattern",
@@ -1025,6 +1097,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Metadata Expiration Duration",
                                                           name: "registeredServiceMetadataExpirationDuration",
                                                           paramName: "metadataExpirationDuration",
@@ -1034,6 +1107,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Signing Credential Fingerprint",
                                                           name: "registeredServiceSigningCredentialFingerprint",
                                                           paramName: "signingCredentialFingerprint",
@@ -1043,6 +1117,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Signing Key Algorithm",
                                                           name: "registeredServiceSigningKeyAlgorithm",
                                                           paramName: "signingKeyAlgorithm",
@@ -1052,6 +1127,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Metadata Criteria Roles",
                                                           name: "registeredServiceMetadataCriteriaRoles",
                                                           paramName: "metadataCriteriaRoles",
@@ -1061,6 +1137,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Signing Credential Type",
                                                           name: "registeredServiceSigningCredentialType",
                                                           paramName: "signingCredentialType",
@@ -1070,6 +1147,7 @@
                                                       }).on("input", generateServiceDefinition);
 
                                                       createInputField({
+                                                          cssClasses: "advanced-option",
                                                           labelTitle: "Signature Canonicalization Algorithm",
                                                           name: "registeredServiceSigningSignatureCanonicalizationAlgorithm",
                                                           paramName: "signingSignatureCanonicalizationAlgorithm",
@@ -1080,161 +1158,203 @@
 
                                                  </script>
 
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='logoutResponseEnabled', label='#Send Logout Response', cssClass='pt-2', selected=true, dataAttrs='param-skip-true=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='requireSignedRoot', label='#Require Metadata Root Signed', cssClass='pt-2', selected=true, dataAttrs='param-skip-true=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='metadataCriteriaRemoveEmptyEntitiesDescriptors', label='#Remove Empty Entities Descriptors', selected=true, cssClass='pt-2', dataAttrs='param-skip-true=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='metadataCriteriaRemoveRolelessEntityDescriptors', label='#Remove Roleless Entity Descriptors', selected=true, cssClass='pt-2', dataAttrs='param-skip-true=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='logoutResponseEnabled', label='#Send Logout Response', cssClass='pt-2 advanced-option', selected=true, dataAttrs='param-skip-true=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='requireSignedRoot', label='#Require Metadata Root Signed', cssClass='pt-2 advanced-option', selected=true, dataAttrs='param-skip-true=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='metadataCriteriaRemoveEmptyEntitiesDescriptors', label='#Remove Empty Entities Descriptors', selected=true, cssClass='pt-2 advanced-option', dataAttrs='param-skip-true=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='metadataCriteriaRemoveRolelessEntityDescriptors', label='#Remove Roleless Entity Descriptors', selected=true, cssClass='pt-2 advanced-option', dataAttrs='param-skip-true=true')}"/>
 
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='validateMetadataCertificates', label='#Validate Metadata Certificates', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='signUnsolicitedAuthnRequest', label='#Sign Unsolicited AuthnRequest', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='validateMetadataCertificates', label='#Validate Metadata Certificates', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='signUnsolicitedAuthnRequest', label='#Sign Unsolicited AuthnRequest', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
 
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSessionNotOnOrAfter', label='#Skip Generating Session NotOnOrAfter', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingAssertionNameId', label='#Skip Generating Assertion NameID', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationInResponseTo', label='#Skip Generating SubjectConfirmation InResponseTo', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='isSkipGeneratingResponseInResponseTo', label='#Skip Generating Response InResponseTo', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationNotOnOrAfter', label='#Skip Generating SubjectConfirmation NotOnOrAfter', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationRecipient', label='#Skip Generating SubjectConfirmation Recipient', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationAddress', label='#Skip Generating SubjectConfirmation Address', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationNotBefore', label='#Skip Generating SubjectConfirmation NotBefore', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationNameId', label='#Skip Generating SubjectConfirmation NameID', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingNameIdQualifiers', label='#Skip Generating NameID Qualifiers', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingTransientNameId', label='#Skip Generating Transient NameID', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipValidatingAuthnRequest', label='#Skip Validating AuthnRequest', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingServiceProviderNameIdQualifier', label='#Skip Generating SP NameID Qualifier', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingAuthenticatingAuthority', label='#Skip Generating Authenticating Authority', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingNameIdQualifier', label='#Skip Generating NameID Qualifier', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSessionNotOnOrAfter', label='#Skip Generating Session NotOnOrAfter', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingAssertionNameId', label='#Skip Generating Assertion NameID', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationInResponseTo', label='#Skip Generating SubjectConfirmation InResponseTo', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='isSkipGeneratingResponseInResponseTo', label='#Skip Generating Response InResponseTo', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationNotOnOrAfter', label='#Skip Generating SubjectConfirmation NotOnOrAfter', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationRecipient', label='#Skip Generating SubjectConfirmation Recipient', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationAddress', label='#Skip Generating SubjectConfirmation Address', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationNotBefore', label='#Skip Generating SubjectConfirmation NotBefore', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingSubjectConfirmationNameId', label='#Skip Generating SubjectConfirmation NameID', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingNameIdQualifiers', label='#Skip Generating NameID Qualifiers', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingTransientNameId', label='#Skip Generating Transient NameID', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipValidatingAuthnRequest', label='#Skip Validating AuthnRequest', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingServiceProviderNameIdQualifier', label='#Skip Generating SP NameID Qualifier', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingAuthenticatingAuthority', label='#Skip Generating Authenticating Authority', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='skipGeneratingNameIdQualifier', label='#Skip Generating NameID Qualifier', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
 
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptAssertions', label='#Encrypt Assertions', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptAttributes', label='#Encrypt Attributes', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
-                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptionOptional', label='#Encryption Optional', cssClass='pt-2', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptAssertions', label='#Encrypt Assertions', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptAttributes', label='#Encrypt Attributes', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptionOptional', label='#Encryption Optional', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
 
+                                                 <section class="pt-4 advanced-option" id="editServiceWizardSamlAttributeNameFormatsContainer">
+                                                     <h3>Attribute Name Formats</h3>
+                                                     <script type="text/javascript">
+                                                         createMappedInputField({
+                                                             containerId: "editServiceWizardSamlAttributeNameFormatsContainer",
+                                                             keyField: "attributeName-format",
+                                                             keyLabel: "Attribute Name",
+                                                             valueField: "attributeFormatValue",
+                                                             valueLabel: "Attribute Format (i.e. basic, uri, unspecified, etc)",
+                                                             containerField: "attributeNameFormats"
+                                                         });
+                                                     </script>
+                                                 </section>
+
+                                                 <section class="pt-4 advanced-option" id="editServiceWizardSamlAttributeFriendlyNamesContainer">
+                                                     <h3>Attribute Friendly Names</h3>
+                                                     <script type="text/javascript">
+                                                         createMappedInputField({
+                                                             containerId: "editServiceWizardSamlAttributeFriendlyNamesContainer",
+                                                             keyField: "attributeName-friendly",
+                                                             keyLabel: "Attribute Name",
+                                                             valueField: "attributeFriendlyName",
+                                                             valueLabel: "Attribute Friendly Name",
+                                                             containerField: "attributeFriendlyNames"
+                                                         });
+                                                     </script>
+                                                 </section>
+
+                                                 <section class="pt-4 advanced-option" id="editServiceWizardSamlAttributeValueTypesContainer">
+                                                     <h3>Attribute Value Types</h3>
+                                                     <script type="text/javascript">
+                                                         createMappedInputField({
+                                                             containerId: "editServiceWizardSamlAttributeValueTypesContainer",
+                                                             keyField: "attributeName-valueType",
+                                                             keyLabel: "Attribute Name",
+                                                             valueField: "attributeValueType",
+                                                             valueLabel: "Attribute Value Type (i.e. <code>XSString, XSURI, NameIDType</code>, etc)",
+                                                             containerField: "attributeValueTypes"
+                                                         });
+                                                     </script>
+                                                 </section>
+                                                 
                                              </div>
                                         </div>
 
-
-                                         <h3>Application Expiration Policy</h3>
+                                         <h3 class="advanced-option">Application Expiration Policy</h3>
                                          <div id="editServiceWizardMenuItemExpirationPolicy">
-                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
-                                          <h3>Ticket-Granting Ticket Expiration Policy</h3>
+                                         
+                                          <h3 class="advanced-option">Ticket-Granting Ticket Expiration Policy</h3>
                                           <div id="editServiceWizardMenuItemTGTExpirationPolicy">
-                                             <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
 
-                                         <h3 class="class-CasRegisteredService">Service Ticket Expiration Policy</h3>
+                                         <h3 class="class-CasRegisteredService advanced-option">Service Ticket Expiration Policy</h3>
                                          <div class="class-CasRegisteredService"
                                               id="editServiceWizardMenuItemSTExpirationPolicy">
-                                          <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                          </div>
-                                         <h3 class="class-CasRegisteredService">Proxy-granting Ticket Expiration Policy</h3>
+                                         <h3 class="class-CasRegisteredService advanced-option">Proxy-granting Ticket Expiration Policy</h3>
                                          <div class="class-CasRegisteredService"
                                               id="editServiceWizardMenuItemPGTExpirationPolicy">
-                                          <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                          </div>
-                                         <h3 class="class-CasRegisteredService">Proxy Ticket Expiration Policy</h3>
+                                         <h3 class="class-CasRegisteredService advanced-option">Proxy Ticket Expiration Policy</h3>
                                          <div class="class-CasRegisteredService"
                                               id="editServiceWizardMenuItemPTExpirationPolicy">
-                                          <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                          </div>
-                                         <h3 class="class-CasRegisteredService">Proxy Expiration Policy</h3>
+                                         <h3 class="class-CasRegisteredService advanced-option">Proxy Expiration Policy</h3>
                                          <div class="class-CasRegisteredService"
                                               id="editServiceWizardMenuItemProxyExpirationPolicy">
-                                          <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                          </div>
 
-                                        
+
                                          <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Code Expiration Policy</h3>
                                          <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                               id="editServiceWizardMenuItemOAuthOidcCodeExpirationPolicy">
-                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                          </div>
 
                                         <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Access Token Expiration Policy</h3>
                                          <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                               id="editServiceWizardMenuItemOAuthOidcATExpirationPolicy">
-                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                          </div>
 
                                         <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Refresh Token Expiration Policy</h3>
                                          <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                               id="editServiceWizardMenuItemOAuthOidcRTExpirationPolicy">
-                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                          </div>
 
                                          <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Device Token Expiration Policy</h3>
                                          <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                               id="editServiceWizardMenuItemOAuthOidcDTExpirationPolicy">
-                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                          </div>
 
                                          <h3 class="class-OidcRegisteredService">OpenID Connect ID Token Expiration Policy</h3>
                                          <div class="class-OidcRegisteredService"
                                               id="editServiceWizardMenuItemOAuthOidcITExpirationPolicy">
-                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                          </div>
 
                                         <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Token Exchange Policy</h3>
                                          <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                               id="editServiceWizardMenuItemOAuthOidcTokenExchangePolicy">
-                                              <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                          </div>
 
                                         
                                           <h3>Username Attribute Provider</h3>
                                           <div id="editServiceWizardMenuItemUsernameAttribute">
-                                            <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
                                          <h3>Attribute Release Policy</h3>
                                           <div id="editServiceWizardMenuItemAttributeReleasePolicy">
-                                            <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
                                          <h3>Multifactor Authentication Policy</h3>
                                           <div id="editServiceWizardMenuItemMfaPolicy">
-                                            <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
-                                         <h3>Matching Strategy</h3>
+                                         <h3 class="advanced-option">Matching Strategy</h3>
                                           <div id="editServiceWizardMenuItemMatchingStrategy">
-                                            <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
                                          <h3>Access Strategy</h3>
                                           <div id="editServiceWizardMenuItemAccessStrategy">
-                                            <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
-                                         <h3>Authentication Policy</h3>
+                                         <h3 class="advanced-option">Authentication Policy</h3>
                                           <div id="editServiceWizardMenuItemAuthenticationPolicy">
-                                            <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
-                                         <h3>Properties</h3>
+                                         <h3 class="advanced-option">Properties</h3>
                                           <div id="editServiceWizardMenuItemProperties">
-                                            <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
-                                         <h3>Contacts</h3>
+                                         <h3 class="advanced-option">Contacts</h3>
                                           <div id="editServiceWizardMenuItemContacts">
-                                            <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
-                                         <h3>Public Key</h3>
+                                         <h3 class="advanced-option">Public Key</h3>
                                           <div id="editServiceWizardMenuItemPublicKey">
-                                            <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
-                                        <h3>Acceptable Usage Policy</h3>
+                                        <h3 class="advanced-option">Acceptable Usage Policy</h3>
                                           <div id="editServiceWizardMenuItemAUP">
-                                            <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
-                                       <h3>Single SignOn Participation Policy</h3>
+                                       <h3 class="advanced-option">Single SignOn Participation Policy</h3>
                                           <div id="editServiceWizardMenuItemSSOParticipationPolicy">
-                                            <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
-                                        <h3>Webflow Interrupt Policy</h3>
+                                        <h3 class="advanced-option">Webflow Interrupt Policy</h3>
                                           <div id="editServiceWizardMenuItemWebflowInterruptPolicy">
-                                            <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
-                                        <h3>Passwordless Policy</h3>
+                                        <h3 class="advanced-option">Passwordless Policy</h3>
                                           <div id="editServiceWizardMenuItemPasswordlessPolicy">
-                                            <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+
                                           </div>
-                                        <h3>Surrogate (Impersonation) Policy</h3>
+                                        <h3 class="advanced-option">Surrogate (Impersonation) Policy</h3>
                                           <div id="editServiceWizardMenuItemSurrogatePolicy">
-                                            <div class="p-4 banner banner-warning"><h4>This functionality is not supported yet</h4></div>
+                                            
                                           </div>
                                     </div>
                                     <section class="my-3 h-350px">
