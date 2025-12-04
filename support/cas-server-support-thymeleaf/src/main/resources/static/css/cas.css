@@ -287,6 +287,16 @@ form button i.mdi {
     color: var(--cas-theme-danger, #b00020);
 }
 
+.banner-warning h1:before,
+.banner-warning h2:before,
+.banner-warning h3:before,
+.banner-warning h4:before,
+.banner-warning h5:before {
+    content: "\F0029";
+    font-size: 24px;
+    font: normal normal normal 24px/1 "Material Design Icons";
+}
+
 .banner-warning {
     border-color: #e6a210;
     border-color: var(--cas-theme-warning, #e6a210);
