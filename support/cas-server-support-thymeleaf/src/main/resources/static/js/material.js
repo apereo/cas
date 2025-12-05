@@ -49,7 +49,7 @@ let cas = {
                 el.addEventListener('click', () => {
                     const switchInput = switchInputs[0];
                     switchInput.value = switchElement.selected;
-
+                    $(el).data("param-selected", switchElement.selected);
                     $(switchInput).trigger('change');
                 });
             }

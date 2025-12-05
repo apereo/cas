@@ -67,6 +67,9 @@ function toKebabCase(str) {
         .toLowerCase();
 }
 
+function isNumeric(str) {
+    return typeof str === "string" && str.trim() !== "" && !isNaN(str);
+}
 
 function camelcaseToTitleCase(str) {
     return str

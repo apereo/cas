@@ -14,7 +14,7 @@
 <main>
     <th:div th:fragment="switchbutton (id,label)">
 
-        <script>
+        <script th:inline="javascript">
             window.switchButtonChangeHandler = function (el) {
                 const attrMap = {};
                 $(el).data('attrs').split(',').forEach(pair => {
@@ -31,7 +31,8 @@
             <button th:id="${id + 'Button'}" th:name="${id + 'Button'}"
                     class="mdc-switch" th:title="${title ?: ''}"
                     th:classappend="${#cas.isTrue(selected) ? 'mdc-switch--selected class' : 'mdc-switch--unselected'}"
-                    type="button" role="switch" th:aria-checked="${#cas.isTrue(selected) ? 'true' : 'false'}">
+                    type="button" role="switch"
+                    th:aria-checked="${#cas.isTrue(selected) ? 'true' : 'false'}">
                 <div class="mdc-switch__track"></div>
                 <div class="mdc-switch__handle-track">
                     <div class="mdc-switch__handle">
