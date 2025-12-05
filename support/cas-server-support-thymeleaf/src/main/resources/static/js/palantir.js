@@ -267,6 +267,7 @@ function createSelectField(config) {
         containerId,
         labelTitle,
         paramName,
+        paramType = "",
         options,
         helpText,
         serviceClass = "",
@@ -287,6 +288,7 @@ function createSelectField(config) {
         .attr("id", selectId)
         .attr("data-change-handler", `${changeEventHandlers},generateServiceDefinition`)
         .attr("data-param-name", paramName)
+        .attr("data-param-type", paramType)
         .addClass("jqueryui-selectmenu");
 
     options.forEach(opt => {

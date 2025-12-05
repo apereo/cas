@@ -1469,7 +1469,7 @@
                                                            .hide();
                                                        $("#editServiceWizardMenuItemUsernameAttribute [id$='FieldContainer'] input")
                                                            .val("");
-                                                       
+
                                                        const hideDefaults = $(select).find(":selected").data("hideDefaults");
                                                        if (hideDefaults) {
                                                            $("#editServiceWizardMenuItemUsernameAttribute .DefaultRegisteredServiceUsernameProvider").hide();
@@ -1544,7 +1544,7 @@
                                                        title: "Specifies the principal attribute to be used as the username."
 
                                                    }).on("input", generateServiceDefinition);
-                                                   
+
                                                    createInputField({
                                                        cssClasses: "hide GroovyRegisteredServiceUsernameProvider",
                                                        labelTitle: "Groovy Script",
@@ -1589,12 +1589,12 @@
                                                            },
                                                            {
                                                                value: "UPPER",
-                                                               text: "UPPER",
+                                                               text: "UPPER"
                                                            },
                                                            {
                                                                value: "LOWER",
-                                                               text: "LOWER",
-                                                           },
+                                                               text: "LOWER"
+                                                           }
                                                        ],
                                                        helpText: "Specifies the canonicalization mode for the username."
                                                    });
@@ -1627,7 +1627,7 @@
                                                     .data("renderer", function (value) {
                                                         return ["java.util.HashSet", value.split(",")];
                                                     });
-                                                
+
                                                 createSelectField({
                                                     cssClasses: "advanced-option",
                                                     paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
@@ -1642,20 +1642,20 @@
                                                         },
                                                         {
                                                             value: "OPEN",
-                                                            text: "OPEN",
+                                                            text: "OPEN"
                                                         },
                                                         {
                                                             value: "CLOSED",
-                                                            text: "CLOSED",
+                                                            text: "CLOSED"
                                                         },
                                                         {
                                                             value: "PHANTOM",
-                                                            text: "PHANTOM",
+                                                            text: "PHANTOM"
                                                         },
                                                         {
                                                             value: "NONE",
-                                                            text: "NONE",
-                                                        },
+                                                            text: "NONE"
+                                                        }
                                                     ],
                                                     helpText: "Specifies the failure mode for multifactor authentication."
                                                 });
@@ -1722,22 +1722,22 @@
                                               <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassEnabled',
                                                     title='When enabled, the multifactor authentication policy can be bypassed based on defined criteria',
                                                     label='#Bypass Multifactor Authentication', cssClass='pt-2',
-                                                    dataAttrs='param-skip-false=true,param-name=multifactorPolicy.bypassEnabled')}"/>
+                                                    dataAttrs='param-skip-false=true,param-name=multifactorPolicy.bypassEnabled,param-type=org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy')}"/>
 
                                               <div th:replace="~{fragments/switchbutton :: switchbutton (id='forceExecution',
                                                     title='When enabled, multifactor authentication is forced for this service',
                                                     label='#Force Multifactor Authentication', cssClass='pt-2 advanced-option',
-                                                    dataAttrs='param-skip-false=true,param-name=multifactorPolicy.forceExecution')}"/>
+                                                    dataAttrs='param-skip-false=true,param-name=multifactorPolicy.forceExecution,param-type=org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy')}"/>
 
                                               <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassTrustedDeviceEnabled',
                                                     title='When enabled, trusted devices are allowed to bypass multifactor authentication',
                                                     label='#Bypass Trusted Devices', cssClass='advanced-option',
-                                                    dataAttrs='param-skip-false=true,param-name=multifactorPolicy.bypassTrustedDeviceEnabled')}"/>
+                                                    dataAttrs='param-skip-false=true,param-name=multifactorPolicy.bypassTrustedDeviceEnabled,param-type=org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy')}"/>
 
                                               <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassIfMissingPrincipalAttribute',
                                                     title='When enabled, multifactor authentication is bypassed if the principal attribute used for triggering is missing',
                                                     label='#Bypass If Missing Principal Attribute', cssClass='pt-2 advanced-option',
-                                                    dataAttrs='param-skip-false=true,param-name=multifactorPolicy.bypassIfMissingPrincipalAttribute')}"/>
+                                                    dataAttrs='param-skip-false=true,param-name=multifactorPolicy.bypassIfMissingPrincipalAttribute,param-type=org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy')}"/>
                                           </div>
 
                                           <h3 class="advanced-option">Matching Strategy</h3>
@@ -1750,9 +1750,9 @@
                                                         $("#editServiceWizardMenuItemMatchingStrategy [id$='ButtonPanel']")
                                                             .not(`.${type}`)
                                                             .hide();
-                                                        
+
                                                     }
-                                                    
+
                                                     createSelectField({
                                                         containerId: "editServiceWizardMenuItemMatchingStrategy",
                                                         labelTitle: "Type:",
@@ -1765,12 +1765,12 @@
                                                             },
                                                             {
                                                                 value: "org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy",
-                                                                text: "PARTIAL REGEX",
+                                                                text: "PARTIAL REGEX"
                                                             },
                                                             {
                                                                 value: "org.apereo.cas.services.LiteralRegisteredServiceMatchingStrategy",
-                                                                text: "LITERAL",
-                                                            },
+                                                                text: "LITERAL"
+                                                            }
                                                         ],
                                                         helpText: "Specifies the strategy to determine how service IDs are matched.",
                                                         changeEventHandlers: "handleMatchingStrategyChange"
@@ -1829,16 +1829,60 @@
                                         </div>
                                         <h3 id="registeredServiceAcceptableUsagePolicy" class="advanced-option">Acceptable Usage Policy</h3>
                                           <div id="editServiceWizardMenuItemAUP">
-
+                                              <script type="text/javascript">
+                                                    createInputField({
+                                                        paramType: "org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy",
+                                                        labelTitle: "Message Code",
+                                                        name: "registeredServiceAUPMessageCode",
+                                                        paramName: "acceptableUsagePolicy.messageCode",
+                                                        required: false,
+                                                        containerId: "editServiceWizardMenuItemAUP",
+                                                        title: "Specifies the message code to be shown to the user for the acceptable usage policy."
+                                                    }).on("input", generateServiceDefinition);
+                                                    createInputField({
+                                                        paramType: "org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy",
+                                                        labelTitle: "Text",
+                                                        name: "registeredServiceAUPText",
+                                                        paramName: "acceptableUsagePolicy.text",
+                                                        required: false,
+                                                        containerId: "editServiceWizardMenuItemAUP",
+                                                        title: "Specifies the text to be shown to the user for the acceptable usage policy."
+                                                    }).on("input", generateServiceDefinition);
+                                                </script>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='enabled',
+                                                    title='When enabled, the acceptable usage policy is enforced for this service',
+                                                    label='#Enabled', cssClass='pt-2',
+                                                    dataAttrs='param-skip-false=true,param-name=acceptableUsagePolicy.enabled,param-type=org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy')}"/>
                                           </div>
+                                        
                                        <h3 class="advanced-option">Single SignOn Participation Policy</h3>
                                           <div id="editServiceWizardMenuItemSSOParticipationPolicy">
 
                                           </div>
-                                        <h3 id="registeredServiceWebflowInterruptPolicy" class="advanced-option">Webflow Interrupt Policy</h3>
+                                         <h3 id="registeredServiceWebflowInterruptPolicy" class="advanced-option">Webflow Interrupt Policy</h3>
                                           <div id="editServiceWizardMenuItemWebflowInterruptPolicy">
 
+                                                <script type="text/javascript">
+                                                       createSelectField({
+                                                           containerId: "editServiceWizardMenuItemWebflowInterruptPolicy",
+                                                           labelTitle: "Force Execution:",
+                                                           paramName: "webflowInterruptPolicy.forceExecution",
+                                                           paramType: "org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy",
+                                                           options: [
+                                                               {value: "", text: "UNDEFINED", selected: true},
+                                                               {value: "TRUE", text: "TRUE"},
+                                                               {value: "FALSE", text: "FALSE"}
+                                                           ],
+                                                           helpText: "Specifies whether to force execution of the webflow interrupt policy."
+                                                       });
+                                                </script>
+                                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='aupEnabled',
+                                                    title='When enabled, the acceptable usage policy is enforced for this service',
+                                                    label='#Enabled', cssClass='pt-2',
+                                                    dataAttrs='param-skip-false=true,param-name=webflowInterruptPolicy.enabled,param-type=org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy')}"/>
+
                                           </div>
+
                                         <h3 id="registeredServicePasswordlessPolicy" class="advanced-option">Passwordless Policy</h3>
                                           <div id="editServiceWizardMenuItemPasswordlessPolicy">
 
