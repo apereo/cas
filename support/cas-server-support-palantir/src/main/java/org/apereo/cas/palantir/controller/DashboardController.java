@@ -89,7 +89,8 @@ public class DashboardController extends AbstractController {
         val subTypes = ReflectionUtils.findSubclassesInPackage(BaseRegisteredService.class, CentralAuthenticationService.NAMESPACE);
         return subTypes
             .stream()
-            .filter(type -> !type.isInterface() && !Modifier.isAbstract(type.getModifiers()))
+            .filter(type -> !type.isInterface() && !type.isAnonymousClass()
+                && !Modifier.isAbstract(type.getModifiers()) && !type.isMemberClass())
             .collect(Collectors.toMap(Class::getName, Unchecked.function(type -> {
                 val service = (RegisteredService) type.getDeclaredConstructor().newInstance();
                 return service.getFriendlyName();
