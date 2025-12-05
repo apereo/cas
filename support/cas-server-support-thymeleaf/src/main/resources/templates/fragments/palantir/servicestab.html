@@ -1360,9 +1360,38 @@
                                              </div>
                                         </div>
                                         
-                                         <h3 class="advanced-option">Application Expiration Policy</h3>
-                                         <div id="editServiceWizardMenuItemExpirationPolicy">
+                                          <h3 class="advanced-option">Application Expiration Policy</h3>
+                                          <div id="editServiceWizardMenuItemExpirationPolicy">
 
+                                                <script type="text/javascript">
+                                                    createInputField({
+                                                        paramType: "org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy",
+                                                        labelTitle: "Expiration Date",
+                                                        name: "registeredServiceExpirationPolicyExpirationDate",
+                                                        paramName: "expirationPolicy.expirationDate",
+                                                        required: false,
+                                                        containerId: "editServiceWizardMenuItemExpirationPolicy",
+                                                        title: "Specifies the expiration date for the registered service in the format YYYY-MM-DD."
+                                                    }).on("input", generateServiceDefinition);
+
+                                                </script>
+                                              
+                                              <div th:replace="~{fragments/switchbutton :: switchbutton (id='deleteWhenExpired',
+                                                    title='When enabled, the service will be deleted upon expiration',
+                                                    label='#Delete When Expired', cssClass='pt-2',
+                                                    dataAttrs='param-skip-false=true,param-name=expirationPolicy.deleteWhenExpired')}"/>
+
+                                              <div th:replace="~{fragments/switchbutton :: switchbutton (id='notifyWhenDeleted',
+                                                    title='When enabled, a notification will be sent when the service is deleted upon expiration',
+                                                    label='#Notify When Deleted', cssClass='pt-2',
+                                                    dataAttrs='param-skip-false=true,param-name=expirationPolicy.notifyWhenDeleted')}"/>
+
+                                              <div th:replace="~{fragments/switchbutton :: switchbutton (id='notifyWhenExpired',
+                                                    title='When enabled, a notification will be sent when the service is expired',
+                                                    label='#Notify When Expired', cssClass='pt-2',
+                                                    dataAttrs='param-skip-false=true,param-name=expirationPolicy.notifyWhenExpired')}"/>
+
+                                              
                                           </div>
                                          
                                           <h3 class="advanced-option">Ticket-Granting Ticket Expiration Policy</h3>
@@ -1601,6 +1630,7 @@
                                                 
                                                 createSelectField({
                                                     cssClasses: "advanced-option",
+                                                    paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
                                                     containerId: "editServiceWizardMenuItemMfaPolicy",
                                                     labelTitle: "Failure Mode:",
                                                     paramName: "multifactorPolicy.failureMode",
@@ -1631,6 +1661,7 @@
                                                 });
 
                                                 createInputField({
+                                                    paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
                                                     cssClasses: "advanced-option",
                                                     labelTitle: "Principal Attribute Name Trigger",
                                                     name: "registeredServiceMfaPrincipalAttributeNameTrigger",
@@ -1641,6 +1672,7 @@
                                                 }).on("input", generateServiceDefinition);
 
                                                 createInputField({
+                                                    paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
                                                     cssClasses: "advanced-option",
                                                     labelTitle: "Principal Attribute Value To Match",
                                                     name: "registeredServiceMfaPrincipalAttributeValueToMatch",
@@ -1651,6 +1683,7 @@
                                                 }).on("input", generateServiceDefinition);
 
                                                 createInputField({
+                                                    paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
                                                     cssClasses: "advanced-option",
                                                     labelTitle: "Principal Attribute Name Bypass",
                                                     name: "registeredServiceMfaBypassPrincipalAttributeName",
@@ -1661,6 +1694,7 @@
                                                 }).on("input", generateServiceDefinition);
 
                                                 createInputField({
+                                                    paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
                                                     cssClasses: "advanced-option",
                                                     labelTitle: "Principal Attribute Value Bypass",
                                                     name: "registeredServiceMfaBypassPrincipalAttributeValue",
@@ -1672,6 +1706,7 @@
 
                                                 if (scriptFactoryAvailable) {
                                                     createInputField({
+                                                        paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
                                                         cssClasses: "advanced-option",
                                                         labelTitle: "Groovy Script",
                                                         name: "registeredServiceMfaScript",
@@ -1707,9 +1742,52 @@
 
                                           <h3 class="advanced-option">Matching Strategy</h3>
                                           <div id="editServiceWizardMenuItemMatchingStrategy">
+                                                <script type="text/javascript">
+                                                    function handleMatchingStrategyChange(select) {
+                                                        const type = getLastWord($(select).val());
+                                                        console.log("Selected matching strategy type:", type);
+                                                        $(`#editServiceWizardMenuItemMatchingStrategy .${type}`).show();
+                                                        $("#editServiceWizardMenuItemMatchingStrategy [id$='ButtonPanel']")
+                                                            .not(`.${type}`)
+                                                            .hide();
+                                                        
+                                                    }
+                                                    
+                                                    createSelectField({
+                                                        containerId: "editServiceWizardMenuItemMatchingStrategy",
+                                                        labelTitle: "Type:",
+                                                        paramName: "matchingStrategy",
+                                                        options: [
+                                                            {
+                                                                value: "org.apereo.cas.services.FullRegexRegisteredServiceMatchingStrategy",
+                                                                text: "FULL REGEX",
+                                                                selected: true
+                                                            },
+                                                            {
+                                                                value: "org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy",
+                                                                text: "PARTIAL REGEX",
+                                                            },
+                                                            {
+                                                                value: "org.apereo.cas.services.LiteralRegisteredServiceMatchingStrategy",
+                                                                text: "LITERAL",
+                                                            },
+                                                        ],
+                                                        helpText: "Specifies the strategy to determine how service IDs are matched.",
+                                                        changeEventHandlers: "handleMatchingStrategyChange"
+                                                    }).data("renderer", function (value) {
+                                                        return {"@class": value};
+                                                    });
+                                                    
+                                                </script>
 
+                                            <div th:replace="~{fragments/switchbutton :: switchbutton (id='caseInsensitive',
+                                                title='When enabled, service ID matching is performed in a case-insensitive manner',
+                                                label='#Case Insensitive', cssClass='pt-2 hide LiteralRegisteredServiceMatchingStrategy',
+                                                dataAttrs='param-skip-false=true,param-name=matchingStrategy.caseInsensitive')}"/>
                                           </div>
-                                         <h3>Access Strategy</h3>
+
+
+                                          <h3>Access Strategy</h3>
                                           <div id="editServiceWizardMenuItemAccessStrategy">
 
                                           </div>
@@ -1725,10 +1803,30 @@
                                           <div id="editServiceWizardMenuItemContacts">
 
                                           </div>
-                                         <h3 class="advanced-option">Public Key</h3>
-                                          <div id="editServiceWizardMenuItemPublicKey">
+                                        <h3 class="advanced-option">Public Key</h3>
+                                        <div id="editServiceWizardMenuItemPublicKey">
+                                            <script type="text/javascript">
+                                                createInputField({
+                                                    paramType: "org.apereo.cas.services.RegisteredServicePublicKeyImpl",
+                                                    labelTitle: "Public Key Location",
+                                                    name: "registeredServicePublicKeyLocation",
+                                                    paramName: "publicKey.location",
+                                                    required: false,
+                                                    containerId: "editServiceWizardMenuItemPublicKey",
+                                                    title: "Specifies the location of the public key used for encrypting attributes or the username."
+                                                }).on("input", generateServiceDefinition);
 
-                                          </div>
+                                                createInputField({
+                                                    paramType: "org.apereo.cas.services.RegisteredServicePublicKeyImpl",
+                                                    labelTitle: "Algorithm",
+                                                    name: "registeredServicePublicKeyAlgorithm",
+                                                    paramName: "publicKey.algorithm",
+                                                    required: false,
+                                                    containerId: "editServiceWizardMenuItemPublicKey",
+                                                    title: "Specifies the algorithm used with the public key (i.e. <code>RSA</code>)."
+                                                }).on("input", generateServiceDefinition);
+                                            </script>
+                                        </div>
                                         <h3 id="registeredServiceAcceptableUsagePolicy" class="advanced-option">Acceptable Usage Policy</h3>
                                           <div id="editServiceWizardMenuItemAUP">
 

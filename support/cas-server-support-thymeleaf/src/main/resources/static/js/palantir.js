@@ -1921,7 +1921,7 @@ async function initializeCasSpringWebflowOperations() {
             startOnLoad: false,
             securityLevel: "loose",
             theme: "base",
-            logLevel: 3,
+            logLevel: 4,
             themeVariables: {
                 primaryColor: "deepskyblue",
                 secondaryColor: "#73e600",
