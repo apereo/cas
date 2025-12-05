@@ -125,6 +125,15 @@ function generateServiceDefinition() {
             });
 
         if (Object.keys(serviceDefinition).length > 1) {
+            $("form#editServiceWizardForm")
+                .find("input,select")
+                .each(function () {
+                    const $input = $(this);
+                    const beforeGenerate = $input.data("beforeGenerate");
+                    if (typeof beforeGenerate === "function") {
+                        beforeGenerate($input, serviceDefinition);
+                    }
+                });
             editor.setValue(JSON.stringify(serviceDefinition, null, 4));
         } else {
             editor.setValue("");
@@ -133,13 +142,16 @@ function generateServiceDefinition() {
     }, 150);
 }
 
-function generateMappedFieldValue(sectionId, multipleValues = false) {
+function generateMappedFieldValue(sectionId, multipleValues = false, valueFieldRenderer) {
     const definition = {};
     const inputs = $(`#${sectionId}`).find("input");
     for (let i = 0; i < inputs.length; i += 2) {
         const key = $(inputs[i]).val();
         const value = $(inputs[i + 1]).val();
-        if (key && key.trim().length > 0 && value && value.trim().length > 0) {
+
+        if (valueFieldRenderer !== undefined && typeof valueFieldRenderer === "function") {
+            definition[key] = valueFieldRenderer($(inputs[i]), $(inputs[i+1]))
+        } else if (key && key.trim().length > 0 && value && value.trim().length > 0) {
             if (multipleValues) {
                 definition[key] = ["java.util.ArrayList", value.split(",")];
             } else {
@@ -160,7 +172,8 @@ function createMappedInputField(config) {
         keyLabel = "",
         valueLabel = "",
         required = false,
-        multipleValues = false
+        multipleValues = false,
+        valueFieldRenderer
     } = config;
 
     const sectionContainerId = `registeredService${capitalize(keyField)}Container`;
@@ -231,9 +244,10 @@ function createMappedInputField(config) {
             </button>
         </div>
     `);
-
+    
     $(`#${containerId}`).append(fields);
-
+    
+    
     function configureRemoveMapRowEventHandler() {
         $(`button[name=${removeButtonId}]`).off().on("click", function () {
             $(this).closest(`.${keyField}-map-row`).remove();
@@ -249,7 +263,7 @@ function createMappedInputField(config) {
 
     function configureInputRenderer() {
         $(`#${sectionContainerId} input`).data("renderer", function () {
-            return generateMappedFieldValue(sectionContainerId, multipleValues);
+            return generateMappedFieldValue(sectionContainerId, multipleValues, valueFieldRenderer);
         });
     }
 
@@ -337,7 +351,8 @@ function createInputField(config) {
         containerId,
         title,
         serviceClass = "",
-        cssClasses = ""
+        cssClasses = "",
+        data = {}
     } = config;
 
     const label = $("<label>", {
@@ -369,6 +384,9 @@ function createInputField(config) {
         required: required
     });
 
+    Object.entries(data).forEach(([key, value]) => {
+        input.data(key, value);
+    });
     label.append(outline, input);
 
     const container = $("<span>", {
