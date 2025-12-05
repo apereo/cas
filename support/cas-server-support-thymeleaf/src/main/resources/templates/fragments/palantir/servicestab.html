@@ -1473,10 +1473,16 @@
                                                                    hideDefaults: true
                                                                }
                                                            },
-                                                           {
-                                                               value: "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
-                                                               text: "GROOVY"
-                                                           },
+
+                                                           ...(
+                                                               scriptFactoryAvailable
+                                                                   ? [{
+                                                                       value: "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
+                                                                       text: "GROOVY"
+                                                                   }]
+                                                                   : []
+                                                           ),
+
                                                            {
                                                                value: "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
                                                                text: "PRINCIPAL ATTRIBUTE"
@@ -1571,15 +1577,135 @@
                                                     label='#Encrypt Username', cssClass='pt-2,DefaultRegisteredServiceUsernameProvider',
                                                     dataAttrs='param-skip-false=true,param-name=usernameAttributeProvider.encryptUsername')}"/>
                                           </div>
-                                         <h3>Attribute Release Policy</h3>
+
+                                          <h3>Attribute Release Policy</h3>
                                           <div id="editServiceWizardMenuItemAttributeReleasePolicy">
 
                                           </div>
+
                                           <h3 id="registeredServiceMfaPolicy">Multifactor Authentication Policy</h3>
                                           <div id="editServiceWizardMenuItemMfaPolicy">
+                                            <script type="text/javascript">
+                                                createInputField({
+                                                    labelTitle: "Multifactor Providers",
+                                                    name: "registeredServiceMfaProviders",
+                                                    paramName: "multifactorPolicy.multifactorAuthenticationProviders",
+                                                    paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+                                                    required: false,
+                                                    containerId: "editServiceWizardMenuItemMfaPolicy",
+                                                    title: "Define the multifactor authentication providers to be used, separated by commas."
+                                                }).on("input", generateServiceDefinition)
+                                                    .data("renderer", function (value) {
+                                                        return ["java.util.HashSet", value.split(",")];
+                                                    });
+                                                
+                                                createSelectField({
+                                                    cssClasses: "advanced-option",
+                                                    containerId: "editServiceWizardMenuItemMfaPolicy",
+                                                    labelTitle: "Failure Mode:",
+                                                    paramName: "multifactorPolicy.failureMode",
+                                                    options: [
+                                                        {
+                                                            value: "",
+                                                            text: "UNDEFINED",
+                                                            selected: true
+                                                        },
+                                                        {
+                                                            value: "OPEN",
+                                                            text: "OPEN",
+                                                        },
+                                                        {
+                                                            value: "CLOSED",
+                                                            text: "CLOSED",
+                                                        },
+                                                        {
+                                                            value: "PHANTOM",
+                                                            text: "PHANTOM",
+                                                        },
+                                                        {
+                                                            value: "NONE",
+                                                            text: "NONE",
+                                                        },
+                                                    ],
+                                                    helpText: "Specifies the failure mode for multifactor authentication."
+                                                });
 
+                                                createInputField({
+                                                    cssClasses: "advanced-option",
+                                                    labelTitle: "Principal Attribute Name Trigger",
+                                                    name: "registeredServiceMfaPrincipalAttributeNameTrigger",
+                                                    paramName: "multifactorPolicy.principalAttributeNameTrigger",
+                                                    required: false,
+                                                    containerId: "editServiceWizardMenuItemMfaPolicy",
+                                                    title: "Specifies the principal attribute name that triggers multifactor authentication."
+                                                }).on("input", generateServiceDefinition);
+
+                                                createInputField({
+                                                    cssClasses: "advanced-option",
+                                                    labelTitle: "Principal Attribute Value To Match",
+                                                    name: "registeredServiceMfaPrincipalAttributeValueToMatch",
+                                                    paramName: "multifactorPolicy.principalAttributeValueToMatch",
+                                                    required: false,
+                                                    containerId: "editServiceWizardMenuItemMfaPolicy",
+                                                    title: "Specifies the principal attribute value to match for triggering multifactor authentication."
+                                                }).on("input", generateServiceDefinition);
+
+                                                createInputField({
+                                                    cssClasses: "advanced-option",
+                                                    labelTitle: "Principal Attribute Name Bypass",
+                                                    name: "registeredServiceMfaBypassPrincipalAttributeName",
+                                                    paramName: "multifactorPolicy.bypassPrincipalAttributeName",
+                                                    required: false,
+                                                    containerId: "editServiceWizardMenuItemMfaPolicy",
+                                                    title: "Specifies the principal attribute name that bypasses multifactor authentication."
+                                                }).on("input", generateServiceDefinition);
+
+                                                createInputField({
+                                                    cssClasses: "advanced-option",
+                                                    labelTitle: "Principal Attribute Value Bypass",
+                                                    name: "registeredServiceMfaBypassPrincipalAttributeValue",
+                                                    paramName: "multifactorPolicy.bypassPrincipalAttributeValue",
+                                                    required: false,
+                                                    containerId: "editServiceWizardMenuItemMfaPolicy",
+                                                    title: "Specifies the principal attribute value that bypasses multifactor authentication."
+                                                }).on("input", generateServiceDefinition);
+
+                                                if (scriptFactoryAvailable) {
+                                                    createInputField({
+                                                        cssClasses: "advanced-option",
+                                                        labelTitle: "Groovy Script",
+                                                        name: "registeredServiceMfaScript",
+                                                        paramName: "multifactorPolicy.script",
+                                                        required: false,
+                                                        containerId: "editServiceWizardMenuItemMfaPolicy",
+                                                        title: "Specifies the Groovy script location, inline or external, to determine multifactor authentication."
+                                                    }).on("input", generateServiceDefinition);
+                                                }
+
+                                            </script>
+
+                                              <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassEnabled',
+                                                    title='When enabled, the multifactor authentication policy can be bypassed based on defined criteria',
+                                                    label='#Bypass Multifactor Authentication', cssClass='pt-2',
+                                                    dataAttrs='param-skip-false=true,param-name=multifactorPolicy.bypassEnabled')}"/>
+
+                                              <div th:replace="~{fragments/switchbutton :: switchbutton (id='forceExecution',
+                                                    title='When enabled, multifactor authentication is forced for this service',
+                                                    label='#Force Multifactor Authentication', cssClass='pt-2 advanced-option',
+                                                    dataAttrs='param-skip-false=true,param-name=multifactorPolicy.forceExecution')}"/>
+
+                                              <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassTrustedDeviceEnabled',
+                                                    title='When enabled, trusted devices are allowed to bypass multifactor authentication',
+                                                    label='#Bypass Trusted Devices', cssClass='advanced-option',
+                                                    dataAttrs='param-skip-false=true,param-name=multifactorPolicy.bypassTrustedDeviceEnabled')}"/>
+
+                                              <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassIfMissingPrincipalAttribute',
+                                                    title='When enabled, multifactor authentication is bypassed if the principal attribute used for triggering is missing',
+                                                    label='#Bypass If Missing Principal Attribute', cssClass='pt-2 advanced-option',
+                                                    dataAttrs='param-skip-false=true,param-name=multifactorPolicy.bypassIfMissingPrincipalAttribute')}"/>
                                           </div>
-                                         <h3 class="advanced-option">Matching Strategy</h3>
+
+                                          <h3 class="advanced-option">Matching Strategy</h3>
                                           <div id="editServiceWizardMenuItemMatchingStrategy">
 
                                           </div>
