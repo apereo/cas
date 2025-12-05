@@ -1414,9 +1414,10 @@
                                               id="editServiceWizardMenuItemPTExpirationPolicy">
 
                                          </div>
-                                         <h3 class="class-CasRegisteredService advanced-option">Proxy Expiration Policy</h3>
+                                        
+                                         <h3 class="class-CasRegisteredService advanced-option">Proxy Policy</h3>
                                          <div class="class-CasRegisteredService"
-                                              id="editServiceWizardMenuItemProxyExpirationPolicy">
+                                              id="editServiceWizardMenuItemProxyAuthenticationPolicy">
 
                                          </div>
 
@@ -1885,11 +1886,18 @@
 
                                         <h3 id="registeredServicePasswordlessPolicy" class="advanced-option">Passwordless Policy</h3>
                                           <div id="editServiceWizardMenuItemPasswordlessPolicy">
+                                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='passwordlessEnabled',
+                                                    title='When enabled, passwordless authentication is enforced for this service',
+                                                    label='#Enabled', cssClass='pt-2',
+                                                    dataAttrs='param-skip-false=true,param-name=passwordlessPolicy.enabled,param-type=org.apereo.cas.services.DefaultRegisteredServicePasswordlessPolicy')}"/>
 
                                           </div>
                                         <h3 id="registeredServiceSurrogatePolicy" class="advanced-option">Surrogate (Impersonation) Policy</h3>
                                           <div id="editServiceWizardMenuItemSurrogatePolicy">
-                                            
+                                                  <div th:replace="~{fragments/switchbutton :: switchbutton (id='surrogateEnabled',
+                                                    title='When enabled, surrogate authentication is enforced for this service',
+                                                    label='#Enabled', cssClass='pt-2',
+                                                    dataAttrs='param-skip-false=true,param-name=surrogatePolicy.enabled,param-type=org.apereo.cas.services.DefaultRegisteredServiceSurrogatePolicy')}"/>
                                           </div>
                                     </div>
                                     <section class="my-3 h-350px">
