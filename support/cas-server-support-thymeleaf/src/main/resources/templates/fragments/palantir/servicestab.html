@@ -1491,12 +1491,12 @@
                                                      $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='FieldContainer'] input")
                                                          .val("");
                                                      $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='ButtonPanel'] button")
-                                                         .each(function() {
+                                                         .each(function () {
                                                              const selected = $(this).data("param-selected");
                                                              if (selected) {
                                                                  $(this).click();
                                                              }
-                                                         })
+                                                         });
                                                  }
 
                                                  createSelectField({
@@ -1511,19 +1511,20 @@
                                                          },
                                                          {
                                                              value: "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
-                                                             text: "REGEX",
+                                                             text: "REGEX"
                                                          },
                                                          {
                                                              value: "org.apereo.cas.services.RestfulRegisteredServiceProxyPolicy",
-                                                             text: "REST",
-                                                         },
-                                                         
+                                                             text: "REST"
+                                                         }
+
                                                      ],
                                                      helpText: "Specifies the strategy to determine the username attribute.",
                                                      changeEventHandlers: "handleRegisteredServiceProxyPolicyChange"
-                                                 }).data("renderer", function (value) {
-                                                     return {"@class": value};
-                                                 });
+                                                 })
+                                                     .data("renderer", function (value) {
+                                                         return {"@class": value};
+                                                     });
 
                                                  createInputField({
                                                      cssClasses: "hide RegexMatchingRegisteredServiceProxyPolicy",
@@ -1942,14 +1943,67 @@
                                           <div id="editServiceWizardMenuItemAuthenticationPolicy">
 
                                           </div>
-                                         <h3 class="advanced-option">Properties</h3>
+
+                                          <h3 class="advanced-option">Properties</h3>
                                           <div id="editServiceWizardMenuItemProperties">
-
+                                            <script type="text/javascript">
+                                                 createMappedInputField({
+                                                     containerId: "editServiceWizardMenuItemProperties",
+                                                     keyField: "registeredServicePropertyName",
+                                                     keyLabel: "Property Name",
+                                                     valueField: "registeredServicePropertyValue",
+                                                     valueLabel: "Property value(s) separated by commas",
+                                                     containerField: "properties",
+                                                     valueFieldRenderer: function ($input) {
+                                                         return {
+                                                             "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+                                                             "values": ["java.util.HashSet", $input.val().split(",")]
+                                                         };
+                                                     }
+                                                 });
+                                             </script>
                                           </div>
-                                         <h3 class="advanced-option">Contacts</h3>
+
+                                          <h3 class="advanced-option">Contacts</h3>
                                           <div id="editServiceWizardMenuItemContacts">
+                                               <script type="text/javascript">
+                                                   for (let index = 0; index < 1; index++) {
+                                                       const details = ["name", "email", "phone", "department", "type"];
+                                                       details.forEach(detail => {
+                                                           createInputField({
+                                                               labelTitle: capitalize(detail),
+                                                               name: `registeredServiceContact${capitalize(detail)}${index}`,
+                                                               paramName: `contacts`,
+                                                               required: false,
+                                                               containerId: "editServiceWizardMenuItemContacts",
+                                                               title: `Specify the contact's ${detail}`,
+                                                               data: {
+                                                                   "contact-field": detail,
+                                                                   "contact-group": index
+                                                               }
+                                                           })
+                                                               .data("renderer", function (value, $input, serviceDefinition) {
+                                                                   const contact = {
+                                                                       "@class": "org.apereo.cas.services.DefaultRegisteredServiceContact"
+                                                                   };
+                                                                   return ["java.util.ArrayList", [contact]];
+                                                               })
+                                                               .data("beforeGenerate", function ($input, serviceDefinition) {
+                                                                   if (serviceDefinition["contacts"] && $input.val().length > 0) {
+                                                                       const contactField = $input.data("contact-field");
+                                                                       const contactGroup = Number($input.data("contact-group"));
+                                                                       const contacts = serviceDefinition["contacts"][1][contactGroup];
+                                                                       contacts[contactField] = $input.val();
+                                                                   }
+                                                               })
+                                                               .on("input", generateServiceDefinition);
+                                                       });
+                                                   }
 
+                                                   
+                                               </script>
                                           </div>
+
                                         <h3 class="advanced-option">Public Key</h3>
                                         <div id="editServiceWizardMenuItemPublicKey">
                                             <script type="text/javascript">
