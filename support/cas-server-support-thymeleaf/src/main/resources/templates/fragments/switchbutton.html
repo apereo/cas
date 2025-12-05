@@ -77,12 +77,19 @@
 
         <script th:inline="javascript">
             /*<![CDATA[*/
+            
             document.addEventListener('DOMContentLoaded', () => {
                 if (typeof mdc === 'undefined' || mdc === undefined) {
                     $(/*[[${'#' + id + 'SwitchButtonPanel'}]]*/).hide().empty();
                     $(/*[[${'#' + id + 'checkBoxPanel'}]]*/).show();
                 } else {
-                    $(/*[[${'#' + id + 'SwitchButtonPanel'}]]*/).show();
+                    let cssClass = /*[[${cssClass}]]*/;
+                    let button = /*[[${'#' + id + 'SwitchButtonPanel'}]]*/;
+                    if (cssClass && cssClass.indexOf('hide') !== -1) {
+                        $(button).hide();
+                    } else {
+                        $(button).show();
+                    }
                     $(/*[[${'#' + id + 'checkBoxPanel'}]]*/).hide().empty();
                 }
             });
