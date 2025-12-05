@@ -48,7 +48,7 @@ function hideAdvancedRegisteredServiceOptions() {
         $("form#editServiceWizardForm .advanced-option").show();
     }
 
-    if (Object.keys(availableMultifactorProviders).length === 0) {
+    if (availableMultifactorProviders.length === 0) {
         $("#registeredServiceMfaPolicy").hide();
     }
     if (!CAS_FEATURES.includes("AcceptableUsagePolicy")) {
@@ -77,6 +77,7 @@ function generateServiceDefinition() {
             .each(function () {
                 const $input = $(this);
                 const paramName = $input.data("param-name");
+                const paramType = $input.data("param-type");
                 const skipWhenFalse = $input.data("param-skip-false");
                 const skipWhenTrue = $input.data("param-skip-true");
                 let value = $input.val();
@@ -96,12 +97,18 @@ function generateServiceDefinition() {
                         }
 
                         if (typeof renderer === "function") {
-                            console.debug(`Rendering parameter ${paramName} using custom renderer`);
-                            serviceDefinition[paramName] = renderer(value, $input, serviceDefinition);
-                        } else if (paramName.includes(".")) {
-                            console.log("Processing nested parameter:", paramName);
+                            value = renderer(value, $input, serviceDefinition);
+                        }
+
+                        if (paramName.includes(".")) {
                             const parts = paramName.split(".");
                             let current = serviceDefinition;
+
+                            if (paramType && paramType.length > 0 && parts.length > 0) {
+                                if (!current[parts[0]]) {
+                                    current[parts[0]] = { "@class": paramType };
+                                }
+                            }
                             parts.forEach((part, index) => {
                                 if (!current[part]) {
                                     current[part] = (index === parts.length - 1) ? value : {};
@@ -316,6 +323,7 @@ function createInputField(config) {
         labelTitle,
         name,
         paramName,
+        paramType = "",
         required,
         containerId,
         title,
@@ -344,6 +352,7 @@ function createInputField(config) {
         id: name,
         name: name,
         "data-param-name": paramName,
+        "data-param-type": paramType,
         tabindex: 0,
         size: 50,
         autocomplete: "off",

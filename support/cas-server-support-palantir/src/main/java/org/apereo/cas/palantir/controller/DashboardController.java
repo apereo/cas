@@ -9,6 +9,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.web.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -80,7 +82,9 @@ public class DashboardController extends AbstractController {
         mav.addObject("actuatorEndpoints", actuatorEndpoints);
         mav.addObject("supportedServiceTypes", loadSupportedServiceDefinitions());
         mav.addObject("serviceDefinitions", loadExampleServiceDefinitions());
-        mav.addObject("availableMultifactorProviders", MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext));
+        mav.addObject("availableMultifactorProviders", MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).keySet());
+        mav.addObject("scriptFactoryAvailable", CasRuntimeHintsRegistrar.notInNativeImage()
+            && ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory().isPresent());
 
         return mav;
     }
@@ -96,7 +100,7 @@ public class DashboardController extends AbstractController {
                 return service.getFriendlyName();
             })));
     }
-    
+
     private Map<String, List<String>> loadExampleServiceDefinitions() throws IOException {
         val jsonFilesMap = new HashMap<String, List<String>>();
         val serializer = new RegisteredServiceJsonSerializer(applicationContext);
