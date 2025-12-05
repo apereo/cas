@@ -1403,22 +1403,168 @@
                                          <div class="class-CasRegisteredService"
                                               id="editServiceWizardMenuItemSTExpirationPolicy">
 
+                                               <script type="text/javascript">
+                                                    createInputField({
+                                                        paramType: "org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy",
+                                                        labelTitle: "Number of Uses",
+                                                        name: "registeredServiceTicketExpirationPolicyNumberOfUses",
+                                                        paramName: "serviceTicketExpirationPolicy.numberOfUses",
+                                                        required: false,
+                                                        containerId: "editServiceWizardMenuItemSTExpirationPolicy",
+                                                        title: "Control the number of times the ticket can be used"
+                                                    }).attr("type", "number").on("input", generateServiceDefinition);
+
+                                                    createInputField({
+                                                        paramType: "org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy",
+                                                        labelTitle: "Time to Live",
+                                                        name: "registeredServiceTicketExpirationPolicyTimeToLive",
+                                                        paramName: "serviceTicketExpirationPolicy.timeToLive",
+                                                        required: false,
+                                                        containerId: "editServiceWizardMenuItemSTExpirationPolicy",
+                                                        title: "Control how long the ticket should be valid, in seconds."
+                                                    }).attr("type", "number").on("input", generateServiceDefinition);
+
+                                                </script>
+                                             
                                          </div>
                                          <h3 class="class-CasRegisteredService advanced-option">Proxy-granting Ticket Expiration Policy</h3>
                                          <div class="class-CasRegisteredService"
                                               id="editServiceWizardMenuItemPGTExpirationPolicy">
+
+                                             <script type="text/javascript">
+                                                    createInputField({
+                                                        paramType: "org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy",
+                                                        labelTitle: "Max Time to Live",
+                                                        name: "registeredServiceProxyGrantingTicketExpirationPolicyMaxTimeToLive",
+                                                        paramName: "proxyGrantingTicketExpirationPolicy.maxTimeToLiveInSeconds",
+                                                        required: false,
+                                                        containerId: "editServiceWizardMenuItemPGTExpirationPolicy",
+                                                        title: "Control how long the ticket should be valid, in seconds."
+                                                    }).attr("type", "number").on("input", generateServiceDefinition);
+
+                                                </script>
 
                                          </div>
                                          <h3 class="class-CasRegisteredService advanced-option">Proxy Ticket Expiration Policy</h3>
                                          <div class="class-CasRegisteredService"
                                               id="editServiceWizardMenuItemPTExpirationPolicy">
 
+                                             <script type="text/javascript">
+                                                    createInputField({
+                                                        paramType: "org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy",
+                                                        labelTitle: "Number of Uses",
+                                                        name: "registeredServiceProxyTicketExpirationPolicyNumberOfUses",
+                                                        paramName: "proxyTicketExpirationPolicy.numberOfUses",
+                                                        required: false,
+                                                        containerId: "editServiceWizardMenuItemPTExpirationPolicy",
+                                                        title: "Control the number of times the ticket can be used"
+                                                    }).attr("type", "number").on("input", generateServiceDefinition);
+
+                                                    createInputField({
+                                                        paramType: "org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy",
+                                                        labelTitle: "Time to Live",
+                                                        name: "registeredServiceProxyTicketExpirationPolicyTimeToLive",
+                                                        paramName: "proxyTicketExpirationPolicy.timeToLive",
+                                                        required: false,
+                                                        containerId: "editServiceWizardMenuItemPTExpirationPolicy",
+                                                        title: "Control how long the ticket should be valid, in seconds."
+                                                    }).attr("type", "number").on("input", generateServiceDefinition);
+
+                                                </script>
+                                             
                                          </div>
                                         
                                          <h3 class="class-CasRegisteredService advanced-option">Proxy Policy</h3>
                                          <div class="class-CasRegisteredService"
                                               id="editServiceWizardMenuItemProxyAuthenticationPolicy">
 
+                                             <script type="text/javascript">
+                                                 function handleRegisteredServiceProxyPolicyChange(select) {
+                                                     const type = getLastWord($(select).val());
+                                                     $(`#editServiceWizardMenuItemProxyAuthenticationPolicy .${type}`).show();
+                                                     $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='FieldContainer']")
+                                                         .not(`.${type}`)
+                                                         .hide();
+                                                     $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='ButtonPanel']")
+                                                         .not(`.${type}`)
+                                                         .hide();
+                                                     $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='FieldContainer'] input")
+                                                         .val("");
+                                                     $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='ButtonPanel'] button")
+                                                         .each(function() {
+                                                             const selected = $(this).data("param-selected");
+                                                             if (selected) {
+                                                                 $(this).click();
+                                                             }
+                                                         })
+                                                 }
+
+                                                 createSelectField({
+                                                     containerId: "editServiceWizardMenuItemProxyAuthenticationPolicy",
+                                                     labelTitle: "Type:",
+                                                     paramName: "proxyPolicy",
+                                                     options: [
+                                                         {
+                                                             value: "org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy",
+                                                             text: "REFUSE",
+                                                             selected: true
+                                                         },
+                                                         {
+                                                             value: "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+                                                             text: "REGEX",
+                                                         },
+                                                         {
+                                                             value: "org.apereo.cas.services.RestfulRegisteredServiceProxyPolicy",
+                                                             text: "REST",
+                                                         },
+                                                         
+                                                     ],
+                                                     helpText: "Specifies the strategy to determine the username attribute.",
+                                                     changeEventHandlers: "handleRegisteredServiceProxyPolicyChange"
+                                                 }).data("renderer", function (value) {
+                                                     return {"@class": value};
+                                                 });
+
+                                                 createInputField({
+                                                     cssClasses: "hide RegexMatchingRegisteredServiceProxyPolicy",
+                                                     labelTitle: "Pattern",
+                                                     name: "registeredServiceProxyPolicyRegexPattern",
+                                                     paramName: "proxyPolicy.pattern",
+                                                     required: false,
+                                                     containerId: "editServiceWizardMenuItemProxyAuthenticationPolicy",
+                                                     title: "Specifies the URL pattern that is allowed for proxy authentication"
+                                                 }).on("input", generateServiceDefinition);
+
+                                                 createInputField({
+                                                     cssClasses: "hide RestfulRegisteredServiceProxyPolicy",
+                                                     labelTitle: "Endpoint",
+                                                     name: "registeredServiceProxyPolicyRestEndpoint",
+                                                     paramName: "proxyPolicy.endpoint",
+                                                     required: false,
+                                                     containerId: "editServiceWizardMenuItemProxyAuthenticationPolicy",
+                                                     title: "Specifies the endpoint CAS must reach to determine proxy authentication eligibility"
+                                                 }).on("input", generateServiceDefinition);
+
+                                                 createMappedInputField({
+                                                     cssClasses: "hide RestfulRegisteredServiceProxyPolicy",
+                                                     containerId: "editServiceWizardMenuItemProxyAuthenticationPolicy",
+                                                     keyField: "proxyPolicyHeaderName",
+                                                     keyLabel: "Header Name",
+                                                     valueField: "proxyPolicyHeaderValue",
+                                                     valueLabel: "Header Value",
+                                                     containerField: "proxyPolicy.headers"
+                                                 });
+                                                 
+                                             </script>
+
+                                              <div th:replace="~{fragments/switchbutton :: switchbutton (id='proxyAuthenticationUseServiceId',
+                                                    title='When enabled, the service ID pattern will be used in proxy policy enforcement',
+                                                    label='#Use Service ID', cssClass='pt-2 hide RegexMatchingRegisteredServiceProxyPolicy',
+                                                    dataAttrs='param-skip-false=true,param-name=proxyPolicy.useServiceId')}"/>
+                                             <div th:replace="~{fragments/switchbutton :: switchbutton (id='proxyAuthenticationExactMatch',
+                                                    title='When enabled, an exact match is required for proxy policy enforcement',
+                                                    label='#Exact Match', cssClass='pt-2 hide RegexMatchingRegisteredServiceProxyPolicy',
+                                                    dataAttrs='param-skip-false=true,param-name=proxyPolicy.exactMatch')}"/>
                                          </div>
 
 

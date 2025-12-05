@@ -94,6 +94,8 @@ function generateServiceDefinition() {
                             value = true;
                         } else if (value === "false") {
                             value = false;
+                        } else if (isNumeric(value)) {
+                            value = Number(value);
                         }
 
                         if (typeof renderer === "function") {
@@ -150,12 +152,14 @@ function generateMappedFieldValue(sectionId, multipleValues = false) {
 
 function createMappedInputField(config) {
     const {
+        cssClasses = "",
         containerId,
         keyField,
         valueField,
         containerField,
         keyLabel = "",
         valueLabel = "",
+        required = false,
         multipleValues = false
     } = config;
 
@@ -167,9 +171,9 @@ function createMappedInputField(config) {
     const inputFieldKeyId = `registeredService${capitalize(keyField)}`;
     const inputFieldValueId = `registeredService${capitalize(valueField)}`;
     const rowElements = `
-            <div class="d-flex justify-content-between pt-2 ${keyField}-map-row" id="${mapRowId}">
+            <div class="d-flex justify-content-between pt-2 ${keyField}-map-row ${cssClasses}" id="${mapRowId}">
                 <label for="${keyField}"
-                       class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label">
+                       class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label ${cssClasses}">
                     <span class="mdc-notched-outline pr-2">
                         <span class="mdc-notched-outline__leading"></span>
                         <span class="mdc-notched-outline__notch">
@@ -177,17 +181,17 @@ function createMappedInputField(config) {
                         </span>
                         <span class="mdc-notched-outline__trailing"></span>
                     </span>
-                    <input class="mdc-text-field__input form-control"
+                    <input class="mdc-text-field__input form-control "
                            id="${inputFieldKeyId}"
                            name="${inputFieldKeyId}"
                            size="25"
                            type="text"
                            data-param-name="${containerField}"
-                           required="true"/>
+                           required="${required}"/>
                 </label>
 
                 <label for="${valueField}"
-                       class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label">
+                       class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label ${cssClasses}">
                     <span class="mdc-notched-outline">
                         <span class="mdc-notched-outline__leading"></span>
                         <span class="mdc-notched-outline__notch">
@@ -201,26 +205,26 @@ function createMappedInputField(config) {
                            size="25"
                            type="text"
                            data-param-name="${containerField}"
-                           required="true"/>
+                           required="${required}"/>
                 </label>
 
                 <button type="button"
                         id="${removeButtonId}"
                         name="${removeButtonId}"
-                        class="mdc-button mdc-button--raised btn btn-link mdc-button--inline-row">
+                        class="mdc-button mdc-button--raised btn btn-link mdc-button--inline-row ${cssClasses}">
                     <i class="mdi mdi-trash-can" aria-hidden="true"></i>
                 </button>
             </div>
     `;
     const fields = $(`
-        <div id="${sectionContainerId}">
+        <div id="${sectionContainerId}" class="${cssClasses}">
             ${rowElements}
         </div>
-        <div class="d-flex pt-2">
+        <div class="d-flex pt-2 ${cssClasses}">
             <button type="button" 
                     name="${addButtonId}"
                     id="${addButtonId}"
-                    class="mdc-button mdc-button--raised mdc-button--round add-row">
+                    class="mdc-button mdc-button--raised mdc-button--round add-row ${cssClasses}">
                 <span class="mdc-button__label">
                     <i class="mdc-tab__icon mdi mdi-plus-thick" aria-hidden="true"></i>
                 </span>
@@ -250,7 +254,10 @@ function createMappedInputField(config) {
     }
 
     $(`button[name=${addButtonId}]`).off().on("click", () => {
-        $(`#${sectionContainerId}`).append(rowElements);
+        let elementsToAdd = $(rowElements).removeClass('hide');
+        elementsToAdd.find("*").removeClass("hide");
+        
+        $(`#${sectionContainerId}`).append(elementsToAdd);
         configureRemoveMapRowEventHandler();
         cas.attachFields();
         configureInputEventHandler();
