@@ -1396,7 +1396,41 @@
                                          
                                           <h3 class="advanced-option">Ticket-Granting Ticket Expiration Policy</h3>
                                           <div id="editServiceWizardMenuItemTGTExpirationPolicy">
+                                              <script type="text/javascript">
+                                                     createInputField({
+                                                         paramType: "org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy",
+                                                         labelTitle: "Max Time to Live",
+                                                         name: "registeredServiceTicketGrantingTicketExpirationPolicyMaxTimeToLive",
+                                                         paramName: "ticketGrantingTicketExpirationPolicy.maxTimeToLiveInSeconds",
+                                                         required: false,
+                                                         containerId: "editServiceWizardMenuItemTGTExpirationPolicy",
+                                                         title: "Control how long the ticket should be valid, in seconds."
+                                                     }).attr("type", "number").on("input", generateServiceDefinition);
 
+                                                     createMappedInputField({
+                                                         header: "User Agents",
+                                                         containerType: "org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy",
+                                                         containerId: "editServiceWizardMenuItemTGTExpirationPolicy",
+                                                         keyField: "registeredServiceTGTExpirationPolicyUserAgentName",
+                                                         keyLabel: "User Agent",
+                                                         valueField: "registeredServiceTGTExpirationPolicyUserAgentExpirationValue",
+                                                         valueFieldType: "number",
+                                                         valueLabel: "Max Time to Live (in seconds)",
+                                                         containerField: "ticketGrantingTicketExpirationPolicy.userAgents"
+                                                     });
+
+                                                     createMappedInputField({
+                                                         header: "IP Addresses",
+                                                         containerType: "org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy",
+                                                         containerId: "editServiceWizardMenuItemTGTExpirationPolicy",
+                                                         keyField: "registeredServiceTGTExpirationPolicyIPName",
+                                                         keyLabel: "IP Address",
+                                                         valueField: "registeredServiceTGTExpirationPolicyIPExpirationValue",
+                                                         valueLabel: "Max Time to Live (in seconds)",
+                                                         valueFieldType: "number",
+                                                         containerField: "ticketGrantingTicketExpirationPolicy.ipAddresses"
+                                                     });
+                                              </script>
                                           </div>
 
                                          <h3 class="class-CasRegisteredService advanced-option">Service Ticket Expiration Policy</h3>
@@ -1928,7 +1962,7 @@
                                                     
                                                 </script>
 
-                                            <div th:replace="~{fragments/switchbutton :: switchbutton (id='caseInsensitive',
+                                            <div th:replace="~{fragments/switchbutton :: switchbutton (id='matchingStrategyCaseInsensitive',
                                                 title='When enabled, service ID matching is performed in a case-insensitive manner',
                                                 label='#Case Insensitive', cssClass='pt-2 hide LiteralRegisteredServiceMatchingStrategy',
                                                 dataAttrs='param-skip-false=true,param-name=matchingStrategy.caseInsensitive')}"/>
@@ -1937,8 +1971,237 @@
 
                                           <h3>Access Strategy</h3>
                                           <div id="editServiceWizardMenuItemAccessStrategy">
+                                               <script type="text/javascript">
+                                                   function handleAccessStrategyChange(select) {
+                                                       const type = getLastWord($(select).val());
+                                                       $(`#editServiceWizardMenuItemAccessStrategy .${type}`).show();
+                                                       $("#editServiceWizardMenuItemAccessStrategy [id$='FieldContainer']")
+                                                           .not(`.${type}`)
+                                                           .hide();
+                                                       $("#editServiceWizardMenuItemAccessStrategy [id$='ButtonPanel']")
+                                                           .not(`.${type}`)
+                                                           .hide();
+                                                       $("#editServiceWizardMenuItemAccessStrategy [id$='MapContainer']")
+                                                           .not(`.${type}`)
+                                                           .hide();
+                                                       $("#editServiceWizardMenuItemAccessStrategy [id$='FieldContainer'] input")
+                                                           .val("");
+                                                       $("#editServiceWizardMenuItemAccessStrategy [id$='MapContainer'] input")
+                                                           .val("");
+                                                       $("#editServiceWizardMenuItemAccessStrategy [id$='ButtonPanel'] button")
+                                                           .each(function () {
+                                                               const selected = $(this).data("param-selected");
+                                                               if (selected) {
+                                                                   $(this).click();
+                                                               }
+                                                           });
+                                                   }
 
+                                                   createSelectField({
+                                                       containerId: "editServiceWizardMenuItemAccessStrategy",
+                                                       labelTitle: "Type:",
+                                                       paramName: "accessStrategy",
+                                                       options: [
+                                                           {
+                                                               value: "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+                                                               text: "DEFAULT",
+                                                               selected: true
+                                                           },
+                                                           {
+                                                               value: "org.apereo.cas.services.RemoteEndpointServiceAccessStrategy",
+                                                               text: "REMOTE",
+                                                           },
+                                                           {
+                                                               value: "org.apereo.cas.services.HttpRequestRegisteredServiceAccessStrategy",
+                                                               text: "HTTP REQUEST",
+                                                           },
+                                                           {
+                                                               value: "org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy",
+                                                               text: "GROUPER",
+                                                           },
+                                                           ...(
+                                                               scriptFactoryAvailable
+                                                                   ? [{
+                                                                       value: "org.apereo.cas.services.GroovyRegisteredServiceAccessStrategy",
+                                                                       text: "GROOVY",
+                                                                   }]
+                                                                   : []
+                                                           )
+                                                       ],
+                                                       helpText: "Specifies the access strategy for the registered service.",
+                                                       changeEventHandlers: "handleAccessStrategyChange"
+                                                   }).data("renderer", function (value) {
+                                                       return {"@class": value};
+                                                   });
+
+                                                   createInputField({
+                                                       cssClasses: "hide HttpRequestRegisteredServiceAccessStrategy",
+                                                       labelTitle: "IP Address",
+                                                       name: "registeredServiceAccessStrategyIpAddress",
+                                                       paramName: "accessStrategy.ipAddress",
+                                                       required: false,
+                                                       containerId: "editServiceWizardMenuItemAccessStrategy",
+                                                       title: "Specifies the IP address to be used for access strategy."
+                                                   }).on("input", generateServiceDefinition);
+
+                                                   createInputField({
+                                                       cssClasses: "hide HttpRequestRegisteredServiceAccessStrategy",
+                                                       labelTitle: "User Agent",
+                                                       name: "registeredServiceAccessStrategyUserAgent",
+                                                       paramName: "accessStrategy.userAgent",
+                                                       required: false,
+                                                       containerId: "editServiceWizardMenuItemAccessStrategy",
+                                                       title: "Specifies the user agent to be used for access strategy."
+                                                   }).on("input", generateServiceDefinition);
+
+                                                   createMappedInputField({
+                                                       cssClasses: "hide HttpRequestRegisteredServiceAccessStrategy",
+                                                       header: "Headers",
+                                                       containerId: "editServiceWizardMenuItemAccessStrategy",
+                                                       keyField: "registeredServiceAccessStrategyHttpRequestHeaderName",
+                                                       keyLabel: "Header Name",
+                                                       valueField: "registeredServiceAccessStrategyHttpRequestHeaderValue",
+                                                       valueLabel: "Header Value",
+                                                       containerField: "accessStrategy.headers"
+                                                   });
+                                                   
+                                                   createSelectField({
+                                                       cssClasses: "hide GrouperRegisteredServiceAccessStrategy",
+                                                       containerId: "editServiceWizardMenuItemAccessStrategy",
+                                                       labelTitle: "Group Field:",
+                                                       paramName: "accessStrategy.groupField",
+                                                       options: [
+                                                           {value: "", text: "NAME", selected: true},
+                                                           {value: "EXTENSION", text: "EXTENSION"},
+                                                           {value: "DISPLAY_NAME", text: "DISPLAY_NAME"},
+                                                           {value: "DISPLAY_EXTENSION", text: "DISPLAY_EXTENSION"},
+                                                       ],
+                                                       helpText: "Specifies the group field to be used when evaluating group membership.",
+                                                   });
+                                                   
+                                                   createMappedInputField({
+                                                       cssClasses: "hide GrouperRegisteredServiceAccessStrategy",
+                                                       header: "Configuration Properties",
+                                                       containerId: "editServiceWizardMenuItemAccessStrategy",
+                                                       keyField: "registeredServiceAccessStrategyGrouperConfigPropName",
+                                                       keyLabel: "Property Name",
+                                                       valueField: "registeredServiceAccessStrategyGrouperConfigPropValue",
+                                                       valueLabel: "Property Value",
+                                                       containerField: "accessStrategy.configProperties"
+                                                   });
+                                                   
+                                                   createInputField({
+                                                       cssClasses: "hide RemoteEndpointServiceAccessStrategy",
+                                                       labelTitle: "URL",
+                                                       name: "registeredServiceAccessStrategyEndpointUrl",
+                                                       paramName: "accessStrategy.endpointUrl",
+                                                       required: false,
+                                                       containerId: "editServiceWizardMenuItemAccessStrategy",
+                                                       title: "Specifies the remote endpoint URL to determine access strategy."
+                                                   }).on("input", generateServiceDefinition);
+
+                                                   createInputField({
+                                                       cssClasses: "hide RemoteEndpointServiceAccessStrategy",
+                                                       labelTitle: "Acceptable Response Codes",
+                                                       name: "registeredServiceAccessStrategyEndpointAcceptableResponseCodes",
+                                                       paramName: "accessStrategy.acceptableResponseCodes",
+                                                       required: false,
+                                                       containerId: "editServiceWizardMenuItemAccessStrategy",
+                                                       title: "Specifies the acceptable response codes from the remote endpoint to determine access strategy, separated by comma."
+                                                   }).on("input", generateServiceDefinition);
+
+                                                   createInputField({
+                                                       cssClasses: "hide RemoteEndpointServiceAccessStrategy",
+                                                       labelTitle: "HTTP Method",
+                                                       name: "registeredServiceAccessStrategyEndpointHttpMethod",
+                                                       paramName: "accessStrategy.method",
+                                                       required: false,
+                                                       containerId: "editServiceWizardMenuItemAccessStrategy",
+                                                       title: "Specifies the HTTP method (i.e. <code>GET, POST, etc</code>) to use when contacting the remote endpoint."
+                                                   }).on("input", generateServiceDefinition);
+
+                                                   createMappedInputField({
+                                                       cssClasses: "hide RemoteEndpointServiceAccessStrategy",
+                                                       header: "Headers",
+                                                       containerId: "editServiceWizardMenuItemAccessStrategy",
+                                                       keyField: "registeredServiceAccessStrategyEndpointHeaderName",
+                                                       keyLabel: "Header Name",
+                                                       valueField: "registeredServiceAccessStrategyEndpointHeaderValue",
+                                                       valueLabel: "Header Value",
+                                                       containerField: "accessStrategy.headers"
+                                                   });
+
+
+                                                   createInputField({
+                                                       cssClasses: "hide GroovyRegisteredServiceAccessStrategy",
+                                                       labelTitle: "Groovy Script",
+                                                       name: "registeredServiceAccessStrategyGroovyScript",
+                                                       paramName: "accessStrategy.groovyScript",
+                                                       required: false,
+                                                       containerId: "editServiceWizardMenuItemAccessStrategy",
+                                                       title: "Specifies the Groovy script location, inline or external, to determine access strategy."
+                                                   }).on("input", generateServiceDefinition);
+
+                                                   createInputField({
+                                                       cssClasses: "DefaultRegisteredServiceAccessStrategy",
+                                                       labelTitle: "Unauthorized Redirect URL",
+                                                       name: "registeredServiceAccessStrategyUnauthorizedRedirectUrl",
+                                                       paramName: "accessStrategy.unauthorizedRedirectUrl",
+                                                       required: false,
+                                                       containerId: "editServiceWizardMenuItemAccessStrategy",
+                                                       title: "Specifies the URL to redirect to when access is unauthorized."
+                                                   }).on("input", generateServiceDefinition);
+
+                                                   createMappedInputField({
+                                                       cssClasses: "DefaultRegisteredServiceAccessStrategy GrouperRegisteredServiceAccessStrategy",
+                                                       header: "Required Attributes",
+                                                       containerId: "editServiceWizardMenuItemAccessStrategy",
+                                                       keyField: "registeredServiceAccessStrategyReqAttrName",
+                                                       keyLabel: "Attribute Name",
+                                                       valueField: "registeredServiceAccessStrategyReqAttrValue",
+                                                       valueLabel: "Attribute Value",
+                                                       containerField: "accessStrategy.requiredAttributes",
+                                                       multipleValues: true,
+                                                       multipleValuesType: "java.util.HashSet"
+                                                   });
+
+                                                   createMappedInputField({
+                                                       cssClasses: "DefaultRegisteredServiceAccessStrategy",
+                                                       header: "Rejected Attributes",
+                                                       containerId: "editServiceWizardMenuItemAccessStrategy",
+                                                       keyField: "registeredServiceAccessStrategyRejectedAttrName",
+                                                       keyLabel: "Attribute Name",
+                                                       valueField: "registeredServiceAccessStrategyRejectedAttrValue",
+                                                       valueLabel: "Attribute Value",
+                                                       containerField: "accessStrategy.rejectedAttributes",
+                                                       multipleValues: true,
+                                                       multipleValuesType: "java.util.HashSet"
+                                                   });
+
+                                                   
+                                                </script>
+                                              
+                                              <div th:replace="~{fragments/switchbutton :: switchbutton (id='accessStrategyEnabled',
+                                                    title='Determine if this service is enabled',
+                                                    label='#Enabled', selected=true, cssClass='pt-3 DefaultRegisteredServiceAccessStrategy',
+                                                    dataAttrs='param-skip-true=true,param-name=accessStrategy.enabled,param-type=org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy')}"/>
+
+                                              <div th:replace="~{fragments/switchbutton :: switchbutton (id='accessStrategySsoEnabled',
+                                                    title='Determine if this service is enabled for SSO',
+                                                    label='#Single Sign-on Enabled', selected=true, cssClass='pt-2 DefaultRegisteredServiceAccessStrategy',
+                                                    dataAttrs='param-skip-true=true,param-name=accessStrategy.ssoEnabled,param-type=org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy')}"/>
+
+                                              <div th:replace="~{fragments/switchbutton :: switchbutton (id='accessStrategyRequireAllAttrs',
+                                                    title='Require all attributes defined and available in the access strategy for access to be granted',
+                                                    label='#Require All Attributes', selected=true, cssClass='pt-2 DefaultRegisteredServiceAccessStrategy',
+                                                    dataAttrs='param-skip-true=true,param-name=accessStrategy.requireAllAttributes,param-type=org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy')}"/>
+
+                                              <div th:replace="~{fragments/switchbutton :: switchbutton (id='accessStrategyCaseInsensitive',
+                                                    title='When enabled, attribute matching is performed in a case-insensitive manner',
+                                                    label='#Case Insensitive', cssClass='pt-2 DefaultRegisteredServiceAccessStrategy',
+                                                    dataAttrs='param-skip-false=true,param-name=accessStrategy.caseInsensitive')}"/>
                                           </div>
+
                                          <h3 class="advanced-option">Authentication Policy</h3>
                                           <div id="editServiceWizardMenuItemAuthenticationPolicy">
 
@@ -2101,10 +2364,9 @@
                                           </div>
                                     </div>
                                     <section class="my-3 h-350px">
-                                        <pre class="ace-editor ace-relative w-100 h-100" id="wizardServiceEditor"></pre>
+                                        <pre class="ace-editor ace-relative w-100 h-100 mb-0" id="wizardServiceEditor"></pre>
 
-                                        <span style="padding-left: 10px"><sub><span
-                                                class="mdi mdi-information-box-outline"></span>
+                                        <span class="pl-4"><sub><span class="mdi mdi-information-box-outline"></span>
                                             The editor above shows the current state of the service definition as it is being built using the wizard.
                                             While the chosen format is JSON, the actual format of the entry used when saving may differ based on your registry configuration.
                                             This is merely a preview of the service definition being constructed and cannot be edited directly.

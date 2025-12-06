@@ -108,7 +108,7 @@ function generateServiceDefinition() {
 
                             if (paramType && paramType.length > 0 && parts.length > 0) {
                                 if (!current[parts[0]]) {
-                                    current[parts[0]] = { "@class": paramType };
+                                    current[parts[0]] = {"@class": paramType};
                                 }
                             }
                             parts.forEach((part, index) => {
@@ -142,18 +142,25 @@ function generateServiceDefinition() {
     }, 150);
 }
 
-function generateMappedFieldValue(sectionId, multipleValues = false, valueFieldRenderer) {
+function generateMappedFieldValue(sectionId, config) {
+    const {
+        multipleValues = false,
+        valueFieldRenderer,
+        multipleValuesType
+    } = config;
+
     const definition = {};
+
     const inputs = $(`#${sectionId}`).find("input");
     for (let i = 0; i < inputs.length; i += 2) {
         const key = $(inputs[i]).val();
         const value = $(inputs[i + 1]).val();
 
         if (valueFieldRenderer !== undefined && typeof valueFieldRenderer === "function") {
-            definition[key] = valueFieldRenderer($(inputs[i]), $(inputs[i+1]))
+            definition[key] = valueFieldRenderer($(inputs[i]), $(inputs[i + 1]));
         } else if (key && key.trim().length > 0 && value && value.trim().length > 0) {
             if (multipleValues) {
-                definition[key] = ["java.util.ArrayList", value.split(",")];
+                definition[key] = [multipleValuesType, value.split(",")];
             } else {
                 definition[key] = value;
             }
@@ -164,19 +171,23 @@ function generateMappedFieldValue(sectionId, multipleValues = false, valueFieldR
 
 function createMappedInputField(config) {
     const {
+        header = "",
         cssClasses = "",
-        containerId,
         keyField,
-        valueField,
-        containerField,
         keyLabel = "",
+        valueField,
+        valueFieldType = "text",
         valueLabel = "",
+        containerId,
+        containerField,
+        containerType,
         required = false,
         multipleValues = false,
-        valueFieldRenderer
+        multipleValuesType = "java.util.ArrayList",
+        valueFieldRenderer,
     } = config;
 
-    const sectionContainerId = `registeredService${capitalize(keyField)}Container`;
+    const sectionContainerId = `registeredService${capitalize(keyField)}MapContainer`;
     const addButtonId = `registeredService${capitalize(keyField)}AddButton`;
     const removeButtonId = `registeredService${capitalize(keyField)}RemoveButton`;
     const mapRowId = `registeredService${capitalize(keyField)}Row`;
@@ -200,6 +211,7 @@ function createMappedInputField(config) {
                            size="25"
                            type="text"
                            data-param-name="${containerField}"
+                           data-param-type="${containerType}"
                            required="${required}"/>
                 </label>
 
@@ -216,8 +228,9 @@ function createMappedInputField(config) {
                            id="${inputFieldValueId}"
                            name="${inputFieldValueId}"
                            size="25"
-                           type="text"
+                           type="${valueFieldType}"
                            data-param-name="${containerField}"
+                           data-param-type="${containerType}"
                            required="${required}"/>
                 </label>
 
@@ -229,25 +242,28 @@ function createMappedInputField(config) {
                 </button>
             </div>
     `;
-    const fields = $(`
-        <div id="${sectionContainerId}" class="${cssClasses}">
+
+    const html =
+        `<div id="${sectionContainerId}" class="${cssClasses}">
+            <h3 class="mt-2 mb-2 ${header && header.length > 0 ? "" : "hide"} ${cssClasses}">${header}</h3>
             ${rowElements}
+            <span id="${sectionContainerId}ToAppend" class="pt-2 ${cssClasses}"></span>
+            <div class="d-flex pt-2 ${cssClasses}">
+                <button type="button" 
+                        name="${addButtonId}"
+                        id="${addButtonId}"
+                        class="mdc-button mdc-button--raised mdc-button--round add-row ${cssClasses}">
+                    <span class="mdc-button__label">
+                        <i class="mdc-tab__icon mdi mdi-plus-thick" aria-hidden="true"></i>
+                    </span>
+                </button>
+            </div>
         </div>
-        <div class="d-flex pt-2 ${cssClasses}">
-            <button type="button" 
-                    name="${addButtonId}"
-                    id="${addButtonId}"
-                    class="mdc-button mdc-button--raised mdc-button--round add-row ${cssClasses}">
-                <span class="mdc-button__label">
-                    <i class="mdc-tab__icon mdi mdi-plus-thick" aria-hidden="true"></i>
-                </span>
-            </button>
-        </div>
-    `);
-    
-    $(`#${containerId}`).append(fields);
-    
-    
+        `;
+
+    $(`#${containerId}`).append($(`${html}`));
+
+
     function configureRemoveMapRowEventHandler() {
         $(`button[name=${removeButtonId}]`).off().on("click", function () {
             $(this).closest(`.${keyField}-map-row`).remove();
@@ -263,15 +279,15 @@ function createMappedInputField(config) {
 
     function configureInputRenderer() {
         $(`#${sectionContainerId} input`).data("renderer", function () {
-            return generateMappedFieldValue(sectionContainerId, multipleValues, valueFieldRenderer);
+            return generateMappedFieldValue(sectionContainerId, config);
         });
     }
 
     $(`button[name=${addButtonId}]`).off().on("click", () => {
-        let elementsToAdd = $(rowElements).removeClass('hide');
+        let elementsToAdd = $(rowElements).removeClass("hide");
         elementsToAdd.find("*").removeClass("hide");
-        
-        $(`#${sectionContainerId}`).append(elementsToAdd);
+
+        $(`#${sectionContainerId}ToAppend`).append(elementsToAdd);
         configureRemoveMapRowEventHandler();
         cas.attachFields();
         configureInputEventHandler();
@@ -293,7 +309,7 @@ function createSelectField(config) {
         helpText,
         serviceClass = "",
         cssClasses = "",
-        changeEventHandlers = "",
+        changeEventHandlers = ""
     } = config;
 
     const selectId = `registeredService${capitalize(paramName)}`;
@@ -329,14 +345,14 @@ function createSelectField(config) {
     });
 
     $label.append($select);
-    
+
 
     const container = $("<span>", {
         id: `${name}SelectContainer`,
         class: `${serviceClass ?? ""} ${cssClasses ?? ""}`
     });
     $(container).append($label);
-    
+
     $(`#${containerId}`).append(container);
     return $select;
 }
@@ -393,7 +409,7 @@ function createInputField(config) {
         id: `${name}FieldContainer`,
         class: `${serviceClass ?? ""} ${cssClasses ?? ""}`
     });
-    
+
     $(container).append(label);
     $(`#${containerId}`).append(container);
     return input;
