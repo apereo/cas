@@ -75,6 +75,23 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
+    void verifyValidateService() throws Throwable {
+        var content = new RegisteredServiceJsonSerializer(applicationContext)
+            .toString(RegisteredServiceTestUtils.getRegisteredService());
+        mockMvc.perform(post("/actuator/registeredServices/validate")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+            .andExpect(status().isOk());
+
+        content = new RegisteredServiceYamlSerializer(applicationContext)
+            .toString(RegisteredServiceTestUtils.getRegisteredService());
+        mockMvc.perform(post("/actuator/registeredServices/validate")
+                .contentType(MediaType.APPLICATION_YAML_VALUE)
+                .content(content))
+            .andExpect(status().isOk());
+    }
+    
+    @Test
     void verifyImportOperationAsJson() throws Throwable {
         val content = new RegisteredServiceJsonSerializer(applicationContext)
             .toString(RegisteredServiceTestUtils.getRegisteredService());

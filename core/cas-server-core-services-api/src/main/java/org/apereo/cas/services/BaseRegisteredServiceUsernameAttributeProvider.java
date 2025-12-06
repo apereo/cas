@@ -70,7 +70,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
      */
     @PostLoad
     public void initialize() {
-        setCanonicalizationMode("NONE");
+        canonicalizationMode = "NONE";
     }
 
     protected String removePatternFromUsernameIfNecessary(final String username) {

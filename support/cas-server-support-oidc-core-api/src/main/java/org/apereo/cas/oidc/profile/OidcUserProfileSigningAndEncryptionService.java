@@ -65,7 +65,7 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
                              + "yet CAS is configured to support the following signing algorithms: [{}]. "
                              + "This is quite likely due to misconfiguration of the CAS server or the service definition.",
                     registeredService.getServiceId(), discoverySettings.getUserInfoSigningAlgValuesSupported());
-                throw new IllegalArgumentException("Unable to use 'none' as user-info signing algorithm");
+                throw new IllegalArgumentException("Unable to use 'none' for the user-info signing algorithm");
             }
             return StringUtils.isNotBlank(service.getUserInfoSigningAlg())
                    && !Strings.CI.equals(service.getUserInfoSigningAlg(), AlgorithmIdentifiers.NONE);
@@ -104,8 +104,8 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
             return JsonWebTokenEncryptor.builder()
                 .key(jsonWebKey.getPublicKey())
                 .keyId(jsonWebKey.getKeyId())
-                .algorithm(svc.getIdTokenEncryptionAlg())
-                .encryptionMethod(svc.getIdTokenEncryptionEncoding())
+                .algorithm(svc.getUserInfoEncryptedResponseAlg())
+                .encryptionMethod(svc.getUserInfoEncryptedResponseEncoding())
                 .allowedAlgorithms(discoverySettings.getUserInfoEncryptionAlgValuesSupported())
                 .allowedContentEncryptionAlgorithms(discoverySettings.getUserInfoEncryptionEncodingValuesSupported())
                 .headers(Map.of(OAuth20Constants.CLIENT_ID, svc.getClientId()))

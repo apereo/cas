@@ -3,6 +3,7 @@
   "name": "CAS",
   "description": "This definition comes from the parent template definition",
   "templateName": "ExampleTemplate",
+  "supportedProtocols": [ "java.util.HashSet", ["CAS20", "CAS30"] ],
   "properties" : {
     "@class" : "java.util.HashMap",
     "one": {

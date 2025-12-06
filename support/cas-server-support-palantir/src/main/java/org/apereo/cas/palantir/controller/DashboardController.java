@@ -1,9 +1,16 @@
 package org.apereo.cas.palantir.controller;
 
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.palantir.PalantirConstants;
+import org.apereo.cas.services.BaseRegisteredService;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.web.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jooq.lambda.Unchecked;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -23,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,11 +80,28 @@ public class DashboardController extends AbstractController {
             .map(entry -> Pair.of(entry.getKey(), casProperties.getServer().getPrefix() + entry.getValue().getHref()))
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
         mav.addObject("actuatorEndpoints", actuatorEndpoints);
-        mav.addObject("serviceDefinitions", loadServiceDefinitions());
+        mav.addObject("supportedServiceTypes", loadSupportedServiceDefinitions());
+        mav.addObject("serviceDefinitions", loadExampleServiceDefinitions());
+        mav.addObject("availableMultifactorProviders", MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).keySet());
+        mav.addObject("scriptFactoryAvailable", CasRuntimeHintsRegistrar.notInNativeImage()
+            && ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory().isPresent());
+
         return mav;
     }
 
-    private Map<String, List<String>> loadServiceDefinitions() throws IOException {
+    private static Map<String, String> loadSupportedServiceDefinitions() {
+        val subTypes = ReflectionUtils.findSubclassesInPackage(BaseRegisteredService.class, CentralAuthenticationService.NAMESPACE);
+        return subTypes
+            .stream()
+            .filter(type -> !type.isInterface() && !type.isAnonymousClass()
+                && !Modifier.isAbstract(type.getModifiers()) && !type.isMemberClass())
+            .collect(Collectors.toMap(Class::getName, Unchecked.function(type -> {
+                val service = (RegisteredService) type.getDeclaredConstructor().newInstance();
+                return service.getFriendlyName();
+            })));
+    }
+
+    private Map<String, List<String>> loadExampleServiceDefinitions() throws IOException {
         val jsonFilesMap = new HashMap<String, List<String>>();
         val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val resolver = new PathMatchingResourcePatternResolver();

@@ -350,7 +350,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                     val escapedValue = isCipherExecutorEnabled()
                         ? digestIdentifier(queryValue.toString())
                         : Strings.CI.replace(queryValue.toString(), "-", "\\-");
-                    criteria.add(String.format("(%s" + (isCipherExecutorEnabled() ? " " : "_") + "*%s)", digestIdentifier(key), escapedValue));
+                    criteria.add(String.format("(%s%s*%s)", digestIdentifier(key), isCipherExecutorEnabled() ? " " : "_", escapedValue));
                 }));
                 val query = String.format("(%s) @%s:%s", String.join("|", criteria),
                     RedisTicketDocument.FIELD_NAME_PREFIX, TicketGrantingTicket.PREFIX);

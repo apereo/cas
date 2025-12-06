@@ -37,6 +37,10 @@ function getLastWord(str) {
     return parts.slice(-1).join(".");
 }
 
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function formatDateYearMonthDayHourMinute(date) {
     const d = new Date(date);
     const year = d.getFullYear();
@@ -63,6 +67,19 @@ function toKebabCase(str) {
         .toLowerCase();
 }
 
+function isNumeric(str) {
+    return typeof str === "string" && str.trim() !== "" && !isNaN(str);
+}
+
+function copyToClipboard(str) {
+    navigator.clipboard.writeText(str)
+        .then(() => {
+            console.log("Copied!");
+        })
+        .catch(err => {
+            console.error("Failed to copy: ", err);
+        });
+}
 
 function camelcaseToTitleCase(str) {
     return str
