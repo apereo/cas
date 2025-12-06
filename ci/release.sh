@@ -32,7 +32,7 @@ function snapshot() {
   fi
   printgreen "Publishing CAS SNAPSHOT artifacts. This might take a while..."
   ./gradlew assemble publishAggregationToCentralPortalSnapshots \
-    -x test -x javadoc -x check --no-daemon --no-parallel \
+    -x test -x javadoc -x check --no-daemon --parallel \
     -DskipAot=true -DpublishSnapshots=true --stacktrace \
     --no-configuration-cache --configure-on-demand \
     -DrepositoryUsername="$REPOSITORY_USER" \
@@ -48,6 +48,14 @@ function publish {
         printred "CAS version ${casVersion} cannot be a SNAPSHOT version"
         exit 1
     fi
+
+    printgreen "Verifying dependency versions for CAS release..."
+    ./gradlew verifyDependencyVersions -x test -x javadoc -x check --no-daemon --parallel
+    if [ $? -ne 0 ]; then
+        printred "Dependency version verification failed."
+        exit 1
+    fi
+        
     printgreen "Publishing CAS releases. This might take a while..."
     ./gradlew assemble publishAggregationToCentralPortal \
       --parallel --no-daemon --no-configuration-cache -x test -x check \

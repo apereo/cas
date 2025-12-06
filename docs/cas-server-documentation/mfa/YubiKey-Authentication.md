@@ -17,7 +17,7 @@ source that CAS server could use to authenticate users.
 
 To configure YubiKey accounts and obtain API keys, [refer to the documentation](https://upgrade.yubico.com/getapikey/).
 
-[YubiKey](https://www.yubico.com/products/yubikey-hardware) authentication 
+[YubiKey](https://www.yubico.com/products) authentication 
 components are enabled by including the following dependencies in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-yubikey" %}
