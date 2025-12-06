@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: cas.server.documentation
+Implementation-Title: cas-server-documentation
+Implementation-Vendor: org.apereo.cas
+Created-By: org.apereo.cas
+Specification-Version: N/A
+Implementation-Version: 8.0.0-SNAPSHOT
+
