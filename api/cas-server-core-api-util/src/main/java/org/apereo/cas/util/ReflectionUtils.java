@@ -39,6 +39,7 @@ public class ReflectionUtils {
             .enableSystemJarsAndModules()
             .removeTemporaryFilesAfterScan()
             .enableAnnotationInfo()
+            .disableModuleScanning()
             .scan()) {
             return superclass.isInterface()
                 ? new ArrayList<>(scanResult.getClassesImplementing(superclass).loadClasses(superclass))
@@ -60,6 +61,7 @@ public class ReflectionUtils {
             .overrideClassLoaders(contextClassLoader)
             .acceptPackages(packageName)
             .enableAnnotationInfo()
+            .disableModuleScanning()
             .scan()) {
             return annotations
                 .stream()
@@ -81,6 +83,7 @@ public class ReflectionUtils {
         try (val scanResult = new ClassGraph()
             .acceptPackages(packageName)
             .enableClassInfo()
+            .disableModuleScanning()
             .scan()) {
 
             return scanResult.getAllClasses()

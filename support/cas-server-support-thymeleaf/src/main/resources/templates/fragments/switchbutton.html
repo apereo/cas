@@ -13,10 +13,26 @@
 <body>
 <main>
     <th:div th:fragment="switchbutton (id,label)">
-        <div th:id="${id + 'SwitchButtonPanel'}" style="display: none">
+
+        <script th:inline="javascript">
+            window.switchButtonChangeHandler = function (el) {
+                const attrMap = {};
+                $(el).data('attrs').split(',').forEach(pair => {
+                    const [key, value] = pair.split('=');
+                    attrMap[key] = value;
+                });
+                const fnName = attrMap["changeEventHandler"];
+                if (fnName && typeof window[fnName] === "function") {
+                    window[fnName](el);
+                }
+            };
+        </script>
+        <div th:id="${id + 'SwitchButtonPanel'}" th:classappend="${cssClass ?: ''}" style="display: none">
             <button th:id="${id + 'Button'}" th:name="${id + 'Button'}"
-                    class="mdc-switch mdc-switch--unselected"
-                    type="button" role="switch" aria-checked="false">
+                    class="mdc-switch" th:title="${title ?: ''}"
+                    th:classappend="${#cas.isTrue(selected) ? 'mdc-switch--selected class' : 'mdc-switch--unselected'}"
+                    type="button" role="switch"
+                    th:aria-checked="${#cas.isTrue(selected) ? 'true' : 'false'}">
                 <div class="mdc-switch__track"></div>
                 <div class="mdc-switch__handle-track">
                     <div class="mdc-switch__handle">
@@ -38,22 +54,43 @@
                     <div class="mdc-switch__focus-ring"></div>
                 </span>
             </button>
-            <label class="form-check-label" th:id="${id + 'ButtonLabel'}" th:utext="#{${label}}">Switch Me</label>
-            <input type="hidden" th:name="${id}" th:id="${id}" value="false" th:data-switch-btn="${id + 'Button'}"/>
+            <label class="form-check-label"
+                   th:id="${id + 'ButtonLabel'}"
+                   th:if="${#strings.startsWith(label, '#')}"
+                   th:utext="${#strings.substring(label, 1)}">Switch Me</label>
+            <label class="form-check-label"
+                   th:id="${id + 'ButtonLabel'}"
+                   th:if="${not #strings.startsWith(label, '#')}"
+                   th:utext="#{${label}}">Switch Me</label>
+            <input type="hidden" th:name="${id}" th:id="${id}"
+                   th:data-attrs="${dataAttrs ?: ''}"
+                   onchange="switchButtonChangeHandler(this)"
+                   th:data-param-name="${id}" th:value="${#cas.isTrue(selected)}" th:data-switch-btn="${id + 'Button'}"/>
         </div>
-        <div th:id="${id + 'checkBoxPanel'}" class="form-check form-switch" style="display: none">
-            <input type="checkbox" class="form-check-input" th:id="${id}" th:name="${id}" />
+        <div th:id="${id + 'checkBoxPanel'}" class="form-check form-switch"
+             th:classappend="${cssClass ?: ''}"
+             style="display: none">
+            <input type="checkbox"
+                   onchange="switchButtonChangeHandler(this)"
+                   class="form-check-input" th:data-attrs="${dataAttrs ?: ''}" th:id="${id}" th:name="${id}" />
             <label class="form-check-label" th:for="${id}" th:id="${id + 'ButtonLabel'}" th:utext="#{${label}}">Switch Me</label>
         </div>
 
         <script th:inline="javascript">
             /*<![CDATA[*/
+            
             document.addEventListener('DOMContentLoaded', () => {
                 if (typeof mdc === 'undefined' || mdc === undefined) {
                     $(/*[[${'#' + id + 'SwitchButtonPanel'}]]*/).hide().empty();
                     $(/*[[${'#' + id + 'checkBoxPanel'}]]*/).show();
                 } else {
-                    $(/*[[${'#' + id + 'SwitchButtonPanel'}]]*/).show();
+                    let cssClass = /*[[${cssClass}]]*/;
+                    let button = /*[[${'#' + id + 'SwitchButtonPanel'}]]*/;
+                    if (cssClass && cssClass.indexOf('hide') !== -1) {
+                        $(button).hide();
+                    } else {
+                        $(button).show();
+                    }
                     $(/*[[${'#' + id + 'checkBoxPanel'}]]*/).hide().empty();
                 }
             });
