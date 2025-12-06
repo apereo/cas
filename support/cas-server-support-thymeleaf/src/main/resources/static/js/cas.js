@@ -71,6 +71,16 @@ function isNumeric(str) {
     return typeof str === "string" && str.trim() !== "" && !isNaN(str);
 }
 
+function copyToClipboard(str) {
+    navigator.clipboard.writeText(str)
+        .then(() => {
+            console.log("Copied!");
+        })
+        .catch(err => {
+            console.error("Failed to copy: ", err);
+        });
+}
+
 function camelcaseToTitleCase(str) {
     return str
         .replace(/([A-Z])/g, " $1")

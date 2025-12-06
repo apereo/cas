@@ -134,12 +134,36 @@ function generateServiceDefinition() {
                         beforeGenerate($input, serviceDefinition);
                     }
                 });
-            editor.setValue(JSON.stringify(serviceDefinition, null, 4));
+
+            Object.keys(serviceDefinition).forEach(key => {
+                if (
+                    key !== "@class" &&                             
+                    typeof serviceDefinition[key] === "object" &&
+                    serviceDefinition[key] !== null &&
+                    Object.keys(serviceDefinition[key]).length === 1 &&
+                    serviceDefinition[key].hasOwnProperty("@class") ) {
+
+                    const classType = serviceDefinition[key]["@class"];
+                    const markerClass = $(`option[value='${classType}']`).data("markerClass");
+                    if (!markerClass) {
+                        console.log("Deleting", serviceDefinition[key])
+                        delete serviceDefinition[key];
+                    }
+                }
+            });
+
+            let remainingKeys = Object.keys(serviceDefinition);
+            if (remainingKeys.length === 1 && remainingKeys[0] === "@class") {
+                delete serviceDefinition["@class"];
+                editor.setValue("");
+            } else {
+                editor.setValue(JSON.stringify(serviceDefinition, null, 4));
+            }
         } else {
             editor.setValue("");
         }
         editor.gotoLine(1);
-    }, 150);
+    }, 100);
 }
 
 function generateMappedFieldValue(sectionId, config) {
@@ -550,6 +574,12 @@ function navigateToApplication(serviceIdToFind) {
 }
 
 function initializeFooterButtons() {
+    $("button[name=copyServiceDefinitionWizard]").off().on("click", () => {
+        const editor = initializeAceEditor("wizardServiceEditor");
+        copyToClipboard(editor.getValue());
+    });
+
+    
     $("button[name=validateServiceWizard]").off().on("click", () => {
         const $accordion = $("#editServiceWizardMenu");
         let valid = true;
