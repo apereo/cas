@@ -1519,10 +1519,15 @@
                                                      $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='FieldContainer']")
                                                          .not(`.${type}`)
                                                          .hide();
+                                                     $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='MapContainer']")
+                                                         .not(`.${type}`)
+                                                         .hide();
                                                      $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='ButtonPanel']")
                                                          .not(`.${type}`)
                                                          .hide();
                                                      $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='FieldContainer'] input")
+                                                         .val("");
+                                                     $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='MapContainer'] input")
                                                          .val("");
                                                      $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='ButtonPanel'] button")
                                                          .each(function () {
@@ -1681,7 +1686,8 @@
                                                                value: "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
                                                                text: "ANONYMOUS",
                                                                data: {
-                                                                   hideDefaults: true
+                                                                   hideDefaults: true,
+                                                                   markerClass: true
                                                                }
                                                            },
 
@@ -1947,11 +1953,17 @@
                                                             },
                                                             {
                                                                 value: "org.apereo.cas.services.PartialRegexRegisteredServiceMatchingStrategy",
-                                                                text: "PARTIAL REGEX"
+                                                                text: "PARTIAL REGEX",
+                                                                data: {
+                                                                    markerClass: true
+                                                                }
                                                             },
                                                             {
                                                                 value: "org.apereo.cas.services.LiteralRegisteredServiceMatchingStrategy",
-                                                                text: "LITERAL"
+                                                                text: "LITERAL",
+                                                                data: {
+                                                                    markerClass: true
+                                                                }
                                                             }
                                                         ],
                                                         helpText: "Specifies the strategy to determine how service IDs are matched.",
@@ -2376,6 +2388,11 @@
                             </div>
 
                             <footer class="mdc-dialog__actions modal-footer pr-4">
+                                <button id="copyServiceDefinitionWizard" name="copyServiceDefinitionWizard" type="button"
+                                        class="mdc-button mdc-button--raised btn mdc-button--lg">
+                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-copy"
+                                                                       aria-hidden="true"></i>Copy</span>
+                                </button>
                                 <button id="validateServiceWizard" name="validateServiceWizard" type="button"
                                         class="mdc-button mdc-button--raised btn mdc-button--lg">
                                     <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
