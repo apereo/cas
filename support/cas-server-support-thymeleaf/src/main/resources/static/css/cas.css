@@ -464,6 +464,10 @@ form button i.mdi {
     padding-left: 0.8rem;
 }
 
+.pl-4 {
+    padding-left: 1rem;
+}
+
 .mr-2 {
     margin-right: 2px !important;
 }
