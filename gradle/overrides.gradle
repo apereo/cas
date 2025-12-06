@@ -1,8 +1,18 @@
 configurations.configureEach {
     resolutionStrategy {
+        dependencySubstitution {
+            substitute module("org.lz4:lz4-java") using module("at.yawk.lz4:lz4-java:${libs.lz4.get().version}")
+        }
+        
         capabilitiesResolution {
             withCapability("com.google.collections:google-collections") {
                 selectHighestVersion()
+            }
+            withCapability("org.lz4:lz4-java") { details ->
+                def preferred = details.candidates.find { it.id.group == "at.yawk.lz4" }
+                if (preferred != null) {
+                    details.select(preferred)
+                }
             }
         }
 
