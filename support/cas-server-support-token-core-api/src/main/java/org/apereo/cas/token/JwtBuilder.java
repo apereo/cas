@@ -31,6 +31,7 @@ import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -93,7 +94,7 @@ public class JwtBuilder {
      * @param jwt the jwt
      * @return the jwt
      */
-    public static JWTClaimsSet parse(final String jwt) {
+    public static JWTClaimsSet parse(@Nullable final String jwt) {
         try {
             return JWTParser.parse(jwt).getJWTClaimsSet();
         } catch (final Exception e) {
@@ -231,11 +232,12 @@ public class JwtBuilder {
                 .map(this::locateRegisteredService)
                 .filter(Objects::nonNull)
                 .findFirst()
-                .orElseThrow(() -> {
-                    val formatted = "There is no application record registered with the CAS service registry that would match %s. "
-                        + "Review the applications registered with the CAS service registry and make sure a matching record exists.";
-                    return UnauthorizedServiceException.denied(formatted.formatted(targetAudience));
-                }));
+                .orElseThrow(() -> UnauthorizedServiceException.denied(
+                    """
+                    There is no application record registered with the CAS service registry that would match %s.
+                    Review the applications registered with the CAS service registry and make sure a matching record exists.
+                    """
+                        .formatted(targetAudience).stripIndent().stripLeading())));
         return build(registeredService, claimsSet);
     }
 
@@ -247,7 +249,7 @@ public class JwtBuilder {
      * @param claimsSet         the claims set
      * @return the string
      */
-    public String build(final RegisteredService registeredService,
+    public String build(@Nullable final RegisteredService registeredService,
                         final JWTClaimsSet claimsSet) {
         val jwtJson = claimsSet.toString();
         LOGGER.debug("Generated JWT [{}]", jwtJson);

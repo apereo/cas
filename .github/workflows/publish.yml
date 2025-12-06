@@ -93,7 +93,7 @@ jobs:
            max_attempts: 3
            retry_on: error
            retry_wait_seconds: 10
-           timeout_minutes: 70
+           timeout_minutes: 120
            shell: bash
            command: ./ci/release.sh
        - name: Verify SNAPSHOTs
