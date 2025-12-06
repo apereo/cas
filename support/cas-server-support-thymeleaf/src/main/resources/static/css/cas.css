@@ -783,6 +783,11 @@ span button.toolbar {
     width: 24px;
 }
 
+.mmw-45 {
+    min-width: 45%;
+    max-width: 45%;
+}
+
 .min-vw-100 {
     min-width: 100vw;
 }

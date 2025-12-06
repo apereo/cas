@@ -170,7 +170,7 @@ function generateMappedFieldValue(sectionId, config) {
     const {
         multipleValues = false,
         valueFieldRenderer,
-        multipleValuesType
+        multipleValuesType = "java.util.ArrayList"
     } = config;
 
     const definition = {};
@@ -208,7 +208,7 @@ function createMappedInputField(config) {
         required = false,
         multipleValues = false,
         multipleValuesType = "java.util.ArrayList",
-        valueFieldRenderer,
+        valueFieldRenderer
     } = config;
 
     const sectionContainerId = `registeredService${capitalize(keyField)}MapContainer`;
