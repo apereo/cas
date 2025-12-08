@@ -176,7 +176,8 @@ public class CasConfigurationPropertiesValidator {
 
         if (StringUtils.isNotBlank(messages)) {
             messages = "\nThe following settings are deprecated and scheduled to be removed in future releases of CAS. "
-                + "Please review the replacement settings where applicable and update your configuration accordingly.\n\n"
+                + "Please review the replacement settings where applicable and update your configuration accordingly. "
+                + "For more information on changes and progress, always consult the CAS documentation and published release notes.\n\n"
                 + messages;
             LOGGER.warn(messages);
         }

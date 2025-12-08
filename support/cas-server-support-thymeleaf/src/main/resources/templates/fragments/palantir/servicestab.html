@@ -2095,6 +2095,9 @@
                                                     <script type="text/javascript">
                                                         function handleAttributeReleasePolicyActivationCriteriaChange(select) {
                                                             let type = getLastWord($(select).val());
+                                                            if (type.length === 0) {
+                                                                type = "UNDEFINED";
+                                                            }
                                                             $(`#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria .${type}`).show();
                                                             $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='FieldContainer']")
                                                                 .not(`.${type}`)
@@ -2198,6 +2201,9 @@
                                                        <script type="text/javascript">
                                                             function handleAttributeReleasePolicyPrincipalAttributeRepositoryChange(select) {
                                                                 let type = getLastWord($(select).val());
+                                                                if (type.length === 0) {
+                                                                    type = "UNDEFINED";
+                                                                }
                                                                 $(`#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository .${type}`).show();
                                                                 $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='FieldContainer']")
                                                                     .not(`.${type}`)
@@ -2222,33 +2228,33 @@
                                                                         }
                                                                     });
                                                             }
-                                                            
+
                                                             createSelectField({
-                                                                 cssClasses: "always-show",
-                                                                 containerId: "editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository",
-                                                                 labelTitle: "Principal Attribute Repository:",
-                                                                 changeEventHandlers: "handleAttributeReleasePolicyPrincipalAttributeRepositoryChange",
-                                                                 paramName: "attributeReleasePolicy.principalAttributesRepository",
-                                                                 options: [
-                                                                     {
-                                                                         value: "",
-                                                                         text: "UNDEFINED",
-                                                                         selected: true
-                                                                     },
-                                                                     {
-                                                                         value: "org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository",
-                                                                         text: "DEFAULT"
-                                                                     },
-                                                                     {
+                                                                cssClasses: "always-show",
+                                                                containerId: "editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository",
+                                                                labelTitle: "Principal Attribute Repository:",
+                                                                changeEventHandlers: "handleAttributeReleasePolicyPrincipalAttributeRepositoryChange",
+                                                                paramName: "attributeReleasePolicy.principalAttributesRepository",
+                                                                options: [
+                                                                    {
+                                                                        value: "",
+                                                                        text: "UNDEFINED",
+                                                                        selected: true
+                                                                    },
+                                                                    {
+                                                                        value: "org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository",
+                                                                        text: "DEFAULT"
+                                                                    },
+                                                                    {
                                                                         value: "org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
                                                                         text: "CACHED"
-                                                                     }
+                                                                    }
 
-                                                                 ],
-                                                                 helpText: "Specifies the principal attributes repository for the attribute release policy."
-                                                             }).data("renderer", function (value) {
-                                                                 return {"@class": value};
-                                                             });
+                                                                ],
+                                                                helpText: "Specifies the principal attributes repository for the attribute release policy."
+                                                            }).data("renderer", function (value) {
+                                                                return {"@class": value};
+                                                            });
 
                                                             createInputField({
                                                                 cssClasses: "hide DefaultPrincipalAttributesRepository CachingPrincipalAttributesRepository",
@@ -2257,7 +2263,7 @@
                                                                 paramName: "attributeReleasePolicy.principalAttributesRepository.attributeRepositoryIds",
                                                                 required: false,
                                                                 containerId: "editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository",
-                                                                title: "Define the attribute repository IDs to be used, separated by commas.",
+                                                                title: "Define the attribute repository IDs to be used, separated by commas."
                                                             }).data("renderer", function (value) {
                                                                 return ["java.util.HashSet", value.split(",")];
                                                             });
@@ -2322,10 +2328,148 @@
                                                         label='#Ignore Resolved Attributes', cssClass='pt-3 hide DefaultPrincipalAttributesRepository CachingPrincipalAttributesRepository',
                                                         dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.principalAttributesRepository.ignoreResolvedAttributes')}"/>
                                                    </div>
+
+                                                  <div id="editServiceWizardMenuItemAttributeReleaseValueFilters">
+                                                      <script type="text/javascript">
+                                                          function handleAttributeReleasePolicyValueFilterChange(select) {
+                                                              let type = getLastWord($(select).val());
+                                                              if (type.length === 0) {
+                                                                  type = "UNDEFINED";
+                                                              }
+                                                              $(`#editServiceWizardMenuItemAttributeReleaseValueFilters .${type}`).show();
+                                                              $("#editServiceWizardMenuItemAttributeReleaseValueFilters [id$='FieldContainer']")
+                                                                  .not(`.${type}`)
+                                                                  .not(".always-show")
+                                                                  .hide();
+                                                              $("#editServiceWizardMenuItemAttributeReleaseValueFilters [id$='MapContainer']")
+                                                                  .not(`.${type}`)
+                                                                  .hide();
+                                                              $("#editServiceWizardMenuItemAttributeReleaseValueFilters [id$='ButtonPanel']")
+                                                                  .not(`.${type}`)
+                                                                  .not(".always-show")
+                                                                  .hide();
+                                                              $("#editServiceWizardMenuItemAttributeReleaseValueFilters [id$='FieldContainer'] input")
+                                                                  .val("");
+                                                              $("#editServiceWizardMenuItemAttributeReleaseValueFilters [id$='MapContainer'] input")
+                                                                  .val("");
+                                                              $("#editServiceWizardMenuItemAttributeReleaseValueFilters [id$='ButtonPanel'] button")
+                                                                  .each(function () {
+                                                                      const selected = $(this).data("param-selected");
+                                                                      if (selected) {
+                                                                          $(this).click();
+                                                                      }
+                                                                  });
+                                                          }
+
+                                                          createSelectField({
+                                                              cssClasses: "always-show",
+                                                              containerId: "editServiceWizardMenuItemAttributeReleaseValueFilters",
+                                                              labelTitle: "Value Filter:",
+                                                              changeEventHandlers: "handleAttributeReleasePolicyValueFilterChange",
+                                                              paramName: "attributeReleasePolicy.attributeFilter",
+                                                              options: [
+                                                                  {
+                                                                      value: "",
+                                                                      text: "UNDEFINED",
+                                                                      selected: true
+                                                                  },
+                                                                  {
+                                                                      value: "org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter",
+                                                                      text: "REGEX"
+                                                                  },
+                                                                  {
+                                                                      value: "org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter",
+                                                                      text: "MAPPED REGEX"
+                                                                  },
+                                                                  {
+                                                                      value: "org.apereo.cas.services.support.RegisteredServiceReverseMappedRegexAttributeFilter",
+                                                                      text: "REVERSE MAPPED REGEX"
+                                                                  },
+                                                                  {
+                                                                      value: "org.apereo.cas.services.support.RegisteredServiceMutantRegexAttributeFilter",
+                                                                      text: "MUTANT MAPPED REGEX"
+                                                                  },
+                                                                  ...(
+                                                                      scriptFactoryAvailable
+                                                                          ? [{
+                                                                              value: "org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter",
+                                                                              text: "GROOVY"
+                                                                          }]
+                                                                          : []
+                                                                  )
+                                                              ],
+                                                              helpText: "Specifies the attribute value filter for the attribute release policy."
+                                                          }).data("renderer", function (value) {
+                                                              return {"@class": value};
+                                                          });
+
+                                                          createInputField({
+                                                              cssClasses: "hide RegisteredServiceRegexAttributeFilter",
+                                                              labelTitle: "Pattern",
+                                                              name: "registeredServiceAttrReleasePolicyAttributeValueFilterPattern",
+                                                              paramName: "attributeReleasePolicy.attributeFilter.pattern",
+                                                              required: false,
+                                                              containerId: "editServiceWizardMenuItemAttributeReleaseValueFilters",
+                                                              title: "Define the regex pattern to filter attribute values."
+                                                          });
+
+                                                          if (scriptFactoryAvailable) {
+                                                              createInputField({
+                                                                  cssClasses: "hide RegisteredServiceScriptedAttributeFilter",
+                                                                  labelTitle: "Groovy Script",
+                                                                  name: "registeredServiceAttrReleasePolicyAttributeValueFilterScript",
+                                                                  paramName: "attributeReleasePolicy.attributeFilter.script",
+                                                                  required: false,
+                                                                  containerId: "editServiceWizardMenuItemAttributeReleaseValueFilters",
+                                                                  title: "Specifies the Groovy script location, inline or external, to filter attribute values."
+                                                              });
+                                                          }
+
+                                                          createMappedInputField({
+                                                              cssClasses: "hide RegisteredServiceMutantRegexAttributeFilter",
+                                                              header: "Patterns",
+                                                              containerId: "editServiceWizardMenuItemAttributeReleaseValueFilters",
+                                                              keyField: "registeredServiceAttrReleasePolicyAttributeValueFilterMutantAttrName",
+                                                              keyLabel: "Attribute Name",
+                                                              valueField: "registeredServiceAttrReleasePolicyAttributeValueFilterMutantAttrValue",
+                                                              valueLabel: "Attribute Values (separated by comma)",
+                                                              containerField: "attributeReleasePolicy.attributeFilter.patterns",
+                                                              multipleValues: true,
+                                                              unwrapSingleElement: true
+                                                          });
+                                                          
+                                                          createMappedInputField({
+                                                              cssClasses: "hide RegisteredServiceMappedRegexAttributeFilter RegisteredServiceReverseMappedRegexAttributeFilter",
+                                                              header: "Patterns",
+                                                              containerId: "editServiceWizardMenuItemAttributeReleaseValueFilters",
+                                                              keyField: "registeredServiceAttrReleasePolicyAttributeValueFilterAttrName",
+                                                              keyLabel: "Attribute Name",
+                                                              valueField: "registeredServiceAttrReleasePolicyAttributeValueFilterAttrValue",
+                                                              valueLabel: "Attribute Value",
+                                                              containerField: "attributeReleasePolicy.attributeFilter.patterns",
+                                                              multipleValues: false,
+                                                          });
+                                                      </script>
+
+                                                      <div th:replace="~{fragments/switchbutton :: switchbutton (id='registeredServiceAttrReleasePolicyAttributeValueFilterExcludeUnmapped',
+                                                            title='When enabled, unmapped attributes are excluded from release',
+                                                            label='#Exclude Unmapped Attributes', cssClass='pt-2 hide RegisteredServiceMappedRegexAttributeFilter RegisteredServiceReverseMappedRegexAttributeFilter RegisteredServiceMutantRegexAttributeFilter',
+                                                            dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.attributeFilter.excludeUnmappedAttributes')}"/>
+
+                                                      <div th:replace="~{fragments/switchbutton :: switchbutton (id='registeredServiceAttrReleasePolicyAttributeValueFilterCompleteMatch',
+                                                            title='When enabled, a complete match is required for attribute values to be released',
+                                                            label='#Complete Match', cssClass='hide RegisteredServiceMappedRegexAttributeFilter RegisteredServiceReverseMappedRegexAttributeFilter RegisteredServiceMutantRegexAttributeFilter',
+                                                            dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.attributeFilter.completeMatch')}"/>
+
+                                                      <div th:replace="~{fragments/switchbutton :: switchbutton (id='registeredServiceAttrReleasePolicyAttributeValueFilterCaseInsensitive',
+                                                            title='When enabled, attribute value filtering is performed in a case-insensitive manner',
+                                                            label='#Case Insensitive', selected=true, cssClass='pt-2 hide RegisteredServiceMappedRegexAttributeFilter RegisteredServiceReverseMappedRegexAttributeFilter RegisteredServiceMutantRegexAttributeFilter',
+                                                            dataAttrs='param-skip-true=true,param-name=attributeReleasePolicy.attributeFilter.caseInsensitive')}"/>
+                                                  </div>
                                                   
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseCredentialPassword',
                                                         title='When enabled, the credential password is authorized to be released as an attribute',
-                                                        label='#Release Credential Password', cssClass='pt-2 always-show',
+                                                        label='#Release Credential Password', cssClass='always-show',
                                                         dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.authorizedToReleaseCredentialPassword')}"/>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseProxyGrantingTicket',
                                                         title='When enabled, the proxy granting ticket is authorized to be released as an attribute',
