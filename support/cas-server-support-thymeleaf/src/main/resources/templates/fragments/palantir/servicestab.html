@@ -140,17 +140,17 @@
                                                             required: true,
                                                             containerId: "editServiceWizardGeneralContainer",
                                                             title: "Define a logical name for this application, preferably without spaces or special characters."
-                                                        })
-                                                            .on("input", generateServiceDefinition);
+                                                        });
 
                                                         createInputField({
                                                             labelTitle: "Service ID",
                                                             name: "registeredServiceId",
                                                             paramName: "serviceId",
                                                             required: true,
+                                                            dataType: "regex",
                                                             containerId: "editServiceWizardGeneralContainer",
                                                             title: "Define a pattern that determines which requests are mapped to this application. This is typically a URL pattern or a regular regular expression."
-                                                        }).on("input", generateServiceDefinition);
+                                                        });
 
                                                         createInputField({
                                                             labelTitle: "Description",
@@ -159,18 +159,18 @@
                                                             required: false,
                                                             containerId: "editServiceWizardGeneralContainer",
                                                             title: "Provide a brief description of the application."
-                                                        }).on("input", generateServiceDefinition);
+                                                        });
 
                                                         createInputField({
                                                             cssClasses: "advanced-option",
                                                             labelTitle: "Numeric ID",
                                                             name: "registeredServiceIdentifier",
                                                             paramName: "id",
+                                                            dataType: "number",
                                                             required: false,
                                                             containerId: "editServiceWizardGeneralContainer",
                                                             title: "Define a unique numeric identifier for this application. Depending on your choice of registry, this ID may be auto-generated."
-                                                        }).on("input", generateServiceDefinition)
-                                                            .attr("type", "number");
+                                                        });
 
                                                         createInputField({
                                                             cssClasses: "advanced-option",
@@ -180,7 +180,7 @@
                                                             required: false,
                                                             containerId: "editServiceWizardGeneralContainer",
                                                             title: "Specify a theme to customize the appearance of the login and other user interface pages for this application."
-                                                        }).on("input", generateServiceDefinition);
+                                                        });
 
                                                         createInputField({
                                                             cssClasses: "advanced-option",
@@ -190,7 +190,7 @@
                                                             required: false,
                                                             containerId: "editServiceWizardGeneralContainer",
                                                             title: "Specify a locale to customize the language and regional settings for this application."
-                                                        }).on("input", generateServiceDefinition);
+                                                        });
 
                                                         createInputField({
                                                             cssClasses: "advanced-option",
@@ -200,7 +200,7 @@
                                                             required: false,
                                                             containerId: "editServiceWizardGeneralContainer",
                                                             title: "Provide a URL that points to more information about this application."
-                                                        }).on("input", generateServiceDefinition);
+                                                        });
 
                                                         createInputField({
                                                             cssClasses: "advanced-option",
@@ -210,7 +210,7 @@
                                                             required: false,
                                                             containerId: "editServiceWizardGeneralContainer",
                                                             title: "Provide a URL that points to the privacy policy for this application."
-                                                        }).on("input", generateServiceDefinition);
+                                                        });
 
                                                         createInputField({
                                                             cssClasses: "advanced-option",
@@ -220,18 +220,18 @@
                                                             required: false,
                                                             containerId: "editServiceWizardGeneralContainer",
                                                             title: "Specify a template name to apply predefined settings and configurations for this application."
-                                                        }).on("input", generateServiceDefinition);
+                                                        });
 
                                                         createInputField({
                                                             cssClasses: "advanced-option",
                                                             labelTitle: "Evaluation Order",
                                                             name: "registeredServiceEvaluationOrder",
                                                             paramName: "evaluationOrder",
+                                                            dataType: "number",
                                                             required: false,
                                                             containerId: "editServiceWizardGeneralContainer",
                                                             title: "Define the order in which this application is evaluated relative to other applications. Lower numbers indicate higher priority."
-                                                        }).on("input", generateServiceDefinition)
-                                                            .attr("type", "number");
+                                                        });
 
                                                         createInputField({
                                                             cssClasses: "advanced-option",
@@ -241,7 +241,7 @@
                                                             required: false,
                                                             containerId: "editServiceWizardGeneralContainer",
                                                             title: "Provide a URL to a logo image that represents this application."
-                                                        }).on("input", generateServiceDefinition);
+                                                        });
 
                                                         createInputField({
                                                             cssClasses: "advanced-option",
@@ -251,7 +251,7 @@
                                                             required: false,
                                                             containerId: "editServiceWizardGeneralContainer",
                                                             title: "Specify a URL to redirect users to upon logout from this application."
-                                                        }).on("input", generateServiceDefinition);
+                                                        });
 
                                                         createInputField({
                                                             cssClasses: "advanced-option",
@@ -261,7 +261,7 @@
                                                             required: false,
                                                             containerId: "editServiceWizardGeneralContainer",
                                                             title: "Define the environment(s), separated by comma, in which this application operates (e.g., development, staging, production)"
-                                                        }).on("input", generateServiceDefinition)
+                                                        })
                                                             .data("renderer", function (value) {
                                                                 return ["java.util.HashSet", value.split(",")];
                                                             });
@@ -278,7 +278,7 @@
                                                                    required: false,
                                                                    containerId: "editServiceWizardGeneralContainer",
                                                                    title: "Define the URL to which users are redirected after successful authentication for this application."
-                                                               }).on("input", generateServiceDefinition);
+                                                               });
                                                                createInputField({
                                                                    cssClasses: "advanced-option",
                                                                    labelTitle: "Supported Protocol(s)",
@@ -287,7 +287,7 @@
                                                                    required: false,
                                                                    containerId: "editServiceWizardGeneralContainer",
                                                                    title: "Define the supported protocol(s) for this application, separated by comma (e.g., <code>CAS10,CAS20,CAS30,SAML1</code>)."
-                                                               }).on("input", generateServiceDefinition)
+                                                               })
                                                                    .data("renderer", function (value) {
                                                                        return ["java.util.HashSet", value.split(",")];
                                                                    });
@@ -349,7 +349,7 @@
                                                               required: true,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the client identifier for this OAuth/OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               labelTitle: "Client Secret",
@@ -359,7 +359,7 @@
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the client secret for this OAuth/OpenID Connect relying party."
                                                           }).attr("type", "password")
-                                                              .on("input", generateServiceDefinition);
+                                                          ;
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -367,11 +367,11 @@
                                                               name: "registeredServiceClientSecretExpiration",
                                                               paramName: "clientSecretExpiration",
                                                               required: false,
+                                                              dataType: "number",
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               serviceClass: "class-OidcRegisteredService",
                                                               title: "Time, measured in UTC epoch, at which the client secret will expire or 0 if it will not expire."
-                                                          }).attr("type", "number")
-                                                              .on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               labelTitle: "Scope(s)",
@@ -380,7 +380,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the scope(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>openid,profile,email</code>)."
-                                                          }).on("input", generateServiceDefinition)
+                                                          })
                                                               .data("renderer", function (value) {
                                                                   return ["java.util.HashSet", value.split(",")];
                                                               });
@@ -393,7 +393,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the supported grant type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>authorization_code,refresh_token,client_credentials</code>)."
-                                                          }).on("input", generateServiceDefinition)
+                                                          })
                                                               .data("renderer", function (value) {
                                                                   return ["java.util.HashSet", value.split(",")];
                                                               });
@@ -406,7 +406,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the supported response type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>code,id_token,token</code>)."
-                                                          }).on("input", generateServiceDefinition)
+                                                          })
                                                               .data("renderer", function (value) {
                                                                   return ["java.util.HashSet", value.split(",")];
                                                               });
@@ -419,7 +419,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the audience(s) for this OAuth/OpenID Connect relying party, separated by comma."
-                                                          }).on("input", generateServiceDefinition)
+                                                          })
                                                               .data("renderer", function (value) {
                                                                   return ["java.util.HashSet", value.split(",")];
                                                               });
@@ -433,7 +433,7 @@
                                                               serviceClass: "class-OidcRegisteredService",
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the JSON Web Key Set (JWKS) URL for this OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -444,7 +444,7 @@
                                                               serviceClass: "class-OidcRegisteredService",
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the JSON Web Key Set (JWKS) Key ID in the keystore for this OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -455,7 +455,7 @@
                                                               serviceClass: "class-OidcRegisteredService",
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the cache duration <code>PT5S</code> for the JSON Web Key Set (JWKS) for this OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -466,7 +466,7 @@
                                                               serviceClass: "class-OidcRegisteredService",
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the ID token issuer for this OpenID Connect relying party. Override the <code>iss</code> claim in the ID Token, which should only be used in special circumstances. Do NOT use this setting carelessly as the ID token’s issuer MUST ALWAYS match the identity provider’s issuer."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -477,7 +477,7 @@
                                                               serviceClass: "class-OidcRegisteredService",
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the ID token encryption algorithm for this OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -488,7 +488,7 @@
                                                               serviceClass: "class-OidcRegisteredService",
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the ID token encryption encoding for this OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -499,7 +499,7 @@
                                                               serviceClass: "class-OidcRegisteredService",
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the ID token signing algorithm for this OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -510,7 +510,7 @@
                                                               serviceClass: "class-OidcRegisteredService",
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the user info signing algorithm for this OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -521,7 +521,7 @@
                                                               serviceClass: "class-OidcRegisteredService",
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the user info encryption response algorithm for this OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -532,7 +532,7 @@
                                                               serviceClass: "class-OidcRegisteredService",
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the user info encryption response encoding for this OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -542,7 +542,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the JWT signing algorithm for access tokens issued to this OAuth/OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -552,7 +552,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the signing algorithm for introspection responses issued to this OAuth/OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -562,7 +562,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the encryption algorithm for introspection responses issued to this OAuth/OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -572,7 +572,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the encryption encoding for introspection responses issued to this OAuth/OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -582,7 +582,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the token endpoint authentication method for this OAuth/OpenID Connect relying party. Examples include <code>client_secret_basic,client_secret_jwt,etc</code>"
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -592,7 +592,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the TLS client authentication subject DN for this OAuth/OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -602,7 +602,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the TLS client authentication SAN DNS for this OAuth/OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -612,7 +612,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the TLS client authentication SAN URI for this OAuth/OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -622,7 +622,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the TLS client authentication SAN IP for this OAuth/OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -632,7 +632,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the TLS client authentication SAN email for this OAuth/OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -643,7 +643,7 @@
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               serviceClass: "class-OidcRegisteredService",
                                                               title: "Define the application type for this OpenID Connect relying party (e.g., <code>web, native, user_agent</code>)."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -654,7 +654,7 @@
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               serviceClass: "class-OidcRegisteredService",
                                                               title: "Define the subject type for this OpenID Connect relying party (e.g., <code>public,pairwise</code>)."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -665,7 +665,7 @@
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               serviceClass: "class-OidcRegisteredService",
                                                               title: "Define the sector identifier URI for this OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createSelectField({
                                                               cssClasses: "advanced-option",
@@ -691,7 +691,7 @@
                                                               serviceClass: "class-OidcRegisteredService",
                                                               containerId: "editServiceWizardOAuthOidcContainer",
                                                               title: "Define the backchannel client notification endpoint for this OpenID Connect relying party."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
                                                      </script>
 
                                                      <section>
@@ -760,7 +760,7 @@
                                                               required: true,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Define the metadata location (URL, file path, etc) for the SAML2 service provider."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -770,7 +770,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Directory location of SAML2 identity provider metadata available to CAS as an override."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -780,7 +780,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Proxy endpoint (i.e. <code>https://proxy-address:8901</code>) to fetch service metadata from URL resources."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -788,10 +788,10 @@
                                                               name: "registeredServiceMetadataMaxValidity",
                                                               paramName: "metadataMaxValidity",
                                                               required: false,
+                                                              dataType: "number",
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines a filter that requires the presence of a <code>ValidUntil</code> attribute on the root element of the metadata document."
-                                                          }).on("input", generateServiceDefinition)
-                                                              .attr("type", "number");
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -801,8 +801,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Location of the metadata signing certificate/public key to validate the metadata which must be defined from system files or classpath. If defined, will enforce the <code>SignatureValidationFilter</code> validation filter on metadata."
-                                                          }).on("input", generateServiceDefinition)
-                                                              .attr("type", "number");
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -812,7 +811,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "If defined, will specify the SAML authentication context class in the final response."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -822,7 +821,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "If defined, will force the indicated Name ID format in the final SAML response. "
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -832,7 +831,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines the NameID qualifier to be used in SAML responses."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -842,7 +841,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines the Service Provider NameID qualifier to be used in SAML responses."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -852,7 +851,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "If defined, will override the issuer value with the given identity provider entity id. This may be useful in cases where CAS needs to maintain multiple identity provider entity ids."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -862,7 +861,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "If defined, will overwrite the <code>SubjectLocality</code> attribute of the SAML2 authentication statement."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -872,7 +871,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines the logout response binding to use when sending SAML logout responses to the service provider."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -882,7 +881,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines a comma-separated list of audience values to include in SAML assertions."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -892,7 +891,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines a comma-separated list of attribute names that should be encrypted in SAML assertions."
-                                                          }).on("input", generateServiceDefinition)
+                                                          })
                                                               .data("renderer", function (value) {
                                                                   return ["java.util.HashSet", value.split(",")];
                                                               });
@@ -905,8 +904,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "If defined, indicates number of seconds used to skew authentication dates such as valid-from and valid-until elements, etc."
-                                                          }).on("input", generateServiceDefinition)
-                                                              .attr("type", "number");
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -916,7 +914,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines a comma-separated list of digest methods to use when signing SAML messages."
-                                                          }).on("input", generateServiceDefinition)
+                                                          })
                                                               .data("renderer", function (value) {
                                                                   return ["java.util.ArrayList", value.split(",")];
                                                               });
@@ -929,7 +927,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines a comma-separated list of signature algorithms to use when signing SAML messages."
-                                                          }).on("input", generateServiceDefinition)
+                                                          })
                                                               .data("renderer", function (value) {
                                                                   return ["java.util.ArrayList", value.split(",")];
                                                               });
@@ -942,7 +940,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines a comma-separated list of blacklisted signature algorithms to avoid when signing SAML messages."
-                                                          }).on("input", generateServiceDefinition)
+                                                          })
                                                               .data("renderer", function (value) {
                                                                   return ["java.util.ArrayList", value.split(",")];
                                                               });
@@ -955,7 +953,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines a comma-separated list of whitelisted signature algorithms to avoid when signing SAML messages."
-                                                          }).on("input", generateServiceDefinition)
+                                                          })
                                                               .data("renderer", function (value) {
                                                                   return ["java.util.ArrayList", value.split(",")];
                                                               });
@@ -973,8 +971,7 @@
                                                               .on("input", function () {
                                                                   const value = $(this).val().toUpperCase();
                                                                   $(this).val(value);
-                                                              })
-                                                              .on("input", generateServiceDefinition);
+                                                              });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -984,7 +981,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines a comma-separated list of data encryption algorithms to use when encrypting SAML assertions."
-                                                          }).on("input", generateServiceDefinition)
+                                                          })
                                                               .data("renderer", function (value) {
                                                                   return ["java.util.ArrayList", value.split(",")];
                                                               });
@@ -997,7 +994,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines a comma-separated list of key encryption algorithms to use when encrypting SAML assertions."
-                                                          }).on("input", generateServiceDefinition)
+                                                          })
                                                               .data("renderer", function (value) {
                                                                   return ["java.util.ArrayList", value.split(",")];
                                                               });
@@ -1010,7 +1007,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines a comma-separated list of blacklisted algorithms to avoid when encrypting SAML assertions."
-                                                          }).on("input", generateServiceDefinition)
+                                                          })
                                                               .data("renderer", function (value) {
                                                                   return ["java.util.ArrayList", value.split(",")];
                                                               });
@@ -1022,7 +1019,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines a comma-separated list of whitelisted algorithms to avoid when encrypting SAML assertions."
-                                                          }).on("input", generateServiceDefinition)
+                                                          })
                                                               .data("renderer", function (value) {
                                                                   return ["java.util.ArrayList", value.split(",")];
                                                               });
@@ -1086,7 +1083,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines the metadata criteria direction (e.g. INCLUDE or EXCLUDE)."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -1096,7 +1093,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines the pattern used to filter metadata entities according to the criteria."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -1106,7 +1103,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines how long metadata is considered valid (e.g., an ISO-8601 duration like PT60M)."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -1116,7 +1113,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Specifies the fingerprint of the signing credential used for SAML signing operations."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -1126,7 +1123,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines the algorithm used for signing keys"
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -1136,7 +1133,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines the metadata role(s) used when filtering entities (i.e. `SPSSODescriptor`, `IDPSSODescriptor`)."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -1146,7 +1143,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Specifies the type of signing credential used (e.g., X509, BASIC)."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                           createInputField({
                                                               cssClasses: "advanced-option",
@@ -1156,7 +1153,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardSamlContainer",
                                                               title: "Defines which canonicalization algorithm is used for XML signature processing."
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
 
                                                      </script>
 
@@ -1266,7 +1263,7 @@
                                                                required: false,
                                                                containerId: "editServiceWizardWSFederationContainer",
                                                                title: "Defines the WS-Federation realm for the relying party."
-                                                           }).on("input", generateServiceDefinition);
+                                                           });
 
                                                            createInputField({
                                                                cssClasses: "advanced-option",
@@ -1276,7 +1273,7 @@
                                                                required: false,
                                                                containerId: "editServiceWizardWSFederationContainer",
                                                                title: "Defines the WS-Federation protocol to be used (e.g., <code>http://docs.oasis-open.org/ws-sx/ws-trust/200512</code>)."
-                                                           }).on("input", generateServiceDefinition);
+                                                           });
 
                                                            createInputField({
                                                                cssClasses: "advanced-option",
@@ -1286,7 +1283,7 @@
                                                                required: false,
                                                                containerId: "editServiceWizardWSFederationContainer",
                                                                title: "Defines the WS-Federation token type to be used (e.g., <code>http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0</code>)."
-                                                           }).on("input", generateServiceDefinition);
+                                                           });
 
                                                            createInputField({
                                                                cssClasses: "advanced-option",
@@ -1296,7 +1293,7 @@
                                                                required: false,
                                                                containerId: "editServiceWizardWSFederationContainer",
                                                                title: "Specifies the location of the WSDL for the WS-Federation relying party."
-                                                           }).on("input", generateServiceDefinition);
+                                                           });
 
                                                            createInputField({
                                                                cssClasses: "advanced-option",
@@ -1306,7 +1303,7 @@
                                                                required: false,
                                                                containerId: "editServiceWizardWSFederationContainer",
                                                                title: "Defines the WS-Federation namespace for the relying party (i.e. <code>http://docs.oasis-open.org/ws-sx/ws-trust/200512/</code>"
-                                                           }).on("input", generateServiceDefinition);
+                                                           });
 
                                                            createInputField({
                                                                cssClasses: "advanced-option",
@@ -1316,7 +1313,7 @@
                                                                required: false,
                                                                containerId: "editServiceWizardWSFederationContainer",
                                                                title: "Defines the WS-Addressing namespace for the relying party (i.e. <code>http://www.w3.org/2005/08/addressing</code>)"
-                                                           }).on("input", generateServiceDefinition);
+                                                           });
 
                                                            createInputField({
                                                                cssClasses: "advanced-option",
@@ -1326,7 +1323,7 @@
                                                                required: false,
                                                                containerId: "editServiceWizardWSFederationContainer",
                                                                title: "Defines the WS-Policy namespace for the relying party."
-                                                           }).on("input", generateServiceDefinition);
+                                                           });
 
                                                            createInputField({
                                                                cssClasses: "advanced-option",
@@ -1336,7 +1333,7 @@
                                                                required: false,
                                                                containerId: "editServiceWizardWSFederationContainer",
                                                                title: "Specifies the WSDL service name for the WS-Federation relying party (i.e. <code>SecurityTokenService</code>)"
-                                                           }).on("input", generateServiceDefinition);
+                                                           });
 
                                                            createInputField({
                                                                cssClasses: "advanced-option",
@@ -1346,7 +1343,7 @@
                                                                required: false,
                                                                containerId: "editServiceWizardWSFederationContainer",
                                                                title: "Specifies the WSDL endpoint name for the WS-Federation relying party"
-                                                           }).on("input", generateServiceDefinition);
+                                                           });
 
                                                            createInputField({
                                                                cssClasses: "advanced-option",
@@ -1356,7 +1353,7 @@
                                                                required: false,
                                                                containerId: "editServiceWizardWSFederationContainer",
                                                                title: "Controls to whom security tokens apply. Defaults to the realm value."
-                                                           }).on("input", generateServiceDefinition);
+                                                           });
                                                      </script>
                                                  </div>
                                             </div>
@@ -1373,7 +1370,7 @@
                                                             required: false,
                                                             containerId: "editServiceWizardMenuItemExpirationPolicy",
                                                             title: "Specifies the expiration date for the registered service in the format YYYY-MM-DD."
-                                                        }).on("input", generateServiceDefinition);
+                                                        });
 
                                                     </script>
 
@@ -1404,9 +1401,10 @@
                                                              name: "registeredServiceTicketGrantingTicketExpirationPolicyMaxTimeToLive",
                                                              paramName: "ticketGrantingTicketExpirationPolicy.maxTimeToLiveInSeconds",
                                                              required: false,
+                                                             dataType: "number",
                                                              containerId: "editServiceWizardMenuItemTGTExpirationPolicy",
                                                              title: "Control how long the ticket should be valid, in seconds."
-                                                         }).attr("type", "number").on("input", generateServiceDefinition);
+                                                         });
 
                                                          createMappedInputField({
                                                              header: "User Agents",
@@ -1445,9 +1443,10 @@
                                                             name: "registeredServiceTicketExpirationPolicyNumberOfUses",
                                                             paramName: "serviceTicketExpirationPolicy.numberOfUses",
                                                             required: false,
+                                                            dataType: "number",
                                                             containerId: "editServiceWizardMenuItemSTExpirationPolicy",
                                                             title: "Control the number of times the ticket can be used"
-                                                        }).attr("type", "number").on("input", generateServiceDefinition);
+                                                        });
 
                                                         createInputField({
                                                             paramType: "org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy",
@@ -1455,9 +1454,10 @@
                                                             name: "registeredServiceTicketExpirationPolicyTimeToLive",
                                                             paramName: "serviceTicketExpirationPolicy.timeToLive",
                                                             required: false,
+                                                            dataType: "number",
                                                             containerId: "editServiceWizardMenuItemSTExpirationPolicy",
                                                             title: "Control how long the ticket should be valid, in seconds."
-                                                        }).attr("type", "number").on("input", generateServiceDefinition);
+                                                        });
 
                                                     </script>
 
@@ -1473,9 +1473,10 @@
                                                             name: "registeredServiceProxyGrantingTicketExpirationPolicyMaxTimeToLive",
                                                             paramName: "proxyGrantingTicketExpirationPolicy.maxTimeToLiveInSeconds",
                                                             required: false,
+                                                            dataType: "number",
                                                             containerId: "editServiceWizardMenuItemPGTExpirationPolicy",
                                                             title: "Control how long the ticket should be valid, in seconds."
-                                                        }).attr("type", "number").on("input", generateServiceDefinition);
+                                                        });
 
                                                     </script>
 
@@ -1491,9 +1492,10 @@
                                                             name: "registeredServiceProxyTicketExpirationPolicyNumberOfUses",
                                                             paramName: "proxyTicketExpirationPolicy.numberOfUses",
                                                             required: false,
+                                                            dataType: "number",
                                                             containerId: "editServiceWizardMenuItemPTExpirationPolicy",
                                                             title: "Control the number of times the ticket can be used"
-                                                        }).attr("type", "number").on("input", generateServiceDefinition);
+                                                        });
 
                                                         createInputField({
                                                             paramType: "org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy",
@@ -1501,9 +1503,10 @@
                                                             name: "registeredServiceProxyTicketExpirationPolicyTimeToLive",
                                                             paramName: "proxyTicketExpirationPolicy.timeToLive",
                                                             required: false,
+                                                            dataType: "number",
                                                             containerId: "editServiceWizardMenuItemPTExpirationPolicy",
                                                             title: "Control how long the ticket should be valid, in seconds."
-                                                        }).attr("type", "number").on("input", generateServiceDefinition);
+                                                        });
 
                                                     </script>
 
@@ -1574,7 +1577,7 @@
                                                          required: false,
                                                          containerId: "editServiceWizardMenuItemProxyAuthenticationPolicy",
                                                          title: "Specifies the URL pattern that is allowed for proxy authentication"
-                                                     }).on("input", generateServiceDefinition);
+                                                     });
 
                                                      createInputField({
                                                          cssClasses: "hide RestfulRegisteredServiceProxyPolicy",
@@ -1584,7 +1587,7 @@
                                                          required: false,
                                                          containerId: "editServiceWizardMenuItemProxyAuthenticationPolicy",
                                                          title: "Specifies the endpoint CAS must reach to determine proxy authentication eligibility"
-                                                     }).on("input", generateServiceDefinition);
+                                                     });
 
                                                      createMappedInputField({
                                                          cssClasses: "hide RestfulRegisteredServiceProxyPolicy",
@@ -1721,7 +1724,7 @@
                                                            containerId: "editServiceWizardMenuItemUsernameAttribute",
                                                            title: "Specifies the static value to be used as the username."
 
-                                                       }).on("input", generateServiceDefinition);
+                                                       });
 
                                                        createInputField({
                                                            cssClasses: "hide PrincipalAttributeRegisteredServiceUsernameProvider",
@@ -1732,7 +1735,7 @@
                                                            containerId: "editServiceWizardMenuItemUsernameAttribute",
                                                            title: "Specifies the principal attribute to be used as the username."
 
-                                                       }).on("input", generateServiceDefinition);
+                                                       });
 
                                                        if (scriptFactoryAvailable) {
                                                            createInputField({
@@ -1744,9 +1747,9 @@
                                                                containerId: "editServiceWizardMenuItemUsernameAttribute",
                                                                title: "Specifies the Groovy script location, inline or external, to be used to generate the username."
 
-                                                           }).on("input", generateServiceDefinition);
+                                                           });
                                                        }
-                                                       
+
                                                        createInputField({
                                                            cssClasses: "DefaultRegisteredServiceUsernameProvider",
                                                            labelTitle: "Scope",
@@ -1755,7 +1758,7 @@
                                                            required: false,
                                                            containerId: "editServiceWizardMenuItemUsernameAttribute",
                                                            title: "Specifies the scope to be appended to the username."
-                                                       }).on("input", generateServiceDefinition);
+                                                       });
 
                                                        createInputField({
                                                            cssClasses: "DefaultRegisteredServiceUsernameProvider",
@@ -1765,7 +1768,7 @@
                                                            required: false,
                                                            containerId: "editServiceWizardMenuItemUsernameAttribute",
                                                            title: "Specifies a regex pattern to remove from the username."
-                                                       }).on("input", generateServiceDefinition);
+                                                       });
 
                                                        createSelectField({
                                                            cssClasses: "DefaultRegisteredServiceUsernameProvider",
@@ -1800,6 +1803,542 @@
 
                                               <h3>Attribute Release Policy</h3>
                                               <div id="editServiceWizardMenuItemAttributeReleasePolicy">
+                                                    <script type="text/javascript">
+                                                        function handleAttributeReleasePolicyChange(select) {
+                                                            let type = getLastWord($(select).val());
+                                                            $(`#editServiceWizardMenuItemAttributeReleasePolicy .${type}`).show();
+                                                            $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='FieldContainer']")
+                                                                .not(`.${type}`)
+                                                                .not(".always-show")
+                                                                .hide();
+                                                            $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='MapContainer']")
+                                                                .not(`.${type}`)
+                                                                .hide();
+                                                            $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='ButtonPanel']")
+                                                                .not(`.${type}`)
+                                                                .not(".always-show")
+                                                                .hide();
+
+                                                            $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='FieldContainer'] input")
+                                                                .val("");
+                                                            $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='MapContainer'] input")
+                                                                .val("");
+                                                            $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='ButtonPanel'] button")
+                                                                .each(function () {
+                                                                    const selected = $(this).data("param-selected");
+                                                                    if (selected) {
+                                                                        $(this).click();
+                                                                    }
+                                                                });
+                                                        }
+
+                                                        createSelectField({
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            labelTitle: "Type:",
+                                                            paramName: "attributeReleasePolicy",
+                                                            options: [
+                                                                {
+                                                                    value: "org.apereo.cas.services.DenyAllAttributeReleasePolicy",
+                                                                    text: "DENY ALL",
+                                                                    selected: true
+                                                                },
+                                                                {
+                                                                    value: "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+                                                                    text: "RETURN ALL"
+                                                                },
+                                                                {
+                                                                    value: "org.apereo.cas.services.ReturnStaticAttributeReleasePolicy",
+                                                                    text: "RETURN STATIC"
+                                                                },
+                                                                {
+                                                                    value: "org.apereo.cas.services.ReturnEnvironmentAttributeReleasePolicy",
+                                                                    text: "RETURN ENVIRONMENT"
+                                                                },
+                                                                {
+                                                                    value: "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+                                                                    text: "RETURN ALLOWED"
+                                                                },
+                                                                {
+                                                                    value: "org.apereo.cas.services.ReturnEncryptedAttributeReleasePolicy",
+                                                                    text: "RETURN ENCRYPTED"
+                                                                },
+                                                                {
+                                                                    value: "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+                                                                    text: "RETURN MAPPED"
+                                                                },
+                                                                {
+                                                                    value: "org.apereo.cas.services.ReturnLinkedAttributeReleasePolicy",
+                                                                    text: "RETURN LINKED"
+                                                                },
+                                                                {
+                                                                    value: "org.apereo.cas.services.PatternMatchingAttributeReleasePolicy",
+                                                                    text: "PATTERN MATCHING"
+                                                                },
+                                                                {
+                                                                    value: "org.apereo.cas.services.ReturnRestfulAttributeReleasePolicy",
+                                                                    text: "REST"
+                                                                },
+                                                                ...(
+                                                                    scriptFactoryAvailable
+                                                                        ? [{
+                                                                            value: "org.apereo.cas.services.GroovyScriptAttributeReleasePolicy",
+                                                                            text: "GROOVY SCRIPT"
+                                                                        }]
+                                                                        : []
+                                                                )
+                                                            ],
+                                                            helpText: "Specifies the type of attribute release policy to apply.",
+                                                            changeEventHandlers: "handleAttributeReleasePolicyChange"
+                                                        }).data("renderer", function (value) {
+                                                            return {"@class": value};
+                                                        });
+
+                                                        createSelectField({
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            labelTitle: "Canonicalization Mode:",
+                                                            paramName: "attributeReleasePolicy.canonicalizationMode",
+                                                            options: [
+                                                                {
+                                                                    value: "",
+                                                                    text: "NONE",
+                                                                    selected: true
+                                                                },
+                                                                {
+                                                                    value: "UPPER",
+                                                                    text: "UPPER"
+                                                                },
+                                                                {
+                                                                    value: "LOWER",
+                                                                    text: "LOWER"
+                                                                }
+                                                            ],
+                                                            helpText: "Specifies the canonicalization mode for attributes released."
+                                                        });
+
+
+                                                        createInputField({
+                                                            cssClasses: "hide ReturnAllAttributeReleasePolicy",
+                                                            labelTitle: "Excluded Attributes",
+                                                            name: "registeredServiceAttrReleaseExcludedAttrs",
+                                                            paramName: "attributeReleasePolicy.excludedAttributes",
+                                                            required: false,
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            title: "Define the attributes to be excluded from release, separated by commas."
+                                                        })
+                                                            .data("renderer", function (value) {
+                                                                return ["java.util.HashSet", value.split(",")];
+                                                            });
+
+                                                        createInputField({
+                                                            cssClasses: "hide ReturnEncryptedAttributeReleasePolicy",
+                                                            labelTitle: "Encrypted Attributes (separated by comma)",
+                                                            name: "registeredServiceAttrReleaseEncryptedAttrs",
+                                                            paramName: "attributeReleasePolicy.allowedAttributes",
+                                                            required: false,
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            title: "Define the attributes to be encrypted for release, separated by commas."
+                                                        })
+                                                            .data("renderer", function (value) {
+                                                                return ["java.util.ArrayList", value.split(",")];
+                                                            });
+
+                                                        createInputField({
+                                                            cssClasses: "hide ReturnStaticAttributeReleasePolicy",
+                                                            labelTitle: "Static Attributes",
+                                                            name: "registeredServiceAttrReleaseStaticAttrs",
+                                                            paramName: "attributeReleasePolicy.allowedAttributes",
+                                                            required: false,
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            title: "Define the attributes with static values for release, separated by commas."
+                                                        })
+                                                            .data("renderer", function (value) {
+                                                                return ["java.util.ArrayList", value.split(",")];
+                                                            });
+
+                                                        createInputField({
+                                                            cssClasses: "hide ReturnAllowedAttributeReleasePolicy",
+                                                            labelTitle: "Allowed Attributes",
+                                                            name: "registeredServiceAttrReleaseAllowedAttrs",
+                                                            paramName: "attributeReleasePolicy.allowedAttributes",
+                                                            required: false,
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            title: "Define the attribute names for release, separated by commas."
+                                                        })
+                                                            .data("renderer", function (value) {
+                                                                return ["java.util.ArrayList", value.split(",")];
+                                                            });
+
+                                                        createInputField({
+                                                            cssClasses: "hide ReturnRestfulAttributeReleasePolicy",
+                                                            labelTitle: "Endpoint",
+                                                            name: "registeredServiceAttrReleaseRestEndpoint",
+                                                            paramName: "attributeReleasePolicy.endpoint",
+                                                            required: false,
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            title: "Define the REST endpoint to collect attributes for release."
+                                                        });
+
+                                                        createInputField({
+                                                            cssClasses: "hide ReturnRestfulAttributeReleasePolicy",
+                                                            labelTitle: "Method (i.e. <code>GET, POST, etc</code>)",
+                                                            name: "registeredServiceAttrReleaseRestEndpoint",
+                                                            paramName: "attributeReleasePolicy.method",
+                                                            required: false,
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            title: "Define the REST endpoint method to collect attributes for release."
+                                                        });
+
+                                                        createMappedInputField({
+                                                            cssClasses: "hide ReturnRestfulAttributeReleasePolicy",
+                                                            header: "Headers",
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            keyField: "registeredServiceAttrReleaseRestHeaderName",
+                                                            keyLabel: "Header Name",
+                                                            valueField: "registeredServiceAttrReleasePolicyRestHeaderValue",
+                                                            valueLabel: "Header Value",
+                                                            containerField: "attributeReleasePolicy.headers"
+                                                        });
+
+                                                        createMappedInputField({
+                                                            cssClasses: "hide ReturnRestfulAttributeReleasePolicy",
+                                                            header: "Allowed Attributes",
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            keyField: "registeredServiceAttrReleasePolicyRestAttrName",
+                                                            keyLabel: "Attribute Name",
+                                                            valueField: "registeredServiceAttrReleasePolicyRestAttrValue",
+                                                            valueLabel: "Source Attributes",
+                                                            containerField: "attributeReleasePolicy.allowedAttributes"
+                                                        });
+
+                                                        createMappedInputField({
+                                                            cssClasses: "hide PatternMatchingAttributeReleasePolicy",
+                                                            header: "Allowed Attributes",
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            keyField: "registeredServiceAttrReleasePatternMatchingAllowedAttrs",
+                                                            keyLabel: "Attribute",
+                                                            valueField: "registeredServiceAttrReleasePolicyPatternMatchingAttrValue",
+                                                            valueLabel: "Value Pattern",
+                                                            containerField: "attributeReleasePolicy.allowedAttributes",
+                                                            valueFieldRenderer: function ($inputKey, $inputValue) {
+                                                                return {
+                                                                    "@class": "org.apereo.cas.services.PatternMatchingAttributeReleasePolicy$Rule",
+                                                                    "pattern": $inputValue.val().trim()
+                                                                };
+                                                            }
+                                                        });
+
+
+                                                        if (scriptFactoryAvailable) {
+                                                            createInputField({
+                                                                cssClasses: "hide GroovyScriptAttributeReleasePolicy",
+                                                                labelTitle: "Groovy Script",
+                                                                name: "registeredServiceAttrReleaseGroovyScript",
+                                                                paramName: "attributeReleasePolicy.groovyScript",
+                                                                required: false,
+                                                                containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                                title: "Define the Groovy script location, inline or external, to determine attribute release."
+                                                            });
+                                                        }
+
+                                                        createMappedInputField({
+                                                            cssClasses: "hide ReturnMappedAttributeReleasePolicy",
+                                                            header: "Allowed Attributes",
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            keyField: "registeredServiceAttrReleasePolicyMappedAttrName",
+                                                            keyLabel: "Source Attribute",
+                                                            valueField: "registeredServiceAttrReleasePolicyMappedAttrValue",
+                                                            valueLabel: "CAS Attribute",
+                                                            containerField: "attributeReleasePolicy.allowedAttributes",
+                                                            multipleValues: true,
+                                                            unwrapSingleElement: true
+                                                        });
+
+                                                        createMappedInputField({
+                                                            cssClasses: "hide ReturnLinkedAttributeReleasePolicy",
+                                                            header: "Allowed Attributes",
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            keyField: "registeredServiceAttrReleasePolicyLinkedAttrName",
+                                                            keyLabel: "Attribute Name",
+                                                            valueField: "registeredServiceAttrReleasePolicyLinkedAttrValue",
+                                                            valueLabel: "Source Attributes (separated by comma)",
+                                                            containerField: "attributeReleasePolicy.allowedAttributes",
+                                                            multipleValues: true
+                                                        });
+
+                                                        createMappedInputField({
+                                                            cssClasses: "hide ReturnEnvironmentAttributeReleasePolicy",
+                                                            header: "Environment Variables",
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            keyField: "registeredServiceAttrReleasePolicyEnvVarAttrName",
+                                                            keyLabel: "Environment Variable Name",
+                                                            valueField: "registeredServiceAttrReleasePolicyEnvVarAttrValue",
+                                                            valueLabel: "Attribute Name",
+                                                            containerField: "attributeReleasePolicy.environmentVariables",
+                                                            multipleValues: false
+                                                        });
+
+                                                        createMappedInputField({
+                                                            cssClasses: "hide ReturnEnvironmentAttributeReleasePolicy",
+                                                            header: "System Property",
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                                                            keyField: "registeredServiceAttrReleasePolicySysPropAttrName",
+                                                            keyLabel: "System Property",
+                                                            valueField: "registeredServiceAttrReleasePolicySysPropAttrValue",
+                                                            valueLabel: "Attribute Name",
+                                                            containerField: "attributeReleasePolicy.systemProperties",
+                                                            multipleValues: false
+                                                        });
+                                                        
+                                                    </script>
+
+                                                  <div id="editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria">
+                                                    <script type="text/javascript">
+                                                        function handleAttributeReleasePolicyActivationCriteriaChange(select) {
+                                                            let type = getLastWord($(select).val());
+                                                            $(`#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria .${type}`).show();
+                                                            $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='FieldContainer']")
+                                                                .not(`.${type}`)
+                                                                .not(".always-show")
+                                                                .hide();
+                                                            $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='MapContainer']")
+                                                                .not(`.${type}`)
+                                                                .hide();
+                                                            $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='ButtonPanel']")
+                                                                .not(`.${type}`)
+                                                                .not(".always-show")
+                                                                .hide();
+                                                            $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='FieldContainer'] input")
+                                                                .val("");
+                                                            $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='MapContainer'] input")
+                                                                .val("");
+                                                            $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='ButtonPanel'] button")
+                                                                .each(function () {
+                                                                    const selected = $(this).data("param-selected");
+                                                                    if (selected) {
+                                                                        $(this).click();
+                                                                    }
+                                                                });
+                                                        }
+
+                                                        createSelectField({
+                                                            cssClasses: "always-show",
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria",
+                                                            labelTitle: "Activation Criteria:",
+                                                            changeEventHandlers: "handleAttributeReleasePolicyActivationCriteriaChange",
+                                                            paramName: "attributeReleasePolicy.activationCriteria",
+                                                            options: [
+                                                                {
+                                                                    value: "",
+                                                                    text: "UNDEFINED",
+                                                                    selected: true
+                                                                },
+                                                                {
+                                                                    value: "org.apereo.cas.services.AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria",
+                                                                    text: "ATTRIBUTES"
+                                                                },
+                                                                ...(
+                                                                    scriptFactoryAvailable
+                                                                        ? [{
+                                                                            value: "org.apereo.cas.services.GroovyRegisteredServiceAttributeReleaseActivationCriteria",
+                                                                            text: "GROOVY"
+                                                                        }]
+                                                                        : []
+                                                                )
+
+                                                            ],
+                                                            helpText: "Specifies the activation criteria for the attribute release policy."
+                                                        }).data("renderer", function (value) {
+                                                            return {"@class": value};
+                                                        });
+
+                                                        createInputField({
+                                                            cssClasses: "hide AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria",
+                                                            labelTitle: "Operator (i.e. <code>AND, OR</code>)",
+                                                            name: "registeredServiceAttrReleaseActivationCriteriaAttributesOperator",
+                                                            paramName: "attributeReleasePolicy.activationCriteria.operator",
+                                                            required: false,
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria",
+                                                            title: "Define the operator to use when evaluating attributes for activation criteria."
+                                                        });
+
+                                                        createMappedInputField({
+                                                            cssClasses: "hide AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria",
+                                                            header: "Required Attributes",
+                                                            containerId: "editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria",
+                                                            keyField: "registeredServiceAttrReleasePolicyAttributeActivationCriteriaAttrName",
+                                                            keyLabel: "Attribute Name",
+                                                            valueField: "registeredServiceAttrReleasePolicyAttributeActivationCriteriaAttrValue",
+                                                            valueLabel: "Attribute Values (separated by comma)",
+                                                            containerField: "attributeReleasePolicy.activationCriteria.requiredAttributes",
+                                                            multipleValues: true
+                                                        });
+
+                                                        if (scriptFactoryAvailable) {
+                                                            createInputField({
+                                                                paramType: "org.apereo.cas.services.GroovyRegisteredServiceAttributeReleaseActivationCriteria",
+                                                                cssClasses: "hide GroovyRegisteredServiceAttributeReleaseActivationCriteria",
+                                                                labelTitle: "Groovy Script",
+                                                                name: "registeredServiceAttrReleasePolicyAttributeActivationCriteriaGroovyScript",
+                                                                paramName: "attributeReleasePolicy.activationCriteria.groovyScript",
+                                                                required: false,
+                                                                containerId: "editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria",
+                                                                title: "Specifies the Groovy script location, inline or external, to determine attribute release activation criteria."
+                                                            });
+                                                        }
+                                                        
+                                                    </script>
+                                                      
+                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='registeredServiceAttrReleasePolicyAttributeActivationCriteriaReverseMatch',
+                                                        title='When enabled, the attribute activation criteria performs a reverse match',
+                                                        label='#Reverse Match', cssClass='pt-3 hide AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria',
+                                                        dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.activationCriteria.reverseMatch')}"/>
+                                                  </div>
+
+                                                   <div id="editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository">
+                                                       <script type="text/javascript">
+                                                            function handleAttributeReleasePolicyPrincipalAttributeRepositoryChange(select) {
+                                                                let type = getLastWord($(select).val());
+                                                                $(`#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository .${type}`).show();
+                                                                $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='FieldContainer']")
+                                                                    .not(`.${type}`)
+                                                                    .not(".always-show")
+                                                                    .hide();
+                                                                $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='MapContainer']")
+                                                                    .not(`.${type}`)
+                                                                    .hide();
+                                                                $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='ButtonPanel']")
+                                                                    .not(`.${type}`)
+                                                                    .not(".always-show")
+                                                                    .hide();
+                                                                $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='FieldContainer'] input")
+                                                                    .val("");
+                                                                $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='MapContainer'] input")
+                                                                    .val("");
+                                                                $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='ButtonPanel'] button")
+                                                                    .each(function () {
+                                                                        const selected = $(this).data("param-selected");
+                                                                        if (selected) {
+                                                                            $(this).click();
+                                                                        }
+                                                                    });
+                                                            }
+                                                            
+                                                            createSelectField({
+                                                                 cssClasses: "always-show",
+                                                                 containerId: "editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository",
+                                                                 labelTitle: "Principal Attribute Repository:",
+                                                                 changeEventHandlers: "handleAttributeReleasePolicyPrincipalAttributeRepositoryChange",
+                                                                 paramName: "attributeReleasePolicy.principalAttributesRepository",
+                                                                 options: [
+                                                                     {
+                                                                         value: "",
+                                                                         text: "UNDEFINED",
+                                                                         selected: true
+                                                                     },
+                                                                     {
+                                                                         value: "org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository",
+                                                                         text: "DEFAULT"
+                                                                     },
+                                                                     {
+                                                                        value: "org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
+                                                                        text: "CACHED"
+                                                                     }
+
+                                                                 ],
+                                                                 helpText: "Specifies the principal attributes repository for the attribute release policy."
+                                                             }).data("renderer", function (value) {
+                                                                 return {"@class": value};
+                                                             });
+
+                                                            createInputField({
+                                                                cssClasses: "hide DefaultPrincipalAttributesRepository CachingPrincipalAttributesRepository",
+                                                                labelTitle: "Attribute Repository IDs",
+                                                                name: "registeredServiceAttrReleasePolicyPrincipalAttributeRepositoryIds",
+                                                                paramName: "attributeReleasePolicy.principalAttributesRepository.attributeRepositoryIds",
+                                                                required: false,
+                                                                containerId: "editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository",
+                                                                title: "Define the attribute repository IDs to be used, separated by commas.",
+                                                            }).data("renderer", function (value) {
+                                                                return ["java.util.HashSet", value.split(",")];
+                                                            });
+
+                                                            createSelectField({
+                                                                cssClasses: "hide DefaultPrincipalAttributesRepository CachingPrincipalAttributesRepository",
+                                                                containerId: "editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository",
+                                                                labelTitle: "Merging Strategy:",
+                                                                paramName: "attributeReleasePolicy.principalAttributesRepository.mergingStrategy",
+                                                                options: [
+
+                                                                    {
+                                                                        value: "",
+                                                                        text: "MULTIVALUED",
+                                                                        selected: true
+                                                                    },
+                                                                    {
+                                                                        value: "REPLACE",
+                                                                        text: "REPLACE"
+                                                                    },
+                                                                    {
+                                                                        value: "ADD",
+                                                                        text: "ADD"
+                                                                    },
+                                                                    {
+                                                                        value: "SOURCE",
+                                                                        text: "SOURCE"
+                                                                    },
+                                                                    {
+                                                                        value: "DESTINATION",
+                                                                        text: "DESTINATION"
+                                                                    }
+                                                                ],
+                                                                helpText: "Specifies the merging strategy for principal attributes."
+                                                            });
+
+                                                            createInputField({
+                                                                cssClasses: "hide CachingPrincipalAttributesRepository",
+                                                                labelTitle: "Time Unit (e.g., <code>SECONDS, MINUTES, HOURS, DAYS</code>)",
+                                                                name: "registeredServiceAttrReleasePolicyPrincipalAttributeCachingTimeUnit",
+                                                                paramName: "attributeReleasePolicy.principalAttributesRepository.timeUnit",
+                                                                required: false,
+                                                                containerId: "editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository",
+                                                                title: "Define the time unit for caching principal attributes (e.g., <code>SECONDS, MINUTES, HOURS, DAYS</code>)."
+                                                            });
+
+                                                            createInputField({
+                                                                cssClasses: "hide CachingPrincipalAttributesRepository",
+                                                                labelTitle: "Expiration",
+                                                                dataType: "number",
+                                                                name: "registeredServiceAttrReleasePolicyPrincipalAttributeCachingExpiration",
+                                                                paramName: "attributeReleasePolicy.principalAttributesRepository.expiration",
+                                                                required: false,
+                                                                containerId: "editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository",
+                                                                title: "Define the expiration value for cached principal attributes."
+                                                            });
+                                                            
+                                                       </script>
+
+                                                       <div th:replace="~{fragments/switchbutton :: switchbutton (id='registeredServiceAttrReleasePolicyPrincipalAttributeRepositoryIgnoreResolvedAttributes',
+                                                        title='When enabled, resolved attributes from the principal attributes repository are ignored',
+                                                        label='#Ignore Resolved Attributes', cssClass='pt-3 hide DefaultPrincipalAttributesRepository CachingPrincipalAttributesRepository',
+                                                        dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.principalAttributesRepository.ignoreResolvedAttributes')}"/>
+                                                   </div>
+                                                  
+                                                  <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseCredentialPassword',
+                                                        title='When enabled, the credential password is authorized to be released as an attribute',
+                                                        label='#Release Credential Password', cssClass='pt-2 always-show',
+                                                        dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.authorizedToReleaseCredentialPassword')}"/>
+                                                  <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseProxyGrantingTicket',
+                                                        title='When enabled, the proxy granting ticket is authorized to be released as an attribute',
+                                                        label='#Release Proxy-granting Ticket', cssClass='pt-2 always-show',
+                                                        dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.authorizedToReleaseProxyGrantingTicket')}"/>
+                                                  <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseExcludeDefaultAttributes',
+                                                        title='When enabled, default attributes are excluded from being released',
+                                                        label='#Exclude Default Attributes', cssClass='pt-2 always-show',
+                                                        dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.excludeDefaultAttributes')}"/>
+                                                  <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseAuthenticationAttributes',
+                                                        title='When enabled, authentication attributes are authorized to be released as attributes',
+                                                        label='#Release Authentication Attributes', cssClass='pt-2 always-show',
+                                                        dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.authorizedToReleaseAuthenticationAttributes')}"/>
 
                                               </div>
 
@@ -1814,7 +2353,7 @@
                                                         required: false,
                                                         containerId: "editServiceWizardMenuItemMfaPolicy",
                                                         title: "Define the multifactor authentication providers to be used, separated by commas."
-                                                    }).on("input", generateServiceDefinition)
+                                                    })
                                                         .data("renderer", function (value) {
                                                             return ["java.util.HashSet", value.split(",")];
                                                         });
@@ -1860,7 +2399,7 @@
                                                         required: false,
                                                         containerId: "editServiceWizardMenuItemMfaPolicy",
                                                         title: "Specifies the principal attribute name that triggers multifactor authentication."
-                                                    }).on("input", generateServiceDefinition);
+                                                    });
 
                                                     createInputField({
                                                         paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
@@ -1871,7 +2410,7 @@
                                                         required: false,
                                                         containerId: "editServiceWizardMenuItemMfaPolicy",
                                                         title: "Specifies the principal attribute value to match for triggering multifactor authentication."
-                                                    }).on("input", generateServiceDefinition);
+                                                    });
 
                                                     createInputField({
                                                         paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
@@ -1882,7 +2421,7 @@
                                                         required: false,
                                                         containerId: "editServiceWizardMenuItemMfaPolicy",
                                                         title: "Specifies the principal attribute name that bypasses multifactor authentication."
-                                                    }).on("input", generateServiceDefinition);
+                                                    });
 
                                                     createInputField({
                                                         paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
@@ -1893,7 +2432,7 @@
                                                         required: false,
                                                         containerId: "editServiceWizardMenuItemMfaPolicy",
                                                         title: "Specifies the principal attribute value that bypasses multifactor authentication."
-                                                    }).on("input", generateServiceDefinition);
+                                                    });
 
                                                     if (scriptFactoryAvailable) {
                                                         createInputField({
@@ -1905,7 +2444,7 @@
                                                             required: false,
                                                             containerId: "editServiceWizardMenuItemMfaPolicy",
                                                             title: "Specifies the Groovy script location, inline or external, to determine multifactor authentication."
-                                                        }).on("input", generateServiceDefinition);
+                                                        });
                                                     }
 
                                                 </script>
@@ -1996,6 +2535,10 @@
                                                            $("#editServiceWizardMenuItemAccessStrategy [id$='ButtonPanel']")
                                                                .not(`.${type}`)
                                                                .hide();
+                                                           $("#editServiceWizardMenuItemAccessStrategy [id$='SelectContainer']")
+                                                               .not(`.${type}`)
+                                                               .not(".always-show")
+                                                               .hide();
                                                            $("#editServiceWizardMenuItemAccessStrategy [id$='MapContainer']")
                                                                .not(`.${type}`)
                                                                .hide();
@@ -2013,6 +2556,7 @@
                                                        }
 
                                                        createSelectField({
+                                                           cssClasses: "always-show",
                                                            containerId: "editServiceWizardMenuItemAccessStrategy",
                                                            labelTitle: "Type:",
                                                            paramName: "accessStrategy",
@@ -2057,7 +2601,7 @@
                                                            required: false,
                                                            containerId: "editServiceWizardMenuItemAccessStrategy",
                                                            title: "Specifies the IP address to be used for access strategy."
-                                                       }).on("input", generateServiceDefinition);
+                                                       });
 
                                                        createInputField({
                                                            cssClasses: "hide HttpRequestRegisteredServiceAccessStrategy",
@@ -2067,7 +2611,7 @@
                                                            required: false,
                                                            containerId: "editServiceWizardMenuItemAccessStrategy",
                                                            title: "Specifies the user agent to be used for access strategy."
-                                                       }).on("input", generateServiceDefinition);
+                                                       });
 
                                                        createMappedInputField({
                                                            cssClasses: "hide HttpRequestRegisteredServiceAccessStrategy",
@@ -2077,7 +2621,8 @@
                                                            keyLabel: "Header Name",
                                                            valueField: "registeredServiceAccessStrategyHttpRequestHeaderValue",
                                                            valueLabel: "Header Value",
-                                                           containerField: "accessStrategy.headers"
+                                                           containerField: "accessStrategy.headers",
+                                                           required: false
                                                        });
 
                                                        createSelectField({
@@ -2113,7 +2658,7 @@
                                                            required: false,
                                                            containerId: "editServiceWizardMenuItemAccessStrategy",
                                                            title: "Specifies the remote endpoint URL to determine access strategy."
-                                                       }).on("input", generateServiceDefinition);
+                                                       });
 
                                                        createInputField({
                                                            cssClasses: "hide RemoteEndpointServiceAccessStrategy",
@@ -2123,7 +2668,7 @@
                                                            required: false,
                                                            containerId: "editServiceWizardMenuItemAccessStrategy",
                                                            title: "Specifies the acceptable response codes from the remote endpoint to determine access strategy, separated by comma."
-                                                       }).on("input", generateServiceDefinition);
+                                                       });
 
                                                        createInputField({
                                                            cssClasses: "hide RemoteEndpointServiceAccessStrategy",
@@ -2133,7 +2678,7 @@
                                                            required: false,
                                                            containerId: "editServiceWizardMenuItemAccessStrategy",
                                                            title: "Specifies the HTTP method (i.e. <code>GET, POST, etc</code>) to use when contacting the remote endpoint."
-                                                       }).on("input", generateServiceDefinition);
+                                                       });
 
                                                        createMappedInputField({
                                                            cssClasses: "hide RemoteEndpointServiceAccessStrategy",
@@ -2143,7 +2688,8 @@
                                                            keyLabel: "Header Name",
                                                            valueField: "registeredServiceAccessStrategyEndpointHeaderValue",
                                                            valueLabel: "Header Value",
-                                                           containerField: "accessStrategy.headers"
+                                                           containerField: "accessStrategy.headers",
+                                                           required: false
                                                        });
 
                                                        if (scriptFactoryAvailable) {
@@ -2155,9 +2701,9 @@
                                                                required: false,
                                                                containerId: "editServiceWizardMenuItemAccessStrategy",
                                                                title: "Specifies the Groovy script location, inline or external, to determine access strategy."
-                                                           }).on("input", generateServiceDefinition);
+                                                           });
                                                        }
-                                                       
+
                                                        createInputField({
                                                            cssClasses: "DefaultRegisteredServiceAccessStrategy",
                                                            labelTitle: "Unauthorized Redirect URL",
@@ -2166,7 +2712,7 @@
                                                            required: false,
                                                            containerId: "editServiceWizardMenuItemAccessStrategy",
                                                            title: "Specifies the URL to redirect to when access is unauthorized."
-                                                       }).on("input", generateServiceDefinition);
+                                                       });
 
                                                        createMappedInputField({
                                                            cssClasses: "DefaultRegisteredServiceAccessStrategy GrouperRegisteredServiceAccessStrategy",
@@ -2178,7 +2724,8 @@
                                                            valueLabel: "Attribute Value",
                                                            containerField: "accessStrategy.requiredAttributes",
                                                            multipleValues: true,
-                                                           multipleValuesType: "java.util.HashSet"
+                                                           multipleValuesType: "java.util.HashSet",
+                                                           required: false
                                                        });
 
                                                        createMappedInputField({
@@ -2191,7 +2738,8 @@
                                                            valueLabel: "Attribute Value",
                                                            containerField: "accessStrategy.rejectedAttributes",
                                                            multipleValues: true,
-                                                           multipleValuesType: "java.util.HashSet"
+                                                           multipleValuesType: "java.util.HashSet",
+                                                           required: false
                                                        });
 
 
@@ -2250,11 +2798,21 @@
                                                               {
                                                                   value: "org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria",
                                                                   text: "ALLOWED",
-                                                                  selected: true
+                                                                  selected: true,
+                                                                  data: {
+                                                                      condition: function (value, $input) {
+                                                                          return $("#editServiceWizardMenuItemAuthenticationPolicy #registeredServiceAuthenticationPolicyRequiredHandlers").val().length > 0;
+                                                                      }
+                                                                  }
                                                               },
                                                               {
                                                                   value: "org.apereo.cas.services.ExcludedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria",
-                                                                  text: "EXCLUDED"
+                                                                  text: "EXCLUDED",
+                                                                  data: {
+                                                                      condition: function (value, $input) {
+                                                                          return $("#editServiceWizardMenuItemAuthenticationPolicy #registeredServiceAuthenticationPolicyExcludedHandlers").val().length > 0;
+                                                                      }
+                                                                  }
                                                               },
                                                               {
                                                                   value: "org.apereo.cas.services.AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria",
@@ -2283,8 +2841,13 @@
                                                           ],
                                                           helpText: "Specifies the authentication strategy for the registered service.",
                                                           changeEventHandlers: "handleAuthenticationPolicyChange"
-                                                      }).data("renderer", function (value) {
-                                                          return {"@class": value};
+                                                      }).data("renderer", function (value, $input) {
+                                                          const condition = $input.find(`option[value*='${value}']`).data("condition");
+                                                          let render = true;
+                                                          if (condition && typeof condition === "function") {
+                                                              render = condition(value, $input);
+                                                          }
+                                                          return render ? {"@class": value} : {};
                                                       });
 
                                                       createInputField({
@@ -2295,7 +2858,7 @@
                                                           required: false,
                                                           containerId: "editServiceWizardMenuItemAuthenticationPolicy",
                                                           title: "REST Endpoint URL"
-                                                      }).on("input", generateServiceDefinition);
+                                                      });
 
                                                       createInputField({
                                                           cssClasses: "hide RestfulRegisteredServiceAuthenticationPolicyCriteria",
@@ -2305,7 +2868,7 @@
                                                           required: false,
                                                           containerId: "editServiceWizardMenuItemAuthenticationPolicy",
                                                           title: "Basic Auth Username"
-                                                      }).on("input", generateServiceDefinition);
+                                                      });
 
                                                       createInputField({
                                                           cssClasses: "hide RestfulRegisteredServiceAuthenticationPolicyCriteria",
@@ -2315,7 +2878,7 @@
                                                           required: false,
                                                           containerId: "editServiceWizardMenuItemAuthenticationPolicy",
                                                           title: "Basic Auth Password"
-                                                      }).on("input", generateServiceDefinition);
+                                                      });
 
                                                       if (scriptFactoryAvailable) {
                                                           createInputField({
@@ -2326,7 +2889,7 @@
                                                               required: false,
                                                               containerId: "editServiceWizardMenuItemAuthenticationPolicy",
                                                               title: "Groovy Script"
-                                                          }).on("input", generateServiceDefinition);
+                                                          });
                                                       }
 
                                                       createInputField({
@@ -2337,7 +2900,7 @@
                                                           required: false,
                                                           containerId: "editServiceWizardMenuItemAuthenticationPolicy",
                                                           title: "Required Authentication Handler(s)"
-                                                      }).on("input", generateServiceDefinition)
+                                                      })
                                                           .data("renderer", function (value) {
                                                               return ["java.util.HashSet", value.split(",")];
                                                           });
@@ -2350,7 +2913,7 @@
                                                           required: false,
                                                           containerId: "editServiceWizardMenuItemAuthenticationPolicy",
                                                           title: "Excluded Authentication Handler(s)"
-                                                      }).on("input", generateServiceDefinition)
+                                                      })
                                                           .data("renderer", function (value) {
                                                               return ["java.util.HashSet", value.split(",")];
                                                           });
@@ -2359,7 +2922,7 @@
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='requiredAuthenticationHandlersTryAll',
                                                         title='When enabled, all required authentication handlers will be tried and executed',
                                                         label='#Try All', cssClass='pt-2 AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria',
-                                                        dataAttrs='param-skip-false=true,param-name=authenticationPolicy.criteria.enabled')}"/>
+                                                        dataAttrs='param-skip-false=true,param-name=authenticationPolicy.criteria.tryAll')}"/>
 
                                               </div>
 
@@ -2415,7 +2978,7 @@
                                                                            contacts[contactField] = $input.val();
                                                                        }
                                                                    })
-                                                                   .on("input", generateServiceDefinition);
+                                                               ;
                                                            });
                                                        }
 
@@ -2434,7 +2997,7 @@
                                                         required: false,
                                                         containerId: "editServiceWizardMenuItemPublicKey",
                                                         title: "Specifies the location of the public key used for encrypting attributes or the username."
-                                                    }).on("input", generateServiceDefinition);
+                                                    });
 
                                                     createInputField({
                                                         paramType: "org.apereo.cas.services.RegisteredServicePublicKeyImpl",
@@ -2444,7 +3007,7 @@
                                                         required: false,
                                                         containerId: "editServiceWizardMenuItemPublicKey",
                                                         title: "Specifies the algorithm used with the public key (i.e. <code>RSA</code>)."
-                                                    }).on("input", generateServiceDefinition);
+                                                    });
                                                 </script>
                                             </div>
                                             <h3 id="registeredServiceAcceptableUsagePolicy" class="advanced-option">Acceptable Usage Policy</h3>
@@ -2458,7 +3021,7 @@
                                                             required: false,
                                                             containerId: "editServiceWizardMenuItemAUP",
                                                             title: "Specifies the message code to be shown to the user for the acceptable usage policy."
-                                                        }).on("input", generateServiceDefinition);
+                                                        });
                                                         createInputField({
                                                             paramType: "org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy",
                                                             labelTitle: "Text",
@@ -2467,7 +3030,7 @@
                                                             required: false,
                                                             containerId: "editServiceWizardMenuItemAUP",
                                                             title: "Specifies the text to be shown to the user for the acceptable usage policy."
-                                                        }).on("input", generateServiceDefinition);
+                                                        });
                                                     </script>
                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='enabled',
                                                         title='When enabled, the acceptable usage policy is enforced for this service',
@@ -2492,7 +3055,7 @@
                                                                 .hide();
                                                             $("#editServiceWizardMenuItemSSOParticipationPolicy [id$='SelectContainer']")
                                                                 .not(`.${type}`)
-                                                                .not('.always-show')
+                                                                .not(".always-show")
                                                                 .hide();
                                                             $("#editServiceWizardMenuItemSSOParticipationPolicy [id$='ButtonPanel']")
                                                                 .not(`.${type}`)
@@ -2520,15 +3083,15 @@
                                                                 {value: "", text: "DEFAULT", selected: true},
                                                                 {
                                                                     value: "org.apereo.cas.services.AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy",
-                                                                    text: "ATTRIBUTES",
+                                                                    text: "ATTRIBUTES"
                                                                 },
                                                                 {
                                                                     value: "org.apereo.cas.services.LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy",
-                                                                    text: "LAST USED",
+                                                                    text: "LAST USED"
                                                                 },
                                                                 {
                                                                     value: "org.apereo.cas.services.AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy",
-                                                                    text: "AUTHENTICATION DATE",
+                                                                    text: "AUTHENTICATION DATE"
                                                                 },
                                                                 ...(
                                                                     scriptFactoryAvailable
@@ -2537,7 +3100,7 @@
                                                                             text: "GROOVY"
                                                                         }]
                                                                         : []
-                                                                ),
+                                                                )
                                                             ],
                                                             helpText: "Specifies the single sign-on participation policy for the registered service.",
                                                             changeEventHandlers: "handleSsoParticipationPolicyChange"
@@ -2553,18 +3116,19 @@
                                                             required: false,
                                                             containerId: "editServiceWizardMenuItemSSOParticipationPolicy",
                                                             title: "Specifies the time unit for the SSO participation policy (i.e <code>SECONDS, MINUTES, HOURS, DAYS</code>)."
-                                                        }).on("input", generateServiceDefinition);
+                                                        });
 
                                                         createInputField({
                                                             cssClasses: "hide LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy",
                                                             labelTitle: "Time Value",
+                                                            dataType: "number",
                                                             name: "registeredServiceSSOParticipationTimeValue",
                                                             paramName: "singleSignOnParticipationPolicy.timeValue",
                                                             required: false,
                                                             containerId: "editServiceWizardMenuItemSSOParticipationPolicy",
                                                             title: "Specifies the time value for the SSO participation policy."
-                                                        }).on("input", generateServiceDefinition).attr("type", "number");
-                                                        
+                                                        });
+
                                                         if (scriptFactoryAvailable) {
                                                             createInputField({
                                                                 cssClasses: "hide GroovyRegisteredServiceSingleSignOnParticipationPolicy",
@@ -2574,9 +3138,9 @@
                                                                 required: false,
                                                                 containerId: "editServiceWizardMenuItemSSOParticipationPolicy",
                                                                 title: "Specifies the Groovy script location, inline or external, to be used to generate the username."
-                                                            }).on("input", generateServiceDefinition);
+                                                            });
                                                         }
-                                                        
+
                                                         createSelectField({
                                                             cssClasses: "DefaultRegisteredServiceSingleSignOnParticipationPolicy",
                                                             containerId: "editServiceWizardMenuItemSSOParticipationPolicy",
@@ -2648,7 +3212,7 @@
                                                         dataAttrs='param-skip-false=true,param-name=surrogatePolicy.enabled,param-type=org.apereo.cas.services.DefaultRegisteredServiceSurrogatePolicy')}"/>
                                               </div>
                                         </div>
-                                        <div class="h-350px">
+                                        <div class="h-750px">
                                             <pre class="ace-editor ace-relative w-100 h-100 mb-0 mt-0"
                                                  id="wizardServiceEditor"></pre>
 

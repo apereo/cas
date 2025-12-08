@@ -68,7 +68,7 @@ function toKebabCase(str) {
 }
 
 function isNumeric(str) {
-    return typeof str === "string" && str.trim() !== "" && !isNaN(str);
+    return (typeof str === "string" && str.trim() !== "" && !isNaN(str)) || typeof str === "number";
 }
 
 function copyToClipboard(str) {
@@ -132,6 +132,15 @@ function convertMemoryToGB(memoryStr) {
     const unit = match[3].toUpperCase();
     const bytes = value * units[unit];
     return bytes / units.GB;
+}
+
+function isValidRegex(str) {
+    try {
+        new RegExp(str);
+        return true;
+    } catch (e) {
+        return false;
+    }
 }
 
 function isValidURL(str) {
