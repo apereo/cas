@@ -1,7 +1,7 @@
 [versions]
 aceEditor = "1.41.0"
 acmeClient = "3.5.1"
-amazonDax = "2.0.6"
+amazonDax = "2.0.7"
 amazonSdk = "2.40.3"
 azureInsights = "3.7.6"
 azureKustoLog4j = "1.0.0"
