@@ -137,7 +137,7 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
     }
 
     @RepeatedTest(2)
-    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+    @Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER, readOnly = false)
     void verifyRegistryQuery() throws Throwable {
         val tgt = new TicketGrantingTicketImpl("TGT-335500",
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);

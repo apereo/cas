@@ -29,9 +29,19 @@ const assert = require("assert");
     await cas.loginWith(page);
     await cas.sleep(1000);
     await cas.assertCookie(page);
-    await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
-    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 
+    await cas.logPage(page);
+    await cas.assertPageUrl(page, "https://localhost:8443/cas/account");
+
+    await cas.goto(page, "https://localhost:8443/cas/account");
+    await cas.sleep(1000);
+
+    await cas.click(page, "#linkSessions");
+    await cas.sleep(1000);
+
+    await cas.click(page, "#linkAttributes");
+    await cas.sleep(1000);
+    
     await cas.gotoLogout(page);
 
     await cas.logPage(page);
