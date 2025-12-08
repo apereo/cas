@@ -111,12 +111,19 @@ function generateServiceDefinition() {
                                     current[parts[0]] = {"@class": paramType};
                                 }
                             }
-                            parts.forEach((part, index) => {
+
+                            for (let i = 0; i < parts.length; i++) {
+                                let part = parts[i];
                                 if (!current[part]) {
-                                    current[part] = (index === parts.length - 1) ? value : {};
+                                    const effectiveValue = (i === parts.length - 1) ? value : {};
+                                    if (typeof effectiveValue !== "object"
+                                        || (typeof effectiveValue === "object" && Object.keys(effectiveValue).length > 0)) {
+                                        current[part] = effectiveValue;
+                                    }
                                 }
+
                                 current = current[part];
-                            });
+                            }
                         } else {
                             serviceDefinition[paramName] = value;
                         }
@@ -151,7 +158,6 @@ function generateServiceDefinition() {
                     }
                 }
             });
-
             let remainingKeys = Object.keys(serviceDefinition);
             if (remainingKeys.length === 1 && remainingKeys[0] === "@class") {
                 delete serviceDefinition["@class"];
@@ -170,7 +176,8 @@ function generateMappedFieldValue(sectionId, config) {
     const {
         multipleValues = false,
         valueFieldRenderer,
-        multipleValuesType = "java.util.ArrayList"
+        multipleValuesType = "java.util.ArrayList",
+        unwrapSingleElement = false
     } = config;
 
     const definition = {};
@@ -184,7 +191,12 @@ function generateMappedFieldValue(sectionId, config) {
             definition[key] = valueFieldRenderer($(inputs[i]), $(inputs[i + 1]));
         } else if (key && key.trim().length > 0 && value && value.trim().length > 0) {
             if (multipleValues) {
-                definition[key] = [multipleValuesType, value.split(",")];
+                const valueArray = value.split(",").filter(s => s.trim().length > 0);
+                if (unwrapSingleElement && valueArray.length === 1) {
+                    definition[key] = value;
+                } else {
+                    definition[key] = [multipleValuesType, valueArray];
+                }
             } else {
                 definition[key] = value;
             }
@@ -208,7 +220,8 @@ function createMappedInputField(config) {
         required = false,
         multipleValues = false,
         multipleValuesType = "java.util.ArrayList",
-        valueFieldRenderer
+        valueFieldRenderer,
+        unwrapSingleElement = false
     } = config;
 
     const sectionContainerId = `registeredService${capitalize(keyField)}MapContainer`;
@@ -236,7 +249,7 @@ function createMappedInputField(config) {
                            type="text"
                            data-param-name="${containerField}"
                            data-param-type="${containerType}"
-                           required="${required}"/>
+                           ${required ? "required" : ""}/>
                 </label>
 
                 <label for="${valueField}"
@@ -255,7 +268,7 @@ function createMappedInputField(config) {
                            type="${valueFieldType}"
                            data-param-name="${containerField}"
                            data-param-type="${containerType}"
-                           required="${required}"/>
+                           ${required ? "required" : ""}/>
                 </label>
 
                 <button type="button"
@@ -372,7 +385,7 @@ function createSelectField(config) {
 
 
     const container = $("<span>", {
-        id: `${name}SelectContainer`,
+        id: `${selectId}SelectContainer`,
         class: `${serviceClass ?? ""} ${cssClasses ?? ""}`
     });
     $(container).append($label);
@@ -388,7 +401,9 @@ function createInputField(config) {
         paramName,
         paramType = "",
         required,
+        dataType = "text",
         containerId,
+        inclusion = "append",
         title,
         serviceClass = "",
         cssClasses = "",
@@ -405,14 +420,14 @@ function createInputField(config) {
     outline.append($("<span>", {class: "mdc-notched-outline__leading"}));
 
     const notch = $("<span>", {class: "mdc-notched-outline__notch"});
-    notch.append($("<span>", {class: "mdc-floating-label", text: labelTitle}));
+    notch.append($("<span>", {class: "mdc-floating-label", html: labelTitle}));
 
     outline.append(notch);
     outline.append($("<span>", {class: "mdc-notched-outline__trailing"}));
 
     const input = $("<input>", {
         class: `${serviceClass ?? ""} mdc-text-field__input form-control ${cssClasses ?? ""}`,
-        type: "text",
+        type: dataType === "regex" || dataType === "text" ? "text" : dataType,
         id: name,
         name: name,
         "data-param-name": paramName,
@@ -422,7 +437,23 @@ function createInputField(config) {
         autocomplete: "off",
         title: title,
         required: required
-    });
+    }).on("input", function() {
+        const value = $(this).val();
+        if (value.length > 0 && dataType === "regex" && !isValidRegex(value)) {
+            this.setCustomValidity("Value must be a valid regular expression.");
+        } else if (required && value.length <= 0) {
+            this.setCustomValidity("Field value is required");
+        } else {
+            this.setCustomValidity("");
+            generateServiceDefinition();
+        }
+    })
+        .on("blur", function () {
+            const value = $(this).val().trim();
+            if (!this.checkValidity()) {
+                this.reportValidity();
+            }
+        });
 
     Object.entries(data).forEach(([key, value]) => {
         input.data(key, value);
@@ -435,7 +466,11 @@ function createInputField(config) {
     });
 
     $(container).append(label);
-    $(`#${containerId}`).append(container);
+    if (inclusion === undefined || inclusion === "" || inclusion === "append") {
+        $(`#${containerId}`).append(container);
+    } else if (inclusion === "prepend") {
+        $(`#${containerId}`).prepend(container);
+    }
     return input;
 }
 
@@ -584,7 +619,7 @@ function initializeFooterButtons() {
         const $accordion = $("#editServiceWizardMenu");
         let valid = true;
         const originalIndex = $("#editServiceWizardMenu").accordion("option", "active");
-        $(".ui-accordion-header:visible").each(function () {
+        $("#editServiceWizardMenu .ui-accordion-header:visible").each(function () {
             const $header = $(this);
             const index = $accordion
                 .find(".ui-accordion-header")
@@ -617,7 +652,7 @@ function initializeFooterButtons() {
                     data: editor.getValue(),
                     success: response => {
                         const message = `
-                            The given application definition is valid. Please note that validity
+                            The given application definition is valid and can be parsed by CAS. Please note that validity
                             does not imply behavioral correctness. It only indicates that the generated
                             application definition adheres to the expected schema and structure required by CAS
                             and can be stored successfully.
@@ -649,9 +684,15 @@ function initializeFooterButtons() {
 
             $("#editServiceWizardMenu")
                 .accordion({
-                    active: 0,
                     collapsible: true,
-                    heightStyle: "content"
+                    heightStyle: "content",
+                    activate: function (event, ui) {
+                        let idx = $("#editServiceWizardMenu").accordion("option", "active");
+                        if (isNumeric(idx)) {
+                            // console.log(`Saving wizard menu index ${idx}`);
+                            localStorage.setItem("registeredServiceWizardMenuOption", idx);
+                        }
+                    }
                 });
 
             $(`.class-${className}`).show();
@@ -709,6 +750,18 @@ function initializeFooterButtons() {
                 $("#registeredServiceIdLabel span.mdc-floating-label").text("Redirect URI");
                 break;
             }
+            let savedIndex = localStorage.getItem("registeredServiceWizardMenuOption");
+            if (savedIndex !== null && isNumeric(savedIndex)) {
+                savedIndex = Number(savedIndex);
+            } else {
+                savedIndex = 0;
+            }
+
+            const visible = $("#editServiceWizardForm").find(`.ui-accordion-header:eq(${savedIndex})`).is(":visible")
+            if (!visible) {
+                savedIndex = 0;
+            }
+            $("#editServiceWizardMenu").accordion("option", "active", savedIndex);
             setTimeout(function () {
                 $("#editServiceWizardForm input:visible:enabled").first().focus();
             }, 200);
@@ -4636,7 +4689,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const handlerNames = $select.data("change-handler").split(",");
             for (const handlerName of handlerNames) {
                 if (handlerName && handlerName.length > 0 && typeof window[handlerName] === "function") {
-                    console.log("Invoking change handler:", handlerName);
+                    // console.log("Invoking change handler:", handlerName);
                     const result = window[handlerName]($select, ui);
                     if (result !== undefined && result === false) {
                         break;
