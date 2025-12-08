@@ -1615,25 +1615,114 @@
                                              <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Code Expiration Policy</h3>
                                              <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidcCodeExpirationPolicy">
+                                                 <script type="text/javascript">
+                                                     createInputField({
+                                                         paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy",
+                                                         labelTitle: "Number of Uses",
+                                                         name: "registeredServiceOAuthCodeExpirationPolicyNumberOfUses",
+                                                         paramName: "codeExpirationPolicy.numberOfUses",
+                                                         required: false,
+                                                         dataType: "number",
+                                                         containerId: "editServiceWizardMenuItemOAuthOidcCodeExpirationPolicy",
+                                                         title: "Control the number of times the ticket can be used"
+                                                     });
 
+                                                     createInputField({
+                                                         paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy",
+                                                         labelTitle: "Time to Live",
+                                                         name: "registeredServiceOAuthCodeExpirationPolicyTimeToLive",
+                                                         paramName: "codeExpirationPolicy.timeToLive",
+                                                         required: false,
+                                                             containerId: "editServiceWizardMenuItemOAuthOidcCodeExpirationPolicy",
+                                                         title: "Control how long the ticket should be valid, in seconds."
+                                                     });
+
+                                                 </script>
                                              </div>
 
                                             <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Access Token Expiration Policy</h3>
                                              <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidcATExpirationPolicy">
 
+                                                 <script type="text/javascript">
+                                                         createInputField({
+                                                             paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy",
+                                                             labelTitle: "Time to Kill",
+                                                             name: "registeredServiceATExpirationPolicyTimeToKill",
+                                                             paramName: "accessTokenExpirationPolicy.timeToKill",
+                                                             required: false,
+                                                             containerId: "editServiceWizardMenuItemOAuthOidcATExpirationPolicy",
+                                                             title: "Control how long the ticket should be kept alive"
+                                                         });
+
+                                                         createInputField({
+                                                             paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy",
+                                                             labelTitle: "Maximum Time to Live",
+                                                             name: "registeredServiceATExpirationPolicyMaxTimeToLive",
+                                                             paramName: "accessTokenExpirationPolicy.maxTimeToLive",
+                                                             required: false,
+                                                             containerId: "editServiceWizardMenuItemOAuthOidcATExpirationPolicy",
+                                                             title: "Control how long (maximum) the ticket should be valid, in seconds."
+                                                         });
+
+                                                         createInputField({
+                                                             paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy",
+                                                             labelTitle: "Maximum Active Tokens",
+                                                             name: "registeredServiceATExpirationPolicyMaxActiveTokens",
+                                                             paramName: "accessTokenExpirationPolicy.maxActiveTokens",
+                                                             required: false,
+                                                             dataType: "number",
+                                                             containerId: "editServiceWizardMenuItemOAuthOidcATExpirationPolicy",
+                                                             title: "Control the maximum number of active access tokens."
+                                                         });
+                                                 </script>
+                                                 
                                              </div>
 
                                             <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Refresh Token Expiration Policy</h3>
                                              <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidcRTExpirationPolicy">
 
+                                                 <script type="text/javascript">
+                                                         createInputField({
+                                                             paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy",
+                                                             labelTitle: "Time to Kill",
+                                                             name: "registeredServiceRTExpirationPolicyTimeToKill",
+                                                             paramName: "refreshTokenExpirationPolicy.timeToKill",
+                                                             required: false,
+                                                             containerId: "editServiceWizardMenuItemOAuthOidcRTExpirationPolicy",
+                                                             title: "Control how long the ticket should be kept alive"
+                                                         });
+
+                                                         createInputField({
+                                                             paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy",
+                                                             labelTitle: "Maximum Active Tokens",
+                                                             name: "registeredServiceRTExpirationPolicyMaxActiveTokens",
+                                                             paramName: "refreshTokenExpirationPolicy.maxActiveTokens",
+                                                             required: false,
+                                                             dataType: "number",
+                                                             containerId: "editServiceWizardMenuItemOAuthOidcRTExpirationPolicy",
+                                                             title: "Control the maximum number of active refresh tokens."
+                                                         });
+                                                 </script>
+                                                 
                                              </div>
 
                                              <h3 class="class-OAuthRegisteredService class-OidcRegisteredService">OAuth / OpenID Connect Device Token Expiration Policy</h3>
                                              <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidcDTExpirationPolicy">
+                                                   <script type="text/javascript">
+                                                         createInputField({
+                                                             paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthDeviceTokenExpirationPolicy",
+                                                             labelTitle: "Time to Kill",
+                                                             name: "registeredServiceDTExpirationPolicyTimeToKill",
+                                                             paramName: "deviceTokenExpirationPolicy.timeToKill",
+                                                             required: false,
+                                                             containerId: "editServiceWizardMenuItemOAuthOidcDTExpirationPolicy",
+                                                             title: "Control how long the ticket should be kept alive"
+                                                         });
 
+                                                 </script>
                                              </div>
 
                                              <h3 class="class-OidcRegisteredService">OpenID Connect ID Token Expiration Policy</h3>
