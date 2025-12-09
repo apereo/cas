@@ -3,7 +3,6 @@ package org.apereo.cas.notifications.call;
 import org.apereo.cas.configuration.model.support.phone.PhoneProperties;
 import org.apereo.cas.util.ResourceUtils;
 import lombok.Builder;
-import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,7 +23,6 @@ import java.util.function.Supplier;
 @Slf4j
 @SuperBuilder
 public class PhoneCallBodyBuilder implements Supplier<String> {
-    @NonNull
     private final PhoneProperties properties;
 
     @Builder.Default

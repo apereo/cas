@@ -57,7 +57,7 @@ public class BaseRestEndpointProperties implements CasFeatureModule, Serializabl
 
     /**
      * When attempting to reach the endpoint,
-     * this setting controls the number of <strong>retry attempts<</strong> that CAS should execute
+     * this setting controls the number of <strong>retry attempts</strong> that CAS should execute
      * Setting this value to a zero or negative value will disable the retry policy.
      */
     private int maximumRetryAttempts = 3;

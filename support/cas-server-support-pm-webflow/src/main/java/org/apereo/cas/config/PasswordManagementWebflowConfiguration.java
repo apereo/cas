@@ -66,6 +66,7 @@ import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -658,23 +659,23 @@ class PasswordManagementWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PasswordManagementEndpoint passwordManagementEndpoint(
             @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-            final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
+            final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ObjectProvider<ServicesManager> servicesManager,
+            final ObjectProvider<@NonNull ServicesManager> servicesManager,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
-            final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
+            final ObjectProvider<@NonNull AuthenticationSystemSupport> authenticationSystemSupport,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
-            final ObjectProvider<PasswordManagementService> passwordManagementService,
+            final ObjectProvider<@NonNull PasswordManagementService> passwordManagementService,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-            final ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
+            final ObjectProvider<@NonNull PrincipalResolver> defaultPrincipalResolver,
             @Qualifier(CommunicationsManager.BEAN_NAME)
-            final ObjectProvider<CommunicationsManager> communicationsManager,
+            final ObjectProvider<@NonNull CommunicationsManager> communicationsManager,
             @Qualifier(PasswordResetUrlBuilder.BEAN_NAME)
-            final ObjectProvider<PasswordResetUrlBuilder> passwordResetUrlBuilder,
+            final ObjectProvider<@NonNull PasswordResetUrlBuilder> passwordResetUrlBuilder,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer) {
+            final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer) {
             return new PasswordManagementEndpoint(casProperties, applicationContext,
                 communicationsManager, passwordManagementService,
                 passwordResetUrlBuilder, webApplicationServiceFactory,

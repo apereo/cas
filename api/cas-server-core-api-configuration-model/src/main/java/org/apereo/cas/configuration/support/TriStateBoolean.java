@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonParser;
 import tools.jackson.databind.DeserializationContext;
@@ -32,6 +33,7 @@ public enum TriStateBoolean {
 
     private static final long serialVersionUID = -145819796564884951L;
 
+    @Nullable
     private final Boolean state;
 
     /**
@@ -76,7 +78,7 @@ public enum TriStateBoolean {
      *
      * @return true/false
      */
-    public Boolean toBoolean() {
+    public @Nullable Boolean toBoolean() {
         return state;
     }
 

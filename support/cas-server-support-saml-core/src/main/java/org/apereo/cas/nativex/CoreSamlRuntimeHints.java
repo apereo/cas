@@ -23,6 +23,7 @@ import org.apache.xerces.impl.dv.xs.SchemaDVFactoryImpl;
 import org.apache.xerces.impl.dv.xs.XSSimpleTypeDecl;
 import org.apache.xerces.parsers.XIncludeAwareParserConfiguration;
 import org.apache.xerces.util.SecurityManager;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.core.xml.io.Unmarshaller;
@@ -37,7 +38,7 @@ import java.util.List;
  */
 public class CoreSamlRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         hints.resources()
             .registerResourceBundle("org/apache/xml/security/resource/xmlsecurity")
             .registerResourceBundle("org/apache/xerces/impl/msg/XMLSchemaMessages")

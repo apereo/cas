@@ -31,7 +31,7 @@ public class EnabledIfPortOpenCondition implements ExecutionCondition {
         }
         for (val port : ports) {
             if (port > 0 && SocketUtils.isTcpPortAvailable(port)) {
-                return ConditionEvaluationResult.disabled(String.format("%s is disabled because %s is not listening for requests", element, port));
+                return ConditionEvaluationResult.disabled(String.format("%s is disabled because port %s is not listening for requests", element, port));
             }
         }
         return ConditionEvaluationResult.enabled(

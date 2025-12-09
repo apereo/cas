@@ -23,6 +23,7 @@ import org.apereo.cas.web.view.CasReloadableMessageBundle;
 import org.apereo.cas.web.view.DynamicHtmlView;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -136,7 +137,7 @@ class CasCoreWebConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = UrlValidator.BEAN_NAME)
-        public FactoryBean<UrlValidator> urlValidator(final CasConfigurationProperties casProperties) {
+        public FactoryBean<@NonNull UrlValidator> urlValidator(final CasConfigurationProperties casProperties) {
             val httpClient = casProperties.getHttpClient();
             val allowLocalLogoutUrls = httpClient.isAllowLocalUrls();
             val authorityValidationRegEx = httpClient.getAuthorityValidationRegex();
@@ -226,10 +227,10 @@ class CasCoreWebConfiguration {
     static class CasRestActuatorEndpointsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "restControllerEndpointSupplier")
-        public EndpointsSupplier<RestActuatorControllerEndpoint> restControllerEndpointSupplier(
+        public EndpointsSupplier<@NonNull RestActuatorControllerEndpoint> restControllerEndpointSupplier(
             final ConfigurableApplicationContext applicationContext,
-            final ObjectProvider<PathMapper> endpointPathMappers,
-            final ObjectProvider<Collection<EndpointFilter<RestActuatorControllerEndpoint>>> filters) {
+            final ObjectProvider<@NonNull PathMapper> endpointPathMappers,
+            final ObjectProvider<@NonNull Collection<EndpointFilter<@NonNull RestActuatorControllerEndpoint>>> filters) {
             return new RestActuatorEndpointDiscoverer(applicationContext,
                 endpointPathMappers.orderedStream().toList(),
                 filters.getIfAvailable(Collections::emptyList));

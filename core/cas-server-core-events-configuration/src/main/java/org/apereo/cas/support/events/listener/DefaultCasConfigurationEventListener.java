@@ -1,7 +1,7 @@
 package org.apereo.cas.support.events.listener;
 
-import org.apereo.cas.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
+import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

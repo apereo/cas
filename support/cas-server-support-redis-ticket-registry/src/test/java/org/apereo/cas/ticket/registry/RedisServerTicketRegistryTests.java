@@ -304,7 +304,8 @@ class RedisServerTicketRegistryTests {
     @TestPropertySource(properties = {
         "cas.ticket.registry.redis.protocol-version=RESP2",
         "cas.ticket.registry.redis.queue-identifier=cas-node-1",
-        "cas.ticket.registry.redis.pool.max-active=4",
+        "cas.ticket.registry.redis.pool.max-active=20",
+        "cas.ticket.registry.redis.pool.max-wait=PT10S",
         "cas.ticket.registry.redis.pool.enabled=true",
         "cas.ticket.registry.redis.host=localhost",
         "cas.ticket.registry.redis.port=6379",

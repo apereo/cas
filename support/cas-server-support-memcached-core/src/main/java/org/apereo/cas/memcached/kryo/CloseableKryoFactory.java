@@ -5,7 +5,6 @@ import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaMapSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaSetSerializer;
 import org.apereo.cas.memcached.kryo.serial.ThrowableSerializer;
 import org.apereo.cas.memcached.kryo.serial.URLSerializer;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 import com.esotericsoftware.kryo.serializers.TimeSerializers;
@@ -34,9 +33,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.joda.time.DateTime;
+import org.jspecify.annotations.NonNull;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import org.springframework.beans.factory.FactoryBean;
-
 import javax.security.auth.login.AccountNotFoundException;
 import java.net.URI;
 import java.net.URL;
@@ -85,7 +84,7 @@ import java.util.regex.Pattern;
 @Slf4j
 @Setter
 @RequiredArgsConstructor
-public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
+public class CloseableKryoFactory implements FactoryBean<@NonNull CloseableKryo> {
 
     private final CasKryoPool kryoPool;
 

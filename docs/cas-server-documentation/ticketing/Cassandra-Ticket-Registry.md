@@ -1,14 +1,14 @@
 ---
 layout: default
-title: CAS - Cassandra Ticket Registry
+title: CAS - Apache Cassandra Ticket Registry
 category: Ticketing
 ---
 
 {% include variables.html %}
 
-# Cassandra Ticket Registry
+# Apache Cassandra Ticket Registry
 
-Cassandra integration is enabled by including the following dependency in the WAR overlay:
+Apache Cassandra integration is enabled by including the following dependency in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-cassandra-ticket-registry" %}
 

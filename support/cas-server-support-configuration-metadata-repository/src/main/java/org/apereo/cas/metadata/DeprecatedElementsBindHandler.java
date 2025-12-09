@@ -4,6 +4,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.context.properties.bind.AbstractBindHandler;
 import org.springframework.boot.context.properties.bind.BindContext;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -24,8 +25,8 @@ class DeprecatedElementsBindHandler extends AbstractBindHandler {
     private final List<ConfigurationProperty> deprecatedProperties = new ArrayList<>();
 
     @Override
-    public Object onSuccess(final ConfigurationPropertyName name, final Bindable<?> target,
-                            final BindContext context, final Object result) {
+    public Object onSuccess(final @NonNull ConfigurationPropertyName name, final @NonNull Bindable<?> target,
+                            final @NonNull BindContext context, final @NonNull Object result) {
         FunctionUtils.doUnchecked(_ -> {
             if (result instanceof final Enum enumeration) {
                 val field = enumeration.getDeclaringClass().getField(enumeration.name());

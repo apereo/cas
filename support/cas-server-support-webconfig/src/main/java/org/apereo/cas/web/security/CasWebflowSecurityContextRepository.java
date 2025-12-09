@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,7 +35,7 @@ public class CasWebflowSecurityContextRepository implements SecurityContextRepos
     private final ConfigurableApplicationContext applicationContext;
 
     @Override
-    public SecurityContext loadContext(final HttpRequestResponseHolder requestResponseHolder) {
+    public @NonNull SecurityContext loadContext(final HttpRequestResponseHolder requestResponseHolder) {
         val request = requestResponseHolder.getRequest();
         if (containsContext(request)) {
             val authentication = Objects.requireNonNull(getInProgressAuthentication(request));
@@ -45,11 +46,11 @@ public class CasWebflowSecurityContextRepository implements SecurityContextRepos
     }
 
     @Override
-    public void saveContext(final SecurityContext context, final HttpServletRequest request, final HttpServletResponse response) {
+    public void saveContext(final @NonNull SecurityContext context, final @NonNull HttpServletRequest request, final @NonNull HttpServletResponse response) {
     }
 
     @Override
-    public boolean containsContext(final HttpServletRequest request) {
+    public boolean containsContext(final @NonNull HttpServletRequest request) {
         return getInProgressAuthentication(request) != null;
     }
 

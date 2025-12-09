@@ -1,21 +1,19 @@
 package org.apereo.cas.configuration;
 
-import org.apereo.cas.config.CasConfigurationCreatedEvent;
-import org.apereo.cas.config.CasConfigurationDeletedEvent;
-import org.apereo.cas.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.support.events.AbstractCasEvent;
+import org.apereo.cas.support.events.config.CasConfigurationCreatedEvent;
+import org.apereo.cas.support.events.config.CasConfigurationDeletedEvent;
+import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.function.ComposableFunction;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.io.PathWatcherService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.io.Closeable;
 import java.io.File;
 
@@ -27,6 +25,7 @@ import java.io.File;
  */
 @Slf4j
 @RequiredArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class CasConfigurationWatchService implements Closeable, InitializingBean {
     private final ComposableFunction<File, AbstractCasEvent> createConfigurationCreatedEvent = file ->
             new CasConfigurationCreatedEvent(this, file.toPath(), ClientInfoHolder.getClientInfo());

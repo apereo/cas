@@ -1,9 +1,7 @@
 package org.apereo.cas.rest.factory;
 
 import org.apereo.cas.ticket.Ticket;
-
 import org.springframework.http.ResponseEntity;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
-
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -22,7 +22,7 @@ public interface MultifactorAuthenticationHandler extends AuthenticationHandler 
      *
      * @return the multifactor provider id
      */
-    ObjectProvider<? extends MultifactorAuthenticationProvider> getMultifactorAuthenticationProvider();
+    ObjectProvider<? extends @NonNull MultifactorAuthenticationProvider> getMultifactorAuthenticationProvider();
 
 
     /**

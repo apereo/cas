@@ -3,6 +3,7 @@ package org.apereo.inspektr.common.spi;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link BaseJoinPointArgumentAuditPrincipalIdProvider}.
@@ -17,6 +18,7 @@ public abstract class BaseJoinPointArgumentAuditPrincipalIdProvider<T> implement
     private final Class<T> argumentType;
 
     @Override
+    @Nullable
     public String resolveFrom(final JoinPoint auditTarget, final Object returnValue) {
         if (argumentPosition >= 0
             && argumentPosition <= auditTarget.getArgs().length - 1
@@ -27,6 +29,7 @@ public abstract class BaseJoinPointArgumentAuditPrincipalIdProvider<T> implement
     }
 
     @Override
+    @Nullable
     public String resolveFrom(final JoinPoint auditTarget, final Exception exception) {
         if (argumentPosition >= 0
             && argumentPosition > auditTarget.getArgs().length - 1

@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,7 @@ import java.util.Map;
 public class DefaultOAuth20UserProfileDataCreator<T extends OAuth20ConfigurationContext>
     implements OAuth20UserProfileDataCreator {
 
-    private final ObjectProvider<T> configurationContext;
+    private final ObjectProvider<@NonNull T> configurationContext;
 
     @Override
     @Audit(action = AuditableActions.OAUTH2_USER_PROFILE,

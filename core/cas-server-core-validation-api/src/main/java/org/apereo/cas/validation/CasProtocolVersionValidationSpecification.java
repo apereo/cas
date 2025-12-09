@@ -27,8 +27,10 @@ public class CasProtocolVersionValidationSpecification implements CasProtocolVal
         val tenantSupported = tenantExtractor.extract(request)
             .stream()
             .filter(tenant -> Objects.nonNull(tenant.getAuthenticationPolicy().getAuthenticationProtocolPolicy()))
-            .map(tenant -> {
-                val supportedProtocols = tenant.getAuthenticationPolicy().getAuthenticationProtocolPolicy().getSupportedProtocols()
+            .map(tenant -> tenant.getAuthenticationPolicy().getAuthenticationProtocolPolicy())
+            .filter(policy -> Objects.nonNull(policy.getSupportedProtocols()))
+            .map(policy -> {
+                val supportedProtocols = policy.getSupportedProtocols()
                     .stream()
                     .map(version -> CasProtocolVersions.valueOf(version.toUpperCase(Locale.ROOT)))
                     .collect(Collectors.toSet());

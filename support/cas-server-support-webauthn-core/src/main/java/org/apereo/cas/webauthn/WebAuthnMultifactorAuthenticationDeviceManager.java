@@ -12,6 +12,7 @@ import com.yubico.webauthn.attestation.Attestation;
 import com.yubico.webauthn.data.ByteArray;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class WebAuthnMultifactorAuthenticationDeviceManager implements Multifact
     private static final ObjectWriter OBJECT_WRITER = WebAuthnUtils.getObjectMapper().writer();
 
     private final RegistrationStorage webAuthnCredentialRepository;
-    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    private final ObjectProvider<@NonNull MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
     
     @Override
     public List<MultifactorAuthenticationRegisteredDevice> findRegisteredDevices(final Principal principal) {

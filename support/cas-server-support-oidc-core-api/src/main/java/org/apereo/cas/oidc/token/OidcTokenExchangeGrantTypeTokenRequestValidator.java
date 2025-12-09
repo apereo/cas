@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenExchangeGrantTypeTokenRequestValidator;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +20,7 @@ import java.util.Optional;
  */
 public class OidcTokenExchangeGrantTypeTokenRequestValidator extends OAuth20TokenExchangeGrantTypeTokenRequestValidator<OidcConfigurationContext> {
     public OidcTokenExchangeGrantTypeTokenRequestValidator(
-        final ObjectProvider<OidcConfigurationContext> configurationContext) {
+        final ObjectProvider<@NonNull OidcConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 

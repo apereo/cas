@@ -2,7 +2,7 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import lombok.Getter;
-import lombok.NonNull;
+import org.jspecify.annotations.NonNull;
 import java.io.Serial;
 
 /**

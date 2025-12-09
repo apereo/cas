@@ -36,6 +36,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -134,7 +135,7 @@ class ElectronicFenceWebflowConfiguration {
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver principalResolver,
             @Qualifier(GeoLocationService.BEAN_NAME)
-            final ObjectProvider<GeoLocationService> geoLocationService,
+            final ObjectProvider<@NonNull GeoLocationService> geoLocationService,
             @Qualifier(CasEventRepository.BEAN_NAME)
             final CasEventRepository casEventRepository,
             @Qualifier(CipherExecutor.BEAN_NAME_TGC_CIPHER_EXECUTOR)

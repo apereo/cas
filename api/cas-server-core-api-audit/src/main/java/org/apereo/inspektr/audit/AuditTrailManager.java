@@ -119,7 +119,7 @@ public interface AuditTrailManager extends Cleanable {
         } catch (final Exception e) {
             LOG.error(e.getMessage(), e);
         }
-        return null;
+        return "{}";
     }
 
     /**

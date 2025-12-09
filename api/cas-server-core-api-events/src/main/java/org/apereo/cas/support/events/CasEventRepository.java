@@ -1,6 +1,7 @@
 package org.apereo.cas.support.events;
 
 import org.apereo.cas.support.events.dao.CasEvent;
+import org.jspecify.annotations.Nullable;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.function.Consumer;
@@ -174,7 +175,7 @@ public interface CasEventRepository {
      * @param start the start
      * @return the stream
      */
-    default Stream<CasEventAggregate> aggregate(final Class type, final Duration start) {
+    default Stream<CasEventAggregate> aggregate(@Nullable final Class type, final Duration start) {
         return Stream.empty();
     }
 

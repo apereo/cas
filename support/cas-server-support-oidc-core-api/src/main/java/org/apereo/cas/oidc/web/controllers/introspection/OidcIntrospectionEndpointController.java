@@ -20,6 +20,7 @@ import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpHeaders;
@@ -113,9 +114,9 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
             .orElse(responseEntity);
     }
 
-    protected ResponseEntity<String> buildPlainIntrospectionClaims(final WebContext context,
-                                                                   final OAuth20IntrospectionAccessTokenResponse introspect,
-                                                                   final OAuthRegisteredService registeredService) throws Exception {
+    protected ResponseEntity<@NonNull String> buildPlainIntrospectionClaims(final WebContext context,
+                                                                            final OAuth20IntrospectionAccessTokenResponse introspect,
+                                                                            final OAuthRegisteredService registeredService) throws Exception {
         val claims = convertIntrospectionIntoClaims(introspect, registeredService);
         val jwt = new PlainJWT(JWTClaimsSet.parse(claims.getClaimsMap()));
         val jwtRequest = jwt.serialize();
@@ -134,9 +135,9 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
         return claims;
     }
 
-    protected ResponseEntity<String> signAndEncryptIntrospection(final WebContext context,
-                                                                 final OAuth20IntrospectionAccessTokenResponse introspect,
-                                                                 final OAuthRegisteredService registeredService) throws Throwable {
+    protected ResponseEntity<@NonNull String> signAndEncryptIntrospection(final WebContext context,
+                                                                          final OAuth20IntrospectionAccessTokenResponse introspect,
+                                                                          final OAuthRegisteredService registeredService) throws Throwable {
         val claims = convertIntrospectionIntoClaims(introspect, registeredService);
         LOGGER.debug("Collected introspection claims, before cipher operations, are [{}]", claims);
         val signingAndEncryptionService = getConfigurationContext().getIntrospectionSigningAndEncryptionService();
@@ -145,8 +146,8 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
         return buildResponseEntity(result, registeredService);
     }
 
-    private static ResponseEntity<String> buildResponseEntity(final String result,
-                                                              final OAuthRegisteredService registeredService) {
+    private static ResponseEntity<@NonNull String> buildResponseEntity(final String result,
+                                                                       final OAuthRegisteredService registeredService) {
         val context = CollectionUtils.<String, Object>wrap(
             HttpHeaders.CONTENT_TYPE, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE,
             "Client ID", registeredService.getClientId(),

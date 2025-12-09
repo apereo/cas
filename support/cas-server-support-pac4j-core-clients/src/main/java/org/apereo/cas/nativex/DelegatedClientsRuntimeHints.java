@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactoryCustomizer;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 
 /**
@@ -14,7 +15,7 @@ import org.springframework.aot.hint.RuntimeHints;
  */
 public class DelegatedClientsRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         hints.resources().registerPattern("META-INF/services/com.fasterxml.jackson.databind.Module");
         registerProxyHints(hints, DelegatedClientFactoryCustomizer.class, DelegatedIdentityProviderFactory.class);
         registerReflectionHints(hints, findSubclassesInPackage(DelegatedIdentityProviderFactory.class, CentralAuthenticationService.NAMESPACE));

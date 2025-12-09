@@ -5,6 +5,7 @@ import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -23,11 +24,11 @@ import java.util.List;
  */
 @Endpoint(id = "multitenancy", defaultAccess = Access.NONE)
 public class MultitenancyEndpoint extends BaseCasRestActuatorEndpoint {
-    private final ObjectProvider<TenantExtractor> tenantExtractor;
+    private final ObjectProvider<@NonNull TenantExtractor> tenantExtractor;
 
     public MultitenancyEndpoint(final CasConfigurationProperties casProperties,
                                 final ConfigurableApplicationContext applicationContext,
-                                final ObjectProvider<TenantExtractor> tenantExtractor) {
+                                final ObjectProvider<@NonNull TenantExtractor> tenantExtractor) {
         super(casProperties, applicationContext);
         this.tenantExtractor = tenantExtractor;
     }
@@ -66,7 +67,7 @@ public class MultitenancyEndpoint extends BaseCasRestActuatorEndpoint {
             MEDIA_TYPE_CAS_YAML
         })
     @Operation(summary = "Report registered tenant definition by its id")
-    public ResponseEntity<TenantDefinition> tenantDefinition(
+    public ResponseEntity<@NonNull TenantDefinition> tenantDefinition(
         @PathVariable
         final String tenantId) {
         return ResponseEntity.of(tenantExtractor.getObject().getTenantsManager().findTenant(tenantId));

@@ -27,10 +27,8 @@ public class DefaultLogoutConfirmationResolver implements LogoutConfirmationReso
 
     @Override
     public boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
-        if (casProperties.getLogout().isConfirmLogout()) {
-            return WebUtils.isLogoutRequestConfirmed(requestContext)
-                || requestContext.getRequestParameters().contains("SAMLResponse");
-        }
-        return true;
+        return !casProperties.getLogout().isConfirmLogout()
+            || WebUtils.isLogoutRequestConfirmed(requestContext)
+            || requestContext.getRequestParameters().contains("SAMLResponse");
     }
 }

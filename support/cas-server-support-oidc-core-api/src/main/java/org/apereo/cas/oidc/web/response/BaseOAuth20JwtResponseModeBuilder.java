@@ -6,13 +6,12 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeBuilder;
 import org.apereo.cas.util.DateTimeUtils;
-
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
-
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -29,7 +28,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public abstract class BaseOAuth20JwtResponseModeBuilder implements OAuth20ResponseModeBuilder {
-    protected final ObjectProvider<OidcConfigurationContext> configurationContext;
+    protected final ObjectProvider<@NonNull OidcConfigurationContext> configurationContext;
 
     protected Date getExpirationDate() {
         val jwtExpiration = Beans.newDuration(configurationContext.getObject().getCasProperties()

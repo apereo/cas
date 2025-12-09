@@ -6,8 +6,10 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CompressionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.io.TemporaryFileSystemResource;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -22,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -38,6 +41,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
@@ -60,18 +64,18 @@ import java.util.zip.ZipInputStream;
 @Endpoint(id = "registeredServices", defaultAccess = Access.NONE)
 @Slf4j
 public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
-    private final ObjectProvider<ServicesManager> servicesManager;
+    private final ObjectProvider<@NonNull ServicesManager> servicesManager;
 
-    private final ObjectProvider<ServicesManagerConfigurationContext> configurationContext;
+    private final ObjectProvider<@NonNull ServicesManagerConfigurationContext> configurationContext;
 
-    private final ObjectProvider<List<? extends StringSerializer<RegisteredService>>> registeredServiceSerializers;
+    private final ObjectProvider<@NonNull List<? extends StringSerializer<RegisteredService>>> registeredServiceSerializers;
 
     public RegisteredServicesEndpoint(
         final CasConfigurationProperties casProperties,
-        final ObjectProvider<ServicesManager> servicesManager,
-        final ObjectProvider<ServicesManagerConfigurationContext> configurationContext,
-        final ObjectProvider<List<? extends StringSerializer<RegisteredService>>> registeredServiceSerializers,
-        final ObjectProvider<ConfigurableApplicationContext> applicationContext) {
+        final ObjectProvider<@NonNull ServicesManager> servicesManager,
+        final ObjectProvider<@NonNull ServicesManagerConfigurationContext> configurationContext,
+        final ObjectProvider<@NonNull List<? extends StringSerializer<RegisteredService>>> registeredServiceSerializers,
+        final ObjectProvider<@NonNull ConfigurableApplicationContext> applicationContext) {
         super(casProperties, applicationContext.getObject());
         this.servicesManager = servicesManager;
         this.configurationContext = configurationContext;
@@ -93,7 +97,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
         MEDIA_TYPE_CAS_YAML
     })
-    public ResponseEntity<String> handle() throws Exception {
+    public ResponseEntity<@NonNull String> handle() throws Exception {
         return ResponseEntity.ok(MAPPER.writeValueAsString(
             servicesManager.getObject()
                 .load()
@@ -119,7 +123,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
         MEDIA_TYPE_CAS_YAML
     })
-    public ResponseEntity<String> fetchService(
+    public ResponseEntity<@NonNull String> fetchService(
         @PathVariable
         final String id) throws Exception {
         val service = NumberUtils.isDigits(id)
@@ -147,7 +151,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
         MEDIA_TYPE_CAS_YAML
     })
-    public ResponseEntity<String> fetchServicesByType(
+    public ResponseEntity<@NonNull String> fetchServicesByType(
         @PathVariable
         final String type) throws Exception {
         val services = servicesManager.getObject().findServiceBy(registeredService ->
@@ -192,7 +196,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
             MEDIA_TYPE_SPRING_BOOT_V3_JSON,
             MEDIA_TYPE_CAS_YAML
         })
-    public ResponseEntity<String> deleteService(
+    public ResponseEntity<@NonNull String> deleteService(
         @PathVariable
         final String id) throws Exception {
         if (NumberUtils.isDigits(id)) {
@@ -234,7 +238,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         MEDIA_TYPE_CAS_YAML
     })
     @Operation(summary = "Import registered services as a JSON document or a zip file")
-    public ResponseEntity<RegisteredService> importService(final HttpServletRequest request) throws Exception {
+    public ResponseEntity<@NonNull RegisteredService> importService(final HttpServletRequest request) throws Exception {
         val contentType = request.getContentType();
         if (Strings.CI.equalsAny(MediaType.APPLICATION_OCTET_STREAM_VALUE, contentType)) {
             return importServicesAsStream(request);
@@ -250,7 +254,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     @GetMapping(path = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     @Operation(summary = "Export registered services as a zip file")
-    public ResponseEntity<Resource> export() {
+    public ResponseEntity<@NonNull Resource> export() {
         val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val resource = CompressionUtils.toZipFile(servicesManager.getObject().stream(),
             Unchecked.function(entry -> {
@@ -278,7 +282,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     @ResponseBody
     @Operation(summary = "Export registered services as a single JSON file",
         parameters = @Parameter(name = "id", required = true, description = "The id of the registered service to export", in = ParameterIn.PATH))
-    public ResponseEntity<Resource> export(
+    public ResponseEntity<@NonNull Resource> export(
         @PathVariable("id")
         final long id) throws Exception {
         val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
@@ -326,6 +330,49 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         return ResponseEntity.ok(registeredServiceSerializer.toString(result));
     }
 
+    /**
+     * Validate service response entity.
+     *
+     * @param contentType           the content type
+     * @param registeredServiceBody the registered service body
+     * @return the response entity
+     */
+    @PostMapping(
+        path = "/validate",
+        consumes = {
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_YAML_VALUE,
+            MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+            MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+            MEDIA_TYPE_CAS_YAML
+        }, produces = {
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_YAML_VALUE,
+            MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+            MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+            MEDIA_TYPE_CAS_YAML
+        })
+    @ResponseBody
+    @Operation(summary = "Validate registered service supplied in the request body",
+        parameters = @Parameter(name = "body", required = true, description = "The request body to contain service definition in JSON or YAML format"))
+    public ResponseEntity validateService(
+        @RequestHeader(HttpHeaders.CONTENT_TYPE) final String contentType,
+        @RequestBody
+        final String registeredServiceBody) {
+        try {
+            val isYaml = MediaType.APPLICATION_YAML.isCompatibleWith(MediaType.valueOf(contentType))
+                || MediaType.parseMediaType(MEDIA_TYPE_CAS_YAML).isCompatibleWith(MediaType.valueOf(contentType));
+            val registeredServiceSerializer = isYaml
+                    ? new RegisteredServiceYamlSerializer(applicationContext)
+                    : new RegisteredServiceJsonSerializer(applicationContext);
+            val registeredService = registeredServiceSerializer.from(registeredServiceBody);
+            return ResponseEntity.ok(registeredService != null);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        }
+    }
+
 
     /**
      * Update service response entity.
@@ -358,7 +405,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         return ResponseEntity.ok(registeredServiceSerializer.toString(result));
     }
 
-    private ResponseEntity<RegisteredService> importSingleService(final HttpServletRequest request) throws IOException {
+    private ResponseEntity<@NonNull RegisteredService> importSingleService(final HttpServletRequest request) throws IOException {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted registered service:\n[{}]", requestBody);
 
@@ -385,7 +432,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
             .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
-    private ResponseEntity<RegisteredService> importServicesAsStream(final HttpServletRequest request) throws IOException {
+    private ResponseEntity<@NonNull RegisteredService> importServicesAsStream(final HttpServletRequest request) throws IOException {
         var servicesToImport = Stream.<RegisteredService>empty();
         try (val bais = new ByteArrayInputStream(IOUtils.toByteArray(request.getInputStream()));
              val zipIn = new ZipInputStream(bais)) {

@@ -65,7 +65,7 @@ public class CasGoogleCloudPubSubTicketRegistryAutoConfiguration {
     public QueueableTicketRegistryMessagePublisher messageQueueTicketRegistryPublisher(
         @Qualifier("pubSubMessageConverter")
         final PubSubMessageConverter pubSubMessageConverter,
-        @Qualifier("messageQueueTicketRegistryIdentifier")
+        @Qualifier(PublisherIdentifier.DEFAULT_BEAN_NAME)
         final PublisherIdentifier messageQueueTicketRegistryIdentifier,
         final PubSubTemplate pubSubTemplate) {
         LOGGER.debug("Configuring Google Cloud ticket registry with identifier [{}]", messageQueueTicketRegistryIdentifier);

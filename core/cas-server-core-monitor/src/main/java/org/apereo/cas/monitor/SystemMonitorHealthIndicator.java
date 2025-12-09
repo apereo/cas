@@ -2,6 +2,7 @@ package org.apereo.cas.monitor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.health.contributor.AbstractHealthIndicator;
 import org.springframework.boot.health.contributor.Health;
@@ -58,7 +59,7 @@ public class SystemMonitorHealthIndicator extends AbstractHealthIndicator {
         return getMetricsFor(key, tag, 0);
     }
 
-    private double getMetricsFor(final String key, final List<String> tag, final int measure) {
+    private double getMetricsFor(final String key, final @Nullable List<String> tag, final int measure) {
         return Optional.ofNullable(metrics.getIfAvailable())
             .map(endpoint -> {
                 val metric = endpoint.metric(key, tag);

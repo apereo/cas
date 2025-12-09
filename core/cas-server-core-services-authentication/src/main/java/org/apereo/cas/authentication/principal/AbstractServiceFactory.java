@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.hc.core5.net.URIBuilder;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
      * @param url the url
      * @return sanitized url.
      */
-    protected static String cleanupUrl(final String url) {
+    protected static @Nullable String cleanupUrl(final String url) {
         if (url == null) {
             return null;
         }
@@ -78,7 +79,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         return url.substring(0, jsessionPosition) + url.substring(questionMarkPosition);
     }
 
-    protected static String getSourceParameter(final HttpServletRequest request, final String... paramNames) {
+    protected static @Nullable String getSourceParameter(final HttpServletRequest request, final String... paramNames) {
         if (request != null) {
             val parameterMap = request.getParameterMap();
             return Stream.of(paramNames)

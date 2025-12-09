@@ -55,10 +55,14 @@ class InfluxDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
         val dto1 = getCasEvent(UUID.randomUUID().toString());
         eventRepository.save(dto1);
 
-        var results = eventRepository.aggregate().toList();
-        assertFalse(results.isEmpty());
+        try (val stream = eventRepository.aggregate()) {
+            val results = stream.toList();
+            assertFalse(results.isEmpty());
+        }
 
-        results = eventRepository.aggregate(CasTicketGrantingTicketCreatedEvent.class, Duration.ofDays(2)).toList();
-        assertFalse(results.isEmpty());
+        try (val stream = eventRepository.aggregate(CasTicketGrantingTicketCreatedEvent.class, Duration.ofDays(2))) {
+            val results = stream.toList();
+            assertFalse(results.isEmpty());
+        }
     }
 }

@@ -8,8 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.annotation.Id;
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
@@ -57,7 +57,7 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
     }
 
     @Override
-    public int compareTo(@Nonnull final OneTimeToken token) {
+    public int compareTo(@NonNull final OneTimeToken token) {
         return Comparator
             .comparing(OneTimeToken::getToken)
             .thenComparing(OneTimeToken::getUserId)

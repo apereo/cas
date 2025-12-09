@@ -2,8 +2,8 @@ package org.apereo.cas.metadata;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.context.properties.source.ConfigurationProperty;
-import jakarta.annotation.Nonnull;
 
 /**
  * This is {@link CasConfigurationPropertyBindingResult}.
@@ -13,7 +13,7 @@ import jakarta.annotation.Nonnull;
  */
 public record CasConfigurationPropertyBindingResult(ConfigurationProperty property, BindingStatus status) {
 
-    @Nonnull
+    @NonNull
     @Override
     public String toString() {
         return String.format("\t%s = %s (Origin: %s) (Status: %s)%n",

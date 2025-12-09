@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
@@ -92,8 +93,8 @@ public class CasFeatureEnabledCondition extends SpringBootCondition {
     }
 
     @Override
-    public ConditionOutcome getMatchOutcome(final ConditionContext context,
-                                            final AnnotatedTypeMetadata metadata) {
+    public @NonNull ConditionOutcome getMatchOutcome(final @NonNull ConditionContext context,
+                                                     final AnnotatedTypeMetadata metadata) {
         val attributes = metadata.getAnnotationAttributes(ConditionalOnFeatureEnabled.class.getName());
         if (attributes == null) {
             val conditions = (AnnotationAttributes[]) metadata.getAnnotationAttributes(

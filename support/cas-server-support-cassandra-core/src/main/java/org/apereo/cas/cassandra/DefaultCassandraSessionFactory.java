@@ -2,7 +2,6 @@ package org.apereo.cas.cassandra;
 
 import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
 import org.apereo.cas.util.LoggingUtils;
-
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
@@ -13,11 +12,10 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.data.cassandra.core.cql.CqlTemplate;
-
-import jakarta.annotation.Nonnull;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLParameters;
@@ -76,10 +74,10 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
 
         val engineFactory = new ProgrammaticSslEngineFactory(this.sslContext,
             cassandra.getSslCipherSuites(), false) {
-            @Nonnull
+            @NonNull
             @Override
             public SSLEngine newSslEngine(
-                @Nonnull
+                @NonNull
                 final EndPoint remoteEndpoint) {
                 val engine = super.newSslEngine(remoteEndpoint);
                 engine.setSSLParameters(buildSslParameters(cassandra));

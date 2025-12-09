@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.util.LinkedHashSet;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @RequiredArgsConstructor
-public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServerDiscoverySettings> {
+public class OidcServerDiscoverySettingsFactory implements FactoryBean<@NonNull OidcServerDiscoverySettings> {
     protected final CasConfigurationProperties casProperties;
 
     protected final OidcIssuerService issuerService;

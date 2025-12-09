@@ -15,6 +15,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties;
@@ -65,7 +66,7 @@ public class CasWebSecurityConfigurerAdapter {
                 .collect(Collectors.toSet());
             object.setAuthenticationConverter(new BasicAuthenticationConverter() {
                 @Override
-                public UsernamePasswordAuthenticationToken convert(final HttpServletRequest request) {
+                public UsernamePasswordAuthenticationToken convert(final @NonNull HttpServletRequest request) {
                     val requestIsNotIgnored = patternsToIgnore.stream().noneMatch(requestMatcher -> requestMatcher.matches(request));
                     return requestIsNotIgnored ? super.convert(request) : null;
                 }
@@ -80,7 +81,7 @@ public class CasWebSecurityConfigurerAdapter {
 
     private final ManagementServerProperties managementServerProperties;
 
-    private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
+    private final ObjectProvider<@NonNull PathMappedEndpoints> pathMappedEndpoints;
 
     private final List<CasWebSecurityConfigurer> webSecurityConfigurers;
 

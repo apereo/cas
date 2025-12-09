@@ -25,6 +25,7 @@ import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.jspecify.annotations.NonNull;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
@@ -67,7 +68,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientBuilder {
     protected final CasSSLContext casSslContext;
-    protected final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory;
+    protected final ObjectProvider<@NonNull SAMLMessageStoreFactory> samlMessageStoreFactory;
     protected final OpenSamlConfigBean configBean;
 
     @Override

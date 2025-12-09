@@ -6,6 +6,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -21,7 +22,7 @@ import java.util.Objects;
 public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository<OneTimeToken> {
     private final CasReentrantLock lock = new CasReentrantLock();
 
-    private final Cache<String, Collection<OneTimeToken>> storage;
+    private final Cache<@NonNull String, Collection<OneTimeToken>> storage;
 
     @Override
     public void cleanInternal() {

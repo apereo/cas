@@ -38,8 +38,8 @@ import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.springframework.boot.tomcat.TomcatWebServer;
 import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
-import jakarta.annotation.Nonnull;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * A {@link CasTomcatServletWebServerFactory} that will configure Tomcat with clustering support based on the
@@ -58,7 +58,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
 
     public CasTomcatServletWebServerFactory(final CasConfigurationProperties casProperties,
                                             final ServerProperties serverProperties) {
-        super(serverProperties.getPort());
+        super(Objects.requireNonNullElse(serverProperties.getPort(), 0));
         if (StringUtils.isNotBlank(serverProperties.getServlet().getContextPath())) {
             setContextPath(serverProperties.getServlet().getContextPath());
         }
@@ -85,9 +85,8 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
         context.setResources(webResourceRoot);
     }
 
-    @Nonnull
     @Override
-    protected TomcatWebServer getTomcatWebServer(@Nonnull final Tomcat tomcat) {
+    protected TomcatWebServer getTomcatWebServer(final Tomcat tomcat) {
         configureSessionClustering(tomcat);
         return super.getTomcatWebServer(tomcat);
     }

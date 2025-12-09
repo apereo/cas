@@ -6,10 +6,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-
+import org.jspecify.annotations.NonNull;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;

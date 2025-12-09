@@ -25,11 +25,13 @@ public class CompositeHealthIndicator extends AbstractHealthIndicator {
         val aggregatedStatus = new ArrayList<Status>();
         healthIndicators.forEach(indicator -> {
             val health = indicator.health(true);
-            val name = (String) health.getDetails().getOrDefault("name", indicator.getClass().getSimpleName());
-            val details = new LinkedHashMap<>(health.getDetails());
-            details.computeIfAbsent("status", _ -> health.getStatus());
-            builder.withDetail(name, details);
-            aggregatedStatus.add(health.getStatus());
+            if (health != null) {
+                val name = (String) health.getDetails().getOrDefault("name", indicator.getClass().getSimpleName());
+                val details = new LinkedHashMap<>(health.getDetails());
+                details.computeIfAbsent("status", _ -> health.getStatus());
+                builder.withDetail(name, details);
+                aggregatedStatus.add(health.getStatus());
+            }
         });
         val isUp = aggregatedStatus.stream().allMatch(s -> s.equals(Status.UP));
         builder.status(isUp ? Status.UP : Status.DOWN);

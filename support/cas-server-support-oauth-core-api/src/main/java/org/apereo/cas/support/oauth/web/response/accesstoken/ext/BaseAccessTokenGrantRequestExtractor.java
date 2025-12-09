@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -27,7 +28,7 @@ import java.util.TreeSet;
 @Getter
 @Slf4j
 public abstract class BaseAccessTokenGrantRequestExtractor<T extends OAuth20ConfigurationContext> implements AccessTokenGrantRequestExtractor {
-    private final ObjectProvider<T> configurationContext;
+    private final ObjectProvider<@NonNull T> configurationContext;
 
     @Override
     public AccessTokenRequestContext extract(final WebContext webContext) throws Throwable {

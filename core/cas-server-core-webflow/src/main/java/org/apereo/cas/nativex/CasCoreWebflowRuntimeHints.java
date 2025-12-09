@@ -10,6 +10,8 @@ import org.apereo.cas.web.flow.executor.CasFlowExecutor;
 import org.apereo.cas.web.flow.executor.ClientFlowExecutionRepository;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
@@ -40,7 +42,7 @@ import java.util.List;
  */
 public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
-    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+    public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
         registerProxyHints(hints, List.of(
             Action.class,
             FlowDefinitionRegistry.class,

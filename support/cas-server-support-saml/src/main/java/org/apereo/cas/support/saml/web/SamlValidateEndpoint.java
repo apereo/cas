@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -48,32 +49,32 @@ import java.util.Optional;
  */
 @Endpoint(id = "samlValidate", defaultAccess = Access.NONE)
 public class SamlValidateEndpoint extends BaseCasRestActuatorEndpoint {
-    private final ObjectProvider<ServicesManager> servicesManager;
+    private final ObjectProvider<@NonNull ServicesManager> servicesManager;
 
-    private final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+    private final ObjectProvider<@NonNull AuthenticationSystemSupport> authenticationSystemSupport;
 
-    private final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory;
+    private final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> serviceFactory;
 
-    private final ObjectProvider<PrincipalFactory> principalFactory;
+    private final ObjectProvider<@NonNull PrincipalFactory> principalFactory;
 
-    private final ObjectProvider<SamlResponseBuilder> samlResponseBuilder;
+    private final ObjectProvider<@NonNull SamlResponseBuilder> samlResponseBuilder;
 
-    private final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
+    private final ObjectProvider<@NonNull OpenSamlConfigBean> openSamlConfigBean;
 
-    private final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
+    private final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
-    private final ObjectProvider<PrincipalResolver> principalResolver;
+    private final ObjectProvider<@NonNull PrincipalResolver> principalResolver;
 
     public SamlValidateEndpoint(final CasConfigurationProperties casProperties,
                                 final ConfigurableApplicationContext applicationContext,
-                                final ObjectProvider<ServicesManager> servicesManager,
-                                final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
-                                final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory,
-                                final ObjectProvider<PrincipalFactory> principalFactory,
-                                final ObjectProvider<SamlResponseBuilder> samlResponseBuilder,
-                                final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean,
-                                final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
-                                final ObjectProvider<PrincipalResolver> principalResolver) {
+                                final ObjectProvider<@NonNull ServicesManager> servicesManager,
+                                final ObjectProvider<@NonNull AuthenticationSystemSupport> authenticationSystemSupport,
+                                final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> serviceFactory,
+                                final ObjectProvider<@NonNull PrincipalFactory> principalFactory,
+                                final ObjectProvider<@NonNull SamlResponseBuilder> samlResponseBuilder,
+                                final ObjectProvider<@NonNull OpenSamlConfigBean> openSamlConfigBean,
+                                final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer,
+                                final ObjectProvider<@NonNull PrincipalResolver> principalResolver) {
         super(casProperties, applicationContext);
         this.servicesManager = servicesManager;
         this.authenticationSystemSupport = authenticationSystemSupport;

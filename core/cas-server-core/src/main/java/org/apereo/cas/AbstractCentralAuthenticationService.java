@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.util.ObjectUtils;
 import java.io.Serial;
@@ -52,8 +53,10 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
     }
 
-    protected Authentication getAuthenticationSatisfiedByPolicy(final Authentication authentication, final Service service,
-                                                                final RegisteredService registeredService) throws AbstractTicketException {
+    protected @Nullable Authentication getAuthenticationSatisfiedByPolicy(
+        @Nullable
+        final Authentication authentication, final Service service,
+        final RegisteredService registeredService) throws AbstractTicketException {
         val policy = configurationContext.getAuthenticationPolicy();
         try {
             val policyContext = Map.of(RegisteredService.class.getName(), registeredService, Service.class.getName(), service);

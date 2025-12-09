@@ -54,6 +54,7 @@ import org.apereo.cas.web.flow.delegation.PasswordlessDetermineDelegatedAuthenti
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -212,7 +213,7 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
-            final ObjectProvider<DelegatedClientIdentityProviderConfigurationProducer> delegatedClientIdentityProviderConfigurationProducer,
+            final ObjectProvider<@NonNull DelegatedClientIdentityProviderConfigurationProducer> delegatedClientIdentityProviderConfigurationProducer,
             @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
             final PasswordlessUserAccountStore passwordlessUserAccountStore) {
             return WebflowActionBeanSupplier.builder()
@@ -390,7 +391,7 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
             final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
-            final ObjectProvider<DelegatedClientIdentityProviderConfigurationProducer> pp,
+            final ObjectProvider<@NonNull DelegatedClientIdentityProviderConfigurationProducer> pp,
             final CasConfigurationProperties casProperties) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)

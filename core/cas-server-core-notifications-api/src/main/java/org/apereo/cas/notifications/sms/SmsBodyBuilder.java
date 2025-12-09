@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.Builder;
-import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,7 +23,6 @@ import java.util.function.Supplier;
 @Slf4j
 @SuperBuilder
 public class SmsBodyBuilder implements Supplier<String> {
-    @NonNull
     private final SmsProperties properties;
 
     @Builder.Default

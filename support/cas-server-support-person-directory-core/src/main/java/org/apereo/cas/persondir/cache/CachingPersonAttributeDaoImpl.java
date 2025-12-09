@@ -11,8 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.InitializingBean;
-import jakarta.annotation.Nonnull;
 import java.io.Serializable;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
@@ -183,7 +183,7 @@ public class CachingPersonAttributeDaoImpl extends AbstractDefaultAttributePerso
             arguments = args;
         }
         
-        @Nonnull
+        @NonNull
         @Override
         public AccessibleObject getStaticPart() {
             throw new UnsupportedOperationException("getStaticPart() is not supported.");
@@ -199,7 +199,7 @@ public class CachingPersonAttributeDaoImpl extends AbstractDefaultAttributePerso
             throw new UnsupportedOperationException("proceed() is not supported.");
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public Method getMethod() {
             return METHOD;

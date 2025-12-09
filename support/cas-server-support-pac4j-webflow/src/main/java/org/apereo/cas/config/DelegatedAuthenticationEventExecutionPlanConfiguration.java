@@ -58,6 +58,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.session.SessionStore;
@@ -157,7 +158,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
             @Qualifier(TenantExtractor.BEAN_NAME)
             final TenantExtractor tenantExtractor,
             @Qualifier(GeoLocationService.BEAN_NAME)
-            final ObjectProvider<GeoLocationService> geoLocationService,
+            final ObjectProvider<@NonNull GeoLocationService> geoLocationService,
             @Qualifier("delegatedClientDistributedSessionCookieCipherExecutor")
             final CipherExecutor delegatedClientDistributedSessionCookieCipherExecutor,
             final CasConfigurationProperties casProperties) {
@@ -233,7 +234,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = DelegatedClientUserProfileProvisioner.BEAN_NAME)
         public DelegatedClientUserProfileProvisioner clientUserProfileProvisioner(
-            final ObjectProvider<List<Supplier<DelegatedClientUserProfileProvisioner>>> provisioners) {
+            final ObjectProvider<@NonNull List<Supplier<DelegatedClientUserProfileProvisioner>>> provisioners) {
             val results = provisioners.getIfAvailable(() -> CollectionUtils.wrapList(DelegatedClientUserProfileProvisioner::noOp))
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
@@ -256,7 +257,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactoryCache")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Cache<String, List<BaseClient>> pac4jDelegatedClientFactoryCache(
+        public Cache<@NonNull String, List<BaseClient>> pac4jDelegatedClientFactoryCache(
             final CasConfigurationProperties casProperties) {
             val core = casProperties.getAuthn().getPac4j().getCore();
             return Caffeine.newBuilder()
@@ -271,9 +272,9 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
         public DelegatedIdentityProviderFactory pac4jDelegatedClientFactory(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("pac4jDelegatedClientFactoryCache")
-            final Cache<String, List<BaseClient>> clientsCache,
+            final Cache<@NonNull String, List<BaseClient>> clientsCache,
             final CasConfigurationProperties casProperties,
-            final ObjectProvider<List<DelegatedClientFactoryCustomizer>> customizerList,
+            final ObjectProvider<@NonNull List<DelegatedClientFactoryCustomizer>> customizerList,
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext) {
 
@@ -308,9 +309,9 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
             final JdbcOperations jdbcTemplate,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("pac4jDelegatedClientFactoryCache")
-            final Cache<String, List<BaseClient>> clientsCache,
+            final Cache<@NonNull String, List<BaseClient>> clientsCache,
             final CasConfigurationProperties casProperties,
-            final ObjectProvider<List<DelegatedClientFactoryCustomizer>> customizerList,
+            final ObjectProvider<@NonNull List<DelegatedClientFactoryCustomizer>> customizerList,
             @Qualifier(CasSSLContext.BEAN_NAME)
             final CasSSLContext casSslContext) {
 

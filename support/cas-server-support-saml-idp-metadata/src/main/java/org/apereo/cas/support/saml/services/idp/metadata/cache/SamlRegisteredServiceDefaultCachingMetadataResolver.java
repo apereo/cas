@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.opensaml.core.criterion.SatisfyAnyCriterion;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
@@ -42,7 +43,7 @@ import java.util.Optional;
 @Slf4j
 @Monitorable
 public class SamlRegisteredServiceDefaultCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
-    private final LoadingCache<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> cache;
+    private final LoadingCache<@NonNull SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> cache;
 
     @Getter
     private final OpenSamlConfigBean openSamlConfigBean;
@@ -51,7 +52,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
 
     public SamlRegisteredServiceDefaultCachingMetadataResolver(
         final CasConfigurationProperties casProperties,
-        final CacheLoader<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> loader,
+        final CacheLoader<@NonNull SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> loader,
         final OpenSamlConfigBean openSamlConfigBean) {
 
         this.openSamlConfigBean = openSamlConfigBean;

@@ -22,6 +22,7 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -67,7 +68,7 @@ public class CasInterruptWebflowAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier(ScriptResourceCacheManager.BEAN_NAME)
-        final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager,
+        final ObjectProvider<@NonNull ScriptResourceCacheManager> scriptResourceCacheManager,
         @Qualifier(InterruptTrackingEngine.BEAN_NAME)
         final InterruptTrackingEngine interruptTrackingEngine,
         @Qualifier(InterruptInquirer.BEAN_NAME)

@@ -26,6 +26,7 @@ import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -99,7 +100,7 @@ class DelegatedAuthenticationSaml2IdPConfiguration {
         @Qualifier(TenantExtractor.BEAN_NAME)
         final TenantExtractor tenantExtractor,
         @Qualifier(GeoLocationService.BEAN_NAME)
-        final ObjectProvider<GeoLocationService> geoLocationService,
+        final ObjectProvider<@NonNull GeoLocationService> geoLocationService,
         @Qualifier("delegatedClientDistributedSessionCookieCipherExecutor")
         final CipherExecutor delegatedClientDistributedSessionCookieCipherExecutor,
         final CasConfigurationProperties casProperties) {

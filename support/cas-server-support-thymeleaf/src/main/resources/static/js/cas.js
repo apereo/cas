@@ -37,6 +37,10 @@ function getLastWord(str) {
     return parts.slice(-1).join(".");
 }
 
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function formatDateYearMonthDayHourMinute(date) {
     const d = new Date(date);
     const year = d.getFullYear();
@@ -63,6 +67,19 @@ function toKebabCase(str) {
         .toLowerCase();
 }
 
+function isNumeric(str) {
+    return (typeof str === "string" && str.trim() !== "" && !isNaN(str)) || typeof str === "number";
+}
+
+function copyToClipboard(str) {
+    navigator.clipboard.writeText(str)
+        .then(() => {
+            console.log("Copied!");
+        })
+        .catch(err => {
+            console.error("Failed to copy: ", err);
+        });
+}
 
 function camelcaseToTitleCase(str) {
     return str
@@ -115,6 +132,15 @@ function convertMemoryToGB(memoryStr) {
     const unit = match[3].toUpperCase();
     const bytes = value * units[unit];
     return bytes / units.GB;
+}
+
+function isValidRegex(str) {
+    try {
+        new RegExp(str);
+        return true;
+    } catch (e) {
+        return false;
+    }
 }
 
 function isValidURL(str) {

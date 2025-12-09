@@ -5,17 +5,16 @@ import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,11 +26,11 @@ import java.util.Map;
  */
 @Endpoint(id = "resolveAttributes", defaultAccess = Access.NONE)
 public class CasResolveAttributesReportEndpoint extends BaseCasActuatorEndpoint {
-    private final ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
+    private final ObjectProvider<@NonNull PrincipalResolver> defaultPrincipalResolver;
 
     public CasResolveAttributesReportEndpoint(
         final CasConfigurationProperties casProperties,
-        final ObjectProvider<PrincipalResolver> defaultPrincipalResolver) {
+        final ObjectProvider<@NonNull PrincipalResolver> defaultPrincipalResolver) {
         super(casProperties);
         this.defaultPrincipalResolver = defaultPrincipalResolver;
     }

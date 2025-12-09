@@ -6,12 +6,10 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.multitenancy.TenantsManager;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
+import org.jspecify.annotations.NonNull;
 import java.util.Objects;
 import java.util.stream.Stream;
 

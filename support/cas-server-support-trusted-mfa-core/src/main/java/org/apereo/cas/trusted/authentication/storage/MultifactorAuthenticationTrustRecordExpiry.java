@@ -5,7 +5,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import com.github.benmanes.caffeine.cache.Expiry;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -18,13 +18,13 @@ import java.time.temporal.ChronoUnit;
  * @since 7.0.0
  */
 @Slf4j
-public class MultifactorAuthenticationTrustRecordExpiry implements Expiry<String, MultifactorAuthenticationTrustRecord> {
+public class MultifactorAuthenticationTrustRecordExpiry implements Expiry<@NonNull String, @NonNull MultifactorAuthenticationTrustRecord> {
 
     @Override
     public long expireAfterCreate(
-        @Nonnull
+        @NonNull
         final String key,
-        @Nonnull final MultifactorAuthenticationTrustRecord value, final long currentTime) {
+        @NonNull final MultifactorAuthenticationTrustRecord value, final long currentTime) {
         if (value.getExpirationDate() == null) {
             LOGGER.trace("Multifactor trust record [{}] will never expire", value);
             return Long.MAX_VALUE;
@@ -42,16 +42,16 @@ public class MultifactorAuthenticationTrustRecordExpiry implements Expiry<String
 
     @Override
     public long expireAfterUpdate(
-        @Nonnull final String key,
-        @Nonnull final MultifactorAuthenticationTrustRecord value, final long currentTime,
+        @NonNull final String key,
+        @NonNull final MultifactorAuthenticationTrustRecord value, final long currentTime,
         final long currentDuration) {
         return expireAfterCreate(key, value, currentTime);
     }
 
     @Override
     public long expireAfterRead(
-        @Nonnull final String key,
-        @Nonnull final MultifactorAuthenticationTrustRecord value, final long currentTime,
+        @NonNull final String key,
+        @NonNull final MultifactorAuthenticationTrustRecord value, final long currentTime,
         final long currentDuration) {
         return expireAfterCreate(key, value, currentTime);
     }

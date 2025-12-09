@@ -6,6 +6,7 @@ import org.springframework.beans.factory.config.YamlProcessor;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.Resource;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link CasCoreConfigurationUtils}.
@@ -15,7 +16,6 @@ import java.util.Map;
  */
 @UtilityClass
 public final class CasCoreConfigurationUtils {
-
 
     /**
      * Load yaml properties map.
@@ -29,6 +29,6 @@ public final class CasCoreConfigurationUtils {
         factory.setResources(resource);
         factory.setSingleton(true);
         factory.afterPropertiesSet();
-        return (Map) factory.getObject();
+        return (Map) Objects.requireNonNull(factory.getObject());
     }
 }

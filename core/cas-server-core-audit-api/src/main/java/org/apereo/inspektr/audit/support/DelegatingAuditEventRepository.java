@@ -8,6 +8,7 @@ import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 public class DelegatingAuditEventRepository implements AuditEventRepository {
-    private final ObjectProvider<CasEventRepository> casEventRepository;
+    private final ObjectProvider<@NonNull CasEventRepository> casEventRepository;
     private final AuditEventRepository auditEventRepository = new InMemoryAuditEventRepository();
 
     @Override
@@ -59,7 +60,7 @@ public class DelegatingAuditEventRepository implements AuditEventRepository {
     }
 
     @Override
-    public List<AuditEvent> find(final String principal, final Instant after, final String type) {
+    public @NonNull List<AuditEvent> find(final String principal, final Instant after, final String type) {
         val results = new ArrayList<AuditEvent>();
         casEventRepository.ifAvailable(repo -> {
             if (StringUtils.isNotBlank(principal) && after != null && StringUtils.isNotBlank(type)) {

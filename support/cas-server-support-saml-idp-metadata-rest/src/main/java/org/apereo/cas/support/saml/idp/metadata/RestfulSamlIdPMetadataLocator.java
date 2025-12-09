@@ -18,6 +18,7 @@ import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
     private final RestSamlMetadataProperties properties;
 
     public RestfulSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
-                                         final Cache<String, SamlIdPMetadataDocument> metadataCache,
+                                         final Cache<@NonNull String, SamlIdPMetadataDocument> metadataCache,
                                          final RestSamlMetadataProperties properties,
                                          final ConfigurableApplicationContext applicationContext) {
         super(metadataCipherExecutor, metadataCache, applicationContext);

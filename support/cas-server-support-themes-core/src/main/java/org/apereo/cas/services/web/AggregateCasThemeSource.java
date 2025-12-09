@@ -7,9 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.StaticMessageSource;
-import jakarta.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Properties;
@@ -25,10 +25,10 @@ import java.util.Properties;
 public class AggregateCasThemeSource extends ResourceBundleThemeSource {
     private final CasConfigurationProperties casProperties;
 
-    @Nonnull
+    @NonNull
     @Override
     protected MessageSource createMessageSource(
-        @Nonnull
+        @NonNull
         final String basename) {
         val source = new StaticMessageSource();
         source.setParentMessageSource(super.createMessageSource(basename));

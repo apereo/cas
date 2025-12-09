@@ -9,6 +9,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.env.Environment;
@@ -44,6 +45,7 @@ public class CasJdbcCloudConfigBootstrapAutoConfiguration implements PropertySou
             val rows = jdbcTemplate.queryForList(connection.getSql());
             props.putAll(rows
                 .stream()
+                .filter(row -> row.get("value") != null)
                 .collect(Collectors.toMap(row -> row.get("name"), row -> row.get("value"), (a, b) -> b, Properties::new)));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -62,7 +64,7 @@ public class CasJdbcCloudConfigBootstrapAutoConfiguration implements PropertySou
             this.environment = environment;
         }
 
-        private static String getSetting(final Environment environment, final String key) {
+        private static @Nullable String getSetting(final Environment environment, final String key) {
             return environment.getProperty(CAS_CONFIGURATION_PREFIX + '.' + key);
         }
 

@@ -3,17 +3,15 @@ package com.yubico.webauthn.attestation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import lombok.Builder;
+import lombok.Value;
+import org.jspecify.annotations.NonNull;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.Value;
 
 /**
  * This is {@link Attestation}.

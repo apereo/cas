@@ -13,6 +13,7 @@ import org.apereo.cas.discovery.DefaultCasServerProfileRegistrar;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -65,7 +66,7 @@ public class CasDiscoveryProfileAutoConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasServerProfileRegistrar.BEAN_NAME)
-            final ObjectProvider<CasServerProfileRegistrar> casServerProfileRegistrar) {
+            final ObjectProvider<@NonNull CasServerProfileRegistrar> casServerProfileRegistrar) {
             return new CasServerDiscoveryProfileEndpoint(casProperties, applicationContext, casServerProfileRegistrar);
         }
     }
@@ -84,7 +85,7 @@ public class CasDiscoveryProfileAutoConfiguration {
         @ConditionalOnMissingBean(name = "discoveryProfileAvailableAttributes")
         public BeanContainer<String> discoveryProfileAvailableAttributes(
             final CasConfigurationProperties casProperties,
-            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final ObjectProvider<PersonAttributeDao> attributeRepository) {
+            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final ObjectProvider<@NonNull PersonAttributeDao> attributeRepository) {
 
             val attributes = new LinkedHashSet<String>();
             attributeRepository.ifAvailable(repository -> {

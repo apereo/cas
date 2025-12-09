@@ -34,6 +34,7 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.convert.ConversionService;
@@ -237,11 +238,11 @@ class CasWebflowContextConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "localeChangeInterceptor")
         public HandlerInterceptor localeChangeInterceptor(
-            final ObjectProvider<CasConfigurationProperties> casProperties,
+            final ObjectProvider<@NonNull CasConfigurationProperties> casProperties,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ObjectProvider<ServicesManager> servicesManager,
+            final ObjectProvider<@NonNull ServicesManager> servicesManager,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ObjectProvider<ArgumentExtractor> argumentExtractor) {
+            final ObjectProvider<@NonNull ArgumentExtractor> argumentExtractor) {
             val localeProperties = casProperties.getObject().getLocale();
             val interceptor = new CasLocaleChangeInterceptor(casProperties,
                 argumentExtractor, servicesManager);
@@ -320,15 +321,15 @@ class CasWebflowContextConfiguration {
             @Qualifier("defaultLogoutWebflowConfigurer")
             final CasWebflowConfigurer defaultLogoutWebflowConfigurer,
             @Qualifier("groovyWebflowConfigurer")
-            final ObjectProvider<CasWebflowConfigurer> groovyWebflowConfigurer,
+            final ObjectProvider<@NonNull CasWebflowConfigurer> groovyWebflowConfigurer,
             @Qualifier("localeChangeInterceptor")
             final HandlerInterceptor localeChangeInterceptor,
             @Qualifier("resourceUrlProviderExposingInterceptor")
             final HandlerInterceptor resourceUrlProviderExposingInterceptor,
             @Qualifier("themeChangeInterceptor")
-            final ObjectProvider<HandlerInterceptor> themeChangeInterceptor,
+            final ObjectProvider<@NonNull HandlerInterceptor> themeChangeInterceptor,
             @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
-            final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
+            final ObjectProvider<@NonNull AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan) {
             return plan -> {
                 plan.registerWebflowConfigurer(defaultWebflowConfigurer);
                 plan.registerWebflowConfigurer(defaultLogoutWebflowConfigurer);
@@ -382,9 +383,9 @@ class CasWebflowContextConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public ViewFactoryCreator viewFactoryCreator(
-            final ObjectProvider<List<ViewResolver>> resolversProvider,
+            final ObjectProvider<@NonNull List<ViewResolver>> resolversProvider,
             @Qualifier("registeredServiceViewResolver")
-            final ObjectProvider<ViewResolver> registeredServiceViewResolver) {
+            final ObjectProvider<@NonNull ViewResolver> registeredServiceViewResolver) {
             val viewResolver = registeredServiceViewResolver.getIfAvailable();
             val resolver = new CasMvcViewFactoryCreator();
             if (viewResolver != null) {

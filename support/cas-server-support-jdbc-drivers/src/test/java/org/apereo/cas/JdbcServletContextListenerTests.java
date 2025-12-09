@@ -2,7 +2,9 @@ package org.apereo.cas;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockServletContext;
 
+import jakarta.servlet.ServletContextEvent;
 import java.sql.DriverManager;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +28,6 @@ class JdbcServletContextListenerTests {
     }
 
     @Test
-
     void verifyContextDestroyed() throws Throwable {
         /* registers all drivers */
         Class.forName("org.hsqldb.jdbc.JDBCDriver");
@@ -37,8 +38,7 @@ class JdbcServletContextListenerTests {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         Class.forName("oracle.jdbc.driver.OracleDriver");
         Class.forName("org.h2.Driver");
-
-        listener.contextDestroyed(null);
+        listener.contextDestroyed(new ServletContextEvent(new MockServletContext()));
         assertFalse(DriverManager.getDrivers().hasMoreElements());
     }
 }

@@ -9,6 +9,7 @@ import org.apereo.cas.web.UrlValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Locale;
 import java.util.Objects;
@@ -47,7 +48,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
     }
 
     @Override
-    public WebApplicationService createService(final HttpServletRequest request) {
+    public @Nullable WebApplicationService createService(final HttpServletRequest request) {
         val serviceToUse = getRequestedService(request);
         if (StringUtils.isBlank(serviceToUse)) {
             LOGGER.trace("No service is specified in the request. Skipping service creation");
@@ -83,7 +84,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         return newService;
     }
 
-    protected String getRequestedService(final HttpServletRequest request) {
+    protected @Nullable String getRequestedService(final HttpServletRequest request) {
         val targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
         val service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
         val serviceAttribute = request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);

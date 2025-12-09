@@ -27,7 +27,7 @@ class MongoDbPropertySourceLocatorTests {
         val factory = new SimpleMongoClientDatabaseFactory(CasMongoDbCloudConfigBootstrapAutoConfigurationTests.MONGODB_URI);
         val template = new MongoTemplate(factory);
         val loc = new MongoDbPropertySourceLocator(template);
-        assertNull(loc.locate(mock(Environment.class)));
+        assertNotNull(loc.locate(mock(Environment.class)));
     }
 
 }

@@ -287,6 +287,16 @@ form button i.mdi {
     color: var(--cas-theme-danger, #b00020);
 }
 
+.banner-warning h1:before,
+.banner-warning h2:before,
+.banner-warning h3:before,
+.banner-warning h4:before,
+.banner-warning h5:before {
+    content: "\F0029";
+    font-size: 24px;
+    font: normal normal normal 24px/1 "Material Design Icons";
+}
+
 .banner-warning {
     border-color: #e6a210;
     border-color: var(--cas-theme-warning, #e6a210);
@@ -454,6 +464,10 @@ form button i.mdi {
     padding-left: 0.8rem;
 }
 
+.pl-4 {
+    padding-left: 1rem;
+}
+
 .mr-2 {
     margin-right: 2px !important;
 }
@@ -471,7 +485,11 @@ form button i.mdi {
 }
 
 .pr-2 {
-    padding-right: 0.8rem;
+    padding-right: 0.8rem !important;
+}
+
+.pr-3 {
+    padding-right: 1rem !important;
 }
 
 .pr-4 {
@@ -630,6 +648,17 @@ span button.toolbar {
     background-color: var(--cas-theme-button-bg-hover, dodgerblue);
 }
 
+.mdc-button--round {
+    padding-top: 0px !important;
+    border-radius: 100px !important;
+}
+
+.mdc-button--inline-row {
+    height: 54px !important;
+    border-radius: 0px 9px 0px 0px !important;
+    margin-left: 2px !important;
+}
+
 .mdc-button--lg {
     width: 180px;
     height: 48px;
@@ -752,6 +781,11 @@ span button.toolbar {
 .min-width-48x {
     min-width: 48px !important;
     width: 24px;
+}
+
+.mmw-45 {
+    min-width: 45%;
+    max-width: 45%;
 }
 
 .min-vw-100 {

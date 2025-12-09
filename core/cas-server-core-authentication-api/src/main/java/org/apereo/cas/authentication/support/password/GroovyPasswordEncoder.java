@@ -6,11 +6,11 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.AbstractPasswordEncoder;
-import jakarta.annotation.Nonnull;
 
 /**
  * This is {@link GroovyPasswordEncoder}.
@@ -33,16 +33,15 @@ public class GroovyPasswordEncoder extends AbstractPasswordEncoder implements Di
     }
 
     @Override
-    public boolean matchesNonNull(final String rawPassword, final String encodedPassword) {
+    public boolean matchesNonNull(final @NonNull String rawPassword, final @NonNull String encodedPassword) {
         return FunctionUtils.doUnchecked(() -> {
             val args = new Object[]{rawPassword, encodedPassword, LOGGER, this.applicationContext};
             return watchableScript.execute("matches", Boolean.class, args);
         });
     }
 
-    @Nonnull
     @Override
-    public byte[] encodedNonNullPassword(final CharSequence rawPassword, final byte[] salt) {
+    public byte @NonNull [] encodedNonNullPassword(final @NonNull CharSequence rawPassword, final byte @NonNull [] salt) {
         return FunctionUtils.doUnchecked(() -> {
             val args = new Object[]{rawPassword, salt, LOGGER, this.applicationContext};
             return watchableScript.execute(args, byte[].class);

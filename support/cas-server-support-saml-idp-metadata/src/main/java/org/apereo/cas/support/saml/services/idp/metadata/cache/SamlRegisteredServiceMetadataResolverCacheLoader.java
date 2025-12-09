@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.component.AbstractIdentifiableInitializableComponent;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import java.time.Clock;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> {
+public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<@NonNull SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> {
 
     protected final OpenSamlConfigBean configBean;
 

@@ -16,6 +16,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -36,7 +37,7 @@ import java.util.Optional;
 @Getter
 @Setter
 public abstract class BaseOAuth20TokenRequestValidator<T extends OAuth20ConfigurationContext> implements OAuth20TokenRequestValidator {
-    private final ObjectProvider<T> configurationContext;
+    private final ObjectProvider<@NonNull T> configurationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 

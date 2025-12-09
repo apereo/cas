@@ -30,6 +30,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -221,11 +222,11 @@ class CasCoreAuthenticationHandlersConfiguration {
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-            final ObjectProvider<PersonAttributeDao> attributeRepository,
+            final ObjectProvider<@NonNull PersonAttributeDao> attributeRepository,
             @Qualifier("jaasPrincipalFactory")
             final PrincipalFactory jaasPrincipalFactory,
             @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
-            final ObjectProvider<AttributeRepositoryResolver> attributeRepositoryResolver) {
+            final ObjectProvider<@NonNull AttributeRepositoryResolver> attributeRepositoryResolver) {
             val personDirectory = casProperties.getPersonDirectory();
             return BeanContainer.of(casProperties.getAuthn().getJaas()
                 .stream()

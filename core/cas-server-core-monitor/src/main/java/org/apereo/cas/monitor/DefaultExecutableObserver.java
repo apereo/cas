@@ -9,7 +9,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.springframework.beans.factory.ObjectProvider;
-
 import java.util.Map;
 
 /**

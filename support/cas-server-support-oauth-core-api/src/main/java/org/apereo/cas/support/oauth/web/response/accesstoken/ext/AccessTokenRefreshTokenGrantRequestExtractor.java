@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
@@ -21,7 +22,7 @@ import org.springframework.beans.factory.ObjectProvider;
  */
 @Slf4j
 public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAuthorizationCodeGrantRequestExtractor {
-    public AccessTokenRefreshTokenGrantRequestExtractor(final ObjectProvider<OAuth20ConfigurationContext> oAuthConfigurationContext) {
+    public AccessTokenRefreshTokenGrantRequestExtractor(final ObjectProvider<@NonNull OAuth20ConfigurationContext> oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 

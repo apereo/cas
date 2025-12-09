@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import java.util.Arrays;
 import java.util.Objects;
@@ -40,7 +41,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
-    private final ObjectProvider<TicketFactory> ticketFactory;
+    private final ObjectProvider<@NonNull TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;
     private final PrincipalFactory principalFactory;
     @Getter

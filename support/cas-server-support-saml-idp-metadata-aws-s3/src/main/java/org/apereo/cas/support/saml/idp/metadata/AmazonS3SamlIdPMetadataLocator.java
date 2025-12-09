@@ -9,6 +9,7 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.ConfigurableApplicationContext;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -31,7 +32,7 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
     private final String bucketName;
 
     public AmazonS3SamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
-                                          final Cache<String, SamlIdPMetadataDocument> metadataCache,
+                                          final Cache<@NonNull String, SamlIdPMetadataDocument> metadataCache,
                                           final String bucketName, final S3Client s3Client,
                                           final ConfigurableApplicationContext applicationContext) {
         super(metadataCipherExecutor, metadataCache, applicationContext);

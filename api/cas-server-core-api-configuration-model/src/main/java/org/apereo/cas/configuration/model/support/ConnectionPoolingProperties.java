@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -81,5 +82,6 @@ public class ConnectionPoolingProperties implements Serializable {
      * Set the name of the connection pool. This is primarily used for
      * the MBean to uniquely identify the pool configuration.
      */
+    @Nullable
     private String name;
 }

@@ -6,6 +6,7 @@ import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -23,11 +24,11 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Endpoint(id = "oidcJwks", defaultAccess = Access.NONE)
 public class OidcJwksRotationEndpoint extends BaseCasRestActuatorEndpoint {
-    private final ObjectProvider<OidcJsonWebKeystoreRotationService> rotationService;
+    private final ObjectProvider<@NonNull OidcJsonWebKeystoreRotationService> rotationService;
 
     public OidcJwksRotationEndpoint(final CasConfigurationProperties casProperties,
                                     final ConfigurableApplicationContext applicationContext,
-                                    final ObjectProvider<OidcJsonWebKeystoreRotationService> rotationService) {
+                                    final ObjectProvider<@NonNull OidcJsonWebKeystoreRotationService> rotationService) {
         super(casProperties, applicationContext);
         this.rotationService = rotationService;
     }
@@ -40,7 +41,7 @@ public class OidcJwksRotationEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @GetMapping(path = "/rotate", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Rotate keys in the keystore forcefully")
-    public ResponseEntity<String> handleRotation() throws Throwable {
+    public ResponseEntity<@NonNull String> handleRotation() throws Throwable {
         val rotation = rotationService.getObject().rotate();
         return new ResponseEntity<>(
             rotation.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY), HttpStatus.OK);
@@ -54,7 +55,7 @@ public class OidcJwksRotationEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @GetMapping(path = "/revoke", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Revoke keys in the keystore forcefully")
-    public ResponseEntity<String> handleRevocation() throws Throwable {
+    public ResponseEntity<@NonNull String> handleRevocation() throws Throwable {
         val rotation = rotationService.getObject().revoke();
         return new ResponseEntity<>(
             rotation.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY), HttpStatus.OK);

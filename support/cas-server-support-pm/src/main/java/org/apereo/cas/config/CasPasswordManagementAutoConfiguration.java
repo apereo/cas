@@ -43,6 +43,7 @@ import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.FirstParameterAuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.SpringWebflowActionExecutionAuditablePrincipalResolver;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -249,7 +250,7 @@ public class CasPasswordManagementAutoConfiguration {
         public CasApplicationReadyListener passwordManagementApplicationReady(
             final CasConfigurationProperties casProperties,
             @Qualifier(CommunicationsManager.BEAN_NAME)
-            final ObjectProvider<CommunicationsManager> communicationsManager) {
+            final ObjectProvider<@NonNull CommunicationsManager> communicationsManager) {
             return event -> {
                 val pm = casProperties.getAuthn().getPm();
                 if (pm.getCore().isEnabled()) {

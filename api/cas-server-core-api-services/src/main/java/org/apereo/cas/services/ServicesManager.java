@@ -5,6 +5,7 @@ import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.util.NamedObject;
 
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 
 import java.util.Arrays;
@@ -100,7 +101,7 @@ public interface ServicesManager extends Ordered, NamedObject {
      * @param service the service to match with.
      * @return the {@link RegisteredService} that matches the supplied service.
      */
-    RegisteredService findServiceBy(Service service);
+    RegisteredService findServiceBy(@Nullable Service service);
 
     /**
      * Find a collection of services by type.
@@ -136,7 +137,7 @@ public interface ServicesManager extends Ordered, NamedObject {
      * @param clazz the clazz
      * @return the {@link RegisteredService} that matches the supplied service.
      */
-    default <T extends RegisteredService> T findServiceBy(final long id, final Class<T> clazz) {
+    default <T extends RegisteredService> @Nullable T findServiceBy(final long id, final Class<T> clazz) {
         val service = findServiceBy(id);
         if (service != null && clazz.isAssignableFrom(service.getClass())) {
             return (T) service;
@@ -160,7 +161,7 @@ public interface ServicesManager extends Ordered, NamedObject {
      * @param clazz the clazz
      * @return the {@link RegisteredService} that matches the supplied service.
      */
-    default <T extends RegisteredService> T findServiceByName(final String name, final Class<T> clazz) {
+    default <T extends RegisteredService> @Nullable T findServiceByName(final String name, final Class<T> clazz) {
         val service = findServiceByName(name);
         if (service != null && clazz.isAssignableFrom(service.getClass())) {
             return (T) service;

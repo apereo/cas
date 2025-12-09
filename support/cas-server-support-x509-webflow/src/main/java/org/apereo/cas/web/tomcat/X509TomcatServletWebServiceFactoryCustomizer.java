@@ -7,6 +7,7 @@ import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.AbstractHttp11Protocol;
 import org.apache.tomcat.util.net.SSLHostConfig;
 import org.apache.tomcat.util.net.SSLHostConfigCertificate;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.tomcat.autoconfigure.TomcatServerProperties;
 import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
@@ -36,7 +37,7 @@ public class X509TomcatServletWebServiceFactoryCustomizer extends ServletWebServ
     }
 
     @Override
-    public void customize(final ConfigurableServletWebServerFactory factory) {
+    public void customize(final @NonNull ConfigurableServletWebServerFactory factory) {
         val webflow = casProperties.getAuthn().getX509().getWebflow();
         if (factory instanceof final TomcatServletWebServerFactory tomcat && webflow.getPort() > 0) {
             LOGGER.debug("Creating X509 configuration for the tomcat container...");

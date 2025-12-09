@@ -1,14 +1,12 @@
 package org.apereo.cas.qr.authentication;
 
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
-
+import org.jspecify.annotations.NonNull;
 import java.io.Serial;
 
 /**

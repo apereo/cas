@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -48,7 +49,7 @@ public class HeimdallAuthorizationEndpoint extends BaseCasRestActuatorEndpoint {
     @PostMapping(path = "/resource", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch authorizable resource matching the given authorization request in the body",
         parameters = @Parameter(name = "request", required = true, description = "Authorization request in the body"))
-    public ResponseEntity<AuthorizableResource> fetchResource(@RequestBody final AuthorizationRequest request) {
+    public ResponseEntity<@NonNull AuthorizableResource> fetchResource(@RequestBody final AuthorizationRequest request) {
         return ResponseEntity.of(authorizableResourceRepository.find(request));
     }
 
@@ -59,7 +60,7 @@ public class HeimdallAuthorizationEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @GetMapping(path = "/resources", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch all authorizable resources")
-    public ResponseEntity<Map<String, List<AuthorizableResource>>> fetchResources() {
+    public ResponseEntity<@NonNull Map<String, List<AuthorizableResource>>> fetchResources() {
         val resources = authorizableResourceRepository.findAll();
         return ResponseEntity.ok(resources);
     }
@@ -73,7 +74,7 @@ public class HeimdallAuthorizationEndpoint extends BaseCasRestActuatorEndpoint {
     @GetMapping(path = "/resources/{namespace}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch all authorizable resources for namespace",
         parameters = @Parameter(name = "namespace", in = ParameterIn.PATH, required = true, description = "Namespace to fetch resources for"))
-    public ResponseEntity<List<AuthorizableResource>> fetchResourcesForNamespace(
+    public ResponseEntity<@NonNull List<AuthorizableResource>> fetchResourcesForNamespace(
         @PathVariable final String namespace) {
         val resources = authorizableResourceRepository.find(namespace);
         return ResponseEntity.ok(resources);
@@ -92,7 +93,7 @@ public class HeimdallAuthorizationEndpoint extends BaseCasRestActuatorEndpoint {
             @Parameter(name = "namespace", in = ParameterIn.PATH, required = true, description = "Namespace to fetch resources for"),
             @Parameter(name = "id", in = ParameterIn.PATH, required = true, description = "Resource id to fetch")
         })
-    public ResponseEntity<AuthorizableResource> fetchResourcesForNamespaceById(
+    public ResponseEntity<@NonNull AuthorizableResource> fetchResourcesForNamespaceById(
         @PathVariable final String namespace, @PathVariable final long id) {
         val resource = authorizableResourceRepository.find(namespace, id);
         return ResponseEntity.of(resource);

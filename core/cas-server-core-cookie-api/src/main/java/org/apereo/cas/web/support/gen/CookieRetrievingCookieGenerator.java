@@ -11,13 +11,13 @@ import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.InvalidCookieException;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.Cookie;
@@ -106,7 +106,7 @@ public class CookieRetrievingCookieGenerator implements Serializable, CasCookieB
     }
 
     @Override
-    public String retrieveCookieValue(final HttpServletRequest request) {
+    public @Nullable String retrieveCookieValue(final HttpServletRequest request) {
         try {
             if (StringUtils.isBlank(getCookieName())) {
                 throw new InvalidCookieException("Cookie name is undefined");
@@ -241,7 +241,7 @@ public class CookieRetrievingCookieGenerator implements Serializable, CasCookieB
         return cookie;
     }
 
-    protected Cookie createCookie(@NonNull final String cookieValue) {
+    protected Cookie createCookie(final String cookieValue) {
         val cookie = new Cookie(getCookieName(), cookieValue);
         if (StringUtils.isNotBlank(getCookieDomain())) {
             cookie.setDomain(getCookieDomain());

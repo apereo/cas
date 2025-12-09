@@ -23,7 +23,6 @@ import org.apereo.cas.util.serialization.SerializationUtils;
 import com.google.common.io.ByteSource;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationContext;
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -68,7 +68,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     protected final ApplicationContext applicationContext;
 
-    protected static String getPrincipalIdFrom(final Ticket ticket) {
+    protected String getPrincipalIdFrom(final Ticket ticket) {
         return ticket instanceof final AuthenticationAwareTicket authenticationAwareTicket
             ? Optional.ofNullable(authenticationAwareTicket.getAuthentication())
             .map(auth -> auth.getPrincipal().getId()).orElse(StringUtils.EMPTY)
@@ -364,9 +364,13 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return ticketToProcess;
         }
         LOGGER.debug("Attempting to decode [{}]", ticketToProcess);
-        val ticket = SerializationUtils.decodeAndDeserializeObject(encodedTicket.getEncodedTicket(), this.cipherExecutor, Ticket.class);
+        val ticket = decodeAndDeserialize(encodedTicket.getEncodedTicket());
         LOGGER.debug("Decoded ticket to [{}]", ticket);
         return ticket;
+    }
+
+    protected Ticket decodeAndDeserialize(final byte[] encodedTicket) {
+        return SerializationUtils.decodeAndDeserializeObject(encodedTicket, this.cipherExecutor, Ticket.class);
     }
 
     protected Collection<Ticket> decodeTickets(final Collection<Ticket> items) {
@@ -391,8 +395,12 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     protected Ticket createEncodedTicket(final Ticket ticket) throws Exception {
         LOGGER.debug("Encoding ticket [{}]", ticket);
-        val encodedTicketObject = SerializationUtils.serializeAndEncodeObject(cipherExecutor, ticket);
+        val encodedTicketObject = getSerializeAndEncode(ticket);
         return toEncodedTicket(ticket, encodedTicketObject);
+    }
+
+    protected byte[] getSerializeAndEncode(final Ticket ticket) {
+        return SerializationUtils.serializeAndEncodeObject(cipherExecutor, ticket);
     }
 
     protected Ticket toEncodedTicket(final Ticket ticket, final byte[] encodedTicketObject) throws Exception {

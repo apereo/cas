@@ -16,6 +16,7 @@ import org.apereo.cas.util.text.MessageSanitationContributor;
 import org.apereo.cas.util.text.MessageSanitizer;
 import org.apereo.cas.util.text.TicketCatalogMessageSanitationContributor;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -107,12 +108,12 @@ class CasCoreUtilConfiguration {
         }
 
         @Bean
-        public static Converter<ZonedDateTime, String> zonedDateTimeToStringConverter() {
+        public static Converter<@NonNull ZonedDateTime, @NonNull String> zonedDateTimeToStringConverter() {
             return new Converters.ZonedDateTimeToStringConverter();
         }
 
         @Bean
-        public static Converter<String, Resource> stringToResourceConverter() {
+        public static Converter<@NonNull String, @NonNull Resource> stringToResourceConverter() {
             return new Converters.StringToResourceConverter();
         }
 
@@ -158,7 +159,7 @@ class CasCoreUtilConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "ticketCatalogMessageSanitationContributor")
         public MessageSanitationContributor defaultMessageSanitationContributor(
-            @Qualifier(TicketCatalog.BEAN_NAME) final ObjectProvider<TicketCatalog> ticketCatalog) {
+            @Qualifier(TicketCatalog.BEAN_NAME) final ObjectProvider<@NonNull TicketCatalog> ticketCatalog) {
             return new TicketCatalogMessageSanitationContributor(ticketCatalog);
         }
 

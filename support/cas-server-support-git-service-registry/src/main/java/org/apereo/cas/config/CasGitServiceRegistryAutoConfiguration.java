@@ -19,6 +19,7 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -58,7 +59,7 @@ public class CasGitServiceRegistryAutoConfiguration {
     @ConditionalOnMissingBean(name = "gitServiceRegistry")
     public ServiceRegistry gitServiceRegistry(
         final CasConfigurationProperties casProperties,
-        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
+        final ObjectProvider<@NonNull List<ServiceRegistryListener>> serviceRegistryListeners,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("gitServiceRegistryRepositoryInstance")
         final GitRepository gitServiceRegistryRepositoryInstance,

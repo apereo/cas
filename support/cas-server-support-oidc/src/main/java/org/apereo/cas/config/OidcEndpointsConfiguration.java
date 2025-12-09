@@ -49,6 +49,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.FactoryBean;
@@ -75,7 +76,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import jakarta.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,7 +103,7 @@ class OidcEndpointsConfiguration {
             @Qualifier(MultifactorAuthenticationProviderResolver.BEAN_NAME)
             final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver,
             @Qualifier(OidcServerDiscoverySettings.BEAN_NAME_FACTORY)
-            final FactoryBean<OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory,
+            final FactoryBean<@NonNull OidcServerDiscoverySettings> oidcServerDiscoverySettingsFactory,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return new OidcMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver,
@@ -148,22 +148,22 @@ class OidcEndpointsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor oauthInterceptor(
-            final ObjectProvider<List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
-            final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthRequestValidators,
+            final ObjectProvider<@NonNull List<AccessTokenGrantRequestExtractor>> accessTokenGrantRequestExtractors,
+            final ObjectProvider<@NonNull List<OAuth20AuthorizationRequestValidator>> oauthRequestValidators,
             @Qualifier("oauthDistributedSessionStore")
-            final ObjectProvider<SessionStore> oauthDistributedSessionStore,
+            final ObjectProvider<@NonNull SessionStore> oauthDistributedSessionStore,
             @Qualifier("requiresAuthenticationAuthorizeInterceptor")
-            final ObjectProvider<HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
+            final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationAuthorizeInterceptor,
             @Qualifier("requiresAuthenticationAccessTokenInterceptor")
-            final ObjectProvider<HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor,
+            final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationAccessTokenInterceptor,
             @Qualifier("requiresAuthenticationClientConfigurationInterceptor")
-            final ObjectProvider<HandlerInterceptor> requiresAuthenticationClientConfigurationInterceptor,
+            final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationClientConfigurationInterceptor,
             @Qualifier("requiresAuthenticationDynamicRegistrationInterceptor")
-            final ObjectProvider<HandlerInterceptor> requiresAuthenticationDynamicRegistrationInterceptor,
+            final ObjectProvider<@NonNull HandlerInterceptor> requiresAuthenticationDynamicRegistrationInterceptor,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final ObjectProvider<OAuth20RequestParameterResolver> oauthRequestParameterResolver,
+            final ObjectProvider<@NonNull OAuth20RequestParameterResolver> oauthRequestParameterResolver,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ObjectProvider<ServicesManager> servicesManager,
+            final ObjectProvider<@NonNull ServicesManager> servicesManager,
             final CasConfigurationProperties casProperties) {
 
             return new OidcHandlerInterceptorAdapter(
@@ -197,12 +197,12 @@ class OidcEndpointsConfiguration {
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             @Qualifier("oauthInterceptor")
-            final ObjectProvider<HandlerInterceptor> oauthInterceptor,
+            final ObjectProvider<@NonNull HandlerInterceptor> oauthInterceptor,
             final CasConfigurationProperties casProperties) {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(
-                    @Nonnull
+                    @NonNull
                     final InterceptorRegistry registry) {
                     val baseEndpoint = getOidcBaseEndpoint(oidcIssuerService, casProperties);
                     LOGGER.info("Registering CAS OpenID Connect endpoints under [{}]. Verify to make sure this value "
@@ -268,10 +268,10 @@ class OidcEndpointsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor oidcLocaleChangeInterceptor(
             @Qualifier(ArgumentExtractor.BEAN_NAME)
-            final ObjectProvider<ArgumentExtractor> argumentExtractor,
+            final ObjectProvider<@NonNull ArgumentExtractor> argumentExtractor,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ObjectProvider<ServicesManager> servicesManager,
-            final ObjectProvider<CasConfigurationProperties> casProperties) {
+            final ObjectProvider<@NonNull ServicesManager> servicesManager,
+            final ObjectProvider<@NonNull CasConfigurationProperties> casProperties) {
             val interceptor = new OidcLocaleChangeInterceptor(casProperties,
                 argumentExtractor, servicesManager);
             interceptor.setParamName(OidcConstants.UI_LOCALES);
@@ -440,7 +440,7 @@ class OidcEndpointsConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("oidcJsonWebKeystoreRotationService")
-            final ObjectProvider<OidcJsonWebKeystoreRotationService> oidcJsonWebKeystoreRotationService) {
+            final ObjectProvider<@NonNull OidcJsonWebKeystoreRotationService> oidcJsonWebKeystoreRotationService) {
             return new OidcJwksRotationEndpoint(casProperties, applicationContext, oidcJsonWebKeystoreRotationService);
         }
     }

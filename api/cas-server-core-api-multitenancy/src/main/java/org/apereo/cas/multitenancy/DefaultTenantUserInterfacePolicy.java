@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jspecify.annotations.Nullable;
 import java.io.Serial;
 
 /**
@@ -22,5 +23,5 @@ public class DefaultTenantUserInterfacePolicy implements TenantUserInterfacePoli
     @Serial
     private static final long serialVersionUID = 3238689336491450327L;
 
-    private String themeName;
+    private @Nullable String themeName;
 }

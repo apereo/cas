@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.mail.autoconfigure.MailProperties;
 import org.springframework.boot.ssl.SslBundles;
@@ -53,7 +54,7 @@ public class DefaultEmailSender implements EmailSender {
         }, throwable -> false).get();
 
         val recipients = emailRequest.getRecipients();
-        if (connectionAvailable) {
+        if (connectionAvailable && mailSender != null) {
             val message = createEmailMessage(emailRequest, mailSender);
             emailSenderCustomizers.forEach(customizer -> customizer.customize(mailSender, emailRequest));
             mailSender.send(message);
@@ -88,7 +89,7 @@ public class DefaultEmailSender implements EmailSender {
         return message;
     }
 
-    protected JavaMailSenderImpl createMailSender(final EmailMessageRequest emailRequest) {
+    protected @Nullable JavaMailSenderImpl createMailSender(final EmailMessageRequest emailRequest) {
         val sender = applyProperties(new JavaMailSenderImpl(), emailRequest);
         return StringUtils.isNotBlank(sender.getHost()) ? sender : null;
     }

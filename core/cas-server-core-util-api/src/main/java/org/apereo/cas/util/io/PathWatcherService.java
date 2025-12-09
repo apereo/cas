@@ -8,8 +8,8 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
-import jakarta.annotation.Nullable;
 import java.io.File;
 import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.Path;
@@ -18,8 +18,6 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import static java.nio.file.StandardWatchEventKinds.*;
 
@@ -47,7 +45,15 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
     @Nullable
     private Thread thread;
 
-    private final ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
+    protected PathWatcherService(final WatchService watcherService,
+                                 final CheckedConsumer<File> onModify) {
+        this.watchService = watcherService;
+        this.onCreate = _ -> {
+        };
+        this.onModify = onModify;
+        this.onDelete = _ -> {
+        };
+    }
 
     public PathWatcherService(final File watchablePath, final CheckedConsumer<File> onModify) {
         this(watchablePath.toPath(),
@@ -69,14 +75,13 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
     }
 
     @Override
-    @SuppressWarnings("FutureReturnValueIgnored")
     public void run() {
         if (shouldEnableWatchService()) {
             try {
                 var key = (WatchKey) null;
                 while ((key = watchService.take()) != null) {
-                    val finalKey = key;
-                    executorService.submit(() -> handleEvent(finalKey));
+                    handleEvent(key);
+
                     val valid = key.reset();
                     if (!valid) {
                         LOGGER.info("Directory key is no longer valid. Quitting watcher service");
@@ -96,7 +101,6 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
         if (this.thread != null) {
             thread.interrupt();
         }
-        executorService.shutdownNow();
         LOGGER.trace("Closed service registry watcher thread");
     }
 
