@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jspecify.annotations.Nullable;
 import java.io.Serial;
 import java.util.Set;
 
@@ -23,5 +24,5 @@ public class TenantCasAuthenticationProtocolPolicy implements TenantAuthenticati
     @Serial
     private static final long serialVersionUID = -9012299259747093234L;
 
-    private Set<String> supportedProtocols;
+    private @Nullable Set<String> supportedProtocols;
 }

@@ -173,7 +173,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+    @Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER, readOnly = false)
     void verifyTicketsWithAuthnAttributes() throws Throwable {
         assumeTrue(canTicketRegistryIterate());
         val authn = CoreAuthenticationTestUtils.getAuthentication(
@@ -306,7 +306,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+    @Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER, readOnly = false)
     void verifyCountSessionsPerUser() throws Throwable {
         val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
         assumeTrue(canTicketRegistryIterate());
@@ -319,7 +319,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+    @Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER, readOnly = false)
     void verifyGetSsoSessionsPerUser() throws Throwable {
         val assumption = "Ticket registry %s does not support iteration".formatted(getClass().getName());
         assumeTrue(canTicketRegistryIterate(), assumption);
@@ -489,7 +489,7 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
-    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+    @Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER, readOnly = false)
     void verifyDeleteNonExistingTicket() throws Throwable {
         val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
         val addedTicket = ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,

@@ -63,6 +63,7 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -157,7 +158,7 @@ class CasCoreTicketsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationPolicy uniqueAuthenticationPolicy(
             @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
-            final ObjectProvider<SingleSignOnParticipationStrategy> singleSignOnParticipationStrategy,
+            final ObjectProvider<@NonNull SingleSignOnParticipationStrategy> singleSignOnParticipationStrategy,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties) {
@@ -193,7 +194,7 @@ class CasCoreTicketsConfiguration {
             final QueueableTicketRegistryMessagePublisher messageQueueTicketRegistryPublisher,
             @Qualifier(CipherExecutor.BEAN_NAME_TICKET_REGISTRY_CIPHER_EXECUTOR)
             final CipherExecutor defaultTicketRegistryCipherExecutor,
-            @Qualifier("messageQueueTicketRegistryIdentifier")
+            @Qualifier(PublisherIdentifier.DEFAULT_BEAN_NAME)
             final PublisherIdentifier messageQueueTicketRegistryIdentifier,
             @Qualifier(TicketCatalog.BEAN_NAME)
             final TicketCatalog ticketCatalog,
@@ -232,14 +233,14 @@ class CasCoreTicketsConfiguration {
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("messageQueueTicketRegistryIdentifier")
+            @Qualifier(PublisherIdentifier.DEFAULT_BEAN_NAME)
             final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
             return ticketRegistry instanceof final QueueableTicketRegistry queueableTicketRegistry
                 ? new DefaultQueueableTicketRegistryMessageReceiver(queueableTicketRegistry, messageQueueTicketRegistryIdentifier, applicationContext)
                 : QueueableTicketRegistryMessageReceiver.noOp();
         }
 
-        @ConditionalOnMissingBean(name = "messageQueueTicketRegistryIdentifier")
+        @ConditionalOnMissingBean(name = PublisherIdentifier.DEFAULT_BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PublisherIdentifier messageQueueTicketRegistryIdentifier(final CasConfigurationProperties casProperties) {
@@ -559,7 +560,7 @@ class CasCoreTicketsConfiguration {
     @EnableTransactionManagement(proxyTargetClass = false)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     static class CasCoreTicketTransactionConfiguration {
-        @ConditionalOnMissingBean(name = "ticketTransactionManager")
+        @ConditionalOnMissingBean(name = TicketRegistry.TICKET_TRANSACTION_MANAGER)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager ticketTransactionManager() {

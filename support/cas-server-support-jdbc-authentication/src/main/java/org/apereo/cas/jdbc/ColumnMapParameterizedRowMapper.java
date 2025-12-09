@@ -1,6 +1,7 @@
 package org.apereo.cas.jdbc;
 
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 import java.sql.ResultSet;
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public class ColumnMapParameterizedRowMapper extends ColumnMapRowMapper {
     @Override
-    public final Map<String, Object> mapRow(final ResultSet rs, final int rowNum) throws SQLException {
+    public final @NonNull Map<String, Object> mapRow(final ResultSet rs, final int rowNum) throws SQLException {
         val rsmd = rs.getMetaData();
         val columnCount = rsmd.getColumnCount();
         val mapOfColValues = createColumnMap(columnCount);

@@ -11,6 +11,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,14 +41,14 @@ import jakarta.servlet.http.HttpServletRequest;
 class CasWebflowMonitoringConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "casWebflowMonitoringAspect")
-    public CasWebflowMonitoringAspect casWebflowMonitoringAspect(final ObjectProvider<ExecutableObserver> observer) {
+    public CasWebflowMonitoringAspect casWebflowMonitoringAspect(final ObjectProvider<@NonNull ExecutableObserver> observer) {
         return new CasWebflowMonitoringAspect(observer);
     }
 
     @Aspect
     @Slf4j
     @SuppressWarnings("UnusedMethod")
-    record CasWebflowMonitoringAspect(ObjectProvider<ExecutableObserver> observerProvider) {
+    record CasWebflowMonitoringAspect(ObjectProvider<@NonNull ExecutableObserver> observerProvider) {
 
         @Around("allComponentsThatAreWebflowExecutors()")
         public Object aroundWebflowOperations(final ProceedingJoinPoint joinPoint) throws Throwable {

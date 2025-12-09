@@ -10,6 +10,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -101,7 +102,7 @@ public class MultifactorAuthenticationUtils {
      * @param predicate         the predicate
      * @return the set
      */
-    public static Set<Event> resolveEventViaMultivaluedAttribute(
+    public static @Nullable Set<Event> resolveEventViaMultivaluedAttribute(
         final Principal principal,
         final Object attributeValue,
         final RegisteredService registeredService,
@@ -179,7 +180,7 @@ public class MultifactorAuthenticationUtils {
      * @param predicate              the predicate
      * @return the set
      */
-    public static Set<Event> resolveEventViaSingleAttribute(
+    public static @Nullable Set<Event> resolveEventViaSingleAttribute(
         final Principal principal,
         final Object providedAttributeValue,
         final RegisteredService registeredService,

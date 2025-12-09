@@ -1,8 +1,18 @@
 configurations.configureEach {
     resolutionStrategy {
+        dependencySubstitution {
+            substitute module("org.lz4:lz4-java") using module("at.yawk.lz4:lz4-java:${libs.lz4.get().version}")
+        }
+        
         capabilitiesResolution {
             withCapability("com.google.collections:google-collections") {
                 selectHighestVersion()
+            }
+            withCapability("org.lz4:lz4-java") { details ->
+                def preferred = details.candidates.find { it.id.group == "at.yawk.lz4" }
+                if (preferred != null) {
+                    details.select(preferred)
+                }
             }
         }
 
@@ -44,6 +54,9 @@ configurations.configureEach {
                 }
                 if (requested.group == "com.google.code.gson") {
                     details.useVersion(libs.gson.get().version)
+                }
+                if (requested.group == "org.apache.pulsar") {
+                    details.useVersion(libs.pulsar.client.api.get().version)
                 }
                 if (requested.name == "hibernate-validator") {
                     details.useVersion(libs.hibernate.validator.get().version)
@@ -122,9 +135,6 @@ configurations.configureEach {
                 }
                 if (requested.group == "com.github.ben-manes.caffeine") {
                     details.useVersion(libs.caffeine.get().version)
-                }
-                if (requested.group == "org.apache.logging.log4j") {
-                    details.useVersion(libs.log4j.core.get().version)
                 }
                 if (requested.group == "org.apache.groovy") {
                     details.useVersion(libs.apachegroovy.core.get().version)

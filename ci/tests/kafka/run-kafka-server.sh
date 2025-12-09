@@ -9,7 +9,6 @@ function printgreen() {
   printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
 }
 
-
 printgreen "Building Kafka image..."
 COMPOSE_FILE=./ci/tests/kafka/docker-compose.yml
 test -f $COMPOSE_FILE || COMPOSE_FILE=docker-compose.yml

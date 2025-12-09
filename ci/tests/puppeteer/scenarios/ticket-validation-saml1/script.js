@@ -1,14 +1,21 @@
-
 const assert = require("assert");
 const https = require("https");
 const cas = require("../../cas.js");
 
-(async () => {
-    const browser = await cas.newBrowser(cas.browserOptions());
-    const page = await cas.newPage(browser);
-    const service = "https://apereo.github.io";
+const SERVICE = "https://localhost:9859/anything/cas";
 
-    await cas.goto(page, `https://localhost:8443/cas/login?TARGET=${service}`);
+async function validateCas1Ticket(page) {
+    await cas.gotoLogin(page, SERVICE);
+    await cas.loginWith(page);
+    const ticket = await cas.assertTicketParameter(page);
+    const body = await cas.doRequest(`https://localhost:8443/cas/validate?service=${SERVICE}&ticket=${ticket}`);
+    await cas.log(body);
+    assert(body === "no\n\n");
+    await cas.gotoLogout(page);
+}
+
+async function validateSaml1Ticket(page) {
+    await cas.goto(page, `https://localhost:8443/cas/login?TARGET=${SERVICE}`);
     await cas.loginWith(page);
 
     const ticket = await cas.assertParameter(page, "SAMLart");
@@ -29,7 +36,7 @@ IssueInstant="2021-06-19T17:03:44.022Z">
         protocol: "https:",
         hostname: "localhost",
         port: 8443,
-        path: `/cas/samlValidate?TARGET=${service}&SAMLart=${ticket}`,
+        path: `/cas/samlValidate?TARGET=${SERVICE}&SAMLart=${ticket}`,
         method: "POST",
         rejectUnauthorized: false,
         headers: {
@@ -54,5 +61,13 @@ IssueInstant="2021-06-19T17:03:44.022Z">
     assert(body.includes("<saml1:NameIdentifier>casuser</saml1:NameIdentifier>"));
     assert(body.includes("<saml1:AttributeValue>Static Credentials</saml1:AttributeValue>"));
     assert(body.includes("<saml1:AttributeValue>urn:oasis:names:tc:SAML:1.0:am:password</saml1:AttributeValue>"));
+    await cas.gotoLogout(page);
+}
+
+(async () => {
+    const browser = await cas.newBrowser(cas.browserOptions());
+    const page = await cas.newPage(browser);
+    await validateSaml1Ticket(page);
+    await validateCas1Ticket(page);
     await cas.closeBrowser(browser);
 })();

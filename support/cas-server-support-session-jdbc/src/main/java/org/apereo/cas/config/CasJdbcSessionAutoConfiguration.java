@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeaturesEnabled;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -41,8 +42,8 @@ public class CasJdbcSessionAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     JdbcSessionDataSourceScriptDatabaseInitializer jdbcSessionDataSourceInitializer(
-        @SpringSessionDataSource final ObjectProvider<DataSource> sessionDataSource,
-        final ObjectProvider<DataSource> dataSource,
+        @SpringSessionDataSource final ObjectProvider<@NonNull DataSource> sessionDataSource,
+        final ObjectProvider<@NonNull DataSource> dataSource,
         final JdbcSessionProperties properties) {
         return new JdbcSessionDataSourceScriptDatabaseInitializer(
             sessionDataSource.getIfAvailable(dataSource::getObject), properties);
@@ -52,7 +53,7 @@ public class CasJdbcSessionAutoConfiguration {
     @Bean
     @Primary
     public PlatformTransactionManager jdbcSessionTransactionManager(
-        final ObjectProvider<DataSource> dataSource) {
+        final ObjectProvider<@NonNull DataSource> dataSource) {
         val ds = dataSource.getIfAvailable();
         return ds != null ? new DataSourceTransactionManager(ds) : new PseudoTransactionManager();
     }

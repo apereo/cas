@@ -17,6 +17,7 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.bson.Document;
 import org.bson.json.JsonMode;
 import org.bson.json.JsonWriterSettings;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,7 +26,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import tools.jackson.databind.ObjectMapper;
-import jakarta.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -64,7 +64,7 @@ public class CasSupportMongoDbAuditAutoConfiguration {
             .defaultTypingEnabled(false).build().toObjectMapper();
 
         @Override
-        public AuditActionContext convert(@Nonnull final Document document) {
+        public AuditActionContext convert(@NonNull final Document document) {
             return FunctionUtils.doUnchecked(() ->
                 MAPPER.readValue(document.toJson(JsonWriterSettings.builder()
                     .outputMode(JsonMode.RELAXED)

@@ -19,6 +19,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.jooq.lambda.Unchecked;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import tools.jackson.databind.ObjectMapper;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
  * @since 6.6.0
  */
 @RequiredArgsConstructor
+@Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER)
 public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();

@@ -11,6 +11,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.hjson.JsonValue;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.IndirectClient;
@@ -41,7 +42,7 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
     public RestfulDelegatedIdentityProviderFactory(final Collection<DelegatedClientFactoryCustomizer> customizers,
                                                    final CasSSLContext casSSLContext,
                                                    final CasConfigurationProperties casProperties,
-                                                   final Cache<String, List<BaseClient>> clientsCache,
+                                                   final Cache<@NonNull String, List<BaseClient>> clientsCache,
                                                    final ConfigurableApplicationContext applicationContext) {
         super(casProperties, customizers, casSSLContext, clientsCache, applicationContext);
     }

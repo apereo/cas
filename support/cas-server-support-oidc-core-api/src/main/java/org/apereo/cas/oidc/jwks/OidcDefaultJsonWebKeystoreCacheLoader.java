@@ -3,15 +3,14 @@ package org.apereo.cas.oidc.jwks;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.util.LoggingUtils;
-
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
+import org.jspecify.annotations.NonNull;
 import org.springframework.core.io.Resource;
-
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public record OidcDefaultJsonWebKeystoreCacheLoader(OidcJsonWebKeystoreGeneratorService oidcJsonWebKeystoreGeneratorService)
-    implements CacheLoader<OidcJsonWebKeyCacheKey, JsonWebKeySet> {
+    implements CacheLoader<@NonNull OidcJsonWebKeyCacheKey, JsonWebKeySet> {
     /**
      * Gets json web key from jwks.
      *

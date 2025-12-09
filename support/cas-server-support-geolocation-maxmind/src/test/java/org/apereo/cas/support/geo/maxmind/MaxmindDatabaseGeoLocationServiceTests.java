@@ -1,7 +1,6 @@
 package org.apereo.cas.support.geo.maxmind;
 
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
-
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.WebServiceClient;
 import com.maxmind.geoip2.exception.AddressNotFoundException;
@@ -16,14 +15,11 @@ import com.maxmind.geoip2.record.Postal;
 import com.maxmind.geoip2.record.RepresentedCountry;
 import com.maxmind.geoip2.record.Traits;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import jakarta.annotation.Nonnull;
-
 import java.net.InetAddress;
 import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -58,7 +54,7 @@ class MaxmindDatabaseGeoLocationServiceTests {
     }
 
     private static CityResponse getCityResponse() {
-        val location = new Location(10, 100, 40.0D, 70.0D, 1, 1, "UTC");
+        val location = new Location(10, 100, 40.0D, 70.0D, 1, "UTC");
         return new CityResponse(new City(), new Continent(), new Country(),
             location, new MaxMind(), new Postal(),
             new Country(), new RepresentedCountry(), new ArrayList<>(), new Traits());
@@ -106,7 +102,7 @@ class MaxmindDatabaseGeoLocationServiceTests {
         assertNull(response2);
     }
 
-    @Nonnull
+    @NonNull
     private static CountryResponse getCountryResponse() {
         return new CountryResponse(new Continent(), new Country(),
             new MaxMind(), new Country(),

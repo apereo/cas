@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -62,42 +63,42 @@ public class PasswordManagementEndpoint extends BaseCasRestActuatorEndpoint {
     /**
      * The communication manager for SMS/emails.
      */
-    protected final ObjectProvider<CommunicationsManager> communicationsManager;
+    protected final ObjectProvider<@NonNull CommunicationsManager> communicationsManager;
 
     /**
      * The password management service.
      */
-    protected final ObjectProvider<PasswordManagementService> passwordManagementService;
+    protected final ObjectProvider<@NonNull PasswordManagementService> passwordManagementService;
 
     /**
      * Build the reset URL for the user.
      */
-    protected final ObjectProvider<PasswordResetUrlBuilder> passwordResetUrlBuilder;
+    protected final ObjectProvider<@NonNull PasswordResetUrlBuilder> passwordResetUrlBuilder;
 
-    protected final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory;
+    protected final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> serviceFactory;
 
-    protected final ObjectProvider<ServicesManager> servicesManager;
+    protected final ObjectProvider<@NonNull ServicesManager> servicesManager;
 
     /**
      * The principal resolver to resolve the user
      * and fetch attributes for follow-up ops, such as email message body building.
      */
-    protected final ObjectProvider<PrincipalResolver> principalResolver;
+    protected final ObjectProvider<@NonNull PrincipalResolver> principalResolver;
 
-    protected final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+    protected final ObjectProvider<@NonNull AuthenticationSystemSupport> authenticationSystemSupport;
 
-    private final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
+    private final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     public PasswordManagementEndpoint(final CasConfigurationProperties casProperties,
                                       final ConfigurableApplicationContext applicationContext,
-                                      final ObjectProvider<CommunicationsManager> communicationsManager,
-                                      final ObjectProvider<PasswordManagementService> passwordManagementService,
-                                      final ObjectProvider<PasswordResetUrlBuilder> passwordResetUrlBuilder,
-                                      final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory,
-                                      final ObjectProvider<ServicesManager> servicesManager,
-                                      final ObjectProvider<PrincipalResolver> principalResolver,
-                                      final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
-                                      final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer) {
+                                      final ObjectProvider<@NonNull CommunicationsManager> communicationsManager,
+                                      final ObjectProvider<@NonNull PasswordManagementService> passwordManagementService,
+                                      final ObjectProvider<@NonNull PasswordResetUrlBuilder> passwordResetUrlBuilder,
+                                      final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> serviceFactory,
+                                      final ObjectProvider<@NonNull ServicesManager> servicesManager,
+                                      final ObjectProvider<@NonNull PrincipalResolver> principalResolver,
+                                      final ObjectProvider<@NonNull AuthenticationSystemSupport> authenticationSystemSupport,
+                                      final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer) {
         super(casProperties, applicationContext);
         this.communicationsManager = communicationsManager;
         this.passwordManagementService = passwordManagementService;

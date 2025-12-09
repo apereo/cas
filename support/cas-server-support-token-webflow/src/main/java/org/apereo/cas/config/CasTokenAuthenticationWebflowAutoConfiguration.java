@@ -21,6 +21,7 @@ import org.apereo.cas.web.flow.TokenWebflowConfigurer;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -112,17 +113,17 @@ public class CasTokenAuthenticationWebflowAutoConfiguration {
     @ConditionalOnAvailableEndpoint
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TokenAuthenticationEndpoint tokenAuthenticationEndpoint(
-        final ObjectProvider<CasConfigurationProperties> casProperties,
+        final ObjectProvider<@NonNull CasConfigurationProperties> casProperties,
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
+        final ObjectProvider<@NonNull PrincipalResolver> defaultPrincipalResolver,
         @Qualifier(ServicesManager.BEAN_NAME)
-        final ObjectProvider<ServicesManager> servicesManager,
+        final ObjectProvider<@NonNull ServicesManager> servicesManager,
         @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-        final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
+        final ObjectProvider<@NonNull AuditableExecution> registeredServiceAccessStrategyEnforcer,
         @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
-        final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
+        final ObjectProvider<@NonNull ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
         @Qualifier(PrincipalFactory.BEAN_NAME)
-        final ObjectProvider<PrincipalFactory> principalFactory) {
+        final ObjectProvider<@NonNull PrincipalFactory> principalFactory) {
         return new TokenAuthenticationEndpoint(casProperties, defaultPrincipalResolver,
             servicesManager, registeredServiceAccessStrategyEnforcer,
             webApplicationServiceFactory, principalFactory);

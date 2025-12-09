@@ -40,6 +40,440 @@ const CAS_FEATURES = [];
 
 let notyf = null;
 
+function hideAdvancedRegisteredServiceOptions() {
+    const value = $("#hideAdvancedOptions").val();
+    if (value === "true" || value === true) {
+        $("form#editServiceWizardForm .advanced-option").hide();
+    } else {
+        $("form#editServiceWizardForm .advanced-option").show();
+    }
+
+    if (availableMultifactorProviders.length === 0) {
+        $("#registeredServiceMfaPolicy").hide();
+    }
+    if (!CAS_FEATURES.includes("AcceptableUsagePolicy")) {
+        $("#registeredServiceAcceptableUsagePolicy").hide();
+    }
+    if (!CAS_FEATURES.includes("InterruptNotifications")) {
+        $("#registeredServiceWebflowInterruptPolicy").hide();
+    }
+    if (!CAS_FEATURES.includes("PasswordlessAuthn")) {
+        $("#registeredServicePasswordlessPolicy").hide();
+    }
+    if (!CAS_FEATURES.includes("SurrogateAuthentication")) {
+        $("#registeredServiceSurrogatePolicy").hide();
+    }
+}
+
+function generateServiceDefinition() {
+    setTimeout(function () {
+        const editor = initializeAceEditor("wizardServiceEditor");
+        let serviceDefinition = {
+            "@class": $("#serviceClassType").text().trim()
+        };
+
+        $("form#editServiceWizardForm")
+            .find("input,select")
+            .each(function () {
+                const $input = $(this);
+                const paramName = $input.data("param-name");
+                const paramType = $input.data("param-type");
+                const skipWhenFalse = $input.data("param-skip-false");
+                const skipWhenTrue = $input.data("param-skip-true");
+                let value = $input.val();
+
+                if (paramName && paramName.trim().length > 0 && value && value.trim().length > 0) {
+                    if (skipWhenFalse && (value === "false" || value === false)) {
+                        console.debug(`Skipping parameter ${paramName} because its value is false`);
+                    } else if (skipWhenTrue && (value === "true" || value === true)) {
+                        console.debug(`Skipping parameter ${paramName} because its value is true`);
+                    } else {
+                        const renderer = $input.data("renderer");
+
+                        if (value === "true") {
+                            value = true;
+                        } else if (value === "false") {
+                            value = false;
+                        } else if (isNumeric(value)) {
+                            value = Number(value);
+                        }
+
+                        if (typeof renderer === "function") {
+                            value = renderer(value, $input, serviceDefinition);
+                        }
+
+                        if (paramName.includes(".")) {
+                            const parts = paramName.split(".");
+                            let current = serviceDefinition;
+
+                            if (paramType && paramType.length > 0 && parts.length > 0) {
+                                if (!current[parts[0]]) {
+                                    current[parts[0]] = {"@class": paramType};
+                                }
+                            }
+
+                            for (let i = 0; i < parts.length; i++) {
+                                let part = parts[i];
+                                if (!current[part]) {
+                                    const effectiveValue = (i === parts.length - 1) ? value : {};
+                                    if (typeof effectiveValue !== "object"
+                                        || (typeof effectiveValue === "object" && Object.keys(effectiveValue).length > 0)) {
+                                        current[part] = effectiveValue;
+                                    }
+                                }
+
+                                current = current[part];
+                            }
+                        } else {
+                            serviceDefinition[paramName] = value;
+                        }
+                    }
+                }
+            });
+
+        if (Object.keys(serviceDefinition).length > 1) {
+            $("form#editServiceWizardForm")
+                .find("input,select")
+                .each(function () {
+                    const $input = $(this);
+                    const beforeGenerate = $input.data("beforeGenerate");
+                    if (typeof beforeGenerate === "function") {
+                        beforeGenerate($input, serviceDefinition);
+                    }
+                });
+
+            Object.keys(serviceDefinition).forEach(key => {
+                if (
+                    key !== "@class" &&                             
+                    typeof serviceDefinition[key] === "object" &&
+                    serviceDefinition[key] !== null &&
+                    Object.keys(serviceDefinition[key]).length === 1 &&
+                    serviceDefinition[key].hasOwnProperty("@class") ) {
+
+                    const classType = serviceDefinition[key]["@class"];
+                    const markerClass = $(`option[value='${classType}']`).data("markerClass");
+                    if (!markerClass) {
+                        console.log("Deleting", serviceDefinition[key])
+                        delete serviceDefinition[key];
+                    }
+                }
+            });
+            let remainingKeys = Object.keys(serviceDefinition);
+            if (remainingKeys.length === 1 && remainingKeys[0] === "@class") {
+                delete serviceDefinition["@class"];
+                editor.setValue("");
+            } else {
+                editor.setValue(JSON.stringify(serviceDefinition, null, 4));
+            }
+        } else {
+            editor.setValue("");
+        }
+        editor.gotoLine(1);
+    }, 100);
+}
+
+function generateMappedFieldValue(sectionId, config) {
+    const {
+        multipleValues = false,
+        valueFieldRenderer,
+        multipleValuesType = "java.util.ArrayList",
+        unwrapSingleElement = false
+    } = config;
+
+    const definition = {};
+
+    const inputs = $(`#${sectionId}`).find("input");
+    for (let i = 0; i < inputs.length; i += 2) {
+        const key = $(inputs[i]).val();
+        const value = $(inputs[i + 1]).val();
+
+        if (valueFieldRenderer !== undefined && typeof valueFieldRenderer === "function") {
+            definition[key] = valueFieldRenderer($(inputs[i]), $(inputs[i + 1]));
+        } else if (key && key.trim().length > 0 && value && value.trim().length > 0) {
+            if (multipleValues) {
+                const valueArray = value.split(",").filter(s => s.trim().length > 0);
+                if (unwrapSingleElement && valueArray.length === 1) {
+                    definition[key] = value;
+                } else {
+                    definition[key] = [multipleValuesType, valueArray];
+                }
+            } else {
+                definition[key] = value;
+            }
+        }
+    }
+    return {"@class": "java.util.TreeMap", ...definition};
+}
+
+function createMappedInputField(config) {
+    const {
+        header = "",
+        cssClasses = "",
+        keyField,
+        keyLabel = "",
+        valueField,
+        valueFieldType = "text",
+        valueLabel = "",
+        containerId,
+        containerField,
+        containerType,
+        required = false,
+        multipleValues = false,
+        multipleValuesType = "java.util.ArrayList",
+        valueFieldRenderer,
+        unwrapSingleElement = false
+    } = config;
+
+    const sectionContainerId = `registeredService${capitalize(keyField)}MapContainer`;
+    const addButtonId = `registeredService${capitalize(keyField)}AddButton`;
+    const removeButtonId = `registeredService${capitalize(keyField)}RemoveButton`;
+    const mapRowId = `registeredService${capitalize(keyField)}Row`;
+
+    const inputFieldKeyId = `registeredService${capitalize(keyField)}`;
+    const inputFieldValueId = `registeredService${capitalize(valueField)}`;
+    const rowElements = `
+            <div class="d-flex justify-content-between pt-2 ${keyField}-map-row ${cssClasses}" id="${mapRowId}">
+                <label for="${keyField}"
+                       class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label ${cssClasses}">
+                    <span class="mdc-notched-outline pr-2">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span class="mdc-floating-label">${keyLabel ?? ""}</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                    <input class="mdc-text-field__input form-control "
+                           id="${inputFieldKeyId}"
+                           name="${inputFieldKeyId}"
+                           size="25"
+                           type="text"
+                           data-param-name="${containerField}"
+                           data-param-type="${containerType}"
+                           ${required ? "required" : ""}/>
+                </label>
+
+                <label for="${valueField}"
+                       class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon control-label ${cssClasses}">
+                    <span class="mdc-notched-outline">
+                        <span class="mdc-notched-outline__leading"></span>
+                        <span class="mdc-notched-outline__notch">
+                            <span class="mdc-floating-label">${valueLabel ?? ""}</span>
+                        </span>
+                        <span class="mdc-notched-outline__trailing"></span>
+                    </span>
+                    <input class="mdc-text-field__input form-control"
+                           id="${inputFieldValueId}"
+                           name="${inputFieldValueId}"
+                           size="25"
+                           type="${valueFieldType}"
+                           data-param-name="${containerField}"
+                           data-param-type="${containerType}"
+                           ${required ? "required" : ""}/>
+                </label>
+
+                <button type="button"
+                        id="${removeButtonId}"
+                        name="${removeButtonId}"
+                        class="mdc-button mdc-button--raised btn btn-link mdc-button--inline-row ${cssClasses}">
+                    <i class="mdi mdi-trash-can" aria-hidden="true"></i>
+                </button>
+            </div>
+    `;
+
+    const html =
+        `<div id="${sectionContainerId}" class="${cssClasses}">
+            <h3 class="mt-2 mb-2 ${header && header.length > 0 ? "" : "hide"} ${cssClasses}">${header}</h3>
+            ${rowElements}
+            <span id="${sectionContainerId}ToAppend" class="pt-2 ${cssClasses}"></span>
+            <div class="d-flex pt-2 ${cssClasses}">
+                <button type="button" 
+                        name="${addButtonId}"
+                        id="${addButtonId}"
+                        class="mdc-button mdc-button--raised mdc-button--round add-row ${cssClasses}">
+                    <span class="mdc-button__label">
+                        <i class="mdc-tab__icon mdi mdi-plus-thick" aria-hidden="true"></i>
+                    </span>
+                </button>
+            </div>
+        </div>
+        `;
+
+    $(`#${containerId}`).append($(`${html}`));
+
+
+    function configureRemoveMapRowEventHandler() {
+        $(`button[name=${removeButtonId}]`).off().on("click", function () {
+            $(this).closest(`.${keyField}-map-row`).remove();
+            generateServiceDefinition();
+        });
+    }
+
+    function configureInputEventHandler() {
+        $(`#${sectionContainerId} input`).off().on("input", () => {
+            generateServiceDefinition();
+        });
+    }
+
+    function configureInputRenderer() {
+        $(`#${sectionContainerId} input`).data("renderer", function () {
+            return generateMappedFieldValue(sectionContainerId, config);
+        });
+    }
+
+    $(`button[name=${addButtonId}]`).off().on("click", () => {
+        let elementsToAdd = $(rowElements).removeClass("hide");
+        elementsToAdd.find("*").removeClass("hide");
+
+        $(`#${sectionContainerId}ToAppend`).append(elementsToAdd);
+        configureRemoveMapRowEventHandler();
+        cas.attachFields();
+        configureInputEventHandler();
+        configureInputRenderer();
+    });
+
+    configureRemoveMapRowEventHandler();
+    configureInputEventHandler();
+    configureInputRenderer();
+}
+
+function createSelectField(config) {
+    const {
+        containerId,
+        labelTitle,
+        paramName,
+        paramType = "",
+        options,
+        helpText,
+        serviceClass = "",
+        cssClasses = "",
+        changeEventHandlers = ""
+    } = config;
+
+    const selectId = `registeredService${capitalize(paramName)}`;
+    const $label = $("<label>")
+        .addClass(serviceClass ?? "")
+        .addClass("pt-2")
+        .addClass("mb-2")
+        .addClass(cssClasses ?? "")
+        .css("display", "block")
+        .attr("for", selectId).text(`${labelTitle} `);
+
+    const $select = $("<select>")
+        .attr("id", selectId)
+        .attr("data-change-handler", `${changeEventHandlers},generateServiceDefinition`)
+        .attr("data-param-name", paramName)
+        .attr("data-param-type", paramType)
+        .addClass("jqueryui-selectmenu");
+
+    options.forEach(opt => {
+        const $opt = $("<option>")
+            .attr("value", opt.value)
+            .text(opt.text);
+        if (opt.data && Object.keys(opt.data).length > 0) {
+            Object.entries(opt.data).forEach(([key, value]) => {
+                $opt.data(key, value);
+            });
+        }
+        if (opt.selected) {
+            $opt.attr("selected", "selected");
+        }
+
+        $select.append($opt);
+    });
+
+    $label.append($select);
+
+
+    const container = $("<span>", {
+        id: `${selectId}SelectContainer`,
+        class: `${serviceClass ?? ""} ${cssClasses ?? ""}`
+    });
+    $(container).append($label);
+
+    $(`#${containerId}`).append(container);
+    return $select;
+}
+
+function createInputField(config) {
+    const {
+        labelTitle,
+        name,
+        paramName,
+        paramType = "",
+        required,
+        dataType = "text",
+        containerId,
+        inclusion = "append",
+        title,
+        serviceClass = "",
+        cssClasses = "",
+        data = {}
+    } = config;
+
+    const label = $("<label>", {
+        for: name,
+        id: `${name}Label`,
+        class: `${serviceClass ?? ""} mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2 ${cssClasses ?? ""}`
+    });
+
+    const outline = $("<span>", {class: "mdc-notched-outline"});
+    outline.append($("<span>", {class: "mdc-notched-outline__leading"}));
+
+    const notch = $("<span>", {class: "mdc-notched-outline__notch"});
+    notch.append($("<span>", {class: "mdc-floating-label", html: labelTitle}));
+
+    outline.append(notch);
+    outline.append($("<span>", {class: "mdc-notched-outline__trailing"}));
+
+    const input = $("<input>", {
+        class: `${serviceClass ?? ""} mdc-text-field__input form-control ${cssClasses ?? ""}`,
+        type: dataType === "regex" || dataType === "text" ? "text" : dataType,
+        id: name,
+        name: name,
+        "data-param-name": paramName,
+        "data-param-type": paramType,
+        tabindex: 0,
+        size: 50,
+        autocomplete: "off",
+        title: title,
+        required: required
+    }).on("input", function() {
+        const value = $(this).val();
+        if (value.length > 0 && dataType === "regex" && !isValidRegex(value)) {
+            this.setCustomValidity("Value must be a valid regular expression.");
+        } else if (required && value.length <= 0) {
+            this.setCustomValidity("Field value is required");
+        } else {
+            this.setCustomValidity("");
+            generateServiceDefinition();
+        }
+    })
+        .on("blur", function () {
+            const value = $(this).val().trim();
+            if (!this.checkValidity()) {
+                this.reportValidity();
+            }
+        });
+
+    Object.entries(data).forEach(([key, value]) => {
+        input.data(key, value);
+    });
+    label.append(outline, input);
+
+    const container = $("<span>", {
+        id: `${name}FieldContainer`,
+        class: `${serviceClass ?? ""} ${cssClasses ?? ""}`
+    });
+
+    $(container).append(label);
+    if (inclusion === undefined || inclusion === "" || inclusion === "append") {
+        $(`#${containerId}`).append(container);
+    } else if (inclusion === "prepend") {
+        $(`#${containerId}`).prepend(container);
+    }
+    return input;
+}
+
 function fetchServices(callback) {
     if (actuatorEndpoints.registeredservices) {
         $.get(actuatorEndpoints.registeredservices, response => {
@@ -136,7 +570,7 @@ function fetchServices(callback) {
             applicationsTable.on("draw", () => {
                 initializeServiceButtons();
             });
-            
+
             applicationsTable.search("").draw();
             saml2MetadataProvidersTable.search("").draw();
 
@@ -175,11 +609,193 @@ function navigateToApplication(serviceIdToFind) {
 }
 
 function initializeFooterButtons() {
-    $("button[name=newService]").off().on("click", () => {
+    $("button[name=copyServiceDefinitionWizard]").off().on("click", () => {
+        const editor = initializeAceEditor("wizardServiceEditor");
+        copyToClipboard(editor.getValue());
+    });
+
+    
+    $("button[name=validateServiceWizard]").off().on("click", () => {
+        const $accordion = $("#editServiceWizardMenu");
+        let valid = true;
+        const originalIndex = $("#editServiceWizardMenu").accordion("option", "active");
+        $("#editServiceWizardMenu .ui-accordion-header:visible").each(function () {
+            const $header = $(this);
+            const index = $accordion
+                .find(".ui-accordion-header")
+                .index($header);
+            $accordion.accordion("option", "active", index);
+
+            $("#editServiceWizardForm .ui-accordion-content:visible input:visible").each(function () {
+                const input = $(this);
+                valid = input.get(0).checkValidity();
+                if (!valid) {
+                    input.get(0).reportValidity();
+                    return false;
+                }
+            });
+            if (!valid) {
+                return false;
+            }
+        });
+        if (valid) {
+            const currentIndex = $("#editServiceWizardMenu").accordion("option", "active");
+            if (originalIndex !== currentIndex) {
+                $("#editServiceWizardMenu").accordion("option", "active", originalIndex);
+            }
+            if (actuatorEndpoints.registeredservices) {
+                const editor = initializeAceEditor("wizardServiceEditor");
+                $.ajax({
+                    url: `${actuatorEndpoints.registeredservices}/validate`,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: editor.getValue(),
+                    success: response => {
+                        const message = `
+                            The given application definition is valid and can be parsed by CAS. Please note that validity
+                            does not imply behavioral correctness. It only indicates that the generated
+                            application definition adheres to the expected schema and structure required by CAS
+                            and can be stored successfully.
+                        `;
+                        Swal.fire("Success", message, "info");
+                    },
+                    error: (xhr, status, error) => {
+                        console.error(`Error: ${status} / ${error} / ${xhr.responseText}`);
+                        displayBanner(xhr);
+                    }
+                });
+            }
+        }
+    });
+
+    $("button[name=newServiceWizard]").off().on("click", () => {
+
+        function openWizardDialog(serviceClass) {
+            $("#editServiceWizardGeneralContainer").find("input").val("");
+
+            const editor = initializeAceEditor("wizardServiceEditor");
+            editor.setReadOnly(true);
+            editor.setValue("");
+            editor.gotoLine(1);
+
+            const className = getLastWord(serviceClass);
+            $("#serviceClassType").text(serviceClass);
+            $("#editServiceWizardForm").data("service-class", serviceClass).data("service-class-name", className);
+
+            $("#editServiceWizardMenu")
+                .accordion({
+                    collapsible: true,
+                    heightStyle: "content",
+                    activate: function (event, ui) {
+                        let idx = $("#editServiceWizardMenu").accordion("option", "active");
+                        if (isNumeric(idx)) {
+                            // console.log(`Saving wizard menu index ${idx}`);
+                            localStorage.setItem("registeredServiceWizardMenuOption", idx);
+                        }
+                    }
+                });
+
+            $(`.class-${className}`).show();
+            $("[class*='class-']").not(`.class-${className}`).hide();
+
+            $("#editServiceWizardMenu").accordion("refresh");
+
+            const editServiceWizardDialogElement = document.getElementById("editServiceWizardDialog");
+            let editServiceWizardDialog = window.mdc.dialog.MDCDialog.attachTo(editServiceWizardDialogElement);
+            $(editServiceWizardDialogElement).attr("newService", true);
+            $(editServiceWizardDialogElement).attr("serviceClass", serviceClass);
+
+            $("#editServiceWizardForm input[type=hidden]")
+                .each(function () {
+                    const id = this.id;
+
+                    const data = $(`input#${id}`).data("attrs");
+                    if (data && data.length > 0) {
+                        const attributes = Object.fromEntries(
+                            data.split(",").map(pair => {
+                                const [key, val] = pair.split("=");
+                                return [key, val === "true" ? true : val === "false" ? false : val];
+                            })
+                        );
+
+                        Object.entries(attributes).forEach(([key, value]) => {
+                            $(`input#${id}`).data(key, value);
+                        });
+                    }
+                    $(`button#${id}Button`).on("click", function (e) {
+                        setTimeout(() => generateServiceDefinition(), 0);
+                    });
+                });
+
+            $("#editServiceWizardForm input").val("");
+
+            generateServiceDefinition();
+            editServiceWizardDialog["open"]();
+
+            const value = $("#hideAdvancedOptions").val();
+            if (value === "false" || value === false) {
+                $("#hideAdvancedOptionsButton").click();
+            }
+            hideAdvancedRegisteredServiceOptions();
+
+            switch (className) {
+            case "CasRegisteredService":
+                $("#registeredServiceIdLabel span.mdc-floating-label").text("Service ID");
+                break;
+            case "SamlRegisteredService":
+                $("#registeredServiceIdLabel span.mdc-floating-label").text("Entity ID");
+                break;
+            case "OAuthRegisteredService":
+            case "OidcRegisteredService":
+                $("#registeredServiceIdLabel span.mdc-floating-label").text("Redirect URI");
+                break;
+            }
+            let savedIndex = localStorage.getItem("registeredServiceWizardMenuOption");
+            if (savedIndex !== null && isNumeric(savedIndex)) {
+                savedIndex = Number(savedIndex);
+            } else {
+                savedIndex = 0;
+            }
+
+            const visible = $("#editServiceWizardForm").find(`.ui-accordion-header:eq(${savedIndex})`).is(":visible")
+            if (!visible) {
+                savedIndex = 0;
+            }
+            $("#editServiceWizardMenu").accordion("option", "active", savedIndex);
+            setTimeout(function () {
+                $("#editServiceWizardForm input:visible:enabled").first().focus();
+            }, 200);
+        }
+
+        if (Object.keys(supportedServiceTypes).length === 1) {
+            openWizardDialog(Object.keys(supportedServiceTypes)[0]);
+        } else {
+            const sortedServiceTypes = Object.keys(supportedServiceTypes)
+                .sort()
+                .reduce((acc, key) => {
+                    acc[key] = supportedServiceTypes[key];
+                    return acc;
+                }, {});
+            Swal.fire({
+                title: "What type of application do you want to add?",
+                input: "select",
+                icon: "question",
+                inputOptions: sortedServiceTypes,
+                inputPlaceholder: "Select an application type...",
+                showCancelButton: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    openWizardDialog(result.value);
+                }
+            });
+        }
+    });
+
+    $("button[name=newServicePlain]").off().on("click", () => {
         if (actuatorEndpoints.registeredservices) {
             const editServiceDialogElement = document.getElementById("editServiceDialog");
             let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(editServiceDialogElement);
-            const editor = initializeAceEditor("serviceEditor");
+            const editor = initializeAceEditor("serviceEditor", "json");
             editor.setValue("");
             editor.gotoLine(1);
 
@@ -206,7 +822,6 @@ function initializeFooterButtons() {
                             reader.readAsText(file);
                             reader.onload = e => {
                                 const fileContent = e.target.result;
-
 
                                 $.ajax({
                                     url: `${actuatorEndpoints.registeredservices}`,
@@ -1278,7 +1893,7 @@ async function initializeCasSpringWebflowOperations() {
                 if (!selectedState) {
                     const allStates = Object.keys(flow.states).sort();
                     $("#webflowStateFilter").empty().append(
-                        $('<option>', {
+                        $("<option>", {
                             value: "all",
                             text: "All",
                             selected: true
@@ -1287,13 +1902,13 @@ async function initializeCasSpringWebflowOperations() {
 
                     $.each(allStates, (idx, item) => {
                         $("#webflowStateFilter").append(
-                            $('<option>', {
+                            $("<option>", {
                                 value: item,
                                 text: item
                             })
                         );
                     });
-                    $("#webflowStateFilter").selectmenu('refresh');
+                    $("#webflowStateFilter").selectmenu("refresh");
                 }
 
                 let diagramDefinition = `stateDiagram-v2\ndirection LR\n`;
@@ -1305,7 +1920,7 @@ async function initializeCasSpringWebflowOperations() {
                         if (action.startsWith("set ")) {
                             action = "Execute";
                         }
-                        
+
                         if (i === 0) {
                             diagramDefinition += `\t\t[*] --> ${action}: Then\n`;
                         } else {
@@ -1324,7 +1939,7 @@ async function initializeCasSpringWebflowOperations() {
                 } else {
                     diagramDefinition += `\t[*] --> ${flow.startState}: Start\n`;
                 }
-                
+
                 for (let entry of Object.keys(flow.states)) {
                     const state = flow.states[entry];
                     entry = entry.trim().replace(/-/g, "_");
@@ -1379,7 +1994,7 @@ async function initializeCasSpringWebflowOperations() {
                                 if (startActionState.startsWith("set ")) {
                                     startActionState = "Execute";
                                 }
-                                
+
                                 for (let i = 0; i < state.actionList.length; i++) {
                                     let action = state.actionList[i];
                                     if (action.startsWith("set ")) {
@@ -1409,7 +2024,7 @@ async function initializeCasSpringWebflowOperations() {
                         }
                     }
                 }
-                
+
                 $("#webflowMarkdownContainer").removeClass("hide");
                 $("#webflowMarkdown").empty().text(diagramDefinition);
                 const {svg, bindFunctions} = await mermaid.render("webflowDiagram", diagramDefinition);
@@ -1432,11 +2047,11 @@ async function initializeCasSpringWebflowOperations() {
             startOnLoad: false,
             securityLevel: "loose",
             theme: "base",
-            logLevel: 1,
+            logLevel: 4,
             themeVariables: {
                 primaryColor: "deepskyblue",
-                secondaryColor: '#73e600',
-                lineColor: 'deepskyblue'
+                secondaryColor: "#73e600",
+                lineColor: "deepskyblue"
             }
         });
 
@@ -1449,7 +2064,7 @@ async function initializeCasSpringWebflowOperations() {
         $("#webflowStateFilter").empty().selectmenu({
             change: (event, data) => drawFlowStateDiagram()
         });
-        
+
         $.ajax({
             url: `${actuatorEndpoints.springWebflow}`,
             type: "GET",
@@ -1460,14 +2075,14 @@ async function initializeCasSpringWebflowOperations() {
                 const availableFlows = Object.keys(response);
                 $.each(availableFlows, (idx, item) => {
                     $("#webflowFilter").append(
-                        $('<option>', {
+                        $("<option>", {
                             value: item,
-                            text:  item.toUpperCase(),
+                            text: item.toUpperCase(),
                             selected: idx === 0
                         })
                     );
                 });
-                $("#webflowFilter").selectmenu('refresh');
+                $("#webflowFilter").selectmenu("refresh");
                 drawFlowStateDiagram();
             },
             error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown)
@@ -4068,7 +4683,20 @@ document.addEventListener("DOMContentLoaded", () => {
     $(".jqueryui-tabs").tabs().off().on("click", () => updateNavigationSidebar());
     $(".jqueryui-menu").menu();
     $(".jqueryui-selectmenu").selectmenu({
-        width: '350px'
+        width: "350px",
+        change: function (event, ui) {
+            const $select = $(this);
+            const handlerNames = $select.data("change-handler").split(",");
+            for (const handlerName of handlerNames) {
+                if (handlerName && handlerName.length > 0 && typeof window[handlerName] === "function") {
+                    // console.log("Invoking change handler:", handlerName);
+                    const result = window[handlerName]($select, ui);
+                    if (result !== undefined && result === false) {
+                        break;
+                    }
+                }
+            }
+        }
     });
 
     $("nav.sidebar-navigation ul li").off().on("click", function () {

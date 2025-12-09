@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -25,7 +26,7 @@ import java.util.Objects;
  */
 @Slf4j
 public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator<OAuth20ConfigurationContext> {
-    public OAuth20RefreshTokenGrantTypeTokenRequestValidator(final ObjectProvider<OAuth20ConfigurationContext> configurationContext) {
+    public OAuth20RefreshTokenGrantTypeTokenRequestValidator(final ObjectProvider<@NonNull OAuth20ConfigurationContext> configurationContext) {
         super(configurationContext);
     }
 

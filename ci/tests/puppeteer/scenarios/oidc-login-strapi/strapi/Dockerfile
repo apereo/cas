@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:22
 RUN apt-get update > /dev/null \
     && apt-get install git patch iproute2 iputils-ping -y > /dev/null \
     && rm -rf /var/lib/apt/lists/*
@@ -12,7 +12,7 @@ ENV NODE_ENV=development
 
 RUN npm i -g patch-package
 
-RUN npx create-strapi@5.6.0 . \
+RUN npx create-strapi@5.23.0 . \
             --no-run \
             --use-yarn \
             --javascript \

@@ -1,12 +1,9 @@
 package org.apereo.cas.rest.authentication;
 
 import org.apereo.cas.authentication.AuthenticationResult;
-
 import org.springframework.util.MultiValueMap;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Optional;
 
 /**

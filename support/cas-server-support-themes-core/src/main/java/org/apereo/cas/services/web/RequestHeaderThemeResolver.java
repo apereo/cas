@@ -4,7 +4,7 @@ import org.apereo.cas.web.theme.AbstractThemeResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import jakarta.annotation.Nonnull;
+import org.jspecify.annotations.NonNull;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class RequestHeaderThemeResolver extends AbstractThemeResolver {
     private final String themeHeaderName;
 
-    @Nonnull
+    @NonNull
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
         val theme = request.getHeader(this.themeHeaderName);

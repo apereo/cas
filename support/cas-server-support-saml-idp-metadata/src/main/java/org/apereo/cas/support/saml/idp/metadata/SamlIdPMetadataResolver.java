@@ -16,10 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
+import org.jspecify.annotations.NonNull;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.resilience.annotation.Retryable;
-import jakarta.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +41,7 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
 
     private final CasConfigurationProperties casProperties;
 
-    private final Cache<String, Iterable<EntityDescriptor>> metadataCache;
+    private final Cache<@NonNull String, Iterable<EntityDescriptor>> metadataCache;
 
     public SamlIdPMetadataResolver(final SamlIdPMetadataLocator locator,
                                    final SamlIdPMetadataGenerator generator,
@@ -82,7 +82,7 @@ public class SamlIdPMetadataResolver extends BaseElementMetadataResolver {
         return results;
     }
 
-    @Nonnull
+    @NonNull
     @Override
     @Retryable(value = ResolverException.class, maxRetries = 3, delay = 1000)
     public Iterable<EntityDescriptor> resolve(final CriteriaSet criteria) {

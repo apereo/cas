@@ -25,6 +25,7 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -43,7 +44,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.ContentVersionStrategy;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
-import jakarta.annotation.Nonnull;
 
 /**
  * This is {@link CasThemesAutoConfiguration}.
@@ -71,13 +71,13 @@ public class CasThemesAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ThemeResolver themeResolver(
-        final ObjectProvider<CasConfigurationProperties> casProperties,
+        final ObjectProvider<@NonNull CasConfigurationProperties> casProperties,
         @Qualifier(TenantExtractor.BEAN_NAME)
-        final ObjectProvider<TenantExtractor> tenantExtractor,
+        final ObjectProvider<@NonNull TenantExtractor> tenantExtractor,
         @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
-        final ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies,
+        final ObjectProvider<@NonNull AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies,
         @Qualifier(ServicesManager.BEAN_NAME)
-        final ObjectProvider<ServicesManager> servicesManager) {
+        final ObjectProvider<@NonNull ServicesManager> servicesManager) {
 
         val defaultThemeName = casProperties.getObject().getTheme().getDefaultThemeName();
         val fixedResolver = new FixedThemeResolver();
@@ -124,7 +124,7 @@ public class CasThemesAutoConfiguration {
         return new WebMvcConfigurer() {
             @Override
             public void addResourceHandlers(
-                @Nonnull
+                @NonNull
                 final ResourceHandlerRegistry registry) {
                 val templatePrefixes = casProperties.getView().getTemplatePrefixes();
                 if (!templatePrefixes.isEmpty()) {

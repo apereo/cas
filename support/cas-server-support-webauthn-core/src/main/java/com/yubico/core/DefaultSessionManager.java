@@ -1,8 +1,8 @@
 package com.yubico.core;
 
 import com.yubico.webauthn.data.ByteArray;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 

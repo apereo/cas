@@ -6,12 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
-import jakarta.annotation.Nonnull;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -40,8 +40,8 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
 
     @Override
     public View resolveViewName(
-        @Nonnull
-        final String viewName, @Nonnull
+        @NonNull
+        final String viewName, @NonNull
         final Locale locale) {
         try {
             val theme = Optional.of(RequestContextHolder.currentRequestAttributes())
