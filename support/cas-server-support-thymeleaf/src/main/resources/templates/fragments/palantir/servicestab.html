@@ -1239,7 +1239,7 @@
                                                                  keyField: "metadataCriteriaEntityAttribute",
                                                                  keyLabel: "Entity Attribute",
                                                                  valueField: "metadataCriteriaEntityAttributeValue",
-                                                                 valueLabel: "Entity attribute value(s) separated by commas (i.e. <code>http://refeds.org/category/research-and-scholarship</code>)",
+                                                                 valueLabel: "Entity attribute value(s) separated by comma (i.e. <code>http://refeds.org/category/research-and-scholarship</code>)",
                                                                  containerField: "metadataCriteriaEntityAttributes",
                                                                  multipleValues: true
                                                              });
@@ -2145,7 +2145,7 @@
                                                             paramName: "attributeReleasePolicy.excludedAttributes",
                                                             required: false,
                                                             containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
-                                                            title: "Define the attributes to be excluded from release, separated by commas."
+                                                            title: "Define the attributes to be excluded from release, separated by comma."
                                                         })
                                                             .data("renderer", function (value) {
                                                                 return ["java.util.HashSet", value.split(",")];
@@ -2158,7 +2158,7 @@
                                                             paramName: "attributeReleasePolicy.allowedAttributes",
                                                             required: false,
                                                             containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
-                                                            title: "Define the attributes to be encrypted for release, separated by commas."
+                                                            title: "Define the attributes to be encrypted for release, separated by comma."
                                                         })
                                                             .data("renderer", function (value) {
                                                                 return ["java.util.ArrayList", value.split(",")];
@@ -2171,7 +2171,7 @@
                                                             paramName: "attributeReleasePolicy.allowedAttributes",
                                                             required: false,
                                                             containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
-                                                            title: "Define the attributes with static values for release, separated by commas."
+                                                            title: "Define the attributes with static values for release, separated by comma."
                                                         })
                                                             .data("renderer", function (value) {
                                                                 return ["java.util.ArrayList", value.split(",")];
@@ -2184,7 +2184,7 @@
                                                             paramName: "attributeReleasePolicy.allowedAttributes",
                                                             required: false,
                                                             containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
-                                                            title: "Define the attribute names for release, separated by commas."
+                                                            title: "Define the attribute names for release, separated by comma."
                                                         })
                                                             .data("renderer", function (value) {
                                                                 return ["java.util.ArrayList", value.split(",")];
@@ -2485,7 +2485,7 @@
                                                                 paramName: "attributeReleasePolicy.principalAttributesRepository.attributeRepositoryIds",
                                                                 required: false,
                                                                 containerId: "editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository",
-                                                                title: "Define the attribute repository IDs to be used, separated by commas."
+                                                                title: "Define the attribute repository IDs to be used, separated by comma."
                                                             }).data("renderer", function (value) {
                                                                 return ["java.util.HashSet", value.split(",")];
                                                             });
@@ -2718,7 +2718,7 @@
                                                         paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
                                                         required: false,
                                                         containerId: "editServiceWizardMenuItemMfaPolicy",
-                                                        title: "Define the multifactor authentication providers to be used, separated by commas."
+                                                        title: "Define the multifactor authentication providers to be used, separated by comma."
                                                     })
                                                         .data("renderer", function (value) {
                                                             return ["java.util.HashSet", value.split(",")];
@@ -3300,12 +3300,12 @@
                                                          keyField: "registeredServicePropertyName",
                                                          keyLabel: "Property Name",
                                                          valueField: "registeredServicePropertyValue",
-                                                         valueLabel: "Property value(s) separated by commas",
+                                                         valueLabel: "Property value(s) separated by comma",
                                                          containerField: "properties",
-                                                         valueFieldRenderer: function ($input) {
+                                                         valueFieldRenderer: function ($inputKey, $inputValue) {
                                                              return {
                                                                  "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
-                                                                 "values": ["java.util.HashSet", $input.val().split(",")]
+                                                                 "values": ["java.util.HashSet", $inputValue.val().split(",")]
                                                              };
                                                          }
                                                      });
