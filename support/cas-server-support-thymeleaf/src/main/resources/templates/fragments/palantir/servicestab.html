@@ -1616,26 +1616,28 @@
                                              <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidcCodeExpirationPolicy">
                                                  <script type="text/javascript">
-                                                     createInputField({
-                                                         paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy",
-                                                         labelTitle: "Number of Uses",
-                                                         name: "registeredServiceOAuthCodeExpirationPolicyNumberOfUses",
-                                                         paramName: "codeExpirationPolicy.numberOfUses",
-                                                         required: false,
-                                                         dataType: "number",
-                                                         containerId: "editServiceWizardMenuItemOAuthOidcCodeExpirationPolicy",
-                                                         title: "Control the number of times the ticket can be used"
-                                                     });
+                                                        createInputField({
+                                                            paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy",
+                                                            labelTitle: "Number of Uses",
+                                                            name: "registeredServiceOAuthCodeExpirationPolicyNumberOfUses",
+                                                            paramName: "codeExpirationPolicy.numberOfUses",
+                                                            required: false,
+                                                            dataType: "number",
+                                                            containerId: "editServiceWizardMenuItemOAuthOidcCodeExpirationPolicy",
+                                                            multipleValues: true,
+                                                            title: "Control the number of times the ticket can be used"
+                                                        });
 
-                                                     createInputField({
-                                                         paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy",
-                                                         labelTitle: "Time to Live",
-                                                         name: "registeredServiceOAuthCodeExpirationPolicyTimeToLive",
-                                                         paramName: "codeExpirationPolicy.timeToLive",
-                                                         required: false,
-                                                             containerId: "editServiceWizardMenuItemOAuthOidcCodeExpirationPolicy",
-                                                         title: "Control how long the ticket should be valid, in seconds."
-                                                     });
+                                                        createInputField({
+                                                            paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthCodeExpirationPolicy",
+                                                            labelTitle: "Time to Live",
+                                                            name: "registeredServiceOAuthCodeExpirationPolicyTimeToLive",
+                                                            paramName: "codeExpirationPolicy.timeToLive",
+                                                            required: false,
+                                                            containerId: "editServiceWizardMenuItemOAuthOidcCodeExpirationPolicy",
+                                                            title: "Control how long the ticket should be valid, in seconds.",
+                                                            multipleValues: true
+                                                        });
 
                                                  </script>
                                              </div>
@@ -1728,13 +1730,144 @@
                                              <h3 class="class-OidcRegisteredService advanced-option">OpenID Connect ID Token Expiration Policy</h3>
                                              <div class="class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidcITExpirationPolicy">
+                                                <script type="text/javascript">
 
+                                                    createInputField({
+                                                        paramType: "org.apereo.cas.oidc.services.DefaultRegisteredServiceOidcIdTokenExpirationPolicy",
+                                                        labelTitle: "Time to Kill",
+                                                        name: "registeredServiceITExpirationPolicyTimeToKill",
+                                                        paramName: "idTokenExpirationPolicy.timeToKill",
+                                                        required: false,
+                                                        containerId: "editServiceWizardMenuItemOAuthOidcITExpirationPolicy",
+                                                        title: "Control how long the ticket should be kept alive"
+                                                    });
+                                                </script>
                                              </div>
 
                                             <h3 class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect Token Exchange Policy</h3>
                                              <div class="class-OAuthRegisteredService class-OidcRegisteredService"
                                                   id="editServiceWizardMenuItemOAuthOidcTokenExchangePolicy">
 
+                                                 <script type="text/javascript">
+
+                                                     function handleRegisteredServiceTokenExchangePolicyChange(select) {
+                                                         const type = $(select).find("option:selected").text();
+                                                         $(`#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy .${type}`).show();
+                                                         $("#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy [id$='FieldContainer']")
+                                                             .not(`.${type}`)
+                                                             .hide();
+                                                         $("#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy [id$='MapContainer']")
+                                                             .not(`.${type}`)
+                                                             .hide();
+                                                         $("#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy [id$='ButtonPanel']")
+                                                             .not(`.${type}`)
+                                                             .hide();
+                                                         $("#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy [id$='FieldContainer'] input")
+                                                             .val("");
+                                                         $("#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy [id$='MapContainer'] input")
+                                                             .val("");
+                                                         $("#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy [id$='ButtonPanel'] button")
+                                                             .each(function () {
+                                                                 const selected = $(this).data("param-selected");
+                                                                 if (selected) {
+                                                                     $(this).click();
+                                                                 }
+                                                             });
+                                                     }
+
+                                                     createSelectField({
+                                                         containerId: "editServiceWizardMenuItemOAuthOidcTokenExchangePolicy",
+                                                         labelTitle: "Type:",
+                                                         paramName: "tokenExchangePolicy",
+                                                         options: [
+                                                             {
+                                                                 value: "",
+                                                                 text: "UNDEFINED",
+                                                                 selected: true
+                                                             },
+                                                             {
+                                                                 value: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
+                                                                 text: "IMPERSONATION"
+                                                             },
+                                                             {
+                                                                 value: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
+                                                                 text: "DELEGATION"
+                                                             }
+
+                                                         ],
+                                                         helpText: "Specifies the OAuth token exchange policy type.",
+                                                         changeEventHandlers: "handleRegisteredServiceTokenExchangePolicyChange"
+                                                     })
+                                                         .data("renderer", function (value) {
+                                                             return {"@class": value};
+                                                         });
+
+                                                     createInputField({
+                                                         cssClasses: "hide IMPERSONATION",
+                                                         paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
+                                                         labelTitle: "Allowed Resources (separated by comma)",
+                                                         name: "registeredServiceOAuthTokenExchangePolicyAllowedResources",
+                                                         paramName: "tokenExchangePolicy.allowedResources",
+                                                         required: false,
+                                                         containerId: "editServiceWizardMenuItemOAuthOidcTokenExchangePolicy",
+                                                         title: "Define the resources allowed for token exchange, separated by comma."
+                                                     }).data("renderer", function (value) {
+                                                         return ["java.util.HashSet", value.split(",")];
+                                                     });
+
+                                                     createInputField({
+                                                         cssClasses: "hide IMPERSONATION",
+                                                         paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
+                                                         labelTitle: "Allowed Audience(s) (separated by comma)",
+                                                         name: "registeredServiceOAuthTokenExchangePolicyAllowedAudiences",
+                                                         paramName: "tokenExchangePolicy.allowedAudience",
+                                                         required: false,
+                                                         containerId: "editServiceWizardMenuItemOAuthOidcTokenExchangePolicy",
+                                                         title: "Define the audience allowed for token exchange, separated by comma."
+                                                     }).data("renderer", function (value) {
+                                                         return ["java.util.HashSet", value.split(",")];
+                                                     });
+
+                                                     createInputField({
+                                                         cssClasses: "hide IMPERSONATION",
+                                                         paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
+                                                         labelTitle: "Allowed Token Types(s) (separated by comma)",
+                                                         name: "registeredServiceOAuthTokenExchangePolicyAllowedTokenTypes",
+                                                         paramName: "tokenExchangePolicy.allowedTokenTypes",
+                                                         required: false,
+                                                         containerId: "editServiceWizardMenuItemOAuthOidcTokenExchangePolicy",
+                                                         title: "Define the token types allowed for token exchange, separated by comma."
+                                                     }).data("renderer", function (value) {
+                                                         return ["java.util.HashSet", value.split(",")];
+                                                     });
+
+                                                     createInputField({
+                                                         cssClasses: "hide DELEGATION",
+                                                         paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
+                                                         labelTitle: "Allowed Actor Token Types(s) (separated by comma)",
+                                                         name: "registeredServiceOAuthTokenExchangePolicyAllowedActorTokenTypes",
+                                                         paramName: "tokenExchangePolicy.allowedActorTokenTypes",
+                                                         required: false,
+                                                         containerId: "editServiceWizardMenuItemOAuthOidcTokenExchangePolicy",
+                                                         title: "Define the actor token types allowed for token exchange, separated by comma."
+                                                     }).data("renderer", function (value) {
+                                                         return ["java.util.HashSet", value.split(",")];
+                                                     });
+
+                                                     createMappedInputField({
+                                                         header: "Required Actor Token Attributes",
+                                                         cssClasses: "hide DELEGATION",
+                                                         containerId: "editServiceWizardMenuItemOAuthOidcTokenExchangePolicy",
+                                                         keyField: "tokenExchangePolicyActorTokenAttributeName",
+                                                         keyLabel: "Attribute Name",
+                                                         valueField: "tokenExchangePolicyActorTokenAttributeValue",
+                                                         valueLabel: "Attribute Value Pattern",
+                                                         containerField: "tokenExchangePolicy.requiredActorTokenAttributes",
+                                                         multipleValues: true,
+                                                         multipleValuesType: "java.util.HashSet",
+                                                     });
+
+                                                </script>
                                              </div>
 
                                               <h3>Username Attribute Provider</h3>
@@ -2526,7 +2659,7 @@
                                                               multipleValues: true,
                                                               unwrapSingleElement: true
                                                           });
-                                                          
+
                                                           createMappedInputField({
                                                               cssClasses: "hide RegisteredServiceMappedRegexAttributeFilter RegisteredServiceReverseMappedRegexAttributeFilter",
                                                               header: "Patterns",
@@ -2536,7 +2669,7 @@
                                                               valueField: "registeredServiceAttrReleasePolicyAttributeValueFilterAttrValue",
                                                               valueLabel: "Attribute Value",
                                                               containerField: "attributeReleasePolicy.attributeFilter.patterns",
-                                                              multipleValues: false,
+                                                              multipleValues: false
                                                           });
                                                       </script>
 
