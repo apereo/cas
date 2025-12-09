@@ -30,8 +30,8 @@ service whose id token expiration policy is to deviate from the default configur
   "name" : "Service",
   "id" : 1,
   "idTokenExpirationPolicy": {
-    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOidcIdTokenExpirationPolicy",
-    "timeToLive": "PT60S"
+    "@class": "org.apereo.cas.oidc.services.DefaultRegisteredServiceOidcIdTokenExpirationPolicy",
+    "timeToKill": "PT60S"
   }
 }
 ```
