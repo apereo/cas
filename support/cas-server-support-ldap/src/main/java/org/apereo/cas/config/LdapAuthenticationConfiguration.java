@@ -31,6 +31,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.beans.factory.DisposableBean;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -60,7 +63,8 @@ class LdapAuthenticationConfiguration {
 
     @Configuration(value = "LdapAuthenticationPlanConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    static class LdapAuthenticationPlanConfiguration {
+    static class LdapAuthenticationPlanConfiguration implements DisposableBean {
+        private final List<AuthenticationHandler> createdHandlers = new ArrayList<>();
         @Bean
         @ConditionalOnMissingBean(name = "ldapAuthenticationHandlers")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -76,10 +80,11 @@ class LdapAuthenticationConfiguration {
                 .filter(LdapUtils::isLdapAuthenticationConfigured)
                 .map(prop -> {
                     val handler = LdapUtils.createLdapAuthenticationHandler(prop,
-                        applicationContext, servicesManager, ldapPrincipalFactory);
+                    applicationContext, servicesManager, ldapPrincipalFactory);
                     handler.setState(prop.getState());
+                    createdHandlers.add(handler);
                     LOGGER.info("Created LDAP authentication handler [{}] with state [{}]",
-                        handler.getName(), handler.getState());
+                    handler.getName(), handler.getState());
                     return handler;
                 })
                 .collect(Collectors.toList());
@@ -99,6 +104,21 @@ class LdapAuthenticationConfiguration {
                 LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
                 plan.registerAuthenticationHandlerWithPrincipalResolver(handler, defaultPrincipalResolver);
             });
+        }
+
+        @Override
+        public void destroy() {
+            for (val handler : createdHandlers) {
+                try {
+                    if (handler instanceof DisposableBean disposableHandler) {
+                        disposableHandler.destroy();
+                    }
+                } catch (final Exception e) {
+                    LOGGER.error("Failed to destroy LDAP handler [{}]: {}",
+                        handler.getName(), e.getMessage(), e);
+                }
+            }
+            createdHandlers.clear();
         }
     }
 
