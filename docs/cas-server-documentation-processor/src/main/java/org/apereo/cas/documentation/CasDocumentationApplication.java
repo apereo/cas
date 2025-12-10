@@ -434,7 +434,7 @@ public class CasDocumentationApplication {
         collectRestActuators(restActuators, parentPath, Endpoint.class);
 
         LOGGER.info("Checking endpoints...");
-        subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(Endpoint.class), "org");
+        subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(), List.of(Endpoint.class), "org");
         subTypes.forEach(clazz -> {
             var properties = new ArrayList<Map<?, ?>>();
             var endpoint = getEndpoint(clazz);
