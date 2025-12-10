@@ -42,10 +42,13 @@ let notyf = null;
 
 function hideAdvancedRegisteredServiceOptions() {
     const value = $("#hideAdvancedOptions").val();
+    const className = getLastWord($("#serviceClassType").text());
+
     if (value === "true" || value === true) {
         $("form#editServiceWizardForm .advanced-option").hide();
     } else {
         $("form#editServiceWizardForm .advanced-option").show();
+        $("form#editServiceWizardForm [class*='class-']").not(`.class-${className}`).not(".always-show").hide();
     }
 
     if (availableMultifactorProviders.length === 0) {
@@ -63,6 +66,26 @@ function hideAdvancedRegisteredServiceOptions() {
     if (!CAS_FEATURES.includes("SurrogateAuthentication")) {
         $("#registeredServiceSurrogatePolicy").hide();
     }
+}
+
+function createOidcRegisteredServiceFields() {
+    const $registeredServiceUsernameAttributeProvider = $("#registeredServiceUsernameAttributeProvider");
+    let value = "org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider";
+    if ($registeredServiceUsernameAttributeProvider.find(`option[value="${value}"]`).length === 0) {
+        appendOptionsToDropDown({
+            selectElement: $registeredServiceUsernameAttributeProvider,
+            options: [{
+                value: value,
+                text: "PAIRWISE",
+                data: {
+                    hideDefaults: true,
+                    markerClass: true,
+                    serviceClass: "OidcRegisteredService"
+                }
+            }]
+        });
+    }
+    $registeredServiceUsernameAttributeProvider.selectmenu("refresh");
 }
 
 function generateServiceDefinition() {
@@ -336,6 +359,29 @@ function createMappedInputField(config) {
     configureInputRenderer();
 }
 
+function appendOptionsToDropDown(config) {
+    const {
+        selectElement,
+        options
+    } = config;
+    
+    options.forEach(opt => {
+        const $opt = $("<option>")
+            .attr("value", opt.value)
+            .text(opt.text);
+        if (opt.data && Object.keys(opt.data).length > 0) {
+            Object.entries(opt.data).forEach(([key, value]) => {
+                $opt.data(key, value);
+            });
+        }
+        if (opt.selected) {
+            $opt.attr("selected", "selected");
+        }
+
+        selectElement.append($opt);
+    });
+}
+
 function createSelectField(config) {
     const {
         containerId,
@@ -365,24 +411,12 @@ function createSelectField(config) {
         .attr("data-param-type", paramType)
         .addClass("jqueryui-selectmenu");
 
-    options.forEach(opt => {
-        const $opt = $("<option>")
-            .attr("value", opt.value)
-            .text(opt.text);
-        if (opt.data && Object.keys(opt.data).length > 0) {
-            Object.entries(opt.data).forEach(([key, value]) => {
-                $opt.data(key, value);
-            });
-        }
-        if (opt.selected) {
-            $opt.attr("selected", "selected");
-        }
-
-        $select.append($opt);
-    });
+    appendOptionsToDropDown({
+        selectElement: $select,
+        options: options
+    })
 
     $label.append($select);
-
 
     const container = $("<span>", {
         id: `${selectId}SelectContainer`,
@@ -728,10 +762,15 @@ function initializeFooterButtons() {
                 });
 
             $("#editServiceWizardForm input").val("");
-
+            $('#editServiceWizardForm option').filter(function () {
+                const clazz = $(this).data('serviceClass');
+                return clazz !== undefined && clazz !== null;
+            }).remove();
+            $('#editServiceWizardForm select').selectmenu("refresh");
+            
             generateServiceDefinition();
             editServiceWizardDialog["open"]();
-
+            
             const value = $("#hideAdvancedOptions").val();
             if (value === "false" || value === false) {
                 $("#hideAdvancedOptionsButton").click();
@@ -746,8 +785,17 @@ function initializeFooterButtons() {
                 $("#registeredServiceIdLabel span.mdc-floating-label").text("Entity ID");
                 break;
             case "OAuthRegisteredService":
+                $("#registeredServiceIdLabel span.mdc-floating-label").text("Redirect URI");
+                $(`h3.class-${className}`).each(function () {
+                    const original = $(this).text();
+                    const updated = original.replace("/ OpenID Connect ", "");
+                    $(this).text(updated);
+                });
+                $("#editServiceWizardMenu").accordion("refresh");
+                break;
             case "OidcRegisteredService":
                 $("#registeredServiceIdLabel span.mdc-floating-label").text("Redirect URI");
+                createOidcRegisteredServiceFields();
                 break;
             }
             let savedIndex = localStorage.getItem("registeredServiceWizardMenuOption");
@@ -879,7 +927,6 @@ function initializeFooterButtons() {
         }
     });
 }
-
 
 /**
  * Initialization Functions
