@@ -1916,7 +1916,6 @@
                                                                        markerClass: true
                                                                    }
                                                                },
-
                                                                ...(
                                                                    scriptFactoryAvailable
                                                                        ? [{
@@ -2015,6 +2014,23 @@
                                                            helpText: "Specifies the canonicalization mode for the username."
                                                        });
 
+
+                                                       createInputField({
+                                                           cssClasses: "hide PairwiseOidcRegisteredServiceUsernameAttributeProvider",
+                                                           labelTitle: "Salt",
+                                                           name: "registeredServiceUsernameAttributePairwiseOidcSalt",
+                                                           paramName: "usernameAttributeProvider.persistentIdGenerator",
+                                                           required: false,
+                                                           containerId: "editServiceWizardMenuItemUsernameAttribute",
+                                                           title: "Specifies the salt value used to generate pairwise identifiers."
+
+                                                       }).data("renderer", function (value) {
+                                                           return {
+                                                               "@class": "org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator",
+                                                               "salt": value.trim()
+                                                           };
+                                                       });
+                                                       
                                                    </script>
 
                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptUsername',
