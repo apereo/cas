@@ -23,9 +23,11 @@ public class JasyptListAlgorithmsCommand implements CasShellCommand {
      *
      * @param includeBC whether to include the BouncyCastle provider
      */
-    @Command(group = "Jasypt", name = "jasypt-list-algorithms", description =  "List algorithms you can use with Jasypt for property encryption")
-    public void listAlgorithms(@Option(
-            longName = "includeBC", description = "Include Bouncy Castle provider", defaultValue = "false") final Boolean includeBC) {
+    @Command(group = "Jasypt", name = "jasypt-list-algorithms", description = "List algorithms you can use with Jasypt for property encryption")
+    public void listAlgorithms(
+        @Option(
+            longName = "includeBC", description = "Include Bouncy Castle provider", defaultValue = "false")
+        final Boolean includeBC) {
         if (includeBC) {
             Security.addProvider(new BouncyCastleProvider());
         } else {

@@ -35,21 +35,24 @@ public class FindPropertiesCommand implements CasShellCommand {
      * @param strict  the strict match
      * @param summary the summary
      */
-    @Command(group = "CAS Properties", name = "find", description =  "Look up properties associated with a CAS group/module.")
+    @Command(group = "CAS Properties", name = "find", description = "Look up properties associated with a CAS group/module.")
     public void find(
         @Option(
             longName = "name",
             description = "Property name regex pattern",
-            defaultValue = ".+") final String name,
+            defaultValue = ".+")
+        final String name,
         @Option(
             longName = "strict",
             defaultValue = "false",
             description = "Whether pattern should be done in strict-mode which means "
-                + "the matching engine tries to match the entire region for the query.") final boolean strict,
+                + "the matching engine tries to match the entire region for the query.")
+        final boolean strict,
         @Option(
             longName = "summary",
             defaultValue = "false",
-            description = "Whether results should be presented in summarized mode") final boolean summary) {
+            description = "Whether results should be presented in summarized mode")
+        final boolean summary) {
 
         val results = find(strict, RegexUtils.createPattern(name));
 

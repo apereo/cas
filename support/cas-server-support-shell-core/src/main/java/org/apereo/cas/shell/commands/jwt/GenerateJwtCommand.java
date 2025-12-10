@@ -52,7 +52,7 @@ public class GenerateJwtCommand implements CasShellCommand {
      * @param encryptionMethod     the encryption algorithm
      * @param subject              the subject
      */
-    @Command(group = "JWT", name = "generate-jwt", description =  "Generate a JWT with given size and algorithm for signing and encryption.")
+    @Command(group = "JWT", name = "generate-jwt", description = "Generate a JWT with given size and algorithm for signing and encryption.")
     public void generate(
         @Option(
             longName = "signingSecretSize",

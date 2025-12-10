@@ -48,7 +48,7 @@ public class GenerateFullJwtCommand implements CasShellCommand {
      * @return the string
      * @throws Exception the exception
      */
-    @Command(group = "JWT", name = "generate-full-jwt", description =  "Generate JWT and sign it using a given keystore")
+    @Command(group = "JWT", name = "generate-full-jwt", description = "Generate JWT and sign it using a given keystore")
     public String generateKey(
         @Option(
             longName = "jwks",
