@@ -35,12 +35,12 @@ class ValidateRegisteredServiceCommandTests extends BaseCasShellCommandTests {
             new RegisteredServiceJsonSerializer(appCtx).to(writer, svc);
         }
         assertTrue(file.exists() && file.length() > 0);
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-yaml --file " + file.getPath() + " --destination " + yaml.getPath()));
+        assertDoesNotThrow(() -> runShellCommand(() -> "generate-yaml --file " + file.getPath() + " --destination " + yaml.getPath()));
         assertTrue(yaml.exists());
 
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "validate-service --file " + file.getPath()));
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "validate-service --file " + yaml.getPath()));
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "validate-service --directory " + file.getParent()));
+        assertDoesNotThrow(() -> runShellCommand(() -> "validate-service --file " + file.getPath()));
+        assertDoesNotThrow(() -> runShellCommand(() -> "validate-service --file " + yaml.getPath()));
+        assertDoesNotThrow(() -> runShellCommand(() -> "validate-service --directory " + file.getParent()));
     }
 }
 

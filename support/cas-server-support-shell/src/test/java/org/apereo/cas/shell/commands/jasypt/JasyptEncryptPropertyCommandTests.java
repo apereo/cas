@@ -20,22 +20,22 @@ import static org.junit.jupiter.api.Assertions.*;
 class JasyptEncryptPropertyCommandTests extends BaseCasShellCommandTests {
     @Test
     void verifyOperation() {
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "encrypt-value --value SOMEVALUE --password "
-                                                      + "JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC"));
+        assertDoesNotThrow(() -> runShellCommand(() -> "encrypt-value --value=SOMEVALUE --password="
+                                                      + "JASTYPTPW --alg=PBEWITHSHAAND256BITAES-CBC-BC --provider=BC"));
     }
 
     @Test
     void verifyFileEncryption() throws Throwable {
         val file = Files.createTempFile("file", ".txt").toFile();
         FileUtils.write(file, UUID.randomUUID().toString(), StandardCharsets.UTF_8);
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "encrypt-value --file " + file.getAbsolutePath() + " --password "
-                                                      + "JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC"));
+        assertDoesNotThrow(() -> runShellCommand(() -> "encrypt-value --file=" + file.getAbsolutePath() + " --password="
+                                                      + "JASTYPTPW --alg=PBEWITHSHAAND256BITAES-CBC-BC --provider=BC"));
     }
 
     @Test
     void verifyOperationWithInitVector() {
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "encrypt-value --value SOMEVALUE --password "
-                                                      + "JASTYPTPW --alg PBEWITHSHAAND256BITAES-CBC-BC --provider BC"));
+        assertDoesNotThrow(() -> runShellCommand(() -> "encrypt-value --value=SOMEVALUE --password="
+                                                      + "JASTYPTPW --alg=PBEWITHSHAAND256BITAES-CBC-BC --provider=BC"));
     }
 }
 

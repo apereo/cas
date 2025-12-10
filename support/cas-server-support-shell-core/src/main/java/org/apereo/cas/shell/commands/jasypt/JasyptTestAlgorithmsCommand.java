@@ -1,6 +1,7 @@
 package org.apereo.cas.shell.commands.jasypt;
 
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
+import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,7 +19,7 @@ import java.security.NoSuchAlgorithmException;
  * @since 5.3.0
  */
 @Slf4j
-public class JasyptTestAlgorithmsCommand {
+public class JasyptTestAlgorithmsCommand implements CasShellCommand {
 
     @Autowired
     private Environment environment;
@@ -26,7 +27,8 @@ public class JasyptTestAlgorithmsCommand {
     /**
      * List algorithms you can use Jasypt.
      */
-    @Command(group = "Jasypt", name = "jasypt-test-algorithms", description =  "Test encryption algorithms you can use with Jasypt to make sure encryption and decryption both work")
+    @Command(group = "Jasypt", name = "jasypt-test-algorithms",
+        description =  "Test encryption algorithms you can use with Jasypt to make sure encryption and decryption both work")
     public void validateAlgorithms() {
         val providers = new String[]{BouncyCastleProvider.PROVIDER_NAME, "SunJCE"};
         LOGGER.info("==== JASYPT Password Based Encryption Algorithms ====\n");

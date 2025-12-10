@@ -31,11 +31,11 @@ class GenerateYamlRegisteredServiceCommandTests extends BaseCasShellCommandTests
             new RegisteredServiceJsonSerializer(appCtx).to(writer, svc);
         }
         assertTrue(file.exists() && file.length() > 0);
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-yaml --file " + file.getPath() + " --destination " + yaml.getPath()));
+        assertDoesNotThrow(() -> runShellCommand(() -> "generate-yaml --file=" + file.getPath() + " --destination=" + yaml.getPath()));
         assertTrue(yaml.exists());
         val badFile = Files.createTempFile("first", ".second").toFile();
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-yaml --file " + badFile + " --destination " + yaml.getPath()));
+        assertDoesNotThrow(() -> runShellCommand(() -> "generate-yaml --file=" + badFile + " --destination=" + yaml.getPath()));
         FileUtils.write(badFile, "data", StandardCharsets.UTF_8);
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-yaml --file " + badFile + " --destination " + yaml.getPath()));
+        assertDoesNotThrow(() -> runShellCommand(() -> "generate-yaml --file=" + badFile + " --destination=" + yaml.getPath()));
     }
 }

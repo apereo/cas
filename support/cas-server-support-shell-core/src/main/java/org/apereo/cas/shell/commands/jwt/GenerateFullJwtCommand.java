@@ -1,6 +1,7 @@
 package org.apereo.cas.shell.commands.jwt;
 
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -31,7 +32,7 @@ import java.util.Map;
  * @since 6.6.0
  */
 @Slf4j
-public class GenerateFullJwtCommand {
+public class GenerateFullJwtCommand implements CasShellCommand {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
@@ -49,18 +50,47 @@ public class GenerateFullJwtCommand {
      */
     @Command(group = "JWT", name = "generate-full-jwt", description =  "Generate JWT and sign it using a given keystore")
     public String generateKey(
-        @Option( defaultValue = StringUtils.EMPTY, description = "Path to the JWKS file used to sign the token")
+        @Option(
+            longName = "jwks",
+            defaultValue = StringUtils.EMPTY,
+            description = "Path to the JWKS file used to sign the token"
+        )
         final String jwks,
-        @Option( defaultValue = "https://localhost:8443/cas/oidc", description = "Issuer")
+
+        @Option(
+            longName = "iss",
+            defaultValue = "https://localhost:8443/cas/oidc",
+            description = "Issuer"
+        )
         final String iss,
-        @Option( defaultValue = "{}", description = "JWT claims as JSON")
+
+        @Option(
+            longName = "claims",
+            defaultValue = "{}",
+            description = "JWT claims as JSON"
+        )
         final String claims,
-        @Option( defaultValue = "CAS", description = "Audience")
+
+        @Option(
+            longName = "aud",
+            defaultValue = "CAS",
+            description = "Audience"
+        )
         final String aud,
-        @Option( defaultValue = "300", description = "Expiration in seconds")
+
+        @Option(
+            longName = "exp",
+            defaultValue = "300",
+            description = "Expiration in seconds"
+        )
         final String exp,
-        @Option( description = "Subject")
-        final String sub) throws Exception {
+
+        @Option(
+            longName = "sub",
+            description = "Subject"
+        )
+        final String sub
+    ) throws Exception {
 
         val jwtClaims = new JwtClaims();
         jwtClaims.setJwtId(RandomUtils.randomAlphanumeric(8));

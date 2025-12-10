@@ -1685,6 +1685,21 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "com.vaadin.external.google", module: "android-json")
                 },
+                dependencies.create(libs.spring.shell.starter.test.get()) {
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-context-support")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "jline", module: "jline")
+                    exclude(group: "commons-io", module: "commons-io")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "com.h2database", module: "h2")
+                },
                 dependencies.create(libs.mockwebserver.get()) {
                 },
                 dependencies.create(libs.junit.jupiter.api.get()) {
@@ -3757,7 +3772,7 @@ ext.libraries = [
 //        ],
 
         springshell                : [
-                dependencies.create(libs.spring.shell.starter.get()) {
+                dependencies.create(libs.spring.shell.starter.jansi.get()) {
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")

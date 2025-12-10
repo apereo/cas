@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.properties;
 
+import org.apereo.cas.shell.commands.CasShellCommand;
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -22,7 +23,7 @@ import java.util.TreeMap;
  * @since 7.1.0
  */
 @Slf4j
-public class ConvertPropertiesToYAMLCommand {
+public class ConvertPropertiesToYAMLCommand implements CasShellCommand {
     /**
      * Convert properties to YAML.
      *
@@ -32,6 +33,7 @@ public class ConvertPropertiesToYAMLCommand {
     @Command(group = "CAS Properties", name = "convert-props", description =  "Convert CAS properties to YAML file at the same location.")
     public void convertProperties(
         @Option(
+            longName = "properties",
             description = "Path to a properties file that contains CAS settings",
             defaultValue = "/etc/cas/config/cas.properties") final String propertiesFile) throws Exception {
         val output = FilenameUtils.removeExtension(propertiesFile) + ".yml";

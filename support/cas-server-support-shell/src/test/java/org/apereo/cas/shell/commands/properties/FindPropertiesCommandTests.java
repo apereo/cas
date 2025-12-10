@@ -17,7 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class FindPropertiesCommandTests extends BaseCasShellCommandTests {
     @Test
     void verifyOperation() {
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "find --name cas.server.name --summary"));
+        assertDoesNotThrow(() -> runShellCommand(() -> "find --name=cas.server.name --summary=false"));
+        assertDoesNotThrow(() -> runShellCommand(() -> "find --name=cas.server.name --summary=true"));
     }
 }
 

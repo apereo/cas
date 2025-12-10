@@ -2,6 +2,7 @@ package org.apereo.cas.shell.commands.services;
 
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
+import org.apereo.cas.shell.commands.CasShellCommand;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,7 +24,7 @@ import java.nio.file.attribute.BasicFileAttributes;
  * @since 5.2.0
  */
 @Slf4j
-public class GenerateYamlRegisteredServiceCommand {
+public class GenerateYamlRegisteredServiceCommand implements CasShellCommand {
     private static final int SEP_LINE_LENGTH = 70;
 
     @Autowired
@@ -39,11 +40,16 @@ public class GenerateYamlRegisteredServiceCommand {
      */
     @Command(group = "Registered Services", name = "generate-yaml", description = "Generate a YAML registered service definition")
     public File generateYaml(
-        @Option(longName = "file",
-            description = "Path to the JSON service definition file")
+        @Option(
+            longName = "file",
+            description = "Path to the JSON service definition file"
+        )
         final String file,
-        @Option(longName = "destination",
-            description = "Path to the destination YAML service definition file")
+
+        @Option(
+            longName = "destination",
+            description = "Path to the destination YAML service definition file"
+        )
         final String destination) {
         val filePath = new File(file);
         val result = StringUtils.isBlank(destination) ? null : new File(destination);

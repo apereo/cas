@@ -17,11 +17,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class JasyptListAlgorithmsCommandTests extends BaseCasShellCommandTests {
     @Test
     void verifyOperation() {
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "jasypt-list-algorithms --includeBC"));
+        assertDoesNotThrow(() -> runShellCommand(() -> "jasypt-list-algorithms --includeBC=true"));
     }
 
     @Test
     void verifyNoBouncyCastleOperation() {
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "jasypt-list-algorithms"));
+        assertDoesNotThrow(() -> runShellCommand(() -> "jasypt-list-algorithms"));
     }
 }

@@ -17,6 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExportPropertiesCommandTests extends BaseCasShellCommandTests {
     @Test
     void verifyOperation() {
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "export-props --dir /tmp"));
+        assertDoesNotThrow(() -> runShellCommand(() -> "export-props --dir=/tmp"));
     }
 }

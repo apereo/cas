@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.util;
 
+import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -21,7 +22,7 @@ import java.util.Hashtable;
  * @since 5.3.0
  */
 @Slf4j
-public class ValidateLdapConnectionCommand {
+public class ValidateLdapConnectionCommand implements CasShellCommand {
     private static final int TIMEOUT = 5000;
 
     /**
@@ -39,28 +40,48 @@ public class ValidateLdapConnectionCommand {
     @Command(group = "Utilities", name = "validate-ldap", description = "Test connections to an LDAP server to verify connectivity, SSL, etc")
     public boolean validateLdap(
         @Option(
-            description = "LDAP URL to test, comma-separated.")
+            longName = "url",
+            description = "LDAP URL to test, comma-separated."
+        )
         final String url,
+
         @Option(
-            description = "bindDn to use when testing the LDAP server")
+            longName = "bindDn",
+            description = "bindDn to use when testing the LDAP server"
+        )
         final String bindDn,
+
         @Option(
-            description = "bindCredential to use when testing the LDAP server")
+            longName = "bindCredential",
+            description = "bindCredential to use when testing the LDAP server"
+        )
         final String bindCredential,
+
         @Option(
-            description = "baseDn to use when testing the LDAP server, searching for accounts (i.e. OU=some,DC=org,DC=edu)")
+            longName = "baseDn",
+            description = "baseDn to use when testing the LDAP server, searching for accounts (i.e. OU=some,DC=org,DC=edu)"
+        )
         final String baseDn,
+
         @Option(
+            longName = "searchFilter",
             description = "Filter to use when searching for accounts (i.e. (&(objectClass=*) (sAMAccountName=user)))",
-            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY)
+            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY
+        )
         final String searchFilter,
+
         @Option(
+            longName = "userPassword",
             description = "Password for the user found in the search result, to attempt authentication",
-            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY)
+            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY
+        )
         final String userPassword,
+
         @Option(
+            longName = "userAttributes",
             description = "User attributes, comma-separated, to fetch for the user found in the search result",
-            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY)
+            defaultValue = org.apache.commons.lang3.StringUtils.EMPTY
+        )
         final String userAttributes) {
         try {
             return connect(url, bindDn, bindCredential, baseDn, searchFilter, userAttributes, userPassword);

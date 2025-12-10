@@ -2,6 +2,7 @@ package org.apereo.cas.shell.commands.cipher;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
+import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -21,7 +22,7 @@ import java.nio.charset.StandardCharsets;
  * @since 5.2.0
  */
 @Slf4j
-public class StringableCipherExecutorCommand {
+public class StringableCipherExecutorCommand implements CasShellCommand {
 
     /**
      * Cipher text.
@@ -37,24 +38,42 @@ public class StringableCipherExecutorCommand {
      */
     @Command(group = "Cipher", name = {"cipher-text", "encode-text"}, description = "Sign and encrypt text data using keys")
     public String cipher(
-        @Option(description = "Value to put through the cipher")
+        @Option(longName = "value", description = "Value to put through the cipher")
         final String value,
-        @Option(description = "Encryption key")
+
+        @Option(longName = "secretKeyEncryption", description = "Encryption key")
         final String secretKeyEncryption,
-        @Option(defaultValue = EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, description = "Encryption alg")
+
+        @Option(
+            longName = "encryptionAlg",
+            defaultValue = EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM,
+            description = "Encryption alg"
+        )
         final String encryptionAlg,
-        @Option(description = "Signing key")
+
+        @Option(longName = "secretKeySigning", description = "Signing key")
         final String secretKeySigning,
+
         @Option(
-            defaultValue = StringUtils.EMPTY + EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE, description = "Encryption key size")
+            longName = "secretKeyEncryptionSize",
+            defaultValue = StringUtils.EMPTY + EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE,
+            description = "Encryption key size"
+        )
         final int secretKeyEncryptionSize,
+
         @Option(
-            defaultValue = StringUtils.EMPTY + SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE, description = "Signing key size")
+            longName = "secretKeySigningSize",
+            defaultValue = StringUtils.EMPTY + SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE,
+            description = "Signing key size"
+        )
         final int secretKeySigningSize,
-        @Option(defaultValue = "true", description = "Whether value should be encrypted")
+
+        @Option(longName = "encryptionEnabled", defaultValue = "true", description = "Whether value should be encrypted")
         final boolean encryptionEnabled,
-        @Option(defaultValue = "true", description = "Whether value should be signed")
-        final boolean signingEnabled) {
+
+        @Option(longName = "signingEnabled", defaultValue = "true", description = "Whether value should be signed")
+        final boolean signingEnabled
+    ) {
 
         var toEncode = value;
         if (value != null && new File(value).exists()) {
@@ -78,13 +97,15 @@ public class StringableCipherExecutorCommand {
      * @param keySize the key size
      * @return the string
      */
-    @Command(group = "Cipher", name = "generate-key", description =  "Generate signing/encryption crypto keys for CAS settings")
-    public String generateKey(@Option(defaultValue = "256", description = "Key size") final int keySize) {
+    @Command(group = "Cipher", name = "generate-key", description = "Generate signing/encryption crypto keys for CAS settings")
+    public String generateKey(
+        @Option(longName = "keySize", defaultValue = "256", description = "Key size")
+        final int keySize) {
         val key = EncodingUtils.generateJsonWebKey(keySize);
         LOGGER.info(key);
         return key;
     }
-    
+
     /**
      * Decipher.
      *
@@ -99,23 +120,40 @@ public class StringableCipherExecutorCommand {
      */
     @Command(group = "Cipher", name = {"decipher-text", "decode-text"}, description = "Decrypt and verify text data using keys")
     public String decipher(
-        @Option(description = "Value to put through the cipher")
+        @Option(longName = "value", description = "Value to put through the cipher")
         final String value,
-        @Option(description = "Encryption key")
+
+        @Option(longName = "secretKeyEncryption", description = "Encryption key")
         final String secretKeyEncryption,
-        @Option(defaultValue = EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, description = "Encryption alg")
+
+        @Option(
+            longName = "encryptionAlg",
+            defaultValue = EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM,
+            description = "Encryption alg"
+        )
         final String encryptionAlg,
-        @Option(description = "Signing key")
+
+        @Option(longName = "secretKeySigning", description = "Signing key")
         final String secretKeySigning,
+
         @Option(
-            defaultValue = StringUtils.EMPTY + EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE, description = "Encryption key size")
+            longName = "secretKeyEncryptionSize",
+            defaultValue = StringUtils.EMPTY + EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE,
+            description = "Encryption key size"
+        )
         final int secretKeyEncryptionSize,
+
         @Option(
-            defaultValue = StringUtils.EMPTY + SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE, description = "Signing key size")
+            longName = "secretKeySigningSize",
+            defaultValue = StringUtils.EMPTY + SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE,
+            description = "Signing key size"
+        )
         final int secretKeySigningSize,
-        @Option(defaultValue = "true", description = "Whether value should be encrypted")
+
+        @Option(longName = "encryptionEnabled", defaultValue = "true", description = "Whether value should be encrypted")
         final boolean encryptionEnabled,
-        @Option(defaultValue = "true", description = "Whether value should be signed")
+
+        @Option(longName = "signingEnabled", defaultValue = "true", description = "Whether value should be signed")
         final boolean signingEnabled) {
 
         var toEncode = value;

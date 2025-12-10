@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.db;
 
+import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.ReflectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,7 +34,7 @@ import java.util.TreeMap;
  * @since 5.3.0
  */
 @Slf4j
-public class GenerateDdlCommand {
+public class GenerateDdlCommand implements CasShellCommand {
     private static final Map<String, String> DIALECTS_MAP = new TreeMap<>();
 
     static {
@@ -74,37 +75,61 @@ public class GenerateDdlCommand {
     @Command(group = "RDBMS", name = "generate-ddl", description = "Generate database DDL scripts")
     public String generate(
         @Option(
+            longName = "file",
             description = "DDL file to contain to generated script",
-            defaultValue = "/etc/cas/config/cas-db-schema.sql")
+            defaultValue = "/etc/cas/config/cas-db-schema.sql"
+        )
         final String file,
+
         @Option(
+            longName = "dialect",
             description = "Database dialect class",
-            defaultValue = "HSQL")
+            defaultValue = "HSQL"
+        )
         final String dialect,
+
         @Option(
+            longName = "jdbcUrl",
             description = "JDBC database connection URL",
-            defaultValue = "jdbc:hsqldb:mem:cas")
+            defaultValue = "jdbc:hsqldb:mem:cas"
+        )
         final String jdbcUrl,
+
         @Option(
+            longName = "delimiter",
             description = "Delimiter to use for separation of statements when generating SQL",
-            defaultValue = ";")
+            defaultValue = ";"
+        )
         final String delimiter,
+
         @Option(
+            longName = "pretty",
             description = "Format DDL scripts and pretty-print the output",
-            defaultValue = "false")
+            defaultValue = "false"
+        )
         final Boolean pretty,
+
         @Option(
+            longName = "dropSchema",
             description = "Generate DROP SQL statements in the DDL",
-            defaultValue = "false")
+            defaultValue = "false"
+        )
         final Boolean dropSchema,
+
         @Option(
+            longName = "createSchema",
             description = "Generate DROP SQL statements in the DDL",
-            defaultValue = "false")
+            defaultValue = "false"
+        )
         final Boolean createSchema,
+
         @Option(
+            longName = "haltOnError",
             description = "Halt if an error occurs during the generation process",
-            defaultValue = "false")
-        final Boolean haltOnError) {
+            defaultValue = "false"
+        )
+        final Boolean haltOnError
+    ) {
 
         LOGGER.info("Requested database dialect type [{}]", dialect);
         val dialectName = DIALECTS_MAP.getOrDefault(dialect.trim(), dialect);
