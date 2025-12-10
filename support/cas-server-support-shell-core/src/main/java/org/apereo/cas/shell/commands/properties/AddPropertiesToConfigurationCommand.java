@@ -2,7 +2,6 @@ package org.apereo.cas.shell.commands.properties;
 
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
 import org.apereo.cas.shell.commands.CasShellCommand;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -14,7 +13,6 @@ import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -40,7 +38,7 @@ public class AddPropertiesToConfigurationCommand implements CasShellCommand {
      * @param group the group
      * @throws Exception the exception
      */
-    @Command(group = "CAS Properties", name = "add-properties", description =  "Add properties associated with a CAS group/module to a Properties/Yaml configuration file.")
+    @Command(group = "CAS Properties", name = "add-properties", description = "Add properties associated with a CAS group/module to a Properties/Yaml configuration file.")
     public void add(
         @Option(
             longName = "file",

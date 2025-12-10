@@ -6,7 +6,6 @@ import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import java.util.function.Supplier;
 import static org.junit.jupiter.api.Assertions.*;
 

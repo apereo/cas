@@ -54,7 +54,7 @@ public class GenerateSamlIdPMetadataCommand implements CasShellCommand {
      * @param subjectAltNames  additional subject alternative names for cert (besides entity id)
      * @throws Throwable the throwable
      */
-    @Command(group = "SAML", name = "generate-idp-metadata", description =  "Generate SAML2 IdP Metadata")
+    @Command(group = "SAML", name = "generate-idp-metadata", description = "Generate SAML2 IdP Metadata")
     public void generate(
         @Option(
             longName = "metadataLocation",
@@ -119,7 +119,7 @@ public class GenerateSamlIdPMetadataCommand implements CasShellCommand {
             props.getAuthn().getSamlIdp().getCore().setEntityId(entityId);
             props.getServer().setScope(scope);
             props.getServer().setPrefix(serverPrefix);
-            
+
             val context = SamlIdPMetadataGeneratorConfigurationContext.builder()
                 .samlIdPMetadataLocator(locator)
                 .samlIdPCertificateAndKeyWriter(writer)

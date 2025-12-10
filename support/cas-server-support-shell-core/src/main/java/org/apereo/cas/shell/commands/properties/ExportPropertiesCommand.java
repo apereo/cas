@@ -64,7 +64,7 @@ public class ExportPropertiesCommand implements CasShellCommand {
      * @param dir the directory for the configuration export
      * @throws Exception the exception
      */
-    @Command(group = "CAS Properties", name = "export-props", description =  "Export CAS properties and settings from configuration metadata.")
+    @Command(group = "CAS Properties", name = "export-props", description = "Export CAS properties and settings from configuration metadata.")
     public void exportProperties(
         @Option(
             longName = "dir",
