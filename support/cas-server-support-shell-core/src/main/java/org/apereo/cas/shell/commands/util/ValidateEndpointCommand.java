@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.util;
 
+import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,7 @@ import java.util.Arrays;
  * @since 5.3.0
  */
 @Slf4j
-public class ValidateEndpointCommand {
+public class ValidateEndpointCommand implements CasShellCommand {
     private static X509TrustManager[] getSystemTrustManagers() throws Exception {
         val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init((KeyStore) null);
@@ -90,7 +91,7 @@ public class ValidateEndpointCommand {
 
             httpsConnection.setSSLSocketFactory(getTheAllTrustingSSLContext().getSocketFactory());
 
-            try (val reader = new InputStreamReader(httpsConnection.getInputStream(), StandardCharsets.UTF_8)) {
+            try (val _ = new InputStreamReader(httpsConnection.getInputStream(), StandardCharsets.UTF_8)) {
                 tlsConnectionReport(httpsConnection);
             }
         } catch (final Exception e) {
@@ -181,15 +182,23 @@ public class ValidateEndpointCommand {
     @Command(group = "Utilities", name = "validate-endpoint", description = "Test connections to an endpoint to verify connectivity, SSL, etc")
     public boolean validateEndpoint(
         @Option(
-            description = "Endpoint URL to test")
+            longName = "url",
+            description = "Endpoint URL to test"
+        )
         final String url,
+
         @Option(
+            longName = "proxy",
             description = "Proxy address to use when testing the endpoint url",
-            defaultValue = StringUtils.EMPTY)
+            defaultValue = StringUtils.EMPTY
+        )
         final String proxy,
+
         @Option(
+            longName = "timeout",
             description = "Timeout to use in milliseconds when testing the url",
-            defaultValue = "5000")
+            defaultValue = "5000"
+        )
         final int timeout) {
 
         try {

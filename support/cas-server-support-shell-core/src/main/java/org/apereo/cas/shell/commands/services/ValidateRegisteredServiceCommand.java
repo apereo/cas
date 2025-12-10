@@ -2,6 +2,7 @@ package org.apereo.cas.shell.commands.services;
 
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
+import org.apereo.cas.shell.commands.CasShellCommand;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -24,7 +25,7 @@ import java.util.Objects;
  * @since 5.2.0
  */
 @Slf4j
-public class ValidateRegisteredServiceCommand {
+public class ValidateRegisteredServiceCommand implements CasShellCommand {
     private static final int SEP_LINE_LENGTH = 70;
 
     @Autowired
@@ -40,12 +41,17 @@ public class ValidateRegisteredServiceCommand {
     @Command(group = "Registered Services", name = "validate-service", description = "Validate a given JSON/YAML service definition by path or directory")
     public void validateService(
         @Option(
+            longName = "file",
             description = "Path to the JSON/YAML service definition file",
-            defaultValue = StringUtils.EMPTY)
+            defaultValue = StringUtils.EMPTY
+        )
         final String file,
+
         @Option(
+            longName = "directory",
             description = "Path to the JSON/YAML service definitions directory",
-            defaultValue = StringUtils.EMPTY)
+            defaultValue = StringUtils.EMPTY
+        )
         final String directory) {
 
         if (StringUtils.isNotBlank(file)) {

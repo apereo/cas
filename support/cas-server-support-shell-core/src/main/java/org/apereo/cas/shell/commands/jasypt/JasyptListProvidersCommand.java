@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.jasypt;
 
+import org.apereo.cas.shell.commands.CasShellCommand;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -15,7 +16,7 @@ import java.security.Security;
  * @since 5.3.0
  */
 @Slf4j
-public class JasyptListProvidersCommand {
+public class JasyptListProvidersCommand implements CasShellCommand {
 
     /**
      * List providers you can use Jasypt.
@@ -24,7 +25,7 @@ public class JasyptListProvidersCommand {
      */
     @Command(group = "Jasypt", name = "jasypt-list-providers", description =  "List encryption providers with PBE Ciphers you can use with Jasypt")
     public void listProviders(@Option(
-        description = "Include Bouncy Castle provider", defaultValue = "false") final Boolean includeBC) {
+        longName = "includeBC", description = "Include Bouncy Castle provider", defaultValue = "false") final Boolean includeBC) {
         if (includeBC) {
             Security.addProvider(new BouncyCastleProvider());
         } else {

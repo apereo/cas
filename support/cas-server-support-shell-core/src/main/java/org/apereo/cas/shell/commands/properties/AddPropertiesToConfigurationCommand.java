@@ -1,6 +1,7 @@
 package org.apereo.cas.shell.commands.properties;
 
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
+import org.apereo.cas.shell.commands.CasShellCommand;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Slf4j
-public class AddPropertiesToConfigurationCommand {
+public class AddPropertiesToConfigurationCommand implements CasShellCommand {
     /**
      * Add properties to configuration.
      *
@@ -42,10 +43,18 @@ public class AddPropertiesToConfigurationCommand {
     @Command(group = "CAS Properties", name = "add-properties", description =  "Add properties associated with a CAS group/module to a Properties/Yaml configuration file.")
     public void add(
         @Option(
+            longName = "file",
             description = "Path to the CAS configuration file",
-            defaultValue = "/etc/cas/config/cas.properties") final String file,
+            defaultValue = "/etc/cas/config/cas.properties"
+        )
+        final String file,
+
         @Option(
-            description = "Group/module whose associated settings should be added to the CAS configuration file") final String group) throws Exception {
+            longName = "group",
+            description = "Group/module whose associated settings should be added to the CAS configuration file"
+        )
+        final String group
+    ) throws Exception {
 
         if (StringUtils.isBlank(file)) {
             LOGGER.warn("Configuration file must be specified");

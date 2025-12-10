@@ -1,6 +1,7 @@
 package org.apereo.cas.shell.commands.saml;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
@@ -30,7 +31,7 @@ import java.util.Optional;
  * @since 5.3.0
  */
 @Slf4j
-public class GenerateSamlIdPMetadataCommand {
+public class GenerateSamlIdPMetadataCommand implements CasShellCommand {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -56,22 +57,46 @@ public class GenerateSamlIdPMetadataCommand {
     @Command(group = "SAML", name = "generate-idp-metadata", description =  "Generate SAML2 IdP Metadata")
     public void generate(
         @Option(
+            longName = "metadataLocation",
             description = "Directory location to hold metadata and relevant keys/certificates",
-            defaultValue = "/etc/cas/saml") final String metadataLocation,
+            defaultValue = "/etc/cas/saml"
+        )
+        final String metadataLocation,
+
         @Option(
+            longName = "entityId",
             description = "Entity ID to use for the generated metadata",
-            defaultValue = "cas.example.org") final String entityId,
+            defaultValue = "cas.example.org"
+        )
+        final String entityId,
+
         @Option(
+            longName = "serverPrefix",
             description = "CAS server prefix to be used at the IdP host name when generating metadata",
-            defaultValue = "https://cas.example.org/cas") final String serverPrefix,
+            defaultValue = "https://cas.example.org/cas"
+        )
+        final String serverPrefix,
+
         @Option(
+            longName = "scope",
             description = "Scope to use when generating metadata",
-            defaultValue = "example.org") final String scope,
+            defaultValue = "example.org"
+        )
+        final String scope,
+
         @Option(
-            description = "Force metadata generation (XML only, not certs), overwriting anything at the specified location") final boolean force,
+            longName = "force",
+            description = "Force metadata generation (XML only, not certs), overwriting anything at the specified location"
+        )
+        final boolean force,
+
         @Option(
+            longName = "subjectAltNames",
             description = "Comma separated list of other subject alternative names for the certificate (besides entityId)",
-            defaultValue = StringUtils.EMPTY) final String subjectAltNames) throws Throwable {
+            defaultValue = StringUtils.EMPTY
+        )
+        final String subjectAltNames
+    ) throws Throwable {
 
         val locator = new FileSystemSamlIdPMetadataLocator(CipherExecutor.noOpOfStringToString(),
             new File(metadataLocation),

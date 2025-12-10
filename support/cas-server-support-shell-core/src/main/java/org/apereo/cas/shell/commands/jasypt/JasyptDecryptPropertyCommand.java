@@ -1,6 +1,7 @@
 package org.apereo.cas.shell.commands.jasypt;
 
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
+import org.apereo.cas.shell.commands.CasShellCommand;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
@@ -18,7 +19,7 @@ import org.springframework.shell.core.command.annotation.Option;
  * @since 5.2.0
  */
 @Slf4j
-public class JasyptDecryptPropertyCommand {
+public class JasyptDecryptPropertyCommand implements CasShellCommand {
     @Autowired
     private Environment environment;
 
@@ -34,18 +35,43 @@ public class JasyptDecryptPropertyCommand {
      */
     @Command(name = "decrypt-value", description = "Decrypt a CAS property value/setting via Jasypt")
     public void decryptValue(
-        @Option(description = "Value to decrypt")
+        @Option(
+            longName = "value",
+            description = "Value to decrypt"
+        )
         final String value,
-        @Option(description = "Algorithm to use to decrypt")
+
+        @Option(
+            longName = "alg",
+            description = "Algorithm to use to decrypt"
+        )
         final String alg,
-        @Option(description = "Security provider to use to decrypt")
+
+        @Option(
+            longName = "provider",
+            description = "Security provider to use to decrypt"
+        )
         final String provider,
-        @Option(description = "Password (encryption key) to decrypt")
+
+        @Option(
+            longName = "password",
+            description = "Password (encryption key) to decrypt"
+        )
         final String password,
-        @Option(description = "Use initialization vector to encrypt", defaultValue = "false")
+
+        @Option(
+            longName = "initVector",
+            description = "Use initialization vector to encrypt",
+            defaultValue = "false"
+        )
         final Boolean initVector,
-        @Option(description = "Key obtention iterations to decrypt, default 1000")
-        final String iterations) {
+
+        @Option(
+            longName = "iterations",
+            description = "Key obtention iterations to decrypt, default 1000"
+        )
+        final String iterations
+    ) {
 
         val cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
         cipher.setAlgorithm(alg);
