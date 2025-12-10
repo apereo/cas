@@ -110,8 +110,8 @@ jobs:
         run: |
           chmod -R +x ./ci/tests/shell/run-shell.sh && ./ci/tests/shell/run-shell.sh
           echo "Checking for stack traces in output that would indicate an error"
-          cat cas-shell.out.ignore
-          count=$(grep -c -e ".*\(Exception\|Throwable\|caused\\sby\).*" cas-shell.out.ignore || true);
+          cat cas-shell.ignore
+          count=$(grep -c -e ".*\(Exception\|Throwable\|caused\\sby\).*" cas-shell.ignore || true);
           test $count -eq 0
 
 ##########################################################################
