@@ -167,16 +167,16 @@ function generateServiceDefinition() {
 
             Object.keys(serviceDefinition).forEach(key => {
                 if (
-                    key !== "@class" &&                             
+                    key !== "@class" &&
                     typeof serviceDefinition[key] === "object" &&
                     serviceDefinition[key] !== null &&
                     Object.keys(serviceDefinition[key]).length === 1 &&
-                    serviceDefinition[key].hasOwnProperty("@class") ) {
+                    serviceDefinition[key].hasOwnProperty("@class")) {
 
                     const classType = serviceDefinition[key]["@class"];
                     const markerClass = $(`option[value='${classType}']`).data("markerClass");
                     if (!markerClass) {
-                        console.log("Deleting", serviceDefinition[key])
+                        console.log("Deleting", serviceDefinition[key]);
                         delete serviceDefinition[key];
                     }
                 }
@@ -364,7 +364,7 @@ function appendOptionsToDropDown(config) {
         selectElement,
         options
     } = config;
-    
+
     options.forEach(opt => {
         const $opt = $("<option>")
             .attr("value", opt.value)
@@ -414,7 +414,7 @@ function createSelectField(config) {
     appendOptionsToDropDown({
         selectElement: $select,
         options: options
-    })
+    });
 
     $label.append($select);
 
@@ -471,7 +471,7 @@ function createInputField(config) {
         autocomplete: "off",
         title: title,
         required: required
-    }).on("input", function() {
+    }).on("input", function () {
         const value = $(this).val();
         if (value.length > 0 && dataType === "regex" && !isValidRegex(value)) {
             this.setCustomValidity("Value must be a valid regular expression.");
@@ -648,7 +648,7 @@ function initializeFooterButtons() {
         copyToClipboard(editor.getValue());
     });
 
-    
+
     $("button[name=validateServiceWizard]").off().on("click", () => {
         const $accordion = $("#editServiceWizardMenu");
         let valid = true;
@@ -762,15 +762,15 @@ function initializeFooterButtons() {
                 });
 
             $("#editServiceWizardForm input").val("");
-            $('#editServiceWizardForm option').filter(function () {
-                const clazz = $(this).data('serviceClass');
+            $("#editServiceWizardForm option").filter(function () {
+                const clazz = $(this).data("serviceClass");
                 return clazz !== undefined && clazz !== null;
             }).remove();
-            $('#editServiceWizardForm select').selectmenu("refresh");
-            
+            $("#editServiceWizardForm select").selectmenu("refresh");
+
             generateServiceDefinition();
             editServiceWizardDialog["open"]();
-            
+
             const value = $("#hideAdvancedOptions").val();
             if (value === "false" || value === false) {
                 $("#hideAdvancedOptionsButton").click();
@@ -805,7 +805,7 @@ function initializeFooterButtons() {
                 savedIndex = 0;
             }
 
-            const visible = $("#editServiceWizardForm").find(`.ui-accordion-header:eq(${savedIndex})`).is(":visible")
+            const visible = $("#editServiceWizardForm").find(`.ui-accordion-header:eq(${savedIndex})`).is(":visible");
             if (!visible) {
                 savedIndex = 0;
             }
@@ -1134,6 +1134,8 @@ function displayBanner(error) {
     }
     if (typeof error === "string") {
         message = error;
+    } else {
+        message = error.message;
     }
     notyf.dismissAll();
     notyf.error(message);
@@ -1898,6 +1900,26 @@ async function initializeLoggingOperations() {
                     clearInterval(refreshLogFileInterval);
                     refreshLogFileInterval = startStreamingLogFile();
                 }
+            }
+        });
+
+        $("#downloadLogsButton").off().on("click", () => {
+            try {
+                $("#downloadLogsButton").prop("disabled", true);
+                hideBanner();
+                const text = $("#logDataStream").text();
+                const blob = new Blob([text], {type: "text/plain"});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "cas.log";
+                a.click();
+                URL.revokeObjectURL(url);
+            } catch (e) {
+                console.error("Error downloading log file:", e);
+                displayBanner(e);
+            } finally {
+                $("#downloadLogsButton").prop("disabled", false);
             }
         });
 
