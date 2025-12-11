@@ -170,7 +170,7 @@ public interface BeanContainer<T> extends DisposableBean {
         @Override
         public BeanContainer<T> forEach(final Consumer<T> o) {
             items.forEach(o);
-            return null;
+            return this;
         }
 
         @Override

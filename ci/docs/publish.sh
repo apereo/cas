@@ -64,9 +64,11 @@ while (("$#")); do
   --local)
     propFilter=$2
     if [[ -z "$propFilter" ]]; then
-      propFilter="-none-"
+      propFilter="nothing"
+      shift 1
+    else 
+      shift 2
     fi
-    shift 2
     printgreen "Generating documentation for property filter: ${propFilter}"
     serve=true
     proofRead=false
@@ -276,7 +278,8 @@ if [[ $generateData == "true" ]]; then
   docgen="docs/cas-server-documentation-processor/build/libs/casdocsgen.jar"
   printgreen "Generating documentation site data..."
   if [[ ! -f "$docgen" ]]; then
-    ./gradlew :docs:cas-server-documentation-processor:jsonDependencies :docs:cas-server-documentation-processor:build $GRADLE_BUILD_OPTIONS
+    ./gradlew :docs:cas-server-documentation-processor:jsonDependencies \
+      :docs:cas-server-documentation-processor:build $GRADLE_BUILD_OPTIONS
     if [ $? -eq 1 ]; then
       printred "Unable to build the documentation processor. Aborting..."
       exit 1

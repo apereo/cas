@@ -20,36 +20,38 @@ printgreen "Building CAS command-line shell version $casVersion"
 ./gradlew :support:cas-server-support-shell:build -DskipNestedConfigMetadataGen=true \
   -x check -x javadoc  --no-daemon --build-cache --configure-on-demand --parallel
 
-rm -rf cas-shell.out
-COMMANDS=$(cat "${PWD}"/ci/tests/shell/cas-shell-script.sh)
+rm -rf cas-shell.ignore
+awk "{ gsub(/\\\$PWD/, \"$PWD/ci/tests/shell\"); print }" \
+  "$PWD/ci/tests/shell/cas-shell-script.sh" \
+  > "$PWD/ci/tests/shell/cas-shell-script.sh.ignore"
+COMMANDS=$(cat "${PWD}"/ci/tests/shell/cas-shell-script.sh.ignore)
 printgreen "Running CAS command-line shell commands:"
 echo "${COMMANDS}"
 
 printgreen "Running CAS command-line shell version ${casVersion}"
-java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar \
-  @ci/tests/shell/cas-shell-script.sh \
-  --spring.shell.noninteractive.enabled=false \
-  --spring.shell.script.enabled=true > cas-shell.out &
+java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006 \
+  -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar \
+  @ci/tests/shell/cas-shell-script.sh.ignore \
+  --spring.shell.interactive.enabled=false > cas-shell.ignore
 pid=$!
-tail -F cas-shell.out &
+tail -F cas-shell.ignore &
 printgreen "Launched CAS command-line shell under process id ${pid}. Waiting for commands to finish..."
-sleep 8
-exitRequest="org.springframework.shell.ExitRequest"
+sleep 5
+exitRequest="Command quit returned an error: EXECUTION_ERROR"
 while :; do
-    if grep -q "APPLICATION FAILED TO START" "cas-shell.out"; then
+    if grep -q "APPLICATION FAILED TO START" "cas-shell.ignore"; then
         printred "CAS command-line shell failed to start successfully"
         kill -9 ${pid} &> /dev/null
         exit 1
     fi
-    if grep -q "Caused by: " "cas-shell.out"; then
+    if grep -q "Caused by: " "cas-shell.ignore"; then
         printred "CAS command-line shell encountered an error during execution"
         kill -9 ${pid} &> /dev/null
         exit 1
     fi
-    if grep -q ${exitRequest} "cas-shell.out"; then
-        line_number=$(grep -n ${exitRequest} "cas-shell.out" | cut -d: -f1)
-        printf "Found ${GREEN}${exitRequest}${ENDCOLOR} at line ${GREEN}${line_number}${ENDCOLOR} in CAS command-line shell output\n"
-        sed -i -e "${line_number},\$d" "cas-shell.out"
+    if grep -q ${exitRequest} "cas-shell.ignore"; then
+        printgreen "Found ${GREEN}${exitRequest}${ENDCOLOR}"
+        rm -Rf ./cas-db-schema.sql
         break
     fi
     echo "Waiting for CAS command-line shell to finish..."

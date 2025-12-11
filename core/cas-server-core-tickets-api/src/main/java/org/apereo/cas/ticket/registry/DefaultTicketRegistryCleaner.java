@@ -25,7 +25,7 @@ import java.util.concurrent.Future;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(transactionManager = "ticketTransactionManager")
+@Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER)
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     private final LockRepository lockRepository;
 

@@ -169,7 +169,7 @@ public class CasJpaTicketRegistryAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public TransactionOperations jpaTicketRegistryTransactionTemplate(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("ticketTransactionManager")
+            @Qualifier(TicketRegistry.TICKET_TRANSACTION_MANAGER)
             final PlatformTransactionManager ticketTransactionManager,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(TransactionOperations.class)
@@ -220,7 +220,7 @@ public class CasJpaTicketRegistryAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public org.springframework.integration.jdbc.lock.LockRepository jdbcLockRepository(
-            @Qualifier("ticketTransactionManager")
+            @Qualifier(TicketRegistry.TICKET_TRANSACTION_MANAGER)
             final PlatformTransactionManager ticketTransactionManager,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("dataSourceTicket")

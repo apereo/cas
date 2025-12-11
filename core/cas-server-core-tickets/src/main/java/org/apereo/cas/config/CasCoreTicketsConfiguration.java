@@ -560,7 +560,7 @@ class CasCoreTicketsConfiguration {
     @EnableTransactionManagement(proxyTargetClass = false)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     static class CasCoreTicketTransactionConfiguration {
-        @ConditionalOnMissingBean(name = "ticketTransactionManager")
+        @ConditionalOnMissingBean(name = TicketRegistry.TICKET_TRANSACTION_MANAGER)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager ticketTransactionManager() {

@@ -12,6 +12,12 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.definition.FlowDefinition;
@@ -21,6 +27,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * This is {@link BaseCasWebflowAction}.
@@ -30,7 +37,7 @@ import java.util.Optional;
  */
 public abstract class BaseCasWebflowAction extends AbstractAction {
     protected final EventFactorySupport eventFactory = new EventFactorySupport();
-    
+
     /**
      * Is login flow active.
      *
@@ -59,24 +66,32 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
     @Override
     protected final Event doExecute(final RequestContext requestContext) throws Exception {
         val activeFlow = requestContext.getActiveFlow();
+        val applicationContext = activeFlow.getApplicationContext();
+        val transactionManager = getTransactionManager(requestContext);
+        val transactionStatus = getTransaction(transactionManager);
+
         try {
             WebUtils.putActiveFlow(requestContext);
-            val applicationContext = activeFlow.getApplicationContext();
             val clientInfo = ClientInfoHolder.getClientInfo();
             val scope = new HashMap<>(requestContext.getConversationScope().asMap());
             scope.putAll(requestContext.getFlowScope().asMap());
             scope.putAll(requestContext.getFlashScope().asMap());
             applicationContext.publishEvent(new CasWebflowActionExecutingEvent(this, scope, clientInfo));
-            return doExecuteInternal(requestContext);
+            val result = doExecuteInternal(requestContext);
+            transactionManager.ifPresent(mgr -> transactionStatus.ifPresent(mgr::commit));
+            return result;
         } catch (final Exception e) {
+            transactionManager.ifPresent(mgr -> transactionStatus.ifPresent(mgr::rollback));
             throw e;
         } catch (final Throwable e) {
+            transactionManager.ifPresent(mgr -> transactionStatus.ifPresent(mgr::rollback));
             val currentState = Optional.ofNullable(requestContext.getCurrentState())
                 .map(StateDefinition::getId).orElse("unknown");
             throw new ActionExecutionException(activeFlow.getId(),
                 currentState, this, requestContext.getAttributes(), e);
         }
     }
+
 
     @Override
     protected void doPostExecute(final RequestContext requestContext) {
@@ -89,4 +104,25 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
     }
 
     protected abstract Event doExecuteInternal(RequestContext requestContext) throws Throwable;
+
+    protected Optional<TransactionStatus> getTransaction(
+        final Optional<PlatformTransactionManager> transactionManager) {
+        return transactionManager
+            .map(manager -> {
+                val def = new DefaultTransactionDefinition();
+                def.setName(getClass().getSimpleName() + "-TransactionID-" + UUID.randomUUID());
+                def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+                return manager.getTransaction(def);
+            });
+    }
+
+    protected Optional<PlatformTransactionManager> getTransactionManager(final RequestContext requestContext) {
+        val annotation = AnnotationUtils.findAnnotation(getClass(), Transactional.class);
+        return FunctionUtils.doIfNotNull(annotation, () -> {
+            val activeFlow = requestContext.getActiveFlow();
+            val applicationContext = activeFlow.getApplicationContext();
+            val transactionManagerName = annotation.transactionManager();
+            return Optional.of(applicationContext.getBean(transactionManagerName, PlatformTransactionManager.class));
+        }, Optional::<PlatformTransactionManager>empty).get();
+    }
 }

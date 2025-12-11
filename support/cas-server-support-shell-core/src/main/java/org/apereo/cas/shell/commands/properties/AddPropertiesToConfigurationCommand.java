@@ -1,7 +1,7 @@
 package org.apereo.cas.shell.commands.properties;
 
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
-
+import org.apereo.cas.shell.commands.CasShellCommand;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -9,13 +9,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -32,10 +29,8 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@ShellCommandGroup("CAS Properties")
-@ShellComponent
 @Slf4j
-public class AddPropertiesToConfigurationCommand {
+public class AddPropertiesToConfigurationCommand implements CasShellCommand {
     /**
      * Add properties to configuration.
      *
@@ -43,13 +38,21 @@ public class AddPropertiesToConfigurationCommand {
      * @param group the group
      * @throws Exception the exception
      */
-    @ShellMethod(key = "add-properties", value = "Add properties associated with a CAS group/module to a Properties/Yaml configuration file.")
+    @Command(group = "CAS Properties", name = "add-properties", description = "Add properties associated with a CAS group/module to a Properties/Yaml configuration file.")
     public void add(
-        @ShellOption(value = { "file", "--file" },
-            help = "Path to the CAS configuration file",
-            defaultValue = "/etc/cas/config/cas.properties") final String file,
-        @ShellOption(value = { "group", "--group" },
-            help = "Group/module whose associated settings should be added to the CAS configuration file") final String group) throws Exception {
+        @Option(
+            longName = "file",
+            description = "Path to the CAS configuration file",
+            defaultValue = "/etc/cas/config/cas.properties"
+        )
+        final String file,
+
+        @Option(
+            longName = "group",
+            description = "Group/module whose associated settings should be added to the CAS configuration file"
+        )
+        final String group
+    ) throws Exception {
 
         if (StringUtils.isBlank(file)) {
             LOGGER.warn("Configuration file must be specified");

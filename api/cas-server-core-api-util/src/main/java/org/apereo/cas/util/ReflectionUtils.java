@@ -48,6 +48,36 @@ public class ReflectionUtils {
     }
 
     /**
+     * Find classes with annotations in package collection.
+     *
+     * @param classLoaders the class loaders
+     * @param annotations  the annotations
+     * @param packageName  the package name
+     * @return the collection
+     */
+    public Collection<Class<?>> findClassesWithAnnotationsInPackage(
+        final List<ClassLoader> classLoaders,
+        final Collection<Class<? extends Annotation>> annotations,
+        final String... packageName) {
+        
+        var classGraph = new ClassGraph()
+            .acceptPackages(packageName)
+            .enableAnnotationInfo()
+            .disableModuleScanning();
+        if (!classLoaders.isEmpty()) {
+            classGraph = classGraph.overrideClassLoaders(classLoaders.toArray(new ClassLoader[0]));
+        }
+        try (val scanResult = classGraph.scan()) {
+            return annotations
+                .stream()
+                .map(annotation -> scanResult.getClassesWithAnnotation(annotation).getNames())
+                .flatMap(List::stream)
+                .map(Unchecked.function(ClassUtils::getClass))
+                .collect(Collectors.toList());
+        }
+    }
+
+    /**
      * Finds all classes in the given package, which are annotated with at least one of the given annotations.
      *
      * @param annotations The annotations to look for.
@@ -56,20 +86,7 @@ public class ReflectionUtils {
      */
     public Collection<Class<?>> findClassesWithAnnotationsInPackage(final Collection<Class<? extends Annotation>> annotations,
                                                                     final String... packageName) {
-        val contextClassLoader = Thread.currentThread().getContextClassLoader();
-        try (val scanResult = new ClassGraph()
-            .overrideClassLoaders(contextClassLoader)
-            .acceptPackages(packageName)
-            .enableAnnotationInfo()
-            .disableModuleScanning()
-            .scan()) {
-            return annotations
-                .stream()
-                .map(annotation -> scanResult.getClassesWithAnnotation(annotation).getNames())
-                .flatMap(List::stream)
-                .map(Unchecked.function(name -> ClassUtils.getClass(contextClassLoader, name)))
-                .collect(Collectors.toList());
-        }
+        return findClassesWithAnnotationsInPackage(List.of(Thread.currentThread().getContextClassLoader()), annotations, packageName);
     }
 
     /**
