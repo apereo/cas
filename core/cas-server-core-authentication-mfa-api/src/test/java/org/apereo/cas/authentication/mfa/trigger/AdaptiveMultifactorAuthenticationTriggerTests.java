@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("MFATrigger")
-class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class AdaptiveMultifactorAuthenticationTriggerTests extends BaseSimpleMultifactorAuthenticationTriggerTests {
 
     @Test
     void verifyNoProviders() {

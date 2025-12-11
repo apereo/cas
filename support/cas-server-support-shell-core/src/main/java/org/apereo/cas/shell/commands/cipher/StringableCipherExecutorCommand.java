@@ -2,16 +2,16 @@ package org.apereo.cas.shell.commands.cipher;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
+import org.apereo.cas.shell.commands.CasShellCommand;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
@@ -21,10 +21,8 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@ShellCommandGroup("Cipher Ops")
-@ShellComponent
 @Slf4j
-public class StringableCipherExecutorCommand {
+public class StringableCipherExecutorCommand implements CasShellCommand {
 
     /**
      * Cipher text.
@@ -38,26 +36,44 @@ public class StringableCipherExecutorCommand {
      * @param signingEnabled          the signing enabled
      * @return the string
      */
-    @ShellMethod(key = {"cipher-text", "encode-text"}, value = "Sign and encrypt text data using keys")
+    @Command(group = "Cipher", name = {"cipher-text", "encode-text"}, description = "Sign and encrypt text data using keys")
     public String cipher(
-        @ShellOption(value = { "value", "--value" }, defaultValue = ShellOption.NULL, help = "Value to put through the cipher")
+        @Option(longName = "value", description = "Value to put through the cipher")
         final String value,
-        @ShellOption(value = { "encryption-key", "--encryption-key" }, defaultValue = ShellOption.NULL, help = "Encryption key")
+
+        @Option(longName = "secretKeyEncryption", description = "Encryption key")
         final String secretKeyEncryption,
-        @ShellOption(value = { "encryption-alg", "--encryption-alg" }, defaultValue = EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, help = "Encryption alg")
+
+        @Option(
+            longName = "encryptionAlg",
+            defaultValue = EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM,
+            description = "Encryption alg"
+        )
         final String encryptionAlg,
-        @ShellOption(value = { "signing-key", "--signing-key" }, defaultValue = ShellOption.NULL, help = "Signing key")
+
+        @Option(longName = "secretKeySigning", description = "Signing key")
         final String secretKeySigning,
-        @ShellOption(value = { "encryption-key-size", "--encryption-key-size" },
-            defaultValue = StringUtils.EMPTY + EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE, help = "Encryption key size")
+
+        @Option(
+            longName = "secretKeyEncryptionSize",
+            defaultValue = StringUtils.EMPTY + EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE,
+            description = "Encryption key size"
+        )
         final int secretKeyEncryptionSize,
-        @ShellOption(value = { "signing-key-size", "--signing-key-size" },
-            defaultValue = StringUtils.EMPTY + SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE, help = "Signing key size")
+
+        @Option(
+            longName = "secretKeySigningSize",
+            defaultValue = StringUtils.EMPTY + SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE,
+            description = "Signing key size"
+        )
         final int secretKeySigningSize,
-        @ShellOption(value = { "enable-encryption", "--enable-encryption" }, defaultValue = "true", help = "Whether value should be encrypted")
+
+        @Option(longName = "encryptionEnabled", defaultValue = "true", description = "Whether value should be encrypted")
         final boolean encryptionEnabled,
-        @ShellOption(value = { "enable-signing", "--enable-signing" }, defaultValue = "true", help = "Whether value should be signed")
-        final boolean signingEnabled) {
+
+        @Option(longName = "signingEnabled", defaultValue = "true", description = "Whether value should be signed")
+        final boolean signingEnabled
+    ) {
 
         var toEncode = value;
         if (value != null && new File(value).exists()) {
@@ -76,6 +92,21 @@ public class StringableCipherExecutorCommand {
     }
 
     /**
+     * Generate key.
+     *
+     * @param keySize the key size
+     * @return the string
+     */
+    @Command(group = "Cipher", name = "generate-key", description = "Generate signing/encryption crypto keys for CAS settings")
+    public String generateKey(
+        @Option(longName = "keySize", defaultValue = "256", description = "Key size")
+        final int keySize) {
+        val key = EncodingUtils.generateJsonWebKey(keySize);
+        LOGGER.info(key);
+        return key;
+    }
+
+    /**
      * Decipher.
      *
      * @param value                   the value
@@ -87,25 +118,42 @@ public class StringableCipherExecutorCommand {
      * @param signingEnabled          the signing enabled
      * @return the string
      */
-    @ShellMethod(key = {"decipher-text", "decode-text"}, value = "Decrypt and verify text data using keys")
+    @Command(group = "Cipher", name = {"decipher-text", "decode-text"}, description = "Decrypt and verify text data using keys")
     public String decipher(
-        @ShellOption(value = { "value", "--value" }, defaultValue = ShellOption.NULL, help = "Value to put through the cipher")
+        @Option(longName = "value", description = "Value to put through the cipher")
         final String value,
-        @ShellOption(value = { "encryption-key", "--encryption-key" }, defaultValue = ShellOption.NULL, help = "Encryption key")
+
+        @Option(longName = "secretKeyEncryption", description = "Encryption key")
         final String secretKeyEncryption,
-        @ShellOption(value = { "encryption-alg", "--encryption-alg" }, defaultValue = EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, help = "Encryption alg")
+
+        @Option(
+            longName = "encryptionAlg",
+            defaultValue = EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM,
+            description = "Encryption alg"
+        )
         final String encryptionAlg,
-        @ShellOption(value = { "signing-key", "--signing-key" }, defaultValue = ShellOption.NULL, help = "Signing key")
+
+        @Option(longName = "secretKeySigning", description = "Signing key")
         final String secretKeySigning,
-        @ShellOption(value = { "encryption-key-size", "--encryption-key-size" },
-            defaultValue = StringUtils.EMPTY + EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE, help = "Encryption key size")
+
+        @Option(
+            longName = "secretKeyEncryptionSize",
+            defaultValue = StringUtils.EMPTY + EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE,
+            description = "Encryption key size"
+        )
         final int secretKeyEncryptionSize,
-        @ShellOption(value = { "signing-key-size", "--signing-key-size" },
-            defaultValue = StringUtils.EMPTY + SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE, help = "Signing key size")
+
+        @Option(
+            longName = "secretKeySigningSize",
+            defaultValue = StringUtils.EMPTY + SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE,
+            description = "Signing key size"
+        )
         final int secretKeySigningSize,
-        @ShellOption(value = { "enable-encryption", "--enable-encryption" }, defaultValue = "true", help = "Whether value should be encrypted")
+
+        @Option(longName = "encryptionEnabled", defaultValue = "true", description = "Whether value should be encrypted")
         final boolean encryptionEnabled,
-        @ShellOption(value = { "enable-signing", "--enable-signing" }, defaultValue = "true", help = "Whether value should be signed")
+
+        @Option(longName = "signingEnabled", defaultValue = "true", description = "Whether value should be signed")
         final boolean signingEnabled) {
 
         var toEncode = value;
