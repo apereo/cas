@@ -38,10 +38,7 @@ import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEn
 import org.springframework.boot.actuate.endpoint.web.annotation.WebEndpoint;
 import org.springframework.core.StandardReflectionParameterNameDiscoverer;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -134,7 +131,7 @@ public class CasDocumentationApplication {
         var ui = new Option("ui", "userinterface", true, "Generate data for CAS user interface and templates");
         ui.setRequired(false);
         options.addOption(ui);
-        
+
         HelpFormatter.builder().get().printHelp("-- Review Required Options --",
             "Apereo CAS Documentation", options, "Apereo CAS Documentation", true);
         var cmd = new DefaultParser().parse(options, args);
@@ -270,40 +267,35 @@ public class CasDocumentationApplication {
             FileUtils.deleteQuietly(parentPath);
         }
         if (!parentPath.mkdirs()) {
-            LOGGER.debug("Unable to create directory");
+            LOGGER.debug("Unable to create directory [{}]", parentPath);
         }
-        var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(ShellComponent.class), CasShellCommand.NAMESPACE);
+        var subTypes = ReflectionUtils.findSubclassesInPackage(CasShellCommand.class, CasShellCommand.NAMESPACE);
         var properties = new ArrayList<Map<?, ?>>();
 
         subTypes.forEach(clazz -> {
             LOGGER.debug("Locating shell command group for [{}]", clazz.getSimpleName());
-            var group = clazz.getAnnotation(ShellCommandGroup.class);
-            if (group == null) {
-                LOGGER.warn("Shell command group is missing for {}", clazz.getName());
-            }
-
             var methods = new LinkedHashMap();
             for (var method : clazz.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(ShellMethod.class)) {
-                    var annotInstance = method.getAnnotation(ShellMethod.class);
+                if (method.isAnnotationPresent(Command.class)) {
+                    var annotInstance = method.getAnnotation(Command.class);
                     var cmd = new ShellCommand();
 
                     cmd.parameters = new ArrayList<Map<String, String>>();
                     var parameterAnnotations = method.getParameterAnnotations();
                     for (var parameterAnnotation : parameterAnnotations) {
                         for (var annotation : parameterAnnotation) {
-                            var ann = (ShellOption) annotation;
+                            var ann = (org.springframework.shell.core.command.annotation.Option) annotation;
                             cmd.parameters.add(Map.of(
-                                "name", String.join(",", ann.value()),
-                                "help", String.valueOf(ann.help()),
-                                "optOut", String.valueOf(ann.optOut()),
+                                "name", ann.longName(),
+                                "help", ann.description(),
+                                "required", String.valueOf(ann.required()),
                                 "defaultValue", ann.defaultValue()));
                         }
                     }
 
-                    cmd.description = annotInstance.value();
-                    cmd.name = String.join(",", annotInstance.key());
-                    cmd.group = group == null ? "other" : group.value();
+                    cmd.description = annotInstance.description();
+                    cmd.name = String.join(",", annotInstance.name());
+                    cmd.group = StringUtils.isBlank(annotInstance.group()) ? "other" : annotInstance.group();
 
                     LOGGER.debug("Adding shell command [{}]", cmd.name);
                     methods.put(cmd.name, cmd);
@@ -442,7 +434,7 @@ public class CasDocumentationApplication {
         collectRestActuators(restActuators, parentPath, Endpoint.class);
 
         LOGGER.info("Checking endpoints...");
-        subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(Endpoint.class), "org");
+        subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(), List.of(Endpoint.class), "org");
         subTypes.forEach(clazz -> {
             var properties = new ArrayList<Map<?, ?>>();
             var endpoint = getEndpoint(clazz);

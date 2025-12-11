@@ -10,6 +10,7 @@ import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.retry.RetryPolicy;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.core.retry.Retryable;
@@ -192,8 +193,8 @@ public class FunctionUtils {
      * @param trueFunction the true function
      * @return the value from the supplier or null
      */
-    public static <R> R doIfNotNull(final Object input,
-                                    final CheckedSupplier<R> trueFunction) {
+    public static <R> @Nullable R doIfNotNull(@Nullable final Object input,
+                                              final CheckedSupplier<R> trueFunction) {
         return doIfNotNull(input, trueFunction, () -> null).get();
     }
 
@@ -206,7 +207,7 @@ public class FunctionUtils {
      * @param falseFunction the false function
      * @return the supplier
      */
-    public static <R> Supplier<R> doIfNotNull(final Object input,
+    public static <R> Supplier<R> doIfNotNull(@Nullable final Object input,
                                               final CheckedSupplier<R> trueFunction,
                                               final Supplier<R> falseFunction) {
         return () -> {
