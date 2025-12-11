@@ -33,6 +33,8 @@ import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.support.TransactionOperations;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -75,15 +77,18 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<@NonNull TicketRegistry> ticketRegistryProvider;
 
     private final ObjectProvider<@NonNull SingleLogoutRequestExecutor> singleLogoutRequestExecutor;
+    private final TransactionOperations transactionTemplate;
 
     public SingleSignOnSessionsEndpoint(
         final ObjectProvider<@NonNull TicketRegistry> ticketRegistry,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        final ObjectProvider<@NonNull SingleLogoutRequestExecutor> singleLogoutRequestExecutor) {
+        final ObjectProvider<@NonNull SingleLogoutRequestExecutor> singleLogoutRequestExecutor,
+        final TransactionTemplate transactionTemplate) {
         super(casProperties, applicationContext);
         this.ticketRegistryProvider = ticketRegistry;
         this.singleLogoutRequestExecutor = singleLogoutRequestExecutor;
+        this.transactionTemplate = transactionTemplate;
     }
 
     /**
@@ -135,10 +140,12 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
     public Map<String, Object> getSsoSessions(
         @ModelAttribute final @Valid SsoSessionsRequest ssoSessionsRequest) {
         val sessionsMap = new HashMap<String, Object>();
-        val activeSsoSessions = getActiveSsoSessions(ssoSessionsRequest).toList();
-        sessionsMap.put("activeSsoSessions", activeSsoSessions);
-        sessionsMap.put("totalSsoSessions", ticketRegistryProvider.getObject().sessionCount());
-        return sessionsMap;
+        return this.transactionTemplate.execute(_ -> {
+            val activeSsoSessions = getActiveSsoSessions(ssoSessionsRequest).toList();
+            sessionsMap.put("activeSsoSessions", activeSsoSessions);
+            sessionsMap.put("totalSsoSessions", ticketRegistryProvider.getObject().sessionCount());
+            return sessionsMap;
+        });
     }
 
     /**
@@ -196,23 +203,27 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
 
         if (StringUtils.isNotBlank(ssoSessionsRequest.getUsername())) {
             val sessionsMap = new HashMap<String, Object>();
-            var tickets = ticketRegistryProvider.getObject().getSessionsFor(ssoSessionsRequest.getUsername());
-            if (ssoSessionsRequest.getFrom() > 0) {
-                tickets = tickets.skip(ssoSessionsRequest.getFrom());
-            }
-            if (ssoSessionsRequest.getCount() > 0) {
-                tickets = tickets.limit(ssoSessionsRequest.getCount());
-            }
-            tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId(), request, response)));
-            val deletedCount = sessionsMap.size() + getTicketRegistryProvider().getObject().deleteTicketsFor(ssoSessionsRequest.getUsername());
-            sessionsMap.put("deleted", deletedCount);
-            return sessionsMap;
+            return this.transactionTemplate.execute(_ -> {
+                var tickets = ticketRegistryProvider.getObject().getSessionsFor(ssoSessionsRequest.getUsername());
+                if (ssoSessionsRequest.getFrom() > 0) {
+                    tickets = tickets.skip(ssoSessionsRequest.getFrom());
+                }
+                if (ssoSessionsRequest.getCount() > 0) {
+                    tickets = tickets.limit(ssoSessionsRequest.getCount());
+                }
+                tickets.forEach(ticket -> sessionsMap.put(ticket.getId(), destroySsoSession(ticket.getId(), request, response)));
+                val deletedCount = sessionsMap.size() + getTicketRegistryProvider().getObject().deleteTicketsFor(ssoSessionsRequest.getUsername());
+                sessionsMap.put("deleted", deletedCount);
+                return sessionsMap;
+            });
         }
 
         val sessionsMap = new HashMap<String, Object>();
-        getActiveSsoSessions(ssoSessionsRequest)
-            .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET_ID.getAttributeKey()).toString())
-            .forEach(ticketGrantingTicket -> destroySsoSession(ticketGrantingTicket, request, response));
+        this.transactionTemplate.executeWithoutResult(_ -> {
+            getActiveSsoSessions(ssoSessionsRequest)
+                .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET_ID.getAttributeKey()).toString())
+                .forEach(ticketGrantingTicket -> destroySsoSession(ticketGrantingTicket, request, response));
+        });
         sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
         return sessionsMap;
     }

@@ -19,6 +19,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.jooq.lambda.Unchecked;
+import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import tools.jackson.databind.ObjectMapper;
@@ -52,6 +53,8 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
 
     private final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
 
+    private final TransactionOperations transactionTemplate;
+
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(requestContext);
@@ -72,17 +75,23 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     }
 
     protected void buildActiveSingleSignOnSessions(final RequestContext requestContext, final TicketGrantingTicket ticket) {
-        val activeSessions = ticketRegistry.getSessionsFor(ticket.getAuthentication().getPrincipal().getId())
-            .map(TicketGrantingTicket.class::cast)
-            .map(tgt -> {
-                val ssoSession = new AccountSingleSignOnSession(tgt);
-                ssoSession.setGeoLocation(FunctionUtils.doIf(BeanSupplier.isNotProxy(geoLocationService),
-                    () -> geoLocationService.locate(ssoSession.getClientIpAddress()).build(), () -> "N/A").get());
-                ssoSession.setPayload(FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(ssoSession)));
-                return ssoSession;
-            })
-            .collect(Collectors.toList());
-        WebUtils.putSingleSignOnSessions(requestContext, activeSessions);
+        transactionTemplate.executeWithoutResult(_ -> {
+            val activeSessions = ticketRegistry.getSessionsFor(ticket.getAuthentication().getPrincipal().getId())
+                                     .map(TicketGrantingTicket.class::cast)
+                                     .map(tgt -> {
+                                         val ssoSession = new AccountSingleSignOnSession(tgt);
+                                         ssoSession.setGeoLocation(
+                                             FunctionUtils.doIf(BeanSupplier.isNotProxy(geoLocationService),
+                                                 () -> geoLocationService.locate(ssoSession.getClientIpAddress())
+                                                           .build(), () -> "N/A").get());
+                                         ssoSession.setPayload(FunctionUtils.doUnchecked(
+                                             () -> MAPPER.writerWithDefaultPrettyPrinter()
+                                                       .writeValueAsString(ssoSession)));
+                                         return ssoSession;
+                                     })
+                                     .collect(Collectors.toList());
+            WebUtils.putSingleSignOnSessions(requestContext, activeSessions);
+        });
     }
 
     protected void buildAuthorizedServices(final RequestContext requestContext, final TicketGrantingTicket ticket,
