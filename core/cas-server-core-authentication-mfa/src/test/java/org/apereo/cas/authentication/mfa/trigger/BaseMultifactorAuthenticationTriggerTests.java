@@ -63,6 +63,10 @@ public abstract class BaseMultifactorAuthenticationTriggerTests {
     protected CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("authenticationAttributeMultifactorAuthenticationTrigger")
+    protected MultifactorAuthenticationTrigger authenticationAttributeMultifactorAuthenticationTrigger;
+    
+    @Autowired
     @Qualifier("scriptedRegisteredServiceMultifactorAuthenticationTrigger")
     protected MultifactorAuthenticationTrigger scriptedRegisteredServiceMultifactorAuthenticationTrigger;
 

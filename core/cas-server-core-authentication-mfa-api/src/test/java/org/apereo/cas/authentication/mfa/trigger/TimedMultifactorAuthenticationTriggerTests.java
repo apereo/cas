@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("MFATrigger")
-class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class TimedMultifactorAuthenticationTriggerTests extends BaseSimpleMultifactorAuthenticationTriggerTests {
     @Test
     void verifyUndefined() {
         val props = new CasConfigurationProperties();

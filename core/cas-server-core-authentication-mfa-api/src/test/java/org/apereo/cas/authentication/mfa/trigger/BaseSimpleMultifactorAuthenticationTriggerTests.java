@@ -27,7 +27,7 @@ import java.util.Map;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link BaseMultifactorAuthenticationTriggerTests}.
+ * This is {@link BaseSimpleMultifactorAuthenticationTriggerTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ExtendWith(CasTestExtension.class)
-public abstract class BaseMultifactorAuthenticationTriggerTests {
+public abstract class BaseSimpleMultifactorAuthenticationTriggerTests {
     protected GeoLocationService geoLocationService;
 
     protected Authentication authentication;
