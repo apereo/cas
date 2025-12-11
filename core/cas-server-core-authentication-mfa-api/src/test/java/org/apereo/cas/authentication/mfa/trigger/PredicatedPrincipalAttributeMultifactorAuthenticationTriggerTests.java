@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("MFATrigger")
-class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class PredicatedPrincipalAttributeMultifactorAuthenticationTriggerTests extends BaseSimpleMultifactorAuthenticationTriggerTests {
     @Test
     void verifyNoProviders() throws Throwable {
         val appContext = new StaticApplicationContext();
