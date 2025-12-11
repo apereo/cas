@@ -17,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class JasyptListProvidersCommandTests extends BaseCasShellCommandTests {
     @Test
     void verifyOperation() {
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "jasypt-list-providers --includeBC"));
+        assertDoesNotThrow(() -> runShellCommand(() -> "jasypt-list-providers --includeBC=true"));
     }
 
     @Test
     void verifyNoBouncyCastleOperation() {
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "jasypt-list-providers"));
+        assertDoesNotThrow(() -> runShellCommand(() -> "jasypt-list-providers"));
     }
 }
 

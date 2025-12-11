@@ -33,6 +33,11 @@ public interface TicketRegistry {
     String BEAN_NAME = "ticketRegistry";
 
     /**
+     * Ticket transaction manager bean name.
+     */
+    String TICKET_TRANSACTION_MANAGER = "ticketTransactionManager";
+    
+    /**
      * Add a ticket to the registry. Ticket storage is based on the ticket id.
      *
      * @param ticket The ticket we wish to add to the cache.
