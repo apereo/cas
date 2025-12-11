@@ -1,17 +1,14 @@
 package org.apereo.cas.shell.commands.util;
 
+import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
-
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -39,10 +36,8 @@ import java.util.Arrays;
  * @author John Gasper
  * @since 5.3.0
  */
-@ShellCommandGroup("Utilities")
-@ShellComponent
 @Slf4j
-public class ValidateEndpointCommand {
+public class ValidateEndpointCommand implements CasShellCommand {
     private static X509TrustManager[] getSystemTrustManagers() throws Exception {
         val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init((KeyStore) null);
@@ -96,7 +91,7 @@ public class ValidateEndpointCommand {
 
             httpsConnection.setSSLSocketFactory(getTheAllTrustingSSLContext().getSocketFactory());
 
-            try (val reader = new InputStreamReader(httpsConnection.getInputStream(), StandardCharsets.UTF_8)) {
+            try (val _ = new InputStreamReader(httpsConnection.getInputStream(), StandardCharsets.UTF_8)) {
                 tlsConnectionReport(httpsConnection);
             }
         } catch (final Exception e) {
@@ -184,18 +179,26 @@ public class ValidateEndpointCommand {
      * @param timeout the timeout
      * @return true /false
      */
-    @ShellMethod(key = "validate-endpoint", value = "Test connections to an endpoint to verify connectivity, SSL, etc")
+    @Command(group = "Utilities", name = "validate-endpoint", description = "Test connections to an endpoint to verify connectivity, SSL, etc")
     public boolean validateEndpoint(
-        @ShellOption(value = {"url", "--url"},
-            help = "Endpoint URL to test")
+        @Option(
+            longName = "url",
+            description = "Endpoint URL to test"
+        )
         final String url,
-        @ShellOption(value = {"proxy", "--proxy"},
-            help = "Proxy address to use when testing the endpoint url",
-            defaultValue = StringUtils.EMPTY)
+
+        @Option(
+            longName = "proxy",
+            description = "Proxy address to use when testing the endpoint url",
+            defaultValue = StringUtils.EMPTY
+        )
         final String proxy,
-        @ShellOption(value = {"timeout", "--timeout"},
-            help = "Timeout to use in milliseconds when testing the url",
-            defaultValue = "5000")
+
+        @Option(
+            longName = "timeout",
+            description = "Timeout to use in milliseconds when testing the url",
+            defaultValue = "5000"
+        )
         final int timeout) {
 
         try {

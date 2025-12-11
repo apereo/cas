@@ -75,6 +75,16 @@
                                class="border-rounded language-json text-wrap"></code></pre>
                 </div>
                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='scrollLogs', label='screen.checkbox.scrolllogs.title')}"/>
+
+                <div class="pt-3 d-flex">
+                    <button type="button" name="downloadLogsButton" id="downloadLogsButton"
+                            class="mdc-button mdc-button--raised">
+                        <span class="mdc-button__label">
+                            <i class="mdc-tab__icon mdi mdi-check-all" aria-hidden="true"></i>
+                            Download
+                        </span>
+                    </button>
+                </div>
             </div>
             <div id="auditevents-tab">
                 <p>The latest audit log statements from CAS application displayed and streamed here.</p>

@@ -41,10 +41,10 @@ commonsIo = "2.21.0"
 commonsJexl = "3.6.0"
 commonsLang = "3.20.0"
 commonsLang2 = "2.6"
-commonsPool = "2.12.1"
-commonsText = "1.14.0"
+commonsPool = "2.13.0"
+commonsText = "1.15.0"
 commonsValidator = "1.10.1"
-cosmosdb = "4.75.0"
+cosmosdb = "4.76.0"
 cqEngine = "3.6.0"
 cryptacular = "1.2.7"
 curator = "5.9.0"
@@ -165,7 +165,7 @@ mdiFont = "7.4.47"
 mermaid = "11.6.0"
 micrometer = "1.16.1"
 micrometerOtel = "1.6.1"
-mockito = "5.20.0"
+mockito = "5.21.0"
 mockitoInline = "5.2.0"
 mongoDriver = "5.6.2"
 mssqlServer = "13.3.0.jre11-preview"
@@ -738,7 +738,8 @@ spring-session-core = { module = "org.springframework.session:spring-session-cor
 #spring-session-data-mongodb = { module = "org.springframework.session:spring-session-data-mongodb", version.ref = "springSessionMongo" }
 spring-session-data-redis = { module = "org.springframework.session:spring-session-data-redis", version.ref = "springSession" }
 spring-session-jdbc = { module = "org.springframework.session:spring-session-jdbc", version.ref = "springSession" }
-spring-shell-starter = { module = "org.springframework.shell:spring-shell-starter", version.ref = "springShell" }
+spring-shell-starter-jansi = { module = "org.springframework.shell:spring-shell-starter-jansi", version.ref = "springShell" }
+spring-shell-starter-test = { module = "org.springframework.shell:spring-shell-starter-test", version.ref = "springShell" }
 spring-test = { module = "org.springframework:spring-test", version.ref = "spring" }
 spring-tx = { module = "org.springframework:spring-tx", version.ref = "spring" }
 spring-web = { module = "org.springframework:spring-web", version.ref = "spring" }

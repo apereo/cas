@@ -2,7 +2,7 @@ package org.apereo.cas.shell.commands.services;
 
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
-
+import org.apereo.cas.shell.commands.CasShellCommand;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -10,11 +10,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
-
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -27,10 +24,8 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@ShellCommandGroup("Registered Services")
-@ShellComponent
 @Slf4j
-public class ValidateRegisteredServiceCommand {
+public class ValidateRegisteredServiceCommand implements CasShellCommand {
     private static final int SEP_LINE_LENGTH = 70;
 
     @Autowired
@@ -43,15 +38,20 @@ public class ValidateRegisteredServiceCommand {
      * @param file      the file
      * @param directory the directory
      */
-    @ShellMethod(key = "validate-service", value = "Validate a given JSON/YAML service definition by path or directory")
+    @Command(group = "Registered Services", name = "validate-service", description = "Validate a given JSON/YAML service definition by path or directory")
     public void validateService(
-        @ShellOption(value = {"file", "--file"},
-            help = "Path to the JSON/YAML service definition file",
-            defaultValue = StringUtils.EMPTY)
+        @Option(
+            longName = "file",
+            description = "Path to the JSON/YAML service definition file",
+            defaultValue = StringUtils.EMPTY
+        )
         final String file,
-        @ShellOption(value = {"directory", "--directory"},
-            help = "Path to the JSON/YAML service definitions directory",
-            defaultValue = StringUtils.EMPTY)
+
+        @Option(
+            longName = "directory",
+            description = "Path to the JSON/YAML service definitions directory",
+            defaultValue = StringUtils.EMPTY
+        )
         final String directory) {
 
         if (StringUtils.isNotBlank(file)) {

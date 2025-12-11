@@ -59,7 +59,7 @@ Maps to the `Required` [authentication policy](../authentication/Configuring-Aut
     "requiredAuthenticationHandlers" : ["java.util.TreeSet", [ "JSON" ]],
     "criteria": {
       "@class": "org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria",
-      "tryAll: false
+      "tryAll": false
     }
   }
 }

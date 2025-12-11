@@ -26,7 +26,7 @@ class ConvertPropertiesToYAMLCommandTests extends BaseCasShellCommandTests {
         properties.load(new ClassPathResource("testconfig.properties").getInputStream());
         val tempFile = Files.createTempFile("casconfig", ".properties");
         properties.store(new FileWriter(tempFile.toFile(), StandardCharsets.UTF_8), "CAS Configuration");
-        assertDoesNotThrow(() -> runShellCommand(() -> () -> "convert-props --properties " + tempFile.toFile().getAbsolutePath()));
+        assertDoesNotThrow(() -> runShellCommand(() -> "convert-props --properties=" + tempFile.toFile().getAbsolutePath()));
         assertTrue(Files.exists(tempFile.getParent().resolve(FilenameUtils.getBaseName(tempFile.toFile().getName()) + ".yml")));
     }
 }
