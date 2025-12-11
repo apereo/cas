@@ -1,14 +1,12 @@
 package org.apereo.cas.shell.commands.jasypt;
 
+import org.apereo.cas.shell.commands.CasShellCommand;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.registry.AlgorithmRegistry;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
-
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 import java.security.Security;
 
 /**
@@ -17,19 +15,19 @@ import java.security.Security;
  * @author Hal Deadman
  * @since 5.3.0
  */
-@ShellCommandGroup("Jasypt")
 @Slf4j
-@ShellComponent
-public class JasyptListAlgorithmsCommand {
+public class JasyptListAlgorithmsCommand implements CasShellCommand {
 
     /**
      * List algorithms you can use Jasypt.
      *
      * @param includeBC whether to include the BouncyCastle provider
      */
-    @ShellMethod(key = "jasypt-list-algorithms", value = "List algorithms you can use with Jasypt for property encryption")
-    public void listAlgorithms(@ShellOption(value = { "includeBC", "--includeBC" },
-        help = "Include Bouncy Castle provider", defaultValue = "false") final Boolean includeBC) {
+    @Command(group = "Jasypt", name = "jasypt-list-algorithms", description = "List algorithms you can use with Jasypt for property encryption")
+    public void listAlgorithms(
+        @Option(
+            longName = "includeBC", description = "Include Bouncy Castle provider", defaultValue = "false")
+        final Boolean includeBC) {
         if (includeBC) {
             Security.addProvider(new BouncyCastleProvider());
         } else {

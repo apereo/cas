@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("RestfulApiAuthentication")
-class RestEndpointMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class RestEndpointMultifactorAuthenticationTriggerTests extends BaseSimpleMultifactorAuthenticationTriggerTests {
 
     @Test
     void verifyNoProviders() {

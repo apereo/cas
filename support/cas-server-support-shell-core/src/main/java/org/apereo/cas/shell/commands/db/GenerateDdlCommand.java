@@ -1,7 +1,7 @@
 package org.apereo.cas.shell.commands.db;
 
+import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.ReflectionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -17,14 +17,10 @@ import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.schema.TargetType;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
-
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 import jakarta.persistence.Entity;
 import jakarta.persistence.MappedSuperclass;
-
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,10 +33,8 @@ import java.util.TreeMap;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@ShellCommandGroup("Relational Databases")
-@ShellComponent
 @Slf4j
-public class GenerateDdlCommand {
+public class GenerateDdlCommand implements CasShellCommand {
     private static final Map<String, String> DIALECTS_MAP = new TreeMap<>();
 
     static {
@@ -78,47 +72,71 @@ public class GenerateDdlCommand {
      * @param haltOnError  the halt on error
      * @return the file
      */
-    @ShellMethod(key = "generate-ddl", value = "Generate database DDL scripts")
+    @Command(group = "RDBMS", name = "generate-ddl", description = "Generate database DDL scripts")
     public String generate(
-        @ShellOption(value = {"file", "--file"},
-            help = "DDL file to contain to generated script",
-            defaultValue = "/etc/cas/config/cas-db-schema.sql")
+        @Option(
+            longName = "file",
+            description = "DDL file to contain to generated script",
+            defaultValue = "/etc/cas/config/cas-db-schema.sql"
+        )
         final String file,
-        @ShellOption(value = {"dialect", "--dialect"},
-            help = "Database dialect class",
-            defaultValue = "HSQL")
+
+        @Option(
+            longName = "dialect",
+            description = "Database dialect class",
+            defaultValue = "HSQL"
+        )
         final String dialect,
-        @ShellOption(value = {"url", "--url"},
-            help = "JDBC database connection URL",
-            defaultValue = "jdbc:hsqldb:mem:cas")
+
+        @Option(
+            longName = "jdbcUrl",
+            description = "JDBC database connection URL",
+            defaultValue = "jdbc:hsqldb:mem:cas"
+        )
         final String jdbcUrl,
-        @ShellOption(value = {"delimiter", "--delimiter"},
-            help = "Delimiter to use for separation of statements when generating SQL",
-            defaultValue = ";")
+
+        @Option(
+            longName = "delimiter",
+            description = "Delimiter to use for separation of statements when generating SQL",
+            defaultValue = ";"
+        )
         final String delimiter,
-        @ShellOption(value = {"pretty", "--pretty"},
-            help = "Format DDL scripts and pretty-print the output",
-            defaultValue = "false")
+
+        @Option(
+            longName = "pretty",
+            description = "Format DDL scripts and pretty-print the output",
+            defaultValue = "false"
+        )
         final Boolean pretty,
-        @ShellOption(value = {"dropSchema", "--dropSchema"},
-            help = "Generate DROP SQL statements in the DDL",
-            defaultValue = "false")
+
+        @Option(
+            longName = "dropSchema",
+            description = "Generate DROP SQL statements in the DDL",
+            defaultValue = "false"
+        )
         final Boolean dropSchema,
-        @ShellOption(value = {"createSchema", "--createSchema"},
-            help = "Generate DROP SQL statements in the DDL",
-            defaultValue = "false")
+
+        @Option(
+            longName = "createSchema",
+            description = "Generate DROP SQL statements in the DDL",
+            defaultValue = "false"
+        )
         final Boolean createSchema,
-        @ShellOption(value = {"haltOnError", "--haltOnError"},
-            help = "Halt if an error occurs during the generation process",
-            defaultValue = "false")
-        final Boolean haltOnError) {
+
+        @Option(
+            longName = "haltOnError",
+            description = "Halt if an error occurs during the generation process",
+            defaultValue = "false"
+        )
+        final Boolean haltOnError
+    ) {
 
         LOGGER.info("Requested database dialect type [{}]", dialect);
         val dialectName = DIALECTS_MAP.getOrDefault(dialect.trim(), dialect);
         LOGGER.info("Using database dialect class [{}]", dialectName);
         if (!dialectName.contains(".")) {
             LOGGER.warn("Dialect name must be a fully qualified class name. Supported dialects by default are [{}] "
-                        + "or you may specify the dialect class directly", DIALECTS_MAP.keySet());
+                + "or you may specify the dialect class directly", DIALECTS_MAP.keySet());
             return null;
         }
 
@@ -134,9 +152,9 @@ public class GenerateDdlCommand {
         LOGGER.info("Collecting entity metadata sources...");
         val metadata = new MetadataSources(svcRegistry.build());
         ReflectionUtils.findClassesWithAnnotationsInPackage(
-                        Set.of(MappedSuperclass.class, Entity.class),
-                        "org.apereo.cas")
-                .forEach(metadata::addAnnotatedClass);
+                Set.of(MappedSuperclass.class, Entity.class),
+                "org.apereo.cas")
+            .forEach(metadata::addAnnotatedClass);
 
         val metadataSources = metadata.buildMetadata();
 
