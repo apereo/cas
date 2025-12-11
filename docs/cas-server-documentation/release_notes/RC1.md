@@ -214,3 +214,5 @@ records, etc are processed and loaded.
 - The order of authentication handlers is now correctly preserved when authentication handlers are registered with the authentication plan.
 - Logging out of [Account Profile](../registration/Account-Management-Overview.html) will now initiate SLO if configured.
 - Memory leak fixes when managing virtual threads responsible for file monitoring features and watch services.
+- Spring Webflow actions may optionally run in the context of a transaction if the underlying action is configured to do so.
+- [OpenID Connect Claims Mapping rules](../authentication/OIDC-Authentication-Claims-Mapping.html) now support external Groovy scripts.
