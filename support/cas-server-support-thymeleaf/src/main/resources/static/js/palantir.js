@@ -1977,7 +1977,7 @@ async function initializeCasFeatures() {
 }
 
 function initializeServiceButtons() {
-    const editor = initializeAceEditor("serviceEditor");
+    const serviceEditor = initializeAceEditor("serviceEditor");
     let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("editServiceDialog"));
 
     if (actuatorEndpoints.registeredservices) {
@@ -2039,7 +2039,6 @@ function initializeServiceButtons() {
         });
     });
 
-
     $("button[name=deleteService]").off().on("click", function () {
         let serviceId = $(this).parent().attr("serviceId");
         if (actuatorEndpoints.registeredservices) {
@@ -2055,10 +2054,9 @@ function initializeServiceButtons() {
                         $.ajax({
                             url: `${actuatorEndpoints.registeredservices}/${serviceId}`,
                             type: "DELETE",
+                            headers: { "Content-Type": "application/json" },
                             success: response => {
-
                                 let nearestTr = $(this).closest("tr");
-
                                 let applicationsTable = $("#applicationsTable").DataTable();
                                 applicationsTable.row(nearestTr).remove().draw();
                             },
@@ -2077,8 +2075,8 @@ function initializeServiceButtons() {
         if (actuatorEndpoints.registeredservices) {
             $.get(`${actuatorEndpoints.registeredservices}/${serviceId}`, response => {
                 const value = JSON.stringify(response, null, 4);
-                editor.setValue(value, -1);
-                editor.gotoLine(1);
+                serviceEditor.setValue(value, -1);
+                serviceEditor.gotoLine(1);
                 const editServiceDialogElement = document.getElementById("editServiceDialog");
                 $(editServiceDialogElement).attr("newService", false);
                 editServiceDialog["open"]();
@@ -2089,10 +2087,24 @@ function initializeServiceButtons() {
         }
     });
 
-    $("button[name=saveService]").off().on("click", () => {
+    $("button[name=saveService],button[name=saveServiceWizard]").off().on("click", function() {
         if (actuatorEndpoints.registeredservices) {
-            const editServiceDialogElement = document.getElementById("editServiceDialog");
-            const isNewService = $(editServiceDialogElement).attr("newService") === "true";
+            let isNewService = false;
+            let value = "";
+            
+            const saveButton = $(this);
+            switch(saveButton.attr("name")) {
+                case "saveServiceWizard":
+                    isNewService = true;
+                    const wizardEditor = initializeAceEditor("wizardServiceEditor");
+                    value = wizardEditor.getValue();
+                    break;
+                case "saveService":
+                    const editServiceDialogElement = document.getElementById("editServiceDialog");
+                    isNewService = $(editServiceDialogElement).attr("newService") === "true";
+                    value = serviceEditor.getValue();
+                    break;
+            }
 
             Swal.fire({
                 title: `Are you sure you want to ${isNewService ? "create" : "update"} this entry?`,
@@ -2103,15 +2115,15 @@ function initializeServiceButtons() {
             })
                 .then((result) => {
                     if (result.isConfirmed) {
-                        const value = editor.getValue();
+                        
                         $.ajax({
                             url: `${actuatorEndpoints.registeredservices}`,
                             type: isNewService ? "POST" : "PUT",
                             contentType: "application/json",
                             data: value,
                             success: response => {
-
                                 editServiceDialog["close"]();
+                                editServiceWizardDialog["close"]();
                                 fetchServices(() => {
                                     let newServiceId = response.id;
                                     $("#applicationsTable tr").removeClass("selected");
@@ -2147,9 +2159,9 @@ function initializeServiceButtons() {
                     }
                 });
                 const value = JSON.stringify(clone, null, 4);
-                editor.setValue(value, -1);
-                editor.gotoLine(1);
-                editor.findAll("...", {regExp: false});
+                serviceEditor.setValue(value, -1);
+                serviceEditor.gotoLine(1);
+                serviceEditor.findAll("...", {regExp: false});
 
                 const editServiceDialogElement = document.getElementById("editServiceDialog");
                 $(editServiceDialogElement).attr("newService", true);
