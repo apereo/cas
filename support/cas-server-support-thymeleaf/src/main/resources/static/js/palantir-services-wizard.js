@@ -110,7 +110,16 @@ function createRegisteredServiceAttributeReleasePolicy() {
         helpText: "Specifies the canonicalization mode for attributes released."
     });
 
+    createInputField({
+        labelTitle: "Principal ID Attribute",
+        name: "registeredServiceAttrReleasePrincipalIdAttribute",
+        paramName: "attributeReleasePolicy.principalIdAttribute",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the principal ID to include in attribute release."
+    })
 
+    
     createInputField({
         cssClasses: "hide ReturnAllAttributeReleasePolicy",
         labelTitle: "Excluded Attributes",
