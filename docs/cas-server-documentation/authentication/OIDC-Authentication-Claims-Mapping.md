@@ -91,11 +91,23 @@ The inline script receives the following parameters for its execution:
 
 | Policy       | Description                                                                                            |
 |--------------|--------------------------------------------------------------------------------------------------------|
-| `context`    | Attribute release execution context that carries references to the principal, registered service, etc. |
 | `attributes` | `Map` of attributes that are currently resolved.                                                       |
+| `context`    | Attribute release execution context that carries references to the principal, registered service, etc. |
+| `claim`      | The claim name that is being remapped, i.e. `entitlements`.                                            |
 | `logger`     | The object responsible for issuing log messages such as `logger.info(...)`.                            |
       
-Note that the outcome of the script execution must be a `List` of a values.
+
+You may also choose to use an exteral Groovy script instead, in which case the script may be defined as follows:
+
+```groovy
+def run(Object[] args) {
+    def (attributes, context, claim, logger) = args
+    // Perfom logic to build claim value
+    return []
+}
+```
+
+Note that the outcome of the script execution in all scenarios must be a `List` of a values.
 
 {% endtab %}
 

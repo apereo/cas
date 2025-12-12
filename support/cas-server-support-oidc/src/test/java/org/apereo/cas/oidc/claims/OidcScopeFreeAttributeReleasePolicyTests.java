@@ -10,6 +10,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,6 +45,59 @@ class OidcScopeFreeAttributeReleasePolicyTests extends AbstractOidcTests {
         val attrs = policy.getAttributes(releasePolicyContext);
         assertEquals(2, attrs.size());
         assertTrue(policy.getAllowedAttributes().containsAll(attrs.keySet()));
+    }
+
+    @Test
+    void verifyMappingWithInlineScript() throws Throwable {
+        val policy = new OidcScopeFreeAttributeReleasePolicy(List.of("family_name", "food"));
+        policy.setClaimMappings(Map.of("family_name",
+            "groovy { return attributes.get('family_name').get(0).toUpperCase() }"));
+
+        val principal = CoreAuthenticationTestUtils.getPrincipal(UUID.randomUUID().toString(),
+            CollectionUtils.wrap("name", List.of("cas"),
+                "profile", List.of("test"),
+                "food", List.of("salad"),
+                "family_name", List.of("johnson")));
+
+        val registeredService = getOidcRegisteredService();
+        registeredService.setAttributeReleasePolicy(policy);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .applicationContext(oidcConfigurationContext.getApplicationContext())
+            .build();
+        val attrs = policy.getAttributes(releasePolicyContext);
+        assertEquals(2, attrs.size());
+        assertEquals("salad", attrs.get("food").getFirst().toString());
+        assertEquals("JOHNSON", attrs.get("family_name").getFirst().toString());
+    }
+
+    @Test
+    void verifyMappingWithExternalScript() throws Throwable {
+        val policy = new OidcScopeFreeAttributeReleasePolicy(List.of("family_name", "food"));
+        policy.setClaimMappings(Map.of("family_name", "classpath:OidcAttributeReleasePolicy.groovy"));
+
+        val principal = CoreAuthenticationTestUtils.getPrincipal(UUID.randomUUID().toString(),
+            CollectionUtils.wrap("name", List.of("cas"),
+                "profile", List.of("test"),
+                "food", List.of("salad"),
+                "family_name", List.of("johnson")));
+
+        val registeredService = getOidcRegisteredService();
+        registeredService.setAttributeReleasePolicy(policy);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(principal)
+            .applicationContext(oidcConfigurationContext.getApplicationContext())
+            .build();
+        val attrs = policy.getAttributes(releasePolicyContext);
+        assertEquals(2, attrs.size());
+        assertEquals("salad", attrs.get("food").getFirst().toString());
+        assertEquals("PATTERSON", attrs.get("family_name").getFirst().toString());
     }
 
     @Test

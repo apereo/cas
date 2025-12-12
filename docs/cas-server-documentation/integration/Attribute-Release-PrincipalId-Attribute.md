@@ -35,7 +35,12 @@ The following settings and properties are available:
 | `canonicalizationMode` | Optional. Transform the username to uppercase, or lowercase. Allowed values are `UPPER`, `LOWER` or `NONE`.  |
 | `scope`                | Optional. Allows you to **scope** the value to a given domain, by appending the domain to the final user id. |
 | `removePattern`        | Optional. A regular expression pattern that would remove all matches from the final user id.                 |
-         
+
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>
+You may define multiple attributes in a comma-separated list for the `usernameAttribute` property.
+The first attribute that resolves a non-empty value will be used.
+</p></div>
+
 The following examples should provide useful:
 
 {% tabs accessstrategyprincipal %}

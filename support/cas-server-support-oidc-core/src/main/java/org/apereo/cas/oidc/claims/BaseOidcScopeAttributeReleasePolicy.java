@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -82,13 +83,15 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
 
             val scriptFactoryInstance = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
 
-            if (scriptFactoryInstance.isPresent() && scriptFactoryInstance.get().isInlineScript(mappedAttr)) {
-                val script = scriptFactoryInstance.get().getInlineScript(mappedAttr).orElseThrow();
-                LOGGER.trace("Locating attribute value via script [{}] for definition [{}]", script, claim);
+            if (scriptFactoryInstance.isPresent()
+                && CasRuntimeHintsRegistrar.notInNativeImage()
+                && scriptFactoryInstance.get().isScript(mappedAttr)) {
+                
+                LOGGER.trace("Locating attribute value via script [{}] for definition [{}]", mappedAttr, claim);
                 try (val cacheManager = ApplicationContextProvider.getScriptResourceCacheManager()
                     .orElseThrow(() -> new IllegalArgumentException("No groovy script cache manager is available to execute claim mappings"))) {
-                    val scriptResource = cacheManager.resolveScriptableResource(script, mappedAttr);
-                    val args = Map.of("attributes", resolvedAttributes, "context", context, "logger", LOGGER);
+                    val scriptResource = cacheManager.resolveScriptableResource(mappedAttr, mappedAttr);
+                    val args = CollectionUtils.<String, Object>wrap("attributes", resolvedAttributes, "context", context, "claim", claim, "logger", LOGGER);
                     scriptResource.setBinding(args);
                     val result = scriptResource.execute(args.values().toArray(), Object.class);
                     LOGGER.debug("Mapped attribute [{}] to [{}] from script", claim, result);
