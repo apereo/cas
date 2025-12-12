@@ -24,6 +24,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -110,7 +111,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
                 };
             }
         }
-        
+
         @Test
         void verifyDuplicateHandlers() {
             assertEquals(2, authenticationEventExecutionPlan.resolveAuthenticationHandlers().size());
@@ -126,7 +127,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
             when(input.resolveAuthenticationHandlersBy(any())).thenCallRealMethod();
             assertNotNull(input.resolveAuthenticationHandlersBy(handler -> false));
         }
-        
+
         @Test
         void verifyOperation() {
             val context = PrincipalResolutionContext.builder()
@@ -169,7 +170,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
                 };
             }
         }
-        
+
         @Test
         void verifyMismatchedCount() {
             assertTrue(authenticationEventExecutionPlan.resolveAuthenticationHandlers().isEmpty());
@@ -182,7 +183,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
         @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)
         static class AuthenticationTestConfiguration {
         }
-        
+
         @Test
         void verifyNoHandlerResolves() {
             val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
@@ -228,7 +229,8 @@ class DefaultAuthenticationEventExecutionPlanTests {
         static class AuthenticationTestConfiguration {
             @Bean
             public AuthenticationEventExecutionPlanConfigurer authenticationPlanConfigurer(
-                @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager) {
+                @Qualifier(ServicesManager.BEAN_NAME)
+                final ServicesManager servicesManager) {
                 return plan -> {
                     plan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("Handler1"));
                     plan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler("Handler2"));
@@ -245,7 +247,7 @@ class DefaultAuthenticationEventExecutionPlanTests {
                 };
             }
         }
-        
+
         @Test
         void verifyByCredentialTypeAndServiceByResolvers() throws Throwable {
             val credential = new UsernamePasswordCredential();
@@ -271,16 +273,15 @@ class DefaultAuthenticationEventExecutionPlanTests {
     @Nested
     class OrderingTests extends BaseTests {
         static class OrderedHandler extends SimpleTestUsernamePasswordAuthenticationHandler {
+            @Getter
             private final int order;
-            public OrderedHandler(String name, int order) {
+
+            OrderedHandler(final String name, final int order) {
                 super(name);
                 this.order = order;
             }
-            @Override
-            public int getOrder() {
-                return order;
-            }
         }
+
         @Test
         void verifyOrderIsCorrect() {
             authenticationEventExecutionPlan.registerAuthenticationHandler(new OrderedHandler("o3", 3));
