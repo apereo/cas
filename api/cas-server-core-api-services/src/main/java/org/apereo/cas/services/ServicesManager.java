@@ -85,7 +85,7 @@ public interface ServicesManager extends Ordered, NamedObject {
      * @param id the id of the registeredService to delete.
      * @return the registered service that was deleted, null if there was none.
      */
-    RegisteredService delete(long id);
+    @Nullable RegisteredService delete(long id);
 
     /**
      * Delete the entry for this {@link RegisteredService}.
@@ -93,7 +93,7 @@ public interface ServicesManager extends Ordered, NamedObject {
      * @param svc the registered service to delete.
      * @return the registered service that was deleted, null if there was none.
      */
-    RegisteredService delete(RegisteredService svc);
+    @Nullable RegisteredService delete(RegisteredService svc);
 
     /**
      * Find a {@link RegisteredService} by matching with the supplied service.
@@ -101,7 +101,7 @@ public interface ServicesManager extends Ordered, NamedObject {
      * @param service the service to match with.
      * @return the {@link RegisteredService} that matches the supplied service.
      */
-    RegisteredService findServiceBy(@Nullable Service service);
+    @Nullable RegisteredService findServiceBy(@Nullable Service service);
 
     /**
      * Find a collection of services by type.
@@ -119,7 +119,7 @@ public interface ServicesManager extends Ordered, NamedObject {
      * @param clazz     the clazz
      * @return the t
      */
-    <T extends RegisteredService> T findServiceBy(Service serviceId, Class<T> clazz);
+    <T extends RegisteredService> @Nullable T findServiceBy(Service serviceId, Class<T> clazz);
 
     /**
      * Find a {@link RegisteredService} by matching with the supplied id.
@@ -127,7 +127,7 @@ public interface ServicesManager extends Ordered, NamedObject {
      * @param id the id to match with.
      * @return the {@link RegisteredService} that matches the supplied service.
      */
-    RegisteredService findServiceBy(long id);
+    @Nullable RegisteredService findServiceBy(long id);
 
     /**
      * Find a {@link RegisteredService} by matching with the supplied id.
@@ -151,7 +151,7 @@ public interface ServicesManager extends Ordered, NamedObject {
      * @param name the name to match with.
      * @return the {@link RegisteredService}  that matches the supplied service.
      */
-    RegisteredService findServiceByName(String name);
+    @Nullable RegisteredService findServiceByName(String name);
 
     /**
      * Find a {@link RegisteredService} by matching with the supplied name.
@@ -220,7 +220,7 @@ public interface ServicesManager extends Ordered, NamedObject {
     default long count() {
         return 0;
     }
-    
+
     /**
      * Returns true if this manager supports the type of service passed.
      *
@@ -276,6 +276,7 @@ public interface ServicesManager extends Ordered, NamedObject {
     /**
      * Query the services found using arbitrary attributes
      * for which indexes are registered.
+     *
      * @param queries list of queries each mapped to a field
      * @return query results
      */

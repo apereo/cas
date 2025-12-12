@@ -151,6 +151,14 @@ public interface RegisteredService extends RegisteredServiceDefinition, Comparab
     RegisteredServiceAttributeReleasePolicy getAttributeReleasePolicy();
 
     /**
+     * Sets attribute release policy.
+     *
+     * @param policy the policy
+     * @return the attribute release policy
+     */
+    RegisteredService setAttributeReleasePolicy(RegisteredServiceAttributeReleasePolicy policy);
+
+    /**
      * Describes extra metadata about the service; custom fields
      * that could be used by submodules implementing additional
      * behavior on a per-service basis.
