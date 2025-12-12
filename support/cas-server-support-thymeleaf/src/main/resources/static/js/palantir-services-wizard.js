@@ -1,3 +1,5 @@
+let editServiceWizardDialog = undefined;
+
 function handleAttributeReleasePolicyChange(select) {
     let type = getLastWord($(select).val());
     $(`#editServiceWizardMenuItemAttributeReleasePolicy .${type}`).show();
@@ -1645,7 +1647,6 @@ function createRegisteredServiceExpirationPolicy() {
     });
 }
 
-
 function createRegisteredServiceFields() {
     createInputField({
         labelTitle: "Name",
@@ -1780,6 +1781,7 @@ function createRegisteredServiceFields() {
             return ["java.util.HashSet", value.split(",")];
         });
 }
+
 /********************************************/
 
 function hideAdvancedRegisteredServiceOptions() {
@@ -2262,7 +2264,7 @@ function openRegisteredServiceWizardDialog() {
         $("#editServiceWizardMenu").accordion("refresh");
 
         const editServiceWizardDialogElement = document.getElementById("editServiceWizardDialog");
-        let editServiceWizardDialog = window.mdc.dialog.MDCDialog.attachTo(editServiceWizardDialogElement);
+        editServiceWizardDialog = window.mdc.dialog.MDCDialog.attachTo(editServiceWizardDialogElement);
         $(editServiceWizardDialogElement).attr("newService", true);
         $(editServiceWizardDialogElement).attr("serviceClass", serviceClass);
 
@@ -2365,3 +2367,4 @@ function openRegisteredServiceWizardDialog() {
         });
     }
 }
+
