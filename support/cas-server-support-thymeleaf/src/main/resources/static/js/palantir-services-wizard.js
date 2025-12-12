@@ -283,7 +283,82 @@ function createRegisteredServiceAttributeReleasePolicy() {
         containerField: "attributeReleasePolicy.systemProperties",
         multipleValues: false
     });
+    
+}
 
+function createRegisteredServiceAttributeReleaseConsentPolicy() {
+    createSelectField({
+        cssClasses: "always-show",
+        containerId: "editServiceWizardMenuItemAttributeReleaseValueConsentPolicy",
+        labelTitle: "Consent Policy:",
+        paramName: "attributeReleasePolicy.consentPolicy",
+        options: [
+            {
+                value: "",
+                text: "UNDEFINED",
+                selected: true
+            },
+            {
+                value: "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+                text: "DEFAULT"
+            }
+        ],
+        helpText: "Specifies the consent policy for attribute release.",
+        changeEventHandlers: "handleAttributeReleaseConsentPolicyChange"
+    }).data("renderer", function (value) {
+        return {"@class": value};
+    });;
+
+    createInputField({
+        paramType: "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+        containerId: "editServiceWizardMenuItemAttributeReleaseValueConsentPolicy",
+        cssClasses: "hide DefaultRegisteredServiceConsentPolicy",
+        labelTitle: "Include Only Attributes",
+        name: "registeredServiceAttrReleaseConsentIncludedAttrs",
+        paramName: "attributeReleasePolicy.consentPolicy.includeOnlyAttributes",
+        required: false,
+        title: "Define the attribute names for release, separated by comma."
+    })
+        .data("renderer", function (value) {
+            return ["java.util.HashSet", value.split(",")];
+        });
+
+    createSelectField({
+        cssClasses: "hide DefaultRegisteredServiceConsentPolicy",
+        containerId: "editServiceWizardMenuItemAttributeReleaseValueConsentPolicy",
+        labelTitle: "Status:",
+        paramName: "attributeReleasePolicy.consentPolicy.status",
+        options: [
+            {value: "", text: "UNDEFINED", selected: true},
+            {value: "TRUE", text: "TRUE"},
+            {value: "FALSE", text: "FALSE"}
+        ],
+        helpText: "Specify whether consent is enabled for attribute release."
+    });
+}
+
+function handleAttributeReleaseConsentPolicyChange(select) {
+    let type = getLastWord($(select).val());
+    if (type.length === 0) {
+        type = "UNDEFINED";
+    }
+    $(`#editServiceWizardMenuItemAttributeReleaseValueConsentPolicy .${type}`).show();
+    $("#editServiceWizardMenuItemAttributeReleaseValueConsentPolicy [id$='FieldContainer']")
+        .not(`.${type}`)
+        .not(".always-show")
+        .hide();
+    $("#editServiceWizardMenuItemAttributeReleaseValueConsentPolicy [id$='SelectContainer']")
+        .not(`.${type}`)
+        .not(".always-show")
+        .hide();
+    $("#editServiceWizardMenuItemAttributeReleaseValueConsentPolicy [id$='ButtonPanel']")
+        .not(`.${type}`)
+        .not(".always-show")
+        .hide();
+    $("#editServiceWizardMenuItemAttributeReleaseValueConsentPolicy [id$='FieldContainer'] input")
+        .val("");
+    $("#editServiceWizardMenuItemAttributeReleaseValueConsentPolicy [id$='SelectContainer'] input")
+        .val("");
 }
 
 function handleAttributeReleasePolicyActivationCriteriaChange(select) {
