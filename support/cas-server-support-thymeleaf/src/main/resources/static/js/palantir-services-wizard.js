@@ -316,7 +316,7 @@ function createRegisteredServiceAttributeReleaseConsentPolicy() {
         changeEventHandlers: "handleAttributeReleaseConsentPolicyChange"
     }).data("renderer", function (value) {
         return {"@class": value};
-    });;
+    });
 
     createInputField({
         paramType: "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",

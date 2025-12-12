@@ -455,7 +455,9 @@
 
                                                   <div id="editServiceWizardMenuItemAttributeReleaseValueConsentPolicy">
                                                       <script type="text/javascript">
-                                                          createRegisteredServiceAttributeReleaseConsentPolicy();
+                                                          if (CAS_FEATURES.includes("Consent")) {
+                                                              createRegisteredServiceAttributeReleaseConsentPolicy();
+                                                          }
                                                       </script>
                                                   </div>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseCredentialPassword',
