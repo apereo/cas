@@ -452,7 +452,12 @@
                                                             label='#Case Insensitive', selected=true, cssClass='pt-2 hide RegisteredServiceMappedRegexAttributeFilter RegisteredServiceReverseMappedRegexAttributeFilter RegisteredServiceMutantRegexAttributeFilter',
                                                             dataAttrs='param-skip-true=true,param-name=attributeReleasePolicy.attributeFilter.caseInsensitive')}"/>
                                                   </div>
-                                                  
+
+                                                  <div id="editServiceWizardMenuItemAttributeReleaseValueConsentPolicy">
+                                                      <script type="text/javascript">
+                                                          createRegisteredServiceAttributeReleaseConsentPolicy();
+                                                      </script>
+                                                  </div>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseCredentialPassword',
                                                         title='When enabled, the credential password is authorized to be released as an attribute',
                                                         label='#Release Credential Password', cssClass='always-show',
