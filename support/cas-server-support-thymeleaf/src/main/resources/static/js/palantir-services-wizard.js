@@ -297,7 +297,54 @@ function createRegisteredServiceAttributeReleasePolicy() {
         containerField: "attributeReleasePolicy.systemProperties",
         multipleValues: false
     });
+
+
+    createInputField({
+        cssClasses: "hide AuthnRequestRequestedAttributesAttributeReleasePolicy",
+        labelTitle: "Requester ID Pattern",
+        name: "registeredServiceAttrReleasePolicyRequesterIdPatternAuthnRequest",
+        paramName: "attributeReleasePolicy.requesterIdPattern",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the requester ID pattern to match for this policy."
+    });
     
+    createInputField({
+        cssClasses: "hide AuthnRequestRequestedAttributesAttributeReleasePolicy",
+        labelTitle: "Allowed Attributes (separated by comma)",
+        name: "registeredServiceAttrReleasePolicyAllowedAttributesAuthnRequest",
+        paramName: "attributeReleasePolicy.allowedAttributes",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the attributes allowed to be released by this policy as a comma-separated list."
+    })
+        .data("renderer", function (value) {
+            return ["java.util.ArrayList", value.split(",")];
+        });
+
+
+    createInputField({
+        cssClasses: "hide MetadataRegistrationAuthorityAttributeReleasePolicy",
+        labelTitle: "Registration Authority",
+        name: "registeredServiceAttrReleasePolicyMetadataRegistrationAuthority",
+        paramName: "attributeReleasePolicy.registrationAuthority",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the registration authority pattern for metadata-based attribute release."
+    });
+
+    createInputField({
+        cssClasses: "hide MetadataRegistrationAuthorityAttributeReleasePolicy",
+        labelTitle: "Allowed Attributes (separated by comma)",
+        name: "registeredServiceAttrReleasePolicyAllowedAttributesMetadataRegistrationAuthority",
+        paramName: "attributeReleasePolicy.allowedAttributes",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the attributes allowed to be released by this policy as a comma-separated list."
+    })
+        .data("renderer", function (value) {
+            return ["java.util.ArrayList", value.split(",")];
+        });
 }
 
 function createRegisteredServiceAttributeReleaseConsentPolicy() {
