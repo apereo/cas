@@ -1647,6 +1647,23 @@ function createRegisteredServiceExpirationPolicy() {
         required: false,
         containerId: "editServiceWizardMenuItemExpirationPolicy",
         title: "Specifies the expiration date for the registered service in the format YYYY-MM-DD."
+    }).on("input", function() {
+        const value = $(this).val();
+        if (value.length === 0) {
+            $("#registeredServiceExpirationPolicyExpirationDateLabelText").text("Expiration Date");
+        } else {
+            $("#registeredServiceExpirationPolicyExpirationDateLabelText").text("");
+        }
+    });
+
+    $(document).ready(() => {
+        $("#registeredServiceExpirationPolicyExpirationDate").datepicker({
+            onSelect: function(date, ins) {
+                $("#registeredServiceExpirationPolicyExpirationDateLabelText").text("");
+                $(ins).val(date);
+                generateServiceDefinition();
+            }
+        })
     });
 }
 
@@ -2201,7 +2218,7 @@ function createInputField(config) {
     outline.append($("<span>", {class: "mdc-notched-outline__leading"}));
 
     const notch = $("<span>", {class: "mdc-notched-outline__notch"});
-    notch.append($("<span>", {class: "mdc-floating-label", html: labelTitle}));
+    notch.append($("<span>", {id: `${name}LabelText`, class: "mdc-floating-label", html: labelTitle}));
 
     outline.append(notch);
     outline.append($("<span>", {class: "mdc-notched-outline__trailing"}));
