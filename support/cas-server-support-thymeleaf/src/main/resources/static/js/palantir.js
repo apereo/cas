@@ -4162,7 +4162,7 @@ document.addEventListener("DOMContentLoaded", () => {
     $(".jqueryui-tabs").tabs().off().on("click", () => updateNavigationSidebar());
     $(".jqueryui-menu").menu();
     $(".jqueryui-selectmenu").selectmenu({
-        width: "350px",
+        width: "360px",
         change: function (event, ui) {
             const $select = $(this);
             const handlerNames = $select.data("change-handler").split(",");

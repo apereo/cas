@@ -484,6 +484,14 @@ function createSamlRegisteredServiceAttributeReleasePolicy() {
             }
         },
         {
+            value: "org.apereo.cas.support.saml.services.MetadataRegistrationAuthorityAttributeReleasePolicy",
+            text: "METADATA REGISTRATION AUTHORITY",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
             value: "org.apereo.cas.support.saml.services.AnonymousAccessAttributeReleasePolicy",
             text: "ANONYMOUS ACCESS",
             data: {
@@ -527,4 +535,7 @@ function createSamlRegisteredServiceAttributeReleasePolicy() {
     });
 
     $registeredServiceAttributeReleasePolicy.selectmenu("refresh");
+
+
+
 }
