@@ -137,7 +137,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                         .applicationContext(configurationContext.getApplicationContext())
                         .build();
                     val merger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
-                    val policyAttributes = registeredService.getAttributeReleasePolicy().getAttributes(releasePolicyContext);
+                    val policyAttributes = Objects.requireNonNull(registeredService).getAttributeReleasePolicy().getAttributes(releasePolicyContext);
                     var accessAttributes = CoreAuthenticationUtils.mergeAttributes(principal.getAttributes(), latestAuthentication.getAttributes(), merger);
                     accessAttributes = CoreAuthenticationUtils.mergeAttributes(accessAttributes, policyAttributes, merger);
                     val accessPrincipal = configurationContext.getPrincipalFactory().createPrincipal(principal.getId(), accessAttributes);
@@ -263,7 +263,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 ? serviceTicket.getAuthentication()
                 : ticketGrantingTicket.getRoot().getAuthentication();
 
-            authentication = getAuthenticationSatisfiedByPolicy(authentication, selectedService, registeredService);
+            authentication = getAuthenticationSatisfiedByPolicy(authentication, selectedService, Objects.requireNonNull(registeredService));
             Objects.requireNonNull(authentication, "Authentication cannot be determined for service ticket validation");
             val principal = serviceTicket.isStateless() ? rebuildStatelessTicketPrincipal(serviceTicket) : authentication.getPrincipal();
             val attributePolicy = Objects.requireNonNull(registeredService.getAttributeReleasePolicy());
@@ -367,7 +367,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
         enforceRegisteredServiceAccess(ctx);
 
-        if (!registeredService.getProxyPolicy().isAllowedToProxy()) {
+        if (!Objects.requireNonNull(registeredService).getProxyPolicy().isAllowedToProxy()) {
             LOGGER.warn("Service [{}] attempted to proxy, but is not allowed.", serviceTicket.getService().getId());
             throw new UnauthorizedProxyingException();
         }
@@ -390,7 +390,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     }
 
     private void enforceRegisteredServiceAccess(final Authentication authentication, final Service service,
-                                                final RegisteredService registeredService) throws Throwable {
+                                                @Nullable final RegisteredService registeredService) throws Throwable {
 
         val attributeReleaseContext = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(registeredService)
@@ -398,7 +398,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             .principal(authentication.getPrincipal())
             .applicationContext(configurationContext.getApplicationContext())
             .build();
-        val releasingAttributes = registeredService.getAttributeReleasePolicy().getAttributes(attributeReleaseContext);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+        val releasingAttributes = Objects.requireNonNull(registeredService).getAttributeReleasePolicy().getAttributes(attributeReleaseContext);
         releasingAttributes.putAll(authentication.getAttributes());
 
         val accessStrategyAttributes = CoreAuthenticationUtils.mergeAttributes(
@@ -429,7 +430,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     }
 
     private void enforceRegisteredServiceAccess(final Service service, final TicketGrantingTicket ticket,
-                                                final RegisteredService registeredService) throws Throwable {
+                                                @Nullable final RegisteredService registeredService) throws Throwable {
         val audit = AuditableContext.builder()
             .service(service)
             .ticketGrantingTicket(ticket)

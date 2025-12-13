@@ -713,6 +713,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
     cp $keystore "$dockerContextDirectory"
 
     javaVersion=($(cat $PWD/gradle.properties | grep "sourceCompatibility" | cut -d= -f2))
+    echo "Using Java version: ${javaVersion} for Docker build"
     buildArguments="--build-arg JAVA_VERSION=${javaVersion} "
     buildArguments+="--build-arg SCENARIO_FOLDER=${SCENARIO_FOLDER} "
     buildArguments+="--build-arg SCENARIO_PATH=${SCENARIO_PATH} "
@@ -724,10 +725,10 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
       buildArguments+="--build-arg \"$env\" "
     done
     #  ls -al $dockerContextDirectory
-    #  echo $buildArguments
+    printcyan "Docker build arguments are: $buildArguments"
 
     docker build \
-      "$buildArguments" \
+      $buildArguments \
       --file "$dockerContextDirectory/Dockerfile" \
       -t cas-"${scenarioName}":latest \
       "$dockerContextDirectory"
@@ -852,7 +853,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
           if [[ "$DEBUG_SUSPEND" == "y" ]]; then
             printyellow "Remote debugging will suspend JVM until debugger is attached to port $DEBUG_PORT"
           fi
-          runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
+          runArgs="${runArgs} -Xrunjdwp:transport=dt_socket,address=*:$DEBUG_PORT,server=y,suspend=$DEBUG_SUSPEND"
         fi
         runArgs="${runArgs} -XX:TieredStopAtLevel=1 "
         printcyan "Launching CAS instance #${c} with properties [${properties}], system properties [${systemProperties}], run arguments [${runArgs}] and dependencies [${dependencies}]"
@@ -886,6 +887,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
             -e RUN_ARGS="${runArgs}" \
             -e CAS_PROPERTIES="${properties}" \
             -p ${serverPort}:${serverPort} \
+            -p 5000:5000 \
             -p 5005:5005 \
             -p 8080:8080 \
             cas-${scenarioName}:latest

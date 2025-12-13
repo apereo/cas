@@ -21,6 +21,7 @@ import org.springframework.util.ObjectUtils;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
@@ -56,10 +57,11 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     protected @Nullable Authentication getAuthenticationSatisfiedByPolicy(
         @Nullable
         final Authentication authentication, final Service service,
+        @Nullable
         final RegisteredService registeredService) throws AbstractTicketException {
         val policy = configurationContext.getAuthenticationPolicy();
         try {
-            val policyContext = Map.of(RegisteredService.class.getName(), registeredService, Service.class.getName(), service);
+            val policyContext = Map.of(RegisteredService.class.getName(), Objects.requireNonNull(registeredService), Service.class.getName(), service);
             val executionResult = policy.isSatisfiedBy(authentication, configurationContext.getApplicationContext(), policyContext);
             if (executionResult.isSuccess()) {
                 return authentication;
@@ -70,7 +72,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         throw new UnsatisfiedAuthenticationPolicyException(policy);
     }
 
-    protected void evaluateProxiedServiceIfNeeded(final Service service, final TicketGrantingTicket ticketGrantingTicket, final RegisteredService registeredService) {
+    protected void evaluateProxiedServiceIfNeeded(final Service service,
+                                                  final TicketGrantingTicket ticketGrantingTicket,
+                                                  @Nullable final RegisteredService registeredService) {
         val proxiedBy = ticketGrantingTicket.getProxiedBy();
         if (proxiedBy != null) {
             LOGGER.debug("Ticket-granting ticket is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
@@ -79,10 +83,10 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                 LOGGER.debug("Located proxying service [{}] in the service registry", proxyingService);
                 if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
                     LOGGER.warn("Proxying service [{}] is not authorized to fulfill the proxy attempt made by [{}]", proxyingService.getId(), service.getId());
-                    throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE + registeredService.getId());
+                    throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE + Objects.requireNonNull(registeredService).getId());
                 }
             } else {
-                LOGGER.warn("Proxy attempt by service [{}] (registered service [{}]) is not allowed.", service.getId(), registeredService.getId());
+                LOGGER.warn("Proxy attempt by service [{}] (registered service [{}]) is not allowed.", service.getId(), Objects.requireNonNull(registeredService).getId());
                 throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE + registeredService.getId());
             }
         } else {

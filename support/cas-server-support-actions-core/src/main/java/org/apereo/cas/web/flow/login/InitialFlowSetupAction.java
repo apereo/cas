@@ -26,6 +26,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.Event;
@@ -91,7 +93,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         return success();
     }
 
-    protected String configureWebflowForTicketGrantingTicket(final RequestContext context) {
+    protected @Nullable String configureWebflowForTicketGrantingTicket(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val ticketGrantingTicketId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         LOGGER.trace("Retrieved the ticket-granting ticket identifier in the login webflow: [{}]", ticketGrantingTicketId);
@@ -147,7 +149,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         }
     }
 
-    protected void configureWebflowForSsoParticipation(final RequestContext context, final String ticketGrantingTicketId) throws Throwable {
+    protected void configureWebflowForSsoParticipation(final RequestContext context, @Nullable final String ticketGrantingTicketId) throws Throwable {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
@@ -185,6 +187,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         context.getFlowScope().put("httpRequestSecure", request.isSecure());
         context.getFlowScope().put("httpRequestMethod", request.getMethod());
         context.getFlowScope().put("httpRequestHeaders", HttpRequestUtils.getRequestHeaders(request));
+        context.getFlowScope().put("clientInfo", ClientInfoHolder.getClientInfo());
     }
 
     protected List<String> determineAuthenticationHandlersForSourceSelection(final RequestContext context) {

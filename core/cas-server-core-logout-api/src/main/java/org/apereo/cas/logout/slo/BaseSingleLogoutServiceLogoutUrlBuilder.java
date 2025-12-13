@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.StringUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,7 +64,9 @@ public abstract class BaseSingleLogoutServiceLogoutUrlBuilder implements SingleL
     }
 
     @Override
-    public boolean supports(final RegisteredService registeredService,
+    public boolean supports(@Nullable
+                            final RegisteredService registeredService,
+                            @Nullable
                             final WebApplicationService singleLogoutService,
                             final Optional<HttpServletRequest> httpRequest) {
         return registeredService != null && singleLogoutService != null

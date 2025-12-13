@@ -20,6 +20,7 @@ java ${RUN_ARGS} \
   -jar cas.war \
   --server.port=${SERVER_PORT} \
   --spring.profiles.active=none \
+  --cas.audit.slf4j.use-single-line=true \
   --server.ssl.key-store="/etc/cas/thekeystore" \
   ${CAS_PROPERTIES}
 

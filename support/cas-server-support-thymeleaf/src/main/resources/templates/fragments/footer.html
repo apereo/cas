@@ -14,4 +14,10 @@
           th:if="${#cas.isTrue(#cas.theme('cas.footer.show-host'))}"
           th:text="${'🖥️ ' + host}">
     </code>
+    <span th:remove="tag" th:if="${clientInfo}">
+        <code id="clientIpAddress" class="clientIpAddress pl-2"
+              th:if="${#cas.isTrue(#cas.theme('cas.footer.show-client-ip'))}"
+              th:text="${'🌍 ' + clientInfo.clientIpAddress}">
+        </code>
+    </span>
 </footer>
