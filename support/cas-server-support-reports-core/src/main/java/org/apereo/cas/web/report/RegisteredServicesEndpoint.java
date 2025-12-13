@@ -112,7 +112,6 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
      *
      * @param id the id
      * @return the registered service
-     * @throws Exception the exception
      */
     @Operation(summary = "Fetch service either by numeric id or service id pattern")
     @GetMapping(path = "{id}", produces = {
