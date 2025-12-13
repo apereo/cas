@@ -38,6 +38,6 @@ recipeList:
       filePattern: 'gradle.properties'
   - org.openrewrite.gradle.AddProperty:
       key: jibVersion
-      value: 3.5.1
+      value: 3.5.2
       overwrite: true
       filePattern: 'gradle.properties'
