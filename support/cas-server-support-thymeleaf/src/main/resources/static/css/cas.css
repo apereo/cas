@@ -997,7 +997,7 @@ select.palantir {
     font-size: unset;
 }
 
-.ui-widget-content, .ui-widget-header {
+ul.ui-widget-header {
     background: unset;
 }
 
