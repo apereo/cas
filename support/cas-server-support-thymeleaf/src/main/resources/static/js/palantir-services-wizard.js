@@ -2335,6 +2335,7 @@ function openRegisteredServiceWizardDialog() {
             break;
         case "SamlRegisteredService":
             $("#registeredServiceIdLabel span.mdc-floating-label").text("Entity ID");
+            createSamlRegisteredServiceAttributeReleasePolicy();
             break;
         case "OAuthRegisteredService":
             $("#registeredServiceIdLabel span.mdc-floating-label").text("Redirect URI");
