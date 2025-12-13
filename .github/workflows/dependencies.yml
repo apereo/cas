@@ -71,7 +71,7 @@ jobs:
             -DgradleReleaseChannel=current --max-workers=8 -DreportfileName=dependencies \
             -DoutputFormatter=json,plain -DoutputDir=./build/reports/dependency-updates
       - name: Upload Results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: dependency-updates
           path: ./build/reports/dependency-updates/dependencies.json
