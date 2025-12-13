@@ -41,7 +41,10 @@ function createRegisteredServiceAttributeReleasePolicy() {
             },
             {
                 value: "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
-                text: "RETURN ALL"
+                text: "RETURN ALL",
+                data: {
+                    markerClass: true
+                }
             },
             {
                 value: "org.apereo.cas.services.ReturnStaticAttributeReleasePolicy",
@@ -1973,6 +1976,7 @@ function createMappedInputField(config) {
 
     const sectionContainerId = `registeredService${capitalize(keyField)}MapContainer`;
     const addButtonId = `registeredService${capitalize(keyField)}AddButton`;
+    const deleteAllButtonId = `registeredService${capitalize(keyField)}DeleteAllButton`;
     const removeButtonId = `registeredService${capitalize(keyField)}RemoveButton`;
     const mapRowId = `registeredService${capitalize(keyField)}Row`;
 
@@ -2021,8 +2025,9 @@ function createMappedInputField(config) {
                 <button type="button"
                         id="${removeButtonId}"
                         name="${removeButtonId}"
+                        title="Remove Row"
                         class="mdc-button mdc-button--raised btn btn-link mdc-button--inline-row ${cssClasses}">
-                    <i class="mdi mdi-trash-can" aria-hidden="true"></i>
+                    <i class="mdi mdi-minus-thick" aria-hidden="true"></i>
                 </button>
             </div>
     `;
@@ -2036,9 +2041,19 @@ function createMappedInputField(config) {
                 <button type="button" 
                         name="${addButtonId}"
                         id="${addButtonId}"
+                        title="Add Row"
                         class="mdc-button mdc-button--raised mdc-button--round add-row ${cssClasses}">
                     <span class="mdc-button__label">
                         <i class="mdc-tab__icon mdi mdi-plus-thick" aria-hidden="true"></i>
+                    </span>
+                </button>
+                <button type="button" 
+                        name="${deleteAllButtonId}"
+                        id="${deleteAllButtonId}"
+                        title="Delete All Rows"
+                        class="mdc-button mdc-button--raised mdc-button--round add-row ${cssClasses}">
+                    <span class="mdc-button__label">
+                        <i class="mdc-tab__icon mdi mdi-trash-can" aria-hidden="true"></i>
                     </span>
                 </button>
             </div>
@@ -2046,7 +2061,6 @@ function createMappedInputField(config) {
         `;
 
     $(`#${containerId}`).append($(`${html}`));
-
 
     function configureRemoveMapRowEventHandler() {
         $(`button[name=${removeButtonId}]`).off().on("click", function () {
@@ -2077,7 +2091,16 @@ function createMappedInputField(config) {
         configureInputEventHandler();
         configureInputRenderer();
     });
-
+    $(`button[name=${deleteAllButtonId}]`).off().on("click", () => {
+        $(`#${sectionContainerId}ToAppend`).empty();
+        $(`#${sectionContainerId} input`).val("");
+        configureRemoveMapRowEventHandler();
+        cas.attachFields();
+        configureInputEventHandler();
+        configureInputRenderer();
+        generateServiceDefinition();
+    });
+    
     configureRemoveMapRowEventHandler();
     configureInputEventHandler();
     configureInputRenderer();
