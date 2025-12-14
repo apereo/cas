@@ -1302,39 +1302,35 @@ function createRegisteredServiceProperties() {
     });
 }
 
-function createRegisteredServiceContacts() {
-    for (let index = 0; index < 1; index++) {
-        const details = ["name", "email", "phone", "department", "type"];
-        details.forEach(detail => {
-            createInputField({
-                labelTitle: capitalize(detail),
-                name: `registeredServiceContact${capitalize(detail)}${index}`,
-                paramName: `contacts`,
-                required: false,
-                containerId: "editServiceWizardMenuItemContacts",
-                title: `Specify the contact's ${detail}`,
-                data: {
-                    "contact-field": detail,
-                    "contact-group": index
+function createRegisteredServiceContacts(index) {
+    const details = ["name", "email", "phone", "department", "type"];
+    details.forEach(detail => {
+        createInputField({
+            labelTitle: capitalize(detail),
+            name: `registeredServiceContact${capitalize(detail)}${index}`,
+            paramName: `contacts`,
+            required: false,
+            containerId: `registeredServiceContact${index}-tab`,
+            title: `Specify the contact's ${detail}`
+        })
+            .data("renderer", function (value, $input, serviceDefinition) {
+                return ["java.util.ArrayList", []];
+            })
+            .data("beforeGenerate", function ($input, serviceDefinition) {
+                if (serviceDefinition["contacts"] && $input.val().length > 0) {
+                    let currentContact = serviceDefinition["contacts"][1][index-1];
+                    if (!currentContact) {
+                        currentContact = {
+                            "@class": "org.apereo.cas.services.DefaultRegisteredServiceContact"
+                        };
+                        serviceDefinition["contacts"][1].push(currentContact);
+                    }
+                    currentContact[detail] = $input.val();
                 }
             })
-                .data("renderer", function (value, $input, serviceDefinition) {
-                    const contact = {
-                        "@class": "org.apereo.cas.services.DefaultRegisteredServiceContact"
-                    };
-                    return ["java.util.ArrayList", [contact]];
-                })
-                .data("beforeGenerate", function ($input, serviceDefinition) {
-                    if (serviceDefinition["contacts"] && $input.val().length > 0) {
-                        const contactField = $input.data("contact-field");
-                        const contactGroup = Number($input.data("contact-group"));
-                        const contacts = serviceDefinition["contacts"][1][contactGroup];
-                        contacts[contactField] = $input.val();
-                    }
-                })
-            ;
-        });
-    }
+        ;
+    });
+
 }
 
 function createRegisteredServicePublicKey() {
@@ -1967,7 +1963,7 @@ function generateServiceDefinition() {
                     const classType = serviceDefinition[key]["@class"];
                     const markerClass = $(`option[value='${classType}']`).data("markerClass");
                     if (!markerClass) {
-                        console.log("Deleting", serviceDefinition[key]);
+                        // console.log("Deleting", serviceDefinition[key]);
                         delete serviceDefinition[key];
                     }
                 }
