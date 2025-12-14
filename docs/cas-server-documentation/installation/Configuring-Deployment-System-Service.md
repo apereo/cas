@@ -90,7 +90,8 @@ WantedBy=multi-user.target
 <code>User</code> and <code>ExecStart</code> fields for your deployment.</p></div>
 
 The user that runs the CAS web application, PID file and console log file are managed by `systemd` itself and therefore must be
-configured using appropriate fields in `service` script. Consult [the service unit configuration man page](https://www.freedesktop.org/software/systemd/man/systemd.service.html) for more details.
+configured using appropriate fields in `service` script. Consult the `systemd` unit configuration 
+manual for more details.
 
 To flag the application to start automatically on system boot use the following command:
 
