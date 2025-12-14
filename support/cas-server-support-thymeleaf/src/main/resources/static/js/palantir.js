@@ -518,6 +518,7 @@ function displayBanner(error) {
             break;
         case 400:
         case 500:
+        case 503:
             message = "Unable to process or accept the request. Check CAS server logs for details.";
             break;
         case 0:
@@ -531,10 +532,12 @@ function displayBanner(error) {
     if (error.hasOwnProperty("path")) {
         message += `Unable to make an API call to ${error.path}. Is the endpoint enabled and available?`;
     }
-    if (typeof error === "string") {
-        message = error;
-    } else {
-        message = error.message;
+    if (message.length === 0) {
+        if (typeof error === "string") {
+            message = error;
+        } else {
+            message = error.message;
+        }
     }
     notyf.dismissAll();
     notyf.error(message);

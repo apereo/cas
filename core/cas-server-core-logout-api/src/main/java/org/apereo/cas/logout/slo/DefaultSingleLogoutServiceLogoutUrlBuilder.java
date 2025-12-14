@@ -26,13 +26,14 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
     }
 
     @Override
-    public boolean supports(@Nullable
-                            final RegisteredService registeredService,
-                            @Nullable
-                            final WebApplicationService singleLogoutService,
-                            final Optional<HttpServletRequest> httpRequest) {
+    public boolean supports(
+        @Nullable
+        final RegisteredService registeredService,
+        @Nullable
+        final WebApplicationService singleLogoutService,
+        final Optional<HttpServletRequest> httpRequest) {
         return super.supports(registeredService, singleLogoutService, httpRequest)
-           && Objects.requireNonNull(registeredService).getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME);
+            && Objects.requireNonNull(registeredService).getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME);
     }
 
 }
