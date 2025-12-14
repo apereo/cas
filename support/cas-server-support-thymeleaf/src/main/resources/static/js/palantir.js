@@ -3979,130 +3979,126 @@ async function initializeSAML2ProtocolOperations() {
     }
 }
 
+function processNavigationTabs() {
+    if (!actuatorEndpoints.registeredservices) {
+        $("#applicationsTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.APPLICATIONS}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.metrics || !actuatorEndpoints.httpexchanges || !actuatorEndpoints.auditevents
+        || !actuatorEndpoints.heapdump || !actuatorEndpoints.health || !actuatorEndpoints.statistics) {
+        $("#systemTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.SYSTEM}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.ticketregistry) {
+        $("#ticketsTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.TICKETS}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.ticketregistry) {
+        $("#tasksTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.TASKS}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.persondirectory) {
+        $("#personDirectoryTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.PERSON_DIRECTORY}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.authenticationHandlers || !actuatorEndpoints.authenticationPolicies) {
+        $("#authenticationTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.AUTHENTICATION}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.serviceaccess) {
+        $("#accessStrategyTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.ACCESS_STRATEGY}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.ssosessions) {
+        $("#ssoSessionsTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.SSO_SESSIONS}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.auditlog) {
+        $("#auditEvents").parent().addClass("d-none");
+    }
+    if (!actuatorEndpoints.events) {
+        $("#casEvents").parent().addClass("d-none");
+    }
+    if ((!actuatorEndpoints.loggingconfig || !actuatorEndpoints.loggers) && !actuatorEndpoints.auditlog) {
+        $("#loggingTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.LOGGING}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.env || !actuatorEndpoints.configprops) {
+        $("#configurationTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.CONFIGURATION}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.attributeconsent || !CAS_FEATURES.includes("Consent")) {
+        $("#consentTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.CONSENT}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.casvalidate) {
+        $("#casprotocol").parent().remove();
+        $("#casProtocolContainer").addClass("d-none");
+    }
+    if (!actuatorEndpoints.samlpostprofileresponse || !CAS_FEATURES.includes("SAMLIdentityProvider")) {
+        $("#saml2protocol").parent().remove();
+        $("#saml2ProtocolContainer").addClass("d-none");
+    }
+    if (!actuatorEndpoints.samlvalidate || !CAS_FEATURES.includes("SAML")) {
+        $("#saml1ProtocolContainer").addClass("d-none");
+        $("#saml1protocol").parent().remove();
+    }
+    if (!actuatorEndpoints.casconfig) {
+        $("#config-encryption-tab").addClass("d-none");
+        $("#casConfigSecurity").parent().remove();
+    }
+    if (!actuatorEndpoints.configurationmetadata) {
+        $("#casConfigSearch").addClass("d-none");
+    }
+    if (!actuatorEndpoints.oidcjwks || !CAS_FEATURES.includes("OpenIDConnect")) {
+        $("#oidcprotocol").parent().remove();
+        $("#oidcProtocolContainer").addClass("d-none");
+    }
+    if (!actuatorEndpoints.samlvalidate && !actuatorEndpoints.casvalidate
+        && !actuatorEndpoints.samlpostprofileresponse && !actuatorEndpoints.oidcjwks) {
+        $("#protocolsTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.PROTOCOLS}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.throttles) {
+        $("#throttlesTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.THROTTLES}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.mfadevices || availableMultifactorProviders.length === 0) {
+        $("#mfaTabButton").addClass("d-none");
+        $("#mfaDevicesTab").parent().addClass("d-none");
+        $(`#attribute-tab-${Tabs.MFA}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.multifactortrusteddevices || availableMultifactorProviders.length === 0) {
+        $("#trustedMfaDevicesTab").parent().addClass("d-none");
+    }
+    if (!actuatorEndpoints.multitenancy || !CAS_FEATURES.includes("Multitenancy")) {
+        $("#tenantsTabButton").addClass("d-none");
+    }
+
+    return $("nav.sidebar-navigation ul li:visible").length;
+}
+
 async function initializePalantir() {
     try {
         setTimeout(() => {
-            if (!actuatorEndpoints.registeredservices) {
-                $("#applicationsTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.APPLICATIONS}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.metrics || !actuatorEndpoints.httpexchanges || !actuatorEndpoints.auditevents
-                || !actuatorEndpoints.heapdump || !actuatorEndpoints.health || !actuatorEndpoints.statistics) {
-                $("#systemTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.SYSTEM}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.ticketregistry) {
-                $("#ticketsTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.TICKETS}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.ticketregistry) {
-                $("#tasksTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.TASKS}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.persondirectory) {
-                $("#personDirectoryTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.PERSON_DIRECTORY}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.authenticationHandlers || !actuatorEndpoints.authenticationPolicies) {
-                $("#authenticationTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.AUTHENTICATION}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.serviceaccess) {
-                $("#accessStrategyTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.ACCESS_STRATEGY}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.ssosessions) {
-                $("#ssoSessionsTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.SSO_SESSIONS}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.auditlog) {
-                $("#auditEvents").parent().addClass("d-none");
-            }
-            if (!actuatorEndpoints.events) {
-                $("#casEvents").parent().addClass("d-none");
-            }
-            if ((!actuatorEndpoints.loggingconfig || !actuatorEndpoints.loggers) && !actuatorEndpoints.auditlog) {
-                $("#loggingTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.LOGGING}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.env || !actuatorEndpoints.configprops) {
-                $("#configurationTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.CONFIGURATION}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.attributeconsent || !CAS_FEATURES.includes("Consent")) {
-                $("#consentTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.CONSENT}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.casvalidate) {
-                $("#casprotocol").parent().remove();
-                $("#casProtocolContainer").addClass("d-none");
-            }
-            if (!actuatorEndpoints.samlpostprofileresponse) {
-                $("#saml2protocol").parent().remove();
-                $("#saml2ProtocolContainer").addClass("d-none");
-            }
-            if (!actuatorEndpoints.samlvalidate) {
-                $("#saml1ProtocolContainer").addClass("d-none");
-                $("#saml1protocol").parent().remove();
-            }
-            if (!actuatorEndpoints.casconfig) {
-                $("#config-encryption-tab").addClass("d-none");
-                $("#casConfigSecurity").parent().remove();
-            }
-            if (!actuatorEndpoints.configurationmetadata) {
-                $("#casConfigSearch").addClass("d-none");
-            }
+            initializeCasFeatures().then(() => {
+               let visibleCount = processNavigationTabs();
+                if (visibleCount === 0) {
+                    $("#dashboard").hide();
+                    Swal.fire({
+                        title: "Palantir is unavailable!",
+                        text: `Palantir requires a number of actuator endpoints to be enabled and exposed, and your CAS deployment fails to do so.`,
+                        icon: "warning",
+                        showConfirmButton: false
+                    });
+                } else {
+                    let selectedTab = window.localStorage.getItem("PalantirSelectedTab");
+                    if (!$(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).is(":visible")) {
+                        selectedTab = Tabs.APPLICATIONS;
+                    }
+                    $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
+                    activateDashboardTab(selectedTab);
 
-            if (!actuatorEndpoints.oidcjwks || !CAS_FEATURES.includes("OpenIDConnect")) {
-                $("#oidcprotocol").parent().remove();
-                $("#oidcProtocolContainer").addClass("d-none");
-            }
-
-            if (!actuatorEndpoints.samlvalidate && !actuatorEndpoints.casvalidate
-                && !actuatorEndpoints.samlpostprofileresponse && !actuatorEndpoints.oidcjwks) {
-                $("#protocolsTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.PROTOCOLS}`).addClass("d-none");
-            }
-
-            if (!actuatorEndpoints.throttles) {
-                $("#throttlesTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.THROTTLES}`).addClass("d-none");
-            }
-
-            if (!actuatorEndpoints.mfadevices || availableMultifactorProviders.length === 0) {
-                $("#mfaTabButton").addClass("d-none");
-                $("#mfaDevicesTab").parent().addClass("d-none");
-                $(`#attribute-tab-${Tabs.MFA}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.multifactortrusteddevices || availableMultifactorProviders.length === 0) {
-                $("#trustedMfaDevicesTab").parent().addClass("d-none");
-            }
-            if (!actuatorEndpoints.multitenancy || !CAS_FEATURES.includes("Multitenancy")) {
-                $("#tenantsTabButton").addClass("d-none");
-            }
-
-            let visibleCount = $("nav.sidebar-navigation ul li:visible").length;
-
-
-            if (visibleCount === 0) {
-                $("#dashboard").hide();
-                Swal.fire({
-                    title: "Palantir is unavailable!",
-                    text: `Palantir requires a number of actuator endpoints to be enabled and exposed, and your CAS deployment fails to do so.`,
-                    icon: "warning",
-                    showConfirmButton: false
-                });
-            } else {
-
-                let selectedTab = window.localStorage.getItem("PalantirSelectedTab");
-
-                if (!$(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).is(":visible")) {
-                    selectedTab = Tabs.APPLICATIONS;
-                }
-
-                $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
-                activateDashboardTab(selectedTab);
-                initializeCasFeatures().then(() =>
                     Promise.all([
                         initializeAllCharts(),
                         initializeScheduledTasksOperations(),
@@ -4128,8 +4124,9 @@ async function initializePalantir() {
                         initializeAuditEventsOperations(),
                         initializeCasEventsOperations(),
                         initializeCasSpringWebflowOperations()
-                    ]));
-            }
+                    ]);
+                }
+            });
         }, 2);
         $("#dashboard").removeClass("d-none");
     } catch (error) {
