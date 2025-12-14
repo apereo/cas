@@ -4029,7 +4029,7 @@ async function initializePalantir() {
                 $("#configurationTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.CONFIGURATION}`).addClass("d-none");
             }
-            if (!actuatorEndpoints.attributeconsent) {
+            if (!actuatorEndpoints.attributeconsent || !CAS_FEATURES.includes("Consent")) {
                 $("#consentTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.CONSENT}`).addClass("d-none");
             }
@@ -4053,7 +4053,7 @@ async function initializePalantir() {
                 $("#casConfigSearch").addClass("d-none");
             }
 
-            if (!actuatorEndpoints.oidcjwks) {
+            if (!actuatorEndpoints.oidcjwks || !CAS_FEATURES.includes("OpenIDConnect")) {
                 $("#oidcprotocol").parent().remove();
                 $("#oidcProtocolContainer").addClass("d-none");
             }
@@ -4069,15 +4069,15 @@ async function initializePalantir() {
                 $(`#attribute-tab-${Tabs.THROTTLES}`).addClass("d-none");
             }
 
-            if (!actuatorEndpoints.mfadevices) {
+            if (!actuatorEndpoints.mfadevices || availableMultifactorProviders.length === 0) {
                 $("#mfaTabButton").addClass("d-none");
                 $("#mfaDevicesTab").parent().addClass("d-none");
                 $(`#attribute-tab-${Tabs.MFA}`).addClass("d-none");
             }
-            if (!actuatorEndpoints.multifactortrusteddevices) {
+            if (!actuatorEndpoints.multifactortrusteddevices || availableMultifactorProviders.length === 0) {
                 $("#trustedMfaDevicesTab").parent().addClass("d-none");
             }
-            if (!actuatorEndpoints.multitenancy) {
+            if (!actuatorEndpoints.multitenancy || !CAS_FEATURES.includes("Multitenancy")) {
                 $("#tenantsTabButton").addClass("d-none");
             }
 
