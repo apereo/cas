@@ -23,6 +23,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 
 /**
  * Note: this class has a natural ordering that is inconsistent with equals.
@@ -53,7 +54,7 @@ public class Milestone implements Comparable<Milestone> {
         this.description = description;
         this.url = url;
         this.number = number;
-        
+
         this.createdDate = created;
         this.updatedDate = updated;
         this.dueDate = dueOn;
@@ -61,9 +62,8 @@ public class Milestone implements Comparable<Milestone> {
 
     @Override
     public int compareTo(final Milestone o) {
-        if (o.getDueDate() == null || this.dueDate == null) {
-            return 0;
-        }
-        return this.dueDate.compareTo(o.getDueDate());
+        return Comparator
+                .comparing(Milestone::getDueDate, Comparator.nullsLast(Comparator.naturalOrder()))
+                .compare(this, o);
     }
 }
