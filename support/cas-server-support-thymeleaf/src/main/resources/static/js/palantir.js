@@ -4178,6 +4178,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    $("input.jquery-datepicker").datepicker({
+        showAnim: "slideDown",
+        onSelect: function(date, ins) {
+            $(ins).val(date);
+            generateServiceDefinition();
+            $(`#${$(ins).prop("id")}`).prev().find(".mdc-notched-outline__notch").hide();
+        }
+    })
+    
     $("nav.sidebar-navigation ul li").off().on("click", function () {
         hideBanner();
         const index = selectSidebarMenuButton(this);

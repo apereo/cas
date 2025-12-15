@@ -300,7 +300,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
 
 
     createInputField({
-        cssClasses: "hide AuthnRequestRequestedAttributesAttributeReleasePolicy",
+        cssClasses: "hide AuthnRequestRequesterIdAttributeReleasePolicy",
         labelTitle: "Requester ID Pattern",
         name: "registeredServiceAttrReleasePolicyRequesterIdPatternAuthnRequest",
         paramName: "attributeReleasePolicy.requesterIdPattern",
@@ -310,7 +310,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
     });
     
     createInputField({
-        cssClasses: "hide AuthnRequestRequestedAttributesAttributeReleasePolicy",
+        cssClasses: "hide AuthnRequestRequesterIdAttributeReleasePolicy",
         labelTitle: "Allowed Attributes (separated by comma)",
         name: "registeredServiceAttrReleasePolicyAllowedAttributesAuthnRequest",
         paramName: "attributeReleasePolicy.allowedAttributes",
@@ -321,6 +321,52 @@ function createRegisteredServiceAttributeReleasePolicy() {
         .data("renderer", function (value) {
             return ["java.util.ArrayList", value.split(",")];
         });
+
+
+    createInputField({
+        cssClasses: "hide MetadataEntityAttributesAttributeReleasePolicy",
+        labelTitle: "Allowed Attributes (separated by comma)",
+        name: "registeredServiceAttrReleasePolicyAllowedAttributesMetadataEntity",
+        paramName: "attributeReleasePolicy.allowedAttributes",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the attributes allowed to be released by this policy as a comma-separated list."
+    })
+        .data("renderer", function (value) {
+            return ["java.util.ArrayList", value.split(",")];
+        });
+
+    createInputField({
+        cssClasses: "hide MetadataEntityAttributesAttributeReleasePolicy",
+        labelTitle: "Entity Attribute Values (separated by comma)",
+        name: "registeredServiceAttrReleasePolicyEntityAttributeValues",
+        paramName: "attributeReleasePolicy.entityAttributeValues",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the entity attribute values allowed to be released by this policy as a comma-separated list."
+    })
+        .data("renderer", function (value) {
+            return ["java.util.LinkedHashSet", value.split(",")];
+        });
+    
+    createInputField({
+        cssClasses: "hide MetadataEntityAttributesAttributeReleasePolicy",
+        labelTitle: "Entity Attribute",
+        name: "registeredServiceAttrReleasePolicyMetadataEntityAttribute",
+        paramName: "attributeReleasePolicy.entityAttribute",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the entity attribute to match for metadata-based attribute release."
+    });
+    createInputField({
+        cssClasses: "hide MetadataEntityAttributesAttributeReleasePolicy",
+        labelTitle: "Entity Attribute Format",
+        name: "registeredServiceAttrReleasePolicyMetadataEntityAttributeFormat",
+        paramName: "attributeReleasePolicy.entityAttributeFormat",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the entity attribute format to match for metadata-based attribute release."
+    });
 
 
     createInputField({
@@ -345,6 +391,61 @@ function createRegisteredServiceAttributeReleasePolicy() {
         .data("renderer", function (value) {
             return ["java.util.ArrayList", value.split(",")];
         });
+
+    createInputField({
+        cssClasses: "hide PatternMatchingEntityIdAttributeReleasePolicy",
+        labelTitle: "Allowed Attributes (separated by comma)",
+        name: "registeredServiceAttrReleasePolicyAllowedAttributesPatternMatchingEntityId",
+        paramName: "attributeReleasePolicy.allowedAttributes",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the attributes allowed to be released by this policy as a comma-separated list."
+    })
+        .data("renderer", function (value) {
+            return ["java.util.ArrayList", value.split(",")];
+        });
+
+    createInputField({
+        cssClasses: "hide PatternMatchingEntityIdAttributeReleasePolicy",
+        labelTitle: "Entity IDs",
+        name: "registeredServiceAttrReleasePolicyEntityIdsPatternMatching",
+        paramName: "attributeReleasePolicy.entityIds",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the entity IDs patterns to match for this policy"
+    });
+
+    createInputField({
+        cssClasses: "hide GroovySamlRegisteredServiceAttributeReleasePolicy",
+        labelTitle: "Groovy Script",
+        name: "registeredServiceAttrReleasePolicyGroovySamlScript",
+        paramName: "attributeReleasePolicy.groovyScript",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the Groovy script location to determine attribute release."
+    });
+
+
+    createInputField({
+        cssClasses: "hide EduPersonTargetedIdAttributeReleasePolicy",
+        labelTitle: "Salt",
+        name: "registeredServiceAttrReleasePolicyEduPersonTargetedIdSalt",
+        paramName: "attributeReleasePolicy.salt",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the salt value used in generating the EduPersonTargetedID."
+    });
+    createInputField({
+        cssClasses: "hide EduPersonTargetedIdAttributeReleasePolicy",
+        labelTitle: "Attribute",
+        name: "registeredServiceAttrReleasePolicyEduPersonTargetedIdAttribute",
+        paramName: "attributeReleasePolicy.attribute",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the attribute name to store the EduPersonTargetedID."
+    });
+
+    
 }
 
 function createRegisteredServiceAttributeReleaseConsentPolicy() {
@@ -967,11 +1068,35 @@ function createRegisteredServiceAccessStrategy() {
                 value: "org.apereo.cas.grouper.services.GrouperRegisteredServiceAccessStrategy",
                 text: "GROUPER"
             },
+            {
+                value: "org.apereo.cas.services.OpenFGARegisteredServiceAccessStrategy",
+                text: "OPEN FGA"
+            },
+            {
+                value: "org.apereo.cas.services.OpenPolicyAgentRegisteredServiceAccessStrategy",
+                text: "OPA"
+            },
+            {
+                value: "org.apereo.cas.services.PermifyRegisteredServiceAccessStrategy",
+                text: "PERMIFY"
+            },
+            {
+                value: "org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy",
+                text: "TIME BASED"
+            },
             ...(
                 scriptFactoryAvailable
                     ? [{
                         value: "org.apereo.cas.services.GroovyRegisteredServiceAccessStrategy",
                         text: "GROOVY"
+                    }]
+                    : []
+            ),
+            ...(
+                CAS_FEATURES.includes("SCIM")
+                    ? [{
+                        value: "org.apereo.cas.scim.v2.access.ScimRegisteredServiceAccessStrategy",
+                        text: "SCIM"
                     }]
                     : []
             )
@@ -1104,7 +1229,7 @@ function createRegisteredServiceAccessStrategy() {
     });
 
     createMappedInputField({
-        cssClasses: "DefaultRegisteredServiceAccessStrategy GrouperRegisteredServiceAccessStrategy",
+        cssClasses: "DefaultRegisteredServiceAccessStrategy GrouperRegisteredServiceAccessStrategy ScimRegisteredServiceAccessStrategy",
         header: "Required Attributes",
         containerId: "editServiceWizardMenuItemAccessStrategy",
         keyField: "registeredServiceAccessStrategyReqAttrName",
@@ -1131,6 +1256,209 @@ function createRegisteredServiceAccessStrategy() {
         required: false
     });
 
+
+    createInputField({
+        cssClasses: "hide OpenFGARegisteredServiceAccessStrategy",
+        labelTitle: "Relation",
+        name: "registeredServiceAccessStrategyOpenFGARelation",
+        paramName: "accessStrategy.relation",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the OpenFGA relation used to evaluate access permissions."
+    });
+
+    createInputField({
+        cssClasses: "hide OpenFGARegisteredServiceAccessStrategy",
+        labelTitle: "Object",
+        name: "registeredServiceAccessStrategyOpenFGAObject",
+        paramName: "accessStrategy.object",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the OpenFGA object against which the relation is evaluated."
+    });
+
+    createInputField({
+        cssClasses: "hide OpenFGARegisteredServiceAccessStrategy",
+        labelTitle: "API URL",
+        name: "registeredServiceAccessStrategyOpenFGAApiUrl",
+        paramName: "accessStrategy.apiUrl",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the OpenFGA API endpoint URL. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide OpenFGARegisteredServiceAccessStrategy",
+        labelTitle: "Store ID",
+        name: "registeredServiceAccessStrategyOpenFGAStoreId",
+        paramName: "accessStrategy.storeId",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the OpenFGA store identifier. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide OpenFGARegisteredServiceAccessStrategy",
+        labelTitle: "Token",
+        name: "registeredServiceAccessStrategyOpenFGAToken",
+        paramName: "accessStrategy.token",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the authentication token used to access the OpenFGA API. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide OpenFGARegisteredServiceAccessStrategy",
+        labelTitle: "User Type",
+        name: "registeredServiceAccessStrategyOpenFGAUserType",
+        paramName: "accessStrategy.userType",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the OpenFGA user type to be used when constructing access checks."
+    });
+
+    createInputField({
+        cssClasses: "hide OpenPolicyAgentRegisteredServiceAccessStrategy",
+        labelTitle: "Decision",
+        name: "registeredServiceAccessStrategyOPADecision",
+        paramName: "accessStrategy.decision",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the Open Policy Agent decision or policy path used to evaluate access."
+    });
+
+    createInputField({
+        cssClasses: "hide OpenPolicyAgentRegisteredServiceAccessStrategy",
+        labelTitle: "API URL",
+        name: "registeredServiceAccessStrategyOPAApiUrl",
+        paramName: "accessStrategy.apiUrl",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the Open Policy Agent API endpoint URL. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide OpenPolicyAgentRegisteredServiceAccessStrategy",
+        labelTitle: "Token",
+        name: "registeredServiceAccessStrategyOPAToken",
+        paramName: "accessStrategy.token",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the authentication token used to access the Open Policy Agent API. Supports expression language."
+    });
+
+    createMappedInputField({
+        cssClasses: "hide OpenPolicyAgentRegisteredServiceAccessStrategy",
+        header: "Context",
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        keyField: "registeredServiceAccessStrategyOPAContextAttrName",
+        keyLabel: "Attribute Name",
+        valueField: "registeredServiceAccessStrategyOPAContextAttrValue",
+        valueLabel: "Attribute Value",
+        containerField: "accessStrategy.context",
+        required: false
+    });
+
+
+    createInputField({
+        cssClasses: "hide PermifyRegisteredServiceAccessStrategy",
+        labelTitle: "API URL",
+        name: "registeredServiceAccessStrategyPermifyApiUrl",
+        paramName: "accessStrategy.apiUrl",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the Permify API endpoint URL. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide PermifyRegisteredServiceAccessStrategy",
+        labelTitle: "Tenant ID",
+        name: "registeredServiceAccessStrategyPermifyTenantId",
+        paramName: "accessStrategy.tenantId",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the Permify tenant identifier. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide PermifyRegisteredServiceAccessStrategy",
+        labelTitle: "Entity Type",
+        name: "registeredServiceAccessStrategyPermifyEntityType",
+        paramName: "accessStrategy.entityType",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the Permify entity type used in permission evaluation. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide PermifyRegisteredServiceAccessStrategy",
+        labelTitle: "Subject Type",
+        name: "registeredServiceAccessStrategyPermifySubjectType",
+        paramName: "accessStrategy.subjectType",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the Permify subject type used in permission evaluation. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide PermifyRegisteredServiceAccessStrategy",
+        labelTitle: "Subject Relation",
+        name: "registeredServiceAccessStrategyPermifySubjectRelation",
+        paramName: "accessStrategy.subjectRelation",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the relation between the subject and the entity in Permify. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide PermifyRegisteredServiceAccessStrategy",
+        labelTitle: "Permission",
+        name: "registeredServiceAccessStrategyPermifyPermission",
+        paramName: "accessStrategy.permission",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the permission to be evaluated by Permify. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide PermifyRegisteredServiceAccessStrategy",
+        labelTitle: "Token",
+        name: "registeredServiceAccessStrategyPermifyToken",
+        paramName: "accessStrategy.token",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the authentication token used to access the Permify API. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide TimeBasedRegisteredServiceAccessStrategy",
+        labelTitle: "Starting Date/Time",
+        name: "registeredServiceAccessStrategyTimeBasedStartingDateTime",
+        paramName: "accessStrategy.startingDateTime",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the starting date and time from which access is allowed. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide TimeBasedRegisteredServiceAccessStrategy",
+        labelTitle: "Ending Date/Time",
+        name: "registeredServiceAccessStrategyTimeBasedEndingDateTime",
+        paramName: "accessStrategy.endingDateTime",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the ending date and time after which access is denied. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide TimeBasedRegisteredServiceAccessStrategy",
+        labelTitle: "Zone ID",
+        name: "registeredServiceAccessStrategyTimeBasedZoneId",
+        paramName: "accessStrategy.zoneId",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the time zone identifier used to interpret the starting and ending date/time values. Supports expression language and defaults to UTC."
+    });
 
 }
 
@@ -1683,6 +2011,7 @@ function createRegisteredServiceUsernameAttributeProvider() {
 
 function createRegisteredServiceExpirationPolicy() {
     createInputField({
+        cssClasses: "jquery-datepicker",
         paramType: "org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy",
         labelTitle: "Expiration Date",
         name: "registeredServiceExpirationPolicyExpirationDate",
@@ -1690,23 +2019,6 @@ function createRegisteredServiceExpirationPolicy() {
         required: false,
         containerId: "editServiceWizardMenuItemExpirationPolicy",
         title: "Specifies the expiration date for the registered service in the format YYYY-MM-DD."
-    }).on("input", function() {
-        const value = $(this).val();
-        if (value.length === 0) {
-            $("#registeredServiceExpirationPolicyExpirationDateLabelText").text("Expiration Date");
-        } else {
-            $("#registeredServiceExpirationPolicyExpirationDateLabelText").text("");
-        }
-    });
-
-    $(document).ready(() => {
-        $("#registeredServiceExpirationPolicyExpirationDate").datepicker({
-            onSelect: function(date, ins) {
-                $("#registeredServiceExpirationPolicyExpirationDateLabelText").text("");
-                $(ins).val(date);
-                generateServiceDefinition();
-            }
-        })
     });
 }
 
@@ -2280,7 +2592,14 @@ function createInputField(config) {
         required: required
     }).on("input", function () {
         const value = $(this).val();
-        if (value.length > 0 && dataType === "regex" && !isValidRegex(value)) {
+        if (dataType === "date") {
+            if (value.length === 0) {
+                $(`${name}LabelText`).text(title);
+            } else {
+                $(`${name}LabelText`).text("");
+            }
+            generateServiceDefinition();
+        } else if (value.length > 0 && dataType === "regex" && !isValidRegex(value)) {
             this.setCustomValidity("Value must be a valid regular expression.");
         } else if (required && value.length <= 0) {
             this.setCustomValidity("Field value is required");
@@ -2289,12 +2608,11 @@ function createInputField(config) {
             generateServiceDefinition();
         }
     })
-        .on("blur", function () {
-            const value = $(this).val().trim();
-            if (!this.checkValidity()) {
-                this.reportValidity();
-            }
-        });
+    .on("blur", function () {
+        if (!this.checkValidity()) {
+            this.reportValidity();
+        }
+    });
 
     Object.entries(data).forEach(([key, value]) => {
         input.data(key, value);

@@ -476,8 +476,24 @@ function createSamlRegisteredServiceAttributeReleasePolicy() {
             }
         },
         {
+            value: "org.apereo.cas.support.saml.services.MetadataEntityAttributesAttributeReleasePolicy",
+            text: "METADATA ENTITY ATTRIBUTES",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
             value: "org.apereo.cas.support.saml.services.AuthnRequestRequestedAttributesAttributeReleasePolicy",
             text: "AUTHN REQUEST REQUESTED ATTRIBUTES",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.AuthnRequestRequesterIdAttributeReleasePolicy",
+            text: "AUTHN REQUEST REQUESTER ID",
             data: {
                 markerClass: true,
                 serviceClass: "SamlRegisteredService"
@@ -522,7 +538,31 @@ function createSamlRegisteredServiceAttributeReleasePolicy() {
                 markerClass: true,
                 serviceClass: "SamlRegisteredService"
             }
-        }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicy",
+            text: "PATTERN MATCHING ENTITY IDS",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy",
+            text: "EDUPERSON TARGETED ID",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        ...(
+            scriptFactoryAvailable
+                ? [{
+                    value: "org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicy",
+                    text: "GROOVY SAML"
+                }]
+                : []
+        ),
     ];
 
     releasePolicyOptions.forEach(option => {
