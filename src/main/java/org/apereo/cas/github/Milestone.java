@@ -61,6 +61,9 @@ public class Milestone implements Comparable<Milestone> {
 
     @Override
     public int compareTo(final Milestone o) {
+        if (o.getDueDate() == null || this.dueDate == null) {
+            return 0;
+        }
         return this.dueDate.compareTo(o.getDueDate());
     }
 }
