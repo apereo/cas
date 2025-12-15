@@ -58,6 +58,6 @@ public class CasSwaggerAutoConfiguration {
                     .url("https://github.com/apereo/cas/blob/master/LICENSE")))
             .externalDocs(new ExternalDocumentation()
                 .description("Apereo CAS Documentation")
-                .url("https://apereo.github.com/cas"));
+                .url("https://apereo.github.io/cas"));
     }
 }
