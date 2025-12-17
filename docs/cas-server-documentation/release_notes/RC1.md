@@ -178,11 +178,6 @@ operation will be attempted a total of `4` times (`1` initial + `3` retries).
 as an embedded servlet container has been dropped. Please consider using Apache Tomcat or Jetty
 as an alternative embedded server until Undertow adds support for Servlet `6.1`.
 We will consider re-adding support for Undertow once it is compatible with our version of Spring Boot.
-   
-#### JavaMelody
-
-Support for [JavaMelody](../monitoring/Configuring-Monitoring-JavaMelody.html) is not yet compatible with Spring Boot `4`. 
-We plan to re-add support for JavaMelody in the future once compatibility is restored.
 
 #### Google Cloud Platform
 

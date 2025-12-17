@@ -450,7 +450,7 @@ jansi = { module = "org.fusesource.jansi:jansi", version.ref = "jansi" }
 jasypt = { module = "org.jasypt:jasypt", version.ref = "jasypt" }
 java-driver-core = { module = "org.apache.cassandra:java-driver-core", version.ref = "apacheCassandra" }
 java-driver-mapper-runtime = { module = "org.apache.cassandra:java-driver-mapper-runtime", version.ref = "apacheCassandra" }
-javamelody-spring-boot-starter = { module = "net.bull.javamelody:javamelody-spring-boot-starter", version.ref = "javaMelody" }
+javamelody-spring-boot-starter = { module = "net.bull.javamelody:javamelody-spring-boot4-starter", version.ref = "javaMelody" }
 javaparser-core = { module = "com.github.javaparser:javaparser-core", version.ref = "javaParser" }
 javers-spring-boot-starter-mongo = { module = "org.javers:javers-spring-boot-starter-mongo", version.ref = "javers" }
 jaxb-impl = { module = "com.sun.xml.bind:jaxb-impl", version.ref = "jaxbImpl" }
