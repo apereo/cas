@@ -12,7 +12,7 @@ env:
   JDK_CURRENT: 25
   JDK_DISTRIBUTION: "corretto"
   DOCS_BRANCH: master
-  RUBY_VERSION: '3.4.7'
+  RUBY_VERSION: '3.4.8'
 
 ##########################################################################
 
