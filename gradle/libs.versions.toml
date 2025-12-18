@@ -270,7 +270,7 @@ gradleDependencyVersions = "0.53.0"
 gradleErrorProne = "4.3.0"
 gradleNullAway = "2.3.0"
 gradleGraalVmNative = "0.11.3"
-gradleSonarqube = "7.2.1.6560"
+gradleSonarqube = "7.2.2.6593"
 gradleNmcpPublishing = "1.3.0"
 gradleJib = "3.5.2"
 
