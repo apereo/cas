@@ -112,7 +112,6 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
      *
      * @param id the id
      * @return the registered service
-     * @throws Exception the exception
      */
     @Operation(summary = "Fetch service either by numeric id or service id pattern")
     @GetMapping(path = "{id}", produces = {
@@ -124,8 +123,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         MEDIA_TYPE_CAS_YAML
     })
     public ResponseEntity<@NonNull String> fetchService(
-        @PathVariable
-        final String id) throws Exception {
+        @PathVariable final String id) {
         val service = NumberUtils.isDigits(id)
             ? servicesManager.getObject().findServiceBy(Long.parseLong(id))
             : servicesManager.getObject().findServiceBy(configurationContext.getObject().getServiceFactory().createService(id));

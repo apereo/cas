@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Helper strategy API to ease retrieving CAS' {@code Authentication} object and its associated components
@@ -34,7 +35,7 @@ public interface TicketRegistrySupport {
      * @param ticketGrantingTicketId an SSO token identifying the requested Authentication
      * @return valid TGT OR <b>NULL</b> if there is no valid SSO session present identified by the provided TGT id SSO token
      */
-    TicketGrantingTicket getTicketGrantingTicket(String ticketGrantingTicketId);
+    TicketGrantingTicket getTicketGrantingTicket(@Nullable String ticketGrantingTicketId);
 
     /**
      * Retrieve a valid ticket object identified by the provided the id and transform it into a ticket state.
