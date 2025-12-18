@@ -143,19 +143,19 @@ public class MonitoredRepository {
             return Optional.empty();
         }
 
-        var pattern = Pattern.compile("`v*(\\d+\\.\\d+\\.\\d+).*` \\-\\> `v*(\\d+\\.\\d+\\.\\d+).*`");
+        var pattern = Pattern.compile("`v*(\\d+\\.\\d+\\.\\d+).*`\s((\\-\\>)|→)\s`v*(\\d+\\.\\d+\\.\\d+).*`");
         var matcher = pattern.matcher(pr.getBody());
         if (matcher.find()) {
             var startingVersion = new Semver(matcher.group(1));
-            var endingVersion = new Semver(matcher.group(2));
+            var endingVersion = new Semver(matcher.group(4));
             return Optional.of(new DependencyRange(startingVersion, endingVersion));
         }
 
-        pattern = Pattern.compile("`(\\d+\\.\\d+(\\.\\d+)*).*` \\-\\> `(\\d+\\.\\d+(\\.\\d+)*).*`");
+        pattern = Pattern.compile("`(\\d+\\.\\d+(\\.\\d+)*).*`\s((\\-\\>)|→)\s`(\\d+\\.\\d+(\\.\\d+)*).*`");
         matcher = pattern.matcher(pr.getBody());
         if (matcher.find()) {
             var startingVersion = Semver.coerce(matcher.group(1));
-            var endingVersion = Semver.coerce(matcher.group(3));
+            var endingVersion = Semver.coerce(matcher.group(4));
             return Optional.of(new DependencyRange(startingVersion, endingVersion));
         }
 
@@ -420,12 +420,12 @@ public class MonitoredRepository {
     public Optional<Milestone> getMilestoneForMaster() {
         var milestones = getActiveMilestones();
 
-        var currentVersion = Version.valueOf(currentVersionInMaster.toString().replace("-SNAPSHOT", ""));
+        var currentVersion = Version.parse(currentVersionInMaster.toString().replace("-SNAPSHOT", ""));
         return milestones
                 .stream()
                 .sorted()
                 .filter(milestone -> {
-                    var masterVersion = Version.valueOf(milestone.getTitle());
+                    var masterVersion = Version.parse(milestone.getTitle());
                     return masterVersion.majorVersion() == currentVersion.majorVersion()
                            && masterVersion.minorVersion() == currentVersion.minorVersion();
                 })
