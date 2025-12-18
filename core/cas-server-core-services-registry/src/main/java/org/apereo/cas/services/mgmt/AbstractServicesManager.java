@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.IndexableServicesManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceChainingAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,6 +78,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
         return lock.tryLock(() -> {
             val clientInfo = ClientInfoHolder.getClientInfo();
             publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo));
+            flattenAttributeReleasePolicy(registeredService);
             val savedService = configurationContext.getServiceRegistry().save(registeredService);
             cacheRegisteredService(savedService);
             saveInternal(registeredService);
@@ -96,6 +99,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             val clientInfo = ClientInfoHolder.getClientInfo();
             if (registeredService != null) {
                 publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService, clientInfo));
+                flattenAttributeReleasePolicy(registeredService);
                 cacheRegisteredService(registeredService);
                 saveInternal(registeredService);
                 publishEvent(new CasRegisteredServiceSavedEvent(this, registeredService, clientInfo));
@@ -116,7 +120,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     }
 
     @Override
-    public RegisteredService delete(final long id) {
+    public @Nullable RegisteredService delete(final long id) {
         return lock.tryLock(() -> {
             val service = findServiceBy(id);
             return delete(service);
@@ -124,7 +128,9 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     }
 
     @Override
-    public RegisteredService delete(final RegisteredService service) {
+    public @Nullable RegisteredService delete(
+        @Nullable
+        final RegisteredService service) {
         return lock.tryLock(() -> {
             if (service != null) {
                 val clientInfo = ClientInfoHolder.getClientInfo();
@@ -139,7 +145,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     }
 
     @Override
-    public RegisteredService findServiceBy(final Service service) {
+    public @Nullable RegisteredService findServiceBy(@Nullable final Service service) {
         if (service == null) {
             return null;
         }
@@ -190,7 +196,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     }
 
     @Override
-    public <T extends RegisteredService> T findServiceBy(final Service requestedService, final Class<T> clazz) {
+    public <T extends RegisteredService> @Nullable T findServiceBy(final Service requestedService, final Class<T> clazz) {
         if (requestedService == null) {
             return null;
         }
@@ -202,7 +208,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     }
 
     @Override
-    public RegisteredService findServiceBy(final long id) {
+    public @Nullable RegisteredService findServiceBy(final long id) {
         val result = configurationContext.getServicesCache().get(id,
             _ -> configurationContext.getServiceRegistry().findServiceById(id));
         return validateRegisteredService(result);
@@ -222,7 +228,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     }
 
     @Override
-    public RegisteredService findServiceByName(final String name) {
+    public @Nullable RegisteredService findServiceByName(final String name) {
         if (StringUtils.isBlank(name)) {
             return null;
         }
@@ -411,7 +417,9 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             .forEach(this::processExpiredRegisteredService);
     }
 
-    private RegisteredService validateRegisteredService(final RegisteredService registeredService) {
+    private @Nullable RegisteredService validateRegisteredService(
+        @Nullable
+        final RegisteredService registeredService) {
         val result = checkServiceExpirationPolicyIfAny(registeredService);
         if (validateAndFilterServiceByEnvironment(result)) {
             return result;
@@ -419,14 +427,16 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
         return null;
     }
 
-    private RegisteredService checkServiceExpirationPolicyIfAny(final RegisteredService registeredService) {
+    private @Nullable RegisteredService checkServiceExpirationPolicyIfAny(
+        @Nullable
+        final RegisteredService registeredService) {
         if (registeredService == null || RegisteredServiceAccessStrategyUtils.ensureServiceIsNotExpired(registeredService)) {
             return registeredService;
         }
         return processExpiredRegisteredService(registeredService);
     }
 
-    private RegisteredService processExpiredRegisteredService(final RegisteredService registeredService) {
+    private @Nullable RegisteredService processExpiredRegisteredService(final RegisteredService registeredService) {
         val policy = registeredService.getExpirationPolicy();
         LOGGER.warn("Registered service [{}] has expired on [{}]", registeredService.getServiceId(), policy.getExpirationDate());
         val clientInfo = ClientInfoHolder.getClientInfo();
@@ -451,7 +461,9 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
         configurationContext.getApplicationContext().publishEvent(event);
     }
 
-    private boolean validateAndFilterServiceByEnvironment(final RegisteredService service) {
+    private boolean validateAndFilterServiceByEnvironment(
+        @Nullable
+        final RegisteredService service) {
         if (configurationContext.getEnvironments().isEmpty()) {
             LOGGER.trace("No environments are defined by which services could be filtered");
             return true;
@@ -469,7 +481,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             .anyMatch(configurationContext.getEnvironments()::contains);
     }
 
-    private RegisteredService getService(final Predicate<RegisteredService> filter) {
+    private @Nullable RegisteredService getService(final Predicate<RegisteredService> filter) {
         return getCacheableServicesStream()
             .get()
             .filter(filter)
@@ -479,8 +491,14 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
 
     @SafeVarargs
     private static Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(
-        final Predicate<RegisteredService>... p) {
-        val predicates = Stream.of(p).toList();
-        return predicates.stream().reduce(x -> true, Predicate::and);
+        final Predicate<RegisteredService>... predicates) {
+        return Stream.of(predicates).reduce(x -> true, Predicate::and);
+    }
+
+    private static void flattenAttributeReleasePolicy(final RegisteredService registeredService) {
+        if (registeredService.getAttributeReleasePolicy() instanceof final RegisteredServiceChainingAttributeReleasePolicy chain
+            && chain.getPolicies().size() == 1) {
+            registeredService.setAttributeReleasePolicy(chain.getPolicies().getFirst());
+        }
     }
 }

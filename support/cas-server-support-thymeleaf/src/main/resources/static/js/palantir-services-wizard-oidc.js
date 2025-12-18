@@ -115,7 +115,7 @@ function createRegisteredServiceOidcFields() {
     createInputField({
         cssClasses: "advanced-option",
         labelTitle: "JWKS Key ID",
-        name: "registeredServiceJwksUrl",
+        name: "registeredServiceJwksKeyId",
         paramName: "jwksKeyId",
         required: false,
         serviceClass: "class-OidcRegisteredService",
