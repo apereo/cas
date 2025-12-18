@@ -518,6 +518,7 @@ function displayBanner(error) {
             break;
         case 400:
         case 500:
+        case 503:
             message = "Unable to process or accept the request. Check CAS server logs for details.";
             break;
         case 0:
@@ -531,10 +532,12 @@ function displayBanner(error) {
     if (error.hasOwnProperty("path")) {
         message += `Unable to make an API call to ${error.path}. Is the endpoint enabled and available?`;
     }
-    if (typeof error === "string") {
-        message = error;
-    } else {
-        message = error.message;
+    if (message.length === 0) {
+        if (typeof error === "string") {
+            message = error;
+        } else {
+            message = error.message;
+        }
     }
     notyf.dismissAll();
     notyf.error(message);
@@ -1971,13 +1974,16 @@ async function initializeCasFeatures() {
                 }
                 resolve();
             });
+        } else {
+            console.error("CAS Features endpoint is not available.");
+            resolve();
         }
     });
 
 }
 
 function initializeServiceButtons() {
-    const editor = initializeAceEditor("serviceEditor");
+    const serviceEditor = initializeAceEditor("serviceEditor");
     let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("editServiceDialog"));
 
     if (actuatorEndpoints.registeredservices) {
@@ -2039,7 +2045,6 @@ function initializeServiceButtons() {
         });
     });
 
-
     $("button[name=deleteService]").off().on("click", function () {
         let serviceId = $(this).parent().attr("serviceId");
         if (actuatorEndpoints.registeredservices) {
@@ -2055,10 +2060,9 @@ function initializeServiceButtons() {
                         $.ajax({
                             url: `${actuatorEndpoints.registeredservices}/${serviceId}`,
                             type: "DELETE",
+                            headers: { "Content-Type": "application/json" },
                             success: response => {
-
                                 let nearestTr = $(this).closest("tr");
-
                                 let applicationsTable = $("#applicationsTable").DataTable();
                                 applicationsTable.row(nearestTr).remove().draw();
                             },
@@ -2077,8 +2081,8 @@ function initializeServiceButtons() {
         if (actuatorEndpoints.registeredservices) {
             $.get(`${actuatorEndpoints.registeredservices}/${serviceId}`, response => {
                 const value = JSON.stringify(response, null, 4);
-                editor.setValue(value, -1);
-                editor.gotoLine(1);
+                serviceEditor.setValue(value, -1);
+                serviceEditor.gotoLine(1);
                 const editServiceDialogElement = document.getElementById("editServiceDialog");
                 $(editServiceDialogElement).attr("newService", false);
                 editServiceDialog["open"]();
@@ -2089,10 +2093,24 @@ function initializeServiceButtons() {
         }
     });
 
-    $("button[name=saveService]").off().on("click", () => {
+    $("button[name=saveService],button[name=saveServiceWizard]").off().on("click", function() {
         if (actuatorEndpoints.registeredservices) {
-            const editServiceDialogElement = document.getElementById("editServiceDialog");
-            const isNewService = $(editServiceDialogElement).attr("newService") === "true";
+            let isNewService = false;
+            let value = "";
+            
+            const saveButton = $(this);
+            switch(saveButton.attr("name")) {
+                case "saveServiceWizard":
+                    isNewService = true;
+                    const wizardEditor = initializeAceEditor("wizardServiceEditor");
+                    value = wizardEditor.getValue();
+                    break;
+                case "saveService":
+                    const editServiceDialogElement = document.getElementById("editServiceDialog");
+                    isNewService = $(editServiceDialogElement).attr("newService") === "true";
+                    value = serviceEditor.getValue();
+                    break;
+            }
 
             Swal.fire({
                 title: `Are you sure you want to ${isNewService ? "create" : "update"} this entry?`,
@@ -2103,15 +2121,15 @@ function initializeServiceButtons() {
             })
                 .then((result) => {
                     if (result.isConfirmed) {
-                        const value = editor.getValue();
+                        
                         $.ajax({
                             url: `${actuatorEndpoints.registeredservices}`,
                             type: isNewService ? "POST" : "PUT",
                             contentType: "application/json",
                             data: value,
                             success: response => {
-
                                 editServiceDialog["close"]();
+                                editServiceWizardDialog["close"]();
                                 fetchServices(() => {
                                     let newServiceId = response.id;
                                     $("#applicationsTable tr").removeClass("selected");
@@ -2147,9 +2165,9 @@ function initializeServiceButtons() {
                     }
                 });
                 const value = JSON.stringify(clone, null, 4);
-                editor.setValue(value, -1);
-                editor.gotoLine(1);
-                editor.findAll("...", {regExp: false});
+                serviceEditor.setValue(value, -1);
+                serviceEditor.gotoLine(1);
+                serviceEditor.findAll("...", {regExp: false});
 
                 const editServiceDialogElement = document.getElementById("editServiceDialog");
                 $(editServiceDialogElement).attr("newService", true);
@@ -3967,130 +3985,126 @@ async function initializeSAML2ProtocolOperations() {
     }
 }
 
+function processNavigationTabs() {
+    if (!actuatorEndpoints.registeredservices) {
+        $("#applicationsTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.APPLICATIONS}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.metrics || !actuatorEndpoints.httpexchanges || !actuatorEndpoints.auditevents
+        || !actuatorEndpoints.heapdump || !actuatorEndpoints.health || !actuatorEndpoints.statistics) {
+        $("#systemTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.SYSTEM}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.ticketregistry) {
+        $("#ticketsTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.TICKETS}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.ticketregistry) {
+        $("#tasksTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.TASKS}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.persondirectory) {
+        $("#personDirectoryTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.PERSON_DIRECTORY}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.authenticationHandlers || !actuatorEndpoints.authenticationPolicies) {
+        $("#authenticationTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.AUTHENTICATION}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.serviceaccess) {
+        $("#accessStrategyTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.ACCESS_STRATEGY}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.ssosessions) {
+        $("#ssoSessionsTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.SSO_SESSIONS}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.auditlog) {
+        $("#auditEvents").parent().addClass("d-none");
+    }
+    if (!actuatorEndpoints.events) {
+        $("#casEvents").parent().addClass("d-none");
+    }
+    if ((!actuatorEndpoints.loggingconfig || !actuatorEndpoints.loggers) && !actuatorEndpoints.auditlog) {
+        $("#loggingTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.LOGGING}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.env || !actuatorEndpoints.configprops) {
+        $("#configurationTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.CONFIGURATION}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.attributeconsent || !CAS_FEATURES.includes("Consent")) {
+        $("#consentTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.CONSENT}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.casvalidate) {
+        $("#casprotocol").parent().remove();
+        $("#casProtocolContainer").addClass("d-none");
+    }
+    if (!actuatorEndpoints.samlpostprofileresponse || !CAS_FEATURES.includes("SAMLIdentityProvider")) {
+        $("#saml2protocol").parent().remove();
+        $("#saml2ProtocolContainer").addClass("d-none");
+    }
+    if (!actuatorEndpoints.samlvalidate || !CAS_FEATURES.includes("SAML")) {
+        $("#saml1ProtocolContainer").addClass("d-none");
+        $("#saml1protocol").parent().remove();
+    }
+    if (!actuatorEndpoints.casconfig) {
+        $("#config-encryption-tab").addClass("d-none");
+        $("#casConfigSecurity").parent().remove();
+    }
+    if (!actuatorEndpoints.configurationmetadata) {
+        $("#casConfigSearch").addClass("d-none");
+    }
+    if (!actuatorEndpoints.oidcjwks || !CAS_FEATURES.includes("OpenIDConnect")) {
+        $("#oidcprotocol").parent().remove();
+        $("#oidcProtocolContainer").addClass("d-none");
+    }
+    if (!actuatorEndpoints.samlvalidate && !actuatorEndpoints.casvalidate
+        && !actuatorEndpoints.samlpostprofileresponse && !actuatorEndpoints.oidcjwks) {
+        $("#protocolsTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.PROTOCOLS}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.throttles) {
+        $("#throttlesTabButton").addClass("d-none");
+        $(`#attribute-tab-${Tabs.THROTTLES}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.mfadevices || availableMultifactorProviders.length === 0) {
+        $("#mfaTabButton").addClass("d-none");
+        $("#mfaDevicesTab").parent().addClass("d-none");
+        $(`#attribute-tab-${Tabs.MFA}`).addClass("d-none");
+    }
+    if (!actuatorEndpoints.multifactortrusteddevices || availableMultifactorProviders.length === 0) {
+        $("#trustedMfaDevicesTab").parent().addClass("d-none");
+    }
+    if (!actuatorEndpoints.multitenancy || !CAS_FEATURES.includes("Multitenancy")) {
+        $("#tenantsTabButton").addClass("d-none");
+    }
+
+    return $("nav.sidebar-navigation ul li:visible").length;
+}
+
 async function initializePalantir() {
     try {
         setTimeout(() => {
-            if (!actuatorEndpoints.registeredservices) {
-                $("#applicationsTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.APPLICATIONS}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.metrics || !actuatorEndpoints.httpexchanges || !actuatorEndpoints.auditevents
-                || !actuatorEndpoints.heapdump || !actuatorEndpoints.health || !actuatorEndpoints.statistics) {
-                $("#systemTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.SYSTEM}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.ticketregistry) {
-                $("#ticketsTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.TICKETS}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.ticketregistry) {
-                $("#tasksTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.TASKS}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.persondirectory) {
-                $("#personDirectoryTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.PERSON_DIRECTORY}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.authenticationHandlers || !actuatorEndpoints.authenticationPolicies) {
-                $("#authenticationTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.AUTHENTICATION}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.serviceaccess) {
-                $("#accessStrategyTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.ACCESS_STRATEGY}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.ssosessions) {
-                $("#ssoSessionsTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.SSO_SESSIONS}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.auditlog) {
-                $("#auditEvents").parent().addClass("d-none");
-            }
-            if (!actuatorEndpoints.events) {
-                $("#casEvents").parent().addClass("d-none");
-            }
-            if ((!actuatorEndpoints.loggingconfig || !actuatorEndpoints.loggers) && !actuatorEndpoints.auditlog) {
-                $("#loggingTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.LOGGING}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.env || !actuatorEndpoints.configprops) {
-                $("#configurationTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.CONFIGURATION}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.attributeconsent) {
-                $("#consentTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.CONSENT}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.casvalidate) {
-                $("#casprotocol").parent().remove();
-                $("#casProtocolContainer").addClass("d-none");
-            }
-            if (!actuatorEndpoints.samlpostprofileresponse) {
-                $("#saml2protocol").parent().remove();
-                $("#saml2ProtocolContainer").addClass("d-none");
-            }
-            if (!actuatorEndpoints.samlvalidate) {
-                $("#saml1ProtocolContainer").addClass("d-none");
-                $("#saml1protocol").parent().remove();
-            }
-            if (!actuatorEndpoints.casconfig) {
-                $("#config-encryption-tab").addClass("d-none");
-                $("#casConfigSecurity").parent().remove();
-            }
-            if (!actuatorEndpoints.configurationmetadata) {
-                $("#casConfigSearch").addClass("d-none");
-            }
+            initializeCasFeatures().then(() => {
+               let visibleCount = processNavigationTabs();
+                if (visibleCount === 0) {
+                    $("#dashboard").hide();
+                    Swal.fire({
+                        title: "Palantir is unavailable!",
+                        text: `Palantir requires a number of actuator endpoints to be enabled and exposed, and your CAS deployment fails to do so.`,
+                        icon: "warning",
+                        showConfirmButton: false
+                    });
+                } else {
+                    let selectedTab = window.localStorage.getItem("PalantirSelectedTab");
+                    if (!$(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).is(":visible")) {
+                        selectedTab = Tabs.APPLICATIONS;
+                    }
+                    $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
+                    activateDashboardTab(selectedTab);
 
-            if (!actuatorEndpoints.oidcjwks) {
-                $("#oidcprotocol").parent().remove();
-                $("#oidcProtocolContainer").addClass("d-none");
-            }
-
-            if (!actuatorEndpoints.samlvalidate && !actuatorEndpoints.casvalidate
-                && !actuatorEndpoints.samlpostprofileresponse && !actuatorEndpoints.oidcjwks) {
-                $("#protocolsTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.PROTOCOLS}`).addClass("d-none");
-            }
-
-            if (!actuatorEndpoints.throttles) {
-                $("#throttlesTabButton").addClass("d-none");
-                $(`#attribute-tab-${Tabs.THROTTLES}`).addClass("d-none");
-            }
-
-            if (!actuatorEndpoints.mfadevices) {
-                $("#mfaTabButton").addClass("d-none");
-                $("#mfaDevicesTab").parent().addClass("d-none");
-                $(`#attribute-tab-${Tabs.MFA}`).addClass("d-none");
-            }
-            if (!actuatorEndpoints.multifactortrusteddevices) {
-                $("#trustedMfaDevicesTab").parent().addClass("d-none");
-            }
-            if (!actuatorEndpoints.multitenancy) {
-                $("#tenantsTabButton").addClass("d-none");
-            }
-
-            let visibleCount = $("nav.sidebar-navigation ul li:visible").length;
-
-
-            if (visibleCount === 0) {
-                $("#dashboard").hide();
-                Swal.fire({
-                    title: "Palantir is unavailable!",
-                    text: `Palantir requires a number of actuator endpoints to be enabled and exposed, and your CAS deployment fails to do so.`,
-                    icon: "warning",
-                    showConfirmButton: false
-                });
-            } else {
-
-                let selectedTab = window.localStorage.getItem("PalantirSelectedTab");
-
-                if (!$(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).is(":visible")) {
-                    selectedTab = Tabs.APPLICATIONS;
-                }
-
-                $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
-                activateDashboardTab(selectedTab);
-                initializeCasFeatures().then(() =>
                     Promise.all([
                         initializeAllCharts(),
                         initializeScheduledTasksOperations(),
@@ -4116,8 +4130,9 @@ async function initializePalantir() {
                         initializeAuditEventsOperations(),
                         initializeCasEventsOperations(),
                         initializeCasSpringWebflowOperations()
-                    ]));
-            }
+                    ]);
+                }
+            });
         }, 2);
         $("#dashboard").removeClass("d-none");
     } catch (error) {
@@ -4150,7 +4165,7 @@ document.addEventListener("DOMContentLoaded", () => {
     $(".jqueryui-tabs").tabs().off().on("click", () => updateNavigationSidebar());
     $(".jqueryui-menu").menu();
     $(".jqueryui-selectmenu").selectmenu({
-        width: "350px",
+        width: "360px",
         change: function (event, ui) {
             const $select = $(this);
             const handlerNames = $select.data("change-handler").split(",");
@@ -4166,6 +4181,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    $("input.jquery-datepicker").datepicker({
+        showAnim: "slideDown",
+        onSelect: function(date, ins) {
+            $(ins).val(date);
+            generateServiceDefinition();
+            $(`#${$(ins).prop("id")}`).prev().find(".mdc-notched-outline__notch").hide();
+        }
+    })
+    
     $("nav.sidebar-navigation ul li").off().on("click", function () {
         hideBanner();
         const index = selectSidebarMenuButton(this);
