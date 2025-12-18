@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @Slf4j
-public abstract class AbstractServicesManagerTests{
+public abstract class AbstractServicesManagerTests {
     @Autowired
     @Qualifier(ServiceRegistry.BEAN_NAME)
     protected ServiceRegistry serviceRegistry;
@@ -141,6 +141,22 @@ public abstract class AbstractServicesManagerTests{
         registeredService.setExpirationPolicy(expirationPolicy);
         servicesManager.save(registeredService);
         assertNull(servicesManager.findServiceBy(RegisteredServiceTestUtils.getService(registeredService.getServiceId())));
+    }
+
+    @Test
+    void verifyReleasePolicyChainFlattened() {
+        val registeredService = new CasRegisteredService();
+        registeredService.setId(RandomUtils.nextLong());
+        registeredService.setName(UUID.randomUUID().toString());
+        registeredService.setServiceId(registeredService.getName());
+        val chain = new ChainingAttributeReleasePolicy();
+        val policy1 = new ReturnAllAttributeReleasePolicy();
+        chain.addPolicies(policy1);
+        registeredService.setAttributeReleasePolicy(chain);
+        servicesManager.save(registeredService);
+        val result = servicesManager.findServiceBy(RegisteredServiceTestUtils.getService(registeredService.getServiceId()));
+        assertNotNull(result);
+        assertInstanceOf(ReturnAllAttributeReleasePolicy.class, result.getAttributeReleasePolicy());
     }
 
     /**

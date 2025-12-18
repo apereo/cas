@@ -114,7 +114,7 @@
 
                                 <div class="p-4 banner banner-warning"><h4>
                                     The wizard-based service editor is a work in progress and not all features are supported yet.
-                                    Tread lightly and consider using the plain-text editor for production use cases.
+                                    Use with caution and consider using the plain-text editor for production use cases.
                                     Verify with release notes for updates on the wizard functionality and feel free to contribute!
                                 </h4></div>
                                 <p>The following application type is chosen:</p>
@@ -394,6 +394,11 @@
 
                                               <h3>Username Attribute Provider</h3>
                                               <div id="editServiceWizardMenuItemUsernameAttribute">
+                                                  <p>Registered CAS applications are given the ability to allow for configuration of a username attribute provider,
+                                                      which controls what should be the designated user identifier that is returned to the application. The user
+                                                      identifier by default is the authenticated CAS principal id,
+                                                      and it optionally may be based off of an existing attribute that
+                                                      is available and resolved for the principal already.</p>
                                                    <script type="text/javascript">
                                                        createRegisteredServiceUsernameAttributeProvider();
                                                    </script>
@@ -406,6 +411,8 @@
 
                                               <h3>Attribute Release Policy</h3>
                                               <div id="editServiceWizardMenuItemAttributeReleasePolicy">
+                                                    <p>The attribute release policy decides how attributes are selected and provided to a given application in the final CAS response. Additionally,
+                                                      each policy has the ability to apply an optional filter to weed out their attributes based on their values.</p>
                                                     <script type="text/javascript">
                                                          createRegisteredServiceAttributeReleasePolicy();
                                                     </script>
@@ -452,7 +459,14 @@
                                                             label='#Case Insensitive', selected=true, cssClass='pt-2 hide RegisteredServiceMappedRegexAttributeFilter RegisteredServiceReverseMappedRegexAttributeFilter RegisteredServiceMutantRegexAttributeFilter',
                                                             dataAttrs='param-skip-true=true,param-name=attributeReleasePolicy.attributeFilter.caseInsensitive')}"/>
                                                   </div>
-                                                  
+
+                                                  <div id="editServiceWizardMenuItemAttributeReleaseValueConsentPolicy">
+                                                      <script type="text/javascript">
+                                                          if (CAS_FEATURES.includes("Consent")) {
+                                                              createRegisteredServiceAttributeReleaseConsentPolicy();
+                                                          }
+                                                      </script>
+                                                  </div>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseCredentialPassword',
                                                         title='When enabled, the credential password is authorized to be released as an attribute',
                                                         label='#Release Credential Password', cssClass='always-show',
@@ -514,6 +528,10 @@
 
                                               <h3>Access Strategy</h3>
                                               <div id="editServiceWizardMenuItemAccessStrategy">
+                                                  <div>The access strategy of a registered service provides fine-grained control over the service
+                                                      authorization rules. It describes whether the service is allowed to use the CAS server,
+                                                      allowed to participate in single sign-on authentication, etc. Additionally, it may be configured
+                                                      to require a certain set of principal attributes that must exist before access can be granted to the service. </div>
                                                    <script type="text/javascript">
                                                         createRegisteredServiceAccessStrategy();
                                                    </script>
@@ -561,9 +579,37 @@
 
                                               <h3 class="advanced-option">Contacts</h3>
                                               <div id="editServiceWizardMenuItemContacts">
-                                                   <script type="text/javascript">
-                                                       createRegisteredServiceContacts();
-                                                   </script>
+                                                  <p>You may assign contact information to this application. These are individual and/or entities that
+                                                      can be classified as owners of the application that may be notified in
+                                                      case changes are applied to the application.</p>
+                                                  <div class="jqueryui-tabs">
+                                                      <ul>
+                                                         <li><a id="registeredServiceContact1"
+                                                                href="#registeredServiceContact1-tab">Primary Contact</a></li>
+                                                         <li><a id="registeredServiceContact2"
+                                                                href="#registeredServiceContact2-tab">Secondary Contact</a></li>
+                                                         <li><a id="registeredServiceContact3"
+                                                                href="#registeredServiceContact3-tab">Other Contact</a></li>
+                                                      </ul>
+
+                                                        <div id="registeredServiceContact1-tab">
+                                                            <script type="text/javascript">
+                                                                createRegisteredServiceContacts(1);
+                                                            </script>
+                                                        </div>
+                                                        <div id="registeredServiceContact2-tab">
+                                                            <script type="text/javascript">
+                                                                createRegisteredServiceContacts(2);
+                                                            </script>
+                                                        </div>
+                                                        <div id="registeredServiceContact3-tab">
+                                                            <script type="text/javascript">
+                                                                createRegisteredServiceContacts(3);
+                                                            </script>
+                                                        </div>
+                                                      
+                                                  </div>
+
                                               </div>
 
                                             <h3 class="advanced-option">Public Key</h3>
