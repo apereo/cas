@@ -12,7 +12,7 @@ import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegated
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClientBuilder;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
@@ -242,6 +242,7 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                 try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
                     val futures = Arrays.stream(Iterables.toArray(providers, EntityDescriptor.class))
                         .parallel()
+                        .filter(entityDescriptor -> StringUtils.isNotBlank(entityDescriptor.getEntityID()))
                         .map(entityDescriptor -> executor.submit(
                             () -> buildSaml2ClientFromAggregate(saml2Client, entityDescriptor, saml2Properties, properties)))
                         .toList();
@@ -269,8 +270,7 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
 
         val singleConfiguration = createSaml2Configuration(entityDescriptor, configuration);
         val singleClient = createSaml2Client(saml2Client, singleConfiguration);
-
-        val clientName = saml2Client.getName() + '-' + RandomUtils.nextLong();
+        val clientName = saml2Client.getName() + '-' + DigestUtils.sha256(entityDescriptor.getEntityID());
         DelegatedIdentityProviderFactory.configureClientName(singleClient, clientName);
         DelegatedIdentityProviderFactory.configureClientCustomProperties(singleClient, saml2Properties);
         DelegatedIdentityProviderFactory.configureClientCallbackUrl(singleClient, saml2Properties, properties.getServer().getLoginUrl());

@@ -97,12 +97,12 @@ The inline script receives the following parameters for its execution:
 | `logger`     | The object responsible for issuing log messages such as `logger.info(...)`.                            |
       
 
-You may also choose to use an exteral Groovy script instead, in which case the script may be defined as follows:
+You may also choose to use an external Groovy script instead, in which case the script may be defined as follows:
 
 ```groovy
 def run(Object[] args) {
     def (attributes, context, claim, logger) = args
-    // Perfom logic to build claim value
+    // Perform logic to build claim value
     return []
 }
 ```
