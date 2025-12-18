@@ -33,7 +33,7 @@ function getLastTwoWords(str) {
 }
 
 function getLastWord(str) {
-    const parts = str.split(".");
+    const parts = str ?? "".split(".");
     return parts.slice(-1).join(".");
 }
 
