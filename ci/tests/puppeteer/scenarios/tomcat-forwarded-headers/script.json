@@ -1,0 +1,27 @@
+{
+  "dependencies": "reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "requirements": {
+    "docker": {
+      "build": "true"
+    }
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=info",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.audit.engine.alternate-client-addr-header-name=",
+    
+    "--cas.monitor.endpoints.endpoint.info.access=IP_ADDRESS",
+    "--cas.monitor.endpoints.endpoint.info.required-ip-addresses=172\\..+",
+
+    "--server.tomcat.remoteip.internal-proxies=172\\..+",
+    "--server.tomcat.remoteip.trusted-proxies=172\\..+"
+  ]
+}

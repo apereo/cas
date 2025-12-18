@@ -26,7 +26,7 @@ COPY thekeystore /etc/cas
 COPY entrypoint.sh cas-server/
 RUN chmod +x /cas-server/entrypoint.sh
 
-EXPOSE 8080 $SERVER_PORT 5005
+EXPOSE 8080 $SERVER_PORT 5005 5000
 
 ENV PATH=$PATH:$JAVA_HOME/bin:.
 WORKDIR cas-server
