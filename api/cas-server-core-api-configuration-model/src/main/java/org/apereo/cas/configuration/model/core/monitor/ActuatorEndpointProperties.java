@@ -48,7 +48,7 @@ public class ActuatorEndpointProperties implements Serializable {
     /**
      * Define the security access level of the endpoint.
      */
-    private List<EndpointAccessLevel> access = Stream.of(EndpointAccessLevel.DENY).toList();
+    private EndpointAccessLevel access = EndpointAccessLevel.DENY;
 
     /**
      * Define the security access level for the endpoint.

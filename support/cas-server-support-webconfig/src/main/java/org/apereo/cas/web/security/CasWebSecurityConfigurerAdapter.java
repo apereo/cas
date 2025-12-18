@@ -145,8 +145,7 @@ public class CasWebSecurityConfigurerAdapter {
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
         endpoints.forEach(Unchecked.biConsumer((key, endpointProps) -> {
             val endpoint = EndpointRequest.to(key);
-            endpointProps.getAccess().forEach(Unchecked.consumer(
-                access -> configureEndpointAccess(requests, access, endpointProps, endpoint)));
+            configureEndpointAccess(requests, endpointProps, endpoint);
         }));
         configureEndpointAccessToDenyUndefined(requests, applicationContext);
         configureEndpointAccessForStaticResources(requests);
@@ -193,6 +192,7 @@ public class CasWebSecurityConfigurerAdapter {
         final HttpSecurity http, final ApplicationContext applicationContext) {
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
         val mappedEndpoints = pathMappedEndpoints.getObject();
+
         mappedEndpoints
             .stream()
             .filter(BeanSupplier::isNotProxy)
@@ -211,10 +211,8 @@ public class CasWebSecurityConfigurerAdapter {
                         }
                     } else {
                         val endpointDefaults = casProperties.getMonitor().getEndpoints().getDefaultEndpointProperties();
-                        val defaultAccessRules = endpointDefaults.getAccess();
                         LOGGER.trace("Endpoint security is NOT defined for endpoint [{}]. Using default security rules [{}]", rootPath, endpointDefaults);
-                        defaultAccessRules.forEach(Unchecked.consumer(access ->
-                            configureEndpointAccess(http, access, endpointDefaults, endpointMatcher)));
+                        configureEndpointAccess(http, endpointDefaults, endpointMatcher);
                     }
                 }
             }));
@@ -250,10 +248,9 @@ public class CasWebSecurityConfigurerAdapter {
     }
 
     protected void configureEndpointAccess(final HttpSecurity httpSecurity,
-                                           final ActuatorEndpointProperties.EndpointAccessLevel access,
                                            final ActuatorEndpointProperties properties,
                                            final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
-        switch (access) {
+        switch (properties.getAccess()) {
             case AUTHORITY -> configureEndpointAccessByAuthority(httpSecurity, properties, endpoint);
             case ROLE -> configureEndpointAccessByRole(httpSecurity, properties, endpoint);
             case AUTHENTICATED -> configureEndpointAccessAuthenticated(httpSecurity, endpoint);

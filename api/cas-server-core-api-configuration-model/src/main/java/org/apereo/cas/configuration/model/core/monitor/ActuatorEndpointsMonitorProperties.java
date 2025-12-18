@@ -85,9 +85,7 @@ public class ActuatorEndpointsMonitorProperties implements Serializable {
     
     public ActuatorEndpointsMonitorProperties() {
         val defaultProps = new ActuatorEndpointProperties();
-        defaultProps.setAccess(Stream
-            .of(ActuatorEndpointProperties.EndpointAccessLevel.DENY)
-            .collect(Collectors.toList()));
+        defaultProps.setAccess(ActuatorEndpointProperties.EndpointAccessLevel.DENY);
         getEndpoint().put("defaults", defaultProps);
     }
 
