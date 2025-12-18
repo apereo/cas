@@ -27,7 +27,7 @@ public class RegisteredServiceAccessStrategyUtils {
      *
      * @param registeredService the registered service
      */
-    public static void ensureServiceAccessIsAllowed(final RegisteredService registeredService) {
+    public static void ensureServiceAccessIsAllowed(@Nullable final RegisteredService registeredService) {
         ensureServiceAccessIsAllowed(null, registeredService);
     }
 
@@ -62,7 +62,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param registeredService the service
      * @return boolean - true if service is not expired
      */
-    public static boolean ensureServiceIsNotExpired(final RegisteredService registeredService) {
+    public static boolean ensureServiceIsNotExpired(@Nullable final RegisteredService registeredService) {
         return getRegisteredServiceExpirationPolicyPredicate().test(registeredService);
     }
 
@@ -73,7 +73,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param service              the service
      * @param ticketGrantingTicket the ticket granting ticket
      */
-    public static void ensureServiceSsoAccessIsAllowed(final RegisteredService registeredService, final Service service,
+    public static void ensureServiceSsoAccessIsAllowed(@Nullable final RegisteredService registeredService, final Service service,
                                                        final TicketGrantingTicket ticketGrantingTicket) {
         ensureServiceSsoAccessIsAllowed(registeredService, service, ticketGrantingTicket, false);
     }
@@ -86,7 +86,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param ticketGrantingTicket the ticket granting ticket
      * @param credentialsProvided  the credentials provided
      */
-    public static void ensureServiceSsoAccessIsAllowed(final RegisteredService registeredService,
+    public static void ensureServiceSsoAccessIsAllowed(@Nullable final RegisteredService registeredService,
                                                        final Service service,
                                                        final TicketGrantingTicket ticketGrantingTicket,
                                                        final boolean credentialsProvided) {
