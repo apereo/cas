@@ -1974,6 +1974,9 @@ async function initializeCasFeatures() {
                 }
                 resolve();
             });
+        } else {
+            console.error("CAS Features endpoint is not available.");
+            resolve();
         }
     });
 

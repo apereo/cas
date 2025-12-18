@@ -190,7 +190,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
     createInputField({
         cssClasses: "hide ReturnRestfulAttributeReleasePolicy",
         labelTitle: "Method (i.e. <code>GET, POST, etc</code>)",
-        name: "registeredServiceAttrReleaseRestEndpoint",
+        name: "registeredServiceAttrReleaseRestEndpointMethod",
         paramName: "attributeReleasePolicy.method",
         required: false,
         containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
