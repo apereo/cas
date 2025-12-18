@@ -171,7 +171,7 @@ while (( "$#" )); do
             auth|authn|authentication)
                 task+="testAuthentication "
                 ;;
-            tickets|ticketing)
+            tickets|ticketing|geode)
                 task+="testTickets "
                 ;;
             syncope)
