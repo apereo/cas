@@ -997,7 +997,7 @@ select.palantir {
     font-size: unset;
 }
 
-.ui-widget-content, .ui-widget-header {
+ul.ui-widget-header {
     background: unset;
 }
 
@@ -1144,7 +1144,7 @@ pre code.hljs {
 }
 
 .fade-in {
-    animation: appear 0.4s ease-in-out forwards;
+    animation: appear 0.7s ease-in-out forwards;
 }
 
 @keyframes appear {
