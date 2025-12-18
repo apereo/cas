@@ -6,8 +6,10 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.UrlValidator;
 
+import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -24,11 +26,14 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilder extends BaseSingleLogout
     }
 
     @Override
-    public boolean supports(final RegisteredService registeredService,
-                            final WebApplicationService singleLogoutService,
-                            final Optional<HttpServletRequest> httpRequest) {
+    public boolean supports(
+        @Nullable
+        final RegisteredService registeredService,
+        @Nullable
+        final WebApplicationService singleLogoutService,
+        final Optional<HttpServletRequest> httpRequest) {
         return super.supports(registeredService, singleLogoutService, httpRequest)
-               && registeredService.getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME);
+            && Objects.requireNonNull(registeredService).getFriendlyName().equalsIgnoreCase(CasRegisteredService.FRIENDLY_NAME);
     }
 
 }

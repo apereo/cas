@@ -402,7 +402,6 @@ function createRegisteredServiceSaml2Fields() {
     });
 }
 
-
 function createRegisteredServiceMetadataCriteriaEntityAttribute() {
     createMappedInputField({
         containerId: "editServiceWizardSamlMetadataCriteriaEntityAttributesContainer",
@@ -446,4 +445,137 @@ function createRegisteredServiceAttributeFriendlyNames() {
         valueLabel: "Attribute Friendly Name",
         containerField: "attributeFriendlyNames"
     });
+}
+
+function createSamlRegisteredServiceAttributeReleasePolicy() {
+    const $registeredServiceAttributeReleasePolicy = $("#registeredServiceAttributeReleasePolicy");
+
+    const releasePolicyOptions = [
+        {
+            value: "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy",
+            text: "INCOMMON R&S",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.RefedsRSAttributeReleasePolicy",
+            text: "REFEDS R&S",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy",
+            text: "METADATA REQUESTED ATTRIBUTES",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.MetadataEntityAttributesAttributeReleasePolicy",
+            text: "METADATA ENTITY ATTRIBUTES",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.AuthnRequestRequestedAttributesAttributeReleasePolicy",
+            text: "AUTHN REQUEST REQUESTED ATTRIBUTES",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.AuthnRequestRequesterIdAttributeReleasePolicy",
+            text: "AUTHN REQUEST REQUESTER ID",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.MetadataRegistrationAuthorityAttributeReleasePolicy",
+            text: "METADATA REGISTRATION AUTHORITY",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.AnonymousAccessAttributeReleasePolicy",
+            text: "ANONYMOUS ACCESS",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.PseudonymousAccessAttributeReleasePolicy",
+            text: "PSEUDONYMOUS ACCESS",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.PersonalizedAccessAttributeReleasePolicy",
+            text: "PERSONALIZED ACCESS",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.MetadataEntityGroupAttributeReleasePolicy",
+            text: "METADATA ENTITY GROUP",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicy",
+            text: "PATTERN MATCHING ENTITY IDS",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy",
+            text: "EDUPERSON TARGETED ID",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        ...(
+            scriptFactoryAvailable
+                ? [{
+                    value: "org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicy",
+                    text: "GROOVY SAML"
+                }]
+                : []
+        ),
+    ];
+
+    releasePolicyOptions.forEach(option => {
+        if ($registeredServiceAttributeReleasePolicy.find(`option[value="${option.value}"]`).length === 0) {
+            appendOptionsToDropDown({
+                selectElement: $registeredServiceAttributeReleasePolicy,
+                options: [option]
+            });
+        }
+    });
+
+    $registeredServiceAttributeReleasePolicy.selectmenu("refresh");
+
+
+
 }
