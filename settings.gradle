@@ -52,6 +52,13 @@ dependencyResolutionManagement {
         }
         mavenCentral()
         maven {
+            url = "https://jitpack.io"
+            mavenContent {releasesOnly() }
+            content {
+                includeGroupByRegex "com\\.github\\.javaparser.*"
+            }
+        }
+        maven {
             url = "https://build.shibboleth.net/maven/snapshots"
             mavenContent { snapshotsOnly() }
             content {
