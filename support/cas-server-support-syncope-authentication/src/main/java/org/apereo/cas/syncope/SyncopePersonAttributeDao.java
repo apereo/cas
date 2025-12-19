@@ -45,7 +45,6 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
         final Set<PersonAttributes> resolvedPeople) {
         return map.entrySet()
             .stream()
-            .filter(e -> Objects.nonNull(e.getValue()))
             .filter(e -> !e.getValue().isEmpty())
             .filter(e -> properties.getSearchFilter().contains(e.getKey()))
             .findFirst()

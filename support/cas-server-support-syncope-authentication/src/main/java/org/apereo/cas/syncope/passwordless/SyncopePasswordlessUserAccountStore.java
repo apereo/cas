@@ -12,6 +12,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link SyncopePasswordlessUserAccountStore}.
@@ -55,8 +56,8 @@ public class SyncopePasswordlessUserAccountStore implements PasswordlessUserAcco
         return Optional.empty();
     }
 
-    protected String getPasswordlessUserAttribute(final Map<String, List<Object>> syncopeUser,
-                                                  final String attributeName) {
+    protected @Nullable String getPasswordlessUserAttribute(final Map<String, List<Object>> syncopeUser,
+                                                            final String attributeName) {
         return syncopeUser.containsKey(attributeName)
             ? syncopeUser.get(attributeName).getFirst().toString()
             : null;

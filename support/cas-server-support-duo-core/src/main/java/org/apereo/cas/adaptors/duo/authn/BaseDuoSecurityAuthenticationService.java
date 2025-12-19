@@ -26,7 +26,6 @@ import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.json.JSONObject;
-import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
 import tools.jackson.databind.ObjectMapper;
@@ -57,7 +56,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
 
-    private final Cache<@NonNull String, DuoSecurityUserAccount> userAccountCache;
+    private final Cache<String, DuoSecurityUserAccount> userAccountCache;
     
     @Override
     public DuoSecurityAuthenticationResult authenticate(final Credential credential) throws Exception {

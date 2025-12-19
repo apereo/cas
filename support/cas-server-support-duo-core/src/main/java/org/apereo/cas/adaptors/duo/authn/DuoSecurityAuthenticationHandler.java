@@ -15,7 +15,6 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -30,14 +29,13 @@ import org.springframework.beans.factory.ObjectProvider;
 public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler
     implements MultifactorAuthenticationHandler {
     @Getter
-    private final ObjectProvider<? extends @NonNull DuoSecurityMultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    private final ObjectProvider<? extends DuoSecurityMultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
     private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
 
     public DuoSecurityAuthenticationHandler(final String name,
-
                                             final PrincipalFactory principalFactory,
-                                            final ObjectProvider<@NonNull DuoSecurityMultifactorAuthenticationProvider> multifactorAuthenticationProvider,
+                                            final ObjectProvider<DuoSecurityMultifactorAuthenticationProvider> multifactorAuthenticationProvider,
                                             final Integer order,
                                             final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver) {
         super(name, principalFactory, order);
@@ -67,19 +65,23 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
      */
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Exception {
-        if (credential instanceof final DuoSecurityPasscodeCredential duo) {
-            LOGGER.debug("Attempting to authenticate credential via Duo Security passcode");
-            return authenticateDuoPasscodeCredential(duo);
+        switch (credential) {
+            case final DuoSecurityPasscodeCredential duo -> {
+                LOGGER.debug("Attempting to authenticate credential via Duo Security passcode");
+                return authenticateDuoPasscodeCredential(duo);
+            }
+            case final DuoSecurityUniversalPromptCredential duo -> {
+                LOGGER.debug("Attempting to authenticate credential via Duo Security universal prompt");
+                return authenticateDuoUniversalPromptCredential(duo);
+            }
+            case final DuoSecurityDirectCredential duo -> {
+                LOGGER.debug("Attempting to directly authenticate credential against Duo");
+                return authenticateDuoApiCredential(duo);
+            }
+            default -> {
+                throw new FailedLoginException("Unknown Duo Security authentication attempt");
+            }
         }
-        if (credential instanceof final DuoSecurityUniversalPromptCredential duo) {
-            LOGGER.debug("Attempting to authenticate credential via Duo Security universal prompt");
-            return authenticateDuoUniversalPromptCredential(duo);
-        }
-        if (credential instanceof final DuoSecurityDirectCredential duo) {
-            LOGGER.debug("Attempting to directly authenticate credential against Duo");
-            return authenticateDuoApiCredential(duo);
-        }
-        throw new FailedLoginException("Unknown Duo Security authentication attempt");
     }
 
     /**

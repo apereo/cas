@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import module java.base;
 import org.apereo.cas.authentication.principal.Service;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AuthenticationResultBuilder}. It attempts to collect authentication objects
@@ -76,5 +77,5 @@ public interface AuthenticationResultBuilder extends Serializable {
      * @return the authentication result
      * @throws Throwable the throwable
      */
-    AuthenticationResult build(Service service) throws Throwable;
+    AuthenticationResult build(@Nullable Service service) throws Throwable;
 }

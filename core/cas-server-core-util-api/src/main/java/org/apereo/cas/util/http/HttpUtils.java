@@ -40,6 +40,7 @@ import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
 import org.apache.hc.core5.pool.PoolReusePolicy;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.util.Timeout;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.retry.Retryable;
 import org.springframework.http.MediaType;
 
@@ -129,7 +130,7 @@ public class HttpUtils {
      *
      * @param response the response to close
      */
-    public void close(final HttpResponse response) {
+    public void close(final @Nullable HttpResponse response) {
         if (response instanceof final CloseableHttpResponse closeableHttpResponse) {
             FunctionUtils.doAndHandle(_ -> closeableHttpResponse.close());
         }
