@@ -1,8 +1,8 @@
 package org.apereo.inspektr.audit.spi.support;
 
-import module java.base;
-import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
+import lombok.val;
+import module java.base;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;

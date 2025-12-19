@@ -1,11 +1,11 @@
 package org.apereo.inspektr.audit.support;
 
-import module java.base;
+import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditTrailManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
-import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.audit.AuditTrailManager;
+import module java.base;
 import tools.jackson.core.util.MinimalPrettyPrinter;
 
 /**
