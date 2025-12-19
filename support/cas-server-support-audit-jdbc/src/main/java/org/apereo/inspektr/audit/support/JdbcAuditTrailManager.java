@@ -1,10 +1,8 @@
 package org.apereo.inspektr.audit.support;
 
-import module java.base;
-import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
-import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
-import org.apereo.cas.jpa.JpaEntityFactory;
-import org.apereo.cas.util.jpa.MapToJsonAttributeConverter;
+import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditTrailManager;
+import org.apereo.inspektr.common.web.ClientInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -12,16 +10,18 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.audit.AuditTrailManager;
-import org.apereo.inspektr.common.web.ClientInfo;
+import module java.base;
+import module java.sql;
+import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
+import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
+import org.apereo.cas.jpa.JpaEntityFactory;
+import org.apereo.cas.util.jpa.MapToJsonAttributeConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import module java.sql;
 
 /**
  * <p>Implementation of {@link AuditTrailManager} to persist the

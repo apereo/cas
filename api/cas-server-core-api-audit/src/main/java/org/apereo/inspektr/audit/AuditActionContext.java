@@ -1,13 +1,13 @@
 package org.apereo.inspektr.audit;
 
-import module java.base;
+import org.apereo.inspektr.common.web.ClientInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
-import org.apereo.inspektr.common.web.ClientInfo;
+import module java.base;
 
 /**
  * Immutable container holding the core elements of an audit-able action that need to be recorded

@@ -1,10 +1,10 @@
 package org.apereo.inspektr.audit.spi.support;
 
-import module java.base;
-import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import lombok.val;
+import module java.base;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import static org.junit.jupiter.api.Assertions.*;

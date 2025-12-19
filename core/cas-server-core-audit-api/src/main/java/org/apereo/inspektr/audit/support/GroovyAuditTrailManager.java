@@ -1,12 +1,12 @@
 package org.apereo.inspektr.audit.support;
 
-import module java.base;
-import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import org.apereo.inspektr.audit.AuditActionContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.inspektr.audit.AuditActionContext;
+import module java.base;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.springframework.context.ApplicationContext;
 
 /**

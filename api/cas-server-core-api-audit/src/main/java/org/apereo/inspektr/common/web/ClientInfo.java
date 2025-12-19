@@ -1,7 +1,6 @@
 package org.apereo.inspektr.common.web;
 
 import module java.base;
-import org.apereo.cas.multitenancy.TenantExtractor;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AllArgsConstructor;
@@ -11,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.apereo.cas.multitenancy.TenantExtractor;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;

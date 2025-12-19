@@ -1,10 +1,10 @@
 package org.apereo.inspektr.audit.spi.support;
 
-import module java.base;
-import org.apereo.cas.util.AopUtils;
-import lombok.Setter;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import lombok.Setter;
+import module java.base;
+import org.apereo.cas.util.AopUtils;
 import org.aspectj.lang.JoinPoint;
 
 /**
