@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link EmailMessageRequest}.
@@ -30,6 +31,7 @@ public class EmailMessageRequest {
 
     private final EmailProperties emailProperties;
 
+    @Nullable
     private final String body;
 
     private final List<String> to;

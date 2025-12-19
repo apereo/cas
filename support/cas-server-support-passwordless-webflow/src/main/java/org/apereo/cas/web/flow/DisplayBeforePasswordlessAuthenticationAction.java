@@ -44,7 +44,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
         if (attributes.contains(CasWebflowConstants.TRANSITION_ID_ERROR)) {
             val error = attributes.get(CasWebflowConstants.TRANSITION_ID_ERROR, Exception.class);
             requestContext.getFlowScope().put(CasWebflowConstants.TRANSITION_ID_ERROR, error);
-            val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+            val user = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
             PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, user);
             return success();
         }

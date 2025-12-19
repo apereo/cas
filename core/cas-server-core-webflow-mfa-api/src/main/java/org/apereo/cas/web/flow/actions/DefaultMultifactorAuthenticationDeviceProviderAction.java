@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -25,7 +26,7 @@ public class DefaultMultifactorAuthenticationDeviceProviderAction extends BaseCa
     private final MultifactorAuthenticationDeviceManager multifactorAuthenticationDeviceManager;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
         val accounts = multifactorAuthenticationDeviceManager.findRegisteredDevices(principal);

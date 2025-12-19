@@ -34,7 +34,7 @@ public class AcceptPasswordlessSelectionMenuAction extends BasePasswordlessCasWe
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
-        val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+        val user = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
 
         if (!user.isAllowSelectionMenu()) {
             LOGGER.error("Passwordless account [{}] is not allowed to select options", user.getUsername());
@@ -58,9 +58,9 @@ public class AcceptPasswordlessSelectionMenuAction extends BasePasswordlessCasWe
     }
 
     protected Event buildFinalSelectionEvent(final RequestContext requestContext, final PasswordlessSelectionMenu selection) {
-        val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         val finalEvent = switch (selection) {
             case PASSWORD -> {
+                val user = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
                 WebUtils.putCasLoginFormViewable(requestContext, doesPasswordlessAccountRequestPassword(user));
                 yield CasWebflowConstants.TRANSITION_ID_PROMPT;
             }

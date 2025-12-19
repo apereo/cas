@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowStateContributor;
 import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.WebContext;
 import org.springframework.webflow.execution.RequestContext;
@@ -34,8 +35,8 @@ public class PasswordlessDelegatedClientAuthenticationWebflowStateContributor
     }
 
     @Override
-    public Service restore(final RequestContext requestContext, final WebContext webContext,
-                           final Optional<TransientSessionTicket> givenTicket, final Client client) {
+    public @Nullable Service restore(final RequestContext requestContext, final WebContext webContext,
+                                     final Optional<TransientSessionTicket> givenTicket, final Client client) {
         return givenTicket
             .map(ticket -> {
                 val account = ticket.getProperty(PasswordlessUserAccount.class.getName(), PasswordlessUserAccount.class);
