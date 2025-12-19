@@ -3766,21 +3766,16 @@ ext.libraries = [
                 }
         ],
 //        springsessionmongo         : [
-//                dependencies.create(libs.spring.session.data.mongodb.get()) {
+//                dependencies.create(libs.mongodb.spring.session.get()) {
 //                    exclude(group: "org.springframework", module: "spring-web")
 //                    exclude(group: "org.springframework", module: "spring-core")
 //                    exclude(group: "org.springframework", module: "spring-webmvc")
 //                    exclude(group: "org.springframework", module: "spring-context")
 //                    exclude(group: "org.springframework.session", module: "spring-session")
-//                },
-//                dependencies.create(libs.spring.boot.session.mongodb.get()) {
-//                    exclude(group: "org.springframework", module: "spring-web")
-//                    exclude(group: "org.springframework", module: "spring-core")
-//                    exclude(group: "org.springframework", module: "spring-webmvc")
-//                    exclude(group: "org.springframework", module: "spring-context")
+//                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+//                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
 //                }
 //        ],
-
         springshell                : [
                 dependencies.create(libs.spring.shell.starter.jansi.get()) {
                     exclude(group: "org.springframework", module: "spring-beans")

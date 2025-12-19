@@ -89,11 +89,7 @@ configurations.configureEach {
                     details.useVersion(libs.jakarta.mail.get().version)
                 }
                 if (requested.group == "org.springframework.session") {
-                    if (requested.name == "spring-session-data-mongodb") {
-                        details.useVersion(libs.spring.session.data.mongodb.get().version)
-                    } else {
-                        details.useVersion(libs.spring.session.core.get().version)
-                    }
+                    details.useVersion(libs.spring.session.core.get().version)
                 }
                 if (requested.group.startsWith("org.eclipse.jetty")) {
                     details.useVersion(libs.versions.jetty.get())
@@ -125,7 +121,11 @@ configurations.configureEach {
                     details.useVersion(libs.kafka.clients.get().version)
                 }
                 if (requested.group == "org.mongodb") {
-                    details.useVersion(libs.mongodb.driver.core.get().version)
+                    if (requested.name == "mongodb-spring-session") {
+                        details.useVersion(libs.mongodb.spring.session.get().version)
+                    } else {
+                        details.useVersion(libs.mongodb.driver.core.get().version)
+                    }
                 }
                 if (requested.group == "mysql") {
                     details.useVersion(libs.mysql.connectorj.get().version)
