@@ -18,6 +18,7 @@ import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -155,7 +156,7 @@ public class HttpRequestUtils {
      * @param request the request
      * @return the http servlet request user agent
      */
-    public static String getHttpServletRequestUserAgent(final HttpServletRequest request) {
+    public static String getHttpServletRequestUserAgent(final @Nullable HttpServletRequest request) {
         if (request != null) {
             return request.getHeader(HttpHeaders.USER_AGENT);
         }
