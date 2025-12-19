@@ -11,6 +11,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -101,7 +102,7 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
         applicationContext.publishEvent(new CasWebflowActionExecutedEvent(this, scope, clientInfo));
     }
 
-    protected abstract Event doExecuteInternal(RequestContext requestContext) throws Throwable;
+    protected abstract @Nullable Event doExecuteInternal(RequestContext requestContext) throws Throwable;
 
     protected Optional<TransactionStatus> getTransaction(
         final Optional<PlatformTransactionManager> transactionManager) {

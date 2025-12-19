@@ -9,6 +9,7 @@ import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -24,7 +25,7 @@ public class DuoSecurityMultifactorAuthenticationDeviceProviderAction extends Ba
     implements MultifactorAuthenticationDeviceProviderAction {
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();

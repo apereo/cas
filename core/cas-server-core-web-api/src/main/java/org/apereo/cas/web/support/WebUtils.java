@@ -372,7 +372,7 @@ public class WebUtils {
      * @param context the context
      * @param service the service
      */
-    public static void putServiceIntoFlowScope(final RequestContext context, final Service service) {
+    public static void putServiceIntoFlowScope(final RequestContext context, @Nullable final Service service) {
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
     }
 
@@ -382,7 +382,7 @@ public class WebUtils {
      * @param context the context
      * @param service the service
      */
-    public static void putServiceIntoFlashScope(final RequestContext context, final Service service) {
+    public static void putServiceIntoFlashScope(final RequestContext context, @Nullable final Service service) {
         context.getFlashScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
     }
 
@@ -413,7 +413,7 @@ public class WebUtils {
      * @param request           the request
      * @param registeredService the registered service
      */
-    public static void putRegisteredService(final HttpServletRequest request, final RegisteredService registeredService) {
+    public static void putRegisteredService(final HttpServletRequest request, @Nullable final RegisteredService registeredService) {
         request.setAttribute(CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE, registeredService);
     }
 
@@ -423,7 +423,8 @@ public class WebUtils {
      * @param context           the context
      * @param registeredService the service
      */
-    public static void putRegisteredService(final RequestContext context, final RegisteredService registeredService) {
+    public static void putRegisteredService(final RequestContext context,
+                                            @Nullable final RegisteredService registeredService) {
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE, registeredService);
     }
 

@@ -57,7 +57,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         val result = authenticateSyncopeUser(credential);
         if (result.isPresent()) {
             val user = result.get();
-            LOGGER.debug("Received user object as [{}]", user);
+            LOGGER.debug("Received Syncope user object as [{}]", user);
             if (user.has("suspended") && user.get("suspended").asBoolean()) {
                 throw new AccountDisabledException(
                     "Could not authenticate forbidden account for " + credential.getUsername());

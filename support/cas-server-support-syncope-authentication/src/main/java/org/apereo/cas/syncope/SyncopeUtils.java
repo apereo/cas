@@ -110,7 +110,7 @@ public class SyncopeUtils {
 
         if (user.has("dynMemberships")) {
             val dynMemberships = new ArrayList<>();
-            user.get("dynMemberships").forEach(m -> dynMemberships.add(m.get("groupName").asString()));
+            user.get("dynMemberships").forEach(membership -> dynMemberships.add(membership.get("groupName").asString()));
             if (!dynMemberships.isEmpty()) {
                 name = attributeMappings.getOrDefault("dynMemberships", "syncopeUserDynMemberships");
                 attributes.put(name, dynMemberships);
@@ -221,7 +221,7 @@ public class SyncopeUtils {
                 .build();
             response = Objects.requireNonNull(HttpUtils.execute(exec));
             LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
-            if (HttpStatus.resolve(response.getCode()).is2xxSuccessful()) {
+            if (Objects.requireNonNull(HttpStatus.resolve(response.getCode())).is2xxSuccessful()) {
                 val entity = ((HttpEntityContainer) response).getEntity();
                 return FunctionUtils.doUnchecked(() -> {
                     val result = EntityUtils.toString(entity);

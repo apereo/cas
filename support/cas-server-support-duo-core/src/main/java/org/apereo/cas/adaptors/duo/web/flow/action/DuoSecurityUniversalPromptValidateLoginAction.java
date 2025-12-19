@@ -23,6 +23,7 @@ import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.PredicateUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -158,7 +159,9 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         populateContextWithService(requestContext, registeredService, ticket.getService());
     }
 
-    protected void populateContextWithService(final RequestContext requestContext, final RegisteredService registeredService, final Service service) {
+    protected void populateContextWithService(final RequestContext requestContext,
+                                              @Nullable final RegisteredService registeredService,
+                                              @Nullable final Service service) {
         WebUtils.putRegisteredService(requestContext, registeredService);
         LOGGER.debug("Restored registered service [{}] into webflow context", registeredService);
         WebUtils.putServiceIntoFlowScope(requestContext, service);
@@ -171,7 +174,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         val authentication = (Authentication) sessionStorage.getSessionAttributes(webContext).get(Authentication.class.getSimpleName());
         val duoCode = WebUtils.getRequestParameterOrAttribute(requestContext, REQUEST_PARAMETER_CODE).orElseThrow();
         val duoSecurityIdentifier = (String) sessionStorage.getSessionAttributes(webContext).get("duoProviderId");
-        populateContextWithCredential(requestContext, authentication, duoCode, duoSecurityIdentifier);
+        populateContextWithCredential(requestContext, Objects.requireNonNull(authentication), duoCode, Objects.requireNonNull(duoSecurityIdentifier));
     }
 
     protected void populateContextWithCredential(final RequestContext requestContext, final TransientSessionTicket ticket,
@@ -188,12 +191,12 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                                                  final String duoCode,
                                                  final String duoSecurityIdentifier) {
         LOGGER.trace("Received Duo Security code [{}] for Duo Security identifier [{}]", duoCode, duoSecurityIdentifier);
-        val credential = new DuoSecurityUniversalPromptCredential(duoCode, authentication);
+        val credential = new DuoSecurityUniversalPromptCredential(duoCode, Objects.requireNonNull(authentication));
         val credentialMetadata = new BasicCredentialMetadata(credential);
         credentialMetadata.setTenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(null));
         
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
-        val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(duoSecurityIdentifier, applicationContext)
+        val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(Objects.requireNonNull(duoSecurityIdentifier), applicationContext)
             .orElseThrow(() -> new IllegalArgumentException("Unable to locate multifactor authentication provider by id " + duoSecurityIdentifier));
         credential.setProviderId(provider.getId());
         WebUtils.putCredential(requestContext, credential);
@@ -205,7 +208,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         val authenticationResultBuilder = (AuthenticationResultBuilder) sessionStorage.getSessionAttributes(webContext)
             .get(AuthenticationResultBuilder.class.getSimpleName());
         val service = (Service) sessionStorage.getSessionAttributes(webContext).get(Service.class.getSimpleName());
-        populateContextWithAuthentication(requestContext, authenticationResultBuilder, service);
+        populateContextWithAuthentication(requestContext, Objects.requireNonNull(authenticationResultBuilder), service);
     }
 
     protected void populateContextWithAuthentication(final RequestContext requestContext,
@@ -214,19 +217,19 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             AuthenticationResultBuilder.class.getSimpleName(),
             AuthenticationResultBuilder.class);
         val service = ticket.getProperty(Service.class.getSimpleName(), Service.class);
-        populateContextWithAuthentication(requestContext, authenticationResultBuilder, service);
+        populateContextWithAuthentication(requestContext, Objects.requireNonNull(authenticationResultBuilder), service);
     }
 
     protected void populateContextWithAuthentication(final RequestContext requestContext,
                                                      final AuthenticationResultBuilder authenticationResultBuilder,
-                                                     final Service service) throws Throwable {
-        WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
+                                                     @Nullable final Service service) throws Throwable {
+        WebUtils.putAuthenticationResultBuilder(Objects.requireNonNull(authenticationResultBuilder), requestContext);
         val authenticationResult = authenticationResultBuilder.build(service);
         WebUtils.putAuthenticationResult(authenticationResult, requestContext);
         WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
     }
 
-    protected Event processStateFromTicketRegistry(final RequestContext requestContext, final String duoState) throws Exception {
+    protected @Nullable Event processStateFromTicketRegistry(final RequestContext requestContext, final String duoState) throws Exception {
         if (duoState.startsWith(TransientSessionTicket.PREFIX)) {
             var ticket = (TransientSessionTicket) null;
             try {
