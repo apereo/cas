@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The {@link RegisteredServiceProperty} defines a single custom
@@ -630,7 +631,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * @return the property value
          */
         @JsonIgnore
-        public RegisteredServiceProperty getPropertyValue(final RegisteredService service) {
+        public @Nullable RegisteredServiceProperty getPropertyValue(@Nullable final RegisteredService service) {
             if (isAssignedTo(service)) {
                 val property = service.getProperties()
                     .entrySet()
@@ -655,7 +656,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * @return the property value
          */
         @JsonIgnore
-        public <T> T getPropertyValue(final RegisteredService service, final Class<T> clazz) {
+        public @Nullable <T> T getPropertyValue(final RegisteredService service, final Class<T> clazz) {
             if (isAssignedTo(service)) {
                 val prop = getPropertyValue(service);
                 if (prop != null) {
@@ -674,7 +675,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * @return the property value
          */
         @JsonIgnore
-        public <T> T getPropertyValues(final RegisteredService service, final Class<T> clazz) {
+        public @Nullable <T> T getPropertyValues(@Nullable final RegisteredService service, final Class<T> clazz) {
             if (isAssignedTo(service)) {
                 val prop = getPropertyValue(service);
                 if (prop != null) {
@@ -691,7 +692,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * @return the property integer value
          */
         @JsonIgnore
-        public int getPropertyIntegerValue(final RegisteredService service) {
+        public int getPropertyIntegerValue(@Nullable final RegisteredService service) {
             if (isAssignedTo(service)) {
                 val prop = getPropertyValue(service);
                 if (prop != null) {
@@ -708,7 +709,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * @return the property long value
          */
         @JsonIgnore
-        public long getPropertyLongValue(final RegisteredService service) {
+        public long getPropertyLongValue(@Nullable final RegisteredService service) {
             if (isAssignedTo(service)) {
                 val prop = getPropertyValue(service);
                 if (prop != null) {
@@ -759,7 +760,8 @@ public interface RegisteredServiceProperty extends Serializable {
          * @return true/false
          */
         @JsonIgnore
-        public boolean isAssignedTo(final RegisteredService service) {
+        public boolean isAssignedTo(@Nullable
+                                    final RegisteredService service) {
             return isAssignedTo(service, s -> true);
         }
 
@@ -771,7 +773,7 @@ public interface RegisteredServiceProperty extends Serializable {
          * @return true/false
          */
         @JsonIgnore
-        public boolean isAssignedTo(final RegisteredService service, final Predicate<String> valueFilter) {
+        public boolean isAssignedTo(@Nullable final RegisteredService service, final Predicate<String> valueFilter) {
             return service != null && service.getProperties().entrySet()
                 .stream()
                 .anyMatch(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
@@ -785,16 +787,15 @@ public interface RegisteredServiceProperty extends Serializable {
          * @param registeredService the registered service
          * @return the typed property value
          */
-        public Object getTypedPropertyValue(final RegisteredService registeredService) {
+        public @Nullable Object getTypedPropertyValue(@Nullable final RegisteredService registeredService) {
             return switch (getType()) {
                 case SET -> getPropertyValues(registeredService, Set.class);
                 case INTEGER -> getPropertyIntegerValue(registeredService);
                 case LONG -> getPropertyLongValue(registeredService);
                 case BOOLEAN -> getPropertyBooleanValue(registeredService);
-                default -> getPropertyValue(registeredService).value();
+                default -> Objects.requireNonNull(getPropertyValue(registeredService)).value();
             };
         }
-
 
         /**
          * Is not assigned to boolean.

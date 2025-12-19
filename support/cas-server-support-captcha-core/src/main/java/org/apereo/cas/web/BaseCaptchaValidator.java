@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -58,7 +59,7 @@ public abstract class BaseCaptchaValidator implements CaptchaValidator {
         return request.getParameter(getRecaptchaResponseParameterName());
     }
     
-    protected HttpResponse executeCaptchaVerification(final String recaptchaResponse, final String userAgent) {
+    protected @Nullable HttpResponse executeCaptchaVerification(final String recaptchaResponse, final String userAgent) {
         val headers = CollectionUtils.<String, String>wrap(
             HttpHeaders.USER_AGENT, userAgent,
             HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE,

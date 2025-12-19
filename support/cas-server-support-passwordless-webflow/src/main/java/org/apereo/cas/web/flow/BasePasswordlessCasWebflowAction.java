@@ -20,6 +20,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -98,7 +99,7 @@ public abstract class BasePasswordlessCasWebflowAction extends BaseCasWebflowAct
     }
 
     protected void populateContextWithAuthenticationResult(final RequestContext requestContext, final Authentication authentication,
-                                                           final WebApplicationService service) throws Throwable {
+                                                           @Nullable final WebApplicationService service) throws Throwable {
         val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
         val authenticationResult = builder.collect(authentication).build(service);
         WebUtils.putAuthenticationResultBuilder(builder, requestContext);
@@ -108,7 +109,7 @@ public abstract class BasePasswordlessCasWebflowAction extends BaseCasWebflowAct
 
     protected Optional<MultifactorAuthenticationProvider> resolveMultifactorAuthenticationProvider(
         final RequestContext requestContext, final Authentication authentication,
-        final WebApplicationService service) {
+        @Nullable final WebApplicationService service) {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);

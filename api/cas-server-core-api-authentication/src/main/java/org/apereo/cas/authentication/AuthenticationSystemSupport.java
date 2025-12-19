@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.multitenancy.TenantsManager;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AuthenticationSystemSupport} - a facade that exposes a high level authentication system API to CAS core.
@@ -111,7 +112,7 @@ public interface AuthenticationSystemSupport {
      * @throws AuthenticationException exception to indicate authentication processing failure.
      * @since 5.0.0
      */
-    AuthenticationResultBuilder handleInitialAuthenticationTransaction(Service service, Credential... credential) throws Throwable;
+    AuthenticationResultBuilder handleInitialAuthenticationTransaction(@Nullable Service service, Credential... credential) throws Throwable;
 
     /**
      * Handle single authentication transaction within potential multi-transaction authentication event.
@@ -123,7 +124,7 @@ public interface AuthenticationSystemSupport {
      * @throws Throwable the throwable
      * @since 5.0.0
      */
-    AuthenticationResultBuilder handleAuthenticationTransaction(Service service,
+    AuthenticationResultBuilder handleAuthenticationTransaction(@Nullable Service service,
                                                                 AuthenticationResultBuilder authenticationResultBuilder,
                                                                 Credential... credential) throws Throwable;
 
@@ -136,7 +137,7 @@ public interface AuthenticationSystemSupport {
      * @throws Throwable the throwable
      * @since 5.0.0
      */
-    AuthenticationResult finalizeAllAuthenticationTransactions(AuthenticationResultBuilder authenticationResultBuilder, Service service) throws Throwable;
+    AuthenticationResult finalizeAllAuthenticationTransactions(AuthenticationResultBuilder authenticationResultBuilder, @Nullable Service service) throws Throwable;
 
     /**
      * Handle a single-transaction authentication event and immediately produce a finalized {@link AuthenticationResult}.
@@ -147,7 +148,7 @@ public interface AuthenticationSystemSupport {
      * @throws AuthenticationException exception to indicate authentication processing failure.
      * @since 5.0.0
      */
-    AuthenticationResult finalizeAuthenticationTransaction(Service service, Credential... credential) throws Throwable;
+    AuthenticationResult finalizeAuthenticationTransaction(@Nullable Service service, Credential... credential) throws Throwable;
 
     /**
      * Handle a single-transaction authentication event and immediately produce a finalized {@link AuthenticationResult}.
@@ -158,7 +159,7 @@ public interface AuthenticationSystemSupport {
      * @throws Throwable the throwable
      * @since 5.3.0
      */
-    default AuthenticationResult finalizeAuthenticationTransaction(final Service service,
+    default AuthenticationResult finalizeAuthenticationTransaction(@Nullable final Service service,
                                                                    final Collection<Credential> credentials) throws Throwable {
         return finalizeAuthenticationTransaction(service, credentials.toArray(Credential[]::new));
     }

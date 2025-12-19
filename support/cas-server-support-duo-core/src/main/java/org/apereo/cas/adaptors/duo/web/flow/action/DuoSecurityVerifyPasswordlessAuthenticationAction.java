@@ -47,7 +47,7 @@ public class DuoSecurityVerifyPasswordlessAuthenticationAction extends DuoSecuri
             .filter(BeanSupplier::isNotProxy)
             .filter(provider -> provider.getDuoAuthenticationService().getProperties().isPasswordlessAuthenticationEnabled())
             .map(provider -> FunctionUtils.doAndHandle(() -> {
-                val account = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+                val account = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
                 val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(account.getUsername());
                 val credential = new DuoSecurityDirectCredential(principal, provider.getId());
                 val credentialMetadata = new BasicCredentialMetadata(credential);

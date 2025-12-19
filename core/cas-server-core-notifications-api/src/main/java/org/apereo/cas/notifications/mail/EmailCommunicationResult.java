@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link EmailCommunicationResult}.
@@ -25,6 +26,7 @@ public class EmailCommunicationResult implements Serializable {
 
     private final boolean success;
 
+    @Nullable
     private final String body;
 
     @Builder.Default
