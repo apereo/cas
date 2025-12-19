@@ -1,13 +1,7 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apache.commons.lang3.time.FastDateFormat;
-
-import java.io.Serial;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * A fast date format based on the ISO-8601 standard.

@@ -1,16 +1,11 @@
 package org.apereo.cas.util.ssl;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.util.ClientCertificateProperties;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
-
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-
-import java.security.KeyStore;
 
 /**
  * An SSL utility class.

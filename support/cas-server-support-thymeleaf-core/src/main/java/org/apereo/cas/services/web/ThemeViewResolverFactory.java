@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import module java.base;
 import org.springframework.web.servlet.ViewResolver;
 
 /**

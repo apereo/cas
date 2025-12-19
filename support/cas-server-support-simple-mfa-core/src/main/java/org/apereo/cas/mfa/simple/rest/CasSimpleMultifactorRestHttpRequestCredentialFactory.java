@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple.rest;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
@@ -10,8 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.util.MultiValueMap;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link CasSimpleMultifactorRestHttpRequestCredentialFactory}.

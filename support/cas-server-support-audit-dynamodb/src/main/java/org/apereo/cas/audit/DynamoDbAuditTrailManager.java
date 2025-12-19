@@ -1,13 +1,10 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
-
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apereo.inspektr.audit.AuditActionContext;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link DynamoDbAuditTrailManager}.

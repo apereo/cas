@@ -1,6 +1,6 @@
 package org.apereo.cas.validation;
 
-import java.util.Collection;
+import module java.base;
 
 /**
  * This is {@link ServiceTicketValidationAuthorizersExecutionPlan}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.expiration;
 
+import module java.base;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.util.CollectionUtils;
@@ -7,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.io.Serial;
 
 /**
  * Delegates to different expiration policies depending on whether remember me

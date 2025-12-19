@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import module java.base;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.val;

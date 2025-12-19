@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import module java.base;
 import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
-
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Response;
 

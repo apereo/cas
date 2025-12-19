@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn;
 
+import module java.base;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.config.CasLdapWebAuthnAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -13,8 +14,6 @@ import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Credential;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link OpenLdapWebAuthnCredentialRepositoryTests}.

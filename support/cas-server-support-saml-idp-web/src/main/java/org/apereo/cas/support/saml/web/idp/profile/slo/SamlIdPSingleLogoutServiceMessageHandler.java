@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.LogoutHttpMessage;
@@ -39,7 +40,6 @@ import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link SamlIdPSingleLogoutServiceMessageHandler}.

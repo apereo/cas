@@ -1,16 +1,14 @@
 package org.apereo.cas.oidc.slo;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.slo.BaseSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.UrlValidator;
-
 import org.springframework.core.Ordered;
-
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 /**
  * This is {@link OidcSingleLogoutServiceLogoutUrlBuilder}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall.authorizer.resource.policy;
 
+import module java.base;
 import org.apereo.cas.grouper.DefaultGrouperFacade;
 import org.apereo.cas.grouper.GrouperPermissionAssignmentsQuery;
 import org.apereo.cas.heimdall.AuthorizationRequest;
@@ -15,7 +16,6 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.io.Serial;
 
 /**
  * This is {@link RequiredGrouperPermissionsAuthorizationPolicy}.

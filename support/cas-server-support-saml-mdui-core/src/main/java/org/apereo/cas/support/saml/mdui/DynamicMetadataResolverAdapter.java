@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
+import module java.base;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
@@ -17,12 +18,6 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpMethod;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * A metadata adapter {@link DynamicMetadataResolverAdapter}

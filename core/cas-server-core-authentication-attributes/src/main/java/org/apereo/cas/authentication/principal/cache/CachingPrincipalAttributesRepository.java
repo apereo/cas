@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
@@ -13,9 +14,6 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Wrapper around an attribute repository where attributes cached for a configurable period

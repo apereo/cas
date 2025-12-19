@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.saml;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -9,7 +10,6 @@ import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadat
 import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -20,9 +20,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
-import java.io.File;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link GenerateSamlIdPMetadataCommand}.

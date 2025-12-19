@@ -1,16 +1,14 @@
 package org.apereo.cas.support.saml.util;
 
+import module java.base;
+import module java.xml;
 import org.apereo.cas.support.saml.SamlUtils;
-
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Status;
-
-import javax.xml.namespace.QName;
-import java.time.ZonedDateTime;
 
 /**
  * This is {@link Saml20ObjectBuilder}.

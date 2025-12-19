@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.services;
 
+import module java.base;
 import org.apereo.cas.services.WebBasedRegisteredService;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,11 +12,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * This is {@link DefaultRegisteredServiceUserInterfaceInfo}.

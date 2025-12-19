@@ -1,9 +1,9 @@
 package org.apereo.cas.util.scripting;
 
+import module java.base;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
-import java.util.Set;
 
 /**
  * This is {@link ScriptResourceCacheManager}.

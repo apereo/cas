@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic.remote;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.AbstractCredential;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -7,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-import java.io.Serial;
 
 /**
  * Represents a remote address as CAS credential.

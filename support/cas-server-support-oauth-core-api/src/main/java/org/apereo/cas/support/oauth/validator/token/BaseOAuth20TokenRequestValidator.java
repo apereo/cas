@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -23,8 +24,6 @@ import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
-import java.util.Locale;
-import java.util.Optional;
 
 /**
  * This is {@link BaseOAuth20TokenRequestValidator}.

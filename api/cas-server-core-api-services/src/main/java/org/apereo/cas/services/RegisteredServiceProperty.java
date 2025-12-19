@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -8,9 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import java.io.Serializable;
-import java.util.Set;
-import java.util.function.Predicate;
 
 /**
  * The {@link RegisteredServiceProperty} defines a single custom

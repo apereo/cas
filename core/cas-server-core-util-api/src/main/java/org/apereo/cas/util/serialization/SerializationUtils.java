@@ -1,5 +1,6 @@
 package org.apereo.cas.util.serialization;
 
+import module java.base;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.DecodableCipher;
 import org.apereo.cas.util.crypto.EncodableCipher;
@@ -8,13 +9,6 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jooq.lambda.Unchecked;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
 
 /**
  * This is {@link SerializationUtils}

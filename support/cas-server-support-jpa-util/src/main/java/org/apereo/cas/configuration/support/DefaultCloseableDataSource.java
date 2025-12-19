@@ -1,11 +1,10 @@
 package org.apereo.cas.configuration.support;
 
+import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
-import javax.sql.DataSource;
-import java.io.Closeable;
-import java.io.IOException;
+import module java.sql;
 
 /**
  * This is {@link DefaultCloseableDataSource}.

@@ -1,7 +1,7 @@
 package org.apereo.cas.util.transforms;
 
+import module java.base;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

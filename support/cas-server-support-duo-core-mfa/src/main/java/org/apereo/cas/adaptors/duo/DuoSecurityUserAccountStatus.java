@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.duo;
 
-import java.util.Locale;
+import module java.base;
 
 /**
  * This is {@link DuoSecurityUserAccountStatus}.

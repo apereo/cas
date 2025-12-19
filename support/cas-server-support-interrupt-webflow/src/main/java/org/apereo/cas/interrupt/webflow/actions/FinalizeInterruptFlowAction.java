@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
+import module java.base;
 import org.apereo.cas.interrupt.InterruptTrackingEngine;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Optional;
 
 /**
  * This is {@link FinalizeInterruptFlowAction}.

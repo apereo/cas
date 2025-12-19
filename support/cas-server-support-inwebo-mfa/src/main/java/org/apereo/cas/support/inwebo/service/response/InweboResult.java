@@ -1,4 +1,5 @@
 package org.apereo.cas.support.inwebo.service.response;
+import module java.base;
 
 /**
  * The JSON response result.

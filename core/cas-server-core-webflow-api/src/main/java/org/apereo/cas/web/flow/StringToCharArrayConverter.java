@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import lombok.val;
 import org.springframework.binding.convert.converters.Converter;
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi;
 
+import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -17,10 +18,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 /**

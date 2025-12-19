@@ -1,13 +1,11 @@
 package org.apereo.cas.memcached.kryo.serial;
 
+import module java.base;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import lombok.val;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link ImmutableNativeJavaMapSerializer}.

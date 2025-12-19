@@ -1,19 +1,14 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.view.RedirectView;
-
-import java.net.URI;
-import java.util.LinkedHashSet;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

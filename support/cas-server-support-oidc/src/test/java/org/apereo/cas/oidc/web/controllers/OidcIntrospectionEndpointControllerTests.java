@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers;
 
+import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.web.controllers.introspection.OidcIntrospectionEndpointController;
@@ -21,10 +22,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.Set;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

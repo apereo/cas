@@ -1,16 +1,13 @@
 package org.apereo.cas.util.transforms;
 
+import module java.base;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.val;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A transformer that chains a number of inner transformers together.

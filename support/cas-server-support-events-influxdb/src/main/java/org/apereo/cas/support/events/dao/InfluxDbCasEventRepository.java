@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
+import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
 import org.apereo.cas.support.events.CasEventAggregate;
@@ -13,12 +14,6 @@ import org.apache.commons.text.StringSubstitutor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import tools.jackson.databind.ObjectMapper;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * This is {@link InfluxDbCasEventRepository}.

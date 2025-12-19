@@ -1,5 +1,6 @@
 package org.apereo.cas.tokens;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;

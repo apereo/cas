@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -41,7 +42,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Event;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

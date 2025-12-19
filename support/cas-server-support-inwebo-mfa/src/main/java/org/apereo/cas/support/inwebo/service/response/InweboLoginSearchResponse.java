@@ -1,5 +1,6 @@
 package org.apereo.cas.support.inwebo.service.response;
 
+import module java.base;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,14 +1,12 @@
 package org.apereo.cas.ticket.device;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.io.Serial;
 
 /**
  * This is {@link OAuth20DefaultDeviceUserCode}.

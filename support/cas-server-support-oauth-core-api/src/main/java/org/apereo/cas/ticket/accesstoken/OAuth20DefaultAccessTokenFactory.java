@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
@@ -22,9 +23,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Default OAuth access token factory.

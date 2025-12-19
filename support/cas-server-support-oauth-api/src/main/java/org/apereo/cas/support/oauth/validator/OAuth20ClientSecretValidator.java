@@ -1,9 +1,8 @@
 package org.apereo.cas.support.oauth.validator;
 
+import module java.base;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
-import java.io.Serializable;
 
 /**
  * This is {@link OAuth20ClientSecretValidator}.

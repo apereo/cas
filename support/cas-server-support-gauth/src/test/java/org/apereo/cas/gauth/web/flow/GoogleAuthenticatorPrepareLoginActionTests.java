@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
@@ -23,8 +24,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.webflow.execution.Action;
-import java.util.List;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

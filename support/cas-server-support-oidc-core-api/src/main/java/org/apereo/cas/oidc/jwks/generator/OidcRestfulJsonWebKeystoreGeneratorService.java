@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks.generator;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -20,8 +21,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 /**
  * This is {@link OidcRestfulJsonWebKeystoreGeneratorService}.

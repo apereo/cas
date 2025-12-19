@@ -1,13 +1,9 @@
 package org.apereo.cas.authentication.principal.merger;
 
+import module java.base;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
 
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.MongoDbAuditTrailManager;
 import org.apereo.cas.authentication.CasSSLContext;
@@ -26,7 +27,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import tools.jackson.databind.ObjectMapper;
-import java.util.List;
 
 /**
  * This is {@link CasSupportMongoDbAuditAutoConfiguration}.

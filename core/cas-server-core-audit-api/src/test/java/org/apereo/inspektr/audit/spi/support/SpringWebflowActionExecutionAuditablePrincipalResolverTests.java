@@ -1,5 +1,6 @@
 package org.apereo.inspektr.audit.spi.support;
 
+import module java.base;
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
@@ -13,11 +14,8 @@ import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
-import java.util.UUID;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.params.provider.Arguments.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;

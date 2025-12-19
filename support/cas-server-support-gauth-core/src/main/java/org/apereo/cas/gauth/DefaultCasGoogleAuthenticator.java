@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.gauth.CoreGoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
@@ -15,7 +16,6 @@ import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link DefaultCasGoogleAuthenticator}.

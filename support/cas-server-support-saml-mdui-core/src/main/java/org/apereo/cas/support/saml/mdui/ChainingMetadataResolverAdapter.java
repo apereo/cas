@@ -1,10 +1,8 @@
 package org.apereo.cas.support.saml.mdui;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * This is {@link ChainingMetadataResolverAdapter}.

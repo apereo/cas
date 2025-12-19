@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web;
 
+import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -15,7 +16,6 @@ import lombok.val;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.springframework.web.servlet.ModelAndView;
-import java.util.List;
 
 /**
  * This is {@link OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder}.

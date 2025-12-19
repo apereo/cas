@@ -1,19 +1,16 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import module java.base;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link OAuth20InvalidAuthorizationResponseBuilder}.

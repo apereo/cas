@@ -1,9 +1,8 @@
 package org.apereo.cas.web.flow.configurer;
 
+import module java.base;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
-
-import java.util.List;
 
 /**
  * This is {@link CasMultifactorWebflowConfigurer}.

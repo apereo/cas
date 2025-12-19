@@ -1,16 +1,13 @@
 package org.apereo.cas.configuration.model.support.services.stream;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.services.stream.hazelcast.StreamServicesHazelcastProperties;
 import org.apereo.cas.configuration.model.support.services.stream.hazelcast.StreamServicesKafkaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link StreamingServiceRegistryProperties}.

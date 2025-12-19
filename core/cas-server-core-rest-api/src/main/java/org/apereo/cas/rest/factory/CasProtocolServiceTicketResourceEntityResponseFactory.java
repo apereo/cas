@@ -1,5 +1,6 @@
 package org.apereo.cas.rest.factory;
 
+import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -11,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.text.ParseException;
-import java.util.Optional;
 
 /**
  * This is {@link OAuth20JwtAccessTokenDecodableCipher}.

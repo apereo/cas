@@ -1,5 +1,6 @@
 package org.apereo.cas.multitenancy;
 
+import module java.base;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.val;

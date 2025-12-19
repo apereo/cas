@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -32,12 +33,10 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import static org.apereo.cas.oidc.OidcConstants.StandardScopes.*;
+import static org.apereo.cas.oidc.OidcConstants.StandardScopes.EMAIL;
+import static org.apereo.cas.oidc.OidcConstants.StandardScopes.OPENID;
+import static org.apereo.cas.oidc.OidcConstants.StandardScopes.PHONE;
+import static org.apereo.cas.oidc.OidcConstants.StandardScopes.PROFILE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

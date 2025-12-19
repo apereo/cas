@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring;
 
+import module java.base;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
@@ -7,9 +8,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * This is {@link RefreshableHandlerInterceptor}.

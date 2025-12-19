@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
+import module java.base;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -17,10 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-import java.nio.charset.StandardCharsets;
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

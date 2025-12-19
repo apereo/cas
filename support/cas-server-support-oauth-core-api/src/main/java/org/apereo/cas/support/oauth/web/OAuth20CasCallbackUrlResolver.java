@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.token.TokenConstants;
@@ -14,10 +15,6 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.http.url.UrlResolver;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link OAuth20CasCallbackUrlResolver}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.val;

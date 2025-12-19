@@ -1,9 +1,7 @@
 package org.apereo.cas.memcached.kryo;
 
+import module java.base;
 import com.esotericsoftware.kryo.util.Pool;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * This is {@link CasKryoPool}. It provides pooling while allowing for try-with-resources to be used.

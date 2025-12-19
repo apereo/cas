@@ -1,5 +1,6 @@
 package org.apereo.cas.gua.impl;
 
+import module java.base;
 import org.apereo.cas.AbstractGraphicalAuthenticationTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
@@ -21,8 +22,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-import java.util.List;
-import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

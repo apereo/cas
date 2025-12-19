@@ -1,11 +1,8 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * General contract that allows one to determine whether

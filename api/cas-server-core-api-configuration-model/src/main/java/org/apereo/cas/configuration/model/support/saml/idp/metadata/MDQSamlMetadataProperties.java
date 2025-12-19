@@ -1,14 +1,11 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.http.MediaType;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link MDQSamlMetadataProperties}.

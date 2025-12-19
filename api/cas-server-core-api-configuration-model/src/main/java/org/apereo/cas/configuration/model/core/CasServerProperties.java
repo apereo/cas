@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.web.jetty.CasEmbeddedJettyProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
@@ -11,8 +12,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.Strings;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link CasServerProperties}.

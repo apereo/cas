@@ -1,14 +1,12 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link DefaultServiceMatchingStrategy}.

@@ -1,12 +1,8 @@
 package org.apereo.cas.util.scripting;
 
+import module java.base;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
-import java.io.File;
-import java.net.URLClassLoader;
-import java.util.Map;
-import java.util.Optional;
-import java.util.ServiceLoader;
 
 /**
  * This is {@link ExecutableCompiledScriptFactory}.

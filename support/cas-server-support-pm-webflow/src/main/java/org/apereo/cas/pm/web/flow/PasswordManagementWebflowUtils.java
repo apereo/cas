@@ -1,14 +1,11 @@
 package org.apereo.cas.pm.web.flow;
 
+import module java.base;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link PasswordManagementWebflowUtils}.

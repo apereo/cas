@@ -1,10 +1,9 @@
 package org.apereo.cas.pm.web.flow;
 
+import module java.base;
 import org.apereo.cas.ticket.Ticket;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link PasswordResetRequest}.

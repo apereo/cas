@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import org.apache.logging.log4j.core.async.AsyncLoggerContextSelector;
@@ -12,7 +13,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.View;
 import java.lang.management.RuntimeMXBean;
-import java.util.List;
 
 /**
  * This is {@link CasCoreLoggingRuntimeHints}.

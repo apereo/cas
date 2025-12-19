@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall.authorizer.resource.policy;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -10,8 +11,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import java.io.Serial;
-import java.util.Set;
 
 /**
  * This is {@link RequiredScopesAuthorizationPolicy}.

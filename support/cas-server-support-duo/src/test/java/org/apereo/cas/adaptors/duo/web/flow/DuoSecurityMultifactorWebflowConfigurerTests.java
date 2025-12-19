@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityAdminApiEndpoint;
 import org.apereo.cas.config.CasPasswordlessAuthenticationAutoConfiguration;
@@ -18,7 +19,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

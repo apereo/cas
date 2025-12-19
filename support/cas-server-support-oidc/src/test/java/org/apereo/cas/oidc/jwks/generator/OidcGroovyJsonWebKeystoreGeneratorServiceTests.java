@@ -1,17 +1,14 @@
 package org.apereo.cas.oidc.jwks.generator;
 
+import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
-
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
-import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

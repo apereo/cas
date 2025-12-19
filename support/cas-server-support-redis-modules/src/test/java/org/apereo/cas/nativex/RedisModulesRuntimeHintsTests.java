@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import lombok.val;
 import org.junit.jupiter.api.Tag;

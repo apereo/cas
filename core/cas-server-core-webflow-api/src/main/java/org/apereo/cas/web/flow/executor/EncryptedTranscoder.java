@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.executor;
 
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.RequiredArgsConstructor;
@@ -8,15 +9,6 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Objects;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * Encodes an object by encrypting its serialized byte stream. Details of encryption are handled by an instance of

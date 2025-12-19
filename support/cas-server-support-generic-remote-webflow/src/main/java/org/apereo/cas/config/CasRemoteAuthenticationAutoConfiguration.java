@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressAuthenticationHandler;
 import org.apereo.cas.adaptors.generic.remote.RemoteAuthenticationCookieCipherExecutor;
 import org.apereo.cas.adaptors.generic.remote.RemoteAuthenticationCredential;

@@ -1,17 +1,15 @@
 package org.apereo.cas.acct.provision;
 
+import module java.base;
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.acct.AccountRegistrationResponse;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.Unchecked;
-
-import java.util.List;
 
 /**
  * This is {@link ChainingAccountRegistrationProvisioner}.

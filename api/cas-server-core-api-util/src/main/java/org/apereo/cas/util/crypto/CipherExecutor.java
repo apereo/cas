@@ -1,10 +1,9 @@
 package org.apereo.cas.util.crypto;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.jspecify.annotations.Nullable;
-import java.io.Serializable;
-import java.security.Key;
 
 /**
  * Responsible to define operation that deal with encryption, signing

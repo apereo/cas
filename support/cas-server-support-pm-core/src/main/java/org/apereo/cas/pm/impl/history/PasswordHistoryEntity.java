@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.impl.history;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -7,15 +8,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 
 /**
  * This is {@link PasswordHistoryEntity}.

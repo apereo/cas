@@ -1,5 +1,6 @@
 package org.apereo.inspektr.common.web;
 
+import module java.base;
 import lombok.experimental.UtilityClass;
 
 /**

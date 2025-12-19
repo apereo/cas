@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import module java.base;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -9,10 +10,6 @@ import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.StringTokenizer;
 
 /**
  * Methods for extracting values from certificates to use as principal IDs or person attributes.

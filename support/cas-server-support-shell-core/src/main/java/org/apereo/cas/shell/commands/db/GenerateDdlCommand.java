@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.db;
 
+import module java.base;
 import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.ReflectionUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -21,11 +22,6 @@ import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 import jakarta.persistence.Entity;
 import jakarta.persistence.MappedSuperclass;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * This is {@link GenerateDdlCommand}.

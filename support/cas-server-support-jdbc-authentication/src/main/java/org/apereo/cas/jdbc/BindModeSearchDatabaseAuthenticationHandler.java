@@ -1,5 +1,6 @@
 package org.apereo.cas.jdbc;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -7,9 +8,7 @@ import org.apereo.cas.configuration.model.support.jdbc.authn.BindJdbcAuthenticat
 import org.apereo.cas.monitor.Monitorable;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import javax.security.auth.login.FailedLoginException;
-import javax.sql.DataSource;
-import java.util.ArrayList;
+import module java.sql;
 
 /**
  * This class attempts to authenticate the user by opening a connection to the

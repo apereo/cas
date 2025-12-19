@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
@@ -10,7 +11,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -19,8 +19,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
-
-import java.util.Objects;
 
 /**
  * This is {@link OAuth20DeviceCodeResponseTypeRequestValidator}.

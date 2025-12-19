@@ -1,13 +1,10 @@
 package org.apereo.cas.trusted.web.flow;
 
+import module java.base;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.temporal.ChronoUnit;
 
 /**
  * This is {@link MultifactorAuthenticationTrustBean}.

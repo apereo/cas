@@ -1,12 +1,11 @@
 package org.apereo.cas.services.query;
 
+import module java.base;
 import com.googlecode.cqengine.attribute.Attribute;
 import com.googlecode.cqengine.attribute.SimpleAttribute;
 import com.googlecode.cqengine.query.option.QueryOptions;
 import com.googlecode.cqengine.query.simple.SimpleQuery;
 import lombok.val;
-
-import java.util.stream.StreamSupport;
 
 /**
  * This is {@link IsAssignableFrom}.

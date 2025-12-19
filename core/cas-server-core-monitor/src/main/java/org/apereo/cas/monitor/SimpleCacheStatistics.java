@@ -1,10 +1,9 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.val;
-
-import java.util.Formatter;
 
 /**
  * Simple implementation of cache statistics.

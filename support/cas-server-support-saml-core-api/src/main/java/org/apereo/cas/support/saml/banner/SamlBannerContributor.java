@@ -1,9 +1,9 @@
 package org.apereo.cas.support.saml.banner;
 
+import module java.base;
 import org.apereo.cas.util.spring.boot.BannerContributor;
 import org.opensaml.core.Version;
 import org.springframework.core.env.Environment;
-import java.util.Formatter;
 
 /**
  * This is {@link SamlBannerContributor}.

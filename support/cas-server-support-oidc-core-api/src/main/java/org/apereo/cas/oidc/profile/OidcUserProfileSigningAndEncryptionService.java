@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.profile;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
@@ -18,9 +19,6 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jspecify.annotations.NonNull;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link OidcUserProfileSigningAndEncryptionService}.

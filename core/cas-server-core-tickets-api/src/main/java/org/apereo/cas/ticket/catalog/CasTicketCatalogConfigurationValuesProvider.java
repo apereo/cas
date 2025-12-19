@@ -1,9 +1,9 @@
 package org.apereo.cas.ticket.catalog;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.util.function.Function;
 
 /**
  * Defines a set of methods to retrieve ticket catalog configuration values in a functional way for maximising the reuse

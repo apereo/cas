@@ -1,4 +1,5 @@
 package org.apereo.cas.memcached.kryo;
+import module java.base;
 
 /**
  * This is {@link KryoPool}.

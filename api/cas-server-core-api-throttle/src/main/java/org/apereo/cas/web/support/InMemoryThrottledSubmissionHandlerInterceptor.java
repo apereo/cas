@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

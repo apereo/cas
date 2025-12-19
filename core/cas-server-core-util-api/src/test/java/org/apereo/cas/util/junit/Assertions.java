@@ -1,11 +1,11 @@
 package org.apereo.cas.util.junit;
 
+import module java.base;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.junit.jupiter.api.function.Executable;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.core.NestedExceptionUtils.*;
+import static org.springframework.core.NestedExceptionUtils.getRootCause;
 
 /**
  * This is {@link Assertions}. Allows expected type to be null.

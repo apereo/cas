@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import module java.base;
 import org.apereo.cas.BaseThymeleafTests;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -21,10 +22,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.thymeleaf.context.WebEngineContext;
 import org.thymeleaf.dialect.IExpressionObjectDialect;
-import java.net.URI;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

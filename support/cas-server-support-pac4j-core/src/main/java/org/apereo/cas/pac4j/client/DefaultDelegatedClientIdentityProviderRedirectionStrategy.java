@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.client;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
@@ -19,8 +20,6 @@ import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link DefaultDelegatedClientIdentityProviderRedirectionStrategy}.

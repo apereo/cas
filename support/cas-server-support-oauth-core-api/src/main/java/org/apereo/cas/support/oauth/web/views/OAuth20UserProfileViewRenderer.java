@@ -1,12 +1,10 @@
 package org.apereo.cas.support.oauth.web.views;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-
 import org.springframework.http.ResponseEntity;
-
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * This is {@link OAuth20UserProfileViewRenderer}.

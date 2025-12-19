@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web.support;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +13,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Function;
 
 /**
  * This is {@link MappedExceptionErrorViewResolver}.

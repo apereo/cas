@@ -1,9 +1,7 @@
 package org.apereo.cas.oidc.claims;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link OidcRegisteredServiceAttributeReleasePolicy}.

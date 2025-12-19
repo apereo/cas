@@ -1,10 +1,10 @@
 package org.apereo.cas.shell.commands.properties;
 
+import module java.base;
 import org.apereo.cas.metadata.CasConfigurationMetadataCatalog;
 import org.apereo.cas.metadata.CasReferenceProperty;
 import org.apereo.cas.metadata.ConfigurationMetadataCatalogQuery;
 import org.apereo.cas.shell.commands.CasShellCommand;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -12,10 +12,6 @@ import org.apache.commons.text.WordUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
-import java.io.File;
-import java.io.Writer;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 
 /**
  * This is {@link ExportPropertiesCommand}.

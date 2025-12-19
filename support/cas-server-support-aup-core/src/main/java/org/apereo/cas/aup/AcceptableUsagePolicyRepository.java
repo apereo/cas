@@ -1,12 +1,10 @@
 package org.apereo.cas.aup;
 
+import module java.base;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Optional;
 
 /**
  * This is {@link AcceptableUsagePolicyRepository}.

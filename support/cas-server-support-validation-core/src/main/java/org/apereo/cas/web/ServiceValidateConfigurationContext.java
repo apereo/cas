@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -21,7 +22,6 @@ import lombok.With;
 import lombok.experimental.SuperBuilder;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.util.Set;
 
 /**
  * This is {@link ServiceValidateConfigurationContext}.

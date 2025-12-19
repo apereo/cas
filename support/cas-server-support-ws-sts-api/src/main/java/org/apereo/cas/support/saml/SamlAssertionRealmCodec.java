@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
 import org.apereo.cas.util.RegexUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +8,6 @@ import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.apache.cxf.sts.token.realm.SAMLRealmCodec;
 import org.apache.wss4j.common.saml.SamlAssertionWrapper;
-import java.util.Locale;
 
 /**
  * This is {@link SamlAssertionRealmCodec}.

@@ -1,10 +1,9 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.webflow.execution.RequestContext;
-import java.io.Closeable;
-import java.util.Set;
 
 /**
  * This is {@link DelegatedClientIdentityProviderConfigurationPostProcessor}.

@@ -1,13 +1,11 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.health.contributor.Health;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import javax.sql.DataSource;
-import java.util.concurrent.ExecutorService;
+import module java.sql;
 
 /**
  * Monitors a data source that describes a single connection or connection pool to a database.

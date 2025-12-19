@@ -1,13 +1,11 @@
 package org.apereo.cas.util.transforms;
 
+import module java.base;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.util.RegexUtils;
-
 import lombok.Setter;
 import lombok.val;
-
-import java.util.regex.Pattern;
 
 /**
  * A transformer that matches the username against a given regex pattern

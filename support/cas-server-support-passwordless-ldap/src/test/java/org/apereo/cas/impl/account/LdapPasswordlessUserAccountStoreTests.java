@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.account;
 
+import module java.base;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccountStore;

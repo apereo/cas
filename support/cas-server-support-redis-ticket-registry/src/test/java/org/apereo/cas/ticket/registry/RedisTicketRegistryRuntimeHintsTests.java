@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import module java.base;
 import org.apereo.cas.nativex.RedisTicketRegistryRuntimeHints;
 import org.apereo.cas.util.PublisherIdentifier;
 import lombok.val;

@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.configuration.model.RestEndpointProperties;
-
 import lombok.experimental.UtilityClass;
 import org.springframework.core.io.Resource;
 

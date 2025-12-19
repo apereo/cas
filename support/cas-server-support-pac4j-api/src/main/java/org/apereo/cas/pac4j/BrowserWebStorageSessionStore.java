@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j;
 
+import module java.base;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import org.apereo.cas.web.BrowserStorage;
@@ -14,10 +15,6 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.session.JEESessionStore;
 import jakarta.servlet.http.HttpSession;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link BrowserWebStorageSessionStore}.

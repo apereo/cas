@@ -1,8 +1,7 @@
 package org.apereo.cas.services;
 
-
+import module java.base;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,10 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
-import java.time.ZonedDateTime;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy}.

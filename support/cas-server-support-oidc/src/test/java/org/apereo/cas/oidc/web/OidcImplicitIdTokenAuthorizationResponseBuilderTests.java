@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
@@ -21,11 +22,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

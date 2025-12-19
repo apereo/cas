@@ -1,4 +1,5 @@
 package org.apereo.cas.heimdall.authorizer;
+import module java.base;
 
 /**
  * This is {@link AuthorizationResult}.

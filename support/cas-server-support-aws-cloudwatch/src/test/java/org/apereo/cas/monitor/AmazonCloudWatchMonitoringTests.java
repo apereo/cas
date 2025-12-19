@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import org.apereo.cas.config.CasAmazonCloudWatchAutoConfiguration;
 import org.apereo.cas.config.CasAmazonCoreAutoConfiguration;
 import org.apereo.cas.config.CasMetricsAutoConfiguration;
@@ -15,8 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import software.amazon.awssdk.core.SdkSystemSetting;
-import java.time.Duration;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

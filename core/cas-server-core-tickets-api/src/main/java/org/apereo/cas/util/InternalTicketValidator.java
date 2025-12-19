@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -7,11 +8,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.validation.TicketValidator;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
-import java.util.HashMap;
 
 /**
  * This is a ticket validator that uses CAS back channels to validate ST.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.saml2;
 
+import module java.base;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;

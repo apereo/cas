@@ -1,16 +1,12 @@
 package org.apereo.cas.webauthn.metadata;
 
+import module java.base;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.yubico.webauthn.attestation.AttestationTrustSource;
 import com.yubico.webauthn.data.ByteArray;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link CompositeAttestationTrustSource}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -10,10 +11,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.function.Function;
 
 /**
  * This is {@link ServiceValidationViewFactory}.

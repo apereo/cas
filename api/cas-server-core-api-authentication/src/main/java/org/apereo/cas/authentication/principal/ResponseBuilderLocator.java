@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.io.Serializable;
 
 /**
  * This is {@link ResponseBuilderLocator} which attempts to locate {@link ResponseBuilder}

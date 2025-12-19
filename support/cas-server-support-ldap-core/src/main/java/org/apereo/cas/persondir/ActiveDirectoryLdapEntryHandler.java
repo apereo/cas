@@ -1,21 +1,12 @@
 package org.apereo.cas.persondir;
 
+import module java.base;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.handler.LdapEntryHandler;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * This is {@link ActiveDirectoryLdapEntryHandler}.

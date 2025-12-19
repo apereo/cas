@@ -1,7 +1,7 @@
 package org.apereo.cas.apm;
 
+import module java.base;
 import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
-
 import co.elastic.apm.attach.ElasticApmAttacher;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;

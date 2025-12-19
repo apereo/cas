@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks;
 
+import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
@@ -8,7 +9,6 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.module.SimpleModule;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

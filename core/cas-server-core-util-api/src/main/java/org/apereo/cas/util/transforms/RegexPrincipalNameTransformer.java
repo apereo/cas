@@ -1,12 +1,10 @@
 package org.apereo.cas.util.transforms;
 
+import module java.base;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.util.RegexUtils;
-
 import lombok.Setter;
 import lombok.val;
-
-import java.util.regex.Pattern;
 
 /**
  * A transformer that extracts the principal by a provided regex pattern.

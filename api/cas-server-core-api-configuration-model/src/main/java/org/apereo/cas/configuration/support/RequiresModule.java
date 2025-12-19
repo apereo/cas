@@ -1,10 +1,6 @@
 package org.apereo.cas.configuration.support;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import module java.base;
 
 /**
  * This is {@link RequiresModule} that is put on top of a CAS properties class

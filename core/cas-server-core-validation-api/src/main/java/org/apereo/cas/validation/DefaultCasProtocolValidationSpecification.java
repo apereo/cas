@@ -1,8 +1,7 @@
 package org.apereo.cas.validation;
 
+import module java.base;
 import org.apereo.cas.services.ServicesManager;
-
-import java.util.function.Function;
 
 /**
  * This is {@link DefaultCasProtocolValidationSpecification}.

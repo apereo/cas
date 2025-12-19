@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.engine;
 
+import module java.base;
 import org.apereo.cas.api.AuthenticationRiskContingencyPlan;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
@@ -9,11 +10,9 @@ import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apereo.inspektr.audit.annotation.Audit;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

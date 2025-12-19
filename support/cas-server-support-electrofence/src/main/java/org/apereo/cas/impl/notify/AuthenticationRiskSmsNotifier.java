@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.notify;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;

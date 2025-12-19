@@ -1,14 +1,13 @@
 package org.apereo.cas.dynamodb;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.dynamodb.AuditDynamoDbProperties;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.SdkSystemSetting;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.dax.ClusterDaxClient;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

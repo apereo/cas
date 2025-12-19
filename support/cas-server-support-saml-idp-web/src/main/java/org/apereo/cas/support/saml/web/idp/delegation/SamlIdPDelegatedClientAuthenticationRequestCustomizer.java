@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.delegation;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
@@ -23,10 +24,6 @@ import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.context.SAML2ConfigurationContext;
 import org.springframework.util.StringUtils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link SamlIdPDelegatedClientAuthenticationRequestCustomizer}.

@@ -1,7 +1,7 @@
 package org.apereo.cas.util.spring;
 
+import module java.base;
 import org.apereo.cas.util.spring.beans.BeanContainer;
-
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.StaticApplicationContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

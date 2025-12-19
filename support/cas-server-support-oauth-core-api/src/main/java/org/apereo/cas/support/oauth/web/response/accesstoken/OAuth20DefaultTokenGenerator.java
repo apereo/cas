@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
@@ -38,13 +39,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link OAuth20DefaultTokenGenerator}.

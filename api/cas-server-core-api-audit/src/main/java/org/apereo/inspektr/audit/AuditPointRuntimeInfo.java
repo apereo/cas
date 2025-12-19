@@ -1,6 +1,6 @@
 package org.apereo.inspektr.audit;
 
-import java.io.Serializable;
+import module java.base;
 
 /**
  * Encapsulates a runtime execution context at advised audit points. Used for diagnostic purposes

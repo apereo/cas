@@ -1,7 +1,7 @@
 package org.apereo.cas.jpa;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

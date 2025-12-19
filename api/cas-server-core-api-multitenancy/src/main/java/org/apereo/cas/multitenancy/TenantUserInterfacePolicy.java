@@ -1,8 +1,8 @@
 package org.apereo.cas.multitenancy;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.jspecify.annotations.Nullable;
-import java.io.Serializable;
 
 /**
  * This is {@link TenantUserInterfacePolicy}.

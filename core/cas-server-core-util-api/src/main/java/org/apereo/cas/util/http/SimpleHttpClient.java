@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.HttpMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +18,6 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.http.HttpHeaders;
-import java.io.Serial;
-import java.io.Serializable;
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.RejectedExecutionException;
 
 /**
  * Implementation of CAS {@link HttpClient}

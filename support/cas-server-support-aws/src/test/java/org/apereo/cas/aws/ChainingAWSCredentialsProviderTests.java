@@ -1,12 +1,12 @@
 package org.apereo.cas.aws;
 
+import module java.base;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProviderChain;
 import software.amazon.awssdk.core.SdkSystemSetting;
-import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

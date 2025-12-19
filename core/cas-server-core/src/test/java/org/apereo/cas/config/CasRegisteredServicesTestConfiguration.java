@@ -1,16 +1,14 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
-
-import java.util.List;
 
 /**
  * This is {@link CasRegisteredServicesTestConfiguration}.

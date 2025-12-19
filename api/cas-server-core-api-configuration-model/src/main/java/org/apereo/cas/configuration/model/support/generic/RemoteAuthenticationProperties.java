@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.generic;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
@@ -10,8 +11,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * Configuration properties class for remote.authn.

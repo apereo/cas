@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator;
 
+import module java.base;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -10,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import java.io.Serializable;
 
 /**
  * This is {@link DefaultOAuth20ClientSecretValidator}.

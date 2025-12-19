@@ -1,13 +1,11 @@
 package org.apereo.cas.audit.spi.principal;
 
+import module java.base;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.aspectj.lang.JoinPoint;
-
-import java.util.Optional;
 
 /**
  * This is {@link DefaultAuditPrincipalIdProvider}.

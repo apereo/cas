@@ -1,9 +1,9 @@
 package org.apereo.cas.nativex.features;
 
+import module java.base;
 import lombok.NoArgsConstructor;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.graalvm.nativeimage.hosted.RuntimeClassInitialization;
-import java.security.Security;
 
 /**
  * This is {@link DefaultNativeImageFeature}.

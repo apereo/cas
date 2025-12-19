@@ -1,12 +1,12 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,10 +15,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
 
 
 /**

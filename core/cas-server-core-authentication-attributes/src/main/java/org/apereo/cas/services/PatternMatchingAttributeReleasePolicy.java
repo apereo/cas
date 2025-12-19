@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.util.RegexUtils;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,14 +16,6 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link PatternMatchingAttributeReleasePolicy}.

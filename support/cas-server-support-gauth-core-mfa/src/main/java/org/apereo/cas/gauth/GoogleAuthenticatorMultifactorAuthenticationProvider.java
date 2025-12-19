@@ -1,12 +1,10 @@
 package org.apereo.cas.gauth;
 
+import module java.base;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
-
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serial;
 
 /**
  * The authentication provider for google authenticator.

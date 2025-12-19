@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn;
 
+import module java.base;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasJpaWebAuthnAutoConfiguration;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;

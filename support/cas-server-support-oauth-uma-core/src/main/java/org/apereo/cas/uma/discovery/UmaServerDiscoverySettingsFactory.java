@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.discovery;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.val;

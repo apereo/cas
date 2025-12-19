@@ -1,5 +1,6 @@
 package org.apereo.cas.persondir;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.Getter;
@@ -9,9 +10,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.DisposableBean;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * This is {@link DefaultPersonDirectoryAttributeRepositoryPlan}.

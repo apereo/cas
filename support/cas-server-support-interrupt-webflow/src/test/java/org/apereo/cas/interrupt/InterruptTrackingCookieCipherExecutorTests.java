@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt;
 
+import module java.base;
 import org.apereo.cas.interrupt.webflow.actions.BaseInterruptFlowActionTests;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.crypto.PropertyBoundCipherExecutor;

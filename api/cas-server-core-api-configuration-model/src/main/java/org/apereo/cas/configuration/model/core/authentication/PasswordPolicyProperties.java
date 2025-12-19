@@ -1,18 +1,12 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.util.LinkedCaseInsensitiveMap;
-
-import javax.security.auth.login.LoginException;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
 
 /**
  * Configuration properties class for password.policy.

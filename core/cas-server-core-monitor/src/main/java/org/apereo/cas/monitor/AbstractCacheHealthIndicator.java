@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.AccessLevel;
@@ -9,9 +10,6 @@ import lombok.val;
 import org.springframework.boot.health.contributor.AbstractHealthIndicator;
 import org.springframework.boot.health.contributor.Health;
 import org.springframework.boot.health.contributor.Status;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.stream.Collectors;
 
 /**
  * Abstract base class for monitors that observe cache storage systems.

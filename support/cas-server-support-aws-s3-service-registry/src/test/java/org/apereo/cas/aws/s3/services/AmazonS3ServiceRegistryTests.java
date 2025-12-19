@@ -1,5 +1,6 @@
 package org.apereo.cas.aws.s3.services;
 
+import module java.base;
 import org.apereo.cas.config.CasAmazonS3ServiceRegistryAutoConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;

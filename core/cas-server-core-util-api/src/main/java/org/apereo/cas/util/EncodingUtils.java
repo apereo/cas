@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.util.crypto.DecryptionException;
 import org.apereo.cas.util.crypto.IdentifiableKey;
@@ -22,13 +23,6 @@ import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
-import java.io.Serializable;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link EncodingUtils} that encapsulates common base64,

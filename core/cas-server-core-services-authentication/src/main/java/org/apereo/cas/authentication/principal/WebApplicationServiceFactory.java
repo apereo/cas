@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
@@ -11,9 +12,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * The {@link WebApplicationServiceFactory} is responsible for

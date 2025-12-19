@@ -1,17 +1,14 @@
 package org.apereo.cas.authentication.handler;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * This is {@link ByCredentialSourceAuthenticationHandlerResolver}

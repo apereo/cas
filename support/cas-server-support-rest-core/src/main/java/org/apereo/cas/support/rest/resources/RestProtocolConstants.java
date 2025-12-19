@@ -1,4 +1,5 @@
 package org.apereo.cas.support.rest.resources;
+import module java.base;
 
 /**
  * This is {@link RestProtocolConstants}.

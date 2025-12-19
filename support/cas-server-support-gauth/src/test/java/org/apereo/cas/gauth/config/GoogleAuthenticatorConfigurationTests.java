@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.config;
 
+import module java.base;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.test.CasTestExtension;

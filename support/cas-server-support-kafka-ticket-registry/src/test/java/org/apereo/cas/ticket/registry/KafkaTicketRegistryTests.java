@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import module java.base;
 import org.apereo.cas.config.CasKafkaTicketRegistryAutoConfiguration;
 import org.apereo.cas.ticket.registry.events.KafkaMessagePublishedEvent;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceivedEvent;
@@ -20,8 +21,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.event.EventListener;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.Assert;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link KafkaTicketRegistryTests}.

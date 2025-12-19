@@ -1,20 +1,16 @@
 package org.apereo.cas.configuration.model.support.cognito;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import java.io.Serial;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link AmazonCognitoAuthenticationProperties}.

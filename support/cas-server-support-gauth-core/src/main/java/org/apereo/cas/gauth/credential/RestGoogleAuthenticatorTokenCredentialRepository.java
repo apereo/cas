@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
+import module java.base;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.gauth.CasGoogleAuthenticator;
@@ -23,13 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link RestGoogleAuthenticatorTokenCredentialRepository}.

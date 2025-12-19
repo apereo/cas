@@ -1,12 +1,10 @@
 package org.apereo.cas.support.inwebo;
 
+import module java.base;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties;
-
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serial;
 
 /**
  * The Inwebo MFA provider definition.

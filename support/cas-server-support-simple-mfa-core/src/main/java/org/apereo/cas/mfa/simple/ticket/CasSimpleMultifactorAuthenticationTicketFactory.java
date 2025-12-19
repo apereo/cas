@@ -1,12 +1,10 @@
 package org.apereo.cas.mfa.simple.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactory;
-
-import java.io.Serializable;
-import java.util.Map;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationTicketFactory}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.compact;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
@@ -15,8 +16,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
-import java.util.HashMap;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link TransientSessionTicketCompactor}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;

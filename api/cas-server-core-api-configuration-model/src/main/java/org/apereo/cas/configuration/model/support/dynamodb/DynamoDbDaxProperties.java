@@ -1,15 +1,12 @@
 package org.apereo.cas.configuration.model.support.dynamodb;
 
+import module java.base;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link DynamoDbDaxProperties}.

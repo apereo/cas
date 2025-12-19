@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
@@ -26,8 +27,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * This is {@link PasswordManagementWebflowConfigurer}.

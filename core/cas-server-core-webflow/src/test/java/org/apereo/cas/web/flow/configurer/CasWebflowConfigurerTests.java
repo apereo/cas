@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.configurer;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
@@ -31,9 +31,6 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ViewFactory;
 import org.springframework.webflow.mvc.servlet.ServletMvcViewFactory;
 import org.springframework.webflow.mvc.view.FlowViewResolver;
-
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

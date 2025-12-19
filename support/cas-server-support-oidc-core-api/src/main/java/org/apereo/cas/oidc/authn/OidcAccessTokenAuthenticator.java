@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.authn;
 
+import module java.base;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -14,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.profile.CommonProfile;
-import java.util.Optional;
 
 /**
  * This is {@link OidcAccessTokenAuthenticator}.

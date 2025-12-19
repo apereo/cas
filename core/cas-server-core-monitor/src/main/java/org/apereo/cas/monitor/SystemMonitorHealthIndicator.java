@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
@@ -8,8 +9,6 @@ import org.springframework.boot.health.contributor.AbstractHealthIndicator;
 import org.springframework.boot.health.contributor.Health;
 import org.springframework.boot.health.contributor.Status;
 import org.springframework.boot.micrometer.metrics.actuate.endpoint.MetricsEndpoint;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Monitors JVM system load and memory.

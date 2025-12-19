@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
-import java.util.Collection;
 
 /**
  * This is {@link AbstractServiceRegistry}, that acts as the base parent class

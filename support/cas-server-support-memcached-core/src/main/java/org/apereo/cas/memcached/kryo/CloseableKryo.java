@@ -1,12 +1,11 @@
 package org.apereo.cas.memcached.kryo;
 
+import module java.base;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Registration;
 import com.esotericsoftware.kryo.Serializer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.Closeable;
 
 /**
  * This is {@link CloseableKryo} which allows {@link Kryo} instances

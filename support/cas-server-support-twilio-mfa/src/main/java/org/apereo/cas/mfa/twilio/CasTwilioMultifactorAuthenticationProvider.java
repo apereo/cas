@@ -1,11 +1,11 @@
 package org.apereo.cas.mfa.twilio;
 
+import module java.base;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.twilio.CasTwilioMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import java.io.Serial;
 
 /**
  * This is {@link CasTwilioMultifactorAuthenticationProvider}.

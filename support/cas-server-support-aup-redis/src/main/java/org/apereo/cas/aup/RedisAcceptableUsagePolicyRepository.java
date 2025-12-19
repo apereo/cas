@@ -1,16 +1,14 @@
 package org.apereo.cas.aup;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.io.Serial;
 
 /**
  * This is {@link RedisAcceptableUsagePolicyRepository}.

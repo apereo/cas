@@ -1,17 +1,8 @@
 package org.apereo.cas.util.serialization;
 
+import module java.base;
 import lombok.val;
 import org.springframework.http.MediaType;
-
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Interface to define operations needed to map objects from/to  clobs.

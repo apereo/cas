@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.TenantPersonAttributeDaoBuilder;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -7,7 +8,6 @@ import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttrib
 import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import lombok.val;
-import java.util.List;
 
 /**
  * This is {@link TenantSyncopePersonAttributeDaoBuilder}.

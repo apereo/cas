@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.clients;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -22,7 +23,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.core.Ordered.*;
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
 
 /**
  * This is {@link GroovyDelegatedClientAuthenticationRequestCustomizerTests}.

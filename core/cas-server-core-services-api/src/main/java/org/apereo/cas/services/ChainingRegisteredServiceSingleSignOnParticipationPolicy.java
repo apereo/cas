@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,10 +13,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This is {@link ChainingRegisteredServiceSingleSignOnParticipationPolicy}.

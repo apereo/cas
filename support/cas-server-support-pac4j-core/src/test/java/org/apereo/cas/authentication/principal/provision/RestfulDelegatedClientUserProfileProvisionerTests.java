@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.principal.provision;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.util.MockWebServer;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -13,8 +13,6 @@ import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link RestfulDelegatedClientUserProfileProvisionerTests}.

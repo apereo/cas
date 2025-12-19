@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.serialization;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,9 +14,6 @@ import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.token.Token;
 import net.minidev.json.JSONObject;
 import tools.jackson.databind.module.SimpleModule;
-import java.io.Serial;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This is {@link NimbusOAuthJacksonModule}.

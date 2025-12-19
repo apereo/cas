@@ -1,4 +1,5 @@
 package org.apereo.cas.configuration.support;
+import module java.base;
 
 /**
  * This is {@link PropertyOwner} as a marker interface

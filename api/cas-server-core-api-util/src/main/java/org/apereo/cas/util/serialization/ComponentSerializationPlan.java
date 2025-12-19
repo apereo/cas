@@ -1,6 +1,6 @@
 package org.apereo.cas.util.serialization;
 
-import java.util.Collection;
+import module java.base;
 
 /**
  * This is {@link ComponentSerializationPlan} that allows modules to register objects and classes

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.config.CasDelegatedAuthenticationOidcAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;

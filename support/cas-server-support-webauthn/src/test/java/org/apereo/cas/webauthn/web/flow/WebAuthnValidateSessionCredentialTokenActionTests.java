@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAttestationTrustSourceFidoProperties;
 import org.apereo.cas.test.CasTestExtension;

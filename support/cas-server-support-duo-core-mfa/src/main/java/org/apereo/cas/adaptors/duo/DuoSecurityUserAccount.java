@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AllArgsConstructor;
@@ -14,13 +15,6 @@ import lombok.experimental.Accessors;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link DuoSecurityUserAccount}.

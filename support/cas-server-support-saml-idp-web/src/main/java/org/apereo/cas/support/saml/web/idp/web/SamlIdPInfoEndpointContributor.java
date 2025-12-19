@@ -1,11 +1,11 @@
 package org.apereo.cas.support.saml.web.idp.web;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
-import java.util.Map;
 
 /**
  * This is {@link SamlIdPInfoEndpointContributor}.

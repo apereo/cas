@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.jdbc;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
@@ -28,7 +29,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionOperations;
-import javax.sql.DataSource;
+import module java.sql;
 
 /**
  * This is {@link BaseJdbcPasswordManagementServiceTests}.

@@ -1,14 +1,12 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import java.io.Serial;
 
 /**
  * Encapsulates hazelcast properties exposed by CAS via properties file property source in a type-safe manner.

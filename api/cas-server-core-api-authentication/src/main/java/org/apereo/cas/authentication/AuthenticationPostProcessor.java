@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
 

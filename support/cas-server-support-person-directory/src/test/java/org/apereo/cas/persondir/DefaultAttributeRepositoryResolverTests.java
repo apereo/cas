@@ -1,5 +1,6 @@
 package org.apereo.cas.persondir;
 
+import module java.base;
 import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryQuery;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
@@ -21,9 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

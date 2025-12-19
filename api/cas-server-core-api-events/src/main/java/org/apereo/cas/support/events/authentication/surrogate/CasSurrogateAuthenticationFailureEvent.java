@@ -1,13 +1,11 @@
 package org.apereo.cas.support.events.authentication.surrogate;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.events.AbstractCasEvent;
-
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-
-import java.io.Serial;
 
 /**
  * This is {@link CasSurrogateAuthenticationFailureEvent}.

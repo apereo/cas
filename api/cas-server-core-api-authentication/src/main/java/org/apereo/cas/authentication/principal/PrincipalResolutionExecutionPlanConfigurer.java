@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import org.springframework.core.Ordered;
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import org.apereo.cas.audit.generic.JdbcAuditTrailEntity;
 import org.apereo.cas.audit.mssql.MsSqlServerJdbcAuditTrailEntity;
 import org.apereo.cas.audit.mysql.MySQLJdbcAuditTrailEntity;

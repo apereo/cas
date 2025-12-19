@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationPreProcessor;
 import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;

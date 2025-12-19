@@ -1,10 +1,10 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
-
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -18,8 +18,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
-
-import java.util.List;
 
 /**
  * This is {@link CasSwaggerAutoConfiguration}.

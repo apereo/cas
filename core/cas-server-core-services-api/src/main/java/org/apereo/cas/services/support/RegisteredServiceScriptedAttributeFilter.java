@@ -1,5 +1,6 @@
 package org.apereo.cas.services.support;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -21,9 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.Transient;
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link RegisteredServiceScriptedAttributeFilter}.

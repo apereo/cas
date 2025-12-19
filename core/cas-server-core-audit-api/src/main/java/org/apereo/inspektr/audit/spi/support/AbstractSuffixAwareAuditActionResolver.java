@@ -1,9 +1,10 @@
 package org.apereo.inspektr.audit.spi.support;
 
-import org.apereo.inspektr.audit.spi.AuditActionResolver;
+import module java.base;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apereo.inspektr.audit.spi.AuditActionResolver;
 
 /**
  * Abstract class that encapsulates the required suffixes.

@@ -1,16 +1,12 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
+import module java.base;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-
 import lombok.val;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link SamlMetadataResolverAuditResourceResolver}.

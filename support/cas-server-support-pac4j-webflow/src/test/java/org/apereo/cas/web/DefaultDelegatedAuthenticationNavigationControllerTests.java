@@ -1,9 +1,9 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.flow.controller.DefaultDelegatedAuthenticationNavigationController;
-
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +20,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

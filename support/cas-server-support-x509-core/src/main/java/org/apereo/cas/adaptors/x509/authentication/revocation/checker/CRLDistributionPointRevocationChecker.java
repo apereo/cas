@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
@@ -17,18 +18,7 @@ import org.bouncycastle.asn1.x509.GeneralName;
 import org.cryptacular.x509.ExtensionReader;
 import org.jspecify.annotations.NonNull;
 import org.springframework.core.io.ByteArrayResource;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.IntStream;
 
 /**
  * Performs CRL-based revocation checking by consulting resources defined in

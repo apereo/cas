@@ -1,18 +1,14 @@
 package org.apereo.cas.support.events.redis;
 
+import module java.base;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
-
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.time.ZonedDateTime;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * This is {@link RedisCasEventRepository} that stores event data into a redis database.

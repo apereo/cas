@@ -1,5 +1,6 @@
 package org.apereo.cas.services.query;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
@@ -10,11 +11,6 @@ import com.googlecode.cqengine.query.QueryFactory;
 import com.googlecode.cqengine.query.option.QueryOptions;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * This is {@link DefaultRegisteredServiceIndexService}.

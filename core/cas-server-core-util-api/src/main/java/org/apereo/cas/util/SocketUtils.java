@@ -1,11 +1,8 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 
 /**
  * This is {@link SocketUtils}.

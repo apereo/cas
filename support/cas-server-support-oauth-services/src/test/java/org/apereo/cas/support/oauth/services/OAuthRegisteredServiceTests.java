@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.services;
 
+import module java.base;
 import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
@@ -15,8 +16,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-import java.io.File;
-import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

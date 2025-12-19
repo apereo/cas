@@ -1,8 +1,7 @@
 package org.apereo.cas.logout;
 
+import module java.base;
 import org.springframework.webflow.execution.RequestContext;
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * This is {@link SessionTerminationHandler}.

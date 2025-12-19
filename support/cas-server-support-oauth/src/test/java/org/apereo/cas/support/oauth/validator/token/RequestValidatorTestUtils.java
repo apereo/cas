@@ -1,14 +1,10 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Some utils for creating test services for request validator testing.

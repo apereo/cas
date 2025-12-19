@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
+import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import lombok.val;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.boot.health.contributor.Status;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.util.CollectionUtils;
@@ -12,8 +13,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link CasSimpleMultifactorWebflowConfigurer}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.properties;
 
+import module java.base;
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
 import org.apereo.cas.shell.commands.CasShellCommand;
 import lombok.extern.slf4j.Slf4j;
@@ -13,15 +14,6 @@ import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Comparator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link AddPropertiesToConfigurationCommand}.

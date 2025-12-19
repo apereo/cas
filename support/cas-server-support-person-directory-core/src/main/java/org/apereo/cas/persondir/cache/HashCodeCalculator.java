@@ -1,5 +1,6 @@
 package org.apereo.cas.persondir.cache;
 
+import module java.base;
 import lombok.Getter;
 
 /**

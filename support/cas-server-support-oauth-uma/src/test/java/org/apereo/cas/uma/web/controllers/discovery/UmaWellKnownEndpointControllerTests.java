@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.web.controllers.discovery;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import org.junit.jupiter.api.Tag;

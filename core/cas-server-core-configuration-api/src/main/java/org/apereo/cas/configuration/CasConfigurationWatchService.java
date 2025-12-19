@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration;
 
+import module java.base;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.config.CasConfigurationCreatedEvent;
@@ -14,8 +15,6 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.io.Closeable;
-import java.io.File;
 
 /**
  * This is {@link CasConfigurationWatchService}.

@@ -1,11 +1,9 @@
 package org.apereo.cas.webauthn;
 
+import module java.base;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationProperties;
-
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serial;
 
 /**
  * This is {@link WebAuthnMultifactorAuthenticationProvider}.

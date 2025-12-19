@@ -1,5 +1,6 @@
 package org.apereo.cas.qr.web;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.qr.authentication.QRAuthenticationDeviceRepository;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
@@ -13,7 +14,6 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
-import java.util.Collection;
 
 /**
  * This is {@link QRAuthenticationDeviceRepositoryEndpoint}.

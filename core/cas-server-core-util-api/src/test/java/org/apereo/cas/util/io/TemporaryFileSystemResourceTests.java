@@ -1,12 +1,10 @@
 package org.apereo.cas.util.io;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

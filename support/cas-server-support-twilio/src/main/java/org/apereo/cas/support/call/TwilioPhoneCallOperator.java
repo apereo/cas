@@ -1,5 +1,6 @@
 package org.apereo.cas.support.call;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.sms.TwilioProperties;
 import org.apereo.cas.notifications.call.PhoneCallOperator;
 import org.apereo.cas.util.LoggingUtils;

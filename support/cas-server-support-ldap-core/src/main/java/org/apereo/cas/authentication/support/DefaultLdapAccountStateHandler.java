@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.support;
 
+import module java.base;
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.AuthenticationAccountStateHandler;
 import org.apereo.cas.authentication.MessageDescriptor;
@@ -10,7 +11,6 @@ import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.util.DateTimeUtils;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,22 +23,6 @@ import org.ldaptive.auth.ext.FreeIPAAccountState;
 import org.ldaptive.auth.ext.PasswordExpirationAccountState;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.springframework.util.LinkedCaseInsensitiveMap;
-
-import javax.security.auth.login.AccountExpiredException;
-import javax.security.auth.login.AccountLockedException;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.CredentialExpiredException;
-import javax.security.auth.login.FailedLoginException;
-import javax.security.auth.login.LoginException;
-
-import java.io.Serializable;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Default account state handler.

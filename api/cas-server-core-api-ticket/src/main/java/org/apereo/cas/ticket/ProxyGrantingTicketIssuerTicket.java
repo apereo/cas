@@ -1,9 +1,9 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**

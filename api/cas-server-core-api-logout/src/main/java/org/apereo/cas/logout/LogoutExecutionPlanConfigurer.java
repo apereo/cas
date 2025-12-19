@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 
 /**

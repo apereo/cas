@@ -1,10 +1,9 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.util.app.ApplicationUtils;
 import org.apereo.cas.util.spring.boot.AbstractCasSpringBootServletInitializer;
 import org.apereo.cas.util.spring.boot.CasBanner;
-
-import java.util.List;
 
 /**
  * This is {@link CasWebApplicationServletInitializer}.

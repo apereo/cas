@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.multitenancy.TenantsManager;
-
-import java.util.Collection;
 
 /**
  * This is {@link AuthenticationSystemSupport} - a facade that exposes a high level authentication system API to CAS core.

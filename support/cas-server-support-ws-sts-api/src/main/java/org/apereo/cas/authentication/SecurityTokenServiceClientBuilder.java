@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
+import module java.xml;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -14,9 +16,6 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transport.http.HTTPConduitConfigurer;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.wss4j.common.WSS4JConstants;
-import javax.net.ssl.HostnameVerifier;
-import javax.xml.namespace.QName;
-import java.util.HashMap;
 
 /**
  * This is {@link SecurityTokenServiceClientBuilder}.

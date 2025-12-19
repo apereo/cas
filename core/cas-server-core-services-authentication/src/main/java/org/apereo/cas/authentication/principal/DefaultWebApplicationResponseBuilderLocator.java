@@ -1,9 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
-
-import java.io.Serial;
-import java.util.List;
 
 /**
  * This is {@link DefaultWebApplicationResponseBuilderLocator}.

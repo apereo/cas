@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.web;
 
+import module java.base;
 import org.apereo.cas.BaseCoreWsSecurityIdentityProviderConfigurationTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
@@ -15,7 +16,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
-
 import lombok.val;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.junit.jupiter.api.Tag;
@@ -28,13 +28,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

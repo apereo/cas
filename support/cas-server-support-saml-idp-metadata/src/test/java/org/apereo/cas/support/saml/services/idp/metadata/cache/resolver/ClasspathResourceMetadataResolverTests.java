@@ -1,17 +1,14 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
-
-import java.io.IOException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

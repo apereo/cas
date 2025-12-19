@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j;
 
+import module java.base;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
@@ -13,10 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * This is {@link TicketRegistrySessionStore}.

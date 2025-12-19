@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.expiration;
 
-
+import module java.base;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -13,8 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.io.Serial;
-import java.time.ZonedDateTime;
 
 /**
  * Ticket expiration policy based on a hard timeout from ticket creation time rather than the

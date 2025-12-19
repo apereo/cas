@@ -1,12 +1,11 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apereo.cas.util.gen.DefaultLongNumericGenerator;
 import org.apereo.cas.util.gen.HexRandomStringGenerator;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

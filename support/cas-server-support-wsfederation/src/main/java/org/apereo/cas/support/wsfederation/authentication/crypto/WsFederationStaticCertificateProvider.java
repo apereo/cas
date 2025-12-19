@@ -1,14 +1,10 @@
 package org.apereo.cas.support.wsfederation.authentication.crypto;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.security.credential.Credential;
 import org.springframework.core.io.Resource;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link WsFederationStaticCertificateProvider}.

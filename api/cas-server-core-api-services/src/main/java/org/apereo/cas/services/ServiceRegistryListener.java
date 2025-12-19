@@ -1,9 +1,7 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.springframework.core.Ordered;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link ServiceRegistryListener}.

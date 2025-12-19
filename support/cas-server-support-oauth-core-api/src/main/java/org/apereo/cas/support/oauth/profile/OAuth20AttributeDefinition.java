@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.profile;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -8,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import java.io.Serial;
 
 /**
  * This is {@link OAuth20AttributeDefinition}.

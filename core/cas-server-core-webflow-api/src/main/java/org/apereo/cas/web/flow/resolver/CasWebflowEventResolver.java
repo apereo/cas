@@ -1,10 +1,9 @@
 package org.apereo.cas.web.flow.resolver;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Set;
 
 /**
  * This is {@link CasWebflowEventResolver}

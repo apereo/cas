@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
@@ -18,8 +19,7 @@ import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
-import javax.sql.DataSource;
-import java.util.concurrent.ExecutorService;
+import module java.sql;
 
 /**
  * This is {@link CasJdbcMonitorAutoConfiguration}.

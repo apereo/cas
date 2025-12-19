@@ -1,14 +1,10 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Interface for a ticket granting ticket. A TicketGrantingTicket is the main

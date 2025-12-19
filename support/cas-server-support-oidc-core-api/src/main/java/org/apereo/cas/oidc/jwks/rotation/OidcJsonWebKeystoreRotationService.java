@@ -1,12 +1,11 @@
 package org.apereo.cas.oidc.jwks.rotation;
 
+import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
-
-import java.util.Arrays;
 
 /**
  * This is {@link OidcJsonWebKeystoreRotationService}.

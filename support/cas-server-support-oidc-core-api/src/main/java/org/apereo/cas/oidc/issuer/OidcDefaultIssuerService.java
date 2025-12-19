@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.issuer;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -11,8 +12,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.pac4j.core.context.WebContext;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link OidcDefaultIssuerService}.

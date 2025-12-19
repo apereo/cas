@@ -1,11 +1,11 @@
 package org.apereo.cas.util.spring.beans;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.env.MockEnvironment;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

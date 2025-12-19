@@ -1,18 +1,14 @@
 package org.apereo.cas.uma.web.controllers.policy;
 
+import module java.base;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import java.util.Collection;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

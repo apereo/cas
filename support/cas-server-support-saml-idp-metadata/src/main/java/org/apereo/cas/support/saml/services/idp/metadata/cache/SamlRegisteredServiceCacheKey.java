@@ -1,9 +1,9 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import module java.base;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.DigestUtils;
-
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,10 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.opensaml.core.criterion.EntityIdCriterion;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * This is {@link SamlRegisteredServiceCacheKey}.

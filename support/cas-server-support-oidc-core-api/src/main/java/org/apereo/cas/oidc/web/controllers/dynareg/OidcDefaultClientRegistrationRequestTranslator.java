@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers.dynareg;
 
+import module java.base;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
@@ -34,14 +35,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
 import tools.jackson.databind.ObjectMapper;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link OidcDefaultClientRegistrationRequestTranslator}.

@@ -1,13 +1,12 @@
 package org.apereo.cas.gauth.rest;
 
+import module java.base;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.LinkedMultiValueMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

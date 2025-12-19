@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -7,10 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * This is {@link PublisherIdentifier}. Allows one to declare strings as Spring beans.

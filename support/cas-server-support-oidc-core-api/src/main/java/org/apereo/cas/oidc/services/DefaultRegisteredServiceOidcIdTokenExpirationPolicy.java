@@ -1,8 +1,8 @@
 package org.apereo.cas.oidc.services;
 
+import module java.base;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.services.RegisteredServiceOidcIdTokenExpirationPolicy;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
 
 /**
  * This is {@link DefaultRegisteredServiceOidcIdTokenExpirationPolicy}.

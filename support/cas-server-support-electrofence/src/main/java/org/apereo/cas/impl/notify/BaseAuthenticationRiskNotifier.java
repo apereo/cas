@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.notify;
 
+import module java.base;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
@@ -25,13 +26,6 @@ import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.springframework.context.ApplicationContext;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * This is {@link BaseAuthenticationRiskNotifier}.

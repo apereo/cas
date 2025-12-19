@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import module java.base;
 import org.apereo.cas.BaseThemeTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
@@ -17,7 +18,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.test.context.TestPropertySource;
-import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

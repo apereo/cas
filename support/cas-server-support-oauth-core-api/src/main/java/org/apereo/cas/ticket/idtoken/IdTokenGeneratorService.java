@@ -1,4 +1,5 @@
 package org.apereo.cas.ticket.idtoken;
+import module java.base;
 
 /**
  * This is {@link IdTokenGeneratorService}.

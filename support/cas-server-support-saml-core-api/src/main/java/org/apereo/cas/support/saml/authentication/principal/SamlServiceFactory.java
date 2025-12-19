@@ -1,11 +1,11 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.util.AbstractSamlObjectBuilder;
 import org.apereo.cas.web.UrlValidator;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.NotImplementedException;
@@ -13,9 +13,7 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
-
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.stream.Collectors;
 
 /**
  * The {@link SamlServiceFactory} creates {@link SamlService} objects.

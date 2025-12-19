@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 

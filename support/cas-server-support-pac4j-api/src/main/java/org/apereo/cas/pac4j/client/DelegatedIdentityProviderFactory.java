@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.client;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
@@ -15,7 +16,6 @@ import org.pac4j.core.http.callback.QueryParameterCallbackUrlResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
-import java.util.List;
 
 /**
  * This is {@link DelegatedIdentityProviderFactory}.

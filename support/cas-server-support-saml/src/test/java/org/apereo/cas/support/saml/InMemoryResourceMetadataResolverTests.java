@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
 import org.apereo.cas.test.CasTestExtension;
 import com.google.common.collect.Iterables;
 import lombok.val;
@@ -12,9 +13,6 @@ import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,6 +1,6 @@
 package org.apereo.cas.util.cipher;
 
-
+import module java.base;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.NoArgsConstructor;

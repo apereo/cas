@@ -1,5 +1,6 @@
 package org.apereo.cas.sba;
 
+import module java.base;
 import org.apereo.cas.util.app.ApplicationUtils;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;

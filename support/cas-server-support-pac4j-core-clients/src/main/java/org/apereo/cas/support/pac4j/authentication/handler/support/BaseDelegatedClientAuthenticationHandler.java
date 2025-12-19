@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication.handler.support;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
@@ -19,9 +20,6 @@ import org.pac4j.core.profile.BasicUserProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.Pac4jConstants;
-import javax.security.auth.login.FailedLoginException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Abstract pac4j authentication handler which builds the CAS handler result from the pac4j user profile.

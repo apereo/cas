@@ -1,5 +1,7 @@
 package org.apereo.cas.heimdall.authorizer.resource.policy;
 
+import module java.base;
+import module java.sql;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.heimdall.AuthorizationRequest;
@@ -20,11 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import javax.sql.DataSource;
-import java.io.Serial;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Objects;
 
 /**
  * This is {@link JdbcAuthorizationPolicy}.
@@ -58,7 +55,7 @@ public class JdbcAuthorizationPolicy implements ResourceAuthorizationPolicy {
 
     @JsonIgnore
     private transient NamedParameterJdbcTemplate jdbcTemplate;
-    
+
     @Override
     public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) throws Throwable {
         this.jdbcTemplate = Objects.requireNonNullElseGet(this.jdbcTemplate, this::buildJdbcTemplate);

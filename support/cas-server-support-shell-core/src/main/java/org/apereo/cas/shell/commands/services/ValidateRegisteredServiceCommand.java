@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.services;
 
+import module java.base;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.shell.commands.CasShellCommand;
@@ -12,11 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Locale;
-import java.util.Objects;
 
 /**
  * This is {@link ValidateRegisteredServiceCommand}.

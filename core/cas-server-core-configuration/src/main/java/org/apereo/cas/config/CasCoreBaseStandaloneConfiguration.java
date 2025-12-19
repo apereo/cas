@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.DefaultCasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.DockerSecretsPropertySourceLocator;
@@ -21,8 +22,6 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.io.ResourceLoader;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link CasCoreBaseStandaloneConfiguration}.

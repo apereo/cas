@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
+import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,13 +22,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link CasEvent}, which represents a single event stored in the events repository.

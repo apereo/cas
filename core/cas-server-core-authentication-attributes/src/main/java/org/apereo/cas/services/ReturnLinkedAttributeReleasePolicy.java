@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.AttributeMappingRequest;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -9,11 +9,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.val;
-
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Return a collection of allowed attributes for the principal, but additionally,

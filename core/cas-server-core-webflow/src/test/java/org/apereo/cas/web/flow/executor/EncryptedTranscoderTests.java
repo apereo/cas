@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.executor;
 
+import module java.base;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import lombok.val;
@@ -7,8 +8,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import java.io.IOException;
-import java.net.URI;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

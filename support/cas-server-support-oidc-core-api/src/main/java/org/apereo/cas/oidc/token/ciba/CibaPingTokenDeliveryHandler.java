@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token.ciba;
 
+import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcCibaRequest;
@@ -21,7 +22,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import tools.jackson.databind.ObjectMapper;
-import java.util.Map;
 
 /**
  * This is {@link CibaPingTokenDeliveryHandler}.

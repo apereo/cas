@@ -1,13 +1,8 @@
 package org.apereo.cas.util.serialization;
 
+import module java.base;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultComponentSerializationPlan}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.pm.PasswordHistoryService;
@@ -21,7 +22,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link CasRestPasswordManagementAutoConfiguration}.

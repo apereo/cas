@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
@@ -18,10 +19,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import tools.jackson.databind.ObjectMapper;
-import java.io.Serial;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link RestfulPrincipalFactory}.

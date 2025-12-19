@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.util.credential;
 
+import module java.base;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -12,11 +13,7 @@ import org.opensaml.security.x509.X509Support;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.core.io.Resource;
-import java.security.PrivateKey;
-import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link BasicX509CredentialFactoryBean}.

@@ -1,18 +1,15 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.springframework.context.support.StaticApplicationContext;
-
-import java.util.ArrayList;
-import java.util.stream.Stream;
 
 /**
  * Test cases for {@link YamlServiceRegistry}.

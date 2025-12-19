@@ -1,12 +1,10 @@
 package org.apereo.cas.token;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * This is {@link TokenTicketBuilder}.

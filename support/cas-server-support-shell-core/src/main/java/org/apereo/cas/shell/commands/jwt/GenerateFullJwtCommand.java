@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.jwt;
 
+import module java.base;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.EncodingUtils;
@@ -21,9 +22,6 @@ import org.jose4j.jwt.NumericDate;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 import tools.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 /**
  * This is {@link GenerateFullJwtCommand}.

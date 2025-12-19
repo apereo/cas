@@ -1,8 +1,7 @@
 package org.apereo.cas.support.oauth.profile;
 
+import module java.base;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-
-import java.util.Map;
 
 /**
  * Strategy interface that acts as factory to handle creation of un-typed user profile data which then could be transformed into whatever

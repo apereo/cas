@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.refreshtoken;
 
+import module java.base;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import java.io.Serial;
 
 /**
  * An expiration policy that is independent from the parent ticket-granting ticket.

@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
+import module java.base;
 import org.apereo.cas.util.crypto.CertUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,18 +10,9 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-
-import java.io.Serial;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.Principal;
-import java.security.PublicKey;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.X509Certificate;
-import java.util.Date;
-import java.util.Set;
-
 import static org.mockito.Mockito.*;
 
 /**

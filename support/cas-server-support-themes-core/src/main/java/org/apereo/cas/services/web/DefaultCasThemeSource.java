@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.util.ResourceUtils;
@@ -13,9 +14,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.StaticMessageSource;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
 
 /**
  * This is {@link DefaultCasThemeSource}.

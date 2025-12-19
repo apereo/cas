@@ -1,10 +1,7 @@
 package org.apereo.cas.gauth.credential;
 
+import module java.base;
 import com.warrenstrange.googleauth.ICredentialRepository;
-
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link DummyCredentialRepository}.

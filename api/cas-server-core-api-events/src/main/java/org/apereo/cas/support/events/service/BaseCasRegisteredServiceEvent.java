@@ -1,9 +1,8 @@
 package org.apereo.cas.support.events.service;
 
+import module java.base;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.inspektr.common.web.ClientInfo;
-
-import java.io.Serial;
 
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.util.serialization;
 
+import module java.base;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.val;

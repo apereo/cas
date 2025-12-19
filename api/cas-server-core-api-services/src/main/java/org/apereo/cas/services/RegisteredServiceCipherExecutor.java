@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import java.util.Optional;
+import module java.base;
 
 /**
  * Defines how to encrypt data based on registered service's public key, etc.

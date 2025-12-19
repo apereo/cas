@@ -1,5 +1,6 @@
 package org.apereo.cas.support.inwebo.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationResult;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;

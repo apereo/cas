@@ -1,5 +1,6 @@
 package org.apereo.cas.entity;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.saml2.Saml2TestClientsBuilder;
@@ -11,10 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.attribute.FileTime;
-import java.time.Instant;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

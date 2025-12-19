@@ -1,4 +1,5 @@
 package org.apereo.cas.util.gen;
+import module java.base;
 
 /**
  * Interface to guaranteed to return a long.

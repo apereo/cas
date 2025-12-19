@@ -1,5 +1,6 @@
 package org.apereo.cas.qr.validation;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.qr.QRAuthenticationConstants;
@@ -13,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
-import java.time.Clock;
-import java.time.LocalDateTime;
 
 /**
  * This is {@link QRAuthenticationTokenValidatorService}.

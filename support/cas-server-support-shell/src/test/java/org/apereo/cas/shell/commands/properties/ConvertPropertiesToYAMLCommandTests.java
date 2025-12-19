@@ -1,15 +1,12 @@
 package org.apereo.cas.shell.commands.properties;
 
+import module java.base;
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 import lombok.val;
 import org.apache.commons.io.FilenameUtils;
 import org.cryptacular.io.ClassPathResource;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.io.FileWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Properties;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

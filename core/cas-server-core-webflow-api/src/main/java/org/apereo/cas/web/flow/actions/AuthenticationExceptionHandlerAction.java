@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
@@ -10,8 +11,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Performs two important error handling functions on an

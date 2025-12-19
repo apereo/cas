@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
@@ -13,7 +13,6 @@ import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Fault;
 import org.opensaml.soap.soap11.FaultActor;
 import org.opensaml.soap.soap11.FaultString;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

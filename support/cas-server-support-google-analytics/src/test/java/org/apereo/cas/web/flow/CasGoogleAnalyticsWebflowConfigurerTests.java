@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.config.CasGoogleAnalyticsAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -8,7 +9,6 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
-import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

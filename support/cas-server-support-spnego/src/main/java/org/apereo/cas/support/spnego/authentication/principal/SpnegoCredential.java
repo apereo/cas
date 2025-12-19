@@ -1,9 +1,9 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.AbstractCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.io.ByteSource;
 import lombok.AllArgsConstructor;
@@ -12,9 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.io.Serial;
-import java.util.stream.IntStream;
 
 /**
  * Credential that are a holder for SPNEGO init token.

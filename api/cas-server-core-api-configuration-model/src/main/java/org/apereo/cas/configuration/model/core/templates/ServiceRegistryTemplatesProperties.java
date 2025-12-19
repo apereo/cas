@@ -1,16 +1,13 @@
 package org.apereo.cas.configuration.model.core.templates;
 
+import module java.base;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link ServiceRegistryTemplatesProperties}.

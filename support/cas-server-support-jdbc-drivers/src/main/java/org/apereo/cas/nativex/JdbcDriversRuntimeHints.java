@@ -1,13 +1,12 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
+import module java.sql;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
-import javax.sql.DataSource;
-import java.sql.Driver;
-import java.util.List;
 
 /**
  * This is {@link JdbcDriversRuntimeHints}.

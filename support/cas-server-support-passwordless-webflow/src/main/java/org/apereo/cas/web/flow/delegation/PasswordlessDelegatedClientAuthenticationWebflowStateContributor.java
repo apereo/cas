@@ -1,20 +1,16 @@
 package org.apereo.cas.web.flow.delegation;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowStateContributor;
 import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
-
 import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.WebContext;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link PasswordlessDelegatedClientAuthenticationWebflowStateContributor}.

@@ -1,16 +1,10 @@
 package org.apereo.cas.util.cache;
 
+import module java.base;
 import org.apereo.cas.util.PublisherIdentifier;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link MappableDistributedCacheManager}.

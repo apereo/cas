@@ -1,5 +1,6 @@
 package org.apereo.cas.session;
 
+import module java.base;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -13,13 +14,6 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.session.MapSession;
 import org.springframework.session.MapSessionRepository;
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link TicketRegistrySessionRepository}.

@@ -1,11 +1,11 @@
 package org.apereo.cas.interrupt;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.NamedObject;
-
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
 

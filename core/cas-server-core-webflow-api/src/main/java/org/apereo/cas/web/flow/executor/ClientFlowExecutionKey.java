@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.executor;
 
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
-
 import com.google.common.base.Splitter;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,12 +11,6 @@ import org.cryptacular.util.CodecUtil;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serial;
-import java.util.UUID;
 
 /**
  * Spring Webflow execution id that contains the serialized flow execution state as part of the identifier.

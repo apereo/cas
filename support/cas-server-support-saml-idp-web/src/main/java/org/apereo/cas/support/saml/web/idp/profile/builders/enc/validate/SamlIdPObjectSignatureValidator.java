@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlIdPUtils;
-
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -12,8 +12,6 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
-
-import java.util.List;
 
 /**
  * This is {@link SamlIdPObjectSignatureValidator}.

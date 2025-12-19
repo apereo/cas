@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.accesstoken;
 
-
+import module java.base;
 import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
@@ -14,9 +14,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.io.Serial;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 
 /**
  * This is {@link OAuth20AccessTokenExpirationPolicy}.

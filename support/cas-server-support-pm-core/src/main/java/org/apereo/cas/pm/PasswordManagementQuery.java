@@ -1,5 +1,6 @@
 package org.apereo.cas.pm;
 
+import module java.base;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,8 +11,6 @@ import lombok.With;
 import lombok.experimental.SuperBuilder;
 import org.jspecify.annotations.NonNull;
 import org.springframework.util.LinkedMultiValueMap;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link PasswordManagementQuery}.

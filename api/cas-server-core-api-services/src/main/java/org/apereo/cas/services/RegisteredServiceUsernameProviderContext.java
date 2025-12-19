@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import lombok.AllArgsConstructor;
@@ -8,8 +9,6 @@ import lombok.With;
 import lombok.experimental.SuperBuilder;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationContext;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link RegisteredServiceUsernameProviderContext}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.pm;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.AuthenticationTransaction;

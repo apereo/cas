@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;

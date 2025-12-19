@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.composite;
 
+import module java.base;
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.util.MockRequestContext;

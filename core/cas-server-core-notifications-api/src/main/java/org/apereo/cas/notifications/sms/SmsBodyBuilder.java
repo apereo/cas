@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.sms;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -9,10 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * This is {@link SmsBodyBuilder}.

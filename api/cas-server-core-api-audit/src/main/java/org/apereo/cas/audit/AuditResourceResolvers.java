@@ -1,4 +1,5 @@
 package org.apereo.cas.audit;
+import module java.base;
 
 /**
  * This is {@link AuditResourceResolvers}.

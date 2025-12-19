@@ -1,12 +1,8 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import javax.crypto.Cipher;
-
-import java.io.Serializable;
-import java.security.PublicKey;
 
 /**
  * Represents a public key for a CAS registered service.

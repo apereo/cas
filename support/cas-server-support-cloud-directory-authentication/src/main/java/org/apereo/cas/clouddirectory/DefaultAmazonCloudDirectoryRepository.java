@@ -1,9 +1,9 @@
 package org.apereo.cas.clouddirectory;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.clouddirectory.AmazonCloudDirectoryProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -14,13 +14,6 @@ import software.amazon.awssdk.services.clouddirectory.model.ListIndexRequest;
 import software.amazon.awssdk.services.clouddirectory.model.ListIndexResponse;
 import software.amazon.awssdk.services.clouddirectory.model.ListObjectAttributesRequest;
 import software.amazon.awssdk.services.clouddirectory.model.ObjectReference;
-
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAmazonCloudDirectoryRepository}.

@@ -1,13 +1,9 @@
-// CHECKSTYLE:OFF
 package org.apereo.cas.support.inwebo.service.soap.generated;
-
+import module java.base;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The generated SOAP class.

@@ -1,5 +1,6 @@
 package org.apereo.cas.metadata.rest;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
@@ -16,9 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.core.Ordered;
-import java.io.Serial;
-import java.util.Comparator;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link ConfigurationMetadataSearchResult}.

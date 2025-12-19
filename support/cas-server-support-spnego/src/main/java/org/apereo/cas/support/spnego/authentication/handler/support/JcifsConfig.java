@@ -1,14 +1,12 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ResourceLoader;
-
-import java.util.Properties;
 
 /**
  * Configuration helper for JCIFS and the Spring framework.

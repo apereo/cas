@@ -1,5 +1,6 @@
 package org.apereo.cas.persondir;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.TenantPersonAttributeDaoBuilder;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -8,7 +9,6 @@ import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContex
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.util.LdapUtils;
 import lombok.val;
-import java.util.List;
 
 /**
  * This is {@link TenantLdapPersonAttributeDaoBuilder}.

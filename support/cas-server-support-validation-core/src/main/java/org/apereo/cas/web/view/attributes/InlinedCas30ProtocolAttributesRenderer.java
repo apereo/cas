@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view.attributes;
 
+import module java.base;
 import lombok.val;
 
 /**

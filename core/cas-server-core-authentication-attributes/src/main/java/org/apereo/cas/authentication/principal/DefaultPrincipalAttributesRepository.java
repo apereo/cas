@@ -1,19 +1,15 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Default implementation of {@link RegisteredServicePrincipalAttributesRepository}

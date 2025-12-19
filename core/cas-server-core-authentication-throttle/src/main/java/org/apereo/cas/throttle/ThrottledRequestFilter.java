@@ -1,8 +1,8 @@
 package org.apereo.cas.throttle;
 
+import module java.base;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 

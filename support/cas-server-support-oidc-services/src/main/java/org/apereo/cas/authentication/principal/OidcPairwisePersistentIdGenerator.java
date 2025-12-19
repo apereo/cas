@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
-import java.io.Serial;
+import module java.base;
 
 /**
  * This is {@link OidcPairwisePersistentIdGenerator}.

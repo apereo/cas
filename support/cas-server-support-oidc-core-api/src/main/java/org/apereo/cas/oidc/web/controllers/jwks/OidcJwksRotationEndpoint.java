@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers.jwks;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;

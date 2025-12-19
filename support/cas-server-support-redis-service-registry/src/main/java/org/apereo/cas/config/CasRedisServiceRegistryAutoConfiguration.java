@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.adaptors.redis.services.RedisServiceRegistry;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -26,9 +27,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link CasRedisServiceRegistryAutoConfiguration}.

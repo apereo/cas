@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket;
 
-import java.io.Serial;
+import module java.base;
 
 /**
  * This is {@link OAuth20UnauthorizedScopeRequestException}.

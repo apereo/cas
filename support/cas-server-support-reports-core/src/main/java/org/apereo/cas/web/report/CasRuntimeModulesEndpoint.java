@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.feature.CasRuntimeModule;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import java.util.List;
 
 /**
  * This is {@link CasRuntimeModulesEndpoint}.

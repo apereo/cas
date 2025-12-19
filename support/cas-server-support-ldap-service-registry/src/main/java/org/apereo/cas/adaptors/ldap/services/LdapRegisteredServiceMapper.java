@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.ldap.services;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
-
 import org.ldaptive.LdapEntry;
 
 /**

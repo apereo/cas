@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,13 +9,8 @@ import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link SingleSignOnParticipationRequest}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import org.springframework.webflow.execution.RequestContext;
 

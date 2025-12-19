@@ -1,13 +1,10 @@
 package org.apereo.cas.util.lock;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.integration.support.locks.LockRegistry;
-
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 /**
  * This is {@link DefaultLockRepository}.

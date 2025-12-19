@@ -1,14 +1,11 @@
 package org.apereo.cas.util.scripting;
 
+import module java.base;
 import groovy.lang.GroovyClassLoader;
 import groovy.text.GStringTemplateEngine;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
-import java.io.File;
-import java.net.URLClassLoader;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link GroovyExecutableCompiledScriptFactory}.

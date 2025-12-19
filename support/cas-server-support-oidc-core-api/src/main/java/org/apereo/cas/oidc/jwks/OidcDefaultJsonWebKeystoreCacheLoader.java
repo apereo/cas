@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks;
 
+import module java.base;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
 import org.apereo.cas.util.LoggingUtils;
@@ -11,9 +12,6 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jspecify.annotations.NonNull;
 import org.springframework.core.io.Resource;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcDefaultJsonWebKeystoreCacheLoader}.

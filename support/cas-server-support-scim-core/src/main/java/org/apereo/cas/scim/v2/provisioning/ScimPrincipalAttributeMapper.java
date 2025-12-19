@@ -1,11 +1,10 @@
 package org.apereo.cas.scim.v2.provisioning;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-
 import de.captaingoldfish.scim.sdk.common.resources.Group;
 import de.captaingoldfish.scim.sdk.common.resources.User;
-import java.util.List;
 
 /**
  * This is {@link ScimPrincipalAttributeMapper}.

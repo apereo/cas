@@ -1,5 +1,6 @@
 package org.apereo.cas.eclipselink;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -16,9 +17,6 @@ import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Query;
 import jakarta.persistence.spi.PersistenceProvider;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.stream.Stream;
 
 /**
  * This is {@link CasEclipseLinkJpaBeanFactory}.

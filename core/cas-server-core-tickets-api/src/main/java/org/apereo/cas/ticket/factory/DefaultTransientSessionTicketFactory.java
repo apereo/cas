@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.factory;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -13,8 +14,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import java.io.Serializable;
-import java.util.Map;
 
 /**
  * This is {@link DefaultTransientSessionTicketFactory}.

@@ -1,9 +1,7 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.io.Serializable;
-import java.net.URL;
 
 /**
  * Defines the proxying policy for a registered service.

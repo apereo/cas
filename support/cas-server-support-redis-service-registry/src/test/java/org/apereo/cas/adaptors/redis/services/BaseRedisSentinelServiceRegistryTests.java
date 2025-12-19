@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.redis.services;
 
+import module java.base;
 import org.apereo.cas.config.CasRedisServiceRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;

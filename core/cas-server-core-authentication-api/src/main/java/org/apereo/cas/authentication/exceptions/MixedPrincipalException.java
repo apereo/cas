@@ -1,12 +1,10 @@
 package org.apereo.cas.authentication.exceptions;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Principal;
-
 import lombok.Getter;
-
-import java.io.Serial;
 
 /**
  * Describes an error condition where non-identical principals have been resolved while authenticating

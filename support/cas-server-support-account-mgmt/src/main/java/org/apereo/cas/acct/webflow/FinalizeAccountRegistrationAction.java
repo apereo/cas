@@ -1,18 +1,16 @@
 package org.apereo.cas.acct.webflow;
 
+import module java.base;
 import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Objects;
 
 /**
  * This is {@link FinalizeAccountRegistrationAction}.

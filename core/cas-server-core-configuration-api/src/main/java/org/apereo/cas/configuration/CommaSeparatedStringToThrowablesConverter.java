@@ -1,11 +1,10 @@
 package org.apereo.cas.configuration;
 
+import module java.base;
 import lombok.val;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link CommaSeparatedStringToThrowablesConverter}.

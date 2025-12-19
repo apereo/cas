@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import module java.base;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.DateTimeUtils;
@@ -12,10 +13,6 @@ import org.jspecify.annotations.NonNull;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import java.time.Clock;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link SamlRegisteredServiceMetadataExpirationPolicy}.

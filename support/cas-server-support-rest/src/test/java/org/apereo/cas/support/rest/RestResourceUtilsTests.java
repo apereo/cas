@@ -1,18 +1,15 @@
 package org.apereo.cas.support.rest;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.support.rest.resources.RestResourceUtils;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

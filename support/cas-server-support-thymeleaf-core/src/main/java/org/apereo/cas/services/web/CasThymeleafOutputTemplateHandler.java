@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import module java.base;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.thymeleaf.engine.AbstractTemplateHandler;

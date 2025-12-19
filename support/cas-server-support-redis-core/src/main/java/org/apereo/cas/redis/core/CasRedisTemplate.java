@@ -1,9 +1,8 @@
 package org.apereo.cas.redis.core;
 
+import module java.base;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisOperations;
-
-import java.util.stream.Stream;
 
 /**
  * This is {@link CasRedisTemplate}.

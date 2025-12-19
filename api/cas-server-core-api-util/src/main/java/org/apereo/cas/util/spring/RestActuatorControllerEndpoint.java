@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring;
 
+import module java.base;
 import org.jspecify.annotations.NonNull;
 import org.springframework.boot.actuate.endpoint.Operation;
 import org.springframework.boot.actuate.endpoint.annotation.DiscoveredEndpoint;

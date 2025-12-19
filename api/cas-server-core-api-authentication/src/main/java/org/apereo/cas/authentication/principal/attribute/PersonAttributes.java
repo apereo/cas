@@ -1,9 +1,6 @@
 package org.apereo.cas.authentication.principal.attribute;
 
-import java.io.Serializable;
-import java.security.Principal;
-import java.util.List;
-import java.util.Map;
+import module java.base;
 
 /**
  * An immutable representation of a person with a uid (username) and attributes. A user's attributes can be of any type

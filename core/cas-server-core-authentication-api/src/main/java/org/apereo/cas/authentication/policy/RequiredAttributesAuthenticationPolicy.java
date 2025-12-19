@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
@@ -14,10 +15,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Authentication security policy that is satisfied iff

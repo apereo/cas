@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.provision;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;

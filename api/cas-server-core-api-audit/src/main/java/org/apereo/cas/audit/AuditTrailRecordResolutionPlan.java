@@ -1,11 +1,9 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
-
-import java.util.Arrays;
-import java.util.Map;
 
 /**
  * This is {@link AuditTrailRecordResolutionPlan}.

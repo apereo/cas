@@ -1,5 +1,6 @@
 package org.apereo.cas.qr.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
@@ -8,14 +9,9 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidationRequest;
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidatorService;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
-import java.util.Optional;
 
 /**
  * This is {@link QRAuthenticationTokenAuthenticationHandler}.

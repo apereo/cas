@@ -1,7 +1,7 @@
 package org.apereo.cas.persondir.cache;
 
+import module java.base;
 import org.aopalliance.intercept.MethodInvocation;
-import java.io.Serializable;
 
 /**
  * Generates a unique key based on the description of an invocation to an

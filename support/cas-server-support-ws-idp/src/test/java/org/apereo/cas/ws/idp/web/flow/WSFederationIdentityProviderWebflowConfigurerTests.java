@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.web.flow;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasWsSecurityIdentityProviderAutoConfiguration;

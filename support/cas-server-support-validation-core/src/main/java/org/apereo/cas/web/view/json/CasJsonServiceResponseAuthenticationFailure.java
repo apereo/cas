@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view.json;
 
+import module java.base;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

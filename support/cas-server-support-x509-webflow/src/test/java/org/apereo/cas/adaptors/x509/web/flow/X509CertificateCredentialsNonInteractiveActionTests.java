@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.web.flow;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;

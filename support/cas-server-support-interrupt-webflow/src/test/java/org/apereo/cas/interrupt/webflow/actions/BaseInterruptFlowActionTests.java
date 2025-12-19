@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
+import module java.base;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;

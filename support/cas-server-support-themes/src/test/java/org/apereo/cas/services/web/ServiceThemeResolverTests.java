@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import module java.base;
 import org.apereo.cas.BaseThemeTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.CasRegisteredService;

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.pubsub.commands;
 
+import module java.base;
 import org.apereo.cas.util.PublisherIdentifier;
 
 /**

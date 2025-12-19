@@ -1,11 +1,7 @@
 package org.apereo.inspektr.audit.support;
 
+import module java.base;
 import lombok.val;
-import java.time.Clock;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.List;
 
 /**
  * Produces a where clause to select audit records older than a given duration.

@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks.generator;
 
+import module java.base;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +10,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 /**
  * This is {@link OidcGroovyJsonWebKeystoreGeneratorService}.

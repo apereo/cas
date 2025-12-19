@@ -1,17 +1,13 @@
 package org.apereo.cas.util.ssl;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import javax.net.ssl.X509TrustManager;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CompositeX509TrustManager}.

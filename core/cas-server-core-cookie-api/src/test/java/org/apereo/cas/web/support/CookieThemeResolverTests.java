@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;

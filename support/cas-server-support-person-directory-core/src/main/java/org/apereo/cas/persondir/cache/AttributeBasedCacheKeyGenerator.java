@@ -1,5 +1,6 @@
 package org.apereo.cas.persondir.cache;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import lombok.Getter;
@@ -11,15 +12,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
-import java.io.Serial;
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import static org.apache.commons.codec.digest.MessageDigestAlgorithms.*;
+import static org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA_512;
 
 /**
  * This is {@link AttributeBasedCacheKeyGenerator}.

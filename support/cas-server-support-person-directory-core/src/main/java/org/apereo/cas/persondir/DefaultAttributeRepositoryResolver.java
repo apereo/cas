@@ -1,5 +1,6 @@
 package org.apereo.cas.persondir;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryQuery;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
@@ -13,10 +14,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.util.StringUtils;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link DefaultAttributeRepositoryResolver}.

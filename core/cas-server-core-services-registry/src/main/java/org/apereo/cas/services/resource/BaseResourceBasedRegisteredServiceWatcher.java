@@ -1,14 +1,11 @@
 package org.apereo.cas.services.resource;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
-
-import java.io.File;
-import java.util.function.Consumer;
 
 /**
  * This is {@link BaseResourceBasedRegisteredServiceWatcher}.

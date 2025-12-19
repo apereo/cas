@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
-import java.io.File;
-import java.util.Collection;
+import module java.base;
 
 /**
  * This is {@link ResourceBasedServiceRegistry},

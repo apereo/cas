@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.controller;
 
+import module java.base;
 import org.apereo.cas.web.AbstractController;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import io.swagger.v3.oas.annotations.Operation;

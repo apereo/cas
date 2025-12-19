@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.provision;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.RestEndpointProperties;
@@ -14,8 +15,6 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import java.util.HashMap;
-import java.util.Locale;
 
 /**
  * This is {@link RestfulDelegatedClientUserProfileProvisioner}.

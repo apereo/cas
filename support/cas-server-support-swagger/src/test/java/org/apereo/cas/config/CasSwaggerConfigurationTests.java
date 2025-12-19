@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.test.CasTestExtension;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.junit.jupiter.api.Tag;

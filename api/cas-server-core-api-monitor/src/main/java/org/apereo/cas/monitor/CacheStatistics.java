@@ -1,4 +1,5 @@
 package org.apereo.cas.monitor;
+import module java.base;
 
 /**
  * Describes the simplest set of cache statistics that are meaningful for health monitoring.

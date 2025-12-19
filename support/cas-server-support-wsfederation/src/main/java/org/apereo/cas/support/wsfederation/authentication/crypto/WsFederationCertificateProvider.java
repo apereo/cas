@@ -1,19 +1,16 @@
 package org.apereo.cas.support.wsfederation.authentication.crypto;
 
+import module java.base;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CertUtils;
-
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.springframework.util.StringUtils;
-
-import java.io.InputStream;
 import java.security.cert.X509Certificate;
-import java.util.List;
 
 /**
  * This is {@link WsFederationCertificateProvider}.

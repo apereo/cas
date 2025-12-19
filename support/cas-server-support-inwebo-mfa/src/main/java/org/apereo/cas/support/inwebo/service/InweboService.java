@@ -1,5 +1,6 @@
 package org.apereo.cas.support.inwebo.service;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.inwebo.service.response.AbstractInweboResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboDeviceNameResponse;
@@ -16,10 +17,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.util.UriComponentsBuilder;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import java.net.HttpURLConnection;
-import java.net.URI;
 import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.BROWSER_AUTHENTICATION_STATUS;
 import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.PUSH_AND_BROWSER_AUTHENTICATION_STATUS;
 

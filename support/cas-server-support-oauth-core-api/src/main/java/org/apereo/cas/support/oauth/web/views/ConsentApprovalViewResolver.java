@@ -1,7 +1,7 @@
 package org.apereo.cas.support.oauth.web.views;
 
+import module java.base;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-
 import org.pac4j.core.context.WebContext;
 import org.springframework.web.servlet.ModelAndView;
 

@@ -1,8 +1,8 @@
 package org.apereo.inspektr.audit;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;
-import java.io.Serial;
 
 /**
  * Wrapper around AspectJ's JoinPoint containing the runtime execution info for current audit points.

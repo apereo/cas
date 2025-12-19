@@ -1,13 +1,10 @@
 package org.apereo.cas.authentication.support.password;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.MessageDescriptor;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link DefaultPasswordPolicyHandlingStrategy}.

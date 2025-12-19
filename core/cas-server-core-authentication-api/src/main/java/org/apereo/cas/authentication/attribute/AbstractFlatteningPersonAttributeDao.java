@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication.attribute;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link AbstractFlatteningPersonAttributeDao}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.util.cipher.JsonWebKeySetStringCipherExecutor;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import lombok.val;
@@ -7,13 +8,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
-
-import java.time.ZonedDateTime;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TreeSet;
-import java.util.function.Supplier;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

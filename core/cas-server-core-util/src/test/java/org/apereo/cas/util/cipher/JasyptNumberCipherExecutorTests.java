@@ -1,15 +1,11 @@
 package org.apereo.cas.util.cipher;
 
+import module java.base;
 import org.apereo.cas.util.RandomUtils;
-
 import lombok.val;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigInteger;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

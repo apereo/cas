@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.util.spring.RestActuatorControllerEndpoint;
 import org.apereo.cas.util.spring.RestActuatorEndpointDiscoverer;
 import org.apereo.cas.util.spring.RestActuatorEndpointHandlerMapping;
@@ -26,9 +27,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 /**
  * This is {@link CasCoreActuatorsConfiguration}.

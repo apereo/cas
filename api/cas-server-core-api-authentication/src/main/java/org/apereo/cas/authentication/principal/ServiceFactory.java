@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

@@ -1,17 +1,8 @@
 package org.apereo.cas.authentication.handler.support;
 
+import module java.base;
 import lombok.val;
 import org.apache.hc.client5.http.auth.BasicUserPrincipal;
-
-import javax.security.auth.Subject;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.login.LoginException;
-import javax.security.auth.spi.LoginModule;
-
-import java.util.Map;
 
 /**
  * @author Marvin S. Addison

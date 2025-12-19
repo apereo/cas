@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.call;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -9,7 +10,6 @@ import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.util.Optional;
 
 /**
  * This is {@link PhoneCallRequest}.

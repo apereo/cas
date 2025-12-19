@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
+import module java.base;
 import org.jspecify.annotations.Nullable;
-import java.net.InetAddress;
 
 /**
  * This is {@link GeoLocationService}.

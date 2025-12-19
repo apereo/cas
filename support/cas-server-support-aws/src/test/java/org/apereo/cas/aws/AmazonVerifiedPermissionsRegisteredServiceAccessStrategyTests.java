@@ -1,5 +1,6 @@
 package org.apereo.cas.aws;
 
+import module java.base;
 import org.apereo.cas.aws.authz.AmazonVerifiedPermissionsRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -17,9 +18,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import software.amazon.awssdk.core.SdkSystemSetting;
 import tools.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.util.Set;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.geo.ip;
 
+import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
 import io.ipgeolocation.sdk.api.IPGeolocationAPI;
@@ -7,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.net.InetAddress;
 
 /**
  * This is {@link IPGeoLocationService}.

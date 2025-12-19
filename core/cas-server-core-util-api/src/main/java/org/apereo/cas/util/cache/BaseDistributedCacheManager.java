@@ -1,8 +1,7 @@
 package org.apereo.cas.util.cache;
 
+import module java.base;
 import org.apereo.cas.util.PublisherIdentifier;
-
-import java.io.Serializable;
 
 /**
  * This is {@link BaseDistributedCacheManager}.

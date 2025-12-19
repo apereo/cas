@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.audit;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -11,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
-import java.util.HashMap;
 
 /**
  * This is {@link OidcIdTokenAuditResourceResolver}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.redis;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.BasePersonAttributeDao;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.attribute.SimpleUsernameAttributeProvider;
@@ -12,10 +13,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link RedisPersonAttributeDao}.

@@ -1,10 +1,10 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import lombok.val;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.Severity;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Arrays;
 
 /**
  * This is {@link PopulateMessageContextAction}.

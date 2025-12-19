@@ -1,15 +1,10 @@
 package org.apereo.cas.util.lock;
 
+import module java.base;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

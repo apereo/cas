@@ -1,5 +1,6 @@
 package org.apereo.cas.persondir.cache;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.AbstractDefaultAttributePersonAttributeDao;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
@@ -13,15 +14,6 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.InitializingBean;
-import java.io.Serializable;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * A configurable caching implementation of {@link PersonAttributeDao}

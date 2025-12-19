@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall;
 
+import module java.base;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,7 +10,6 @@ import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
-import java.io.Serial;
 
 /**
  * This is {@link AuthorizationResponse}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.geo.azure;
 
+import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasGeoLocationAutoConfiguration;
 import org.apereo.cas.config.CasGeoLocationAzureMapsAutoConfiguration;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.net.InetAddress;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

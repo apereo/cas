@@ -1,16 +1,13 @@
 package org.apereo.cas.uma.ticket.permission;
 
+import module java.base;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * This is {@link DefaultUmaPermissionTicketFactory}.

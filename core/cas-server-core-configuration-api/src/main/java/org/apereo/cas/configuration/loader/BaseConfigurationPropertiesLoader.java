@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.loader;
 
+import module java.base;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ArrayUtils;
@@ -7,11 +8,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link BaseConfigurationPropertiesLoader}.

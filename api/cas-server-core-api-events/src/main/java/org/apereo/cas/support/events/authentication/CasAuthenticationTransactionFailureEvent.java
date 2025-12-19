@@ -1,14 +1,10 @@
 package org.apereo.cas.support.events.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.support.events.AbstractCasEvent;
-
 import lombok.Getter;
 import org.apereo.inspektr.common.web.ClientInfo;
-
-import java.io.Serial;
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * This is {@link CasAuthenticationTransactionFailureEvent}.

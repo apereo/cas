@@ -1,5 +1,6 @@
 package org.apereo.cas.memcached.kryo;
 
+import module java.base;
 import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -8,9 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 
 /**
  * {@link net.spy.memcached.MemcachedClient} transcoder implementation based on Kryo fast serialization framework

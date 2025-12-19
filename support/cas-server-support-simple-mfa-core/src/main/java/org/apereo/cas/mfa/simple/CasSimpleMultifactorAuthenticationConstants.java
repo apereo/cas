@@ -1,4 +1,5 @@
 package org.apereo.cas.mfa.simple;
+import module java.base;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationConstants}.

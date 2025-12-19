@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.DefaultSecurityTokenServiceTokenFetcher;
@@ -81,11 +82,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.ScopedProxyMode;
 import jakarta.xml.ws.WebServiceContext;
-import javax.net.ssl.HostnameVerifier;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * This is {@link CoreWsSecuritySecurityTokenServiceConfiguration}.

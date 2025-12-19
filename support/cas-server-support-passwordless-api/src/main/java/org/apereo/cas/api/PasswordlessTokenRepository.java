@@ -1,8 +1,7 @@
 package org.apereo.cas.api;
 
+import module java.base;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
-
-import java.util.Optional;
 
 /**
  * This is {@link PasswordlessTokenRepository}.

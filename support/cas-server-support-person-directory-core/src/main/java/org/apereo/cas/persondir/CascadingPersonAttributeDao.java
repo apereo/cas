@@ -1,5 +1,6 @@
 package org.apereo.cas.persondir;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.AbstractAggregatingDefaultQueryPersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
@@ -8,11 +9,6 @@ import org.apereo.cas.authentication.principal.merger.ReplacingAttributeAdder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 
 /**

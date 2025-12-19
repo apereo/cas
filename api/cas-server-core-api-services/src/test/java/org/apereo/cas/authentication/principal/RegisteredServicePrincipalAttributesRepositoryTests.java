@@ -1,14 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

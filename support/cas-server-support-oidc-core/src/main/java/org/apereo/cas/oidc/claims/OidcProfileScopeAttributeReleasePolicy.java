@@ -1,8 +1,7 @@
 package org.apereo.cas.oidc.claims;
 
+import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
-import java.io.Serial;
-import java.util.List;
 
 /**
  * This is {@link OidcProfileScopeAttributeReleasePolicy}.

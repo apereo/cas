@@ -1,6 +1,6 @@
 package org.apereo.cas.shell.commands.services;
 
-
+import module java.base;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.shell.commands.CasShellCommand;
 import lombok.extern.slf4j.Slf4j;

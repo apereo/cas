@@ -1,9 +1,9 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
+import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import java.util.Collection;
 
 /**
  * This is {@link MetadataEntityAttributeQuery}.

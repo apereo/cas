@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.filters;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,8 +16,6 @@ import org.springframework.webflow.conversation.impl.SimpleConversationId;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Optional;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

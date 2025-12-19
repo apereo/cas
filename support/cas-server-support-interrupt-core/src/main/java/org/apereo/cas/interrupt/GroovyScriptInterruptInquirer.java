@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
@@ -10,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.HashMap;
 
 /**
  * This is {@link GroovyScriptInterruptInquirer}.

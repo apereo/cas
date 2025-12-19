@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
+import module java.base;
 
 public class CheckDuplicateTestConfiguration {
 

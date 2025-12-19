@@ -1,15 +1,10 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import module java.base;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link DuoSecurityAuthenticationResult}.

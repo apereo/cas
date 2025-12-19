@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.web.controllers.ciba.CibaRequestContext;
@@ -14,8 +15,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 /**
  * This is {@link OidcDefaultCibaRequestFactory}.

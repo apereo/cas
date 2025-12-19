@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.ldap;
 
+import module java.base;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker;
@@ -29,8 +30,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.TestPropertySource;
-import java.net.URI;
-import java.net.URL;
 import java.security.cert.CertificateException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

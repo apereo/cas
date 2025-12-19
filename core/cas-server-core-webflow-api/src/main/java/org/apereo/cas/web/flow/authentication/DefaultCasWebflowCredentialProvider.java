@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.AbstractCredential;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
@@ -12,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This is {@link DefaultCasWebflowCredentialProvider}.

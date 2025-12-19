@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -7,11 +8,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.MediaType;
-import java.io.Serial;
-import java.io.Serializable;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link HttpMessage}.

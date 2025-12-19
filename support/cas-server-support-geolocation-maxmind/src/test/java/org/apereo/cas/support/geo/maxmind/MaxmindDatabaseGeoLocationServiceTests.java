@@ -1,5 +1,6 @@
 package org.apereo.cas.support.geo.maxmind;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.WebServiceClient;
@@ -18,8 +19,6 @@ import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.net.InetAddress;
-import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

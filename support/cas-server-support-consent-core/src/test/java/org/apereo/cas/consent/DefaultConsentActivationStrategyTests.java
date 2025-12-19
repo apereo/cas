@@ -1,5 +1,6 @@
 package org.apereo.cas.consent;
 
+import module java.base;
 import org.junit.jupiter.api.Tag;
 
 /**

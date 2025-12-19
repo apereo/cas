@@ -1,19 +1,16 @@
 package org.apereo.cas.logout;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.web.UrlValidator;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
-
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.util.Objects;
 
 /**
  * This is {@link LogoutWebApplicationServiceFactory}.

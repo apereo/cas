@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import lombok.NoArgsConstructor;
-
-import java.io.Serial;
 
 /**
  * This is {@link MultifactorAuthenticationProviderAbsentException}.

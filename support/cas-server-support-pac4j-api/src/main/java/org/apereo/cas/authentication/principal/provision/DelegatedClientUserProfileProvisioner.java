@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication.principal.provision;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.profile.UserProfile;
 

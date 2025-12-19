@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -18,9 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link AccessTokenTokenExchangeGrantRequestExtractor}.

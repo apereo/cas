@@ -1,6 +1,6 @@
 package org.apereo.cas.support.spnego;
 
-import java.security.Principal;
+import module java.base;
 
 /**
  * @author Marc-Antoine Garrigue

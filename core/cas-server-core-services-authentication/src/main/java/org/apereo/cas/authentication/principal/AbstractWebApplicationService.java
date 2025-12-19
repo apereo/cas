@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.jpa.MultivaluedMapToJsonAttributeConverter;
 import org.apereo.cas.validation.ValidationResponseType;
@@ -22,9 +23,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.Table;
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Abstract implementation of a WebApplicationService.

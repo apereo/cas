@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.cache.ExpiringSimpleCacheProperties;
 import org.apereo.cas.configuration.model.core.templates.ServiceRegistryTemplatesProperties;
 import org.apereo.cas.configuration.model.support.aws.AmazonS3ServiceRegistryProperties;
@@ -19,14 +20,10 @@ import org.apereo.cas.configuration.model.support.services.stream.StreamingServi
 import org.apereo.cas.configuration.model.support.services.yaml.YamlServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * Configuration properties class for service.registry.

@@ -1,5 +1,6 @@
 package org.apereo.cas.metadata;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
@@ -10,12 +11,6 @@ import org.springframework.boot.configurationmetadata.CasConfigurationMetadataRe
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepository;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasConfigurationMetadataRepository}.

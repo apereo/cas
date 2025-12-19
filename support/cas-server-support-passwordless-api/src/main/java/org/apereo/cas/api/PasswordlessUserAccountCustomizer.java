@@ -1,7 +1,7 @@
 package org.apereo.cas.api;
 
+import module java.base;
 import org.springframework.core.Ordered;
-import java.util.Optional;
 
 /**
  * This is {@link PasswordlessUserAccountCustomizer}.

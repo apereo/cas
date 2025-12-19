@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web;
 
+import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
@@ -9,8 +10,6 @@ import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JacksonJsonView;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link OidcPushedAuthorizationModelAndViewBuilder}.

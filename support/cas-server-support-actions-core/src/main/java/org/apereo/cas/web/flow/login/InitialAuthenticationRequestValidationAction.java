@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow.login;
 
+import module java.base;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;

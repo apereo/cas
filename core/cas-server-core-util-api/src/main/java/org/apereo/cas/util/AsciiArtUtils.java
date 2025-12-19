@@ -1,13 +1,12 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-
-import java.io.PrintStream;
 
 /**
  * This is {@link AsciiArtUtils}.

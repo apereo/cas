@@ -1,5 +1,6 @@
 package org.apereo.cas.redis.modules;
 
+import module java.base;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -8,9 +9,6 @@ import io.lettuce.core.search.arguments.TextFieldArgs;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.io.File;
-import java.util.List;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

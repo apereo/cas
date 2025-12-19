@@ -1,4 +1,5 @@
 package org.apereo.cas.palantir;
+import module java.base;
 
 /**
  * This is {@link PalantirConstants}.

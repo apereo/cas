@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
 import com.samskivert.mustache.Mustache;
 import lombok.Setter;
@@ -8,10 +9,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.boot.mustache.servlet.view.MustacheView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 /**
  * This is {@link CasMustacheView}.

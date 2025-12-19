@@ -1,10 +1,9 @@
 package org.apereo.cas.support.events.service;
 
+import module java.base;
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-
-import java.io.Serial;
 
 /**
  * This is {@link CasRegisteredServicesDeletedEvent}.

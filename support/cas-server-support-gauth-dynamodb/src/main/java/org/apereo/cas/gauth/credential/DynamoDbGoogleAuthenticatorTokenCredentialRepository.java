@@ -1,15 +1,10 @@
 package org.apereo.cas.gauth.credential;
 
+import module java.base;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.val;
-
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DynamoDbGoogleAuthenticatorTokenCredentialRepository}.

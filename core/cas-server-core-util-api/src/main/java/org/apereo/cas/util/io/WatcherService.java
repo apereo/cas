@@ -1,6 +1,6 @@
 package org.apereo.cas.util.io;
 
-import java.io.Closeable;
+import module java.base;
 
 /**
  * This is {@link WatcherService}.

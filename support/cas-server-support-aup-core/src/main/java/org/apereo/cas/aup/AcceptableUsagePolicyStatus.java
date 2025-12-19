@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.util.CollectionUtils;
@@ -8,11 +9,6 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Data;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link AcceptableUsagePolicyStatus}.

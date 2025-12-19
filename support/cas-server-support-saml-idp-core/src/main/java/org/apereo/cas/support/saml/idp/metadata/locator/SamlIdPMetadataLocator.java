@@ -1,10 +1,10 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import module java.base;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.springframework.core.io.Resource;
-import java.util.Optional;
 
 /**
  * This is {@link SamlIdPMetadataLocator}.

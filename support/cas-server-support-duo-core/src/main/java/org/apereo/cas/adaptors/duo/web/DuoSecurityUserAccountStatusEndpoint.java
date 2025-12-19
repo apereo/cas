@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.web;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -17,9 +18,6 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link DuoSecurityUserAccountStatusEndpoint}.

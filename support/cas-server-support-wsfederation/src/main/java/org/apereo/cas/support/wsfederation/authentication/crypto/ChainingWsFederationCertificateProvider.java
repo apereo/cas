@@ -1,11 +1,8 @@
 package org.apereo.cas.support.wsfederation.authentication.crypto;
 
+import module java.base;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.security.credential.Credential;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ChainingWsFederationCertificateProvider}.

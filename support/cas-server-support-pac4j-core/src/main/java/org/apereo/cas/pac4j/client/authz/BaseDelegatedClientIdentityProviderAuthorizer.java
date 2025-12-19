@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.client.authz;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.Service;

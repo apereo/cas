@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import lombok.EqualsAndHashCode;
@@ -12,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.Nullable;
 import org.springframework.web.util.UriComponentsBuilder;
-import java.io.Serial;
 
 /**
  * This is {@link PairwiseOidcRegisteredServiceUsernameAttributeProvider}.

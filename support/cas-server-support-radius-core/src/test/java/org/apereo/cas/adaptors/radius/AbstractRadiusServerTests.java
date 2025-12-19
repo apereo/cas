@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.radius;
 
+import module java.base;
 import lombok.val;
 import net.jradius.dictionary.vsa_microsoft.Attr_MSCHAP2Success;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -8,7 +9,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
-import java.security.Security;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

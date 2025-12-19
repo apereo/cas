@@ -1,5 +1,6 @@
 package com.yubico.webauthn.attestation;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.webauthn.WebAuthnUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -15,13 +16,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link MetadataObject}.

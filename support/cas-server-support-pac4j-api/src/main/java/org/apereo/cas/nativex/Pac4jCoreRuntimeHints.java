@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCandidateProfile;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCredentialExtractor;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationPreProcessor;
@@ -17,7 +18,6 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.client.config.BaseClientConfiguration;
 import org.pac4j.core.credentials.Credentials;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.List;
 
 /**
  * This is {@link Pac4jCoreRuntimeHints}.

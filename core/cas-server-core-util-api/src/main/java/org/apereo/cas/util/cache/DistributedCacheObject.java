@@ -1,7 +1,7 @@
 package org.apereo.cas.util.cache;
 
+import module java.base;
 import org.apereo.cas.util.PublisherIdentifier;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,11 +12,6 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * This is {@link DistributedCacheObject}.

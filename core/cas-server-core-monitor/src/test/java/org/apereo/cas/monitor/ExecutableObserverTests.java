@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
@@ -8,7 +9,6 @@ import org.aspectj.lang.Signature;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

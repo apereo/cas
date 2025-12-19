@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
@@ -26,10 +27,6 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.springframework.beans.factory.ObjectProvider;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link SamlProfileAuthnContextClassRefBuilder}.

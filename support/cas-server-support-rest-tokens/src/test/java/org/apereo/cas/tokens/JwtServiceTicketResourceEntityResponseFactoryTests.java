@@ -1,11 +1,11 @@
 package org.apereo.cas.tokens;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
-
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

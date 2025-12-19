@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.expiration;
 
-
+import module java.base;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.util.DateTimeUtils;
@@ -16,10 +16,6 @@ import lombok.ToString;
 import lombok.With;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.io.Serial;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.ZonedDateTime;
 
 /**
  * Ticket expiration policy based on a predefined fixed expiration date.

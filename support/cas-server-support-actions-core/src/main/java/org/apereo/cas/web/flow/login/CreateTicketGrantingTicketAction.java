@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.MessageDescriptor;
@@ -18,10 +19,6 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Action that handles the {@link TicketGrantingTicket} creation and destruction. If the

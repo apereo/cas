@@ -1,4 +1,5 @@
 package org.apereo.cas.shell.commands;
+import module java.base;
 
 /**
  * This is {@link CasShellCommand}.

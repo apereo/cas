@@ -1,5 +1,6 @@
 package org.apereo.cas.web.tomcat;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

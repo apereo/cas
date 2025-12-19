@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.token;
 
+import module java.base;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
@@ -12,8 +13,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link TokenAuthenticationProperties}.

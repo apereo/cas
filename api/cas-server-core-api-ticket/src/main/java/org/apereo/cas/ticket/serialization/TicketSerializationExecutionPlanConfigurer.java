@@ -1,4 +1,5 @@
 package org.apereo.cas.ticket.serialization;
+import module java.base;
 
 /**
  * This is {@link TicketSerializationExecutionPlanConfigurer}.

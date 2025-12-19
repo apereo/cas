@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import java.io.Serial;
+import module java.base;
 
 /**
  * Exception thrown when a service attempts to use SSO when it should not be

@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -7,9 +8,6 @@ import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
 import org.jspecify.annotations.NonNull;
 import org.springframework.boot.health.contributor.Health;
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Monitors the memcached hosts known to an instance of {@link MemcachedClientIF}.

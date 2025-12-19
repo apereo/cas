@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.account;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountCustomizer;
 import org.apereo.cas.util.ResourceUtils;
@@ -13,8 +14,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link GroovyPasswordlessUserAccountStore}.

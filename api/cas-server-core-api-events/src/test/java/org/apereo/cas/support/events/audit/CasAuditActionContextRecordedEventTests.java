@@ -1,14 +1,12 @@
 package org.apereo.cas.support.events.audit;
 
+import module java.base;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

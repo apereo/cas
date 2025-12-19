@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.federation;
 
+import module java.base;
 import org.apereo.cas.services.OidcRegisteredService;
-import java.util.Optional;
 
 /**
  * This is {@link OidcFederationTrustChainResolver}.

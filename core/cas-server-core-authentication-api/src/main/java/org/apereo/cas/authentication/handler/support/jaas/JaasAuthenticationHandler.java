@@ -1,29 +1,17 @@
 package org.apereo.cas.authentication.handler.support.jaas;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.Configuration;
-import javax.security.auth.login.FailedLoginException;
-import javax.security.auth.login.LoginContext;
-
-import java.io.File;
-import java.security.GeneralSecurityException;
-import java.security.URIParameter;
-import java.util.Arrays;
 
 /**
  * JAAS Authentication Handler for CAS. This is a simple bridge from CAS'

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import lombok.val;

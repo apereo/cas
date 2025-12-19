@@ -1,8 +1,7 @@
 package org.apereo.cas.oidc.assurance;
 
+import module java.base;
 import org.apereo.cas.oidc.assurance.entity.Verification;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link AssuranceVerificationSource}.

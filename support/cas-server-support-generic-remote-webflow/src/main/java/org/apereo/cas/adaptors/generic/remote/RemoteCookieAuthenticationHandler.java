@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic.remote;
 
+import module java.base;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
@@ -11,8 +12,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import javax.security.auth.login.FailedLoginException;
-import java.io.Serializable;
 
 /**
  * This is {@link RemoteCookieAuthenticationHandler}.

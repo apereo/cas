@@ -1,13 +1,11 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Generic CAS exception that sits at the top of the exception hierarchy. Provides

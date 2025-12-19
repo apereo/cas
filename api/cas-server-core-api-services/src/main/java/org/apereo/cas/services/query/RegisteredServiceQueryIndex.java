@@ -1,4 +1,5 @@
 package org.apereo.cas.services.query;
+import module java.base;
 
 /**
  * This is {@link RegisteredServiceQueryIndex}.

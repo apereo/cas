@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.MetadataEntityAttributeQuery;
@@ -14,12 +15,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link MetadataEntityAttributesAttributeReleasePolicy}.

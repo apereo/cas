@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.passwordless;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationPreProcessor;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.authentication.Authentication;
@@ -12,12 +13,9 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.util.Optional;
 
 /**
  * This is {@link SurrogatePasswordlessAuthenticationPreProcessor}.

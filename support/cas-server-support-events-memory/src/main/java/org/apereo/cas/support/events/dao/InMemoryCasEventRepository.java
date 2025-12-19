@@ -1,10 +1,9 @@
 package org.apereo.cas.support.events.dao;
 
+import module java.base;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.jspecify.annotations.NonNull;
-import java.util.UUID;
-import java.util.stream.Stream;
 
 /**
  * This is {@link InMemoryCasEventRepository}.

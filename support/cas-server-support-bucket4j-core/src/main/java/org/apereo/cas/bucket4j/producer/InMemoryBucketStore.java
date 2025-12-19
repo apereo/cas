@@ -1,8 +1,8 @@
 package org.apereo.cas.bucket4j.producer;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.bucket4j.BaseBucket4jProperties;
 import org.apereo.cas.configuration.support.Beans;
-
 import io.github.bucket4j.AbstractBucket;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
@@ -10,9 +10,6 @@ import io.github.bucket4j.Refill;
 import io.github.bucket4j.local.LocalBucketBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is {@link InMemoryBucketStore}.

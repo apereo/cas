@@ -1,13 +1,10 @@
 package org.apereo.cas.jmx.services;
 
+import module java.base;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ServicesManagerManagedResource}.

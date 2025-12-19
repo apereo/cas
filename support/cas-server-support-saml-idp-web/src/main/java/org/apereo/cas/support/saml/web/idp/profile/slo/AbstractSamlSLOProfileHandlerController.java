@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
+import module java.base;
+import module java.xml;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
@@ -33,9 +35,6 @@ import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import javax.xml.namespace.QName;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 /**
  * This is {@link AbstractSamlSLOProfileHandlerController}.

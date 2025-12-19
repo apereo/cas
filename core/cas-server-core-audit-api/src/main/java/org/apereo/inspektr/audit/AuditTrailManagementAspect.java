@@ -1,5 +1,11 @@
 package org.apereo.inspektr.audit;
 
+import module java.base;
+import org.apereo.cas.util.LoggingUtils;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.audit.annotation.Audits;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -8,19 +14,11 @@ import org.apereo.inspektr.common.spi.AuditActionDateProvider;
 import org.apereo.inspektr.common.spi.ClientInfoResolver;
 import org.apereo.inspektr.common.spi.DefaultClientInfoResolver;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apereo.cas.util.LoggingUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.jspecify.annotations.NonNull;
 import org.springframework.util.Assert;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * A POJO style aspect modularizing management of an audit trail data concern.

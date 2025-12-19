@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications;
 
+import module java.base;
 import org.apereo.cas.config.CasSlackMessagingAutoConfiguration;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

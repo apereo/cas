@@ -1,11 +1,8 @@
 package org.apereo.cas.notifications.push;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
-
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link DefaultNotificationSender}.

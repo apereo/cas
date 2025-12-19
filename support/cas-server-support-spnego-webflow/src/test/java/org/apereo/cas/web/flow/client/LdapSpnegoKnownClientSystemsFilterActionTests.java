@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow.client;
 
+import module java.base;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;

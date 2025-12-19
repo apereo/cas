@@ -1,12 +1,9 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.ticket.ExpirationPolicy;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.io.Serializable;
-import java.util.Optional;
 
 /**
  * This is {@link RegisteredServiceTicketGrantingTicketExpirationPolicy}.

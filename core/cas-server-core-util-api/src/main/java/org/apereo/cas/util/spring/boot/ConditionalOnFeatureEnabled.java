@@ -1,15 +1,9 @@
 package org.apereo.cas.util.spring.boot;
 
+import module java.base;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Conditional;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
  * This is {@link ConditionalOnFeatureEnabled}.

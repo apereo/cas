@@ -1,12 +1,10 @@
 package org.apereo.cas.configuration.model.support.okta;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import java.io.Serial;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link OktaPrincipalProvisioningProperties}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.authentication;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;

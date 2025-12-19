@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.services;
 
+import module java.base;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -11,12 +12,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * This is {@link CustomNamespaceWSFederationClaimsReleasePolicy}.

@@ -1,13 +1,10 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.security.cert.X509Certificate;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Extracts EDIPI as an attribute in addition to default attributes.

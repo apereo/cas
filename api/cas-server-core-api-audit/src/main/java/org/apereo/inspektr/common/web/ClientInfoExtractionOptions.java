@@ -1,13 +1,10 @@
 package org.apereo.inspektr.common.web;
 
+import module java.base;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link ClientInfoExtractionOptions}.

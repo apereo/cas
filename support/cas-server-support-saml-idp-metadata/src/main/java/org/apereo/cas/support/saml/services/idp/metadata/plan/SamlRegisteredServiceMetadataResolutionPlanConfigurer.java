@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.plan;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 
 /**

@@ -1,4 +1,5 @@
 package org.apereo.cas.notifications.sms;
+import module java.base;
 
 /**
  * This is {@link SmsSender}.

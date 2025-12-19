@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
@@ -9,11 +10,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.util.pattern.PathPattern;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link RestActuatorEndpointHandlerMapping}.

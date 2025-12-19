@@ -1,5 +1,6 @@
 package org.apereo.cas.web.saml2;
 
+import module java.base;
 import org.apereo.cas.config.CasDelegatedAuthenticationSaml2AutoConfiguration;
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClientBuilder;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;

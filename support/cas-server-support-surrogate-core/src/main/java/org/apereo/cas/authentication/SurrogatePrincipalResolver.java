@@ -1,20 +1,16 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
-
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link SurrogatePrincipalResolver}.

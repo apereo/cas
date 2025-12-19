@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
+import module java.base;
 import org.apereo.cas.authentication.BaseAuthenticationTests;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;

@@ -1,12 +1,10 @@
 package org.apereo.cas.token.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
-
 import lombok.NoArgsConstructor;
-
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import java.io.Serial;
 
 /**
  * This is {@link TokenWebApplicationService}.

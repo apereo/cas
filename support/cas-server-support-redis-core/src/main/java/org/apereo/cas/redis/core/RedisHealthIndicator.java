@@ -1,5 +1,6 @@
 package org.apereo.cas.redis.core;
 
+import module java.base;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -8,9 +9,6 @@ import org.springframework.boot.health.contributor.Health;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisConnectionUtils;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link RedisHealthIndicator}.

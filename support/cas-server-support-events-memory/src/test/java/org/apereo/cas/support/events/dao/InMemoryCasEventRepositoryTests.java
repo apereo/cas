@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasEventsInMemoryRepositoryAutoConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;

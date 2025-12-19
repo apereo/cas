@@ -1,5 +1,6 @@
 package org.apereo.cas.services.support;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.RegexUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -12,12 +13,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.io.Serial;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * The regex filter that is responsible to make sure only attributes that match a certain regex pattern

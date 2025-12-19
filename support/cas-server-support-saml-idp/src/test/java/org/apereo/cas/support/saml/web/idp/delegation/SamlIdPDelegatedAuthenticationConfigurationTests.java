@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.delegation;
 
+import module java.base;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;

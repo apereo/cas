@@ -1,16 +1,12 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import java.nio.charset.StandardCharsets;
-import java.security.Security;
-import java.util.Optional;
 
 /**
  * Default cipher implementation based on public keys.

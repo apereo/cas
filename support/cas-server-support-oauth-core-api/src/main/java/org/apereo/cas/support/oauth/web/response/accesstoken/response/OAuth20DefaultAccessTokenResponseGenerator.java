@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import module java.base;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -23,8 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JacksonJsonView;
 import tools.jackson.databind.json.JsonMapper;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link OAuth20DefaultAccessTokenResponseGenerator}.

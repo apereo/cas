@@ -1,10 +1,10 @@
 package org.apereo.inspektr.audit.spi.support;
 
+import module java.base;
+import lombok.Setter;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
-import lombok.Setter;
 import org.aspectj.lang.JoinPoint;
-import java.util.function.Function;
 
 /**
  * Abstract AuditResourceResolver for when the resource is the same regardless of an exception or not.

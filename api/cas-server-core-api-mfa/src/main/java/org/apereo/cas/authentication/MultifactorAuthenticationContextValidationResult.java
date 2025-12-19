@@ -1,10 +1,9 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-
-import java.util.Optional;
 
 /**
  * This is {@link MultifactorAuthenticationContextValidationResult}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.okta;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.okta.BaseOktaApiProperties;
 import org.apereo.cas.configuration.model.support.okta.OktaAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -15,7 +16,6 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link OktaConfigurationFactory}.

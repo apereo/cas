@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.web.controllers.rpt;
 
+import module java.base;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -10,9 +11,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.call.PhoneCallOperator;
@@ -16,8 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link DefaultCommunicationsManager}.

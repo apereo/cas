@@ -1,5 +1,6 @@
 package org.apereo.cas.integration.pac4j;
 
+import module java.base;
 import org.apereo.cas.pac4j.client.DelegatedClientNameExtractor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;

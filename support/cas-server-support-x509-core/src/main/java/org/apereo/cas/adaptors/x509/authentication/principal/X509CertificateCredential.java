@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonDeserializer;
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonSerializer;
 import org.apereo.cas.authentication.credential.AbstractCredential;
@@ -11,9 +12,7 @@ import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
 import tools.jackson.databind.annotation.JsonDeserialize;
 import tools.jackson.databind.annotation.JsonSerialize;
-import java.io.Serial;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 
 /**
  * An X.509 certificate credential.

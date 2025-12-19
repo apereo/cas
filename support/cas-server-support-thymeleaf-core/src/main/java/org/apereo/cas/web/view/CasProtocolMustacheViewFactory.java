@@ -1,12 +1,12 @@
 package org.apereo.cas.web.view;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.mustache.servlet.view.MustacheViewResolver;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.servlet.View;
-import java.util.Locale;
 
 /**
  * This is {@link CasProtocolMustacheViewFactory}.

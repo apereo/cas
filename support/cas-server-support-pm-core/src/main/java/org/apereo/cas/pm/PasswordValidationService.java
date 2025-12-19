@@ -1,4 +1,5 @@
 package org.apereo.cas.pm;
+import module java.base;
 
 /**
  * This is {@link PasswordValidationService}.

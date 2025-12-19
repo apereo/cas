@@ -1,5 +1,6 @@
 package org.apereo.cas.support.inwebo.service;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.core.util.ClientCertificateProperties;
@@ -20,9 +21,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import tools.jackson.databind.ObjectMapper;
-import javax.net.ssl.SSLHandshakeException;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

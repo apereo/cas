@@ -1,11 +1,9 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.RegisteredService;
-
 import org.springframework.core.Ordered;
-
-import java.io.Serializable;
 
 /**
  * This is {@link MultifactorAuthenticationFailureModeEvaluator}.

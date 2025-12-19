@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
-import java.util.Collection;
+import module java.base;
 
 /**
  * This is {@link PrincipalResolutionExecutionPlan}.

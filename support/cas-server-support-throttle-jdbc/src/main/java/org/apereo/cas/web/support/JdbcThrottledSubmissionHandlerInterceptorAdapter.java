@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import org.apereo.cas.throttle.AbstractInspektrAuditHandlerInterceptorAdapter;
 import org.apereo.cas.throttle.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.util.DateTimeUtils;
@@ -9,7 +10,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowMapper;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.UUID;
 
 /**
  * Works in conjunction with the Inspektr Library to block attempts to dictionary attack users.

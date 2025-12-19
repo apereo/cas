@@ -1,15 +1,13 @@
 package org.apereo.cas.authentication.credential;
 
+import module java.base;
 import org.apereo.cas.authentication.RememberMeCredential;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.io.Serial;
 
 /**
  * Handles both remember me services and username and password.

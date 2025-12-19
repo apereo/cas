@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.web.flow;
 
+import module java.base;
 import org.apereo.cas.adaptors.yubikey.AcceptAllYubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
@@ -12,7 +13,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.execution.Action;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

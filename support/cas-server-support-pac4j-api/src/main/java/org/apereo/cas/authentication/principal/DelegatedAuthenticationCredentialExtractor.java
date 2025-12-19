@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import org.pac4j.core.client.BaseClient;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Optional;
 
 /**
  * This is {@link DelegatedAuthenticationCredentialExtractor}.

@@ -1,8 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-
 import org.pac4j.core.context.WebContext;
 
 /**

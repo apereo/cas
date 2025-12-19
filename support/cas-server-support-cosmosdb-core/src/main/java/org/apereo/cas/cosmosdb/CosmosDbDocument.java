@@ -1,10 +1,8 @@
 package org.apereo.cas.cosmosdb;
 
+import module java.base;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link CosmosDbDocument}.

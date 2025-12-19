@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -17,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.Ordered;
-import java.util.List;
 
 /**
  * This is {@link OAuth20ServicesManagerRegisteredServiceLocator}.

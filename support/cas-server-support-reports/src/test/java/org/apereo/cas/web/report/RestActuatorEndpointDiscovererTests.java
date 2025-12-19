@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import module java.base;
 import org.apereo.cas.util.spring.RestActuatorEndpoint;
 import org.apereo.cas.util.spring.RestActuatorEndpointDiscoverer;
 import lombok.val;

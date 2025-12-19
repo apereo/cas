@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.jpa;
 
+import module java.base;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasJpaEventsAutoConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;

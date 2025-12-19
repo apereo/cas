@@ -1,15 +1,13 @@
 package org.apereo.cas.pm.jdbc;
 
+import module java.base;
 import org.apereo.cas.pm.impl.history.PasswordHistoryEntity;
-
 import lombok.Getter;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.io.Serial;
 
 /**
  * This is {@link JdbcPasswordHistoryEntity}.

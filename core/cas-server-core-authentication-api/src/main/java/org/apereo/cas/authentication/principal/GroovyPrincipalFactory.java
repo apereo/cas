@@ -1,14 +1,12 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Factory to create {@link SimplePrincipal} objects.

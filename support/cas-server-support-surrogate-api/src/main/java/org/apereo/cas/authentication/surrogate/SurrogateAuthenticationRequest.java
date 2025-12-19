@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
+import module java.base;
 import org.apereo.cas.authentication.MutableCredential;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,9 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link SurrogateAuthenticationRequest}.

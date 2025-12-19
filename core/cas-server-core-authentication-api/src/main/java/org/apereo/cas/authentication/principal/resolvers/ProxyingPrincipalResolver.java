@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
@@ -11,8 +12,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Provides the most basic means of principal resolution.

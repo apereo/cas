@@ -1,13 +1,11 @@
 package org.apereo.cas.web.view.attributes;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.text.StringEscapeUtils;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * This is {@link DefaultCas30ProtocolAttributesRenderer}.

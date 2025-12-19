@@ -1,5 +1,6 @@
 package org.apereo.cas.support.geo.maxmind;
 
+import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
@@ -16,10 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
-import java.net.InetAddress;
-import java.net.ProxySelector;
-import java.time.Duration;
-import java.util.Optional;
 
 /**
  * This is {@link MaxmindDatabaseGeoLocationService} that reads geo data

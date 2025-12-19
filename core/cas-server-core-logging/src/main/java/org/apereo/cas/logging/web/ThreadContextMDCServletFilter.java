@@ -1,5 +1,6 @@
 package org.apereo.cas.logging.web;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.RegexUtils;
@@ -18,12 +19,6 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.TimeZone;
-import java.util.UUID;
 
 /**
  * This is {@link ThreadContextMDCServletFilter}.

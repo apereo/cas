@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall;
 
+import module java.base;
 import org.apereo.cas.heimdall.engine.AuthorizationEngine;
 import org.apereo.cas.heimdall.engine.AuthorizationPrincipalParser;
 import org.apereo.cas.util.LoggingUtils;
@@ -22,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link HeimdallAuthorizationController}.

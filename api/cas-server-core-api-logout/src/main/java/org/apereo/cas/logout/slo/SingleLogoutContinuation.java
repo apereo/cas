@@ -1,13 +1,10 @@
 package org.apereo.cas.logout.slo;
 
+import module java.base;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.http.HttpMethod;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link SingleLogoutContinuation}.

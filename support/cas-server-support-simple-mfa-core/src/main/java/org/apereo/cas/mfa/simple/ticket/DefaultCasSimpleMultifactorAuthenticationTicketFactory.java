@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
@@ -8,8 +9,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
-import java.io.Serializable;
-import java.util.Map;
 
 /**
  * This is {@link DefaultCasSimpleMultifactorAuthenticationTicketFactory}.

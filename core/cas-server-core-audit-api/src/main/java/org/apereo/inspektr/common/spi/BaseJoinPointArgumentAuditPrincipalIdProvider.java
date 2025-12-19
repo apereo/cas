@@ -1,5 +1,6 @@
 package org.apereo.inspektr.common.spi;
 
+import module java.base;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.JoinPoint;

@@ -1,5 +1,6 @@
 package org.apereo.cas.webflow;
 
+import module java.base;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

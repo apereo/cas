@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
@@ -7,14 +8,9 @@ import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Optional;
 
 /**
  * This is {@link HandlePasswordExpirationWarningMessagesAction}.

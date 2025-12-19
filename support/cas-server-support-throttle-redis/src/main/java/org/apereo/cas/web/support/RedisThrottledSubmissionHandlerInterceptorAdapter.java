@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import org.apereo.cas.audit.RedisAuditTrailManager;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.throttle.AbstractInspektrAuditHandlerInterceptorAdapter;
@@ -9,9 +10,6 @@ import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.data.redis.core.BoundValueOperations;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Comparator;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Works in conjunction with a redis database to

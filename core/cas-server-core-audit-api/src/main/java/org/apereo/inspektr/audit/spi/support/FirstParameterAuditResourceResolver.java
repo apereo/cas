@@ -1,12 +1,11 @@
 package org.apereo.inspektr.audit.spi.support;
 
+import module java.base;
+import org.apereo.cas.util.AopUtils;
+import lombok.Setter;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
-import lombok.Setter;
-import org.apereo.cas.util.AopUtils;
 import org.aspectj.lang.JoinPoint;
-import java.util.List;
-import java.util.function.Function;
 
 /**
  * Converts the first argument object into a String resource identifier.

@@ -1,9 +1,8 @@
 package com.yubico.core;
 
+import module java.base;
 import com.yubico.webauthn.data.ByteArray;
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.util.function.Function;
 
 /**
  * WebAuthn cache.

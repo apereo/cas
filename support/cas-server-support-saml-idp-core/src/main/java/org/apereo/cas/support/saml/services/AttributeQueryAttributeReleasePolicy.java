@@ -1,10 +1,10 @@
 package org.apereo.cas.support.saml.services;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,10 +12,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link AttributeQueryAttributeReleasePolicy}.

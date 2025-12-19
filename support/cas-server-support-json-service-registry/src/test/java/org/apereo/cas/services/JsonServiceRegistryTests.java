@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
@@ -31,12 +32,6 @@ import tools.jackson.core.json.JsonFactory;
 import tools.jackson.dataformat.cbor.CBORFactory;
 import tools.jackson.dataformat.smile.SmileFactory;
 import tools.jackson.dataformat.yaml.YAMLFactory;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

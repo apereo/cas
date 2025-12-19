@@ -1,5 +1,6 @@
 package org.apereo.cas.support.inwebo.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.support.inwebo.service.response.InweboLoginSearchResponse;
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.web.flow.CasWebflowConstants;

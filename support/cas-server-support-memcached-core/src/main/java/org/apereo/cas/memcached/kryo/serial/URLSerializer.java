@@ -1,15 +1,12 @@
 package org.apereo.cas.memcached.kryo.serial;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import lombok.val;
-
-import java.net.URI;
-import java.net.URL;
 
 /**
  * Kryo serializer for {@link URL}.

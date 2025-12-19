@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.ldap.services;
 
+import module java.base;
 import org.apereo.cas.config.CasLdapServiceRegistryAutoConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.CasRegisteredService;

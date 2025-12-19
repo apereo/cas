@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyEvaluator;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,11 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import jakarta.persistence.PostLoad;
-import java.io.Serial;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link DefaultRegisteredServiceAccessStrategy}

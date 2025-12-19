@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.BaseCasCoreTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
@@ -32,8 +33,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import java.util.Map;
-import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

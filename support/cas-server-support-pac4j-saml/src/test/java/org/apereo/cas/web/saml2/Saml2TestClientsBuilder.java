@@ -1,5 +1,6 @@
 package org.apereo.cas.web.saml2;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
@@ -11,8 +12,6 @@ import org.apache.commons.io.FileUtils;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
-import java.io.File;
-import java.util.List;
 
 /**
  * This is {@link Saml2TestClientsBuilder}.

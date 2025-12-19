@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
+import module java.base;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
@@ -15,14 +16,7 @@ import org.opensaml.xmlsec.signature.SignableXMLObject;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.opensaml.xmlsec.signature.support.SignatureSupport;
 import org.springframework.beans.factory.InitializingBean;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * A metadata generator based on a predefined template.

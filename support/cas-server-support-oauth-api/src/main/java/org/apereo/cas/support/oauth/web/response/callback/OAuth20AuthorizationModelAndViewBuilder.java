@@ -1,11 +1,9 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.Map;
 
 /**
  * This is {@link OAuth20AuthorizationModelAndViewBuilder}.

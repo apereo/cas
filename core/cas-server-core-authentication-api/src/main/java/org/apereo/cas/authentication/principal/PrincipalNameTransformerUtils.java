@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
@@ -14,7 +15,6 @@ import org.apereo.cas.util.transforms.RegexPrincipalNameTransformer;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.util.ServiceLoader;
 
 /**
  * This is {@link PrincipalNameTransformerUtils}.

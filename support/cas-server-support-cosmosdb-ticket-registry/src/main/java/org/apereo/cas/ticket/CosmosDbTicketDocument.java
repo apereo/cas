@@ -1,12 +1,10 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link CosmosDbTicketDocument}.

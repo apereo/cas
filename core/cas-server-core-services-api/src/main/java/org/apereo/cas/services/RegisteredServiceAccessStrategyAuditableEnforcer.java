@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -18,8 +19,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link RegisteredServiceAccessStrategyAuditableEnforcer}.

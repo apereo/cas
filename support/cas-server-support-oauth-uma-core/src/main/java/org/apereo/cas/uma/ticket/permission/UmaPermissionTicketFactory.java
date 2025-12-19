@@ -1,10 +1,8 @@
 package org.apereo.cas.uma.ticket.permission;
 
+import module java.base;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
-
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * This is {@link UmaPermissionTicketFactory}.

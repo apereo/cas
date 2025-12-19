@@ -1,4 +1,5 @@
 package org.apereo.cas.acct;
+import module java.base;
 
 /**
  * This is {@link AccountRegistrationRequestValidator}.

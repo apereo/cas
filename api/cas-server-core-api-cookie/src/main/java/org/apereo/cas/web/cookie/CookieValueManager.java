@@ -1,11 +1,10 @@
 package org.apereo.cas.web.cookie;
 
+import module java.base;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.io.Serializable;
 
 /**
  * The {@link CookieValueManager} is responsible for

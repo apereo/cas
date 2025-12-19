@@ -1,11 +1,10 @@
 package org.apereo.cas.configuration.model.core.authentication.risk;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link RiskBasedAuthenticationGeoLocationProperties}.

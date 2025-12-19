@@ -1,5 +1,6 @@
 package org.apereo.cas.jdbc;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.AbstractQueryPersonAttributeDao;
 import org.apereo.cas.authentication.attribute.CaseCanonicalizationMode;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
@@ -11,10 +12,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import javax.sql.DataSource;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
+import module java.sql;
 
 /**
  * Provides common logic for executing a JDBC based query including building the WHERE clause SQL string.

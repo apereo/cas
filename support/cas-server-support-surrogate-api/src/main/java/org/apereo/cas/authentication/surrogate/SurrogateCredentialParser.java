@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
+import module java.base;
 import org.apereo.cas.authentication.MutableCredential;
-
-import java.util.Optional;
 
 /**
  * This is {@link SurrogateCredentialParser}.

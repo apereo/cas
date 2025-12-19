@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.attribute;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.UsernameAttributeProvider;
 import lombok.AllArgsConstructor;
@@ -9,8 +10,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Provides the username attribute based on a pre-configured string. Determines the username from a query Map based

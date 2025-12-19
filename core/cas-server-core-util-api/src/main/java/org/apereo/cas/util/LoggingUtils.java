@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.logging.DefaultLogMessageSummarizer;
 import lombok.experimental.UtilityClass;
@@ -8,9 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.Map;
-import java.util.Objects;
-import java.util.ServiceLoader;
 
 /**
  * This is {@link LoggingUtils}.

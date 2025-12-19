@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.ecp;
 
+import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -24,8 +25,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

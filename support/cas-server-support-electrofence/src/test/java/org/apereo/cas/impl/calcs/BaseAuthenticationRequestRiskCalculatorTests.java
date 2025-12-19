@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.calcs;
 
+import module java.base;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.authentication.CasSSLContext;
@@ -41,7 +42,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * This is {@link BaseAuthenticationRequestRiskCalculatorTests}.

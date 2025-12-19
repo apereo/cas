@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -12,8 +13,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.AbstractResourceBasedMessageSource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import java.util.Locale;
-import java.util.Properties;
 
 /**
  * An extension of the {@link ReloadableResourceBundleMessageSource}.

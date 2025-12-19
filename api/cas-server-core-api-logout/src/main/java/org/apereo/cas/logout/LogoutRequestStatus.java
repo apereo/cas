@@ -1,4 +1,5 @@
 package org.apereo.cas.logout;
+import module java.base;
 
 /**
  * Define the status of a logout request.

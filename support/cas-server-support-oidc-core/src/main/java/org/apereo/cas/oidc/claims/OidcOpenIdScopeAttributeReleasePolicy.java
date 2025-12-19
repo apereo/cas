@@ -1,12 +1,8 @@
 package org.apereo.cas.oidc.claims;
 
+import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link OidcOpenIdScopeAttributeReleasePolicy}.

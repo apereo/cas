@@ -1,17 +1,14 @@
 package org.apereo.cas.ticket.registry.pubsub.commands;
 
+import module java.base;
 import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.util.PublisherIdentifier;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.With;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link BaseMessageQueueCommand}.

@@ -1,8 +1,7 @@
 package org.apereo.cas.throttle;
 
+import module java.base;
 import org.springframework.web.servlet.HandlerInterceptor;
-
-import java.util.List;
 
 /**
  * This is {@link AuthenticationThrottlingExecutionPlan}.

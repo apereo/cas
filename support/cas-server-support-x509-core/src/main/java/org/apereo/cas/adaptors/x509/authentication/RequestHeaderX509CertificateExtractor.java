@@ -1,17 +1,13 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
-import java.util.Objects;
 
 /**
  * This class is adapted from the Tomcat SSLValve class and uses its parsing

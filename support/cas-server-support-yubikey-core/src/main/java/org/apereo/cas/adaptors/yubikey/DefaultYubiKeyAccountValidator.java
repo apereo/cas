@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
-
 import com.yubico.client.v2.ResponseStatus;
 import com.yubico.client.v2.YubicoClient;
 import lombok.RequiredArgsConstructor;

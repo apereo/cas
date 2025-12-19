@@ -1,7 +1,8 @@
 package org.apereo.inspektr.audit.spi.support;
 
-import org.apereo.inspektr.audit.annotation.Audit;
+import module java.base;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.aspectj.lang.JoinPoint;
 
 /**

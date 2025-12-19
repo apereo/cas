@@ -1,14 +1,10 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.util.NamedObject;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The release policy that decides how attributes are to be released for a given service.

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
+import module java.base;
 import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
@@ -22,11 +23,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

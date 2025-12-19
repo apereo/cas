@@ -1,17 +1,16 @@
 package org.apereo.cas.authentication.mfa.bypass.audit;
 
+import module java.base;
 import org.apereo.cas.authentication.bypass.AlwaysAllowMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.audit.MultifactorAuthenticationProviderBypassAuditResourceResolver;
 import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
-
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

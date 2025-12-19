@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.SystemMonitorHealthIndicator;
 import org.apereo.cas.test.CasTestExtension;

@@ -1,5 +1,6 @@
 package org.apereo.cas.metadata;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreConfigurationMetadataAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -18,7 +19,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

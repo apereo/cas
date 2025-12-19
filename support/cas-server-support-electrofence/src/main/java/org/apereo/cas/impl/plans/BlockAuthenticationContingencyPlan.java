@@ -1,14 +1,13 @@
 package org.apereo.cas.impl.plans;
 
+import module java.base;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Event;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

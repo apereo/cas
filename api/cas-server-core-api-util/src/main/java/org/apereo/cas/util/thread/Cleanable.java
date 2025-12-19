@@ -1,4 +1,5 @@
 package org.apereo.cas.util.thread;
+import module java.base;
 
 /**
  * Describes a resource that supports purging auditing, statistics, or

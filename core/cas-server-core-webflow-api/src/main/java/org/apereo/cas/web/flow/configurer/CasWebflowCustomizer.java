@@ -1,8 +1,7 @@
 package org.apereo.cas.web.flow.configurer;
 
+import module java.base;
 import org.springframework.core.Ordered;
-
-import java.util.List;
 
 /**
  * This is {@link CasWebflowCustomizer}.

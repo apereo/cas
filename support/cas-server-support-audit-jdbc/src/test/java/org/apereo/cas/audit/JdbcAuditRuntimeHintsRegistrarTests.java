@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
 import org.apereo.cas.nativex.JdbcAuditRuntimeHintsRegistrar;
 import lombok.val;

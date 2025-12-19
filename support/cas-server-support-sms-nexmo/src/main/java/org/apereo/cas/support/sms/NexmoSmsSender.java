@@ -1,9 +1,9 @@
 package org.apereo.cas.support.sms;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.sms.NexmoProperties;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.LoggingUtils;
-
 import com.nexmo.client.NexmoClient;
 import com.nexmo.client.sms.MessageStatus;
 import com.nexmo.client.sms.messages.TextMessage;

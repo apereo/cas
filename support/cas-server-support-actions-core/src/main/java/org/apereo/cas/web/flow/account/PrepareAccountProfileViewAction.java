@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.account;
 
+import module java.base;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -23,12 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import tools.jackson.databind.ObjectMapper;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Prepare the authenticated account for view.

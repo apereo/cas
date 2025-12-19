@@ -1,12 +1,11 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import com.hazelcast.query.extractor.ValueCollector;
 import com.hazelcast.query.extractor.ValueExtractor;
 import lombok.NoArgsConstructor;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.MapSession;
-
-import java.util.Optional;
 
 /**
  * This is {@link HazelcastSessionPrincipalNameExtractor}.

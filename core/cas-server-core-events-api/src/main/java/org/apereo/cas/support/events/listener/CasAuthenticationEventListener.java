@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.listener;
 
+import module java.base;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationDetectedEvent;
@@ -7,7 +8,6 @@ import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.util.spring.CasEventListener;
-
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 

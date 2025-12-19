@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.mail;
 
+import module java.base;
 import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -19,9 +20,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import jakarta.mail.internet.MimeMessage;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * This is {@link DefaultEmailSender}.

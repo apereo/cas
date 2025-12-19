@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
-
 import org.pac4j.core.client.BaseClient;
 import org.springframework.core.Ordered;
 

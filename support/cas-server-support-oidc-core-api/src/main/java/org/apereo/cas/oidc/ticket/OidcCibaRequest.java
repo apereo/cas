@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.ticket;
 
+import module java.base;
 import org.apereo.cas.ticket.OAuth20Token;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 

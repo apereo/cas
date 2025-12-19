@@ -1,10 +1,7 @@
 package org.apereo.cas.persondir;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 /**
  * This is {@link PersonDirectoryAttributeRepositoryPlan}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.account;
 
+import module java.base;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;

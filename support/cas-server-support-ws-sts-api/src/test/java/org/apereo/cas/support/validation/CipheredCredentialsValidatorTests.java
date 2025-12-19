@@ -1,7 +1,7 @@
 package org.apereo.cas.support.validation;
 
+import module java.base;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.val;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.handler.RequestData;
@@ -9,9 +9,6 @@ import org.apache.wss4j.dom.message.token.UsernameToken;
 import org.apache.wss4j.dom.validate.Credential;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

@@ -1,12 +1,11 @@
 package org.apereo.cas.util.jpa;
 
+import module java.base;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link MultivaluedMapToJsonAttributeConverter}.

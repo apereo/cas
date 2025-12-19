@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import lombok.RequiredArgsConstructor;
@@ -7,13 +8,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link RedisAuditTrailManager}.

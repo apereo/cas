@@ -1,7 +1,7 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.AbstractCredential;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,12 +9,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.io.Serial;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class represents the basic elements of the WsFederation token.

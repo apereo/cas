@@ -1,9 +1,9 @@
 package org.apereo.cas.support.wsfederation;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.wsfederation.authentication.crypto.WsFederationCertificateProvider;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
-
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -13,11 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.xmlsec.signature.Signature;
 import org.springframework.core.io.ClassPathResource;
-
-import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

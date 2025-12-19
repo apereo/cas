@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.time.ZonedDateTime;
 
 /**
  * Strategy that determines if the ticket is expired. Implementations of the

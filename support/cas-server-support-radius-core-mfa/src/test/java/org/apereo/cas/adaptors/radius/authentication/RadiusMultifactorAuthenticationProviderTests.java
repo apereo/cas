@@ -1,16 +1,15 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
+import module java.base;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.BaseAbstractMultifactorAuthenticationProviderTests;
 import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import net.jradius.exception.TimeoutException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
-import java.io.Serial;
-import java.util.Map;
+import module java.base;
 
 /**
  * Describes a principal resolution error, which is a subcategory of authentication error.

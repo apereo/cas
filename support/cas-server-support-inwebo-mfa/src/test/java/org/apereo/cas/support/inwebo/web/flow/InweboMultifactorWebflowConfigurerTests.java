@@ -1,5 +1,6 @@
 package org.apereo.cas.support.inwebo.web.flow;
 
+import module java.base;
 import org.apereo.cas.support.inwebo.config.BaseInweboConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;

@@ -1,16 +1,13 @@
 package org.apereo.cas.configuration.model.support.git.services;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.FileSystemResource;
-
-import java.io.File;
-import java.io.Serial;
 
 /**
  * This is {@link GitServiceRegistryProperties}.

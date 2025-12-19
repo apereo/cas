@@ -1,4 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
+import module java.base;
 
 /**
  * This is {@link AbstractCasMultifactorAuthenticationWebflowEventResolver} that provides parent

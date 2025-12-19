@@ -1,7 +1,7 @@
 package org.apereo.cas.mfa.simple.validation;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
-import java.util.Map;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationAccountService}.

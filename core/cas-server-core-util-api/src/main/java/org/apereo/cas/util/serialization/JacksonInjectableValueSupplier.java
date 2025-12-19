@@ -1,16 +1,12 @@
 package org.apereo.cas.util.serialization;
 
+import module java.base;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import lombok.val;
 import org.springframework.data.util.DirectFieldAccessFallbackBeanWrapper;
 import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.InjectableValues;
-import java.io.Serial;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * This is {@link JacksonInjectableValueSupplier}.

@@ -1,10 +1,8 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.DuoSecurityBypassCode;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link DuoSecurityAdminApiService}.

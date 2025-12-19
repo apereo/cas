@@ -1,8 +1,8 @@
 package org.apereo.cas.sba;
 
+import module java.base;
 import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
 import de.codecentric.boot.admin.server.config.EnableAdminServer;
-import java.util.List;
 
 /**
  * This is {@link CasSpringBootAdminServerInitializer}.

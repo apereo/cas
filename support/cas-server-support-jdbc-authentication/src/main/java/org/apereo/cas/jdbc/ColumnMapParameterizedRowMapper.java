@@ -1,12 +1,11 @@
 package org.apereo.cas.jdbc;
 
+import module java.base;
+import module java.sql;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Map;
 
 /**
  * Clone of {@link ColumnMapRowMapper}

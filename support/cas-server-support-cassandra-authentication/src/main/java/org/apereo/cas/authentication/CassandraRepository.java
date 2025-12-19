@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
-import java.util.List;
-import java.util.Map;
+import module java.base;
 
 /**
  * This is {@link CassandraRepository}.

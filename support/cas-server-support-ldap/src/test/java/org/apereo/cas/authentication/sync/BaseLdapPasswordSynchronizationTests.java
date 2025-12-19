@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.sync;
 
+import module java.base;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;

@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.impl;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -16,17 +17,11 @@ import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.UriUtils;
-
-import java.io.Serializable;
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link DefaultPasswordResetUrlBuilder}.

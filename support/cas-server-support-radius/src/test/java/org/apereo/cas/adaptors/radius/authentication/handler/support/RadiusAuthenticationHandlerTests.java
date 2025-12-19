@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.radius.authentication.handler.support;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;

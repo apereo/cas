@@ -1,7 +1,7 @@
 package org.apereo.cas.memcached.kryo.serial;
 
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;

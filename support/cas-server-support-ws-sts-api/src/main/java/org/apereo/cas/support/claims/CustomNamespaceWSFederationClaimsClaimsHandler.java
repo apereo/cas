@@ -1,7 +1,7 @@
 package org.apereo.cas.support.claims;
 
+import module java.base;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,11 +9,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rt.security.claims.Claim;
 import org.apache.cxf.sts.claims.ClaimsParameters;
-
-import java.io.Serial;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link CustomNamespaceWSFederationClaimsClaimsHandler}.

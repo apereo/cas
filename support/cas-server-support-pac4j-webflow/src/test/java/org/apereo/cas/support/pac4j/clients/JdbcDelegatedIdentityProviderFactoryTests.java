@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.clients;
 
+import module java.base;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.clients.JdbcDelegatedIdentityProviderFactory;
 import org.apereo.cas.test.CasTestExtension;
@@ -15,7 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcOperations;
-import javax.sql.DataSource;
+import module java.sql;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.policy;
 
-import java.security.GeneralSecurityException;
+import module java.base;
 
 
 /**

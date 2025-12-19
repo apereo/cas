@@ -1,5 +1,6 @@
 package org.apereo.cas.sms;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.email.MailjetProperties;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.LoggingUtils;

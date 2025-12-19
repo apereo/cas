@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.jpa;
 
+import module java.base;
 import org.apereo.cas.support.events.dao.CasEvent;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.io.Serial;
 
 /**
  * This is {@link JpaCasEvent}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import module java.base;
 import org.apereo.cas.config.CasAcceptableUsagePolicyMongoDbAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

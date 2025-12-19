@@ -1,5 +1,6 @@
 package org.apereo.cas.qr.web;
 
+import module java.base;
 import org.apereo.cas.qr.QRAuthenticationConstants;
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidationRequest;
 import org.apereo.cas.qr.validation.QRAuthenticationTokenValidatorService;
@@ -18,9 +19,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.RestController;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link QRAuthenticationChannelController}.

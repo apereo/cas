@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.jasypt;
 
+import module java.base;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -10,7 +11,6 @@ import org.jasypt.registry.AlgorithmRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.shell.core.command.annotation.Command;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * This is {@link JasyptTestAlgorithmsCommand}.

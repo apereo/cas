@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.trusted.authentication.handler.support;
 
+import module java.base;
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -7,7 +8,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 

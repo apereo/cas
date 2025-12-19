@@ -1,12 +1,11 @@
 package org.apereo.cas;
 
+import module java.base;
+import module java.sql;
 import lombok.val;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
-import java.sql.DriverManager;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This is {@link JdbcServletContextListener} that properly

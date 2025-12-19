@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.services;
 
+import module java.base;
 import org.apereo.cas.authentication.BaseAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -22,8 +23,6 @@ import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.jee.context.JEEContext;
-import java.io.Serial;
-import java.util.Optional;
 
 /**
  * This is {@link OAuth20AuthenticationServiceSelectionStrategy}.

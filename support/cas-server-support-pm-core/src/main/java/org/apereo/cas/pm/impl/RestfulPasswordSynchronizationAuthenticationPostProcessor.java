@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.impl;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.AuthenticationTransaction;
@@ -19,9 +20,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import tools.jackson.databind.ObjectMapper;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * This is {@link RestfulPasswordSynchronizationAuthenticationPostProcessor}.

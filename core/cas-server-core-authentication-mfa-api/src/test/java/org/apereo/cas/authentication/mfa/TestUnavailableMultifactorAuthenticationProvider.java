@@ -1,12 +1,10 @@
 package org.apereo.cas.authentication.mfa;
 
+import module java.base;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.io.Serial;
 
 /**
  * This is {@link TestUnavailableMultifactorAuthenticationProvider}.

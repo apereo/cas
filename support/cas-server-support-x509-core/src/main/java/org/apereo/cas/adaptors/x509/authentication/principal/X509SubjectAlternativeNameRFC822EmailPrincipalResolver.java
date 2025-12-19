@@ -1,12 +1,11 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 

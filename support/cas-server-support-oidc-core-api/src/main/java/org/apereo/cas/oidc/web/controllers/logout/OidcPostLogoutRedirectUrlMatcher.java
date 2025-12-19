@@ -1,4 +1,5 @@
 package org.apereo.cas.oidc.web.controllers.logout;
+import module java.base;
 
 /**
  * Controls how the RP-given postLogoutRedirectUrl is matched against a

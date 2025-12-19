@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -31,10 +32,6 @@ import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Authenticator for user credentials authentication.

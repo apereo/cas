@@ -1,10 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
+import module java.base;
 import lombok.Builder;
 import org.springframework.data.annotation.Id;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
 
 /**
  * This is {@link RedisTicketDocument}.

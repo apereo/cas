@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import lombok.experimental.UtilityClass;
 import org.aspectj.lang.JoinPoint;
 

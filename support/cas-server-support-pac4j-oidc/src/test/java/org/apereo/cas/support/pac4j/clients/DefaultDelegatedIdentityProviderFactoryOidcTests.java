@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.clients;
 
+import module java.base;
 import org.apereo.cas.config.CasDelegatedAuthenticationOidcAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.oauth.client.GitHubClient;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

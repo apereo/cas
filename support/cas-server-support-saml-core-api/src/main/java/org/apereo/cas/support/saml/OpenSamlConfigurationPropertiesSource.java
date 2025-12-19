@@ -1,10 +1,10 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
 import lombok.val;
 import org.opensaml.core.config.ConfigurationProperties;
 import org.opensaml.core.config.ConfigurationPropertiesSource;
 import org.opensaml.core.config.provider.PropertiesAdapter;
-import java.util.Properties;
 
 /**
  * This is {@link OpenSamlConfigurationPropertiesSource}.

@@ -1,9 +1,8 @@
 package org.apereo.cas.oidc.web.controllers.dynareg;
 
+import module java.base;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationRequest;
 import org.apereo.cas.services.OidcRegisteredService;
-
-import java.util.Optional;
 
 /**
  * This is {@link OidcClientRegistrationRequestTranslator}.

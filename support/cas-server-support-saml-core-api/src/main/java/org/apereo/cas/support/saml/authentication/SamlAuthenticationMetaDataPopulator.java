@@ -1,18 +1,15 @@
 package org.apereo.cas.support.saml.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
-
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Capture SAML authentication metadata.

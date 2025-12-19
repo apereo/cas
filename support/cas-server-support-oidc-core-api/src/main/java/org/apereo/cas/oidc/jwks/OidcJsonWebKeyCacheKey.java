@@ -1,15 +1,12 @@
 package org.apereo.cas.oidc.jwks;
 
+import module java.base;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.DigestUtils;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link OidcJsonWebKeyCacheKey}.

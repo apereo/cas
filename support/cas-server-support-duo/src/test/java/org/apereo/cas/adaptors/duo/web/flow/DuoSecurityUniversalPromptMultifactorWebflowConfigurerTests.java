@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;

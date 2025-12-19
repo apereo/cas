@@ -1,14 +1,10 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

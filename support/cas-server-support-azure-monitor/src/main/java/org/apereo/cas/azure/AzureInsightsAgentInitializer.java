@@ -1,5 +1,6 @@
 package org.apereo.cas.azure;
 
+import module java.base;
 import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
 import com.microsoft.applicationinsights.attach.ApplicationInsights;
 import lombok.val;

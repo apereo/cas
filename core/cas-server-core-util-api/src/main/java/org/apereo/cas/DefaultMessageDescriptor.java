@@ -1,13 +1,12 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.authentication.MessageDescriptor;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.apache.commons.lang3.ArrayUtils;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * Simple parameterized message descriptor with a code that refers to a message bundle key and a default

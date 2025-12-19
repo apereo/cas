@@ -1,5 +1,6 @@
 package org.apereo.cas.logout.slo;
 
+import module java.base;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
@@ -13,9 +14,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ApplicationContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link DefaultSingleLogoutRequestExecutor}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall.engine;
 
+import module java.base;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.AuthorizationResponse;
 import org.apereo.cas.heimdall.authorizer.ResourceAuthorizer;
@@ -8,7 +9,6 @@ import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import java.util.List;
 
 /**
  * This is {@link DefaultAuthorizationEngine}.

@@ -1,7 +1,7 @@
 package org.apereo.cas.logging;
 
+import module java.base;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.logging.log4j.core.LogEvent;

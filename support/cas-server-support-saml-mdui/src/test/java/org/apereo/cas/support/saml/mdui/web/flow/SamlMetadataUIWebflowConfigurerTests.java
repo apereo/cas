@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasSamlMetadataUIAutoConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;

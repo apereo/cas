@@ -1,16 +1,13 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link DelegatedClientIdentityProviderConfiguration}.

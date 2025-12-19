@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall.authorizer.repository;
 
+import module java.base;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResources;
@@ -13,13 +14,6 @@ import org.apache.commons.io.FileUtils;
 import org.hjson.JsonValue;
 import org.springframework.util.Assert;
 import tools.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.FileReader;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is {@link JsonAuthorizableResourceRepository}.

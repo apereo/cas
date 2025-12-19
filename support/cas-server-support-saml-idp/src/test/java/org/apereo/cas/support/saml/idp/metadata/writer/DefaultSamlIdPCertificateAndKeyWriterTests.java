@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.writer;
 
+import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
-import java.io.StringWriter;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,14 +1,11 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.net.URI;
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.jar.Manifest;
 
 /**
  * Class that exposes the CAS version. Fetches the "Implementation-Version"

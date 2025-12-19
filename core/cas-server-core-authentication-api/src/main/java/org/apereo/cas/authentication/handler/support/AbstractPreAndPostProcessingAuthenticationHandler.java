@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
+import module java.base;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
@@ -10,9 +11,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.jspecify.annotations.NonNull;
-import javax.security.auth.login.FailedLoginException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Abstract authentication handler that allows deployers to utilize the bundled

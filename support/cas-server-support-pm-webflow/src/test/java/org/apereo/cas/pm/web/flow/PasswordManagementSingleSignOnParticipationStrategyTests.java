@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow;
 
+import module java.base;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.actions.BasePasswordManagementActionTests;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import java.io.Serializable;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

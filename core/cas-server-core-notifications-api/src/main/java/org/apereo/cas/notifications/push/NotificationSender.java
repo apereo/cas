@@ -1,10 +1,8 @@
 package org.apereo.cas.notifications.push;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
-
 import org.springframework.core.Ordered;
-
-import java.util.Map;
 
 /**
  * This is {@link NotificationSender}.

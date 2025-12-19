@@ -1,7 +1,7 @@
 package org.apereo.cas.util.jwt;
 
+import module java.base;
 import org.apereo.cas.util.EncodingUtils;
-
 import lombok.val;
 import org.jooq.lambda.UncheckedException;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -10,12 +10,7 @@ import org.jose4j.keys.AesKey;
 import org.jose4j.lang.InvalidAlgorithmException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Set;
-
-import static org.apereo.cas.util.junit.Assertions.*;
+import static org.apereo.cas.util.junit.Assertions.assertThrowsWithRootCause;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
+import module java.base;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;

@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks.generator;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.oidc.AbstractOidcTests;
@@ -15,10 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.context.TestPropertySource;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Date;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

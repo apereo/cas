@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.RedisAuditTrailManager;
 import org.apereo.cas.authentication.CasSSLContext;
@@ -10,7 +11,6 @@ import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.jooq.lambda.Unchecked;

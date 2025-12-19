@@ -1,15 +1,13 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
-
 import lombok.val;
 import org.apache.wss4j.common.saml.SAMLKeyInfo;
 import org.apache.wss4j.common.saml.SamlAssertionWrapper;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.security.cert.X509Certificate;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

@@ -1,11 +1,11 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.apereo.cas.util.gen.DefaultLongNumericGenerator;
 import org.apereo.cas.util.gen.NumericGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
-
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;

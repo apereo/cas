@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.authentication.policy.AllCredentialsAuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.policy.AllHandlersAuthenticationPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.policy.AnyCredentialAuthenticationPolicyProperties;
@@ -12,10 +13,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Configuration properties class for cas.authn.policy.

@@ -1,5 +1,6 @@
 package org.apereo.cas.cassandra;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
 import org.apereo.cas.util.LoggingUtils;
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -16,11 +17,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.data.cassandra.core.cql.CqlTemplate;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLParameters;
-import java.net.InetSocketAddress;
-import java.time.Duration;
 
 /**
  * This is {@link DefaultCassandraSessionFactory}.

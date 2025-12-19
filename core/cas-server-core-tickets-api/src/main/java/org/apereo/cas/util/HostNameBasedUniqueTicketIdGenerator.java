@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;

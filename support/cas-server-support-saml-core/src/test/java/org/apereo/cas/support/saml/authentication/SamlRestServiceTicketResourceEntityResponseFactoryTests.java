@@ -1,14 +1,13 @@
 package org.apereo.cas.support.saml.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

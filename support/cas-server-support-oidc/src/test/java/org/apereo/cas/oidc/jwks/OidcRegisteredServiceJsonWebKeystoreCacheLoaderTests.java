@@ -1,13 +1,10 @@
 package org.apereo.cas.oidc.jwks;
 
+import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

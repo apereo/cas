@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
+import module java.base;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -18,10 +19,6 @@ import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
-import java.nio.charset.StandardCharsets;
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

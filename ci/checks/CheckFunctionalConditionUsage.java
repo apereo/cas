@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
+import module java.base;
 
 /**
  * This is {@link CheckFunctionalConditionUsage}.

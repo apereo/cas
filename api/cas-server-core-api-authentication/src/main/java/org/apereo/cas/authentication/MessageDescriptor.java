@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.io.Serializable;
 
 /**
  * Simple parameterized message descriptor with a code that refers to a message bundle key and a default

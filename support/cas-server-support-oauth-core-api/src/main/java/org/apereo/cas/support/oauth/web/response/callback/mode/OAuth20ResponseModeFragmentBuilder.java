@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.callback.mode;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeBuilder;
@@ -13,9 +14,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OAuth20ResponseModeFragmentBuilder}.

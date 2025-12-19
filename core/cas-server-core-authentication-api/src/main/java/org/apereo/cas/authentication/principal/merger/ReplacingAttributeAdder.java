@@ -1,8 +1,6 @@
 package org.apereo.cas.authentication.principal.merger;
 
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
+import module java.base;
 
 /**
  * Attribute merge strategy whereby considered attributes over-write

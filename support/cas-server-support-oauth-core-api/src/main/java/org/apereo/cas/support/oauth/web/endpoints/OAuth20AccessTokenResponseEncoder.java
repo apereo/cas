@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -17,8 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.web.servlet.ModelAndView;
-import java.util.LinkedHashMap;
-import java.util.Optional;
 
 /**
  * This is {@link OAuth20AccessTokenResponseEncoder}.

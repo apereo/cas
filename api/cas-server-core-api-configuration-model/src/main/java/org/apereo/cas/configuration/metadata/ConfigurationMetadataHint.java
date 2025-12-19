@@ -1,13 +1,11 @@
 package org.apereo.cas.configuration.metadata;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.boot.configurationmetadata.ValueProvider;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link ConfigurationMetadataHint}.

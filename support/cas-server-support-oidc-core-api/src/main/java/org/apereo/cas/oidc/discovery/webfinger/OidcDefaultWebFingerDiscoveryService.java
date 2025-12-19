@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.discovery.webfinger;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcWebFingerProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
@@ -16,10 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link OidcDefaultWebFingerDiscoveryService}.

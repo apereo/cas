@@ -1,15 +1,13 @@
 package org.apereo.cas.web.flow.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.DefaultChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.util.List;
 
 /**
  * This is {@link ChainingMultifactorAuthenticationProviderSelector}.

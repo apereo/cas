@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -16,7 +17,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.State;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.TransitionableState;
-import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.jpa;
 
+import module java.base;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;

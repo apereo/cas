@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks;
 
+import module java.base;
 import org.apereo.cas.services.OidcRegisteredService;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.val;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationContext;
-import java.util.Optional;
 
 /**
  * This is {@link OidcRegisteredServiceJsonWebKeystoreCacheLoader}.

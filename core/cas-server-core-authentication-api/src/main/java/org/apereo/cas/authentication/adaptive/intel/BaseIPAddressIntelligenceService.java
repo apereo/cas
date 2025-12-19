@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import lombok.AccessLevel;
@@ -7,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link BaseIPAddressIntelligenceService}.

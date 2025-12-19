@@ -1,5 +1,6 @@
 package org.apereo.cas.metadata;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +11,6 @@ import org.springframework.boot.context.properties.bind.BindContext;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.source.ConfigurationProperty;
 import org.springframework.boot.context.properties.source.ConfigurationPropertyName;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link DeprecatedElementsBindHandler}.

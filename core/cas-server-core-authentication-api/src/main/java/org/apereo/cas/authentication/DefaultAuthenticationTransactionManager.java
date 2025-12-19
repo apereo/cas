@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionCompletedEvent;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;

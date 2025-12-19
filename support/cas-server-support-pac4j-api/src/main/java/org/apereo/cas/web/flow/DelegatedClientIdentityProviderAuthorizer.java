@@ -1,17 +1,15 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.Client;
 import org.springframework.webflow.execution.RequestContext;
-
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 
 /**
  * This is {@link DelegatedClientIdentityProviderAuthorizer}.

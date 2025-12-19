@@ -1,4 +1,5 @@
 package org.apereo.cas.util.spring.boot;
+import module java.base;
 
 
 /**

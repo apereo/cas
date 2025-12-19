@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.passwordless.DuoSecurityPasswordlessUserAccountStore;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoSecurityVerifyPasswordlessAuthenticationAction;
@@ -26,7 +27,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.execution.Action;
-import java.util.List;
 
 /**
  * This is {@link DuoSecurityPasswordlessAuthenticationConfiguration}.

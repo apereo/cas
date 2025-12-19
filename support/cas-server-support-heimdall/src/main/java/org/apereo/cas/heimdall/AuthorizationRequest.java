@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.heimdall.authzen.AuthZenAction;
 import org.apereo.cas.heimdall.authzen.AuthZenResource;
@@ -14,9 +15,6 @@ import lombok.ToString;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import org.springframework.validation.annotation.Validated;
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link AuthorizationRequest}.

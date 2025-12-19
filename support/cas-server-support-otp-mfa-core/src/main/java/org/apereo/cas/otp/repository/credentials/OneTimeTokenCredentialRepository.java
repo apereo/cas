@@ -1,8 +1,7 @@
 package org.apereo.cas.otp.repository.credentials;
 
+import module java.base;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-
-import java.util.Collection;
 
 /**
  * This is {@link OneTimeTokenCredentialRepository}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token.ciba;
 
+import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcCibaRequest;
@@ -8,7 +9,6 @@ import org.apereo.cas.services.OidcRegisteredService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import java.util.Map;
 
 /**
  * This is {@link CibaPollTokenDeliveryHandler}.

@@ -1,8 +1,6 @@
 package org.apereo.inspektr.common.spi;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.function.Supplier;
+import module java.base;
 
 /**
  * This is {@link AuditActionDateProvider}.

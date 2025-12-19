@@ -1,10 +1,9 @@
 package org.apereo.cas.ticket.expiration;
 
-
+import module java.base;
 import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,10 +14,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.io.Serial;
-import java.time.Duration;
-import java.time.ZonedDateTime;
 
 /**
  * Implementation of an expiration policy that adds the concept of saying that a

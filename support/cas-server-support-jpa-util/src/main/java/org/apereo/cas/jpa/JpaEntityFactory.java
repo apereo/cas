@@ -1,4 +1,5 @@
 package org.apereo.cas.jpa;
+import module java.base;
 
 /**
  * This is {@link JpaEntityFactory}.

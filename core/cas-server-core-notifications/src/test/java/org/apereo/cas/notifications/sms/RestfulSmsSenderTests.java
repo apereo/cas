@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.sms;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.BaseNotificationTests;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -21,9 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

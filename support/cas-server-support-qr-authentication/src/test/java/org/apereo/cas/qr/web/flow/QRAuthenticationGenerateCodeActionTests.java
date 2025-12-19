@@ -1,5 +1,6 @@
 package org.apereo.cas.qr.web.flow;
 
+import module java.base;
 import org.apereo.cas.qr.BaseQRAuthenticationTokenValidatorServiceTests;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;

@@ -1,10 +1,10 @@
 package org.apereo.cas.services.web;
 
+import module java.base;
 import org.apereo.cas.web.theme.ThemeResolver;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

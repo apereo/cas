@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import net.shibboleth.shared.component.DestructableComponent;
@@ -28,7 +29,6 @@ import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.core.xml.io.Unmarshaller;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.List;
 
 /**
  * This is {@link CoreSamlRuntimeHints}.

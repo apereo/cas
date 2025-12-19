@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
@@ -20,11 +21,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasSimpleMultifactorSendEmail}.

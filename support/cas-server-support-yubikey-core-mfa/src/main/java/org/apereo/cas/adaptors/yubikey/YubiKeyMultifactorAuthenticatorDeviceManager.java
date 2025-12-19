@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
@@ -8,9 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link YubiKeyMultifactorAuthenticatorDeviceManager}.

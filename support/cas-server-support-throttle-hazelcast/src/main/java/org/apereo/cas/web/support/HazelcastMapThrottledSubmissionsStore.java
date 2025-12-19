@@ -1,13 +1,10 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.throttle.BaseMappableThrottledSubmissionsStore;
-
 import com.hazelcast.map.IMap;
 import lombok.val;
-
-import java.util.Map;
-import java.util.function.Predicate;
 
 /**
  * This is {@link HazelcastMapThrottledSubmissionsStore}.

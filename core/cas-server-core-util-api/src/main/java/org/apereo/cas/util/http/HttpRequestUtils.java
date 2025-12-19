@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.LoggingUtils;
@@ -24,15 +25,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link HttpRequestUtils}.

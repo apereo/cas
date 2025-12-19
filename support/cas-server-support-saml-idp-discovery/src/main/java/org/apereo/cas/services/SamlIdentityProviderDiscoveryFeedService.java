@@ -1,11 +1,10 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.entity.SamlIdentityProviderEntity;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Collection;
 
 /**
  * This is {@link SamlIdentityProviderDiscoveryFeedService}.

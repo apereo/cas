@@ -1,4 +1,5 @@
 package org.apereo.cas.authentication;
+import module java.base;
 
 /**
  * The {@link AuthenticationTransactionManager} deals exclusively with authentication concepts

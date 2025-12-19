@@ -1,5 +1,6 @@
 package org.apereo.cas.web.saml2;
 
+import module java.base;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -49,14 +50,6 @@ import org.pac4j.saml.store.EmptyStoreFactory;
 import org.pac4j.saml.store.HttpSessionStoreFactory;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import java.time.Period;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DelegatedClientSaml2Builder}.

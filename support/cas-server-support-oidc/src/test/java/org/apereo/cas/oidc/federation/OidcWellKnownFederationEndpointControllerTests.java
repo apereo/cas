@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.federation;
 
+import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.junit.jupiter.api.Tag;

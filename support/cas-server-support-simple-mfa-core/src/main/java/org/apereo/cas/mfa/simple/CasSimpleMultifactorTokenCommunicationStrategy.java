@@ -1,8 +1,7 @@
 package org.apereo.cas.mfa.simple;
 
+import module java.base;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
-
-import java.util.EnumSet;
 
 /**
  * This is {@link CasSimpleMultifactorTokenCommunicationStrategy}.

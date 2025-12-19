@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreConfigurationWatchAutoConfiguration;
 import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreStandaloneBootstrapAutoConfiguration;

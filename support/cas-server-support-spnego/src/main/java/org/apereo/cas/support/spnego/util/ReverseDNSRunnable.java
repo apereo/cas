@@ -1,13 +1,11 @@
 package org.apereo.cas.support.spnego.util;
 
+import module java.base;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * Utility class to perform DNS work in a threaded, timeout-able way

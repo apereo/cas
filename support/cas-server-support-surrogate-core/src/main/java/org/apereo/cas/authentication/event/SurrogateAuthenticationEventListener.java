@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.event;
 
+import module java.base;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
 import org.apereo.cas.util.spring.CasEventListener;

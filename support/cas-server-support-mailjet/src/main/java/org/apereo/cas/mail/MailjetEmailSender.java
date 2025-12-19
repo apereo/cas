@@ -1,5 +1,6 @@
 package org.apereo.cas.mail;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
@@ -18,8 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.MessageSource;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link MailjetEmailSender}.

@@ -1,13 +1,10 @@
 package org.apereo.cas.util.cipher;
 
+import module java.base;
 import org.apereo.cas.util.crypto.IdentifiableKey;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
-
-import java.io.Serial;
-import java.security.Key;
 
 /**
  * This is {@link BasicIdentifiableKey}.

@@ -1,7 +1,7 @@
 package org.apereo.cas.acct;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
-
 import lombok.experimental.UtilityClass;
 import org.springframework.webflow.execution.RequestContext;
 

@@ -1,13 +1,12 @@
 package org.apereo.cas.token;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

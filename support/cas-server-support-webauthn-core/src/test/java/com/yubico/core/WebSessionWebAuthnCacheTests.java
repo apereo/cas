@@ -1,15 +1,13 @@
 package com.yubico.core;
 
-import com.yubico.webauthn.data.*;
+import module java.base;
+import com.yubico.webauthn.data.ByteArray;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
-
-import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

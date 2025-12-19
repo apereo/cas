@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.factory;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.CasModelRegisteredService;
@@ -20,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.util.Map;
 
 /**
  * The {@link DefaultProxyTicketFactory} is responsible for

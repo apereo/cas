@@ -1,14 +1,11 @@
 package org.apereo.cas.authentication.audit;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.webflow.execution.Event;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link SurrogateEligibilitySelectionAuditResourceResolver}.

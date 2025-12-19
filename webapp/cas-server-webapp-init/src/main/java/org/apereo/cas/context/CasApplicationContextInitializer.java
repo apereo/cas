@@ -1,12 +1,12 @@
 package org.apereo.cas.context;
 
+import module java.base;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.metadata.CasConfigurationPropertiesValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.util.List;
 
 /**
  * This is {@link CasApplicationContextInitializer}.

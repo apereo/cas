@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.factory;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.CasRegisteredService;
@@ -10,8 +11,6 @@ import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.util.List;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

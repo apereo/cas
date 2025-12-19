@@ -1,5 +1,6 @@
 package org.apereo.cas.session;
 
+import module java.base;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.function.FunctionUtils;

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.flow;
 
+import module java.base;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import lombok.val;

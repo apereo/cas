@@ -1,9 +1,9 @@
 package org.apereo.cas.grouper;
 
+import module java.base;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetPermissionAssignmentsResults;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
-import java.util.Collection;
 
 /**
  * This is {@link GrouperFacade} that acts as a wrapper

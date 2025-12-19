@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apache.commons.lang3.StringUtils;
-import java.io.Serializable;
 
 /**
  * This is {@link RegisteredServiceDefinition}.

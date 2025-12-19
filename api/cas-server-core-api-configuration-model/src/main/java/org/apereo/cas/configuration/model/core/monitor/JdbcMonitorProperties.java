@@ -1,14 +1,12 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
 
 /**
  * This is {@link JdbcMonitorProperties}.

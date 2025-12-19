@@ -1,11 +1,8 @@
 package org.apereo.cas.authentication.adaptive;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link UnauthorizedAuthenticationException}.

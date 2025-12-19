@@ -1,12 +1,11 @@
 package org.apereo.cas.configuration;
 
+import module java.base;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.springframework.beans.factory.config.YamlProcessor;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.Resource;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link CasCoreConfigurationUtils}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.ticket;
 
+import module java.base;
 import org.apereo.cas.oidc.web.controllers.ciba.CibaRequestContext;
 import org.apereo.cas.ticket.TicketFactory;
 

@@ -1,12 +1,12 @@
 package org.apereo.cas.impl.token;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationMongoDbTokensProperties;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -22,10 +22,6 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Optional;
 
 /**
  * This is {@link MongoDbPasswordlessTokenRepository}.

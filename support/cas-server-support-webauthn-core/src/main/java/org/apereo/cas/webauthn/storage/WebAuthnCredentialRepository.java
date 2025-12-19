@@ -1,9 +1,8 @@
 package org.apereo.cas.webauthn.storage;
 
+import module java.base;
 import com.yubico.core.RegistrationStorage;
 import com.yubico.data.CredentialRegistration;
-
-import java.util.stream.Stream;
 
 /**
  * This is {@link WebAuthnCredentialRepository}.

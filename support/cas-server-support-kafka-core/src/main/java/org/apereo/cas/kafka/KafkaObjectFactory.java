@@ -1,5 +1,6 @@
 package org.apereo.cas.kafka;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
@@ -15,8 +16,6 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link KafkaObjectFactory}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.util;
 
+import module java.base;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

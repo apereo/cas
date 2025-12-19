@@ -1,5 +1,6 @@
 package org.apereo.cas.aws;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Principal;
@@ -34,9 +35,6 @@ import software.amazon.awssdk.services.sts.model.Credentials;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.LinkedHashMap;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * This is {@link AmazonSecurityTokenServiceEndpoint}.

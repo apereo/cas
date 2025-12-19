@@ -1,5 +1,6 @@
 package org.apereo.cas.util.function;
 
+import module java.base;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.experimental.UtilityClass;
@@ -14,10 +15,6 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.core.retry.RetryPolicy;
 import org.springframework.core.retry.RetryTemplate;
 import org.springframework.core.retry.Retryable;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * This is {@link FunctionUtils}.

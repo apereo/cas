@@ -1,5 +1,6 @@
 package org.apereo.cas.persondir.groovy;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.AbstractDefaultAttributePersonAttributeDao;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
@@ -10,10 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * An implementation of the {@link PersonAttributeDao} that is able to resolve attributes

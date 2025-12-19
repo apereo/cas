@@ -1,16 +1,11 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
-
 import lombok.val;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.security.PublicKey;
-import java.util.Optional;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

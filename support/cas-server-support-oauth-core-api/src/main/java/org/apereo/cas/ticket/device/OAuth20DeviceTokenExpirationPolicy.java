@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.device;
 
+import module java.base;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -10,8 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.io.Serial;
 
 /**
  * This is {@link OAuth20DeviceTokenExpirationPolicy}.

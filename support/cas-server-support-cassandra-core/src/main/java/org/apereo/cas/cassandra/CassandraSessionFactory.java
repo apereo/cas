@@ -1,5 +1,6 @@
 package org.apereo.cas.cassandra;
 
+import module java.base;
 import com.datastax.oss.driver.api.core.CqlSession;
 import org.springframework.data.cassandra.core.CassandraTemplate;
 import org.springframework.data.cassandra.core.cql.CqlTemplate;

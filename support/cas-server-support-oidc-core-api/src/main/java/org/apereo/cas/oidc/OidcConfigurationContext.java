@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc;
 
+import module java.base;
 import org.apereo.cas.oidc.claims.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.oidc.claims.OidcIdTokenClaimCollector;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
@@ -14,7 +15,6 @@ import org.apereo.cas.ticket.idtoken.IdTokenGeneratorService;
 import org.apereo.cas.token.JwtBuilder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import java.util.List;
 
 /**
  * This is {@link OidcConfigurationContext}.

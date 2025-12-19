@@ -1,16 +1,14 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Optional;
 
 /**
  * This is {@link BaseDelegatedClientAuthenticationCredentialResolver}.

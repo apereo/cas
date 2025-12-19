@@ -1,17 +1,10 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
 
 /**
  * Registry of all RegisteredServices.

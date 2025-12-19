@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import module java.base;
 import org.apereo.cas.BaseThymeleafTests;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -19,8 +20,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.View;
 import org.thymeleaf.spring6.view.AbstractThymeleafView;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
-import java.util.Locale;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

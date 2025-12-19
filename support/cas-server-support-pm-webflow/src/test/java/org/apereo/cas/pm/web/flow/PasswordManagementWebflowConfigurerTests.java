@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
 import org.apereo.cas.config.CasPasswordManagementWebflowAutoConfiguration;
@@ -25,7 +26,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.mvc.servlet.FlowHandler;
-import java.util.stream.StreamSupport;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

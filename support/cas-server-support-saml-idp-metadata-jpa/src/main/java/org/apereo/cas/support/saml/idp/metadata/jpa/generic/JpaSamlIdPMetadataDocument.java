@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.jpa.generic;
 
+import module java.base;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
@@ -7,7 +8,6 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.io.Serial;
 
 /**
  * This is {@link JpaSamlIdPMetadataDocument}.

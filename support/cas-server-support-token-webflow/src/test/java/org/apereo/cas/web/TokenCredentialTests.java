@@ -1,13 +1,12 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.token.authentication.TokenCredential;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.mail;
 
+import module java.base;
 import org.springframework.core.Ordered;
 import org.springframework.mail.javamail.JavaMailSender;
 

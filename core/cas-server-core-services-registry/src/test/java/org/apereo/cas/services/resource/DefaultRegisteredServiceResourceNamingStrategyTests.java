@@ -1,13 +1,10 @@
 package org.apereo.cas.services.resource;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.util.regex.Pattern;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

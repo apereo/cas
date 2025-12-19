@@ -1,18 +1,10 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
-import java.io.Serial;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAuthenticationTransactionFactory}.

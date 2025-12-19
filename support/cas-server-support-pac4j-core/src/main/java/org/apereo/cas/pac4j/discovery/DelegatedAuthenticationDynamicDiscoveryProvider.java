@@ -1,11 +1,9 @@
 package org.apereo.cas.pac4j.discovery;
 
+import module java.base;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.core.Ordered;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link DelegatedAuthenticationDynamicDiscoveryProvider}.

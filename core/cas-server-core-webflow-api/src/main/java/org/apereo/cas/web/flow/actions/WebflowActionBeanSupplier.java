@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
@@ -13,7 +14,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Action;
-import java.util.function.Supplier;
 
 /**
  * This is {@link WebflowActionBeanSupplier}.

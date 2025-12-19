@@ -1,5 +1,6 @@
 package org.apereo.cas.scim.v2;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.BaseScimTests;
@@ -10,8 +11,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-import java.time.Clock;
-import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

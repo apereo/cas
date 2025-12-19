@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.web.flow;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
@@ -10,7 +11,6 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationAction;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.HttpStatus;

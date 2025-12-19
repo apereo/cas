@@ -1,18 +1,16 @@
 package org.apereo.cas.configuration.model.support.mfa.duo;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import java.io.Serial;
 
 /**
  * This is {@link DuoSecurityMultifactorAuthenticationProperties}.

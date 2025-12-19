@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.executor;
 
+import module java.base;
 import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.executor.FlowExecutor;

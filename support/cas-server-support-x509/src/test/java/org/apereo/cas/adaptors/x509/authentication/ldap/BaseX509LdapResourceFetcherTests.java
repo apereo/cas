@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.ldap;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.BaseX509Tests;
 import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.extension.ExtendWith;

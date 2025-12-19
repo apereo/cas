@@ -1,5 +1,6 @@
 package org.apereo.cas.grouper;
 
+import module java.base;
 import lombok.Builder;
 import lombok.Getter;
 

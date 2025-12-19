@@ -1,6 +1,6 @@
 package org.apereo.cas.api;
 
-import java.util.Optional;
+import module java.base;
 
 /**
  * This is {@link PasswordlessUserAccountStore}.

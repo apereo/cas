@@ -1,5 +1,6 @@
 package org.apereo.cas.jdbc;
 
+import module java.base;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.DatabaseAuthenticationTestConfiguration;
 import org.apereo.cas.test.CasTestExtension;

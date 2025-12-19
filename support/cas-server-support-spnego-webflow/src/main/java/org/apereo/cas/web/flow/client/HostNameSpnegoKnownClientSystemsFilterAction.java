@@ -1,9 +1,8 @@
 package org.apereo.cas.web.flow.client;
 
+import module java.base;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.util.regex.Pattern;
 
 /**
  * A simple implementation of {@link BaseSpnegoKnownClientSystemsFilterAction} to allow / skip SPNEGO / KRB /

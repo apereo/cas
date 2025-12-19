@@ -1,12 +1,11 @@
 package org.apereo.inspektr.audit.spi.support;
 
-import org.apereo.inspektr.audit.AuditTrailManager;
-import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import module java.base;
 import lombok.Setter;
 import lombok.val;
+import org.apereo.inspektr.audit.AuditTrailManager;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
-import java.util.HashMap;
-import java.util.function.Function;
 
 /**
  * An {@link AuditResourceResolver} that resolves resource as a target object's toString method call.

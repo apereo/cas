@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import org.springframework.binding.expression.EvaluationException;
 import org.springframework.binding.expression.support.AbstractGetValueExpression;

@@ -1,13 +1,10 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
-import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * This is {@link RegisteredServiceConsentPolicy}.

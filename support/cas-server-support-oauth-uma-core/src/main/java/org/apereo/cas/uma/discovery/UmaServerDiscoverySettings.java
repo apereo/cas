@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.discovery;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20ClaimTokenFormats;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -11,8 +12,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.Strings;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link UmaServerDiscoverySettings}.

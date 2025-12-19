@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication.support.password;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationAccountStateHandler;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,15 +1,13 @@
 package org.apereo.cas.aws;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.regions.Region;
-
-import java.net.URI;
 
 /**
  * This is {@link AmazonEnvironmentAwareClientBuilder}.

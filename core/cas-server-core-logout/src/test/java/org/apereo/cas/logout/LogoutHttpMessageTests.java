@@ -1,13 +1,10 @@
 package org.apereo.cas.logout;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.net.URI;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.replication;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
@@ -11,7 +12,6 @@ import lombok.Setter;
 import lombok.With;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serial;
 
 /**
  * This is {@link CookieSessionReplicationProperties}.

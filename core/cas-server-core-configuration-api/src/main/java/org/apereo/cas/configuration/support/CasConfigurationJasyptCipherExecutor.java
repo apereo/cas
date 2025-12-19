@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import module java.base;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +14,6 @@ import org.jasypt.iv.NoIvGenerator;
 import org.jasypt.iv.RandomIvGenerator;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.env.Environment;
-import java.security.Security;
-import java.util.function.Function;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link CasConfigurationJasyptCipherExecutor}.

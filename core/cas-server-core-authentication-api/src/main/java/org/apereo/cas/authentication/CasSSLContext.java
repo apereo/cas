@@ -1,23 +1,12 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.client5.http.ssl.DefaultHostnameVerifier;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.jooq.lambda.Unchecked;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.ManagerFactoryParameters;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.TrustManagerFactorySpi;
-import javax.net.ssl.X509TrustManager;
-import java.io.Serial;
-import java.security.KeyStore;
-import java.security.Provider;
 import java.security.cert.X509Certificate;
 
 /**

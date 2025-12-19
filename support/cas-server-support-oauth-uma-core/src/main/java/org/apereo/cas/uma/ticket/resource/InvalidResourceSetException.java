@@ -1,10 +1,9 @@
 package org.apereo.cas.uma.ticket.resource;
 
+import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-
-import java.io.Serial;
 
 /**
  * This is {@link InvalidResourceSetException}.

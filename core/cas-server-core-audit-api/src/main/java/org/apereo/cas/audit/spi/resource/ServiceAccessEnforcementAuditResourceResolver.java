@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi.resource;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -16,8 +17,6 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
-import java.util.HashMap;
-import java.util.Objects;
 
 /**
  * Inspektr's resource resolver for audit advice weaved at various service access enforcement audit execution joinpoints.

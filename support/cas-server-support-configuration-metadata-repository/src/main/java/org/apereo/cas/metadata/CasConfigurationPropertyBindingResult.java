@@ -1,5 +1,6 @@
 package org.apereo.cas.metadata;
 
+import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;

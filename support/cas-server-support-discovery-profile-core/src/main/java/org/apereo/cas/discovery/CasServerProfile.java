@@ -1,12 +1,8 @@
 package org.apereo.cas.discovery;
 
+import module java.base;
 import lombok.Getter;
 import lombok.Setter;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link CasServerProfile}.

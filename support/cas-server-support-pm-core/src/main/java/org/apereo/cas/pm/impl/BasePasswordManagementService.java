@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.impl;
 
+import module java.base;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -20,8 +21,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * This is {@link BasePasswordManagementService}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.services;
 
+import module java.base;
 import org.apereo.cas.config.CasJsonServiceRegistryAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -17,11 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

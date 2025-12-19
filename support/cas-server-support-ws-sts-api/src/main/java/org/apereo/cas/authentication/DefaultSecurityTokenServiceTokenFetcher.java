@@ -1,20 +1,18 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.cxf.rt.security.SecurityConstants;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-
-import java.util.Optional;
 
 /**
  * This is {@link DefaultSecurityTokenServiceTokenFetcher}.

@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
+import module java.base;
 
 /**
  * This is {@link CheckNativeRuntimeHints}.

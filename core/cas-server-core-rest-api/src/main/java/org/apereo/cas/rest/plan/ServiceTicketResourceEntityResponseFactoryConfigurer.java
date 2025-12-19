@@ -1,4 +1,5 @@
 package org.apereo.cas.rest.plan;
+import module java.base;
 
 /**
  * This is {@link ServiceTicketResourceEntityResponseFactoryConfigurer}.

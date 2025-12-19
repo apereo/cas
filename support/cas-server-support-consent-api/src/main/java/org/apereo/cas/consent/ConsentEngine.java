@@ -1,13 +1,9 @@
 package org.apereo.cas.consent;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-
-import java.io.Serializable;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link ConsentEngine}.

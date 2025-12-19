@@ -1,15 +1,13 @@
 package org.apereo.cas.services.locator;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.git.services.GitServiceRegistryProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.eclipse.jgit.util.FileUtils;
-
-import java.io.File;
 
 /**
  * This is {@link TypeAwareGitRepositoryRegisteredServiceLocator}.

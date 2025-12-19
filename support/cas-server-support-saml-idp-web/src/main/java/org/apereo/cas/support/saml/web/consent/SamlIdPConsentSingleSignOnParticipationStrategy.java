@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.consent;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
@@ -11,7 +12,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.web.idp.web.SamlIdPSingleSignOnParticipationStrategy;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
-
 import lombok.val;
 
 /**

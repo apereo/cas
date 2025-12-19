@@ -1,15 +1,11 @@
 package org.apereo.cas.services.resource;
 
+import module java.base;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreSaveEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * This is {@link CreateResourceBasedRegisteredServiceWatcher}.

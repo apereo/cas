@@ -1,5 +1,6 @@
 package org.apereo.cas.web.security.authentication;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointProperties;
 import org.apereo.cas.util.RegexUtils;
@@ -14,7 +15,6 @@ import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
-import java.util.function.Supplier;
 
 /**
  * This is {@link IpAddressAuthorizationManager}.

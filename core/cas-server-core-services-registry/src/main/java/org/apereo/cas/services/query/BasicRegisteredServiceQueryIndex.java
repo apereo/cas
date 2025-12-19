@@ -1,7 +1,7 @@
 package org.apereo.cas.services.query;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
-
 import com.googlecode.cqengine.attribute.Attribute;
 import com.googlecode.cqengine.index.AttributeIndex;
 import com.googlecode.cqengine.index.hash.HashIndex;

@@ -1,12 +1,10 @@
 package org.apereo.cas.authentication.support;
 
+import module java.base;
 import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.RequiredArgsConstructor;
 import org.ldaptive.auth.AuthenticationResponse;
-
-import java.util.Collection;
 
 /**
  * This is {@link RejectResultCodeLdapPasswordPolicyHandlingStrategy}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.sms;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.sms.RestfulSmsProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpClient;
@@ -15,8 +16,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import tools.jackson.databind.ObjectMapper;
-import java.util.HashMap;
-import java.util.Locale;
 
 /**
  * This is {@link RestfulSmsSender}.

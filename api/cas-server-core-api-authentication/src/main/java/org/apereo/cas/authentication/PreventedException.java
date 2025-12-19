@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
-
-import java.io.Serial;
+import module java.base;
 
 /**
  * Describes an error condition where authentication was prevented for some reason, e.g. communication

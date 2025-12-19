@@ -1,5 +1,6 @@
 package org.apereo.cas.qr.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -7,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.jspecify.annotations.NonNull;
-import java.io.Serial;
 
 /**
  * This is {@link QRAuthenticationTokenCredential}.

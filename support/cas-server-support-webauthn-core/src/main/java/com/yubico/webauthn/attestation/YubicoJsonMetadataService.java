@@ -1,5 +1,6 @@
 package com.yubico.webauthn.attestation;
 
+import module java.base;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -14,13 +15,6 @@ import lombok.val;
 import org.jspecify.annotations.NonNull;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link YubicoJsonMetadataService}.

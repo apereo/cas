@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation.web;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;

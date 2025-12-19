@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j;
 
+import module java.base;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;

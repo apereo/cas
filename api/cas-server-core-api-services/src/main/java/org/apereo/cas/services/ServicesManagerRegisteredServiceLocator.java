@@ -1,14 +1,10 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.query.RegisteredServiceQueryIndex;
 import org.apereo.cas.util.NamedObject;
-
 import org.springframework.core.Ordered;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * This is {@link ServicesManagerRegisteredServiceLocator}.

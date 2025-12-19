@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
@@ -14,9 +15,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.http.MediaType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * Custom View to Return the CAS 1.0 Protocol Response. Implemented as a view

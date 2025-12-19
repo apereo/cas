@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;

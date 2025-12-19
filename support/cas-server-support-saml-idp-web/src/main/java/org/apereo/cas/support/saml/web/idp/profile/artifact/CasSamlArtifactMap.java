@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.artifact;
 
+import module java.base;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
@@ -17,8 +18,6 @@ import org.opensaml.saml.common.binding.artifact.impl.BasicSAMLArtifactMap;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
-import java.io.IOException;
-import java.util.Objects;
 
 /**
  * This is {@link CasSamlArtifactMap}.

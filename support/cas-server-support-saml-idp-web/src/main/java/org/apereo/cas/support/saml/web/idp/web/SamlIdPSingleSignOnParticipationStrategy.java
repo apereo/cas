@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.web;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
@@ -13,15 +14,12 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.BaseSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 /**
  * This is {@link SamlIdPSingleSignOnParticipationStrategy}.

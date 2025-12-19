@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.RestAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;

@@ -1,15 +1,14 @@
 package org.apereo.cas.dynamodb;
 
+import module java.base;
 import org.apereo.cas.ticket.registry.BaseDynamoDbTicketRegistryFacilitatorTests;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.health.contributor.HealthIndicator;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;

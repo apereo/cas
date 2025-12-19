@@ -1,12 +1,8 @@
 package org.apereo.cas.uma.ticket.resource.repository.impl;
 
+import module java.base;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.ticket.resource.repository.BaseResourceSetRepository;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is {@link DefaultResourceSetRepository}.

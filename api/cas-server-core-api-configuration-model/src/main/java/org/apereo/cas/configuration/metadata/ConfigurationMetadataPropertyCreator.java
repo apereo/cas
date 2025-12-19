@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.metadata;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
@@ -12,15 +13,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
-import java.io.Serial;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * This is {@link ConfigurationMetadataPropertyCreator}.

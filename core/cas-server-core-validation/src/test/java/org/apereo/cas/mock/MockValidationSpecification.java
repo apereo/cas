@@ -1,10 +1,9 @@
 package org.apereo.cas.mock;
 
+import module java.base;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
-
 import lombok.AllArgsConstructor;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

@@ -1,13 +1,11 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.util.LinkedCaseInsensitiveMap;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
 
 /**
  * This is {@link DatabaseProperties}.

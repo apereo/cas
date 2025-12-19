@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.adaptive;
 
+import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
-
 import org.springframework.webflow.execution.RequestContext;
 
 /**

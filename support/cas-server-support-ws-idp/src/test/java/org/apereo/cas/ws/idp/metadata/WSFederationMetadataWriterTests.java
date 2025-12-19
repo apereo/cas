@@ -1,13 +1,12 @@
 package org.apereo.cas.ws.idp.metadata;
 
+import module java.base;
 import org.apereo.cas.BaseCoreWsSecurityIdentityProviderConfigurationTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

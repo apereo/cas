@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.surrogate;
 
+import module java.base;
 import org.apereo.cas.config.CasSurrogateJdbcAuthenticationAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import javax.sql.DataSource;
+import module java.sql;
 
 /**
  * This is {@link SurrogateJdbcAuthenticationServiceTests}.

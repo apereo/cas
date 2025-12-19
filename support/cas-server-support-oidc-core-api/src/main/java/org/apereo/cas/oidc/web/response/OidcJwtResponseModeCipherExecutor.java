@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.response;
 
+import module java.base;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.token.BaseOidcJwtCipherExecutor;

@@ -1,8 +1,8 @@
 package org.apereo.cas.otp.repository.token;
 
+import module java.base;
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 

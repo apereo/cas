@@ -1,21 +1,14 @@
 package org.apereo.cas.adaptors.generic;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
-
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
 
 /**
  * Class designed to read data from a file in the format of USERNAME SEPARATOR

@@ -1,12 +1,12 @@
 package org.apereo.cas.pac4j.web;
 
+import module java.base;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpointContributor;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.BaseClient;
-import java.util.Map;
 
 /**
  * This is {@link DelegatedClientsCasEndpointContributor}.

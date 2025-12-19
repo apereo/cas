@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication.attributes;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
@@ -8,7 +9,6 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.profile.converter.AbstractAttributeConverter;
-import java.io.Serializable;
 
 /**
  * This is {@link GroovyAttributeConverter}.

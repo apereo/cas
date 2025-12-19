@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,9 +10,6 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link AcceptableUsagePolicyTerms}.

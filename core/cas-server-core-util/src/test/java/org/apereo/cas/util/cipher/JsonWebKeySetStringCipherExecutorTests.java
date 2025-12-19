@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import module java.base;
 import org.apereo.cas.util.MockWebServer;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -9,14 +10,7 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.attribute.FileTime;
-import java.time.Instant;
-import java.util.Optional;
-import java.util.UUID;
-import static org.apache.commons.lang3.ArrayUtils.*;
+import static org.apache.commons.lang3.ArrayUtils.EMPTY_OBJECT_ARRAY;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

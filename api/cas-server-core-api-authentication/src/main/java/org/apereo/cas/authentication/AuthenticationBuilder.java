@@ -1,14 +1,8 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 
 /**
  * Constructs immutable {@link Authentication} objects using the builder pattern.

@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers.authorize;
 
+import module java.base;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
@@ -24,8 +25,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
-import java.util.Locale;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

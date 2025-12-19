@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.jmx.BaseCasJmxTests;
 import org.apereo.cas.jmx.services.ServicesManagerManagedResource;
 import org.apereo.cas.jmx.ticket.TicketRegistryManagedResource;

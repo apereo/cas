@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;

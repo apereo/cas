@@ -1,19 +1,15 @@
 package org.apereo.cas.adaptors.radius;
 
+import module java.base;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Builder;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 import net.jradius.client.RadiusClient;
 import net.jradius.radsec.RadSecClientTransport;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.net.InetAddress;
 
 /**
  * Factory for creating RADIUS client instances.

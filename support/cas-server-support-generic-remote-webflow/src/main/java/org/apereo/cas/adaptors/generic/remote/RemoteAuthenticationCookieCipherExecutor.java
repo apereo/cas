@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic.remote;
 
+import module java.base;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 /**

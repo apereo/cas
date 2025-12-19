@@ -1,16 +1,14 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicy;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.io.Serial;
 
 /**
  * This is {@link AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria}.

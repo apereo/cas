@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.EllipticCurveJsonWebKey;
@@ -7,8 +8,6 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
-
-import java.util.Optional;
 
 /**
  * This is {@link OAuth20TokenSigningAndEncryptionService}.

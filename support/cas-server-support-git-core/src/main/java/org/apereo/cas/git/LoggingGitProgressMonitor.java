@@ -1,9 +1,8 @@
 package org.apereo.cas.git;
 
+import module java.base;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.lib.BatchingProgressMonitor;
-
-import java.time.Duration;
 
 /**
  * This is {@link LoggingGitProgressMonitor}.

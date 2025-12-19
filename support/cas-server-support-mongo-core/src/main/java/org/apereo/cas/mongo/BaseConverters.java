@@ -1,5 +1,6 @@
 package org.apereo.cas.mongo;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -27,13 +28,6 @@ import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
-import java.lang.ref.ReferenceQueue;
-import java.security.cert.CertPath;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * Collection of mongo converters that map objects to

@@ -1,5 +1,6 @@
 package org.apereo.cas.azure.ad;
 
+import module java.base;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasAzureActiveDirectoryAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;

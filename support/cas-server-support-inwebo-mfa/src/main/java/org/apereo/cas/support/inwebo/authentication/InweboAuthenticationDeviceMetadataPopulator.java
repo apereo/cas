@@ -1,10 +1,10 @@
 package org.apereo.cas.support.inwebo.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
-
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;

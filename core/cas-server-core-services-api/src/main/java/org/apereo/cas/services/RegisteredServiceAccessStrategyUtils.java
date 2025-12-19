@@ -1,12 +1,12 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
-import java.util.function.Predicate;
 
 /**
  * This is {@link RegisteredServiceAccessStrategyUtils} that encapsulates common

@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import io.lettuce.core.cluster.api.sync.RedisClusterCommands;
 import net.jpountz.lz4.LZ4Compressor;
@@ -9,7 +10,6 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import java.util.List;
 
 /**
  * This is {@link RedisCoreRuntimeHints}.

@@ -1,13 +1,12 @@
 package org.apereo.cas.util.junit;
 
+import module java.base;
 import org.apereo.cas.util.SocketUtils;
 import lombok.val;
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
-import java.lang.reflect.AnnotatedElement;
-import java.util.Arrays;
 
 /**
  * This is {@link EnabledIfPortOpenCondition}.

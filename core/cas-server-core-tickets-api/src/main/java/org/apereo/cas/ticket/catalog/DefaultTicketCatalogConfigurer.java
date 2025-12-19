@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.catalog;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;

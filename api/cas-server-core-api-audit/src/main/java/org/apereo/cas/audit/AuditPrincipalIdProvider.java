@@ -1,7 +1,7 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
-
 import org.aspectj.lang.JoinPoint;
 import org.springframework.core.Ordered;
 

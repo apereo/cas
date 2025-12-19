@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,6 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 import org.thymeleaf.spring6.view.AbstractThymeleafView;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * {@link ThemeViewResolver} is a theme resolver that checks for a UI view in the specific theme before utilizing the

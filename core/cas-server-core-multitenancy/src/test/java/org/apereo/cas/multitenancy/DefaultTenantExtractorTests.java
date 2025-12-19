@@ -1,5 +1,6 @@
 package org.apereo.cas.multitenancy;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;

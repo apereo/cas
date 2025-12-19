@@ -1,10 +1,8 @@
 package org.apereo.cas.support.saml.services;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.io.Serial;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link AnonymousAccessAttributeReleasePolicy}.

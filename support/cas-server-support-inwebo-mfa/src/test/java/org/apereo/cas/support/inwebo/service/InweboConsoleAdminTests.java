@@ -1,5 +1,6 @@
 package org.apereo.cas.support.inwebo.service;
 
+import module java.base;
 import org.apereo.cas.support.inwebo.config.BaseInweboConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;

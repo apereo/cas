@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.executor;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.multitenancy.TenantExtractor;

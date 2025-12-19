@@ -1,10 +1,8 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-
 import org.springframework.core.Ordered;
-
-import java.io.Serializable;
 
 /**
  * This is {@link AuthenticationServiceSelectionStrategy} which attempts to

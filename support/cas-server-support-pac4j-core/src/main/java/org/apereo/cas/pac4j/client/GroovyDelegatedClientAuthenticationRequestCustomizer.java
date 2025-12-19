@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.client;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import lombok.RequiredArgsConstructor;

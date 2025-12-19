@@ -1,8 +1,8 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 import org.apereo.cas.util.cache.MappableDistributedCacheManager;
-
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 

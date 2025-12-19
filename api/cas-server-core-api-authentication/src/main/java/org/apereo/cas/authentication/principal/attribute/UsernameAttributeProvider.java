@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.principal.attribute;
 
-import java.util.List;
-import java.util.Map;
+import module java.base;
 
 /**
  * Provider for the username attribute to use when one is not otherwise provided.

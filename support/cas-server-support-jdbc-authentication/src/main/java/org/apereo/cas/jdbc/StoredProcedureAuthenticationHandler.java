@@ -1,5 +1,6 @@
 package org.apereo.cas.jdbc;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -9,10 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
-import javax.security.auth.login.FailedLoginException;
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.Map;
+import module java.sql;
 
 /**
  * This is {@link StoredProcedureAuthenticationHandler}.

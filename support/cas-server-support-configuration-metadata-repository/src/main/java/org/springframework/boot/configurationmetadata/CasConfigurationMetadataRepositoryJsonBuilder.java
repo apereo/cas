@@ -1,15 +1,9 @@
 package org.springframework.boot.configurationmetadata;
 
+import module java.base;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This is {@link CasConfigurationMetadataRepositoryJsonBuilder}

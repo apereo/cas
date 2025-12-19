@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;

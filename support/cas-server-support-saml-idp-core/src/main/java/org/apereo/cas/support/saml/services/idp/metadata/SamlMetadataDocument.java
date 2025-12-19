@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
+import module java.base;
 import org.apereo.cas.util.EncodingUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,8 +16,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link SamlMetadataDocument}.

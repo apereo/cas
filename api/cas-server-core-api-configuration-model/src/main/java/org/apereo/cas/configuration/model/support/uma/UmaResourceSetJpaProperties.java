@@ -1,14 +1,12 @@
 package org.apereo.cas.configuration.model.support.uma;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serial;
 
 /**
  * This is {@link UmaResourceSetJpaProperties}.

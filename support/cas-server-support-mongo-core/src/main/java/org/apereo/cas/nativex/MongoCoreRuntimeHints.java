@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import com.mongodb.ReadConcern;
 import com.mongodb.WriteConcern;
@@ -8,7 +9,6 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import java.util.List;
 
 /**
  * This is {@link MongoCoreRuntimeHints}.

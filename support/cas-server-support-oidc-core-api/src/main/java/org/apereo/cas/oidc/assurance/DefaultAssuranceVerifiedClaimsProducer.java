@@ -1,13 +1,11 @@
 package org.apereo.cas.oidc.assurance;
 
+import module java.base;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwt.JwtClaims;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link DefaultAssuranceVerifiedClaimsProducer}.

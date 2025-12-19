@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.web.controllers.resource;
 
+import module java.base;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -9,8 +10,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
-import java.util.Collection;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

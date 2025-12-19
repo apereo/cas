@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket.device;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.Ticket;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**

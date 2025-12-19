@@ -1,4 +1,5 @@
 package org.apereo.cas.util;
+import module java.base;
 
 /**
  * This is {@link ProxyGrantingTicketIdGenerator}.

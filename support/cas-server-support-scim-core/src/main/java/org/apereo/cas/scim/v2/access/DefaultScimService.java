@@ -1,5 +1,6 @@
 package org.apereo.cas.scim.v2.access;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.scim.ScimProperties;
 import org.apereo.cas.scim.v2.BaseScimService;
 

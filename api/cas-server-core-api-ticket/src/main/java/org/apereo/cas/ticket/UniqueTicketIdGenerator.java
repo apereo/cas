@@ -1,4 +1,5 @@
 package org.apereo.cas.ticket;
+import module java.base;
 
 /**
  * Interface that enables for pluggable unique ticket Ids strategies.

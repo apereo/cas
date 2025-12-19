@@ -1,14 +1,13 @@
 package org.apereo.inspektr.audit.support;
 
-import org.apereo.inspektr.audit.AuditActionContext;
+import module java.base;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import org.apereo.inspektr.audit.AuditActionContext;
 import org.springframework.context.ApplicationContext;
-import java.io.File;
-import java.util.HashMap;
 
 /**
  * {@link org.apereo.inspektr.audit.AuditTrailManager} that dumps auditable information to a configured logger

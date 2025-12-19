@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.tracking;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.Ticket;

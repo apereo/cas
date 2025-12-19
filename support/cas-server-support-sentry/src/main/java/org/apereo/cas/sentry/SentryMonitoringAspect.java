@@ -1,5 +1,6 @@
 package org.apereo.cas.sentry;
 
+import module java.base;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.util.function.FunctionUtils;
 import io.sentry.Sentry;
@@ -12,10 +13,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.AnnotationUtils;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * This is {@link SentryMonitoringAspect}.

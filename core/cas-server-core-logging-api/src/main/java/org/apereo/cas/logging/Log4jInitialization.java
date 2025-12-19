@@ -1,11 +1,11 @@
 package org.apereo.cas.logging;
 
+import module java.base;
 import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.core.lookup.MainMapLookup;
-import java.util.Arrays;
 
 /**
  * This is {@link Log4jInitialization}.

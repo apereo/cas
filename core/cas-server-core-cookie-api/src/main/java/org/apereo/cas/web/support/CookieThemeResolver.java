@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.web.theme.ThemeResolver;
 import lombok.Getter;
@@ -12,7 +13,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.util.WebUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Objects;
 
 /**
  * {@link ThemeResolver} implementation that uses a cookie sent back to the user

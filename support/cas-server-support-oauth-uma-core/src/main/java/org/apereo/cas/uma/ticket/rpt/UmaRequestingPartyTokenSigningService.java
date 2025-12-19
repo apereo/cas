@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.ticket.rpt;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.BaseTokenSigningAndEncryptionService;
@@ -13,10 +14,6 @@ import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link UmaRequestingPartyTokenSigningService}.

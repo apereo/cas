@@ -1,7 +1,7 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

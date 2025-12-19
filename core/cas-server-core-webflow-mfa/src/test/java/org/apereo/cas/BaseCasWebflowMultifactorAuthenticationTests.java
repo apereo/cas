@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
@@ -50,8 +51,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import java.util.Map;
-import java.util.Set;
 import static org.mockito.Mockito.*;
 
 /**

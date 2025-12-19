@@ -1,5 +1,6 @@
 package org.apereo.cas.support.inwebo.service;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.inwebo.service.soap.generated.LoginQuery;
 import org.apereo.cas.support.inwebo.service.soap.generated.LoginQueryResponse;
@@ -7,7 +8,6 @@ import org.apereo.cas.support.inwebo.service.soap.generated.LoginQueryResult;
 import org.apereo.cas.support.inwebo.service.soap.generated.LoginSearch;
 import org.apereo.cas.support.inwebo.service.soap.generated.LoginSearchResponse;
 import org.apereo.cas.support.inwebo.service.soap.generated.LoginSearchResult;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;

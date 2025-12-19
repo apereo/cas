@@ -1,12 +1,9 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-
 import lombok.val;
 import org.apache.commons.lang3.Strings;
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link TransientSessionTicketFactory}.

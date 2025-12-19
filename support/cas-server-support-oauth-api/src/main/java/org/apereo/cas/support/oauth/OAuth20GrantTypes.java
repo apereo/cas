@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth;
 
+import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

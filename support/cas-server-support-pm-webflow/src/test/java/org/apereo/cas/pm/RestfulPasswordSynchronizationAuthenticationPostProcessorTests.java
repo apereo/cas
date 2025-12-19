@@ -1,5 +1,6 @@
 package org.apereo.cas.pm;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -21,7 +22,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
-import java.net.URI;
 
 /**
  * This is {@link RestfulPasswordSynchronizationAuthenticationPostProcessorTests}.

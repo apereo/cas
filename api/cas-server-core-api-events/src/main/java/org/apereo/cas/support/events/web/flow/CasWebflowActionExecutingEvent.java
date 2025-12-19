@@ -1,12 +1,10 @@
 package org.apereo.cas.support.events.web.flow;
 
+import module java.base;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link CasWebflowActionExecutingEvent}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.engine;
 
+import module java.base;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskScore;
@@ -19,12 +20,6 @@ import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.springframework.transaction.annotation.Transactional;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This is {@link DefaultAuthenticationRiskEvaluator}.

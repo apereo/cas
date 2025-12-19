@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.factory;
 
+import module java.base;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.CasRegisteredService;
@@ -7,13 +8,11 @@ import org.apereo.cas.services.DefaultRegisteredServiceProxyGrantingTicketExpira
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
-
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

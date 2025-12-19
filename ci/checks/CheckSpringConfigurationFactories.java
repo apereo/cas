@@ -12,6 +12,7 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import module java.base;
 
 public class CheckSpringConfigurationFactories {
     private static final String ANSI_RESET = "\u001B[0m";

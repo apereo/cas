@@ -1,16 +1,11 @@
 package org.apereo.cas.audit.spi.plan;
 
+import module java.base;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAuditTrailExecutionPlan}.

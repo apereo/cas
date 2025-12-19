@@ -1,13 +1,11 @@
 package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
+import module java.base;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
 
 /**
  * This is {@link Pac4jAzureOidcClientProperties}.

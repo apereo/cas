@@ -1,8 +1,7 @@
 package org.apereo.cas.web.flow.executor;
 
+import module java.base;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
-
-import java.io.Serial;
 
 /**
  * Describes exceptions unique to {@link ClientFlowExecutionRepository}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.With;
 import lombok.experimental.Accessors;
-import java.io.Serial;
 
 /**
  * Base property class for cookies that can be pinned to the HTTP session.

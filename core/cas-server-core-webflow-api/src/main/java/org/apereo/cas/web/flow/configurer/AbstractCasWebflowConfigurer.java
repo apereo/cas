@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -77,11 +78,6 @@ import org.springframework.webflow.expression.spel.FlowVariablePropertyAccessor;
 import org.springframework.webflow.expression.spel.MapAdaptablePropertyAccessor;
 import org.springframework.webflow.expression.spel.MessageSourcePropertyAccessor;
 import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccessor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * The {@link AbstractCasWebflowConfigurer} is responsible for

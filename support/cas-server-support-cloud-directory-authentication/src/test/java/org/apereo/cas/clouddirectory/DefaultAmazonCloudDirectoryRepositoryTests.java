@@ -1,8 +1,8 @@
 package org.apereo.cas.clouddirectory;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.clouddirectory.AmazonCloudDirectoryProperties;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,14 +17,6 @@ import software.amazon.awssdk.services.clouddirectory.model.ListObjectAttributes
 import software.amazon.awssdk.services.clouddirectory.model.ListObjectAttributesResponse;
 import software.amazon.awssdk.services.clouddirectory.model.ObjectReference;
 import software.amazon.awssdk.services.clouddirectory.model.TypedAttributeValue;
-
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.time.Clock;
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.sms;
 
+import module java.base;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

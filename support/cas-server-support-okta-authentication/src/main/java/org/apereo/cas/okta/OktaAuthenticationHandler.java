@@ -1,20 +1,16 @@
 package org.apereo.cas.okta;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.okta.OktaAuthenticationProperties;
 import org.apereo.cas.util.LoggingUtils;
-
 import com.okta.authn.sdk.client.AuthenticationClient;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
-import java.util.Objects;
 
 /**
  * This is {@link OktaAuthenticationHandler}.

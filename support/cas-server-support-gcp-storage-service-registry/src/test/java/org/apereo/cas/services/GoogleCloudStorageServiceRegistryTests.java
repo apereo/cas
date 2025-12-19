@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.config.CasGoogleCloudStorageServiceRegistryAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import com.google.api.gax.core.CredentialsProvider;
@@ -21,8 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import java.io.IOException;
-import java.util.UUID;
 
 /**
  * This is {@link GoogleCloudStorageServiceRegistryTests}.

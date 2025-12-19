@@ -1,13 +1,11 @@
 package org.apereo.cas.metadata;
 
+import module java.base;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link CasReferenceProperty}.

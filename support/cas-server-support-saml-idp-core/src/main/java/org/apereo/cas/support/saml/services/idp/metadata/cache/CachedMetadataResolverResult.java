@@ -1,17 +1,13 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-
 import jakarta.validation.constraints.NotNull;
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.Clock;
-import java.time.Instant;
 
 /**
  * This is {@link CachedMetadataResolverResult}.

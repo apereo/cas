@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import module java.base;
 import org.springframework.web.servlet.ModelAndView;
 
 /**

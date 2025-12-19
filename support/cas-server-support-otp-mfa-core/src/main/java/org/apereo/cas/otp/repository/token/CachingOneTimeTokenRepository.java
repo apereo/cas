@@ -1,5 +1,6 @@
 package org.apereo.cas.otp.repository.token;
 
+import module java.base;
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -7,9 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
 
 /**
  * This is {@link CachingOneTimeTokenRepository}.

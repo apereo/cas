@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
+import module java.base;
 import org.apereo.cas.authentication.BaseAuthenticationTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -18,8 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
-import java.net.URI;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

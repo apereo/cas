@@ -1,5 +1,6 @@
 package org.apereo.cas.metadata.rest;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
@@ -15,10 +16,6 @@ import org.springframework.boot.configurationmetadata.ConfigurationMetadataPrope
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * This is {@link CasConfigurationMetadataServerEndpoint}.

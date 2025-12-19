@@ -1,9 +1,6 @@
 package org.apereo.inspektr.audit.annotation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import module java.base;
 
 /**
  * States that this method should be logged for auditing purposes.

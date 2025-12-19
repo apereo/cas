@@ -1,5 +1,6 @@
 package org.apereo.cas.util.crypto;
 
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +11,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import java.nio.charset.Charset;
 
 /**
  * This is {@link DefaultPasswordEncoder}.

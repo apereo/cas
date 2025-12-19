@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties;
 import org.apereo.cas.configuration.model.support.jdbc.JdbcPrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapPrincipalAttributesProperties;
@@ -8,16 +9,10 @@ import org.apereo.cas.configuration.model.support.redis.RedisPrincipalAttributes
 import org.apereo.cas.configuration.model.support.scim.ScimPrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link PrincipalAttributesProperties}.

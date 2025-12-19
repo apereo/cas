@@ -1,7 +1,6 @@
 package org.apereo.cas.util.crypto;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import module java.base;
 
 /**
  * This is {@link RsaCipherExecutor}.

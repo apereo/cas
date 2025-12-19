@@ -1,14 +1,10 @@
 package org.apereo.cas.configuration.support;
 
+import module java.base;
 import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link RelaxedPropertyNames}.

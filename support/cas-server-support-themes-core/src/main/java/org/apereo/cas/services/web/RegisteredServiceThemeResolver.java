@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -34,8 +35,6 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.webflow.execution.RequestContextHolder;
 import jakarta.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 
 /**
  * {@link ThemeResolver} to determine the theme for CAS based on the service provided.

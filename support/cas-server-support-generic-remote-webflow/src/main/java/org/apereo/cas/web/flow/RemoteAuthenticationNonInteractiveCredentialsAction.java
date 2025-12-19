@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.adaptors.generic.remote.RemoteAuthenticationCredential;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
@@ -13,7 +14,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.stream.Stream;
 
 /**
  * A webflow action that attempts to grab the remote address/cookie from the request,

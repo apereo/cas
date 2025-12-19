@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import module java.base;
 import org.apereo.cas.util.crypto.RsaCipherExecutor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,11 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
-
-import java.io.Serializable;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 
 /**
  * This is {@link RsaKeyPairCipherExecutor}.

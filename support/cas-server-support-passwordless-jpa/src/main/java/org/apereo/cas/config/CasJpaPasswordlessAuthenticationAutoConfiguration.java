@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -34,8 +35,7 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 import jakarta.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.util.Set;
+import module java.sql;
 
 /**
  * This is {@link CasJpaPasswordlessAuthenticationAutoConfiguration}.

@@ -1,10 +1,10 @@
 package org.apereo.cas.ticket.registry.events;
 
+import module java.base;
 import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.context.ApplicationEvent;
-import java.io.Serial;
 
 /**
  * This is {@link KafkaMessagePublishedEvent}.

@@ -1,19 +1,14 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
+import module java.base;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
 import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.val;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link PermissiveYubiKeyAccountRegistry}.

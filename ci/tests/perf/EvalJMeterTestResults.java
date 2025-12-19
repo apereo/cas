@@ -1,6 +1,7 @@
 import java.nio.charset.*;
 import java.nio.file.*;
 import java.util.regex.*;
+import module java.base;
 
 public class EvalJMeterTestResults {
     public static void main(final String[] args) throws Exception {

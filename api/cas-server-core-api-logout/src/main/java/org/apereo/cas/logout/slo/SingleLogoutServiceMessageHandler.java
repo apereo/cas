@@ -1,10 +1,10 @@
 package org.apereo.cas.logout.slo;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.NamedObject;
 import org.apereo.cas.web.HttpMessage;
 import org.springframework.core.Ordered;
-import java.util.Collection;
 
 /**
  * This is {@link SingleLogoutServiceMessageHandler} which defines how a logout message

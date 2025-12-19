@@ -1,5 +1,7 @@
 package org.apereo.cas.shell.commands.util;
 
+import module java.base;
+import module java.naming;
 import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -8,12 +10,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 import org.springframework.util.StringUtils;
-import javax.naming.Context;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.SearchControls;
-import java.util.Arrays;
-import java.util.Hashtable;
 
 /**
  * This is {@link ValidateLdapConnectionCommand}.

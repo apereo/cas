@@ -1,10 +1,8 @@
 package org.apereo.cas.gauth.token;
 
+import module java.base;
 import org.apereo.cas.authentication.OneTimeToken;
-
 import lombok.NoArgsConstructor;
-
-import java.io.Serial;
 
 /**
  * This is {@link GoogleAuthenticatorToken}.

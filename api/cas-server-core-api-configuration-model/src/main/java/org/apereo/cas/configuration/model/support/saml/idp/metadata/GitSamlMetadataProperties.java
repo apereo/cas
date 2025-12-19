@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
@@ -12,8 +13,6 @@ import lombok.experimental.Accessors;
 import org.apache.commons.io.FileUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.FileSystemResource;
-import java.io.File;
-import java.io.Serial;
 
 /**
  * Configuration properties class for git metadata management.

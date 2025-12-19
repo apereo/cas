@@ -1,5 +1,6 @@
 package org.apereo.cas.hz;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -42,9 +43,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.util.StringUtils;
-import java.util.Locale;
-import java.util.ServiceLoader;
-import java.util.UUID;
 
 /**
  * This is {@link HazelcastConfigurationFactory}.

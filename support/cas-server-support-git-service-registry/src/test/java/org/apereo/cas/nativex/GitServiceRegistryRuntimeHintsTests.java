@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import lombok.val;
 import org.eclipse.jgit.internal.JGitText;
 import org.junit.jupiter.api.Tag;

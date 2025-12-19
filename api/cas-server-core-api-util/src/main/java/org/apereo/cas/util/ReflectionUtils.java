@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import lombok.experimental.UtilityClass;
@@ -7,11 +8,6 @@ import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.jooq.lambda.Unchecked;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Reflection Utilities based on {@link ClassGraph}.

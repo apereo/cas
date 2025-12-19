@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.web.controllers;
 
+import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.config.CasOAuthUmaAutoConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -40,10 +41,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

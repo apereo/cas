@@ -1,5 +1,6 @@
 package org.apereo.cas.util.serialization;
 
+import module java.base;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.test.CasTestExtension;
 import com.fasterxml.jackson.annotation.JacksonInject;
@@ -15,10 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import tools.jackson.dataformat.xml.XmlFactory;
 import tools.jackson.dataformat.yaml.YAMLFactory;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

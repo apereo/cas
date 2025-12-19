@@ -1,5 +1,6 @@
 package org.apereo.cas.apm;
 
+import module java.base;
 import org.apereo.cas.monitor.Monitorable;
 
 /**

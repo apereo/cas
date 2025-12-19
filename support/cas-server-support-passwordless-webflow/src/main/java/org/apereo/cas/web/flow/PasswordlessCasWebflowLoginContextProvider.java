@@ -1,14 +1,11 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.io.Serializable;
-import java.util.Optional;
 
 /**
  * This is {@link PasswordlessCasWebflowLoginContextProvider}.

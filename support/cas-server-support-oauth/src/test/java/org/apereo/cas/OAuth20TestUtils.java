@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -10,10 +11,6 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 /**

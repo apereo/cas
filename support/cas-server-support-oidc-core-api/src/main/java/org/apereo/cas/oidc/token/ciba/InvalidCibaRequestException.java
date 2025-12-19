@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.token.ciba;
 
+import module java.base;
 import org.apereo.cas.authentication.RootCasException;
-import java.io.Serial;
 
 /**
  * This is {@link InvalidCibaRequestException}.

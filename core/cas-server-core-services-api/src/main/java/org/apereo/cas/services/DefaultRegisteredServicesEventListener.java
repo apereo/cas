@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -17,9 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link DefaultRegisteredServicesEventListener}.

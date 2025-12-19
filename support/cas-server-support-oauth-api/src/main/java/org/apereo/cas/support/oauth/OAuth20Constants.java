@@ -1,4 +1,5 @@
 package org.apereo.cas.support.oauth;
+import module java.base;
 
 /**
  * This class has the main constants for the OAuth implementation.

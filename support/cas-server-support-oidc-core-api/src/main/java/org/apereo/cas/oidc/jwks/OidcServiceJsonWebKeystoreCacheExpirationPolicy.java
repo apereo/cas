@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -10,7 +11,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jspecify.annotations.NonNull;
-import java.util.Optional;
 
 /**
  * This is {@link OidcServiceJsonWebKeystoreCacheExpirationPolicy}.

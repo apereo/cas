@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 

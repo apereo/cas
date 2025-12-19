@@ -1,5 +1,6 @@
 package com.yubico.webauthn.attestation.matcher;
 
+import module java.base;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.yubico.webauthn.attestation.DeviceMatcher;
 import com.yubico.webauthn.data.ByteArray;
@@ -8,10 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.DEROctetString;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 
 /**

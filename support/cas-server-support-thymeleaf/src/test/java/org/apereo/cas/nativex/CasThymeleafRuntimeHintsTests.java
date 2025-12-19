@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.services.web.CasThymeleafTemplatesDirector;
 import org.apereo.cas.web.view.CasMustacheView;
 import org.apereo.cas.web.view.CasThymeleafView;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

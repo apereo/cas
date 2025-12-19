@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
@@ -23,11 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import tools.jackson.core.util.MinimalPrettyPrinter;
 import tools.jackson.databind.ObjectMapper;
-import java.io.Serial;
-import java.io.StringWriter;
-import java.net.URL;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * A proxy policy that only allows proxying to pgt urls

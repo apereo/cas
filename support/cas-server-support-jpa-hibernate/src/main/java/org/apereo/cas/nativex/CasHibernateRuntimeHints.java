@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.hibernate.CasHibernatePhysicalNamingStrategy;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.hibernate.dialect.Dialect;
@@ -7,7 +8,6 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-import java.util.List;
 
 /**
  * This is {@link CasHibernateRuntimeHints}.

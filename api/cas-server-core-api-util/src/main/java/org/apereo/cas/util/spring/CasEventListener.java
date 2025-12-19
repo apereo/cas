@@ -1,4 +1,5 @@
 package org.apereo.cas.util.spring;
+import module java.base;
 
 /**
  * This is {@link CasEventListener}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
@@ -10,13 +11,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.TicketValidator;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link CASOAuth20TicketValidator}.

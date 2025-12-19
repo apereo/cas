@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation.attributes;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;

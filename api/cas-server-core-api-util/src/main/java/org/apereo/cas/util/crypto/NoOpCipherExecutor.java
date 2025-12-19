@@ -1,5 +1,6 @@
 package org.apereo.cas.util.crypto;
 
+import module java.base;
 import lombok.Getter;
 
 /**

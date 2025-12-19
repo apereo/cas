@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.idtoken;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import lombok.AccessLevel;

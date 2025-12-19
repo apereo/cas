@@ -1,12 +1,11 @@
 package org.apereo.cas.git;
 
+import module java.base;
 import org.apereo.cas.util.RegexUtils;
-
 import lombok.val;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

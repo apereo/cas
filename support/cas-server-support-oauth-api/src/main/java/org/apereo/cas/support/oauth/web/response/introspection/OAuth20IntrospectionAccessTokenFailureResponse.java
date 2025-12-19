@@ -1,9 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.introspection;
 
+import module java.base;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.Serial;
 
 /**
  * This is {@link OAuth20IntrospectionAccessTokenFailureResponse}.

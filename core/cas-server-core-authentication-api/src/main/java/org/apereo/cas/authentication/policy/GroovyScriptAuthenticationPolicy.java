@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
@@ -21,12 +22,6 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.Assert;
 import jakarta.persistence.Transient;
-import java.io.Serial;
-import java.io.Serializable;
-import java.security.GeneralSecurityException;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link GroovyScriptAuthenticationPolicy}.

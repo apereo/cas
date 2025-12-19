@@ -1,12 +1,9 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
-
 import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.List;
-import java.util.UUID;
 
 /**
  * This is {@link TestBaseDelegatedClientAuthenticationCredentialResolver}.

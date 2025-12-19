@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.expiration.builder;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -13,13 +14,10 @@ import org.apereo.cas.ticket.expiration.RememberMeDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.expiration.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serial;
 
 /**
  * This is {@link TicketGrantingTicketExpirationPolicyBuilder}.

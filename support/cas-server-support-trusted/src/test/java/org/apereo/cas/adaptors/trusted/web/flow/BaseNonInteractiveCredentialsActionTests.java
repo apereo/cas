@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import module java.base;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;

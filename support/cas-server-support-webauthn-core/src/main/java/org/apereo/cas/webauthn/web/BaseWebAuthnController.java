@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn.web;
 
+import module java.base;
 import org.apereo.cas.web.AbstractController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yubico.internal.util.JacksonCodecs;

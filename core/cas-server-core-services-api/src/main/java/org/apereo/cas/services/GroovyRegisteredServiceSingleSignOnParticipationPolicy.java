@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.util.CollectionUtils;
@@ -21,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.Transient;
-import java.io.Serial;
 
 /**
  * This is {@link GroovyRegisteredServiceSingleSignOnParticipationPolicy}.

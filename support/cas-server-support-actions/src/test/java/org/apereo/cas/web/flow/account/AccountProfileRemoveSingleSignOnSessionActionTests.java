@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.account;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;

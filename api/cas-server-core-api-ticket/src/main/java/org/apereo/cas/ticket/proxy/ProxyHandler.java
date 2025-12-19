@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.proxy;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.ticket.Ticket;
 

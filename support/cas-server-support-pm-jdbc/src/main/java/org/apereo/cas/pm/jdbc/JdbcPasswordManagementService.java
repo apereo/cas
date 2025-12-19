@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.jdbc;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
@@ -18,10 +19,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionOperations;
-import javax.sql.DataSource;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import module java.sql;
 
 /**
  * This is {@link JdbcPasswordManagementService}.

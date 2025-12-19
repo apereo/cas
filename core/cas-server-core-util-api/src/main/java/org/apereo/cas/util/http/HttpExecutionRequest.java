@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -13,8 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpMethod;
 import tools.jackson.databind.ObjectMapper;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link HttpExecutionRequest}.

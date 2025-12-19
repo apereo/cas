@@ -1,15 +1,10 @@
 package org.apereo.cas.authentication.exceptions;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.ThrowingSupplier;
-
-import javax.security.auth.login.FailedLoginException;
-
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

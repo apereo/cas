@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;

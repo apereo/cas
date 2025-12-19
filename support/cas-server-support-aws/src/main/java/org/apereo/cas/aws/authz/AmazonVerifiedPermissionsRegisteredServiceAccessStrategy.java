@@ -1,5 +1,6 @@
 package org.apereo.cas.aws.authz;
 
+import module java.base;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.services.BaseRegisteredServiceAccessStrategy;
@@ -30,12 +31,6 @@ import software.amazon.awssdk.services.verifiedpermissions.model.ContextDefiniti
 import software.amazon.awssdk.services.verifiedpermissions.model.Decision;
 import software.amazon.awssdk.services.verifiedpermissions.model.EntityIdentifier;
 import software.amazon.awssdk.services.verifiedpermissions.model.IsAuthorizedRequest;
-import java.io.Serial;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link AmazonVerifiedPermissionsRegisteredServiceAccessStrategy}.

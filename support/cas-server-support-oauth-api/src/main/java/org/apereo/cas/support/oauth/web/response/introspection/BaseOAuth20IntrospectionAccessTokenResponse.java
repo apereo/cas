@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.introspection;
 
-import java.io.Serial;
-import java.io.Serializable;
+import module java.base;
 
 /**
  * This is {@link BaseOAuth20IntrospectionAccessTokenResponse}.

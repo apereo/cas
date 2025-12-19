@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.idp.metadata.SamlIdPMetadataResolver;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
@@ -15,7 +16,6 @@ import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntity
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.test.context.TestPropertySource;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

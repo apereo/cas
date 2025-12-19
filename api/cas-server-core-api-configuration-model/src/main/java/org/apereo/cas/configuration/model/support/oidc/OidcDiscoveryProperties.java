@@ -1,15 +1,10 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * This is {@link OidcDiscoveryProperties}.

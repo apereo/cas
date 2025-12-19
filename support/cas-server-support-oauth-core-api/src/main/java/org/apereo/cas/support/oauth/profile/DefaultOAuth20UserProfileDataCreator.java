@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.profile;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditActionResolvers;
@@ -20,9 +21,6 @@ import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Default implementation of {@link OAuth20UserProfileDataCreator}.

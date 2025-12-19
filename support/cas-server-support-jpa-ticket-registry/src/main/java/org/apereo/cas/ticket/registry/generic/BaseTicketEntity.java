@@ -1,21 +1,15 @@
 package org.apereo.cas.ticket.registry.generic;
 
+import module java.base;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link BaseTicketEntity}.

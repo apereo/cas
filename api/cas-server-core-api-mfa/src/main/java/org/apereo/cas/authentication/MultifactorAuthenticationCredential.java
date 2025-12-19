@@ -1,4 +1,5 @@
 package org.apereo.cas.authentication;
+import module java.base;
 
 /**
  * Interface for credentials created by MFA providers to match up which provider created them.

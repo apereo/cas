@@ -1,10 +1,10 @@
 package org.apereo.cas.api;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
-
 import org.springframework.core.Ordered;
 
 /**

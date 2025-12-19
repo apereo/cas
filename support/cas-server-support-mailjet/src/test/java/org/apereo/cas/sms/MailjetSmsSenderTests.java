@@ -1,5 +1,6 @@
 package org.apereo.cas.sms;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMailjetEmailSenderAutoConfiguration;
 import org.apereo.cas.notifications.sms.SmsSender;

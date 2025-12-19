@@ -1,5 +1,6 @@
 package org.apereo.cas.hibernate;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -29,10 +30,6 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.spi.PersistenceProvider;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.util.Properties;
-import java.util.stream.Stream;
 
 /**
  * This is {@link CasHibernateJpaBeanFactory}.

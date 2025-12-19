@@ -1,13 +1,10 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificateException;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.cert.X509CRLEntry;
-import java.util.Date;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

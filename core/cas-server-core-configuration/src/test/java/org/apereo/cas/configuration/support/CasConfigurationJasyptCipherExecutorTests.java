@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import module java.base;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.extern.slf4j.Slf4j;

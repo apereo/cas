@@ -1,16 +1,13 @@
 package org.apereo.cas.oidc.web.flow;
 
+import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link OidcCasWebflowLoginContextProvider}.

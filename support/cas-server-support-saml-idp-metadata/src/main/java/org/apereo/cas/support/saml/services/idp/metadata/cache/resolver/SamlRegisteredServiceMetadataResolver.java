@@ -1,14 +1,12 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import module java.base;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.util.NamedObject;
-
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.NotImplementedException;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-
-import java.util.Collection;
 
 /**
  * This is {@link SamlRegisteredServiceMetadataResolver}.

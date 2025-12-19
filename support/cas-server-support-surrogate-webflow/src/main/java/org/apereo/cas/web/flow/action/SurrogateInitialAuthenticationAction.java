@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.action;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationRequest;
@@ -12,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Objects;
 
 /**
  * This is {@link SurrogateInitialAuthenticationAction}.

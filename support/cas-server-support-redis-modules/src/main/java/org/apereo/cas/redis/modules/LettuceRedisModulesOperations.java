@@ -1,5 +1,6 @@
 package org.apereo.cas.redis.modules;
 
+import module java.base;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.redis.core.RedisModulesOperations;
@@ -14,10 +15,6 @@ import io.lettuce.core.search.arguments.TextFieldArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.util.StringUtils;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Stream;
 
 /**
  * This is {@link LettuceRedisModulesOperations}.

@@ -1,12 +1,9 @@
 package org.apereo.cas.uma.ticket.permission;
 
+import module java.base;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link UmaPermissionTicket}.

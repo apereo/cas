@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
@@ -86,7 +87,6 @@ import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.List;
 
 /**
  * This is {@link CasCoreServicesRuntimeHints}.

@@ -1,14 +1,11 @@
 package org.apereo.cas.support.oauth.web.response;
 
+import module java.base;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link OAuth20AuthorizationRequest}.

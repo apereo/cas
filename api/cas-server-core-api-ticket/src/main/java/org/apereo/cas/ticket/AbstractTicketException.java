@@ -1,9 +1,7 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.RootCasException;
-
-import java.io.Serial;
-import java.util.List;
 
 /**
  * Generic ticket exception. Top of the AbstractTicketException hierarchy.

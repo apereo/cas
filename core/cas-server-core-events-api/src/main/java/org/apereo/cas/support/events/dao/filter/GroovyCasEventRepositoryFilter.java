@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.dao.filter;
 
+import module java.base;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import module java.base;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -17,9 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 /**
  * This is {@link FileSystemSamlIdPMetadataLocator}.

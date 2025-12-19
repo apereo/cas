@@ -1,5 +1,6 @@
 package com.yubico.core;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yubico.internal.util.JacksonCodecs;
@@ -9,9 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
 
 /**
  * WebAuthn cache using the web session.

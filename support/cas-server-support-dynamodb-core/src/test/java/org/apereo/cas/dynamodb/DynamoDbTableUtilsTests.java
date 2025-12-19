@@ -1,5 +1,6 @@
 package org.apereo.cas.dynamodb;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -18,7 +19,6 @@ import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

@@ -1,10 +1,10 @@
 package org.apereo.cas.ws.idp.metadata;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.AbstractController;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,6 @@ import lombok.val;
 import org.apache.wss4j.common.util.DOM2Writer;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 

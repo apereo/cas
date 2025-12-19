@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.acct.AccountRegistrationPropertyLoader;
 import org.apereo.cas.acct.AccountRegistrationRequestAuditPrincipalIdResolver;
 import org.apereo.cas.acct.AccountRegistrationRequestValidator;
@@ -72,8 +73,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasAccountManagementWebflowAutoConfiguration}.

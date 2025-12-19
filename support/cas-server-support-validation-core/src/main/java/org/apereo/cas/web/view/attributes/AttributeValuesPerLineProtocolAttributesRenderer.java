@@ -1,14 +1,9 @@
 package org.apereo.cas.web.view.attributes;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
-
 import lombok.val;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link AttributeValuesPerLineProtocolAttributesRenderer}.

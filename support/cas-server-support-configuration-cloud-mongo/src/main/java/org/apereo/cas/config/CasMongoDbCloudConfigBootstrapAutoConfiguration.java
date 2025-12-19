@@ -1,9 +1,9 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.MongoDbPropertySourceLocator;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -13,8 +13,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
-
-import java.util.Objects;
 
 /**
  * This is {@link CasMongoDbCloudConfigBootstrapAutoConfiguration}.

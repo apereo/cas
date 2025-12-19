@@ -1,4 +1,5 @@
 package org.apereo.cas.persondir;
+import module java.base;
 
 /**
  * This is {@link PersonDirectoryAttributeRepositoryPlanConfigurer}.

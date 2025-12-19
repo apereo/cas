@@ -1,5 +1,6 @@
 package org.apereo.cas.git;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.LoggingUtils;
@@ -20,9 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import java.io.File;
-import java.nio.charset.Charset;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

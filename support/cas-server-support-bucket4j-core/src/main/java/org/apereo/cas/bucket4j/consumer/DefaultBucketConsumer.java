@@ -1,18 +1,15 @@
 package org.apereo.cas.bucket4j.consumer;
 
+import module java.base;
 import org.apereo.cas.bucket4j.producer.BucketStore;
 import org.apereo.cas.configuration.model.support.bucket4j.BaseBucket4jProperties;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import io.github.bucket4j.BlockingStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.util.LinkedHashMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link DefaultBucketConsumer}.

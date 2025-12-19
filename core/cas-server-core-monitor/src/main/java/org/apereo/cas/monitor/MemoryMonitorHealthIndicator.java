@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.io.FileUtils;

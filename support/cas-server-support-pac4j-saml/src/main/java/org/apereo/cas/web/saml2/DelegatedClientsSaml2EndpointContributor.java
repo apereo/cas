@@ -1,5 +1,6 @@
 package org.apereo.cas.web.saml2;
 
+import module java.base;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpointContributor;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
@@ -7,7 +8,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.saml.client.SAML2Client;
-import java.util.Map;
 
 /**
  * This is {@link DelegatedClientsSaml2EndpointContributor}.

@@ -1,5 +1,6 @@
 package org.apereo.inspektr.audit.support;
 
+import module java.base;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 

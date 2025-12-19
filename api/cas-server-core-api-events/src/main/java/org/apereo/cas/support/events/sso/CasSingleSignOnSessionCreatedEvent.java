@@ -1,11 +1,11 @@
 package org.apereo.cas.support.events.sso;
 
+import module java.base;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.Ticket;
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-import java.io.Serial;
 
 /**
  * This is {@link CasSingleSignOnSessionCreatedEvent}.

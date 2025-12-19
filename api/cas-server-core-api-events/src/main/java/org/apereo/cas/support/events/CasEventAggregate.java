@@ -1,7 +1,7 @@
 package org.apereo.cas.support.events;
 
+import module java.base;
 import org.jspecify.annotations.Nullable;
-import java.time.LocalDateTime;
 
 /**
  * This is {@link CasEventAggregate}.

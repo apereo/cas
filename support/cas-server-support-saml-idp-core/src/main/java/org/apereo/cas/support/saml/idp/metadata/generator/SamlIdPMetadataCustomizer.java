@@ -1,11 +1,9 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
+import module java.base;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.Ordered;
-
-import java.util.Optional;
 
 /**
  * This is {@link SamlIdPMetadataCustomizer}.

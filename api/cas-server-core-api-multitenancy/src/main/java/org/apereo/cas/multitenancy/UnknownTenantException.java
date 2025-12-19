@@ -1,6 +1,6 @@
 package org.apereo.cas.multitenancy;
 
-import java.io.Serial;
+import module java.base;
 
 /**
  * This is {@link UnknownTenantException}.

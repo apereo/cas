@@ -1,8 +1,8 @@
 package org.apereo.cas.support.oauth;
 
+import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import java.util.Arrays;
 
 /**
  * The token type identifiers defined for OAuth token exchange.

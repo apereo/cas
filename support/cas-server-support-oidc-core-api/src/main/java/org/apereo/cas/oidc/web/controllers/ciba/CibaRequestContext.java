@@ -1,13 +1,11 @@
 package org.apereo.cas.oidc.web.controllers.ciba;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Set;
 
 /**
  * This is {@link CibaRequestContext}.

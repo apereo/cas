@@ -1,12 +1,12 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Set;
 
 /**
  * This is {@link DelegatedClientIdentityProviderConfigurationGroovyPostProcessor}.

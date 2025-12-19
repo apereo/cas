@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.flow;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20AutoConfiguration;
 import org.apereo.cas.config.CasOAuth20WebflowAutoConfiguration;

@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall.authorizer.resource.policy;
 
+import module java.base;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.AuthorizationResult;
@@ -23,11 +24,6 @@ import lombok.val;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import tools.jackson.databind.ObjectMapper;
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link RestfulAuthorizationPolicy}.

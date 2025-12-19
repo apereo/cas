@@ -1,7 +1,6 @@
 package org.apereo.cas.consent;
 
-
-import java.io.Serial;
+import module java.base;
 
 /**
  * This is {@link InMemoryConsentRepository}.

@@ -1,8 +1,8 @@
 package org.apereo.cas.apm;
 
+import module java.base;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import co.elastic.apm.api.ElasticApm;
 import co.elastic.apm.api.Outcome;
 import lombok.extern.slf4j.Slf4j;
@@ -12,11 +12,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.AnnotationUtils;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * This is {@link ElasticApmMonitoringAspect}.

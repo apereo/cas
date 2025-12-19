@@ -1,5 +1,6 @@
 package org.apereo.cas.logging;
 
+import module java.base;
 import com.google.cloud.spring.logging.StackdriverTraceConstants;
 import com.google.cloud.spring.logging.extractors.CloudTraceIdExtractor;
 import com.google.cloud.spring.logging.extractors.TraceIdExtractor;

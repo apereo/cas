@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication.metadata;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.configuration.model.core.ticket.RememberMeAuthenticationProperties;
 import org.apereo.cas.util.RegexUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;

@@ -1,11 +1,9 @@
 package org.apereo.cas.support.events.ticket;
 
+import module java.base;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-
-import java.io.Serial;
 
 /**
  * Concrete subclass of {@link org.apereo.cas.support.events.AbstractCasEvent} representing single sign on session establishment

@@ -1,10 +1,7 @@
 package org.apereo.cas.authentication.principal.merger;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Interface for merging attributes from sibling attribute repositories.

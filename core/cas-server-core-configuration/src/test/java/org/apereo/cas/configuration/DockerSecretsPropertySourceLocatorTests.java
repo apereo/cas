@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreConfigurationWatchAutoConfiguration;
 import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreStandaloneBootstrapAutoConfiguration;
@@ -16,8 +17,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.env.Environment;
-import java.io.File;
-import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

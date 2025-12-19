@@ -1,9 +1,7 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * This is {@link ImmutableInMemoryServiceRegistry}.

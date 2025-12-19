@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;

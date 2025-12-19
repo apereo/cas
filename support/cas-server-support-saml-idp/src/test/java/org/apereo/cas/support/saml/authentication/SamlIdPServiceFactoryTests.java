@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.authentication;
 
+import module java.base;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.web.SimpleUrlValidator;

@@ -1,14 +1,12 @@
 package org.apereo.cas.oidc.web.controllers;
 
+import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
-
 import lombok.val;
 import org.pac4j.jee.context.JEEContext;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * This is {@link BaseOidcController}.

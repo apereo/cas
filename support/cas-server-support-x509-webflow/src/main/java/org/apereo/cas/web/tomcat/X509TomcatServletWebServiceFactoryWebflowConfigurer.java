@@ -1,5 +1,6 @@
 package org.apereo.cas.web.tomcat;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.X509TomcatServletFactoryInitialAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;

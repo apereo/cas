@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.loader;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.springframework.core.env.Environment;

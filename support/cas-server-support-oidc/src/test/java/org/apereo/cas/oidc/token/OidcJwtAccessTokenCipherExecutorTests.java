@@ -1,12 +1,11 @@
 package org.apereo.cas.oidc.token;
 
+import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
-
 import com.nimbusds.jwt.SignedJWT;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

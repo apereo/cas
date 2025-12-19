@@ -1,5 +1,6 @@
 package org.apereo.cas.services.consent;
 
+import module java.base;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.RegisteredServiceConsentPolicy;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -11,14 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ChainingRegisteredServiceConsentPolicy}.

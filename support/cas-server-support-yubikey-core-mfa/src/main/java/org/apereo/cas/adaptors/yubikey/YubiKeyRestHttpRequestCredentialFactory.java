@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
@@ -9,8 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.util.MultiValueMap;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link YubiKeyRestHttpRequestCredentialFactory}.

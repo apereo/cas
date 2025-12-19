@@ -1,11 +1,10 @@
 package org.apereo.cas.trusted.authentication.storage.oracle;
 
+import module java.base;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -14,7 +13,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.io.Serial;
 
 /**
  * This is {@link OracleJpaMultifactorAuthenticationTrustRecord}.

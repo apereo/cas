@@ -1,5 +1,6 @@
 package org.apereo.cas.util.serialization;
 
+import module java.base;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -17,9 +18,6 @@ import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.deser.ValueDeserializerModifier;
 import tools.jackson.databind.module.SimpleModule;
 import tools.jackson.databind.type.MapType;
-import java.io.Serial;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DecodableCipherExecutorMapModule}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.composite;
 
+import module java.base;
 import org.apereo.cas.authentication.ChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
@@ -12,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Comparator;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link PrepareMultifactorProviderSelectionAction}.

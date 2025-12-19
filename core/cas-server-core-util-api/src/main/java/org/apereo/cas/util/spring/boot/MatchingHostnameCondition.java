@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring.boot;
 
+import module java.base;
 import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.RegexUtils;
 import lombok.val;

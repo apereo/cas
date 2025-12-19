@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
+import module java.base;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.util.DateTimeUtils;
@@ -13,10 +14,6 @@ import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.actuate.audit.listener.AuditApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * This is {@link AbstractCasEventRepository}.

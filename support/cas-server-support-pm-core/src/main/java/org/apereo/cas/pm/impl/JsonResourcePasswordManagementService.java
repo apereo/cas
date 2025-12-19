@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.impl;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
@@ -18,13 +19,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.core.io.Resource;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
-import java.io.InputStreamReader;
-import java.io.Serial;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link JsonResourcePasswordManagementService}.

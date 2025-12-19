@@ -1,11 +1,12 @@
 package org.apereo.cas.ws.idp.metadata;
 
+import module java.base;
+import module java.xml;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.util.CryptoUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,12 +19,6 @@ import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.util.DOM2Writer;
 import org.apache.xml.security.stax.impl.util.IDGenerator;
 import org.jooq.lambda.Unchecked;
-import org.w3c.dom.Document;
-
-import javax.xml.stream.XMLStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-
 import static org.apache.cxf.fediz.core.FedizConstants.SAML2_METADATA_NS;
 import static org.apache.cxf.fediz.core.FedizConstants.SCHEMA_INSTANCE_NS;
 import static org.apache.cxf.fediz.core.FedizConstants.WS_ADDRESSING_NS;

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.sms;
 
+import module java.base;
 import org.apereo.cas.config.CasNexmoSmsAutoConfiguration;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.test.CasTestExtension;

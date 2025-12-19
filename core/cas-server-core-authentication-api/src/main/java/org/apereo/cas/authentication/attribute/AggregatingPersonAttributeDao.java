@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.attribute;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
-import java.util.List;
 
 /**
  * This is {@link AggregatingPersonAttributeDao}.

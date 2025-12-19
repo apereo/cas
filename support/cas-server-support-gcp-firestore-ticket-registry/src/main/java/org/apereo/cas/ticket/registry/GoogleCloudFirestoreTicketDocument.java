@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.annotation.DocumentId;
@@ -11,11 +11,6 @@ import com.google.cloud.spring.data.firestore.mapping.UpdateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Map;
 
 /**
  * This is {@link GoogleCloudFirestoreTicketDocument}.

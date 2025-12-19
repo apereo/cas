@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
-import java.io.Serial;
 
 /**
  * This is {@link DefaultAuthenticationResultBuilderFactory}.

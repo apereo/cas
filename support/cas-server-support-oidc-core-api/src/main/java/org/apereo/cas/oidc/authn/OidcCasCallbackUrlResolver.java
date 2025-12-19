@@ -1,14 +1,12 @@
 package org.apereo.cas.oidc.authn;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
-
 import lombok.val;
-
-import java.util.List;
 
 /**
  * This is {@link OidcCasCallbackUrlResolver}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -7,11 +8,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.expiration.BaseDelegatingExpirationPolicy;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.SurrogateSessionExpirationPolicy;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.val;
-
-import java.io.Serial;
 
 /**
  * This is {@link SurrogateAuthenticationExpirationPolicyBuilder}.

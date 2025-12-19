@@ -1,15 +1,11 @@
 package org.apereo.cas.memcached.kryo.serial;
 
+import module java.base;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import lombok.val;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * This is {@link ImmutableNativeJavaListSerializer}.

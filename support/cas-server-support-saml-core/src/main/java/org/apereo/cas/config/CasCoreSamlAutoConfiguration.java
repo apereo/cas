@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -31,9 +32,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Properties;
 
 /**
  * This is {@link CasCoreSamlAutoConfiguration}.

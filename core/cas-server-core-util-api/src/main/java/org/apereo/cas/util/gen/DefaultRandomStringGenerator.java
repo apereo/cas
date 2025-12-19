@@ -1,9 +1,8 @@
 package org.apereo.cas.util.gen;
 
+import module java.base;
 import lombok.NoArgsConstructor;
 import lombok.val;
-
-import java.util.stream.IntStream;
 
 /**
  * Implementation of the RandomStringGenerator that allows you to define the

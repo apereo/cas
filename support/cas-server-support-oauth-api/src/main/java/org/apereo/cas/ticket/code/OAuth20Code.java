@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket.code;
 
+import module java.base;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.ServiceAwareTicket;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**

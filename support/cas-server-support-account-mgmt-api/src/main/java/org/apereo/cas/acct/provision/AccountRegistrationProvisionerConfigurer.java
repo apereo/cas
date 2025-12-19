@@ -1,5 +1,6 @@
 package org.apereo.cas.acct.provision;
 
+import module java.base;
 import org.springframework.core.Ordered;
 
 /**

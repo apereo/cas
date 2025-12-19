@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.web.flow;
 
+import module java.base;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;

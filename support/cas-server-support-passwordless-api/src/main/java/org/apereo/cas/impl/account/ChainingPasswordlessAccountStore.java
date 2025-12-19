@@ -1,12 +1,11 @@
 package org.apereo.cas.impl.account;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link ChainingPasswordlessAccountStore}.

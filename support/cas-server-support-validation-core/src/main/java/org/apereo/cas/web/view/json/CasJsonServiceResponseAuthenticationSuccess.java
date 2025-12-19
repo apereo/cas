@@ -1,11 +1,9 @@
 package org.apereo.cas.web.view.json;
 
+import module java.base;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link CasJsonServiceResponseAuthenticationSuccess}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.codahale.metrics.MetricRegistry;
 import lombok.Getter;

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.sps;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import lombok.Getter;
@@ -7,9 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * This is {@link SamlServiceProviderProperties}.

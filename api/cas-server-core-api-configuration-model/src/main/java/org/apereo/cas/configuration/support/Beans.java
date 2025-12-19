@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.cache.ExpiringSimpleCacheProperties;
 import org.apereo.cas.configuration.model.core.cache.SimpleCacheProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
@@ -14,10 +15,6 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 import org.springframework.util.StringUtils;
-import java.nio.file.Files;
-import java.time.Duration;
-import java.util.Objects;
-import java.util.concurrent.ExecutorService;
 
 
 /**

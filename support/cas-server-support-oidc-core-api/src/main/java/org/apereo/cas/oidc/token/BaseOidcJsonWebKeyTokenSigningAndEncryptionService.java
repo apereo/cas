@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
@@ -25,9 +26,6 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 import org.jspecify.annotations.NonNull;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link BaseOidcJsonWebKeyTokenSigningAndEncryptionService}.

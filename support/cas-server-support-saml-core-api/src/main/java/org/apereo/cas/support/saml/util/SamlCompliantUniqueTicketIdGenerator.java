@@ -1,17 +1,15 @@
 package org.apereo.cas.support.saml.util;
 
+import module java.base;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Setter;
 import lombok.val;
 import org.opensaml.saml.common.binding.artifact.AbstractSAMLArtifact;
 import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
 import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * Unique Ticket Id Generator compliant with the SAML 1.1 specification for

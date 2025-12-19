@@ -1,5 +1,6 @@
 package org.apereo.cas.aws;
 
+import module java.base;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;

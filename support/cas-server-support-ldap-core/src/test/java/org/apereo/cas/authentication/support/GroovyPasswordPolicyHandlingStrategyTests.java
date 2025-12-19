@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication.support;
 
+import module java.base;
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -10,10 +10,7 @@ import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-
-import javax.security.auth.login.AccountExpiredException;
-
-import static org.apereo.cas.util.junit.Assertions.*;
+import static org.apereo.cas.util.junit.Assertions.assertThrowsWithRootCause;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

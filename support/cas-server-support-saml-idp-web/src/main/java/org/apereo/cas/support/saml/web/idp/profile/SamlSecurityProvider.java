@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
-import java.io.Serial;
-import java.security.Provider;
+import module java.base;
 
 /**
  * This is {@link SamlSecurityProvider}.

@@ -1,11 +1,11 @@
 package org.apereo.inspektr.audit.spi.support;
 
-import org.apereo.inspektr.audit.AuditTrailManager;
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.audit.AuditTrailManager;
 import org.aspectj.lang.JoinPoint;
-import java.util.Arrays;
 
 /**
  * This is {@link ShortenedReturnValueAsStringAuditResourceResolver}.

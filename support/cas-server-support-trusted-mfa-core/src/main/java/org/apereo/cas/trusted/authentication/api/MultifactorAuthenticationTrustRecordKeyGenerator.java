@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.authentication.api;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;

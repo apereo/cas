@@ -1,11 +1,9 @@
 package org.apereo.cas.logout.slo;
 
+import module java.base;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link SingleLogoutMessage}.

@@ -1,11 +1,10 @@
 package org.apereo.cas.pac4j.discovery;
 
+import module java.base;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
-
-import java.util.Optional;
 
 /**
  * This is {@link DelegatedAuthenticationDynamicDiscoveryProviderLocator}.

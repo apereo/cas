@@ -1,14 +1,12 @@
 package org.apereo.cas.configuration.model.support.geo.ip;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.geo.BaseGeoLocationProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
 
 /**
  * This is {@link IPGeoLocationProperties}.

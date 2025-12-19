@@ -1,5 +1,6 @@
 package org.apereo.cas.api;
 
+import module java.base;
 import org.springframework.webflow.execution.Event;
 
 /**

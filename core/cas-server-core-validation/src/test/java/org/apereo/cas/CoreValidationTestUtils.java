@@ -1,18 +1,14 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ImmutableAssertion;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
 
 /**
  * This is {@link CoreValidationTestUtils}.

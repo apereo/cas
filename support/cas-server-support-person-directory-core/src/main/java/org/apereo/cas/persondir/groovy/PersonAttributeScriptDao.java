@@ -1,9 +1,7 @@
 package org.apereo.cas.persondir.groovy;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Simplified DAO interface for use by Groovy scripts that provide user attributes.

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
@@ -51,8 +52,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * This is {@link CoreWsSecurityIdentityProviderConfiguration}.

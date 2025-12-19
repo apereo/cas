@@ -1,16 +1,12 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.util.List;
-import java.util.Objects;
 
 /**
  * The default argument extractor is responsible for creating service

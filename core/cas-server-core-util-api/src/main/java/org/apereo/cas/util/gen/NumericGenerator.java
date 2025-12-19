@@ -1,4 +1,5 @@
 package org.apereo.cas.util.gen;
+import module java.base;
 
 /**
  * Interface to return a new sequential number for each call.

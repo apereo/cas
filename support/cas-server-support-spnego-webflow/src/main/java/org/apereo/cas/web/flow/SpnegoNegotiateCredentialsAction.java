@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -12,7 +13,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * First action of a SPNEGO flow : negotiation.

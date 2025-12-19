@@ -1,10 +1,10 @@
 package org.apereo.cas.support.inwebo.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.webflow.execution.Event;

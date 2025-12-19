@@ -1,9 +1,9 @@
 package org.apereo.cas.audit.spi;
 
+import module java.base;
 import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.io.Serial;
 
 /**
  * This is {@link AuditActionContextJsonSerializer}.

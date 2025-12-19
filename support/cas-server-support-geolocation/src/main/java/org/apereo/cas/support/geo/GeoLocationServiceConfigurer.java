@@ -1,5 +1,6 @@
 package org.apereo.cas.support.geo;
 
+import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 
 /**

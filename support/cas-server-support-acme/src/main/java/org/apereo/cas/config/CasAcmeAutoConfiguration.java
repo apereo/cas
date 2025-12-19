@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.acme.AcmeAuthorizationExecutor;
 import org.apereo.cas.acme.AcmeCertificateManager;
 import org.apereo.cas.acme.AcmeChallengeRepository;
@@ -25,7 +26,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
-import java.security.Security;
 
 /**
  * This is {@link CasAcmeAutoConfiguration}.

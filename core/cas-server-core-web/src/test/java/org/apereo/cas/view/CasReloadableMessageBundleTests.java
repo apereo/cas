@@ -1,5 +1,6 @@
 package org.apereo.cas.view;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
@@ -19,7 +20,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
-import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

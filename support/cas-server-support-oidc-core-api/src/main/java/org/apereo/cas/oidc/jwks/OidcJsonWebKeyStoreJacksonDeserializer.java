@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKeySet;

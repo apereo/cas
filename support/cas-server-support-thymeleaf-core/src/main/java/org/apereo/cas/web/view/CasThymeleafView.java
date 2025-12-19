@@ -1,12 +1,12 @@
 package org.apereo.cas.web.view;
 
+import module java.base;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.thymeleaf.autoconfigure.ThymeleafProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.view.ThymeleafView;
-import java.util.Locale;
 
 /**
  * This is {@link CasThymeleafView}.

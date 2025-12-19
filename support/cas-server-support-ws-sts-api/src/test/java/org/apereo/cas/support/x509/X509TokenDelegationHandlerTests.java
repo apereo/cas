@@ -1,15 +1,13 @@
 package org.apereo.cas.support.x509;
 
+import module java.base;
+import module java.xml;
 import lombok.val;
 import org.apache.cxf.sts.request.ReceivedToken;
 import org.apache.cxf.sts.token.delegation.TokenDelegationParameters;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.Element;
-
-import java.security.Principal;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

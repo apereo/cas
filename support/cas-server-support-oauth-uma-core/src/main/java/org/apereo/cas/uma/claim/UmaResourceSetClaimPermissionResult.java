@@ -1,14 +1,8 @@
 package org.apereo.cas.uma.claim;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link UmaResourceSetClaimPermissionResult}.

@@ -1,12 +1,11 @@
 package org.apereo.cas.pm.impl;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.impl.history.InMemoryPasswordHistoryService;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.extern.slf4j.Slf4j;
-import java.io.Serializable;
 
 /**
  * This is {@link NoOpPasswordManagementService}.

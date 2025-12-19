@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -45,10 +46,6 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.support.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import javax.crypto.Cipher;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

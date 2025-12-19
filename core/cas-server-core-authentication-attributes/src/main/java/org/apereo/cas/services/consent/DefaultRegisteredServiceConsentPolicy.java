@@ -1,5 +1,6 @@
 package org.apereo.cas.services.consent;
 
+import module java.base;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.RegisteredServiceConsentPolicy;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -9,8 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import java.io.Serial;
-import java.util.Set;
 
 /**
  * This is {@link DefaultRegisteredServiceConsentPolicy}.

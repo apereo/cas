@@ -1,5 +1,6 @@
 package org.apereo.cas.hibernate;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
@@ -23,7 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import javax.sql.DataSource;
+import module java.sql;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

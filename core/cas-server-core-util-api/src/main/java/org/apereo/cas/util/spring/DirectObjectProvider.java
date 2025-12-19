@@ -1,9 +1,9 @@
 package org.apereo.cas.util.spring;
 
+import module java.base;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
-import java.util.stream.Stream;
 
 
 /**

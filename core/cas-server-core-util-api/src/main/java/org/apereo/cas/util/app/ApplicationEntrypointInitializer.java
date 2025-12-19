@@ -1,7 +1,7 @@
 package org.apereo.cas.util.app;
 
+import module java.base;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import java.util.List;
 
 /**
  * This is {@link ApplicationEntrypointInitializer}.

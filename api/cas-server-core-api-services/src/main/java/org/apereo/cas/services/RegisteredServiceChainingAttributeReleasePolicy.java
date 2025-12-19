@@ -1,10 +1,8 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Chaining multiple attribute release policies together.

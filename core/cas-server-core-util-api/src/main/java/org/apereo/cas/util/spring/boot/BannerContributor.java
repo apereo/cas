@@ -1,8 +1,7 @@
 package org.apereo.cas.util.spring.boot;
 
+import module java.base;
 import org.springframework.core.env.Environment;
-
-import java.util.Formatter;
 
 /**
  * This is {@link BannerContributor}.

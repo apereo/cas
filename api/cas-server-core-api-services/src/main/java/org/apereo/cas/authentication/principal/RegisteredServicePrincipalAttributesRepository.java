@@ -1,15 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Defines operations required for retrieving principal attributes.

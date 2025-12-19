@@ -1,8 +1,8 @@
 package org.apereo.cas.util.scripting;
 
+import module java.base;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
-import java.util.Map;
 
 /**
  * This is {@link ExecutableCompiledScript}.

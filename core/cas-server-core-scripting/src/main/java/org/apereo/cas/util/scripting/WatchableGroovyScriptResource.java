@@ -1,5 +1,6 @@
 package org.apereo.cas.util.scripting;
 
+import module java.base;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;

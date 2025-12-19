@@ -1,14 +1,11 @@
 package org.apereo.cas.ws.idp;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This is {@link WSFederationClaims}.

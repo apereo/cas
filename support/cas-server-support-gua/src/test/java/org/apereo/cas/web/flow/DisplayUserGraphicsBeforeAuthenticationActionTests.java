@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.AbstractGraphicalAuthenticationTests;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.MockRequestContext;

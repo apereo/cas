@@ -1,12 +1,9 @@
 package org.apereo.cas.interrupt;
 
+import module java.base;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.Getter;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link DefaultInterruptInquiryExecutionPlan}.

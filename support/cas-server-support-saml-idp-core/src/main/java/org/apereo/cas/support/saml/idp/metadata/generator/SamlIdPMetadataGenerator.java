@@ -1,10 +1,10 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
+import module java.base;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apache.commons.lang3.Strings;
-import java.util.Optional;
 
 /**
  * This is {@link SamlIdPMetadataGenerator},

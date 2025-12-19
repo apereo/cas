@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import com.hazelcast.spi.properties.ClusterProperty;
 import lombok.val;
 import org.junit.jupiter.api.Tag;

@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.mdui;
 
+import module java.base;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.util.MockWebServer;
-
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
@@ -12,11 +12,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
-
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

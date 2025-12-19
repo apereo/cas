@@ -1,15 +1,11 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.util.Collection;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DynamoDbServiceRegistry}.

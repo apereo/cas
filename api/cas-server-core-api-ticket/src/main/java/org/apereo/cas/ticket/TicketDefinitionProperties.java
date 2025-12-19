@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket;
 
-import java.io.Serializable;
+import module java.base;
 
 /**
  * This is {@link TicketDefinitionProperties}. Ticket definition describes additional Properties and misc settings

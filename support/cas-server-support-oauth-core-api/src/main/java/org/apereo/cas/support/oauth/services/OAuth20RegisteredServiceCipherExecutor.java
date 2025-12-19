@@ -1,8 +1,7 @@
 package org.apereo.cas.support.oauth.services;
 
+import module java.base;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
-
-import java.io.Serializable;
 
 /**
  * This is {@link OAuth20RegisteredServiceCipherExecutor}.

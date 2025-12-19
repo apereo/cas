@@ -1,5 +1,6 @@
 package org.apereo.cas.services.util;
 
+import module java.base;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -7,10 +8,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import tools.jackson.core.TokenStreamFactory;
 import tools.jackson.dataformat.yaml.YAMLFactory;
-import java.io.File;
-import java.io.Serial;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 /**
  * This is {@link RegisteredServiceYamlSerializer}.

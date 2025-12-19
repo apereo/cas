@@ -1,10 +1,9 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
-
-import java.util.List;
 
 /**
  * This is {@link CasWebSecurityConfigurer}.

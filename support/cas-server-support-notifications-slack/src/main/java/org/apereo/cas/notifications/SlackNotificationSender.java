@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.slack.SlackMessagingProperties;
 import org.apereo.cas.notifications.push.NotificationSender;
@@ -15,8 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link SlackNotificationSender}.

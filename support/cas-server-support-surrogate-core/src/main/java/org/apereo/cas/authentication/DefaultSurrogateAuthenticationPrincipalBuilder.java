@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryQuery;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
@@ -15,7 +16,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.util.Optional;
 
 /**
  * This is {@link SurrogateAuthenticationPrincipalBuilder}.

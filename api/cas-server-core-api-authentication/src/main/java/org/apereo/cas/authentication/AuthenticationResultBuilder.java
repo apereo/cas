@@ -1,11 +1,7 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link AuthenticationResultBuilder}. It attempts to collect authentication objects

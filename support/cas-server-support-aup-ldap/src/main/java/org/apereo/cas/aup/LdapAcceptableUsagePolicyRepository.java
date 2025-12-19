@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.model.support.aup.LdapAcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
@@ -16,11 +17,6 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchResponse;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.webflow.execution.RequestContext;
-import java.io.Serial;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link LdapAcceptableUsagePolicyRepository}.

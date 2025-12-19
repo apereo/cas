@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers.dynareg;
 
+import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientRegistrationResponse;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
@@ -20,12 +21,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
 import org.jose4j.jwk.JsonWebKeySet;
-import java.net.URISyntaxException;
-import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcClientRegistrationUtils}.

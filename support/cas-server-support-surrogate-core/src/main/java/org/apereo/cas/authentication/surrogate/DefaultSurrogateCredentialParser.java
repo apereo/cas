@@ -1,13 +1,11 @@
 package org.apereo.cas.authentication.surrogate;
 
+import module java.base;
 import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.util.Optional;
 
 /**
  * This is {@link DefaultSurrogateCredentialParser}.

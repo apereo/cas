@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.discovery;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
@@ -19,10 +20,6 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocator}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.composite;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.cookie.CasCookieBuilder;

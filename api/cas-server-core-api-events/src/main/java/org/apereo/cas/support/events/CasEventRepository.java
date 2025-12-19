@@ -1,11 +1,8 @@
 package org.apereo.cas.support.events;
 
+import module java.base;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.jspecify.annotations.Nullable;
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 /**
  * Defines DAO operations over an events repository.

@@ -1,15 +1,13 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import java.io.Serial;
 
 /**
  * This is {@link RadiusMultifactorAuthenticationProperties}.

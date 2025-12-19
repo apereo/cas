@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
+import module java.base;
 
 /**
  * This is {@link CheckRedundantTestConfigurationInheritance}.

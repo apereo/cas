@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.web.flow.account;
 
+import module java.base;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;

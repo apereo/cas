@@ -1,7 +1,7 @@
 package org.apereo.cas.util.http;
 
+import module java.base;
 import org.apereo.cas.web.HttpMessage;
-import java.net.URL;
 
 /**
  * Define the behaviour of a HTTP client.

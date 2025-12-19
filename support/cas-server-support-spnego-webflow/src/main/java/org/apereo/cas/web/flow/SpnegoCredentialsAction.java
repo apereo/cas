@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
@@ -9,17 +10,12 @@ import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.webflow.execution.RequestContext;
-
 import jakarta.servlet.http.HttpServletResponse;
-import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.Locale;
 
 /**
  * Second action of a SPNEGO flow : decode the gssapi-data and build a new

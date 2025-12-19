@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth;
 
+import module java.base;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.ICredentialRepository;

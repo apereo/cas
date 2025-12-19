@@ -1,5 +1,6 @@
 package org.apereo.cas.services.query;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
 import com.googlecode.cqengine.attribute.SimpleAttribute;
 import com.googlecode.cqengine.query.Query;
@@ -8,7 +9,6 @@ import com.googlecode.cqengine.query.option.QueryOptions;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanWrapperImpl;
-import java.util.Objects;
 
 /**
  * This is {@link RegisteredServiceQueryAttribute}.

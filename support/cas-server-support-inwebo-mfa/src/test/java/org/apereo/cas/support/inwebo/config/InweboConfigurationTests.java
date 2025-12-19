@@ -1,5 +1,6 @@
 package org.apereo.cas.support.inwebo.config;
 
+import module java.base;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.test.CasTestExtension;

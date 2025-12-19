@@ -1,12 +1,12 @@
 package org.apereo.cas.web.support.mgmr;
 
+import module java.base;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.web.cookie.CookieSameSitePolicy;
 import org.apereo.cas.web.cookie.CookieValueManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.Serial;
 
 /**
  * This is {@link NoOpCookieValueManager}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -14,7 +15,6 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
-import java.util.List;
 
 /**
  * This is {@link CasCoreAuditRuntimeHints}.

@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
-
-import java.io.Serial;
+import module java.base;
 
 /**
  * Exception thrown when a service attempts to proxy when it is not allowed to.

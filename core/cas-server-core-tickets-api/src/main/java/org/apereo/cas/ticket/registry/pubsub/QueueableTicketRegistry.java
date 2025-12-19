@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.pubsub;
 
+import module java.base;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 

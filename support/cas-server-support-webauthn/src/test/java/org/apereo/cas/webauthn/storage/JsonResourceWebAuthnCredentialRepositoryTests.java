@@ -1,12 +1,11 @@
 package org.apereo.cas.webauthn.storage;
 
+import module java.base;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
-
-import java.io.File;
 
 /**
  * This is {@link JsonResourceWebAuthnCredentialRepositoryTests}.

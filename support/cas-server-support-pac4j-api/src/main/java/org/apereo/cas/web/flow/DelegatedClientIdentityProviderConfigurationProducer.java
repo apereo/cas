@@ -1,12 +1,9 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
-
 import org.pac4j.core.client.IndirectClient;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link DelegatedClientIdentityProviderConfigurationProducer}.
