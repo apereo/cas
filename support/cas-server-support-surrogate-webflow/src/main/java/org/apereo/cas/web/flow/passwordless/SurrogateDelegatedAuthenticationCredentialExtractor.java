@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.passwordless;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.authentication.principal.BaseDelegatedAuthenticationCredentialExtractor;
 import org.apereo.cas.authentication.principal.ClientCredential;
@@ -13,7 +14,6 @@ import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Optional;
 
 /**
  * This is {@link SurrogateDelegatedAuthenticationCredentialExtractor}.

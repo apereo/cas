@@ -1,6 +1,6 @@
 package org.apereo.cas.bucket4j.consumer;
 
-import java.util.concurrent.TimeUnit;
+import module java.base;
 
 /**
  * This is {@link BucketConsumer}.

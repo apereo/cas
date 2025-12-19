@@ -1,5 +1,6 @@
 package org.apereo.inspektr.common.spi;
 
+import module java.base;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.aspectj.lang.JoinPoint;
 

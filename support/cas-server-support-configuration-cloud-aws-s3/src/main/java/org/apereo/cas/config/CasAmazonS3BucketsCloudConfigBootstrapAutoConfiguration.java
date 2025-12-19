@@ -1,11 +1,11 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,9 +19,6 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-
-import java.util.LinkedHashMap;
-import java.util.Properties;
 
 /**
  * This is {@link CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration}.

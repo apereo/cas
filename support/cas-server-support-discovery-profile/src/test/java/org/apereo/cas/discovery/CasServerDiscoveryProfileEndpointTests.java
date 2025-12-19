@@ -1,5 +1,6 @@
 package org.apereo.cas.discovery;
 
+import module java.base;
 import org.apereo.cas.config.CasDiscoveryProfileAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;

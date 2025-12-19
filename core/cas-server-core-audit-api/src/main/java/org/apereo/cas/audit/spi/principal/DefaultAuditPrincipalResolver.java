@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi.principal;
 
+import module java.base;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableEntity;
@@ -22,7 +23,6 @@ import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 /**
  * Inspektr {@link PrincipalResolver} that gets the value for principal id

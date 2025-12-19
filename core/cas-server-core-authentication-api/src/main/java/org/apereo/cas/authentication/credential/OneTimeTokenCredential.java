@@ -1,13 +1,12 @@
 package org.apereo.cas.authentication.credential;
 
+import module java.base;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.io.Serial;
 
 /**
  * This is {@link OneTimeTokenCredential}.

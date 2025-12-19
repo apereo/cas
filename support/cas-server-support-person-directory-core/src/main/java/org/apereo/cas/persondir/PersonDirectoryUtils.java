@@ -1,5 +1,6 @@
 package org.apereo.cas.persondir;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.SimpleUsernameAttributeProvider;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
@@ -13,8 +14,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This is {@link PersonDirectoryUtils}.

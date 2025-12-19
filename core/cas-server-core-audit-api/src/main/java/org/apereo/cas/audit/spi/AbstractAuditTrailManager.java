@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi;
 
+import module java.base;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,9 +9,6 @@ import lombok.Setter;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.beans.factory.DisposableBean;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * This is {@link AbstractAuditTrailManager}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
+import module java.base;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProvider;
@@ -19,7 +20,6 @@ import lombok.val;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Map;
 
 /**
  * This is {@link CasSimpleMultifactorUpdateEmailAction}.

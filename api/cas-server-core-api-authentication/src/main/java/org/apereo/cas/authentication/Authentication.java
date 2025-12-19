@@ -1,11 +1,8 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>

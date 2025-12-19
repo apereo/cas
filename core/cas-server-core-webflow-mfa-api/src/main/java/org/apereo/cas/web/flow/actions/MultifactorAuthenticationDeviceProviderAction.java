@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.Action;

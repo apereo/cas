@@ -1,10 +1,8 @@
 package org.apereo.cas.util.lock;
 
+import module java.base;
 import org.springframework.integration.support.locks.DefaultLockRegistry;
 import org.springframework.integration.support.locks.PassThruLockRegistry;
-
-import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * This is {@link LockRepository}.

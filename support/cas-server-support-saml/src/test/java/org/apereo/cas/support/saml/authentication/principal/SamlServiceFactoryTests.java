@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.config.CasSamlAutoConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
-import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

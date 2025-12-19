@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -8,10 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.NonNull;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This is {@link ChainingRegisteredServiceAccessStrategyActivationCriteria}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityClient;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
@@ -33,9 +34,6 @@ import org.springframework.webflow.scope.ConversationScope;
 import org.springframework.webflow.scope.FlashScope;
 import org.springframework.webflow.scope.FlowScope;
 import org.springframework.webflow.scope.RequestScope;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link DuoSecurityUniversalPromptPrepareLoginAction}.

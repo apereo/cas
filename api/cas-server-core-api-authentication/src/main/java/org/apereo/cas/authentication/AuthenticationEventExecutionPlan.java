@@ -1,15 +1,9 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.handler.TenantAuthenticationHandlerBuilder;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.multitenancy.TenantExtractor;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link AuthenticationEventExecutionPlan}.

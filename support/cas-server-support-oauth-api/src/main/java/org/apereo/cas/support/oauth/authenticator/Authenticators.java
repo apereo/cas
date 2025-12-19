@@ -1,4 +1,5 @@
 package org.apereo.cas.support.oauth.authenticator;
+import module java.base;
 
 /**
  * This is {@link Authenticators}.

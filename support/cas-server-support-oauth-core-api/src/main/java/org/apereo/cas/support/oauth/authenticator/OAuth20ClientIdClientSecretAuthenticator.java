@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
@@ -38,8 +39,6 @@ import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Authenticator for client credentials authentication.

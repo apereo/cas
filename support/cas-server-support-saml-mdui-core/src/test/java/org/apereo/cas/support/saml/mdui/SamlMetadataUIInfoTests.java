@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.mdui;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -12,9 +12,6 @@ import org.opensaml.saml.ext.saml2mdui.InformationURL;
 import org.opensaml.saml.ext.saml2mdui.Logo;
 import org.opensaml.saml.ext.saml2mdui.PrivacyStatementURL;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
-
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

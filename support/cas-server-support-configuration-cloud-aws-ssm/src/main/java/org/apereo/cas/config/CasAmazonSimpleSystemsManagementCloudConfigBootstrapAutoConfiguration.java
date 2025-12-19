@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.LoggingUtils;
@@ -16,9 +17,6 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.ssm.model.GetParametersByPathRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * This is {@link CasAmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.metadata;
 
+import module java.base;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.PropertyOwner;
@@ -21,13 +22,6 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.dataformat.yaml.YAMLMapper;
-import java.io.File;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasConfigurationMetadataCatalog}.

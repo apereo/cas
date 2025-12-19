@@ -1,5 +1,6 @@
 package org.apereo.cas.token.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
@@ -18,8 +19,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.Assert;
-import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * This is {@link OAuth20AccessTokenAuthenticationHandler}.

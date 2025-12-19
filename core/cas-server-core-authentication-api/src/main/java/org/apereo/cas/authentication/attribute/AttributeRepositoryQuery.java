@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.attribute;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
@@ -8,7 +9,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
-import java.util.Set;
 
 /**
  * This is {@link AttributeRepositoryQuery}.

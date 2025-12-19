@@ -1,5 +1,6 @@
 package org.apereo.cas.logging;
 
+import module java.base;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -29,10 +30,6 @@ import org.apache.logging.log4j.util.StringMap;
 import org.slf4j.MDC;
 import org.springframework.http.HttpHeaders;
 import tools.jackson.databind.ObjectMapper;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link GoogleCloudAppender}.

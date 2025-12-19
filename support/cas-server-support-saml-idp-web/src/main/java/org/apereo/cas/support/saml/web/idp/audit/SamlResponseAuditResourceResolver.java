@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
+import module java.base;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -8,8 +9,6 @@ import org.aspectj.lang.JoinPoint;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Fault;
-
-import java.util.HashMap;
 
 /**
  * This is {@link SamlResponseAuditResourceResolver}.

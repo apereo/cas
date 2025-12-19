@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -11,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.springframework.core.Ordered;
-import java.io.Serial;
-import java.util.LinkedHashMap;
 
 /**
  * This is {@link BaseAuthenticationServiceSelectionStrategy}.

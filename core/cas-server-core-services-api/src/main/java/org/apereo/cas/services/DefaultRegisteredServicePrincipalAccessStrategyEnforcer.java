@@ -1,12 +1,12 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.PrincipalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ApplicationContext;
-import java.util.HashMap;
 
 /**
  * This is {@link DefaultRegisteredServicePrincipalAccessStrategyEnforcer}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -36,12 +37,6 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link PasswordChangeAction}.

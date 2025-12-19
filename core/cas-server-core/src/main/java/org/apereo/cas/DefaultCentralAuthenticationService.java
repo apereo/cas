@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -53,11 +54,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.jspecify.annotations.Nullable;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Concrete implementation of a {@link CentralAuthenticationService}, and also the

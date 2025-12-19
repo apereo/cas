@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import module java.base;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.events.sso.CasSingleSignOnSessionCreatedEvent;

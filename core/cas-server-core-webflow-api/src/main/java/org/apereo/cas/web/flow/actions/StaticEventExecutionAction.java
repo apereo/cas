@@ -1,13 +1,11 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Optional;
 
 /**
  * This is {@link StaticEventExecutionAction}.

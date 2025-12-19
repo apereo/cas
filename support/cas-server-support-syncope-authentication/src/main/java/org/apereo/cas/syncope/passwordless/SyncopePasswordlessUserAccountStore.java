@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope.passwordless;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountCustomizer;
@@ -11,9 +12,6 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link SyncopePasswordlessUserAccountStore}.

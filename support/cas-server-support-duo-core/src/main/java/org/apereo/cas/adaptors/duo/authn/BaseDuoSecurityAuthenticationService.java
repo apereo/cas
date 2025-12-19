@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.authentication.Credential;
@@ -29,16 +30,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
 import tools.jackson.databind.ObjectMapper;
-import javax.net.ssl.X509TrustManager;
-import java.net.URI;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link BaseDuoSecurityAuthenticationService}.

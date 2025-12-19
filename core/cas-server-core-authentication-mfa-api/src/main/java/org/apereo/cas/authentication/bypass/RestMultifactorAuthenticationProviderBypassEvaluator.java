@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.bypass;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
@@ -14,8 +15,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.Serial;
-import java.util.Locale;
 
 /**
  * This is {@link RestMultifactorAuthenticationProviderBypassEvaluator}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
@@ -8,7 +9,6 @@ import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.List;
 
 /**
  * This is {@link GroovyDelegatedClientAuthenticationCredentialResolver}.

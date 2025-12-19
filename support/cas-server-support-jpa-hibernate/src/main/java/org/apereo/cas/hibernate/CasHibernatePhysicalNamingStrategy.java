@@ -1,5 +1,6 @@
 package org.apereo.cas.hibernate;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.support.events.web.flow.CasWebflowActionExecutedEvent;
 import org.apereo.cas.support.events.web.flow.CasWebflowActionExecutingEvent;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -25,9 +26,6 @@ import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.execution.ActionExecutionException;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * This is {@link BaseCasWebflowAction}.

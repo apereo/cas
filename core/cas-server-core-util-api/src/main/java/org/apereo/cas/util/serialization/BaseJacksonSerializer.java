@@ -1,5 +1,6 @@
 package org.apereo.cas.util.serialization;
 
+import module java.base;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -22,17 +23,6 @@ import tools.jackson.databind.ObjectReader;
 import tools.jackson.databind.ObjectWriter;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.dataformat.yaml.YAMLFactory;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Serial;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Generic class to serialize objects to/from JSON based on jackson.

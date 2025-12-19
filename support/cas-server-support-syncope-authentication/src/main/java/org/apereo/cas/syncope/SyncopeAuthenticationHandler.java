@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -24,9 +25,6 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.springframework.http.HttpMethod;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import javax.security.auth.login.FailedLoginException;
-import java.util.ArrayList;
-import java.util.Optional;
 
 /**
  * This is {@link SyncopeAuthenticationHandler}.

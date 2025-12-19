@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -15,8 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * This is {@link RegisteredServiceAuthenticationHandlerResolver}

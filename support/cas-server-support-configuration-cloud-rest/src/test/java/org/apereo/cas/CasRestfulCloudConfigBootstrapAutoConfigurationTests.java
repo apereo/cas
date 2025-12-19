@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.config.CasRestfulCloudConfigBootstrapAutoConfiguration;
 import org.apereo.cas.config.RestfulPropertySourceLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -19,8 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import tools.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

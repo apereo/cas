@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import module java.base;
 import org.apereo.cas.config.CasAcceptableUsagePolicyRestAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
@@ -18,7 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import tools.jackson.databind.ObjectMapper;
-import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

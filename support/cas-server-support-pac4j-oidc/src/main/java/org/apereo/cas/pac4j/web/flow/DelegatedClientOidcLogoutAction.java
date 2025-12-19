@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -14,9 +15,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link DelegatedClientOidcLogoutAction}.

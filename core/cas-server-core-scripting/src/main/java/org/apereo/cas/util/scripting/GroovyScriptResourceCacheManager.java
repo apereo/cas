@@ -1,5 +1,6 @@
 package org.apereo.cas.util.scripting;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.cache.ExpiringSimpleCacheProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.DigestUtils;
@@ -13,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import java.util.Set;
 
 /**
  * This is {@link GroovyScriptResourceCacheManager}.

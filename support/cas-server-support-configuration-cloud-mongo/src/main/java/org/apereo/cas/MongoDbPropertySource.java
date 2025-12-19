@@ -1,11 +1,11 @@
 package org.apereo.cas;
 
+import module java.base;
 import lombok.EqualsAndHashCode;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.data.mongodb.core.MongoOperations;
-import java.util.List;
 
 /**
  * This is {@link MongoDbPropertySource}.

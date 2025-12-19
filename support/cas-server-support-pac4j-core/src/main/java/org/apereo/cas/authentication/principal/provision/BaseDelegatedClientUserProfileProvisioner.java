@@ -1,4 +1,5 @@
 package org.apereo.cas.authentication.principal.provision;
+import module java.base;
 
 /**
  * This is {@link BaseDelegatedClientUserProfileProvisioner}.

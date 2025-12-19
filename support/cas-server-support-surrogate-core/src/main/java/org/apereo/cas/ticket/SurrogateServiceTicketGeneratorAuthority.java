@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -18,8 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.Ordered;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link SurrogateServiceTicketGeneratorAuthority}.

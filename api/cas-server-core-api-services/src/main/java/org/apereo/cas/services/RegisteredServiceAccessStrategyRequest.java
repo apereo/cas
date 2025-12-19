@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Builder;
@@ -10,12 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import org.springframework.context.ApplicationContext;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link RegisteredServiceAccessStrategyRequest}.

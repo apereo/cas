@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web.flow;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceBypassEvaluator;
@@ -17,7 +18,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Set;
 
 /**
  * This is {@link MultifactorAuthenticationVerifyTrustAction}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.sms;
 
+import module java.base;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -14,11 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import tools.jackson.databind.ObjectMapper;
-import java.io.StringWriter;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link ClickatellSmsSender}.

@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-
+import module java.base;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;

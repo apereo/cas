@@ -1,14 +1,12 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
 
 /**
  * The {@link DefaultAuthenticationResult} represents a concrete implementation of {@link AuthenticationResult}.

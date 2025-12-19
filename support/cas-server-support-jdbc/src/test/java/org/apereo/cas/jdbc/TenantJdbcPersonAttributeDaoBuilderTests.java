@@ -1,5 +1,6 @@
 package org.apereo.cas.jdbc;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.TenantPersonAttributeDaoBuilder;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;

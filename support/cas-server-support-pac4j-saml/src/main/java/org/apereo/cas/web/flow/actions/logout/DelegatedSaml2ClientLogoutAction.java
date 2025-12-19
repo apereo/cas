@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.logout;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
@@ -24,9 +25,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link DelegatedSaml2ClientLogoutAction}.

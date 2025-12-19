@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.velocity;
 
+import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-
 import lombok.val;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -9,9 +9,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.io.StringWriter;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

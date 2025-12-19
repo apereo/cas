@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
@@ -37,7 +38,6 @@ import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Optional;
 import static org.mockito.Mockito.*;
 
 /**

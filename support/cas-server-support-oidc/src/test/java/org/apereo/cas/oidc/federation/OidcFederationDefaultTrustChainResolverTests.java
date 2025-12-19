@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.federation;
 
+import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import com.nimbusds.oauth2.sdk.GrantType;
@@ -24,10 +25,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-import java.net.URI;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.CasModelRegisteredService;
@@ -18,10 +19,6 @@ import lombok.val;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.util.ObjectUtils;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to

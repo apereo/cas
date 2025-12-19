@@ -1,15 +1,12 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This is {@link PasswordlessWebflowUtils}.

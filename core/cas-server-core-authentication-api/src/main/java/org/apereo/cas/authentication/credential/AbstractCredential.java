@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.credential;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
@@ -12,8 +13,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.validation.ValidationContext;
-import java.io.Serial;
-import java.util.Objects;
 
 /**
  * Base class for CAS credentials that are safe for long-term storage.

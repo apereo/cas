@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn.logout;
 
+import module java.base;
 import org.apereo.cas.logout.SessionTerminationHandler;
 import org.apereo.cas.web.support.WebUtils;
 import com.yubico.core.SessionManager;
@@ -7,8 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.webflow.execution.RequestContext;
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * This is {@link WebAuthnSessionTerminationHandler}.

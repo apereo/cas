@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.logout;
 
+import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.LogoutConfirmationResolver;
@@ -24,7 +25,6 @@ import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
 
 /**
  * Terminates the CAS SSO session by destroying all SSO state data (i.e. TGT, cookies).

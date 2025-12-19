@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.web.util.UriComponentsBuilder;

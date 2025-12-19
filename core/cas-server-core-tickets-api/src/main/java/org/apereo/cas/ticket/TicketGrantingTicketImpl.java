@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
@@ -15,15 +16,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is

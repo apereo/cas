@@ -1,30 +1,15 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ssl.CompositeX509KeyManager;
 import org.apereo.cas.util.ssl.CompositeX509TrustManager;
-
 import lombok.Getter;
 import lombok.val;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509KeyManager;
-import javax.net.ssl.X509TrustManager;
-
-import java.security.KeyStore;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultCasSSLContext}.

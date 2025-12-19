@@ -1,13 +1,11 @@
 package org.apereo.cas.authentication.bypass;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-
 import org.springframework.context.ConfigurableApplicationContext;
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.io.Serial;
 
 /**
  * Multifactor Bypass Provider based on Service Multifactor Policy.

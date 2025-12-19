@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication.exceptions;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
-
-import java.io.Serial;
 
 /**
  * This is {@link UniquePrincipalRequiredException}.

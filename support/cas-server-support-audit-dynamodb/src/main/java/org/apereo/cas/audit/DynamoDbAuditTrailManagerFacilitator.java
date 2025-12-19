@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.configuration.model.support.dynamodb.AuditDynamoDbProperties;
 import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
@@ -23,12 +24,6 @@ import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DynamoDbAuditTrailManagerFacilitator}.

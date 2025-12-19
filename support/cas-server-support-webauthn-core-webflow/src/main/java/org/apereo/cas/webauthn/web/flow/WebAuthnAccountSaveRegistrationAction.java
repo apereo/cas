@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn.web.flow;
 
+import module java.base;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;

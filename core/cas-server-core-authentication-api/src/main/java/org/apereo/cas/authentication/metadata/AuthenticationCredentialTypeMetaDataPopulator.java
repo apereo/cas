@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.metadata;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;

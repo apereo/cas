@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket;
 
-import java.util.Collection;
-import java.util.Optional;
+import module java.base;
 
 /**
  * This is {@link TicketCatalog}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
@@ -19,11 +20,6 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link NotifySingleSignOnEventAction}.

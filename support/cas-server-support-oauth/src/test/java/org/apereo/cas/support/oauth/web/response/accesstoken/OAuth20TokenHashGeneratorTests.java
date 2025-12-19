@@ -1,15 +1,12 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
+import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
-
 import lombok.val;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.util.LinkedHashSet;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -11,7 +12,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderCo
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.RandomUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -20,9 +20,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.SubjectLocality;
-
-import java.time.Instant;
-import java.util.Optional;
 
 /**
  * This is {@link SamlProfileSamlAuthNStatementBuilder}.

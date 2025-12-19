@@ -1,10 +1,7 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import lombok.Getter;
-
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Authentication raised by {@link AuthenticationManager} to signal authentication failure.

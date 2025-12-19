@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.logout;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutConfirmationResolver;
@@ -24,7 +25,6 @@ import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.http.adapter.JEEHttpActionAdapter;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Optional;
 
 /**
  * This is {@link DelegatedAuthenticationClientLogoutAction}.

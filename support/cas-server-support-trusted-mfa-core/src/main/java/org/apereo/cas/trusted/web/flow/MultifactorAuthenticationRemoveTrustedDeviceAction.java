@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web.flow;
 
+import module java.base;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import lombok.RequiredArgsConstructor;

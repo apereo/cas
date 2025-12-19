@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
+import module java.base;
 import org.apereo.cas.config.CasGoogleAuthenticatorMongoDbAutoConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.test.CasTestExtension;

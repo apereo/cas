@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.delegation;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -8,17 +9,12 @@ import org.apereo.cas.web.flow.BasePasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderAuthorizer;
 import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
-
-import java.util.List;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

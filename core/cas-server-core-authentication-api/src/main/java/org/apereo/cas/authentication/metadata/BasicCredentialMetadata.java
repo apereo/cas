@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.metadata;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.CredentialTrait;
@@ -13,13 +14,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Basic credential metadata implementation that stores the original credential ID and the original credential type.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.filters;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.RandomUtils;
 import lombok.Getter;
@@ -15,10 +16,6 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * Allows users to easily inject the default security headers to assist in protecting the application.

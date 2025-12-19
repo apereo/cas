@@ -1,14 +1,12 @@
 package org.apereo.cas.notifications.mail;
 
+import module java.base;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.context.MessageSource;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Objects;
 
 /**
  * This is {@link EmailSender}.

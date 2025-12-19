@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.attribute;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import lombok.EqualsAndHashCode;
@@ -12,15 +13,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.util.LinkedCaseInsensitiveMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * Base {@link PersonAttributeDao} that provides implementations of the deprecated methods.

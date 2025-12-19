@@ -1,12 +1,10 @@
 package org.apereo.cas.authentication.attribute;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.merger.MultivaluedAttributeMerger;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * A {@link PersonAttributeDao} implementation which iterates over child

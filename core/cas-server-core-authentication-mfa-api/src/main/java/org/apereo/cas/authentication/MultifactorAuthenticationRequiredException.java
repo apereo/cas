@@ -1,13 +1,11 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-
-import java.io.Serial;
 
 /**
  * This is {@link MultifactorAuthenticationRequiredException}.

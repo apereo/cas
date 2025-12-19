@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -8,8 +9,6 @@ import org.aspectj.lang.JoinPoint;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
-
-import java.util.HashMap;
 
 /**
  * This is {@link SamlRequestAuditResourceResolver}.

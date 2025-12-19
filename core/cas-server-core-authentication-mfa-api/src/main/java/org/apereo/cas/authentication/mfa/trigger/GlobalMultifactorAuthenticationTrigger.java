@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
@@ -23,11 +24,6 @@ import org.springframework.core.Ordered;
 import org.springframework.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link GlobalMultifactorAuthenticationTrigger}.

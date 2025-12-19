@@ -1,15 +1,14 @@
 package org.apereo.inspektr.audit;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import module java.base;
 import org.apereo.cas.util.thread.Cleanable;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.cfg.DateTimeFeature;
 import tools.jackson.databind.json.JsonMapper;
-import java.util.List;
-import java.util.Map;
 
 /**
  * An interface used to make an audit trail record.

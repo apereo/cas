@@ -1,5 +1,6 @@
 package org.apereo.cas.web.security;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointProperties;
 import org.apereo.cas.configuration.model.core.monitor.JaasSecurityActuatorEndpointsMonitorProperties;
@@ -40,11 +41,6 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.ResourceUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasWebSecurityConfigurerAdapter}.

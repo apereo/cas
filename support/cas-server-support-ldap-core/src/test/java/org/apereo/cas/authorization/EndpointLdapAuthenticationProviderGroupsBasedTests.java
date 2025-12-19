@@ -1,5 +1,6 @@
 package org.apereo.cas.authorization;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.LdapUtils;
@@ -14,7 +15,6 @@ import org.springframework.boot.security.autoconfigure.SecurityProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

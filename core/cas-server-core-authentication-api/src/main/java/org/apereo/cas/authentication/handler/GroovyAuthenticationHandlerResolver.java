@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationTransaction;
@@ -12,7 +13,6 @@ import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
-import java.util.Set;
 
 /**
  * This is {@link GroovyAuthenticationHandlerResolver}.

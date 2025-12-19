@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.mgmr;
 
+import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
@@ -16,9 +17,6 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.ObjectProvider;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.Serial;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * The {@link DefaultCasCookieValueManager} is responsible for creating

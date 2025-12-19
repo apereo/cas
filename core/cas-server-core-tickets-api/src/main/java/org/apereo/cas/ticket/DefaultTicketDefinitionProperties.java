@@ -1,10 +1,10 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import java.io.Serial;
 
 /**
  * This is {@link DefaultTicketDefinitionProperties}.

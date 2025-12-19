@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;

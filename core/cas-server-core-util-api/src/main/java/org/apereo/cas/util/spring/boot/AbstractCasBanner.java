@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring.boot;
 
+import module java.base;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.SystemUtils;
@@ -7,10 +8,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.core.env.Environment;
-import java.io.PrintStream;
-import java.util.Collections;
-import java.util.Formatter;
-import java.util.ServiceLoader;
 
 /**
  * This is {@link AbstractCasBanner}.

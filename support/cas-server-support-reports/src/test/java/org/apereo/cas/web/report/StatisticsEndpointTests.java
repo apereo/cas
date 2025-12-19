@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import lombok.val;

@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import java.util.List;
+import module java.base;
 
 /**
  * Manages the storage, retrieval, and matching of Services wishing to use CAS

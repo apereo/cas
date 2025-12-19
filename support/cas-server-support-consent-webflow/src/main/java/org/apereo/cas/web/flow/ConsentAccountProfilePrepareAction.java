@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -13,13 +14,6 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import tools.jackson.databind.ObjectMapper;
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ConsentAccountProfilePrepareAction}.

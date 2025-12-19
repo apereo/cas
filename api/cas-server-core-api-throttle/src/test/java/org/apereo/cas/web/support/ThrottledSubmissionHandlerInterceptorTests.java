@@ -1,12 +1,12 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

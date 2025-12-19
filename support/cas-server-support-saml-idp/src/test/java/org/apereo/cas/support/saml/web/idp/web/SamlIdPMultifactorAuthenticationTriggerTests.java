@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.web;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;

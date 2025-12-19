@@ -1,7 +1,7 @@
 package org.apereo.cas.throttle;
 
+import module java.base;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.scheduling.annotation.Scheduled;

@@ -1,17 +1,16 @@
 package org.apereo.inspektr.audit.spi.support;
 
-import org.apereo.inspektr.audit.AuditTrailManager;
-import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import module java.base;
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.inspektr.audit.AuditTrailManager;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.webflow.execution.Event;
-import java.util.HashMap;
-import java.util.function.Function;
 
 /**
  * This is {@link NullableReturnValueAuditResourceResolver}.

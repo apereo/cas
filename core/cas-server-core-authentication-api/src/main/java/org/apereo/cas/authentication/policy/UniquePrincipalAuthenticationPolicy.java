@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
@@ -21,10 +22,6 @@ import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link UniquePrincipalAuthenticationPolicy}

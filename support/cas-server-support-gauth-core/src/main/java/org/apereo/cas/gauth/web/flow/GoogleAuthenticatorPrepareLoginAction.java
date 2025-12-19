@@ -1,6 +1,6 @@
 package org.apereo.cas.gauth.web.flow;
 
-
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.gauth.CoreGoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;

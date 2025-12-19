@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
+import module java.base;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.support.saml.idp.metadata.generator.BaseSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
@@ -9,7 +10,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.InitializingBean;
-import java.util.Optional;
 
 /**
  * This is {@link RedisSamlIdPMetadataGenerator}.

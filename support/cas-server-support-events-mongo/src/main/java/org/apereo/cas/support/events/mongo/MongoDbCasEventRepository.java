@@ -1,17 +1,14 @@
 package org.apereo.cas.support.events.mongo;
 
+import module java.base;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
-
 import lombok.ToString;
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
-import java.time.ZonedDateTime;
-import java.util.stream.Stream;
 
 /**
  * This is {@link MongoDbCasEventRepository} that stores event data into a mongodb database.

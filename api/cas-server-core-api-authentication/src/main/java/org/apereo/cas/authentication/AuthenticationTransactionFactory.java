@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-
-import java.io.Serializable;
 
 /**
  * This is {@link AuthenticationTransactionFactory},

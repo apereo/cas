@@ -1,14 +1,12 @@
 package org.apereo.cas.authentication.bypass;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.io.Serial;
 
 /**
  * Multifactor bypass provider that will never allow MFA to execute and will always bypass.

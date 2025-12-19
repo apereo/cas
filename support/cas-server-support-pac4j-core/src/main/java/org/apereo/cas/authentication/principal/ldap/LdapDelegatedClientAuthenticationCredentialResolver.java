@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.ldap;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.BaseDelegatedClientAuthenticationCredentialResolver;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCandidateProfile;
@@ -14,11 +15,6 @@ import org.jooq.lambda.Unchecked;
 import org.ldaptive.LdapAttribute;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link LdapDelegatedClientAuthenticationCredentialResolver}.

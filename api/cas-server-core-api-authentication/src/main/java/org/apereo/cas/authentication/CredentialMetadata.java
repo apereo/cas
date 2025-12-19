@@ -1,10 +1,7 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Describes a credential provided for authentication. Implementations should expect instances of this type to be

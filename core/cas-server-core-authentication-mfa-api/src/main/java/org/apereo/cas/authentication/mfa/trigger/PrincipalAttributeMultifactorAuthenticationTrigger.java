@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
@@ -26,11 +27,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.BiPredicate;
-import static org.springframework.util.StringUtils.*;
+import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
 /**
  * This is {@link PrincipalAttributeMultifactorAuthenticationTrigger}.

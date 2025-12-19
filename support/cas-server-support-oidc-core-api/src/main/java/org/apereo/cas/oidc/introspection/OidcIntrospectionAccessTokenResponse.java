@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.introspection;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

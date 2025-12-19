@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Service;
@@ -10,16 +11,11 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link AuthenticationPolicyAwareServiceTicketValidationAuthorizer}.

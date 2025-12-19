@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication.policy;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,11 +13,6 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Authentication policy that defines success as at least one authentication success and no authentication attempts

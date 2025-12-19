@@ -1,7 +1,6 @@
 package org.apereo.cas.web.support;
 
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import module java.base;
 
 /**
  * This is {@link ThrottledSubmissionsStore}.

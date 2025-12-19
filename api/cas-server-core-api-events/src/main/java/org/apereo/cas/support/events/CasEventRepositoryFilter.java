@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events;
 
+import module java.base;
 import org.apereo.cas.support.events.dao.CasEvent;
 
 /**

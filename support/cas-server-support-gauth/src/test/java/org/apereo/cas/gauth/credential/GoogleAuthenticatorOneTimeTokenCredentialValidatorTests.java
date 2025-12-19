@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
@@ -23,10 +24,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import javax.security.auth.login.AccountExpiredException;
-import javax.security.auth.login.AccountNotFoundException;
-import java.util.List;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

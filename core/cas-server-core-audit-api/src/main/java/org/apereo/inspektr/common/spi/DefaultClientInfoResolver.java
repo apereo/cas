@@ -1,9 +1,10 @@
 package org.apereo.inspektr.common.spi;
 
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
+import module java.base;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.aspectj.lang.JoinPoint;
 
 /**

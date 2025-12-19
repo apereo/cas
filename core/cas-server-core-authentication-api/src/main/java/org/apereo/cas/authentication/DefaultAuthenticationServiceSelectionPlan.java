@@ -1,15 +1,11 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAuthenticationServiceSelectionPlan}.

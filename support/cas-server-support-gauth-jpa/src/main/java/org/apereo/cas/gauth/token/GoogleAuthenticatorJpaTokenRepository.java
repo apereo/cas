@@ -1,8 +1,8 @@
 package org.apereo.cas.gauth.token;
 
+import module java.base;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -10,13 +10,9 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Locale;
 
 /**
  * This is {@link GoogleAuthenticatorJpaTokenRepository}.

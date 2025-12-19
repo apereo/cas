@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -20,19 +21,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.support.ResourcePatternUtils;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.jar.JarFile;
 import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
 import static org.springframework.util.ResourceUtils.FILE_URL_PREFIX;
 import static org.springframework.util.ResourceUtils.extractArchiveURL;

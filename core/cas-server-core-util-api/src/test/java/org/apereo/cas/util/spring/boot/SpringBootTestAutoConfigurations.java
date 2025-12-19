@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring.boot;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.boot.actuate.autoconfigure.beans.BeansEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.condition.ConditionsReportEndpointAutoConfiguration;
@@ -46,12 +47,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.resilience.annotation.EnableResilientMethods;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
  * This is {@link SpringBootTestAutoConfigurations}.

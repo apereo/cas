@@ -1,5 +1,6 @@
 package org.apereo.cas.token.authentication;
 
+import module java.base;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
@@ -11,7 +12,6 @@ import com.nimbusds.jose.JWSAlgorithm;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

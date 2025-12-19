@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.client;
 
+import module java.base;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -7,8 +8,6 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchResponse;
 import org.springframework.beans.factory.DisposableBean;
-
-import java.util.regex.Pattern;
 
 /**
  * Peek into an LDAP server and check for the existence of an attribute

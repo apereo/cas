@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.credential;
 
+import module java.base;
 import org.apereo.cas.authentication.MutableCredential;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -10,8 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.io.Serial;
 
 /**
  * This is {@link BasicIdentifiableCredential}, a simple credential implementation

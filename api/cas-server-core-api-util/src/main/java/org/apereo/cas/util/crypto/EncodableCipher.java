@@ -1,5 +1,6 @@
 package org.apereo.cas.util.crypto;
 
+import module java.base;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**

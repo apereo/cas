@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
 import org.springframework.core.Ordered;

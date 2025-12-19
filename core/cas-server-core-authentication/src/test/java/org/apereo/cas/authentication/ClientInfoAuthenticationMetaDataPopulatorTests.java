@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.metadata.ClientInfoAuthenticationMetaDataPopulator;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;

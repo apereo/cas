@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.credential;
 
+import module java.base;
 import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,14 +18,7 @@ import org.springframework.binding.validation.ValidationContext;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.validation.DefaultValidationContext;
-
 import jakarta.validation.constraints.Size;
-
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Credential for authenticating with a username and password.

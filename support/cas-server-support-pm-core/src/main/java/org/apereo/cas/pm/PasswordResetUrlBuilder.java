@@ -1,8 +1,7 @@
 package org.apereo.cas.pm;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-
-import java.net.URL;
 
 /**
  * This is {@link PasswordResetUrlBuilder}.

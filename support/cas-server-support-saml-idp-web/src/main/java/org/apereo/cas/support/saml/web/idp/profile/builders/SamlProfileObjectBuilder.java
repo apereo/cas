@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
+import module java.base;
 import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
-
 import org.opensaml.core.xml.XMLObject;
 
 /**

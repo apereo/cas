@@ -1,10 +1,10 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
-
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 

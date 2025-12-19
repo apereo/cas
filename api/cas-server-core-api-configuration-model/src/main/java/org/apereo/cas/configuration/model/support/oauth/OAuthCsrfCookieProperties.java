@@ -1,13 +1,11 @@
 package org.apereo.cas.configuration.model.support.oauth;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
 
 /**
  * Properties for the Cross-Site Request Forgery (CSRF) cookie used in some Oauth flows.

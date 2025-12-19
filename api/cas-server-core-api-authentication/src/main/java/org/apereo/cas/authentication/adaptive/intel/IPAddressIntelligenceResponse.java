@@ -1,14 +1,10 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
+import module java.base;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * This is {@link IPAddressIntelligenceResponse}.

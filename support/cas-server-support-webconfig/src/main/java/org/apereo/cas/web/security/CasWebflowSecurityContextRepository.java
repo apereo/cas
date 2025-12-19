@@ -1,5 +1,6 @@
 package org.apereo.cas.web.security;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.spring.SecurityContextUtils;
 import org.apereo.cas.web.flow.executor.CasFlowExecutor;
@@ -18,8 +19,6 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.webflow.executor.FlowExecutor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasWebflowSecurityContextRepository}.

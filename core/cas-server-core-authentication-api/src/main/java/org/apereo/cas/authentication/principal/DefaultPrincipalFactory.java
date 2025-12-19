@@ -1,10 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import lombok.EqualsAndHashCode;
-
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Factory to create {@link SimplePrincipal} objects.

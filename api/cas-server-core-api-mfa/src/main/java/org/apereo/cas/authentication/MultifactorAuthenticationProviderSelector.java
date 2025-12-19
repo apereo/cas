@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
-
-import java.util.Collection;
 
 /**
  * This is {@link MultifactorAuthenticationProviderSelector}

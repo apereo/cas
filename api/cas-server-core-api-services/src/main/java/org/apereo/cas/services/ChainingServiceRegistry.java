@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
-import java.util.Collection;
-import java.util.List;
+import module java.base;
 
 /**
  * This is {@link ChainingServiceRegistry}.

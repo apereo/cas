@@ -1,12 +1,9 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.merger.AttributeMerger;
 import org.springframework.core.Ordered;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link PrincipalElectionStrategy} that attempts to nominate a given principal

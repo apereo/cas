@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.bypass;
 
+import module java.base;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -23,13 +24,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link BaseMultifactorAuthenticationProviderBypassEvaluator}.

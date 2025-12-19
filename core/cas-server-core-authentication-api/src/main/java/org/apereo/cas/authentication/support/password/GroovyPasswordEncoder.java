@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.support.password;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;

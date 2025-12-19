@@ -1,8 +1,8 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,13 +29,6 @@ import org.ldaptive.control.util.PagedResultsClient;
 import org.ldaptive.extended.ExtendedOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
 import org.ldaptive.referral.FollowSearchReferralHandler;
-
-import java.io.Closeable;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link LdapConnectionFactory}.

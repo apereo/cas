@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
@@ -10,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.HashSet;
 
 /**
  * This is {@link DefaultMultifactorAuthenticationDeviceProviderAction}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.logout;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.logout.slo.SingleLogoutContinuation;
 import org.apereo.cas.util.function.FunctionUtils;

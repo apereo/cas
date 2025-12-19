@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi.resource;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.util.AopUtils;
@@ -8,8 +9,6 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.aspectj.lang.JoinPoint;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Implementation of the ResourceResolver that can determine the Ticket Id from

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.web;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
@@ -25,9 +26,6 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link SamlIdPMultifactorAuthenticationTrigger}.

@@ -1,4 +1,5 @@
 package org.apereo.cas.grouper;
+import module java.base;
 
 /**
  * This is {@link GrouperGroupField}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.response;
 
+import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import lombok.val;
 import org.junit.jupiter.api.Nested;

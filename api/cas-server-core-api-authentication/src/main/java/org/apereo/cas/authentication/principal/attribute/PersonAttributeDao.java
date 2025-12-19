@@ -1,17 +1,11 @@
 package org.apereo.cas.authentication.principal.attribute;
 
+import module java.base;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * Defines methods for finding a {@link PersonAttributes} or Set of IPersons based on a user ID or a Map of user attributes to

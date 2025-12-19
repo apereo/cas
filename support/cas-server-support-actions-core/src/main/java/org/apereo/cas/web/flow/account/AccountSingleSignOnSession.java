@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.account;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.metadata.ClientInfoAuthenticationMetaDataPopulator;
@@ -12,8 +13,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link AccountSingleSignOnSession}.

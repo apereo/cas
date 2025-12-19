@@ -1,12 +1,10 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Strategy interface for pluggable authentication security policies.

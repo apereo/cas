@@ -1,11 +1,8 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-
 import lombok.Getter;
-
-import java.io.Serial;
-import java.util.List;
 
 /**
  * Exception to alert that there was an error validating the ticket.

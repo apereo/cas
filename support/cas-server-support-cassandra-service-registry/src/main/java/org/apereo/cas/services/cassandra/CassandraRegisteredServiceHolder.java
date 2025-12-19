@@ -1,5 +1,6 @@
 package org.apereo.cas.services.cassandra;
 
+import module java.base;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -8,9 +9,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link CassandraRegisteredServiceHolder}.

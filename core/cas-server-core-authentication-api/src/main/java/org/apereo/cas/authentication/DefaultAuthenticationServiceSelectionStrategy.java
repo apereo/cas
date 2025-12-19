@@ -1,12 +1,10 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.core.Ordered;
-
-import java.io.Serial;
 
 /**
  * This is {@link DefaultAuthenticationServiceSelectionStrategy} which returns back to the caller

@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 

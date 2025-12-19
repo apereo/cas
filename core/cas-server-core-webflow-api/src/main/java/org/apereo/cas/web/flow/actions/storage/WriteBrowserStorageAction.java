@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.storage;
 
+import module java.base;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.DefaultBrowserStorage;

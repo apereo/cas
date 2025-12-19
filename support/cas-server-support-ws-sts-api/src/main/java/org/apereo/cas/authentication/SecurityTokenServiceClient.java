@@ -1,10 +1,11 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
+import module java.xml;
 import lombok.val;
 import org.apache.cxf.Bus;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.cxf.ws.security.trust.STSClient;
-import org.w3c.dom.Element;
 
 /**
  * This is {@link SecurityTokenServiceClient}.

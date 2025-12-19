@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.EncodingUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-
-import java.io.Serial;
 
 /**
  * This is {@link DefaultSecurityTokenTicket}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web.flow;
 
+import module java.base;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -21,9 +22,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

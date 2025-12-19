@@ -1,13 +1,11 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.pac4j.core.client.Client;
-
-import java.util.HashMap;
-import java.util.Objects;
 
 /**
  * This is {@link DelegatedAuthenticationAuditResourceResolver}.

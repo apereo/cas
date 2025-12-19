@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.web.controllers.claims;
 
+import module java.base;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -9,10 +10,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.view.RedirectView;
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

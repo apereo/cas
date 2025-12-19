@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.flow.account;
 
+import module java.base;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import lombok.RequiredArgsConstructor;

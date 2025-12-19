@@ -1,16 +1,14 @@
 package org.apereo.cas.support.oauth.web.audit;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
-
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
-
-import java.util.HashMap;
 
 /**
  * The {@link OAuth20AccessTokenGrantRequestAuditResourceResolver} for audit advice

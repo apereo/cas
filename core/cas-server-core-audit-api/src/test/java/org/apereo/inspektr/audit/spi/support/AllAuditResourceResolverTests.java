@@ -1,7 +1,8 @@
 package org.apereo.inspektr.audit.spi.support;
 
-import org.apereo.inspektr.audit.AuditTrailManager;
+import module java.base;
 import lombok.val;
+import org.apereo.inspektr.audit.AuditTrailManager;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,7 +10,6 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

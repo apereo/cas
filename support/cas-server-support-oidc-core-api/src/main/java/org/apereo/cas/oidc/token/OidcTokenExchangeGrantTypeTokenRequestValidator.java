@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token;
 
+import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
@@ -9,8 +10,6 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20TokenExchangeGrantTyp
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link OidcTokenExchangeGrantTypeTokenRequestValidator}.

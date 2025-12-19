@@ -1,16 +1,11 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.core.Ordered;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link StubPrincipalAttributesProperties}.

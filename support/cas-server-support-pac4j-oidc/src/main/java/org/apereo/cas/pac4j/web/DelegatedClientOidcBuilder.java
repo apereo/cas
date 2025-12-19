@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.web;
 
+import module java.base;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClientProperties;
@@ -42,13 +43,6 @@ import org.pac4j.oidc.config.AppleOidcConfiguration;
 import org.pac4j.oidc.config.AzureAd2OidcConfiguration;
 import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
-import java.security.interfaces.ECPrivateKey;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DelegatedClientOidcBuilder}.

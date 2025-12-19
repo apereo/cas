@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import module java.base;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.MediaType;
 import org.springframework.util.FileCopyUtils;
@@ -7,7 +8,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.View;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 /**
  * This is {@link DynamicHtmlView}.

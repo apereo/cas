@@ -1,4 +1,5 @@
 package org.apereo.cas.support.spnego.util;
+import module java.base;
 
 /**
  * Spnego Constants.

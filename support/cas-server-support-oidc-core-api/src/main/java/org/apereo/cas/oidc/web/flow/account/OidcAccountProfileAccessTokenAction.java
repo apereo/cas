@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.flow.account;
 
+import module java.base;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;

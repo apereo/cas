@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.authn;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;

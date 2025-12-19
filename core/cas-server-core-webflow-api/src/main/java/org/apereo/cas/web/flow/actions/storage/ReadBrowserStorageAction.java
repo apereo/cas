@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.storage;
 
+import module java.base;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.DefaultBrowserStorage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -12,8 +13,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link ReadBrowserStorageAction}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import groovy.lang.Script;
 import org.codehaus.groovy.runtime.BytecodeInterface8;
@@ -9,8 +10,6 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.List;
-import java.util.stream.IntStream;
 
 /**
  * This is {@link CasGroovyRuntimeHints}.

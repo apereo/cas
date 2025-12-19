@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalProvisioner;
@@ -24,7 +25,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import tools.jackson.databind.ObjectMapper;
-import java.util.Objects;
 
 /**
  * This is {@link SyncopePrincipalProvisioner}.

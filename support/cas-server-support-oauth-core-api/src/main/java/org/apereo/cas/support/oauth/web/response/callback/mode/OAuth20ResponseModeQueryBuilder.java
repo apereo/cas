@@ -1,15 +1,13 @@
 package org.apereo.cas.support.oauth.web.response.callback.mode;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeBuilder;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-
-import java.util.Map;
 
 /**
  * This is {@link OAuth20ResponseModeQueryBuilder}.

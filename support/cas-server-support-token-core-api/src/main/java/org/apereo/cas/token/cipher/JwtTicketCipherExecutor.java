@@ -1,12 +1,10 @@
 package org.apereo.cas.token.cipher;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
-
 import lombok.val;
-
-import java.util.Optional;
 
 
 /**

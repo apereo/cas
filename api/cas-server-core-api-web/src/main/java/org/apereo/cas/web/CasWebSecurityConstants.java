@@ -1,4 +1,5 @@
 package org.apereo.cas.web;
+import module java.base;
 
 /**
  * This is {@link CasWebSecurityConstants}.

@@ -1,15 +1,11 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.springframework.core.Ordered;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Interface for a service that can be registered by the Services Management

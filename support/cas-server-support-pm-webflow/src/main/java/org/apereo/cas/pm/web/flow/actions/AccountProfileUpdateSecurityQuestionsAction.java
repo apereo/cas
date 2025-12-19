@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -18,8 +19,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This is {@link AccountProfileUpdateSecurityQuestionsAction}.

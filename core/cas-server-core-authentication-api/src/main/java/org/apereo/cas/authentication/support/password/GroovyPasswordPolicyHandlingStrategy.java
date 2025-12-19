@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.support.password;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
@@ -9,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
-import java.util.List;
 
 /**
  * This is {@link GroovyPasswordPolicyHandlingStrategy}.

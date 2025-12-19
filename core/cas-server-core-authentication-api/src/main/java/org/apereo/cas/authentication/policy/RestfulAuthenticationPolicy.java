@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
@@ -26,15 +27,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import tools.jackson.databind.ObjectMapper;
-import javax.security.auth.login.AccountExpiredException;
-import javax.security.auth.login.AccountLockedException;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-import java.io.Serial;
-import java.io.Serializable;
-import java.security.GeneralSecurityException;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link RestfulAuthenticationPolicy}.

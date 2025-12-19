@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
@@ -27,15 +28,6 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.io.Serializable;
-import java.util.EnumSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasSimpleMultifactorSendTokenAction}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.rest.audit;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -7,8 +8,6 @@ import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver
 import org.aspectj.lang.JoinPoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.HashMap;
 
 /**
  * This is {@link RestResponseEntityAuditResourceResolver}.

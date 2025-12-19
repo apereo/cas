@@ -1,10 +1,9 @@
 package org.apereo.cas.ticket.serialization.serializers;
 
+import module java.base;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.util.serialization.BaseJacksonSerializer;
-
 import org.springframework.context.ConfigurableApplicationContext;
-import java.io.Serial;
 
 /**
  * This is {@link ProxyGrantingTicketStringSerializer}.

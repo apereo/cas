@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow.client;
 
+import module java.base;
 import org.apereo.cas.support.spnego.util.ReverseDNSRunnable;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,8 +13,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.regex.Pattern;
 
 /**
  * Abstract class for defining a simple binary filter to determine whether a

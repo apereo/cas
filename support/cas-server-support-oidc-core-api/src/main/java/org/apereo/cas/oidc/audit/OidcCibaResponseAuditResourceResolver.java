@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.audit;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.web.controllers.ciba.OidcCibaResponse;
@@ -10,9 +11,6 @@ import lombok.val;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.http.ResponseEntity;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link OidcCibaResponseAuditResourceResolver}.

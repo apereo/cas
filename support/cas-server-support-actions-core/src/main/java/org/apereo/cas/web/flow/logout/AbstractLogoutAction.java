@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.logout;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.services.ServicesManager;
@@ -13,7 +14,6 @@ import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 /**
  * Abstract logout action, which prevents caching on logout.

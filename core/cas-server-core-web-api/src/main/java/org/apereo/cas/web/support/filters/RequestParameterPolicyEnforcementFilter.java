@@ -1,7 +1,7 @@
 package org.apereo.cas.web.support.filters;
 
+import module java.base;
 import org.apereo.cas.util.RegexUtils;
-
 import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.util.ForwardedHeaderUtils;
-
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -17,14 +16,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * This is a Java Servlet Filter that examines specified Request Parameters as to whether they contain specified

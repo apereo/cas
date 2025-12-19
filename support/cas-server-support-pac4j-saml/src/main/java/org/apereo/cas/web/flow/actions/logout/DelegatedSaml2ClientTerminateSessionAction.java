@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.logout;
 
+import module java.base;
 import org.apereo.cas.logout.LogoutConfirmationResolver;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
@@ -17,7 +18,6 @@ import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.state.SAML2StateGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Optional;
 
 /**
  * This is {@link DelegatedSaml2ClientTerminateSessionAction}.

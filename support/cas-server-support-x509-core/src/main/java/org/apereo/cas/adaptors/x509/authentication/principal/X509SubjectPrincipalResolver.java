@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
-
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -11,11 +11,7 @@ import org.cryptacular.x509.dn.AttributeType;
 import org.cryptacular.x509.dn.NameReader;
 import org.cryptacular.x509.dn.RDNSequence;
 import org.cryptacular.x509.dn.StandardAttributeType;
-
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.regex.Pattern;
 
 /**
  * Credential to principal resolver that extracts one or more attribute values

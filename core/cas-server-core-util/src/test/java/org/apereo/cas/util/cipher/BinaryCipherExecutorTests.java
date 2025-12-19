@@ -1,18 +1,14 @@
 package org.apereo.cas.util.cipher;
 
+import module java.base;
 import org.apereo.cas.util.crypto.DecryptionException;
-
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jooq.lambda.UncheckedException;
 import org.jose4j.lang.JoseException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-
-import static org.apereo.cas.util.junit.Assertions.*;
+import static org.apereo.cas.util.junit.Assertions.assertThrowsWithRootCause;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

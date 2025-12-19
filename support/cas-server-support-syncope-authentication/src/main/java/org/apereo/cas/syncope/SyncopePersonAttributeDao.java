@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.BasePersonAttributeDao;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
@@ -8,12 +9,6 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttributesProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * This is {@link SyncopePersonAttributeDao}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
@@ -24,9 +25,6 @@ import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
 
 /**
  * This is {@link AbstractCasWebflowEventResolver} that provides parent

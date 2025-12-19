@@ -1,13 +1,12 @@
 package org.apereo.cas.uma.web.controllers.authz;
 
+import module java.base;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import tools.jackson.databind.ObjectMapper;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link UmaAuthorizationRequest}.

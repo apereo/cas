@@ -1,8 +1,7 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-
-import java.io.Serial;
 
 /**
  * This is {@link OAuth20ClientIdClientSecretCredential}.

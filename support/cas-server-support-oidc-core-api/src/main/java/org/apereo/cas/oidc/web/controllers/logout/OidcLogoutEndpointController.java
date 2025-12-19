@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers.logout;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
@@ -30,10 +31,6 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcLogoutEndpointController}.

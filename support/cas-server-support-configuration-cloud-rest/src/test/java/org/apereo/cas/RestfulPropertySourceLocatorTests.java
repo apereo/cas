@@ -1,12 +1,12 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.config.RestfulPropertySourceLocator;
 import org.apereo.cas.util.MockWebServer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.env.MockEnvironment;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

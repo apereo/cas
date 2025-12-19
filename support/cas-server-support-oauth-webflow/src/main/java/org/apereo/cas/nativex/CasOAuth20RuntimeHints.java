@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.support.oauth.services.OAuth20RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.OAuth20DistributedSessionCookieCipherExecutor;
@@ -15,7 +16,6 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.List;
 
 /**
  * This is {@link CasOAuth20RuntimeHints}.

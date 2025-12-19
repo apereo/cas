@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands;
 
+import module java.base;
 import org.apereo.cas.CasCommandLineShellApplication;
 import org.apereo.cas.config.CasCommandLineShellAutoConfiguration;
 import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
@@ -13,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.shell.boot.SpringShellAutoConfiguration;
 import org.springframework.shell.core.ShellRunner;
-import java.util.function.Supplier;
 
 /**
  * This is {@link BaseCasShellCommandTests}.

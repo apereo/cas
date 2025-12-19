@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -11,9 +12,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Contains information about a successful authentication produced by an {@link AuthenticationHandler}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers.profile;
 
+import module java.base;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
@@ -33,9 +34,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcUserProfileEndpointController}.

@@ -1,15 +1,10 @@
 package org.apereo.cas.services.locator;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.util.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link GitRepositoryRegisteredServiceLocator}.

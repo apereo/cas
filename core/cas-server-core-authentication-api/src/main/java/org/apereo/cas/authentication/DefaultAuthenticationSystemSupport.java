@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
@@ -10,8 +11,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * This is {@link DefaultAuthenticationSystemSupport}.

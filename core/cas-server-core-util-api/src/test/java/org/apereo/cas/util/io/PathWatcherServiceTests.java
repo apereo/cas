@@ -1,18 +1,12 @@
 package org.apereo.cas.util.io;
 
+import module java.base;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

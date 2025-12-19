@@ -1,22 +1,13 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link ActuatorEndpointsMonitorProperties}.

@@ -1,13 +1,9 @@
 package org.apereo.cas.util.spring;
 
+import module java.base;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.FilteredEndpoint;
 import org.springframework.web.bind.annotation.ResponseBody;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
  * This is {@link RestActuatorEndpoint}.

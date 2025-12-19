@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
+import module java.xml;
 import org.apereo.cas.support.saml.util.credential.BasicResourceCredentialFactoryBean;
 import org.apereo.cas.support.saml.util.credential.BasicX509CredentialFactoryBean;
 import org.apereo.cas.util.CollectionUtils;
@@ -7,7 +9,6 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,24 +41,7 @@ import org.opensaml.xmlsec.signature.support.SignatureValidationParametersCriter
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.w3c.dom.Element;
-
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 /**
  * This is {@link SamlUtils}.

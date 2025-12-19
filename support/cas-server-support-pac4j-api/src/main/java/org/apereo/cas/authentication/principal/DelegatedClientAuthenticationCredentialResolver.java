@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.List;
 
 /**
  * This is {@link DelegatedClientAuthenticationCredentialResolver}.

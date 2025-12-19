@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi.resource;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
@@ -11,7 +12,6 @@ import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
-import java.util.HashMap;
 
 /**
  * Extracts the resource as a CAS service for the audit.

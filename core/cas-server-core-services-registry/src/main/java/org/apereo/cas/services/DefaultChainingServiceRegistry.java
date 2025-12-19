@@ -1,18 +1,12 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import com.google.common.base.Predicates;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultChainingServiceRegistry}.

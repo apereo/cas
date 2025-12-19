@@ -1,9 +1,9 @@
 package org.apereo.cas.support.sms;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.sms.AmazonSnsProperties;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -11,8 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
-
-import java.util.HashMap;
 
 /**
  * This is {@link AmazonSimpleNotificationServiceSmsSender}.

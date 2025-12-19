@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.logout;
 
+import module java.base;
 import org.apereo.cas.logout.slo.SingleLogoutContinuation;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -15,7 +16,6 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Optional;
 
 /**
  * This is {@link DelegatedAuthenticationIdentityProviderFinalizeLogoutAction}.

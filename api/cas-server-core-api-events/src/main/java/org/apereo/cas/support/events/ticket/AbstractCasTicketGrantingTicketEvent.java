@@ -1,14 +1,12 @@
 package org.apereo.cas.support.events.ticket;
 
+import module java.base;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.IdleExpirationPolicy;
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-
-import java.io.Serial;
-import java.time.ZonedDateTime;
 
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.DuoSecurityBypassCode;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountGroup;
@@ -22,16 +23,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
-import javax.net.ssl.X509TrustManager;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultDuoSecurityAdminApiService}.

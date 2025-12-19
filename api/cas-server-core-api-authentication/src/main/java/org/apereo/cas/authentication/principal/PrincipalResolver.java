@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.util.NamedObject;
 import org.springframework.core.Ordered;
-import java.util.Optional;
 
 /**
  * Resolves a {@link Principal} from a {@link Credential} using an arbitrary strategy.

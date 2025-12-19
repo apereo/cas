@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.AbstractCredential;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
@@ -12,8 +13,6 @@ import lombok.val;
 import org.pac4j.core.credentials.AnonymousCredentials;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.UserProfile;
-import java.io.Serial;
-import java.util.UUID;
 
 /**
  * This class represents client credentials and (after authentication) a user profile.

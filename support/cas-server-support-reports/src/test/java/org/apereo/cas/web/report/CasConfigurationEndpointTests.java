@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

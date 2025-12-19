@@ -1,5 +1,7 @@
 package org.apereo.cas.persondir;
 
+import module java.base;
+import module java.naming;
 import org.apereo.cas.authentication.attribute.AbstractQueryPersonAttributeDao;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
@@ -18,13 +20,6 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.SearchResultHandler;
-import javax.naming.directory.SearchControls;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Person directory {@link org.apereo.cas.authentication.principal.attribute.PersonAttributeDao}

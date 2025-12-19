@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.rest;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityDirectCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityPasscodeCredential;
 import org.apereo.cas.authentication.Authentication;
@@ -19,8 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.util.MultiValueMap;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link DuoSecurityRestHttpRequestCredentialFactory}.

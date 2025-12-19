@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.bypass;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
@@ -11,7 +12,6 @@ import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.Serial;
 
 /**
  * Multifactor Bypass Provider based on Authentication.

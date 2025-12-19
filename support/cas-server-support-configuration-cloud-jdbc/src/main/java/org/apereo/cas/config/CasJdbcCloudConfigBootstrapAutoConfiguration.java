@@ -1,11 +1,11 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -16,10 +16,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import java.io.Serial;
-import java.util.Properties;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasJdbcCloudConfigBootstrapAutoConfiguration}.

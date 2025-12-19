@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.storage;
 
+import module java.base;
 import org.apereo.cas.web.DefaultBrowserStorage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;

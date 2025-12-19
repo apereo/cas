@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import module java.base;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import lombok.NoArgsConstructor;
 

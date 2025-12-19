@@ -1,16 +1,11 @@
 package org.apereo.cas.pac4j.client;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
-
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link ChainingDelegatedClientIdentityProviderRedirectionStrategy}.

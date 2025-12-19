@@ -1,14 +1,11 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.util.RandomUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
