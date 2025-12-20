@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "management.endpoints.web.exposure.include=*",
 
     "cas.monitor.endpoints.endpoint.defaults.access=ROLE",
-    "cas.monitor.endpoints.endpoint.defaults.requiredRoles=ADMIN",
+    "cas.monitor.endpoints.endpoint.defaults.required-roles=ADMIN",
 
     "cas.monitor.endpoints.json.location=classpath:/StaticUserDetails.json"
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

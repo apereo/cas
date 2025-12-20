@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver;
@@ -65,6 +66,8 @@ public class DashboardController extends AbstractController {
         mav.addObject("httpRequestSecure", request.isSecure());
         mav.addObject("httpRequestMethod", request.getMethod());
         mav.addObject("httpRequestHeaders", HttpRequestUtils.getRequestHeaders(request));
+        mav.addObject("clientInfo", ClientInfoHolder.getClientInfo());
+        
         val basePath = webEndpointProperties.getBasePath();
         val endpoints = endpointLinksResolver.resolveLinks(basePath);
         val actuatorEndpoints = endpoints

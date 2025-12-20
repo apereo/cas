@@ -24,6 +24,11 @@
 
                     <p>CAS Server host currently active and handling requests is:</p>
                     <pre><code id="casServerHost" class="border-rounded language-html"></code></pre>
+
+                    <p>CAS Server understands your client IP address to be:</p>
+                    <pre><code id="casServerClientIp"
+                               class="border-rounded language-html"
+                               th:text="${clientInfo.clientIpAddress}"></code></pre>
                 </div>
             </div>
 
