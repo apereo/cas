@@ -41,6 +41,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.CompareConnectionValidator;
@@ -154,8 +155,8 @@ public class LdapUtils {
      * @return {@code true} if the attribute's value matches (case-insensitive) {@code "true"}, otherwise false
      */
     public static Boolean getBoolean(final LdapEntry ctx, final String attribute, final Boolean nullValue) {
-        val v = getString(ctx, attribute, nullValue.toString());
-        return v.equalsIgnoreCase(Boolean.TRUE.toString());
+        val value = getString(ctx, attribute, nullValue.toString());
+        return Objects.requireNonNull(value).equalsIgnoreCase(Boolean.TRUE.toString());
     }
 
     /**
@@ -167,8 +168,8 @@ public class LdapUtils {
      * @return the long value
      */
     public static Long getLong(final LdapEntry entry, final String attribute, final Long nullValue) {
-        val v = getString(entry, attribute, String.valueOf(nullValue));
-        return Long.valueOf(v);
+        val value = getString(entry, attribute, String.valueOf(nullValue));
+        return Long.valueOf(Objects.requireNonNull(value));
     }
 
     /**
@@ -178,7 +179,7 @@ public class LdapUtils {
      * @param attribute the attribute name
      * @return the string
      */
-    public static String getString(final LdapEntry entry, final String attribute) {
+    public static @Nullable String getString(final LdapEntry entry, final String attribute) {
         return getString(entry, attribute, null);
     }
 
@@ -190,18 +191,18 @@ public class LdapUtils {
      * @param nullValue the value which should be returning in case of a null value
      * @return the string
      */
-    public static String getString(final LdapEntry entry, final String attribute, final String nullValue) {
+    public static @Nullable String getString(final LdapEntry entry, final String attribute, @Nullable final String nullValue) {
         val attr = entry.getAttribute(attribute);
         if (attr == null) {
             return nullValue;
         }
 
-        val v = attr.isBinary()
+        val value = attr.isBinary()
             ? new String(attr.getBinaryValue(), StandardCharsets.UTF_8)
             : attr.getStringValue();
 
-        if (StringUtils.isNotBlank(v)) {
-            return v;
+        if (StringUtils.isNotBlank(value)) {
+            return value;
         }
         return nullValue;
     }
@@ -258,13 +259,13 @@ public class LdapUtils {
      */
     public static SearchRequest newLdaptiveSearchRequest(final String baseDn,
                                                          final FilterTemplate filter,
-                                                         final String[] binaryAttributes,
+                                                         @Nullable final String[] binaryAttributes,
                                                          final String[] returnAttributes) {
-        val sr = new SearchRequest(baseDn, filter);
-        sr.setBinaryAttributes(binaryAttributes);
-        sr.setReturnAttributes(returnAttributes);
-        sr.setSearchScope(SearchScope.SUBTREE);
-        return sr;
+        val searchRequest = new SearchRequest(baseDn, filter);
+        searchRequest.setBinaryAttributes(binaryAttributes);
+        searchRequest.setReturnAttributes(returnAttributes);
+        searchRequest.setSearchScope(SearchScope.SUBTREE);
+        return searchRequest;
     }
 
     /**
@@ -380,7 +381,7 @@ public class LdapUtils {
                     });
         } else {
             filter.setFilter(filterQuery);
-            if (values != null) {
+            if (values != null && !values.isEmpty()) {
                 IntStream.range(0, values.size()).forEach(i -> {
                     val value = values.get(i);
                     if (filter.getFilter().contains("{" + i + '}')) {
@@ -426,7 +427,7 @@ public class LdapUtils {
         val request = newLdaptiveSearchRequest(baseDn, filterQuery, params, returnAttributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         operation.setRequest(request);
         operation.setTemplate(newLdaptiveSearchFilter(filterQuery, params));
-        return operation;
+        return operation;                                          
     }
 
     /**
@@ -447,24 +448,24 @@ public class LdapUtils {
      * @return the authenticator
      */
     public static Authenticator newLdaptiveAuthenticator(final AbstractLdapAuthenticationProperties props) {
-        switch (props.getType()) {
+        return switch (props.getType()) {
             case AD -> {
                 LOGGER.debug("Creating active directory authenticator for [{}]", props.getLdapUrl());
-                return getActiveDirectoryAuthenticator(props);
+                yield getActiveDirectoryAuthenticator(props);
             }
             case DIRECT -> {
                 LOGGER.debug("Creating direct-bind authenticator for [{}]", props.getLdapUrl());
-                return getDirectBindAuthenticator(props);
+                yield getDirectBindAuthenticator(props);
             }
             case AUTHENTICATED -> {
                 LOGGER.debug("Creating authenticated authenticator for [{}]", props.getLdapUrl());
-                return getAuthenticatedOrAnonSearchAuthenticator(props);
+                yield getAuthenticatedOrAnonSearchAuthenticator(props);
             }
             default -> {
                 LOGGER.debug("Creating anonymous authenticator for [{}]", props.getLdapUrl());
-                return getAuthenticatedOrAnonSearchAuthenticator(props);
+                yield getAuthenticatedOrAnonSearchAuthenticator(props);
             }
-        }
+        };
     }
 
     /**
@@ -675,7 +676,7 @@ public class LdapUtils {
      * @return the entry resolver
      */
     public static EntryResolver newLdaptiveSearchEntryResolver(final AbstractLdapAuthenticationProperties properties,
-                                                               final ConnectionFactory factory) {
+                                                               @Nullable final ConnectionFactory factory) {
 
         var resolvers = Arrays.stream(StringUtils.split(properties.getBaseDn(), BASE_DN_DELIMITER))
             .map(baseDn -> {
@@ -828,7 +829,7 @@ public class LdapUtils {
     }
 
     private static Authenticator getAuthenticatorViaDnFormat(final AbstractLdapAuthenticationProperties properties,
-                                                             final ConnectionFactory factory) {
+                                                             @Nullable final ConnectionFactory factory) {
         val resolver = new FormatDnResolver(properties.getDnFormat());
         val authenticator = new Authenticator(resolver, getBindAuthenticationHandler(newLdaptiveConnectionFactory(properties)));
 
@@ -850,7 +851,6 @@ public class LdapUtils {
     }
 
     private static SaslConfig getSaslConfigFrom(final AbstractLdapProperties properties) {
-
         if (Mechanism.valueOf(properties.getSaslMechanism()) == Mechanism.DIGEST_MD5) {
             val sc = new SaslConfig();
             sc.setMechanism(Mechanism.DIGEST_MD5);
@@ -1109,7 +1109,7 @@ public class LdapUtils {
     @SuppressWarnings("UnusedVariable")
     private record ChainingLdapDnResolver(List<? extends DnResolver> resolvers) implements DnResolver {
         @Override
-        public String resolve(final User user) {
+        public @Nullable String resolve(final User user) {
             return resolvers
                 .stream()
                 .map(resolver -> FunctionUtils.doAndHandle(
@@ -1128,8 +1128,9 @@ public class LdapUtils {
     @SuppressWarnings("UnusedVariable")
     private record ChainingLdapEntryResolver(List<? extends EntryResolver> resolvers) implements EntryResolver {
         @Override
-        public LdapEntry resolve(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response) {
-            return resolvers.stream()
+        public @Nullable LdapEntry resolve(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response) {
+            return resolvers
+                .stream()
                 .map(resolver -> FunctionUtils.doAndHandle(
                         () -> resolver.resolve(criteria, response),
                         throwable -> {

@@ -32,6 +32,7 @@ import org.ldaptive.handler.SearchResultHandler;
 @Slf4j
 @Setter
 @Getter
+@SuppressWarnings("NullAway.Init")
 public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<FilterTemplate> implements AutoCloseable {
 
     private String baseDN;

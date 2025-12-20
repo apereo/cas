@@ -20,6 +20,7 @@ import org.ldaptive.auth.AuthenticationResponse;
 @Slf4j
 @Getter
 @Setter
+@SuppressWarnings("NullAway.Init")
 public class OptionalWarningLdapAccountStateHandler extends DefaultLdapAccountStateHandler {
 
     private String warnAttributeName;

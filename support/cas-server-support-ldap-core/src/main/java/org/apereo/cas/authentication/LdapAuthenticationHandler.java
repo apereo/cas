@@ -37,6 +37,7 @@ import org.springframework.beans.factory.DisposableBean;
 @Setter
 @Getter
 @Monitorable
+@SuppressWarnings("NullAway.Init")
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements DisposableBean {
 
     /**
@@ -84,7 +85,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                                      final AuthenticationPasswordPolicyHandlingStrategy strategy) {
         super(name, principalFactory, order);
         this.authenticator = authenticator;
-        this.passwordPolicyHandlingStrategy = strategy;
+        setPasswordPolicyHandlingStrategy(strategy);
     }
 
     @Override
@@ -141,7 +142,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      *
      * @param username  Username that was successfully authenticated which is used for principal ID when principal id is not specified.
      * @param ldapEntry LDAP entry that may contain principal attributes.
-     * @return Principal if the LDAP entry contains at least a principal ID attribute value, null otherwise.
+     * @return Principal if the LDAP entry contains at least a principal ID attribute value.
      * @throws LoginException On security policy errors related to principal creation.
      */
     protected Principal createPrincipal(final String username, final LdapEntry ldapEntry) throws Throwable {

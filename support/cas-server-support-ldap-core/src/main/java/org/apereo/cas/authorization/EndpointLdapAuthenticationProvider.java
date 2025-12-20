@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import org.jspecify.annotations.NonNull;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.Credential;
 import org.ldaptive.ReturnAttributes;
@@ -47,7 +46,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
 
     private static Authentication generateAuthenticationToken(final Authentication authentication,
                                                               final List<SimpleGrantedAuthority> authorities) {
-        val username = authentication.getPrincipal().toString();
+        val username = Objects.requireNonNull(authentication.getPrincipal()).toString();
         val credentials = authentication.getCredentials();
         return new UsernamePasswordAuthenticationToken(username, credentials, authorities);
     }
@@ -61,9 +60,9 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
     }
 
     @Override
-    public Authentication authenticate(final @NonNull Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         try {
-            val username = authentication.getPrincipal().toString();
+            val username = Objects.requireNonNull(authentication.getPrincipal()).toString();
             val credentials = authentication.getCredentials();
             val password = Optional.ofNullable(credentials).map(Object::toString).orElse(null);
             if (StringUtils.isBlank(password)) {
@@ -115,7 +114,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
     }
 
     @Override
-    public boolean supports(final @NonNull Class<?> aClass) {
+    public boolean supports(final Class<?> aClass) {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(aClass);
     }
 
