@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
     ServerProperties.class,
     TomcatServerProperties.class
 })
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 @Slf4j
 @ExtendWith(CasTestExtension.class)
 class CasTomcatServletWebServerFactoryClusterTests {

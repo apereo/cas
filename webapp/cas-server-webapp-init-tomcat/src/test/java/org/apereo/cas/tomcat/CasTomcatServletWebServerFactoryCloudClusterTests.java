@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
     "server.port=8183",
     "server.ssl.enabled=false"
 }, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 @EnableConfigurationProperties({
     CasConfigurationProperties.class,
     ServerProperties.class,

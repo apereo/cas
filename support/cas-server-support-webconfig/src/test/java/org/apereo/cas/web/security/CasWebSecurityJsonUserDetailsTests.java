@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "cas.monitor.endpoints.json.location=classpath:/StaticUserDetails.json"
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 @ExtendWith(CasTestExtension.class)
 @Slf4j
 class CasWebSecurityJsonUserDetailsTests {

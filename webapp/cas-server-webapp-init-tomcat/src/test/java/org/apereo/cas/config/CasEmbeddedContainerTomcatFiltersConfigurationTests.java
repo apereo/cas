@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.server.tomcat.remote-addr.enabled=true"
 }, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 @ExtendWith(CasTestExtension.class)
 class CasEmbeddedContainerTomcatFiltersConfigurationTests {
     @Autowired

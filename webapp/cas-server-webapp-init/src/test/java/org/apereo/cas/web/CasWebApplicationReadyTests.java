@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 @ExtendWith(CasTestExtension.class)
 class CasWebApplicationReadyTests {
     @Test
