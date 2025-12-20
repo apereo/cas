@@ -53,7 +53,7 @@ public class CasWebflowSecurityContextRepository implements SecurityContextRepos
         return getInProgressAuthentication(request) != null;
     }
 
-    private Authentication getInProgressAuthentication(final HttpServletRequest request) {
+    private @NonNull Authentication getInProgressAuthentication(final HttpServletRequest request) {
         val flowExecutors = applicationContext.getBeansOfType(FlowExecutor.class)
             .values()
             .stream()

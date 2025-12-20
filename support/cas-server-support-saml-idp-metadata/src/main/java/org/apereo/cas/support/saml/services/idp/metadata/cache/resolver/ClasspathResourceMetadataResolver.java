@@ -41,7 +41,7 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
         LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
         try (val in = ResourceUtils.getResourceFrom(metadataLocation).getInputStream()) {
             LOGGER.debug("Parsing metadata from [{}]", metadataLocation);
-            val document = this.configBean.getParserPool().parse(in);
+            val document = configBean.getParserPool().parse(in);
 
             val metadataRoot = document.getDocumentElement();
             val metadataProvider = new DOMMetadataResolver(metadataRoot);
@@ -58,7 +58,9 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
     public boolean supports(final SamlRegisteredService service) {
         try {
             val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
-            val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            val metadataResource = ResourceUtils.isClasspathResource(metadataLocation)
+                ? ResourceUtils.getResourceFrom(metadataLocation)
+                : null;
             return metadataResource instanceof ClassPathResource;
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);

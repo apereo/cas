@@ -1810,36 +1810,51 @@ async function initializeSystemOperations() {
     }
 
     async function configureHealthChart() {
+        function updateHealthChart(response) {
+            if (response.components !== undefined) {
+                const payload = {
+                    labels: [],
+                    data: [],
+                    colors: []
+                };
+                Object.keys(response.components).forEach(key => {
+                    payload.labels.push(camelcaseToTitleCase(key));
+                    payload.data.push(1);
+                    payload.colors.push(response.components[key].status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)");
+                });
+                systemHealthChart.data.labels = payload.labels;
+                systemHealthChart.data.datasets[0].data = payload.data;
+                systemHealthChart.data.datasets[0].backgroundColor = payload.colors;
+                systemHealthChart.data.datasets[0].borderColor = payload.colors;
+                systemHealthChart.options.plugins.legend.labels.generateLabels = (chart => {
+                    const originalLabels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                    originalLabels.forEach(label => {
+                        label.fillStyle = response.status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)";
+                        label.lineWidth = 0;
+                    });
+                    return originalLabels;
+                });
+                systemHealthChart.update();
+            }
+        }
+
         if (actuatorEndpoints.health) {
-            $.get(actuatorEndpoints.health, response => {
-                if (response.components !== undefined) {
-                    const payload = {
-                        labels: [],
-                        data: [],
-                        colors: []
-                    };
-                    Object.keys(response.components).forEach(key => {
-                        payload.labels.push(key.charAt(0).toUpperCase() + key.slice(1).toLowerCase());
-                        payload.data.push(response.components[key].status === "UP" ? 1 : 0);
-                        payload.colors.push(response.components[key].status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)");
-                    });
-                    systemHealthChart.data.labels = payload.labels;
-                    systemHealthChart.data.datasets[0].data = payload.data;
-                    systemHealthChart.data.datasets[0].backgroundColor = payload.colors;
-                    systemHealthChart.data.datasets[0].borderColor = payload.colors;
-                    systemHealthChart.options.plugins.legend.labels.generateLabels = (chart => {
-                        const originalLabels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
-                        originalLabels.forEach(label => {
-                            label.fillStyle = response.status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)";
-                            label.lineWidth = 0;
-                        });
-                        return originalLabels;
-                    });
-                    systemHealthChart.update();
+            $.ajax({
+                url: actuatorEndpoints.health,
+                method: "GET",
+                timeout: 5000,
+                success: function (response) {
+                    updateHealthChart(response);
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    if (xhr.status === 503) {
+                        const response = xhr.responseJSON;
+                        updateHealthChart(response)
+                    } else {
+                        console.error("Error fetching health data:", errorThrown);
+                        displayBanner(xhr);
+                    }
                 }
-            }).fail((xhr, status, error) => {
-                console.error("Error fetching data:", error);
-                displayBanner(xhr);
             });
         }
     }
@@ -2060,7 +2075,7 @@ function initializeServiceButtons() {
                         $.ajax({
                             url: `${actuatorEndpoints.registeredservices}/${serviceId}`,
                             type: "DELETE",
-                            headers: { "Content-Type": "application/json" },
+                            headers: {"Content-Type": "application/json"},
                             success: response => {
                                 let nearestTr = $(this).closest("tr");
                                 let applicationsTable = $("#applicationsTable").DataTable();
@@ -2093,23 +2108,23 @@ function initializeServiceButtons() {
         }
     });
 
-    $("button[name=saveService],button[name=saveServiceWizard]").off().on("click", function() {
+    $("button[name=saveService],button[name=saveServiceWizard]").off().on("click", function () {
         if (actuatorEndpoints.registeredservices) {
             let isNewService = false;
             let value = "";
-            
+
             const saveButton = $(this);
-            switch(saveButton.attr("name")) {
-                case "saveServiceWizard":
-                    isNewService = true;
-                    const wizardEditor = initializeAceEditor("wizardServiceEditor");
-                    value = wizardEditor.getValue();
-                    break;
-                case "saveService":
-                    const editServiceDialogElement = document.getElementById("editServiceDialog");
-                    isNewService = $(editServiceDialogElement).attr("newService") === "true";
-                    value = serviceEditor.getValue();
-                    break;
+            switch (saveButton.attr("name")) {
+            case "saveServiceWizard":
+                isNewService = true;
+                const wizardEditor = initializeAceEditor("wizardServiceEditor");
+                value = wizardEditor.getValue();
+                break;
+            case "saveService":
+                const editServiceDialogElement = document.getElementById("editServiceDialog");
+                isNewService = $(editServiceDialogElement).attr("newService") === "true";
+                value = serviceEditor.getValue();
+                break;
             }
 
             Swal.fire({
@@ -2121,7 +2136,7 @@ function initializeServiceButtons() {
             })
                 .then((result) => {
                     if (result.isConfirmed) {
-                        
+
                         $.ajax({
                             url: `${actuatorEndpoints.registeredservices}`,
                             type: isNewService ? "POST" : "PUT",
@@ -4088,7 +4103,7 @@ async function initializePalantir() {
     try {
         setTimeout(() => {
             initializeCasFeatures().then(() => {
-               let visibleCount = processNavigationTabs();
+                let visibleCount = processNavigationTabs();
                 if (visibleCount === 0) {
                     $("#dashboard").hide();
                     Swal.fire({
@@ -4183,13 +4198,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     $("input.jquery-datepicker").datepicker({
         showAnim: "slideDown",
-        onSelect: function(date, ins) {
+        onSelect: function (date, ins) {
             $(ins).val(date);
             generateServiceDefinition();
             $(`#${$(ins).prop("id")}`).prev().find(".mdc-notched-outline__notch").hide();
         }
-    })
-    
+    });
+
     $("nav.sidebar-navigation ul li").off().on("click", function () {
         hideBanner();
         const index = selectSidebarMenuButton(this);

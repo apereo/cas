@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 /**
@@ -63,7 +64,7 @@ public class RegexUtils {
      * @return the pattern or {@link RegexUtils#MATCH_NOTHING_PATTERN}
      * if pattern is null or invalid.
      */
-    public static Pattern createPattern(final String pattern) {
+    public static Pattern createPattern(@Nullable final String pattern) {
         return createPattern(pattern, Pattern.CASE_INSENSITIVE);
     }
 
@@ -74,7 +75,7 @@ public class RegexUtils {
      * @param flags   the flags
      * @return the compiled pattern or {@link RegexUtils#MATCH_NOTHING_PATTERN} if pattern is null or invalid.
      */
-    public static Pattern createPattern(final String pattern, final int flags) {
+    public static Pattern createPattern(@Nullable final String pattern, final int flags) {
         if (StringUtils.isBlank(pattern)) {
             LOGGER.warn("Pattern cannot be null/blank");
             return MATCH_NOTHING_PATTERN;
@@ -135,7 +136,7 @@ public class RegexUtils {
      * @param value   the string
      * @return true/false
      */
-    public static boolean find(final String pattern, final String value) {
+    public static boolean find(@Nullable final String pattern, @Nullable final String value) {
         return StringUtils.isNotBlank(value) && createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(value).find();
     }
 
@@ -146,7 +147,7 @@ public class RegexUtils {
      * @param elements the elements
      * @return the optional
      */
-    public static Optional<String> findFirst(final String pattern, final Collection elements) {
+    public static Optional<String> findFirst(@Nullable final String pattern, final Collection elements) {
         val compiledPattern = createPattern(pattern);
         return elements
             .stream()
