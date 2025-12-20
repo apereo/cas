@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="CAS - Enterprise Single Sign-On for the Web"/>
+    <meta name="keywords" content="authentication, login, cas, central authentication service, web, java, protocol, thymeleaf,
+                   open source, boot, spring, authorization, google, facebook, twitter, higher-ed, enterprise,
+                   access management, single sign-on, sso, RBAC, ABAC, attributes, SAML, OpenID, openid connect,
+                   JWT, ADFS"/>
+    <meta name="robots" content="index,follow"/>
+
+    
+    
+
+    
+
+
+
+
+
+
+
+    
+
+    <script>
+        ((i, s, o, g, r, a, m) => {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-83384532-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.2/css/all.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/stylesheet.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/print.css'>
+
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,700' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:900,900italic,300,300italic&subset=latin-ext,latin' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <title>CAS - Configuration Properties</title>
+
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="hidden-sm-down">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-4 col-md-2">
+                    <a href="../../index.html">
+                        <img class="undecorated" src="/cas/images/cas_logo.png"/>
+                    </a>
+                </div>
+                <div class="col-xs-8 col-md-6">
+                    <h1>Enterprise Identity for All Earthlings and Beyond<p><sub>Identity, Single Sign-On and Access Management</sub></p></h1>
+                </div>
+                <div class="hidden-sm-down col-md-4">
+                    <a id="forkme_banner" href="https://github.com/apereo/cas">View on GitHub</a>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary bg-dark">
+        
+        <button onclick="navigateSidebar()" id="sidebarNavButton">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        
+        <div class="container">
+<!--            <button id="navigationNavButton" class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"-->
+<!--                    data-bs-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false"-->
+<!--                    aria-label="Toggle navigation">-->
+<!--                <span class="navbar-toggler-icon"></span>-->
+<!--            </button>-->
+
+            <div class="navbar-collapse collapse" id="navbarsExample04">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active"><a href="../../index.html" class="zoom nav-link">Home</a></li>
+                    <li class="nav-item"><a href="https://github.com/apereo/cas/releases" class="zoom nav-link">Releases</a></li>
+                    <li class="nav-item"><a href="../../Support.html" class="zoom nav-link">Support</a></li>
+                    <li class="nav-item"><a href="../../Mailing-Lists.html" class="zoom nav-link">Mailing Lists</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="zoom nav-link dropdown-toggle mr-md-2" href="javascript:void(0)" role="button" id="cas-versions" data-bs-toggle="dropdown"
+                           aria-haspopup="true" aria-expanded="false">Versions</a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="cas-versions">
+                            
+                            
+                            <a class="dropdown-item" href="/cas/development/">Development</a>
+                            
+                            
+                            
+                            <a class="dropdown-item" href="/cas/7.2.x/">v7.2.x</a>
+                            
+                            
+                            
+                            <a class="dropdown-item" href="/cas/7.1.x/">v7.1.x</a>
+                            
+                            
+                            
+                            <a class="dropdown-item" href="/cas/7.0.x/">v7.0.x</a>
+                            
+                            
+
+                        </div>
+                    </li>
+                    <li class="nav-item"><a href="https://apereo.github.io" target="_blank" rel="noopener" class="zoom nav-link">Blog</a></li>
+                </ul>
+
+            </div>
+
+        </div>
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="row flex-xl-nowrap">
+
+            
+                <div class="col-12 col-md-3 col-xl-2 docs-sidebar pb-5" id="sidebar"></div>
+
+                <div class="d-none d-xl-block col-xl-2 docs-toc">
+    <div id="pageContents">
+        <ul class="section-nav"></ul>
+    </div>
+</div>
+
+            
+
+            <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 cas-docs-content" role="main">
+                
+                
+
+                <section>
+                    
+                    <nav id="docsNavBar">
+                        <span id="toolbarIcons"></span>
+                    </nav>
+                    
+
+                    <div id="cas-docs-container">
+                        
+<h1 id="configuration-properties">Configuration Properties</h1>
+
+<p>You may search the CAS configuration catalog to find properties and their descriptions.
+The collection of properties available for search includes CAS properties as well as those
+offered by third party libraries and frameworks such as Spring, Spring Boot, etc.</p>
+
+<div class="container py-2">
+    <div class="row justify-content-center">
+        <div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="search-addon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 0a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" />
+                </svg>
+              </span>
+                <input id="search-input" type="search" class="form-control" placeholder="Type to search properties..." tabindex="0" style="min-height: 4rem; font-size: 1.1rem; font-family: Menlo, Monaco, Consolas, monospace" aria-label="Search" aria-describedby="search-addon" />
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="ignore-cache-checkbox" />
+                  <label class="form-check-label" for="ignore-cache-checkbox">Ignore Cache</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" checked="" id="exact-match-checkbox" />
+                  <label class="form-check-label" for="exact-match-checkbox">Exact Match</label>
+                </div>
+              </div>
+              <div class="input-group" style="width: auto;">
+                <label class="input-group-text" for="max-results-select">Max Results</label>
+                <select class="form-select" id="max-results-select">
+                  <option value="5">5</option>
+                  <option value="10" selected="">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="all">All</option>
+                </select>
+              </div>
+            </div>
+
+            <ul id="search-results" class="list-group"></ul>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/lunr/lunr.js"></script>
+
+<script>
+    (async () => {
+        const ignoreCacheEl = document.getElementById('ignore-cache-checkbox');
+        
+        const url = "/cas/assets/data/7.3.x/index.json?v=20251220224823";
+        console.log("Loading data from", url);
+        const resp = ignoreCacheEl.checked 
+            ? await fetch(url, { cache: 'reload' })
+            : await fetch(url);
+
+        const { index: indexJson, docs } = await resp.json();
+        const idx = lunr.Index.load(indexJson);
+
+        const input = document.getElementById('search-input');
+        const exactMatchEl = document.getElementById('exact-match-checkbox');
+        const maxResultsEl = document.getElementById('max-results-select');
+        const resultsList = document.getElementById('search-results');
+        let timer;
+
+        function convertJavadoc(text) {
+            if (!text) {
+                return '';
+            }
+            return text
+                .replace(/\{@code\s+([^}]+)\}/g, '<code>$1</code>')
+                .replace(/\{@link\s+([^\s}]+)\s*([^}]*)\}/g, (m, link, label) => {
+                    const lbl = label || link;
+                    const url = `${link.replace(/\./g, '/')}.html`;
+                    return `<a href="${url}">${lbl}</a>`;
+                })
+                .replace(/\r?\n/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+        
+        function prepareQuery(input, exact) {
+          input = input.replace("[0]", "[]");
+          const parts = input.split(/[^A-Za-z0-9]+/).filter(Boolean);
+          if (!parts.length) return '';
+          if (exact) {
+            // exact: match whole tokens
+            return input;
+          }
+          // prefix only on last segment
+          return parts.map((term, i) =>
+            i === parts.length - 1 ? `*${term}*` : term
+          ).join(' ');
+        }
+
+        async function performSearch() {
+          const raw = input.value.trim();
+          resultsList.innerHTML = '';
+          if (!raw) return;
+
+          const exact = exactMatchEl.checked;
+
+          const query = prepareQuery(raw, exact);
+          if (!query) return;
+
+          let results = query ? idx.search(query) : [];
+
+          const max = maxResultsEl.value;
+          if (max !== 'all') {
+              results = results.slice(0, Number(max));
+          }
+
+          if (!results.length) {
+              resultsList.innerHTML = '<li class="list-group-item text-center text-muted">No results found</li>';
+              return;
+          }
+
+          results.forEach(({ ref, score }) => {
+              const doc = docs[ref];
+              const li = document.createElement('li');
+              li.className = 'list-group-item';
+              li.innerHTML = `
+                  <h5 class="mb-1"><code>${doc.name.replace(/\[\]/g, '[0]')} = ${doc.defaultValue}</code></h5>
+                  <small class="text-muted">Score: ${score.toFixed(2)}</small>
+                  <p class="mb-0 text-justify">${convertJavadoc(doc.description) || '<em>No description</em>'}</p>
+              `;
+              resultsList.appendChild(li);
+          });
+        }
+
+        window.addEventListener('load', () => inputEl.focus());
+        input.addEventListener('input', () => performSearch());
+        ignoreCacheEl.addEventListener('change', () => performSearch());
+        exactMatchEl.addEventListener('change', () => performSearch());
+        maxResultsEl.addEventListener('change', () => performSearch());
+        
+
+
+    })();
+</script>
+
+
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+
+    <footer>
+        <div class="container">
+            CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.
+        </div>
+    </footer>
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/tether@2.0.0/dist/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+    <script src='/cas/javascripts/URI.js'></script>
+    <script src='/cas/javascripts/main.js'></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"></script>
+
+    <script>
+        let pageSection = 'Configuration';
+        let siteUrl = '';
+        let basePath = '/cas';
+
+        
+    </script>
+</body>
+
+</html>
