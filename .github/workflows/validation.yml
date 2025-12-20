@@ -44,11 +44,18 @@ jobs:
     needs: [trigger-ci]
     runs-on: ubuntu-latest
     outputs:
-      JDK_CURRENT: ${{ env.JDK_CURRENT }}
-      JDK_LATEST: ${{ env.JDK_LATEST }}
+      jdks: ${{ steps.determine-jdk.outputs.jdks }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Determine JDKs
+        id: determine-jdk
+        run: |
+          if [ "$JDK_CURRENT" == "$JDK_LATEST" ]; then
+            echo "jdks=[\"$JDK_CURRENT\"]" >> "$GITHUB_OUTPUT"
+          else
+            echo "jdks=[\"$JDK_CURRENT\", \"$JDK_LATEST\"]" >> "$GITHUB_OUTPUT"
+          fi
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
@@ -89,9 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk:
-          - ${{ needs.initialize.outputs.JDK_CURRENT }}
-          - ${{ needs.initialize.outputs.JDK_LATEST }}
+        jdk: ${{ fromJson(needs.initialize.outputs.jdks) }}
     name: commandline shell - JDK ${{ matrix.jdk }}
     steps:
       - name: Checkout
@@ -123,9 +128,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk:
-          - ${{ needs.initialize.outputs.JDK_CURRENT }}
-          - ${{ needs.initialize.outputs.JDK_LATEST }}
+        jdk: ${{ fromJson(needs.initialize.outputs.jdks) }}
         category:
           - tomcat
           - jetty
@@ -161,9 +164,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk:
-          - ${{ needs.initialize.outputs.JDK_CURRENT }}
-          - ${{ needs.initialize.outputs.JDK_LATEST }}
+        jdk: ${{ fromJson(needs.initialize.outputs.jdks) }}
         category:
           - cas-server
           - config-server
@@ -198,9 +199,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk:
-          - ${{ needs.initialize.outputs.JDK_CURRENT }}
-          - ${{ needs.initialize.outputs.JDK_LATEST }}
+        jdk: ${{ fromJson(needs.initialize.outputs.jdks) }}
     name: spring cloud config server - JDK ${{ matrix.jdk }}
     steps:
       - name: Checkout
