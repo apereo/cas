@@ -72,16 +72,16 @@ public class CasHazelcastSessionAutoConfiguration {
         return hazelcastInstance;
     }
 
-    private static class InstantCompactSerializer implements CompactSerializer<Instant> {
+    private static final class InstantCompactSerializer implements CompactSerializer<Instant> {
         @Override
-        public Instant read(CompactReader reader) {
-            long epochSecond = reader.readInt64("epochSecond");
-            int nano = reader.readInt32("nano");
+        public Instant read(final CompactReader reader) {
+            val epochSecond = reader.readInt64("epochSecond");
+            val nano = reader.readInt32("nano");
             return Instant.ofEpochSecond(epochSecond, nano);
         }
 
         @Override
-        public void write(CompactWriter writer, Instant instant) {
+        public void write(final CompactWriter writer, final Instant instant) {
             writer.writeInt64("epochSecond", instant.getEpochSecond());
             writer.writeInt32("nano", instant.getNano());
         }
@@ -97,17 +97,17 @@ public class CasHazelcastSessionAutoConfiguration {
         }
     }
 
-    private static class DurationCompactSerializer implements CompactSerializer<Duration> {
+    private static final class DurationCompactSerializer implements CompactSerializer<Duration> {
 
         @Override
-        public Duration read(CompactReader reader) {
-            long seconds = reader.readInt64("seconds");
-            int nanos = reader.readInt32("nanos");
+        public Duration read(final CompactReader reader) {
+            val seconds = reader.readInt64("seconds");
+            val nanos = reader.readInt32("nanos");
             return Duration.ofSeconds(seconds, nanos);
         }
 
         @Override
-        public void write(CompactWriter writer, Duration duration) {
+        public void write(final CompactWriter writer, final Duration duration) {
             writer.writeInt64("seconds", duration.getSeconds());
             writer.writeInt32("nanos", duration.getNano());
         }
