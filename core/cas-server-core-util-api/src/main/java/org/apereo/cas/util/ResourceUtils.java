@@ -73,15 +73,25 @@ public class ResourceUtils {
         if (StringUtils.isBlank(location)) {
             throw new IllegalArgumentException("Provided location does not exist and is empty");
         }
-        if (location.toLowerCase(Locale.ENGLISH).startsWith(HTTP_URL_PREFIX)) {
+        if (isUrl(location)) {
             return new UrlResource(location);
         }
-        if (location.toLowerCase(Locale.ENGLISH).startsWith(CLASSPATH_URL_PREFIX)) {
+        if (isClasspathResource(location)) {
             return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
         }
         return new FileSystemResource(Strings.CI.remove(location, FILE_URL_PREFIX));
     }
 
+    /**
+     * Is classpath resource?.
+     *
+     * @param location the location
+     * @return true/false
+     */
+    public static boolean isClasspathResource(final String location) {
+        return StringUtils.isNotBlank(location) && location.toLowerCase(Locale.ENGLISH).startsWith(CLASSPATH_URL_PREFIX);
+    }
+    
     /**
      * An embedded resource typically is a resource on the classpath
      * that is picked up by the GraalVM native image.
@@ -355,7 +365,7 @@ public class ResourceUtils {
      * @return true/false
      */
     public static boolean isUrl(final String resource) {
-        return StringUtils.isNotBlank(resource) && resource.startsWith("http");
+        return StringUtils.isNotBlank(resource) && resource.toLowerCase(Locale.ENGLISH).startsWith(HTTP_URL_PREFIX);
     }
 
     /**

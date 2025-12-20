@@ -61,7 +61,9 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
     public boolean supports(final SamlRegisteredService service) {
         try {
             val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
-            val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            val metadataResource = ResourceUtils.isClasspathResource(metadataLocation)
+                ? ResourceUtils.getResourceFrom(metadataLocation)
+                : null;
             return metadataResource instanceof ClassPathResource;
         } catch (final Exception e) {
             LOGGER.trace(e.getMessage(), e);
