@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AttributeModification;
@@ -131,7 +132,7 @@ public class LdapConnectionFactory implements Closeable {
         final FilterTemplate filter,
         final int pageSize,
         final String... returnAttributes) throws LdapException {
-        return executeSearchOperation(baseDn, filter, pageSize, null, returnAttributes);
+        return executeSearchOperation(baseDn, filter, pageSize, ArrayUtils.EMPTY_STRING_ARRAY, returnAttributes);
     }
 
     /**
@@ -149,6 +150,7 @@ public class LdapConnectionFactory implements Closeable {
         final String baseDn,
         final FilterTemplate filter,
         final int pageSize,
+        @Nullable
         final String[] binaryAttributes,
         final String[] returnAttributes) throws LdapException {
         val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);

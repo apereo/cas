@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.handler.LdapEntryHandler;
 
@@ -52,7 +53,8 @@ public class ActiveDirectoryLdapEntryHandler implements LdapEntryHandler {
     //CHECKSTYLE:ON
 
     @Override
-    public LdapEntry apply(final LdapEntry ldapEntry) {
+    @SuppressWarnings("NullAway")
+    public @Nullable LdapEntry apply(final LdapEntry ldapEntry) {
         val attr = ldapEntry.getAttribute("userAccountControl");
         if (attr != null) {
             val uac = Integer.parseInt(attr.getStringValue());

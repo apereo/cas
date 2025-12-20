@@ -10,6 +10,7 @@ import org.apereo.cas.util.serialization.StringSerializer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.springframework.util.StringUtils;
@@ -59,7 +60,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
     }
 
     @Override
-    public RegisteredService mapToRegisteredService(final LdapEntry entry) {
+    public @Nullable RegisteredService mapToRegisteredService(final LdapEntry entry) {
         val value = LdapUtils.getString(entry, ldap.getServiceDefinitionAttribute());
         if (StringUtils.hasText(value)) {
             LOGGER.debug("Transforming LDAP entry [{}] into registered service definition", entry);

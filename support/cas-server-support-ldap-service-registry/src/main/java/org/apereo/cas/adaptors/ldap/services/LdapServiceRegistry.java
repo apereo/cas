@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchResponse;
 import org.springframework.beans.factory.DisposableBean;
@@ -92,16 +93,16 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
                 .filter(Objects::nonNull)
                 .map(this::invokeServiceRegistryListenerPostLoad)
                 .filter(Objects::nonNull)
-                .forEach(s -> {
-                    publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo));
-                    list.add(s);
+                .forEach(registeredService -> {
+                    publishEvent(new CasRegisteredServiceLoadedEvent(this, registeredService, clientInfo));
+                    list.add(registeredService);
                 });
         }
         return list;
     }
 
     @Override
-    public RegisteredService findServiceById(final long id) {
+    public @Nullable RegisteredService findServiceById(final long id) {
         val response = searchForServiceById(id);
         if (LdapUtils.containsResultEntry(response)) {
             return this.ldapServiceMapper.mapToRegisteredService(response.getEntry());
@@ -140,7 +141,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
     private RegisteredService insert(final RegisteredService rs) {
         rs.assignIdIfNecessary();
         val entry = this.ldapServiceMapper.mapFromRegisteredService(ldapProperties.getBaseDn(), rs);
-        connectionFactory.executeAddOperation(entry);
+        connectionFactory.executeAddOperation(Objects.requireNonNull(entry));
         return rs;
     }
 
@@ -156,7 +157,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
         if (StringUtils.isNotBlank(currentDn)) {
             LOGGER.debug("Updating registered service at [{}]", currentDn);
             val entry = this.ldapServiceMapper.mapFromRegisteredService(ldapProperties.getBaseDn(), rs);
-            connectionFactory.executeModifyOperation(currentDn, entry);
+            connectionFactory.executeModifyOperation(currentDn, Objects.requireNonNull(entry));
         } else {
             LOGGER.debug("Cannot locate DN for registered service with id [{}]. Attempting to save the service", rs.getId());
             insert(rs);
@@ -180,7 +181,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
         });
     }
 
-    private String getCurrentDnForRegisteredService(final RegisteredService rs) {
+    private @Nullable String getCurrentDnForRegisteredService(final RegisteredService rs) {
         val response = searchForServiceById(rs.getId());
         if (LdapUtils.containsResultEntry(response)) {
             return response.getEntry().getDn();
