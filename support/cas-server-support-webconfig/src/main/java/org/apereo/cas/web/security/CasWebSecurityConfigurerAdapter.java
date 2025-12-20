@@ -77,7 +77,7 @@ public class CasWebSecurityConfigurerAdapter {
     private final CasConfigurationProperties casProperties;
 
     private final WebEndpointProperties webEndpointProperties;
-    
+
     private final ManagementServerProperties managementServerProperties;
 
     private final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints;
@@ -143,9 +143,11 @@ public class CasWebSecurityConfigurerAdapter {
 
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
         endpoints.forEach(Unchecked.biConsumer((key, endpointProps) -> {
-            val endpoint = EndpointRequest.to(key);
-            endpointProps.getAccess().forEach(Unchecked.consumer(
-                access -> configureEndpointAccess(requests, access, endpointProps, endpoint)));
+            if (!Strings.CI.equals(key, "defaults")) {
+                val endpoint = EndpointRequest.to(key);
+                endpointProps.getAccess().forEach(Unchecked.consumer(
+                    access -> configureEndpointAccess(requests, access, endpointProps, endpoint)));
+            }
         }));
         configureEndpointAccessToDenyUndefined(requests, applicationContext);
         configureEndpointAccessForStaticResources(requests);
