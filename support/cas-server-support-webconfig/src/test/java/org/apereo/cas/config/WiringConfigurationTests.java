@@ -56,7 +56,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "cas.http-web-request.header.content-security-policy=policy"
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 @ExtendWith(CasTestExtension.class)
 class WiringConfigurationTests {
     @Autowired

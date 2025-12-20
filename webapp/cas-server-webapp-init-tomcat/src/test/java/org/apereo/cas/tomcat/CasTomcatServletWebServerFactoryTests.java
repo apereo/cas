@@ -63,7 +63,7 @@ import org.springframework.boot.web.server.servlet.ConfigurableServletWebServerF
     ServerProperties.class,
     TomcatServerProperties.class
 })
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 class CasTomcatServletWebServerFactoryTests {
     @Autowired
     protected CasConfigurationProperties casProperties;

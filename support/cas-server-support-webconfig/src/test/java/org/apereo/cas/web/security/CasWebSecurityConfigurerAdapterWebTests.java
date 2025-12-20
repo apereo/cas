@@ -62,7 +62,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "cas.monitor.endpoints.form-login-enabled=true"
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 @ExtendWith(CasTestExtension.class)
 @Slf4j
 class CasWebSecurityConfigurerAdapterWebTests {

@@ -174,6 +174,9 @@ while (( "$#" )); do
             tickets|ticketing|geode)
                 task+="testTickets "
                 ;;
+            tomcat|apachetomcat|apache-tomcat|atc)
+                task+="testApacheTomcat "
+                ;;
             syncope)
                 isDockerOnLinux && ./ci/tests/syncope/run-syncope-server.sh || exit 1
                 task+="testSyncope "

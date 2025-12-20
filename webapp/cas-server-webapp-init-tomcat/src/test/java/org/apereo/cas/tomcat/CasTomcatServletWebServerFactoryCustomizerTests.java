@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties({
     CasConfigurationProperties.class,
