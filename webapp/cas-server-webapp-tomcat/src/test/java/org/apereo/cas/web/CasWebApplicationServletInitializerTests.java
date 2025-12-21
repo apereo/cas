@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 @ExtendWith(CasTestExtension.class)
 class CasWebApplicationServletInitializerTests {
 
