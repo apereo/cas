@@ -53,6 +53,8 @@ dependencies {
     implementation libraries.javaparser
     implementation libraries.hibernatevalidator
 
+    testImplementation libraries.springshelltests
+    
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
     testImplementation project(":core:cas-server-core-scripting")
