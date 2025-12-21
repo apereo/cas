@@ -17,6 +17,7 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Inspektr's resource resolver for audit advice weaved at various service access enforcement audit execution joinpoints.
@@ -31,7 +32,7 @@ public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAs
     protected final PrincipalFactory defaultPrincipalFactory = PrincipalFactoryUtils.newPrincipalFactory();
 
     @Override
-    public String[] resolveFrom(final JoinPoint auditableTarget, final Object returnValue) {
+    public String[] resolveFrom(final JoinPoint auditableTarget, @Nullable final Object returnValue) {
         Objects.requireNonNull(returnValue, "AuditableExecutionResult must not be null");
         val serviceAccessCheckResult = (AuditableExecutionResult) returnValue;
         val accessCheckOutcome = "Service Access " + BooleanUtils.toString(serviceAccessCheckResult.isExecutionFailure(), "Denied", "Granted");

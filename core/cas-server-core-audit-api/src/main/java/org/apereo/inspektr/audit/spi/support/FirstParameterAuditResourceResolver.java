@@ -6,6 +6,7 @@ import lombok.Setter;
 import module java.base;
 import org.apereo.cas.util.AopUtils;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Converts the first argument object into a String resource identifier.
@@ -17,16 +18,18 @@ import org.aspectj.lang.JoinPoint;
  * @since 1.0
  */
 @Setter
+@SuppressWarnings("NullAway.Init")
 public class FirstParameterAuditResourceResolver implements AuditResourceResolver {
 
     protected Function<String[], String[]> resourcePostProcessor = Function.identity();
 
+    @Nullable
     private String resourceString;
 
     private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
 
     @Override
-    public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
+    public String[] resolveFrom(final JoinPoint joinPoint, @Nullable final Object retval) {
         return toResources(getArguments(joinPoint));
     }
 

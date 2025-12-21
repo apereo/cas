@@ -9,6 +9,7 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The {@link OAuth20AccessTokenGrantRequestAuditResourceResolver} for audit advice
@@ -20,8 +21,8 @@ import org.aspectj.lang.JoinPoint;
 public class OAuth20AccessTokenGrantRequestAuditResourceResolver extends ReturnValueAsStringResourceResolver {
 
     @Override
-    public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
-        val auditResult = (AuditableExecutionResult) retval;
+    public String[] resolveFrom(final JoinPoint auditableTarget, @Nullable final Object retval) {
+        val auditResult = Objects.requireNonNull((AuditableExecutionResult) retval);
         val executionResult = auditResult.getExecutionResult();
 
         if (executionResult.isPresent()) {

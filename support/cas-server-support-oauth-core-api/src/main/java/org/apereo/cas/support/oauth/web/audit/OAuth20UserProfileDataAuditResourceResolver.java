@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The {@link OAuth20UserProfileDataAuditResourceResolver}.
@@ -17,7 +18,7 @@ import org.aspectj.lang.JoinPoint;
  */
 public class OAuth20UserProfileDataAuditResourceResolver extends ReturnValueAsStringResourceResolver {
     @Override
-    public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
+    public String[] resolveFrom(final JoinPoint auditableTarget, @Nullable final Object retval) {
         Objects.requireNonNull(retval, "User profile data must not be null");
         val profileMap = (Map) retval;
         val accessToken = (OAuth20AccessToken) auditableTarget.getArgs()[0];

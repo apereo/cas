@@ -15,6 +15,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager.AuditFormats;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Converts the Credential object into a String resource identifier.
@@ -28,7 +29,7 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
     protected final AuditEngineProperties properties;
 
     @Override
-    public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
+    public String[] resolveFrom(final JoinPoint joinPoint, @Nullable final Object retval) {
         return toResources(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
     }
 

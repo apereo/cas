@@ -4,6 +4,7 @@ import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.actuate.audit.listener.AuditApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -16,6 +17,7 @@ import org.springframework.context.ApplicationEventPublisherAware;
  */
 @RequiredArgsConstructor
 @Slf4j
+@SuppressWarnings("NullAway.Init")
 public class FilterAndDelegateAuditTrailManager implements AuditTrailManager, ApplicationEventPublisherAware {
 
     private final Collection<AuditTrailManager> auditTrailManagers;
@@ -25,6 +27,7 @@ public class FilterAndDelegateAuditTrailManager implements AuditTrailManager, Ap
     private final List<String> excludedActionsPerformed;
 
     @Setter
+    @Nullable
     private ApplicationEventPublisher applicationEventPublisher;
 
     @Override

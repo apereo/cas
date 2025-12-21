@@ -52,6 +52,7 @@ import jakarta.validation.constraints.Size;
 @Slf4j
 @Setter
 @RequiredArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
 
     /**

@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implementation of {@link AuditResourceResolver} that uses the toString version of the return value
@@ -23,7 +24,7 @@ public class ReturnValueAsStringResourceResolver implements AuditResourceResolve
     protected Function<String[], String[]> resourcePostProcessor = Function.identity();
 
     @Override
-    public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
+    public @Nullable String[] resolveFrom(final JoinPoint auditableTarget, @Nullable final Object retval) {
         if (retval instanceof final Collection collection) {
             val size = collection.size();
             val returnValues = new String[size];
@@ -60,7 +61,7 @@ public class ReturnValueAsStringResourceResolver implements AuditResourceResolve
      * @param arg the arg
      * @return the string
      */
-    public String toResourceString(final Object arg) {
+    public String toResourceString(@Nullable final Object arg) {
         if (auditFormat == AuditTrailManager.AuditFormats.JSON && arg != null) {
             return postProcess(AuditTrailManager.toJson(arg));
         }
