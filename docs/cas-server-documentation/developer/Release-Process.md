@@ -62,15 +62,8 @@ This step is only relevant if you wish to run the release process locally.</p></
 
 - Load your SSH key and ensure this SSH key is also referenced in GitHub.
 - Adjust `$GRADLE_OPTS` to initialize the JVM heap size, if necessary.
-- Load your `~/.gradle/gradle.properties` file with the following *as an example*:
-
-```properties
-org.gradle.daemon=false
-org.gradle.parallel=false
-```
-
 - Checkout the CAS project: `git clone git@github.com:apereo/cas.git cas-server`
-- Make sure you have the [latest version of JDK 25](https://openjdk.java.net/projects/jdk/25/) installed via `java -version`. 
+- Make sure you have the [latest version of JDK 25](https://openjdk.java.net/projects/jdk/25/) installed and verify via `java -version`. 
 
 ## Preparing the Release
 
@@ -80,15 +73,15 @@ a new release branch should be created.
 
 ### Create Branch
 
-```bash
-# Replace $BRANCH with CAS version (i.e. 6.5.x)
-git checkout -b $BRANCH
-```
-
 <div class="alert alert-warning">:warning: <strong>Remember</strong><p>You should do this only for major or minor 
 releases (i.e. <code>4.2.x</code>, <code>5.0.x</code>).
 If there already exists a remote tracking branch for the version you are about to release, you should <code>git checkout</code> that branch, 
 skip this step and move on to next section to build and release.</p></div>
+
+```bash
+# Replace $BRANCH with CAS version (i.e. 6.5.x)
+git checkout -b $BRANCH
+```
 
 ### GitHub Actions
 
@@ -145,9 +138,7 @@ The CAS release can be performed using the following options.
 
 ### GitHub Actions (Preferred)
 
-- Once you're on the right branch in the project's `gradle.properties`, change the project version to the release version and remove the `-SNAPSHOT`. (i.e. `6.0.0-RC1`).
-- Commit and push the changes to the remote branch. Make sure the commit message includes the message `[skip ci]` to skip the CI build to save time.
-- Go to [GitHub Actions](https://github.com/apereo/cas/actions) and dispatch the `Release` workflow run on the right branch. This will trigger the release process.
+Go to [GitHub Actions](https://github.com/apereo/cas/actions) and dispatch the `Release` workflow run on the right branch. This will trigger the release process. You will be prompted to provide the release version (i.e. `8.0.0-RC1`) and the next development version (i.e. `8.0.1-SNAPSHOT`).
 
 The workflow will automatically build the project, sign the artifacts, stage them to central repository, 
 and create a tag for the released version. It will also create a GitHub release for the version, with
@@ -161,28 +152,20 @@ Once the release is staged and has passed validation, it will be published autom
 You should only do this if you <strong>REALLY</strong> know what you're doing. This step is reserved
 best for troubleshooting and diagnostics.</p></div>
 
-- In the project's `gradle.properties`, change the project version to the release version and remove the `-SNAPSHOT`. (i.e. `6.0.0-RC1`). Commit the change.
 - You need to specify the credentials beforehand as environment variables:
 
-```json
+```bash
 # Credentials here are generated at https://central.sonatype.com/account
-# You will receive a userid and a user token.
+# You will receive a user id and a user token.
 export REPOSITORY_USER="..."
 export REPOSITORY_PWD="..."
 ```
 
-- Build and release the project using the following command:
+- Build and release the project using the following command as an example:
 
 ```bash
-./ci/release.sh
+./ci/release.sh --release-version="8.0.0-RC1" --next-version="8.0.1-SNAPSHOT"
 ```
-
-## Finalizing the Release
-
-You should now switch back to the main development branch (i.e. `master`) and follow these steps:
-
-- In the project's `gradle.properties`, change the project version to the *next* development version (i.e. `5.0.0-SNAPSHOT`). 
-- Push your changes to the upstream repository. 
 
 ## Housekeeping
 

@@ -6,6 +6,28 @@ YELLOW="\e[33m"
 ENDCOLOR="\e[0m"
 
 casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
+nextVersion="${casVersion}"
+
+while (("$#")); do
+  case "$1" in
+  --release-version)
+    casVersion=$2
+    shift 2
+    ;;
+  --next-version)
+    nextVersion=$2
+    shift 2
+    ;;
+  esac
+done
+
+function sedi() {
+  if sed --version >/dev/null 2>&1; then
+    sed -i "$@"
+  else
+    sed -i '' "$@"
+  fi
+}
 
 function printgreen() {
   printf "☘️  ${GREEN}$1${ENDCOLOR}\n"
@@ -49,15 +71,16 @@ function publish {
         exit 1
     fi
 
-    printgreen "Verifying dependency versions for CAS release..."
+    printgreen "Verifying dependency versions for CAS release ${casVersion}..."
     ./gradlew verifyDependencyVersions -x test -x javadoc -x check --no-daemon --parallel
     if [ $? -ne 0 ]; then
         printred "Dependency version verification failed."
         exit 1
     fi
         
-    printgreen "Publishing CAS releases. This might take a while..."
+    printgreen "Assembling and publishing CAS release ${casVersion}. This might take a while..."
     ./gradlew assemble publishAggregationToCentralPortal \
+      -Pversion="${casVersion}" -PnextVersion="${nextVersion}" \
       --parallel --no-daemon --no-configuration-cache -x test -x check \
       -DskipAot=true -DpublishReleases=true --stacktrace \
       -DrepositoryUsername="$REPOSITORY_USER" -DrepositoryPassword="$REPOSITORY_PWD"
@@ -115,7 +138,6 @@ function publish {
       changelog=$(printf '%s\n' "${links[*]// /,}")
       changelog="- Changelog: ${changelog}"
     fi
-
 
     currentCommit=$(git rev-parse HEAD)
     printgreen "Current commit is ${currentCommit}"
@@ -175,6 +197,17 @@ ${contributors}
     '
     gh milestone-close "v${casVersion}"
 
+    echo "Updating CAS with the next development version: ${nextVersion}"
+    git reset --hard
+    sedi "s/^version=.*/version=${nextVersion}/" ./gradle.properties
+    git add ./gradle.properties
+    git commit -m "Bumping version to ${nextVersion} after release of ${casVersion} [skip ci]"
+    git push origin "${currentBranch}"
+    if [ $? -ne 0 ]; then
+        printred "Pushing the next development version ${nextVersion} failed."
+        exit 1
+    fi
+    
     printgreen "You should now publish the release for CAS v${casVersion} on GitHub!"
     exit 0
 }
@@ -202,6 +235,7 @@ function init {
   esac
 }
 
+
 if [[ "${casVersion}" == v* ]]; then
     printred "CAS version ${casVersion} is incorrect and likely a tag."
     exit 1
@@ -210,6 +244,7 @@ fi
 echo -e "\n"
 echo "***************************************************************"
 printgreen "Welcome to the release process for Apereo CAS ${casVersion}"
+printgreen "Next development version: ${nextVersion}"
 echo -n $(java -version)
 echo -e "***************************************************************\n"
 

@@ -21,6 +21,15 @@ concurrency:
 
 on:
   workflow_dispatch:
+    inputs:
+      releaseVersion:
+        description: "Release Version (Must NOT be a -SNAPSHOT version; i.e. 8.0.0)"
+        required: true
+        type: string
+      nextVersion:
+        description: "Next Version (Optional; must be a -SNAPSHOT version; i.e. 8.0.1-SNAPSHOT)"
+        required: false
+        type: string
 
 jobs:
   check:
@@ -44,7 +53,7 @@ jobs:
           >> $GITHUB_OUTPUT
   release-to-central:
     runs-on: ubuntu-latest
-    needs: [check]
+    needs: [ check ]
     if: needs.check.outputs.is_snapshot == 'false'
     steps:
       - name: Checkout
@@ -60,5 +69,16 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Configure PGP
         run: echo "$PGP_PRIVATE_KEY" | gpg --batch --import
-      - name: Release
-        run: chmod +x ./ci/release.sh && ./ci/release.sh
+      - name: Release CAS
+        run: |
+          RELEASE_VERSION="${{ inputs.releaseVersion }}"
+          
+          if [ -z "${{ inputs.nextVersion }}" ]; then
+            casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
+            NEXT_VERSION="${casVersion}"
+          else
+            NEXT_VERSION="${{ inputs.nextVersion }}"
+          fi
+          
+          chmod +x ./ci/release.sh
+          ./ci/release.sh --release-version "$RELEASE_VERSION" --next-version "$NEXT_VERSION"
