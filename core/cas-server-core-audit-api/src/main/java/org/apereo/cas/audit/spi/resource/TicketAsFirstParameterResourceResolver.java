@@ -13,6 +13,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implementation of the ResourceResolver that can determine the Ticket Id from the first parameter of the method call.
@@ -26,7 +27,7 @@ public class TicketAsFirstParameterResourceResolver implements AuditResourceReso
     protected final AuditEngineProperties properties;
 
     @Override
-    public String[] resolveFrom(final JoinPoint joinPoint, final Object object) {
+    public String[] resolveFrom(final JoinPoint joinPoint, @Nullable final Object object) {
 
         val jp = AopUtils.unWrapJoinPoint(joinPoint);
         if (jp != null) {

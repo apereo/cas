@@ -2,10 +2,12 @@ package org.apereo.inspektr.audit.spi.support;
 
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
-import module java.base;
 import lombok.Setter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import module java.base;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An {@link AuditResourceResolver} that resolves resource as a target object's toString method call.
@@ -21,7 +23,7 @@ public class ObjectToStringResourceResolver implements AuditResourceResolver {
     private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
 
     @Override
-    public String[] resolveFrom(final JoinPoint target, final Object returnValue) {
+    public String[] resolveFrom(final JoinPoint target, @Nullable final Object returnValue) {
         return resourcePostProcessor.apply(new String[]{toResourceString(target.getTarget())});
     }
 
@@ -39,10 +41,10 @@ public class ObjectToStringResourceResolver implements AuditResourceResolver {
      * @param arg the arg
      * @return the string
      */
-    public String toResourceString(final Object arg) {
+    public String toResourceString(@Nullable final Object arg) {
         if (auditFormat == AuditTrailManager.AuditFormats.JSON) {
             return AuditTrailManager.toJson(arg);
         }
-        return arg.toString();
+        return arg != null ? arg.toString() : StringUtils.EMPTY;
     }
 }

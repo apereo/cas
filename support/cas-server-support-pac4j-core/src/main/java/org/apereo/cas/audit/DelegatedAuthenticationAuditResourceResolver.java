@@ -5,6 +5,7 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.client.Client;
 
 /**
@@ -15,7 +16,7 @@ import org.pac4j.core.client.Client;
  */
 public class DelegatedAuthenticationAuditResourceResolver extends ReturnValueAsStringResourceResolver {
     @Override
-    public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
+    public String[] resolveFrom(final JoinPoint auditableTarget, @Nullable final Object retval) {
         Objects.requireNonNull(retval, "Return value must not be null");
         val result = (AuditableExecutionResult) retval;
         val accessCheckOutcome = "Client Access " + BooleanUtils.toString(result.isExecutionFailure(), "Denied", "Granted");

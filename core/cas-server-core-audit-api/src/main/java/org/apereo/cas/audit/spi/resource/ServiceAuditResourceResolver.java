@@ -12,6 +12,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Extracts the resource as a CAS service for the audit.
@@ -25,11 +26,11 @@ public class ServiceAuditResourceResolver implements AuditResourceResolver {
     protected final AuditEngineProperties properties;
 
     @Override
-    public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
+    public String[] resolveFrom(final JoinPoint joinPoint, @Nullable final Object retval) {
         val auditFormat = AuditTrailManager.AuditFormats.valueOf(properties.getAuditFormat().name());
         val service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
         val values = new HashMap<String, String>();
-        values.put("ticketId", retval.toString());
+        values.put("ticketId", Objects.requireNonNull(retval).toString());
         values.put("service", getServiceId(service));
         return new String[]{auditFormat.serialize(values)};
     }

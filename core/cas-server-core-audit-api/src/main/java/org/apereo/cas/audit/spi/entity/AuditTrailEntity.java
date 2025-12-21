@@ -27,6 +27,7 @@ import jakarta.persistence.MappedSuperclass;
 @Getter
 @Setter
 @NoArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class AuditTrailEntity {
 
     @org.springframework.data.annotation.Id

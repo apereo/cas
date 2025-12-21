@@ -10,6 +10,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.util.DateTimeUtils;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 
 /**
@@ -20,15 +21,16 @@ import org.springframework.webflow.execution.Event;
  */
 @Setter
 @RequiredArgsConstructor
+@SuppressWarnings("NullAway")
 public class NullableReturnValueAuditResourceResolver implements AuditResourceResolver {
-    protected Function<String[], String[]> resourcePostProcessor = Function.identity();
+    protected Function<String[], @Nullable String[]> resourcePostProcessor = Function.identity();
 
     private final AuditResourceResolver delegate;
 
     private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
 
     @Override
-    public String[] resolveFrom(final JoinPoint joinPoint, final Object returnValue) {
+    public @Nullable String[] resolveFrom(final JoinPoint joinPoint, @Nullable final Object returnValue) {
         if (returnValue == null) {
             return ArrayUtils.EMPTY_STRING_ARRAY;
         }
@@ -52,12 +54,14 @@ public class NullableReturnValueAuditResourceResolver implements AuditResourceRe
             }
             return resourcePostProcessor.apply(new String[]{values.toString()});
         }
-        return resourcePostProcessor.apply(this.delegate.resolveFrom(joinPoint, returnValue));
+        val resolved = delegate.resolveFrom(joinPoint, returnValue);
+        return resolved != null ? resourcePostProcessor.apply(resolved) : ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
     @Override
-    public String[] resolveFrom(final JoinPoint joinPoint, final Exception e) {
-        return resourcePostProcessor.apply(this.delegate.resolveFrom(joinPoint, e));
+    public @Nullable String[] resolveFrom(final JoinPoint joinPoint, final Exception e) {
+        val resolved = delegate.resolveFrom(joinPoint, e);
+        return resolved != null ? resourcePostProcessor.apply(resolved) : ArrayUtils.EMPTY_STRING_ARRAY;
     }
 }
 
