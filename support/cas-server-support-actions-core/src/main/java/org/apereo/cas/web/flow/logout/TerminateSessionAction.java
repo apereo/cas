@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.Event;
@@ -50,7 +51,7 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
     protected final LogoutConfirmationResolver logoutConfirmationResolver;
     
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val terminateSession = logoutConfirmationResolver.isLogoutRequestConfirmed(requestContext);
         if (terminateSession) {
             return terminate(requestContext);

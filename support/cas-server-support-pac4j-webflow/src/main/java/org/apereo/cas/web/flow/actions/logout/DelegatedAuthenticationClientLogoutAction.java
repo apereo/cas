@@ -13,6 +13,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
@@ -69,7 +70,7 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         if (logoutConfirmationResolver.isLogoutRequestConfirmed(requestContext)) {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);

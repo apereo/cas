@@ -12,6 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,10 +60,10 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
      */
     protected Set<Event> resolveEventsInternal(final Collection<Event> resolveEvents,
                                                final Authentication authentication,
-                                               final RegisteredService registeredService,
+                                               @Nullable final RegisteredService registeredService,
                                                final HttpServletRequest request,
                                                final RequestContext context,
-                                               final Service service) throws Throwable {
+                                               @Nullable final Service service) throws Throwable {
         if (resolveEvents.isEmpty()) {
             LOGGER.trace("No events resolved for authentication transaction [{}] and service [{}]",
                 authentication, registeredService);
@@ -81,9 +82,9 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
     protected Optional<Pair<Collection<Event>, Collection<MultifactorAuthenticationProvider>>> filterEventsByMultifactorAuthenticationProvider(
         final Collection<Event> resolveEvents,
         final Authentication authentication,
-        final RegisteredService registeredService,
+        @Nullable final RegisteredService registeredService,
         final HttpServletRequest request,
-        final Service service) throws Throwable {
+        @Nullable final Service service) throws Throwable {
 
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(
@@ -100,9 +101,10 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
         resolveEvents.removeIf(e -> providerValues.stream().noneMatch(p -> p.matches(e.getId())));
 
         LOGGER.debug("Finalized set of resolved events are [{}]", resolveEvents);
-        val selectedProvider = getConfigurationContext().getMultifactorAuthenticationProviderSelector().resolve(providerValues,
-            registeredService, authentication.getPrincipal());
-        val finalEvent = resolveEvents.stream()
+        val selectedProvider = Objects.requireNonNull(getConfigurationContext().getMultifactorAuthenticationProviderSelector()
+            .resolve(providerValues, registeredService, authentication.getPrincipal()));
+        val finalEvent = resolveEvents
+            .stream()
             .filter(event -> selectedProvider.matches(event.getId())).findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Unable to locate multifactor authentication provider by id " + selectedProvider.getId()));
         return Optional.of(Pair.of(List.of(finalEvent), List.of(selectedProvider)));

@@ -25,7 +25,7 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
      * @param key the key
      * @return the item
      */
-    V get(K key);
+    @Nullable V get(K key);
 
     /**
      * Contains key ?

@@ -97,7 +97,7 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
     }
 
     @Override
-    public void start(final String name) {
+    public void start(final @Nullable String name) {
         if (shouldEnableWatchService()) {
             LOGGER.trace("Starting watcher thread");
             thread = Thread.ofVirtual().name(name).start(this);

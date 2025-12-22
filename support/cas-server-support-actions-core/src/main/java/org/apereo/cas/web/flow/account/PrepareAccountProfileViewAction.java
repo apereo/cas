@@ -20,6 +20,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -50,7 +51,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     private final RegisteredServicePrincipalAccessStrategyEnforcer principalAccessStrategyEnforcer;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(requestContext);
         val ticketGrantingTicket = FunctionUtils.doAndHandle(
             () -> Optional.of(ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class)),

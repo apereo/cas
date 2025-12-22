@@ -33,6 +33,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -72,7 +73,7 @@ public class PasswordChangeAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val clientInfo = ClientInfoHolder.getClientInfo();
         val bean = getPasswordChangeRequest(requestContext);

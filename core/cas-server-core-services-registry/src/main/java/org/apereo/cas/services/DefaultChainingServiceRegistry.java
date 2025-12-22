@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -30,7 +31,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     }
 
     @Override
-    public RegisteredService save(final RegisteredService registeredService) {
+    public @Nullable RegisteredService save(final RegisteredService registeredService) {
         var savedService = (RegisteredService) null;
         for (val serviceRegistry : serviceRegistries) {
             var toSave = Optional.ofNullable(savedService).orElse(registeredService);

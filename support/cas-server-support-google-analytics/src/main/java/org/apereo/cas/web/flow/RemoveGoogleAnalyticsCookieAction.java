@@ -6,6 +6,7 @@ import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -20,7 +21,7 @@ public class RemoveGoogleAnalyticsCookieAction extends BaseCasWebflowAction {
     private final CasCookieBuilder googleAnalyticsCookieBuilder;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         googleAnalyticsCookieBuilder.removeCookie(response);
         return null;

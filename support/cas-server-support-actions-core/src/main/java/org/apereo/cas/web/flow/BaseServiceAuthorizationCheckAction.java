@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -28,7 +29,7 @@ public abstract class BaseServiceAuthorizationCheckAction extends BaseCasWebflow
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext context) {
+    protected @Nullable Event doExecuteInternal(final RequestContext context) {
         val serviceInContext = WebUtils.getService(context);
         val service = FunctionUtils.doUnchecked(() -> authenticationRequestServiceSelectionStrategies.resolveService(serviceInContext));
         if (service == null) {

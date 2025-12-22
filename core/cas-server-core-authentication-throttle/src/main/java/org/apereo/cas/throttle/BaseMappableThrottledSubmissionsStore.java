@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link BaseMappableThrottledSubmissionsStore}.
@@ -66,7 +67,7 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
     }
 
     @Override
-    public T get(final String key) {
+    public @Nullable T get(final String key) {
         return backingMap.get(key);
     }
 

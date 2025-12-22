@@ -10,6 +10,7 @@ import com.yubico.core.RegistrationStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -26,7 +27,7 @@ public class WebAuthnAccountCheckRegistrationAction extends AbstractMultifactorA
     protected final TenantExtractor tenantExtractor;
     
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         LOGGER.trace("Checking registration record for [{}]", principal.getId());

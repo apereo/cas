@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -34,7 +35,7 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolutionConfigurationContext configurationContext;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext context) {
+    protected @Nullable Event doExecuteInternal(final RequestContext context) {
         val service = WebUtils.getService(context);
         val registeredService = WebUtils.getRegisteredService(context);
         val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);

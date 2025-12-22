@@ -24,6 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Travis Schmidt
  * @since 5.3.4
  */
+@SuppressWarnings("NullAway.Init")
 public abstract class AbstractMultifactorAuthenticationAction<T extends MultifactorAuthenticationProvider> extends BaseCasWebflowAction {
     /**
      * The resolved provider for this flow.

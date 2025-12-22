@@ -7,6 +7,7 @@ import org.apereo.cas.web.flow.resolver.impl.AbstractCasMultifactorAuthenticatio
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -23,7 +24,7 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
         super(webflowEventResolutionConfigurationContext);
     }
 
-    protected RegisteredService resolveRegisteredServiceInRequestContext(final RequestContext requestContext) throws Throwable {
+    protected @Nullable RegisteredService resolveRegisteredServiceInRequestContext(final RequestContext requestContext) throws Throwable {
         val resolvedService = resolveServiceFromAuthenticationRequest(requestContext);
         if (resolvedService != null) {
             val service = getConfigurationContext().getServicesManager().findServiceBy(resolvedService);

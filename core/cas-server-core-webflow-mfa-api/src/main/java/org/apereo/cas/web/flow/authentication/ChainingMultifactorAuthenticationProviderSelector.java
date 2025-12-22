@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -22,7 +23,7 @@ public class ChainingMultifactorAuthenticationProviderSelector extends RankedMul
 
     @Override
     protected MultifactorAuthenticationProvider selectMultifactorAuthenticationProvider(
-        final RegisteredService service,
+        @Nullable final RegisteredService service,
         final List<MultifactorAuthenticationProvider> providers) {
 
         if (providers.size() > 1) {

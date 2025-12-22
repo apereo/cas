@@ -10,6 +10,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -25,7 +26,7 @@ public class FinalizeInterruptFlowAction extends BaseCasWebflowAction {
     private final InterruptTrackingEngine interruptTrackingEngine;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val response = InterruptUtils.getInterruptFrom(requestContext);
         if (response.isBlock() && !requestContext.getRequestParameters().contains("link")) {
             val registeredService = WebUtils.getRegisteredService(requestContext);

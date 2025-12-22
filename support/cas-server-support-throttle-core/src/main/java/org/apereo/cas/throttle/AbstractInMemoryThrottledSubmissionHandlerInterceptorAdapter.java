@@ -61,7 +61,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         if (store.contains(key)) {
             val submission = store.get(key);
             LOGGER.trace("Found existing throttled submission [{}] for key [{}]", submission, key);
-            if (!submission.hasExpiredAlready()) {
+            if (!Objects.requireNonNull(submission).hasExpiredAlready()) {
                 LOGGER.warn("Throttled submission [{}] remains throttled; submission expires at [{}]", key, submission.getExpiration());
                 request.setAttribute(ThrottledSubmission.class.getSimpleName(), submission);
                 return true;

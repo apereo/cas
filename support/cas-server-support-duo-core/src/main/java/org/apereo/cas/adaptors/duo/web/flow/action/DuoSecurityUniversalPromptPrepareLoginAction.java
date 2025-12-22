@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -50,7 +51,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
     protected final TenantExtractor tenantExtractor;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val authentication = WebUtils.getAuthentication(requestContext);
         val duoSecurityIdentifier = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(requestContext);

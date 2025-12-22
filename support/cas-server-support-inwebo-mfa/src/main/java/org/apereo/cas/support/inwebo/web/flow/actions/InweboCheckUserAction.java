@@ -9,6 +9,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import static org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB;
@@ -40,7 +41,7 @@ public class InweboCheckUserAction extends BaseCasWebflowAction {
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val login = authentication.getPrincipal().getId();
         LOGGER.trace("Login: [{}]", login);

@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -30,7 +31,7 @@ public class AcceptableUsagePolicySubmitAction extends BaseCasWebflowAction {
         actionResolverName = AuditActionResolvers.AUP_SUBMIT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUP_SUBMIT_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         LOGGER.trace("Submitting acceptable usage policy");
         if (repository.submit(requestContext)) {
             return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED);

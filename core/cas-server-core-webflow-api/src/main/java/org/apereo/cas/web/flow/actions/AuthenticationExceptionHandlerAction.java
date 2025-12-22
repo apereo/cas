@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -55,7 +56,7 @@ public class AuthenticationExceptionHandlerAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val currentEvent = requestContext.getCurrentEvent();
         LOGGER.debug("Located current event [{}]", currentEvent);
 

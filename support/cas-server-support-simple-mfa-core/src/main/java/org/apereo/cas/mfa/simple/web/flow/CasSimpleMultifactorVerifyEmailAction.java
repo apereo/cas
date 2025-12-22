@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -62,7 +63,7 @@ public class CasSimpleMultifactorVerifyEmailAction extends AbstractMultifactorAu
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val emailAddress = requestContext.getRequestParameters().getRequired("email");
             if (isAcceptableEmailAddress(emailAddress)) {

@@ -35,6 +35,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -135,7 +136,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
             //CHECKSTYLE:OFF
             return new BaseCasWebflowAction() {
                 @Override
-                protected Event doExecuteInternal(final RequestContext requestContext) {
+                protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
                     val flowScope = requestContext.getFlowScope();
                     flowScope.put("test", TEST);
                     flowScope.put("test0", Collections.singleton(TEST));

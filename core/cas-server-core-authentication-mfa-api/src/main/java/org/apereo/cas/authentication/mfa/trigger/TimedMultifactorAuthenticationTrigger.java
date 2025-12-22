@@ -64,12 +64,6 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
         return checkTimedMultifactorProvidersForRequest(registeredService);
     }
 
-    /**
-     * Check timed multifactor providers for request optional.
-     *
-     * @param service the service
-     * @return the provider
-     */
     protected Optional<MultifactorAuthenticationProvider> checkTimedMultifactorProvidersForRequest(final RegisteredService service) {
         val timedMultifactor = casProperties.getAuthn().getAdaptive().getPolicy().getRequireTimedMultifactor();
         val now = LocalDateTime.now(ZoneId.systemDefault());
@@ -77,7 +71,8 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
         val dayNamesForToday = Arrays.stream(TextStyle.values())
             .map(style -> dow.getDisplayName(style, Locale.getDefault())).toList();
 
-        val timed = timedMultifactor.stream()
+        val timed = timedMultifactor
+            .stream()
             .filter(t -> {
                 var providerEvent = !t.getOnDays().isEmpty() && t.getOnDays().stream().anyMatch(dayNamesForToday::contains);
                 if (t.getOnOrAfterHour() >= 0) {

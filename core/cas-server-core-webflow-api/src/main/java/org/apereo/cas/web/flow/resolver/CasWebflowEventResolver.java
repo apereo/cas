@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.resolver;
 
 import module java.base;
 import org.apereo.cas.util.NamedObject;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -26,7 +27,7 @@ public interface CasWebflowEventResolver extends NamedObject {
      * @return the event
      * @throws Throwable the throwable
      */
-    Set<Event> resolve(RequestContext context) throws Throwable;
+    @Nullable Set<Event> resolve(RequestContext context) throws Throwable;
 
     /**
      * Resolve single event.
@@ -35,7 +36,7 @@ public interface CasWebflowEventResolver extends NamedObject {
      * @return the event
      * @throws Throwable the throwable
      */
-    Event resolveSingle(RequestContext context) throws Throwable;
+    @Nullable Event resolveSingle(RequestContext context) throws Throwable;
 
     /**
      * Resolve internal event.
@@ -44,5 +45,5 @@ public interface CasWebflowEventResolver extends NamedObject {
      * @return the event
      * @throws Throwable the throwable
      */
-    Set<Event> resolveInternal(RequestContext context) throws Throwable;
+    @Nullable Set<Event> resolveInternal(RequestContext context) throws Throwable;
 }

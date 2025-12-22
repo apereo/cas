@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -29,7 +30,7 @@ public class ValidatePasswordResetTokenAction extends BaseCasWebflowAction {
     private final TicketRegistry ticketRegistry;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val transientTicket = requestContext.getRequestParameters()
                 .get(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN);

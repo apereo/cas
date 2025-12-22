@@ -60,7 +60,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val requestParameters = requestContext.getRequestParameters();
         if (requestParameters.contains(REQUEST_PARAMETER_CODE) && requestParameters.contains(REQUEST_PARAMETER_STATE)) {
             return handleDuoSecurityUniversalPromptResponse(requestContext);
@@ -68,7 +68,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_SKIP);
     }
 
-    protected Event handleDuoSecurityUniversalPromptResponse(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event handleDuoSecurityUniversalPromptResponse(final RequestContext requestContext) throws Throwable {
         val duoState = WebUtils.getRequestParameterOrAttribute(requestContext, REQUEST_PARAMETER_STATE).orElseThrow();
         LOGGER.trace("Received Duo Security state [{}]", duoState);
 
@@ -88,7 +88,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         return processStateFromBrowserStorage(requestContext);
     }
 
-    private Event processStateFromBrowserStorage(final RequestContext requestContext) throws Exception {
+    private @Nullable Event processStateFromBrowserStorage(final RequestContext requestContext) throws Exception {
         val browserStorage = WebUtils.getBrowserStoragePayload(requestContext);
         if (browserStorage.isEmpty()) {
             WebUtils.putTargetTransition(requestContext, CasWebflowConstants.TRANSITION_ID_SWITCH);

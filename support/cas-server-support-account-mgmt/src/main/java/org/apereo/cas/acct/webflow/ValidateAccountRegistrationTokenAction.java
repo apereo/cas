@@ -13,6 +13,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -30,7 +31,7 @@ public class ValidateAccountRegistrationTokenAction extends BaseCasWebflowAction
     private final AccountRegistrationService accountRegistrationService;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         var accountRegTicket = (TransientSessionTicket) null;
         try {
             val activationToken = WebUtils.getRequestParameterOrAttribute(requestContext, AccountRegistrationUtils.REQUEST_PARAMETER_ACCOUNT_REGISTRATION_ACTIVATION_TOKEN).orElseThrow();

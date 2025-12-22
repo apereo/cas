@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -43,7 +44,7 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
     private final ObjectProvider<@NonNull ScriptResourceCacheManager> scriptResourceCacheManager;
     
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         if (WebUtils.isInterruptAuthenticationFlowFinalized(requestContext)) {
             return getInterruptSkippedEvent();
         }
