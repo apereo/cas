@@ -9,6 +9,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,7 +25,7 @@ public class FinalizeAccountRegistrationAction extends BaseCasWebflowAction {
     private final AccountRegistrationService accountRegistrationService;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val registrationRequest = AccountRegistrationUtils.getAccountRegistrationRequest(requestContext);
             Objects.requireNonNull(registrationRequest).putProperties(requestContext.getRequestParameters().asAttributeMap().asMap());

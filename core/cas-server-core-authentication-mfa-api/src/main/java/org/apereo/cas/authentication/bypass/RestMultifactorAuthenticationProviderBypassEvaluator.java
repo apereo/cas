@@ -11,6 +11,7 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -39,9 +40,9 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication,
-                                                                          final RegisteredService registeredService,
+                                                                          @Nullable final RegisteredService registeredService,
                                                                           final MultifactorAuthenticationProvider provider,
-                                                                          final HttpServletRequest request) {
+                                                                          @Nullable final HttpServletRequest request) {
         try {
             val principal = resolvePrincipal(authentication.getPrincipal());
             val rest = bypassProperties.getRest();

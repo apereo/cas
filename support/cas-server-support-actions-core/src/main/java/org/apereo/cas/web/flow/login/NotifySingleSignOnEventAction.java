@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -39,7 +40,7 @@ public class NotifySingleSignOnEventAction extends BaseCasWebflowAction {
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         if (casProperties.getSso().getMail().isUndefined() && casProperties.getSso().getSms().isUndefined()) {
             LOGGER.debug("Communication settings for email/sms are undefined for single sign-on notifications. Skipping...");
             return eventFactory.event(this, CasWebflowConstants.TRANSITION_ID_SKIP);

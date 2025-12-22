@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.NamedObject;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -38,10 +39,10 @@ public interface MultifactorAuthenticationProviderBypassEvaluator extends Serial
      * @return false is request isn't supported and can be bypassed. true otherwise.
      */
     boolean shouldMultifactorAuthenticationProviderExecute(Authentication authentication,
-                                                           RegisteredService registeredService,
+                                                           @Nullable RegisteredService registeredService,
                                                            MultifactorAuthenticationProvider provider,
-                                                           HttpServletRequest request,
-                                                           Service service);
+                                                           @Nullable HttpServletRequest request,
+                                                           @Nullable Service service);
 
 
     /**

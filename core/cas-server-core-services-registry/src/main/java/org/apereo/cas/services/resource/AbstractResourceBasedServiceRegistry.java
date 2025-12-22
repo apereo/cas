@@ -31,6 +31,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.FileSystemResource;
@@ -173,7 +174,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     }
 
     @Override
-    public RegisteredService save(final RegisteredService service) {
+    public @Nullable RegisteredService save(final RegisteredService service) {
         service.assignIdIfNecessary();
         val fileName = getRegisteredServiceFileName(service);
         try (val out = Files.newOutputStream(fileName.toPath())) {
@@ -337,7 +338,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         this.services.remove(service.getId());
     }
 
-    protected RegisteredService getRegisteredServiceFromFile(final File file) {
+    protected @Nullable RegisteredService getRegisteredServiceFromFile(final File file) {
         val fileName = file.getName();
         if (!fileName.isEmpty() && fileName.charAt(0) == '.') {
             LOGGER.trace("[{}] starts with ., ignoring...", fileName);

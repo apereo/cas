@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,10 +41,10 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTrigger implem
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
-                                                                   final RegisteredService registeredService,
+                                                                   @Nullable final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final HttpServletResponse response,
-                                                                   final Service service) {
+                                                                   @Nullable final Service service) {
         val properties = casProperties.getAuthn().getMfa().getTriggers().getPrincipal();
         val predicateResource = Objects.requireNonNull(properties.getGlobalPrincipalAttributePredicate().getLocation());
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);

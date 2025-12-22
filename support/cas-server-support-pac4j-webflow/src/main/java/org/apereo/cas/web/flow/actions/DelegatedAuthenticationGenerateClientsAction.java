@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -27,7 +28,7 @@ public class DelegatedAuthenticationGenerateClientsAction extends BaseCasWebflow
     private final DelegatedAuthenticationSingleSignOnEvaluator singleSignOnEvaluator;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         produceDelegatedAuthenticationClientsForContext(requestContext);
         return success();
     }
@@ -38,7 +39,7 @@ public class DelegatedAuthenticationGenerateClientsAction extends BaseCasWebflow
             .getDelegatedClientIdentityProvidersProducer().produce(context);
         LOGGER.trace("Delegated authentication providers are finalized as [{}]", providers);
         WebUtils.createCredential(context);
-        if (HttpStatus.resolve(response.getStatus()).is2xxSuccessful()) {
+        if (Objects.requireNonNull(HttpStatus.resolve(response.getStatus())).is2xxSuccessful()) {
             singleSignOnEvaluator.configurationContext()
                 .getDelegatedClientIdentityProviderConfigurationPostProcessor()
                 .process(context, providers);

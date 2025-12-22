@@ -7,6 +7,7 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -32,7 +33,7 @@ public class DuoSecurityAuthenticationWebflowEventResolver extends BaseMultifact
         actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
     @Override
-    public Event resolveSingle(final RequestContext context) throws Throwable {
+    public @Nullable Event resolveSingle(final RequestContext context) throws Throwable {
         return super.resolveSingle(context);
     }
 }

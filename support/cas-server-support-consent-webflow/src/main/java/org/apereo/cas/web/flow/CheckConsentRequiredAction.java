@@ -13,6 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -42,7 +43,7 @@ public class CheckConsentRequiredAction extends AbstractConsentAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val consentEvent = determineConsentEvent(requestContext);
         if (StringUtils.isBlank(consentEvent)) {
             return null;

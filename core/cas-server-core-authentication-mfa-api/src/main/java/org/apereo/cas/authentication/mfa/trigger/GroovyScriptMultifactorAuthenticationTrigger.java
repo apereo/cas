@@ -20,6 +20,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
@@ -51,10 +52,10 @@ public class GroovyScriptMultifactorAuthenticationTrigger implements Multifactor
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
-                                                                   final RegisteredService registeredService,
+                                                                   @Nullable final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final HttpServletResponse response,
-                                                                   final Service service) {
+                                                                   @Nullable final Service service) {
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
             return Optional.empty();

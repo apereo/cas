@@ -11,6 +11,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -57,7 +58,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends BaseCasWebflowActi
      * {@link #no()} otherwise.
      */
     @Override
-    protected Event doExecuteInternal(final RequestContext context) throws Exception {
+    protected @Nullable Event doExecuteInternal(final RequestContext context) throws Exception {
         val remoteIp = getRemoteIp(context);
         LOGGER.debug("Current user IP [{}]", remoteIp);
         if (shouldDoSpnego(remoteIp)) {

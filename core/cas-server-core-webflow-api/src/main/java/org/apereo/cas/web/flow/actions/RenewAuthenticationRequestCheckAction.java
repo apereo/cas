@@ -6,6 +6,7 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -20,7 +21,7 @@ public class RenewAuthenticationRequestCheckAction extends BaseCasWebflowAction 
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .requestContext(requestContext)
             .build();

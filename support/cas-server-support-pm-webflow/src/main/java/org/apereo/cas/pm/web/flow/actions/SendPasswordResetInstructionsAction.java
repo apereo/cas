@@ -42,6 +42,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -108,7 +109,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         actionResolverName = AuditActionResolvers.REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         communicationsManager.validate();
         if (!communicationsManager.isMailSenderDefined() && !communicationsManager.isSmsSenderDefined()) {
             return getErrorEvent("contact.failed", "Unable to send email as no mail sender is defined", requestContext);

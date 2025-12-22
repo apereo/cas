@@ -6,6 +6,7 @@ import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -21,7 +22,7 @@ public class MultifactorAuthenticationAvailableAction extends AbstractMultifacto
     protected final TenantExtractor tenantExtractor;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val failureEval = provider.getFailureModeEvaluator();
         val checkAvailability = Optional.ofNullable(failureEval)

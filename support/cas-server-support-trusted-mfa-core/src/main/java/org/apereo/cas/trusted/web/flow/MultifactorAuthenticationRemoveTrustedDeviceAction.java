@@ -5,6 +5,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -19,7 +20,7 @@ public class MultifactorAuthenticationRemoveTrustedDeviceAction extends BaseCasW
     protected final MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val key = requestContext.getRequestParameters().getRequired("key");
         mfaTrustEngine.remove(key);
         return success();

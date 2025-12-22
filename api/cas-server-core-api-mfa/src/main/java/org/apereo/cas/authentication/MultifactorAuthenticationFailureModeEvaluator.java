@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import module java.base;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 
 /**
@@ -22,8 +23,9 @@ public interface MultifactorAuthenticationFailureModeEvaluator extends Serializa
      * @param provider          the provider
      * @return failure mode.
      */
-    BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes evaluate(RegisteredService registeredService,
-                                                                                                           MultifactorAuthenticationProvider provider);
+    BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes evaluate(
+        @Nullable RegisteredService registeredService,
+        MultifactorAuthenticationProvider provider);
 
     @Override
     default int getOrder() {

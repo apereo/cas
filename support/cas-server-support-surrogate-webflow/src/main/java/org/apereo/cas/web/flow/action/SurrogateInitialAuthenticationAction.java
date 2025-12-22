@@ -11,6 +11,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -26,7 +27,7 @@ public class SurrogateInitialAuthenticationAction extends BaseCasWebflowAction {
     private final SurrogateCredentialParser surrogateCredentialParser;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext context) {
+    protected @Nullable Event doExecuteInternal(final RequestContext context) {
         val credential = WebUtils.getCredential(context, Credential.class);
         if (credential instanceof final MutableCredential mc) {
             val surrogateRequest = surrogateCredentialParser.parse(mc);

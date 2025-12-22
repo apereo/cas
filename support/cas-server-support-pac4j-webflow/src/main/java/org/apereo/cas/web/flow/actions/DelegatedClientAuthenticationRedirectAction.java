@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.CallContext;
@@ -52,7 +53,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
     protected final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val ticket = requestContext.getFlowScope().get(TransientSessionTicket.class.getName(), TransientSessionTicket.class);
         val client = locateClientIdentityProvider(ticket, requestContext);
         initializeClientIdentityProvider(client);
@@ -114,7 +115,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
         val result = configContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         result.throwExceptionIfNeeded();
 
-        if (!registeredService.getProperties().isEmpty()) {
+        if (!Objects.requireNonNull(registeredService).getProperties().isEmpty()) {
             val delegatedAuthnProperties = Arrays.stream(RegisteredServiceProperties.values())
                 .filter(prop -> prop.isMemberOf(RegisteredServicePropertyGroups.DELEGATED_AUTHN))
                 .collect(Collectors.toList());

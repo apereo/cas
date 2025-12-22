@@ -16,6 +16,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -41,7 +42,7 @@ public class AccountProfileUpdateSecurityQuestionsAction extends BaseCasWebflowA
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val requestParameters = requestContext.getRequestParameters();
             val questions = Arrays.stream(requestParameters.getRequiredArray("questions", String.class))

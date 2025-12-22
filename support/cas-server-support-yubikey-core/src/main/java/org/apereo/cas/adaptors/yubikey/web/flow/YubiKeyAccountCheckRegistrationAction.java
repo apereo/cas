@@ -9,6 +9,7 @@ import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,7 +25,7 @@ public class YubiKeyAccountCheckRegistrationAction extends AbstractMultifactorAu
     protected final TenantExtractor tenantExtractor;
     
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val uid = resolvePrincipal(authentication.getPrincipal(), requestContext).getId();
         if (registry.isYubiKeyRegisteredFor(uid)) {

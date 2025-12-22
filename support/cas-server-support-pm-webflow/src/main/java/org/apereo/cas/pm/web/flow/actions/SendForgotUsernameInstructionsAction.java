@@ -29,6 +29,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jspecify.annotations.Nullable;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -63,7 +64,7 @@ public class SendForgotUsernameInstructionsAction extends BaseCasWebflowAction {
         actionResolverName = AuditActionResolvers.REQUEST_FORGOT_USERNAME_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.REQUEST_FORGOT_USERNAME_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         communicationsManager.validate();
         if (!communicationsManager.isMailSenderDefined()) {
             return getErrorEvent("email.failed", "Unable to send email as no mail sender is defined", requestContext);

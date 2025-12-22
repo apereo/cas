@@ -15,6 +15,7 @@ import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Event;
@@ -38,7 +39,7 @@ public class DuoSecurityVerifyPasswordlessAuthenticationAction extends DuoSecuri
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val beanFactory = ((ConfigurableApplicationContext) requestContext.getActiveFlow().getApplicationContext()).getBeanFactory();
         val providers = new ArrayList<>(BeanFactoryUtils.beansOfTypeIncludingAncestors(beanFactory, DuoSecurityMultifactorAuthenticationProvider.class).values());
         return providers

@@ -19,6 +19,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -53,7 +54,7 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val passwordlessUserAccount = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
         try {
             val token = requestContext.getRequestParameters().getRequired("token");

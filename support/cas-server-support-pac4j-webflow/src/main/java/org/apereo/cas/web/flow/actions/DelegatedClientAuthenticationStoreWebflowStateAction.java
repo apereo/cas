@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.util.InitializableObject;
@@ -43,7 +44,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
     protected final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
@@ -84,7 +85,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
     }
 
     protected boolean isDelegatedClientAuthorizedForService(final Client client,
-                                                            final Service service,
+                                                            @Nullable final Service service,
                                                             final RequestContext requestContext) {
         return configContext.getDelegatedClientIdentityProviderAuthorizers()
             .stream()

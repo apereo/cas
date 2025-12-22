@@ -13,6 +13,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -46,7 +47,7 @@ public class WsFederationAction extends AbstractAuthenticationAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext context) {
+    protected @Nullable Event doExecuteInternal(final RequestContext context) {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             val wa = request.getParameter(WA);

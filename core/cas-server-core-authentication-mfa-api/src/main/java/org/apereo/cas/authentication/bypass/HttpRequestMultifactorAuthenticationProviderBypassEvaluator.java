@@ -9,6 +9,7 @@ import org.apereo.cas.util.RegexUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -45,9 +46,9 @@ public class HttpRequestMultifactorAuthenticationProviderBypassEvaluator extends
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication,
-                                                                          final RegisteredService registeredService,
+                                                                          @Nullable final RegisteredService registeredService,
                                                                           final MultifactorAuthenticationProvider provider,
-                                                                          final HttpServletRequest request) {
+                                                                          @Nullable final HttpServletRequest request) {
         val principal = authentication.getPrincipal();
         val bypassByHttpRequest = locateMatchingHttpRequest(authentication, request);
         if (bypassByHttpRequest) {
@@ -65,8 +66,8 @@ public class HttpRequestMultifactorAuthenticationProviderBypassEvaluator extends
      * @param request        the request
      * @return true /false
      */
-    protected boolean locateMatchingHttpRequest(final Authentication authentication, final HttpServletRequest request) {
-        if (StringUtils.isNotBlank(bypassProperties.getHttpRequestRemoteAddress())) {
+    protected boolean locateMatchingHttpRequest(final Authentication authentication, @Nullable final HttpServletRequest request) {
+        if (StringUtils.isNotBlank(bypassProperties.getHttpRequestRemoteAddress()) && request != null) {
             if (httpRequestRemoteAddressPattern.matcher(request.getRemoteAddr()).find()) {
                 LOGGER.debug("Http request remote address [{}] matches [{}]", bypassProperties.getHttpRequestRemoteAddress(), request.getRemoteAddr());
                 return true;
@@ -77,7 +78,7 @@ public class HttpRequestMultifactorAuthenticationProviderBypassEvaluator extends
             }
         }
 
-        if (StringUtils.isNotBlank(bypassProperties.getHttpRequestHeaders())) {
+        if (StringUtils.isNotBlank(bypassProperties.getHttpRequestHeaders()) && request != null) {
             val headerNames = Collections.list(request.getHeaderNames());
             val matched = this.httpRequestHeaderPatterns.stream()
                 .anyMatch(pattern -> headerNames.stream().anyMatch(pattern.asMatchPredicate()));

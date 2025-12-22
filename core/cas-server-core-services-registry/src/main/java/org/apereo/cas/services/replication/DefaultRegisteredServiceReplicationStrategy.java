@@ -14,6 +14,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 
 /**
@@ -57,7 +58,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
     }
 
     @Override
-    public RegisteredService getRegisteredServiceFromCacheByPredicate(
+    public @Nullable RegisteredService getRegisteredServiceFromCacheByPredicate(
         final RegisteredService service,
         final Predicate<DistributedCacheObject<RegisteredService>> predicate,
         final ServiceRegistry serviceRegistry) {

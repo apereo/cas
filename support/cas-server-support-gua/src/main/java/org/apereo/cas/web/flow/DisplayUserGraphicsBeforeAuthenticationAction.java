@@ -9,6 +9,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,7 +25,7 @@ public class DisplayUserGraphicsBeforeAuthenticationAction extends BaseCasWebflo
     private final UserGraphicalAuthenticationRepository repository;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val username = requestContext.getRequestParameters().get("username");
         if (StringUtils.isBlank(username)) {
             throw UnauthorizedServiceException.denied("Denied");

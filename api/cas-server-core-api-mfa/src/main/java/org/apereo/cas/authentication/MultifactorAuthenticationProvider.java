@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderByp
 import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 
 /**
@@ -26,7 +27,7 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      * @return true /false flag once verification is successful.
      * @throws AuthenticationException the authentication exception
      */
-    boolean isAvailable(RegisteredService service) throws AuthenticationException;
+    boolean isAvailable(@Nullable RegisteredService service) throws AuthenticationException;
 
     /**
      * Returns the configured bypass provider for this MFA provider.

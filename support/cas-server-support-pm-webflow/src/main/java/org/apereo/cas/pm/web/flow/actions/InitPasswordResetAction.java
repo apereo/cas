@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -44,7 +45,7 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
     private final MultifactorAuthenticationContextValidator multifactorAuthenticationContextValidator;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val username = getPasswordResetUsername(requestContext);
         if (StringUtils.isBlank(username)) {
             LOGGER.error("Password reset token could not be verified to determine username");

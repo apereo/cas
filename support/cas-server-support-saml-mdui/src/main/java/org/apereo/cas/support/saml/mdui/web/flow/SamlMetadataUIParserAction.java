@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -46,7 +47,7 @@ public class SamlMetadataUIParserAction extends BaseCasWebflowAction {
     private final ArgumentExtractor argumentExtractor;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val entityId = getEntityIdFromRequest(requestContext);
         if (StringUtils.isBlank(entityId)) {
             LOGGER.debug("No entity id found for parameter [{}]", this.entityIdParameterName);

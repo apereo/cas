@@ -76,7 +76,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext context) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext context) throws Throwable {
         configureCookieGenerators(context);
         configureWebflowForPostParameters(context);
         configureWebflowForCustomFields(context);

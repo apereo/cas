@@ -8,6 +8,7 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -31,13 +32,6 @@ public class CredentialMultifactorAuthenticationProviderBypassEvaluator extends 
         this.bypassProperties = bypassProperties;
     }
 
-    /**
-     * Locate matching credential type boolean.
-     *
-     * @param authentication      the authentication
-     * @param credentialClassType the credential class type
-     * @return true/false
-     */
     protected static boolean locateMatchingCredentialType(final Authentication authentication, final String credentialClassType) {
         return StringUtils.isNotBlank(credentialClassType) && authentication.getCredentials()
             .stream()
@@ -47,9 +41,9 @@ public class CredentialMultifactorAuthenticationProviderBypassEvaluator extends 
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication,
-                                                                          final RegisteredService registeredService,
+                                                                          @Nullable final RegisteredService registeredService,
                                                                           final MultifactorAuthenticationProvider provider,
-                                                                          final HttpServletRequest request) {
+                                                                          @Nullable final HttpServletRequest request) {
         val bypassByCredType = locateMatchingCredentialType(authentication, bypassProperties.getCredentialClassType());
         if (bypassByCredType) {
             LOGGER.debug("Bypass rules for credential types [{}] indicate the request may be ignored", bypassProperties.getCredentialClassType());

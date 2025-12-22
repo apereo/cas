@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import tools.jackson.databind.ObjectMapper;
@@ -29,7 +30,7 @@ public class ConsentAccountProfilePrepareAction extends BaseCasWebflowAction {
     private final ConsentEngine consentEngine;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
         val decisions = consentEngine.getConsentRepository().findConsentDecisions(principal.getId());

@@ -17,6 +17,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,14 +33,15 @@ import jakarta.servlet.http.HttpServletResponse;
 public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
     private final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger;
 
-    public DefaultMultifactorAuthenticationProviderWebflowEventResolver(final CasWebflowEventResolutionConfigurationContext configurationContext,
-                                                                        final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger) {
+    public DefaultMultifactorAuthenticationProviderWebflowEventResolver(
+        final CasWebflowEventResolutionConfigurationContext configurationContext,
+        final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger) {
         super(configurationContext);
         this.multifactorAuthenticationTrigger = multifactorAuthenticationTrigger;
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext context) throws Throwable {
+    public @Nullable Set<Event> resolveInternal(final RequestContext context) throws Throwable {
         val registeredService = resolveRegisteredServiceInRequestContext(context);
         val service = resolveServiceFromAuthenticationRequest(context);
         val authentication = WebUtils.getAuthentication(context);
@@ -63,16 +65,16 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extend
         actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
     @Override
-    public Event resolveSingle(final RequestContext context) throws Throwable {
+    public @Nullable Event resolveSingle(final RequestContext context) throws Throwable {
         return super.resolveSingle(context);
     }
 
     protected Optional<MultifactorAuthenticationProvider> determineMultifactorAuthenticationProvider(
-        final RegisteredService registeredService,
+        @Nullable final RegisteredService registeredService,
         final Authentication authentication,
         final HttpServletRequest request,
         final HttpServletResponse response,
-        final Service service) throws Throwable {
+        @Nullable final Service service) throws Throwable {
         if (registeredService != null && registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled()) {
             return Optional.empty();
         }

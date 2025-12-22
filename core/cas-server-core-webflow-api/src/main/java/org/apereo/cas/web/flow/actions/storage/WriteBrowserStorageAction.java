@@ -8,6 +8,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Setter;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,7 +25,7 @@ public class WriteBrowserStorageAction extends BaseBrowserStorageAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val ticketGrantingTicket = (String) requestContext.getCurrentEvent().getAttributes().get(TicketGrantingTicket.class.getName());
         val payload = CollectionUtils.wrap(ticketGrantingCookieBuilder.getCookieName(),

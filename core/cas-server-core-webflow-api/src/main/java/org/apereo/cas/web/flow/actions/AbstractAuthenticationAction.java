@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -34,7 +35,7 @@ public abstract class AbstractAuthenticationAction extends BaseCasWebflowAction 
     private final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         if (!evaluateAdaptiveAuthenticationPolicy(requestContext)) {
             val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(requestContext);
             val geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext(requestContext);

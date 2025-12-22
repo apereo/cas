@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.NamedObject;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
@@ -42,8 +43,8 @@ public interface MultifactorAuthenticationProviderResolver extends NamedObject {
      */
     default Set<Event> resolveEventViaAuthenticationAttribute(final Authentication authentication,
                                                               final Collection<String> attributeNames,
-                                                              final RegisteredService registeredService,
-                                                              final Service service,
+                                                              @Nullable final RegisteredService registeredService,
+                                                              @Nullable final Service service,
                                                               final Optional<RequestContext> context,
                                                               final Collection<MultifactorAuthenticationProvider> providers,
                                                               final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {
@@ -67,8 +68,8 @@ public interface MultifactorAuthenticationProviderResolver extends NamedObject {
     Set<Event> resolveEventViaAttribute(Principal principal,
                                         Map<String, List<Object>> attributesToExamine,
                                         Collection<String> attributeNames,
-                                        RegisteredService registeredService,
-                                        Service service,
+                                        @Nullable RegisteredService registeredService,
+                                        @Nullable Service service,
                                         Optional<RequestContext> context,
                                         Collection<MultifactorAuthenticationProvider> providers,
                                         BiPredicate<String, MultifactorAuthenticationProvider> predicate);
@@ -85,10 +86,10 @@ public interface MultifactorAuthenticationProviderResolver extends NamedObject {
      * @param predicate         the predicate
      * @return the set of resolved events
      */
-    default Set<Event> resolveEventViaPrincipalAttribute(final Principal principal,
+    default @Nullable Set<Event> resolveEventViaPrincipalAttribute(final Principal principal,
                                                          final Collection<String> attributeNames,
-                                                         final RegisteredService registeredService,
-                                                         final Service service,
+                                                         @Nullable final RegisteredService registeredService,
+                                                         @Nullable final Service service,
                                                          final Optional<RequestContext> context,
                                                          final Collection<MultifactorAuthenticationProvider> providers,
                                                          final BiPredicate<String, MultifactorAuthenticationProvider> predicate) {

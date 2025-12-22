@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.spel.SpringELExpressionParser;
@@ -802,7 +803,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param outputMapper the output mapper
      * @return the subflow attribute mapper
      */
-    public SubflowAttributeMapper createSubflowAttributeMapper(final Mapper inputMapper, final Mapper outputMapper) {
+    public SubflowAttributeMapper createSubflowAttributeMapper(final Mapper inputMapper, @Nullable final Mapper outputMapper) {
         return new GenericSubflowAttributeMapper(inputMapper, outputMapper);
     }
 

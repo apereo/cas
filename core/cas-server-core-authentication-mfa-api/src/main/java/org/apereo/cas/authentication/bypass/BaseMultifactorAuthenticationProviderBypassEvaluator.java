@@ -21,6 +21,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import jakarta.servlet.http.HttpServletRequest;
@@ -96,10 +97,10 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
         resourceResolverName = AuditResourceResolvers.MULTIFACTOR_AUTHENTICATION_BYPASS_RESOURCE_RESOLVER)
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,
-                                                                  final RegisteredService registeredService,
+                                                                  @Nullable final RegisteredService registeredService,
                                                                   final MultifactorAuthenticationProvider provider,
-                                                                  final HttpServletRequest request,
-                                                                  final Service service) {
+                                                                  @Nullable final HttpServletRequest request,
+                                                                  @Nullable final Service service) {
         return shouldMultifactorAuthenticationProviderExecuteInternal(authentication, registeredService, provider, request);
     }
 
@@ -143,9 +144,9 @@ public abstract class BaseMultifactorAuthenticationProviderBypassEvaluator imple
     }
 
     protected abstract boolean shouldMultifactorAuthenticationProviderExecuteInternal(Authentication authentication,
-                                                                                      RegisteredService registeredService,
+                                                                                      @Nullable RegisteredService registeredService,
                                                                                       MultifactorAuthenticationProvider provider,
-                                                                                      HttpServletRequest request);
+                                                                                      @Nullable HttpServletRequest request);
 
     protected Principal resolvePrincipal(final Principal principal) {
         val resolvers = new ArrayList<>(applicationContext.getBeansOfType(MultifactorAuthenticationPrincipalResolver.class).values());

@@ -12,6 +12,7 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -39,7 +40,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val attributes = requestContext.getCurrentEvent().getAttributes();
         if (attributes.contains(CasWebflowConstants.TRANSITION_ID_ERROR)) {
             val error = attributes.get(CasWebflowConstants.TRANSITION_ID_ERROR, Exception.class);

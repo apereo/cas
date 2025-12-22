@@ -11,6 +11,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -34,7 +35,7 @@ public class ReadBrowserStorageAction extends BaseBrowserStorageAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val browserStorage = new DefaultBrowserStorage()
             .setContext(WebUtils.getBrowserStorageContextKey(requestContext, this.browserStorageContextKey))
             .setStorageType(determineStorageType(requestContext));
