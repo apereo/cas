@@ -58,7 +58,7 @@ public class ResourceUtils {
      * @return the resource from
      * @throws IOException the exception
      */
-    public static AbstractResource getRawResourceFrom(final String location) throws IOException {
+    public static AbstractResource getRawResourceFrom(final @Nullable String location) throws IOException {
         if (StringUtils.isBlank(location)) {
             throw new IllegalArgumentException("Provided location does not exist and is empty");
         }

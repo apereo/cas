@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Concrete implementation of a proxy granting ticket (PGT). A PGT is
@@ -40,7 +41,7 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
     @JsonCreator
     public ProxyGrantingTicketImpl(@JsonProperty("id") final String id,
                                    @JsonProperty("proxiedBy") final Service proxiedBy,
-                                   @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticketGrantingTicket,
+                                   @Nullable @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticketGrantingTicket,
                                    @JsonProperty("authentication") final Authentication authentication,
                                    @JsonProperty("expirationPolicy") final ExpirationPolicy expirationPolicy) {
         super(id, proxiedBy, ticketGrantingTicket, authentication, expirationPolicy);

@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An immutable, serializable ticket validation assertion.
@@ -51,6 +52,7 @@ public class ImmutableAssertion implements Assertion {
     private final boolean stateless;
 
     @JsonProperty
+    @Nullable
     private final Service service;
 
     @JsonProperty

@@ -14,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -39,7 +40,7 @@ public class RestfulPrincipalFactory extends DefaultPrincipalFactory {
     private final RestEndpointProperties properties;
 
     @Override
-    public Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) throws Throwable {
+    public @Nullable Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) throws Throwable {
         HttpResponse response = null;
         try {
             val current = super.createPrincipal(id, attributes);

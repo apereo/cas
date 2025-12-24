@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides the username attribute based on a pre-configured string. Determines the username from a query Map based
@@ -30,7 +31,7 @@ public class SimpleUsernameAttributeProvider implements UsernameAttributeProvide
     private String usernameAttribute = DEFAULT_USERNAME_ATTRIBUTE;
     
     @Override
-    public String getUsernameFromQuery(final Map<String, List<Object>> query) {
+    public @Nullable String getUsernameFromQuery(final Map<String, List<Object>> query) {
         val usernameAttributeValues = getUsernameAttributeValues(query);
         LOGGER.debug("Username attribute value found from the query map is [{}]", usernameAttributeValues);
         
@@ -51,7 +52,7 @@ public class SimpleUsernameAttributeProvider implements UsernameAttributeProvide
         return username;
     }
 
-    private List<Object> getUsernameAttributeValues(final Map<String, List<Object>> query) {
+    private @Nullable List<Object> getUsernameAttributeValues(final Map<String, List<Object>> query) {
         if (query.containsKey(this.usernameAttribute)) {
             val usernameAttributeValues = query.get(this.usernameAttribute);
             LOGGER.debug("Using [{}] attribute to get username from the query map", this.usernameAttribute);

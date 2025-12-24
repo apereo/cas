@@ -8,6 +8,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -33,9 +34,9 @@ public class GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse> implem
     }
 
     @Override
-    public List<MessageDescriptor> handle(final AuthenticationResponse response,
-                                          final PasswordPolicyContext configuration) throws Throwable {
-        val args = new Object[]{response, configuration, LOGGER, applicationContext};
+    public @Nullable List<MessageDescriptor> handle(@Nullable final AuthenticationResponse response,
+                                                    final PasswordPolicyContext configuration) throws Throwable {
+        val args = new Object[]{Objects.requireNonNull(response), configuration, LOGGER, applicationContext};
         return watchableScript.execute(args, List.class);
     }
 }

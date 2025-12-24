@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 
 /**
@@ -46,8 +47,8 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
     }
 
     @Override
-    public Principal nominate(final Collection<Authentication> authentications,
-                              final Map<String, List<Object>> principalAttributes) throws Throwable {
+    public @Nullable Principal nominate(final Collection<Authentication> authentications,
+                                        final Map<String, List<Object>> principalAttributes) throws Throwable {
         val principal = getPrincipalFromAuthentication(authentications);
         val attributes = getPrincipalAttributesForPrincipal(authentications, principal, principalAttributes);
         val finalPrincipal = principalFactory.createPrincipal(principal.getId(), attributes);
@@ -56,7 +57,7 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
     }
 
     @Override
-    public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) throws Throwable {
+    public @Nullable Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) throws Throwable {
         val principalIds = principals.stream()
             .filter(Objects::nonNull)
             .map(p -> p.getId().trim().toLowerCase(Locale.ENGLISH))
@@ -68,7 +69,7 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
         return electPrincipal(principals, attributes);
     }
 
-    protected Principal electPrincipal(final List<Principal> principals, final Map<String, List<Object>> attributes) throws Throwable {
+    protected @Nullable Principal electPrincipal(final List<Principal> principals, final Map<String, List<Object>> attributes) throws Throwable {
         val principal = principalElectionConflictResolver.resolve(principals);
         val finalPrincipal = principalFactory.createPrincipal(principal.getId(), attributes);
         LOGGER.debug("Final principal constructed by the chain of resolvers is [{}]", finalPrincipal);

@@ -9,6 +9,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.Nullable;
 
 
 /**
@@ -39,7 +40,7 @@ public class ClientInfoAuthenticationMetaDataPopulator extends BaseAuthenticatio
      */
     public static final String ATTRIBUTE_GEO_LOCATION = "geoLocation";
 
-    private static void addAttribute(final AuthenticationBuilder builder, final String name, final String value) {
+    private static void addAttribute(final AuthenticationBuilder builder, final String name, final @Nullable String value) {
         FunctionUtils.doIf(StringUtils.isNotBlank(value), v -> builder.mergeAttribute(name, v)).accept(value);
     }
 

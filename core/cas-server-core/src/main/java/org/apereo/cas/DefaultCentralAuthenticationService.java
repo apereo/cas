@@ -125,7 +125,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     getAuthenticationSatisfiedByPolicy(currentAuthentication, selectedService, registeredService);
 
                     val latestAuthentication = ticketGrantingTicket.getRoot().getAuthentication();
-                    val principal = latestAuthentication.getPrincipal();
+                    val principal = Objects.requireNonNull(latestAuthentication).getPrincipal();
                     val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                         .registeredService(registeredService)
                         .service(service)
@@ -146,7 +146,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     }
                     val addedServiceTicket = configurationContext.getTicketRegistry().addTicket(serviceTicket);
                     LOGGER.info("Granted service ticket [{}] for service [{}] and principal [{}]",
-                        serviceTicket.getId(), DigestUtils.abbreviate(selectedService.getId()), principal.getId());
+                        serviceTicket.getId(), DigestUtils.abbreviate(Objects.requireNonNull(selectedService).getId()), principal.getId());
                     doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket, clientInfo));
                     return addedServiceTicket;
                 }
@@ -175,7 +175,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     getAuthenticationSatisfiedByPolicy(proxyGrantingTicket.getRoot().getAuthentication(), service, registeredService);
 
                     val authentication = proxyGrantingTicket.getRoot().getAuthentication();
-                    val principal = authentication.getPrincipal();
+                    val principal = Objects.requireNonNull(authentication).getPrincipal();
                     val factory = (ProxyTicketFactory) configurationContext.getTicketFactory().get(ProxyTicket.class);
                     val proxyTicket = factory.create(proxyGrantingTicket, service);
                     val clientInfo = ClientInfoHolder.getClientInfo();
@@ -225,11 +225,11 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     }
                     if (!configurationContext.getServiceMatchingStrategy().matches(selectedService, resolvedService)) {
                         LOGGER.error("Service ticket [{}] with service [{}] does not match supplied service [{}]",
-                            serviceTicketId, serviceTicket.getService().getId(), resolvedService.getId());
+                            serviceTicketId, serviceTicket.getService().getId(), Objects.requireNonNull(resolvedService).getId());
                         throw new UnrecognizableServiceForServiceTicketValidationException(selectedService);
                     }
                     if (StringUtils.isNotBlank(serviceTicket.getTenantId())) {
-                        if (!Strings.CI.equals(resolvedService.getTenant(), serviceTicket.getTenantId())) {
+                        if (!Strings.CI.equals(Objects.requireNonNull(resolvedService).getTenant(), serviceTicket.getTenantId())) {
                             LOGGER.warn("Service ticket [{}] is not assigned to the same tenant [{}] as the service [{}]",
                                 serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
                             throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
@@ -276,7 +276,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
             val builder = DefaultAuthenticationBuilder.of(
                 configurationContext.getApplicationContext(),
-                principal,
+                Objects.requireNonNull(principal),
                 configurationContext.getPrincipalFactory(),
                 attributesToRelease,
                 selectedService,
@@ -317,7 +317,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 .service(selectedService)
                 .registeredService(registeredService)
                 .authentications(serviceTicket.isStateless()
-                    ? List.of(serviceTicket.getAuthentication())
+                    ? List.of(Objects.requireNonNull(serviceTicket.getAuthentication()))
                     : ticketGrantingTicket.getChainedAuthentications())
                 .newLogin(((RenewableServiceTicket) serviceTicket).isFromNewLogin())
                 .stateless(serviceTicket.isStateless())
@@ -385,7 +385,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             .orElseThrow(UnauthorizedProxyingException::new);
     }
 
-    private void enforceRegisteredServiceAccess(final Authentication authentication, final Service service,
+    private void enforceRegisteredServiceAccess(final Authentication authentication, @Nullable final Service service,
                                                 @Nullable final RegisteredService registeredService) throws Throwable {
 
         val attributeReleaseContext = RegisteredServiceAttributeReleasePolicyContext.builder()
@@ -415,8 +415,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         accessResult.throwExceptionIfNeeded();
     }
 
-    private void enforceRegisteredServiceAccess(final Service service, final RegisteredService registeredService,
-                                                final Principal principal) throws Throwable {
+    private void enforceRegisteredServiceAccess(@Nullable final Service service, @Nullable final RegisteredService registeredService,
+                                                @Nullable final Principal principal) throws Throwable {
         val audit = AuditableContext.builder()
             .service(service)
             .principal(principal)
@@ -425,7 +425,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         enforceRegisteredServiceAccess(audit);
     }
 
-    private void enforceRegisteredServiceAccess(final Service service, final TicketGrantingTicket ticket,
+    private void enforceRegisteredServiceAccess(@Nullable final Service service, final TicketGrantingTicket ticket,
                                                 @Nullable final RegisteredService registeredService) throws Throwable {
         val audit = AuditableContext.builder()
             .service(service)
@@ -435,10 +435,11 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         enforceRegisteredServiceAccess(audit);
     }
 
-    protected Principal rebuildStatelessTicketPrincipal(final ServiceTicket serviceTicket) throws Throwable {
+    protected @Nullable Principal rebuildStatelessTicketPrincipal(final ServiceTicket serviceTicket) throws Throwable {
         val authentication = serviceTicket.getAuthentication();
         return configurationContext.getPrincipalResolver()
-            .resolve(new BasicIdentifiableCredential(authentication.getPrincipal().getId()),
+            .resolve(new BasicIdentifiableCredential(
+                Objects.requireNonNull(authentication).getPrincipal().getId()),
                 Optional.of(authentication.getPrincipal()), Optional.empty(),
                 Optional.of(serviceTicket.getService()));
     }
@@ -453,7 +454,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         val currentAuthentication = context.getAuthentication();
         if (currentAuthentication != null) {
             val original = ticketGrantingTicket.getAuthentication();
-            if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
+            if (!currentAuthentication.getPrincipal().equals(Objects.requireNonNull(original).getPrincipal())) {
                 throw new MixedPrincipalException(currentAuthentication,
                     currentAuthentication.getPrincipal(), original.getPrincipal());
             }

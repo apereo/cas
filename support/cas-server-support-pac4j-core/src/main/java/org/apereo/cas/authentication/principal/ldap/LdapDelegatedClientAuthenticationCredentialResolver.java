@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.LdapAttribute;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.webflow.execution.RequestContext;
@@ -29,7 +30,7 @@ public class LdapDelegatedClientAuthenticationCredentialResolver extends BaseDel
     }
 
     @Override
-    public List<DelegatedAuthenticationCandidateProfile> resolve(final RequestContext context, final ClientCredential credentials) {
+    public @Nullable List<DelegatedAuthenticationCandidateProfile> resolve(final RequestContext context, final ClientCredential credentials) {
         val profile = resolveUserProfile(context, credentials).orElseThrow();
         val ldapServers = configContext.getCasProperties().getAuthn().getPac4j().getProfileSelection().getLdap();
         return ldapServers

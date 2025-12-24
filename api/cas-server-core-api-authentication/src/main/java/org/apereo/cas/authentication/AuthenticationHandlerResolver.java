@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import module java.base;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -49,8 +50,8 @@ public interface AuthenticationHandlerResolver extends Ordered {
      * @return the set
      * @throws Throwable the throwable
      */
-    default Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,
-                                               final AuthenticationTransaction transaction) throws Throwable {
+    default @Nullable Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,
+                                                         final AuthenticationTransaction transaction) throws Throwable {
         val handlers = candidateHandlers
             .stream()
             .filter(handler -> handler.getState() == AuthenticationHandlerStates.ACTIVE)

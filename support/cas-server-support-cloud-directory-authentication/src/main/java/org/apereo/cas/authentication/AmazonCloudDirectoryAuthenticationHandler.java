@@ -8,6 +8,7 @@ import org.apereo.cas.clouddirectory.AmazonCloudDirectoryRepository;
 import org.apereo.cas.configuration.model.support.clouddirectory.AmazonCloudDirectoryProperties;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AmazonCloudDirectoryAuthenticationHandler}.
@@ -32,7 +33,7 @@ public class AmazonCloudDirectoryAuthenticationHandler extends AbstractUsernameP
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws Throwable {
+                                                                                        @Nullable final String originalPassword) throws Throwable {
 
         val username = credential.getUsername();
 
@@ -48,7 +49,7 @@ public class AmazonCloudDirectoryAuthenticationHandler extends AbstractUsernameP
         LOGGER.debug("Located account attributes [{}] for [{}]", attributes.keySet(), username);
 
         val userPassword = attributes.get(cloudDirectoryProperties.getPasswordAttributeName()).getFirst().toString();
-        if (!matches(originalPassword, userPassword)) {
+        if (!matches(Objects.requireNonNull(originalPassword), userPassword)) {
             LOGGER.warn("Account password on record for [{}] does not match the given/encoded password", username);
             throw new FailedLoginException();
         }

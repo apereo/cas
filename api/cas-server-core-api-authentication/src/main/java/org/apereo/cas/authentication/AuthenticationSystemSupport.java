@@ -137,7 +137,7 @@ public interface AuthenticationSystemSupport {
      * @throws Throwable the throwable
      * @since 5.0.0
      */
-    AuthenticationResult finalizeAllAuthenticationTransactions(AuthenticationResultBuilder authenticationResultBuilder, @Nullable Service service) throws Throwable;
+    @Nullable AuthenticationResult finalizeAllAuthenticationTransactions(AuthenticationResultBuilder authenticationResultBuilder, @Nullable Service service) throws Throwable;
 
     /**
      * Handle a single-transaction authentication event and immediately produce a finalized {@link AuthenticationResult}.
@@ -148,7 +148,7 @@ public interface AuthenticationSystemSupport {
      * @throws AuthenticationException exception to indicate authentication processing failure.
      * @since 5.0.0
      */
-    AuthenticationResult finalizeAuthenticationTransaction(@Nullable Service service, Credential... credential) throws Throwable;
+    @Nullable AuthenticationResult finalizeAuthenticationTransaction(@Nullable Service service, Credential... credential) throws Throwable;
 
     /**
      * Handle a single-transaction authentication event and immediately produce a finalized {@link AuthenticationResult}.
@@ -159,7 +159,7 @@ public interface AuthenticationSystemSupport {
      * @throws Throwable the throwable
      * @since 5.3.0
      */
-    default AuthenticationResult finalizeAuthenticationTransaction(@Nullable final Service service,
+    default @Nullable AuthenticationResult finalizeAuthenticationTransaction(@Nullable final Service service,
                                                                    final Collection<Credential> credentials) throws Throwable {
         return finalizeAuthenticationTransaction(service, credentials.toArray(Credential[]::new));
     }
@@ -171,7 +171,7 @@ public interface AuthenticationSystemSupport {
      * @return the authentication result
      * @throws Throwable the throwable
      */
-    default AuthenticationResult finalizeAuthenticationTransaction(final Credential... credentials) throws Throwable {
+    default @Nullable AuthenticationResult finalizeAuthenticationTransaction(final Credential... credentials) throws Throwable {
         return finalizeAuthenticationTransaction(null, credentials);
     }
 }

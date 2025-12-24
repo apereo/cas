@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import module java.base;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultWebApplicationResponseBuilderLocator}.
@@ -17,7 +18,8 @@ public class DefaultWebApplicationResponseBuilderLocator implements ResponseBuil
     private final List<ResponseBuilder> builders;
 
     @Override
-    public ResponseBuilder<WebApplicationService> locate(final WebApplicationService service) {
+    public @Nullable ResponseBuilder<WebApplicationService> locate(
+        final WebApplicationService service) {
         return builders
             .stream()
             .filter(r -> r.supports(service))

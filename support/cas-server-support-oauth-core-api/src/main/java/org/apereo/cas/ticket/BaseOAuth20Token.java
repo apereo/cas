@@ -21,6 +21,7 @@ import org.jspecify.annotations.NonNull;
  */
 @NoArgsConstructor
 @Getter
+@SuppressWarnings("NullAway.Init")
 public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20Token {
 
     @Serial

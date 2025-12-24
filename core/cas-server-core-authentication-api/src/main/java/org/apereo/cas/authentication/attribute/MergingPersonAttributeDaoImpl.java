@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.merger.MultivaluedAttributeMerger;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A {@link PersonAttributeDao} implementation which iterates over child
@@ -25,8 +26,8 @@ public class MergingPersonAttributeDaoImpl extends AbstractAggregatingDefaultQue
     protected Set<PersonAttributes> getAttributesFromDao(final Map<String, List<Object>> seed,
                                                          final boolean isFirstQuery,
                                                          final PersonAttributeDao currentlyConsidering,
-                                                         final Set<PersonAttributes> resultPeople,
-                                                         final PersonAttributeDaoFilter filter) {
+                                                         @Nullable final Set<PersonAttributes> resultPeople,
+                                                         @Nullable final PersonAttributeDaoFilter filter) {
         return currentlyConsidering.getPeopleWithMultivaluedAttributes(seed, filter, resultPeople);
     }
 }

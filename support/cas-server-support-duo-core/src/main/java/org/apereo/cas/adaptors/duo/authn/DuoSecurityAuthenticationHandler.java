@@ -120,7 +120,7 @@ public class DuoSecurityAuthenticationHandler extends AbstractPreAndPostProcessi
             val result = duoAuthenticationService.authenticate(credential);
             if (result.isSuccess()) {
                 val principal = principalFactory.createPrincipal(result.getUsername(), result.getAttributes());
-                LOGGER.debug("Duo Security Universal Prompt has successfully authenticated [{}]", principal.getId());
+                LOGGER.debug("Duo Security Universal Prompt has successfully authenticated [{}]", Objects.requireNonNull(principal).getId());
                 return createHandlerResult(credential, principal, new ArrayList<>());
             }
         } catch (final Throwable e) {

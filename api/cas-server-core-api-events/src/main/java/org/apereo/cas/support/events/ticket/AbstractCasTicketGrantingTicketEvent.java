@@ -73,6 +73,6 @@ public abstract class AbstractCasTicketGrantingTicketEvent extends AbstractCasEv
      * @return principal id
      */
     public String getPrincipalId() {
-        return ticketGrantingTicket.getAuthentication().getPrincipal().getId();
+        return Objects.requireNonNull(ticketGrantingTicket.getAuthentication()).getPrincipal().getId();
     }
 }

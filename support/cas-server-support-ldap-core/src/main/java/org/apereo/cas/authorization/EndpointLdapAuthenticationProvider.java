@@ -95,7 +95,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
                 entry.getAttributes().forEach(attribute -> attributes.put(attribute.getName(), new ArrayList<>(attribute.getStringValues())));
                 val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(username, attributes);
                 val authZGen = buildAuthorizationGenerator();
-                var authorities = authZGen.apply(principal);
+                var authorities = authZGen.apply(Objects.requireNonNull(principal));
 
                 LOGGER.debug("List of authorities remapped from profile roles are [{}]", authorities);
                 if (authorities.stream().anyMatch(authority -> requiredRoles.contains(authority.getAuthority()))) {

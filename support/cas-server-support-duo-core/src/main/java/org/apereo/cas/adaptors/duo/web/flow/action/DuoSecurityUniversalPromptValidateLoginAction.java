@@ -183,7 +183,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         val duoCode = requestParameters.get(REQUEST_PARAMETER_CODE, String.class);
 
         val duoSecurityIdentifier = ticket.getProperty("duoProviderId", String.class);
-        populateContextWithCredential(requestContext, authentication, duoCode, duoSecurityIdentifier);
+        populateContextWithCredential(requestContext, authentication, duoCode, Objects.requireNonNull(duoSecurityIdentifier));
     }
 
     protected void populateContextWithCredential(final RequestContext requestContext,
@@ -225,7 +225,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                                                      @Nullable final Service service) throws Throwable {
         WebUtils.putAuthenticationResultBuilder(Objects.requireNonNull(authenticationResultBuilder), requestContext);
         val authenticationResult = authenticationResultBuilder.build(service);
-        WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+        WebUtils.putAuthenticationResult(Objects.requireNonNull(authenticationResult), requestContext);
         WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
     }
 
@@ -236,7 +236,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
                 ticket = ticketRegistry.getTicket(duoState, TransientSessionTicket.class);
                 if (ticket != null) {
                     val authentication = ticket.getProperty(Authentication.class.getSimpleName(), Authentication.class);
-                    populateContextWithCredential(requestContext, ticket, authentication);
+                    populateContextWithCredential(requestContext, ticket, Objects.requireNonNull(authentication));
                     populateContextWithAuthentication(requestContext, ticket);
                     populateContextWithService(requestContext, ticket);
                     return success(ticket);
@@ -247,7 +247,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
             } finally {
                 if (ticket != null) {
                     val flowScope = ticket.getProperty(FlowScope.class.getSimpleName(), Map.class);
-                    requestContext.getFlowScope().putAll(new LocalAttributeMap<>(flowScope));
+                    requestContext.getFlowScope().putAll(new LocalAttributeMap<>(Objects.requireNonNull(flowScope)));
                 }
                 ticketRegistry.deleteTicket(duoState);
             }

@@ -44,7 +44,7 @@ public class RequiredAttributesAuthenticationPolicy extends BaseAuthenticationPo
                                                              final Map<String, ? extends Serializable> context) {
         val allAttributes = CoreAuthenticationUtils.mergeAttributes(authentication.getAttributes(),
             authentication.getPrincipal().getAttributes());
-        val result = requiredAttributes.entrySet().stream().allMatch(entry -> {
+        val result = Objects.requireNonNull(requiredAttributes).entrySet().stream().allMatch(entry -> {
             var foundAttribute = allAttributes.containsKey(entry.getKey());
             if (foundAttribute) {
                 val attributeValues = allAttributes.get(entry.getKey());

@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@SuppressWarnings("NullAway.Init")
 public class AccountsPreDefinedLoginModule implements LoginModule {
     private Subject subject;
 

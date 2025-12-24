@@ -19,7 +19,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -46,7 +45,7 @@ public class UniquePrincipalAuthenticationPolicy extends BaseAuthenticationPolic
 
     private final TicketRegistry ticketRegistry;
 
-    private final ObjectProvider<@NonNull SingleSignOnParticipationStrategy> singleSignOnParticipationStrategy;
+    private final ObjectProvider<SingleSignOnParticipationStrategy> singleSignOnParticipationStrategy;
 
     private final UniquePrincipalAuthenticationPolicyProperties properties;
 

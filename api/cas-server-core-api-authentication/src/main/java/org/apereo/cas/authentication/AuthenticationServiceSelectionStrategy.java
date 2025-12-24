@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import module java.base;
 import org.apereo.cas.authentication.principal.Service;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 
 /**
@@ -28,7 +29,7 @@ public interface AuthenticationServiceSelectionStrategy extends Serializable, Or
      * @return the resolved service
      * @throws Throwable the throwable
      */
-    Service resolveServiceFrom(Service service) throws Throwable;
+    @Nullable Service resolveServiceFrom(@Nullable Service service) throws Throwable;
 
     /**
      * Indicates whether this strategy supports service selection.
@@ -36,5 +37,5 @@ public interface AuthenticationServiceSelectionStrategy extends Serializable, Or
      * @param service the service
      * @return true/false
      */
-    boolean supports(Service service);
+    boolean supports(@Nullable Service service);
 }

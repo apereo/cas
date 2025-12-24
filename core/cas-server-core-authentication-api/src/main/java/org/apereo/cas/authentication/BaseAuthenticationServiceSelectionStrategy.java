@@ -27,14 +27,14 @@ public abstract class BaseAuthenticationServiceSelectionStrategy implements Auth
     @Serial
     private static final long serialVersionUID = -7458940344679793681L;
 
-    private final transient ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
 
-    private final transient ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+    private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     private int order = Ordered.HIGHEST_PRECEDENCE;
 
     protected Service createService(final String identifier, final Service original) {
-        val result = webApplicationServiceFactory.createService(identifier);
+        val result = Objects.requireNonNull(webApplicationServiceFactory.createService(identifier));
         val attributes = new LinkedHashMap<>(original.getAttributes());
         attributes.put(Service.class.getName(), CollectionUtils.wrapList(original.getOriginalUrl()));
         result.setAttributes(attributes);

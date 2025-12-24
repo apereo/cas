@@ -18,6 +18,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @Deprecated(since = "8.0.0", forRemoval = true)
+@SuppressWarnings("NullAway.Init")
 public class CosmosDbTicketDocument implements Serializable {
     @Serial
     private static final long serialVersionUID = -1741535838543052903L;

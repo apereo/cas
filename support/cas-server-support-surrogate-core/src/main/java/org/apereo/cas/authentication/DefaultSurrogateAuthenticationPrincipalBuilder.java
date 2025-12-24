@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link SurrogateAuthenticationPrincipalBuilder}.
@@ -40,8 +41,7 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
 
     @Override
     public Principal buildSurrogatePrincipal(final Credential credential, final Principal primaryPrincipal,
-                                             final RegisteredService registeredService) throws Throwable {
-
+                                             @Nullable final RegisteredService registeredService) throws Throwable {
         val surrogate = extractSurrogateUser(credential);
         val activeAttributeRepositoryIdentifiers = PrincipalResolverUtils.buildActiveAttributeRepositoryIds(casProperties.getPersonDirectory());
         val query = AttributeRepositoryQuery.builder()
@@ -63,7 +63,7 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
 
         val surrogatePrincipal = principalFactory.createPrincipal(surrogate, attributes);
         LOGGER.debug("Built surrogate principal [{}] with primary principal [{}]", surrogatePrincipal, primaryPrincipal);
-        return new SurrogatePrincipal(primaryPrincipal, surrogatePrincipal);
+        return new SurrogatePrincipal(primaryPrincipal, Objects.requireNonNull(surrogatePrincipal));
     }
 
 

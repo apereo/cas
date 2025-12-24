@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link ResponseBuilderLocator} which attempts to locate {@link ResponseBuilder}
@@ -26,5 +27,5 @@ public interface ResponseBuilderLocator<T extends WebApplicationService> extends
      * @param service the service
      * @return the response builder
      */
-    ResponseBuilder<T> locate(T service);
+    @Nullable ResponseBuilder<T> locate(T service);
 }

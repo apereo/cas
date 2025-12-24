@@ -96,7 +96,7 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
             authenticationResultBuilder = processor.process(authenticationResultBuilder, principal, service, credential, token);
         }
         val authenticationResult = authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
-        WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+        WebUtils.putAuthenticationResult(Objects.requireNonNull(authenticationResult), requestContext);
         WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
         WebUtils.putCredential(requestContext, credential);
     }

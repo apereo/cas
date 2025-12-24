@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import module java.base;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Describes a principal resolution error, which is a subcategory of authentication error.
@@ -24,7 +25,7 @@ public class PrincipalException extends AuthenticationException {
      * @param handlerSuccesses Map of handler names to authentication successes.
      */
     public PrincipalException(
-        final String message,
+        @Nullable final String message,
         final Map<String, Throwable> handlerErrors,
         final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses) {
         super(message, handlerErrors, handlerSuccesses);

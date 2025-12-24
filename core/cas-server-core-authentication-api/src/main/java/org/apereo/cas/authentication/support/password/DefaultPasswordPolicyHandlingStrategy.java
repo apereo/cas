@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrateg
 import org.apereo.cas.authentication.MessageDescriptor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultPasswordPolicyHandlingStrategy}.
@@ -16,7 +17,8 @@ import lombok.val;
 public class DefaultPasswordPolicyHandlingStrategy<AuthnResponse> implements AuthenticationPasswordPolicyHandlingStrategy<AuthnResponse, PasswordPolicyContext> {
 
     @Override
-    public List<MessageDescriptor> handle(final AuthnResponse response, final PasswordPolicyContext configuration) throws Throwable {
+    public @Nullable List<MessageDescriptor> handle(@Nullable final AuthnResponse response,
+                                                    @Nullable final PasswordPolicyContext configuration) throws Throwable {
         if (configuration == null) {
             LOGGER.debug("No password policy configuration is defined");
             return new ArrayList<>();

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Container for password policy configuration.
@@ -24,6 +25,7 @@ public class PasswordPolicyContext {
     /**
      * Directory-specific account state handler component.
      */
+    @Nullable
     private AuthenticationAccountStateHandler accountStateHandler;
 
     private boolean alwaysDisplayPasswordExpirationWarning;

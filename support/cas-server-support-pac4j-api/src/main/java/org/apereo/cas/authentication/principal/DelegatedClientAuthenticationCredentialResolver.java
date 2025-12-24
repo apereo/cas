@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import module java.base;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -26,5 +27,5 @@ public interface DelegatedClientAuthenticationCredentialResolver {
      * @return the list
      * @throws Throwable the throwable
      */
-    List<DelegatedAuthenticationCandidateProfile> resolve(RequestContext context, ClientCredential credentials) throws Throwable;
+    @Nullable List<DelegatedAuthenticationCandidateProfile> resolve(RequestContext context, ClientCredential credentials) throws Throwable;
 }

@@ -26,6 +26,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+@SuppressWarnings("NullAway.Init")
 public class BasicIdentifiableCredential extends AbstractCredential implements MutableCredential {
     @Serial
     private static final long serialVersionUID = -700605020472810939L;

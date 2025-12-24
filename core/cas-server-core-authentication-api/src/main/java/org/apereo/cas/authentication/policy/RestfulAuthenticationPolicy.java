@@ -82,7 +82,7 @@ public class RestfulAuthenticationPolicy extends BaseAuthenticationPolicy {
         try {
             val entity = MAPPER.writeValueAsString(principal);
             val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-            headers.putAll(properties.getHeaders());
+            headers.putAll(Objects.requireNonNull(properties).getHeaders());
             val exec = HttpExecutionRequest.builder()
                 .url(properties.getUrl())
                 .basicAuthPassword(properties.getBasicAuthUsername())

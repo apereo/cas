@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultServiceMatchingStrategy}.
@@ -22,7 +23,7 @@ public class DefaultServiceMatchingStrategy implements ServiceMatchingStrategy {
     protected final ServicesManager servicesManager;
 
     @Override
-    public boolean matches(final Service service, final Service serviceToMatch) {
+    public boolean matches(@Nullable final Service service, @Nullable final Service serviceToMatch) {
         try {
             if (service != null && serviceToMatch != null) {
                 return compareServices(service, serviceToMatch);

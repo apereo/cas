@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import module java.base;
 import org.apereo.cas.authentication.principal.Service;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AuthenticationTransactionFactory},
@@ -26,7 +27,7 @@ public interface AuthenticationTransactionFactory extends Serializable {
      * @param credentials the credentials
      * @return the authentication transaction
      */
-    AuthenticationTransaction newTransaction(Service service, Credential... credentials);
+    AuthenticationTransaction newTransaction(@Nullable Service service, @Nullable Credential... credentials);
 
     /**
      * New transaction.

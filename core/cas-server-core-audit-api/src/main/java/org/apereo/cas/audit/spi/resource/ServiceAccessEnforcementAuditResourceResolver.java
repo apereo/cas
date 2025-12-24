@@ -51,14 +51,16 @@ public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAs
         return new String[]{auditFormat.serialize(values)};
     }
 
-    protected Principal determinePrincipal(final Authentication authentication) {
+    protected @Nullable Principal determinePrincipal(final Authentication authentication) {
         return FunctionUtils.doUnchecked(() -> properties.isIncludeValidationAssertion()
             ? authentication.getPrincipal()
             : defaultPrincipalFactory.withoutAttributes(authentication.getPrincipal()));
     }
 
-    protected String getServiceId(final Service service) {
-        val serviceId = FunctionUtils.doUnchecked(() -> serviceSelectionStrategy.resolveService(service).getId());
-        return DigestUtils.abbreviate(serviceId, properties.getAbbreviationLength());
+    private String getServiceId(final Service givenService) {
+        return FunctionUtils.doUnchecked(() -> {
+            val service = Objects.requireNonNull(serviceSelectionStrategy.resolveService(givenService));
+            return DigestUtils.abbreviate(service.getId(), properties.getAbbreviationLength());
+        });
     }
 }

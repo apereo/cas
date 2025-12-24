@@ -15,6 +15,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.
@@ -29,6 +30,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
+@SuppressWarnings("NullAway.Init")
 public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
 
     @Serial
@@ -50,14 +52,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         this.salt = salt;
     }
 
-    /**
-     * Prepare message digest message digest.
-     *
-     * @param principal the principal
-     * @param service   the service
-     * @return the message digest
-     */
-    protected static MessageDigest prepareMessageDigest(final String principal, final String service) {
+    protected static MessageDigest prepareMessageDigest(final String principal, @Nullable final String service) {
         return FunctionUtils.doUnchecked(() -> {
             val md = MessageDigest.getInstance("SHA");
             if (StringUtils.isNotBlank(service)) {
@@ -71,7 +66,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     }
 
     @Override
-    public String generate(final String principal, final String service) {
+    public String generate(final String principal, @Nullable final String service) {
         if (StringUtils.isBlank(salt)) {
             this.salt = new DefaultRandomStringGenerator(CONST_DEFAULT_SALT_COUNT).getNewString();
         }
@@ -84,7 +79,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     }
 
     @Override
-    public String generate(final Principal principal, final String service) {
+    public String generate(final Principal principal, @Nullable final String service) {
         val attributes = principal.getAttributes();
         LOGGER.debug("Found principal attributes [{}] to use when generating persistent identifiers", attributes);
         val principalId = determinePrincipalIdFromAttributes(principal.getId(), attributes);
@@ -92,7 +87,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     }
 
     /**
-     * Determine principal id from attributes.
+     * Determine principal id from attributes string.
      *
      * @param defaultId  the default id
      * @param attributes the attributes
@@ -121,12 +116,6 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
             .toString();
     }
 
-    /**
-     * Digest and encode with salt string.
-     *
-     * @param md the md
-     * @return the string
-     */
     protected String digestAndEncodeWithSalt(final MessageDigest md) {
         val sanitizedSalt = Strings.CI.replace(salt, "\n", " ");
         val digested = md.digest(sanitizedSalt.getBytes(StandardCharsets.UTF_8));

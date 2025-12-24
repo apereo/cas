@@ -4,6 +4,7 @@ import module java.base;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 /**
@@ -35,7 +36,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
     }
 
     @Override
-    public TicketDefinition find(final String ticketId) {
+    public @Nullable TicketDefinition find(final String ticketId) {
         val index = ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR);
         val prefix = index == -1 ? ticketId : ticketId.substring(0, index);
 
@@ -52,7 +53,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
     }
 
     @Override
-    public TicketDefinition find(final Ticket ticket) {
+    public @Nullable TicketDefinition find(final Ticket ticket) {
         LOGGER.trace("Locating ticket definition for ticket [{}]", ticket);
         return find(ticket.getId());
     }

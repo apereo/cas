@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultSecurityTokenTicket}.
@@ -20,6 +21,7 @@ import org.apache.cxf.ws.security.tokenstore.SecurityToken;
  */
 @NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+@SuppressWarnings("NullAway.Init")
 public class DefaultSecurityTokenTicket extends AbstractTicket implements SecurityTokenTicket {
 
     @Serial
@@ -40,7 +42,7 @@ public class DefaultSecurityTokenTicket extends AbstractTicket implements Securi
     }
 
     @Override
-    public Authentication getAuthentication() {
+    public @Nullable Authentication getAuthentication() {
         return getTicketGrantingTicket().getAuthentication();
     }
 

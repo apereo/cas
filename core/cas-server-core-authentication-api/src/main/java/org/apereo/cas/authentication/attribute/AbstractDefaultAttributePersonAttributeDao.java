@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 
 /**
@@ -23,7 +24,7 @@ public abstract class AbstractDefaultAttributePersonAttributeDao extends Abstrac
     private UsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
     
     @Override
-    public PersonAttributes getPerson(final String uid, final Set<PersonAttributes> resultPeople, final PersonAttributeDaoFilter filter) {
+    public @Nullable PersonAttributes getPerson(final String uid, final Set<PersonAttributes> resultPeople, final PersonAttributeDaoFilter filter) {
         if (!this.isEnabled()) {
             return null;
         }

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -23,6 +24,7 @@ import org.springframework.context.ApplicationContext;
 public class RegisteredServiceUsernameProviderContext {
     private final Principal principal;
 
+    @Nullable
     private final Service service;
 
     private final RegisteredService registeredService;

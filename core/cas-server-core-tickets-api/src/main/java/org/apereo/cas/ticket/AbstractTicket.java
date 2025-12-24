@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Abstract implementation of a ticket that handles all ticket state for
@@ -38,6 +39,7 @@ import lombok.val;
 @EqualsAndHashCode(of = "id")
 @Setter
 @Slf4j
+@SuppressWarnings("NullAway.Init")
 public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket, PropertiesAwareTicket {
 
     @Serial
@@ -138,7 +140,7 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     }
 
     @Override
-    public Authentication getAuthentication() {
+    public @Nullable Authentication getAuthentication() {
         val ticketGrantingTicket = getTicketGrantingTicket();
         return Optional.ofNullable(ticketGrantingTicket)
             .map(AuthenticationAwareTicket.class::cast)
@@ -193,7 +195,7 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     }
 
     @Override
-    public <T> T getProperty(final String name, final Class<T> clazz) {
+    public @Nullable <T> T getProperty(final String name, final Class<T> clazz) {
         if (containsProperty(name)) {
             return clazz.cast(this.properties.get(name));
         }

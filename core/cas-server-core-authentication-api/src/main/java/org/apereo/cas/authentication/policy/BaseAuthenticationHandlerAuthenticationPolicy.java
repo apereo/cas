@@ -33,6 +33,7 @@ import org.springframework.util.StringUtils;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Accessors(chain = true)
+@SuppressWarnings("NullAway.Init")
 public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     @Serial

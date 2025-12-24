@@ -112,7 +112,7 @@ public interface ServicesManager extends Ordered, NamedObject {
      * @param clazz     the clazz
      * @return the t
      */
-    <T extends RegisteredService> @Nullable T findServiceBy(Service serviceId, Class<T> clazz);
+    <T extends RegisteredService> @Nullable T findServiceBy(@Nullable Service serviceId, Class<T> clazz);
 
     /**
      * Find a {@link RegisteredService} by matching with the supplied id.

@@ -2,6 +2,7 @@ package org.apereo.cas.ticket;
 
 import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link PropertiesAwareTicket}.
@@ -26,7 +27,7 @@ public interface PropertiesAwareTicket extends Ticket {
      * @param clazz the clazz
      * @return the property
      */
-    <T> T getProperty(String key, Class<T> clazz);
+    @Nullable <T> T getProperty(String key, Class<T> clazz);
 
     /**
      * Gets property.
@@ -37,7 +38,7 @@ public interface PropertiesAwareTicket extends Ticket {
      * @param defaultValue the default value
      * @return the property
      */
-    <T extends Serializable> T getProperty(String name, Class<T> clazz, T defaultValue);
+    @Nullable <T extends Serializable> T getProperty(String name, Class<T> clazz, T defaultValue);
     
     /**
      * Put property.

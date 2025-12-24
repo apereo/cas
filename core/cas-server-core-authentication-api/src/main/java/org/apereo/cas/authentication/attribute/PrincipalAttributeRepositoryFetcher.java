@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link PrincipalAttributeRepositoryFetcher}.
@@ -31,8 +32,10 @@ public class PrincipalAttributeRepositoryFetcher {
     @Builder.Default
     private final Map<String, List<Object>> queryAttributes = new HashMap<>();
 
+    @Nullable
     private final Principal currentPrincipal;
 
+    @Nullable
     private final Service service;
 
     /**

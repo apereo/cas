@@ -60,6 +60,7 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
         return DefaultResponse.getPostResponse(determineServiceResponseUrl(service), parameters);
     }
 
+    @SuppressWarnings("NullAway")
     protected Response.ResponseType getWebApplicationServiceResponseType(final WebApplicationService finalService) {
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val methodRequest = Optional.ofNullable(request)

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The {@link DefaultAuthenticationResult} represents a concrete implementation of {@link AuthenticationResult}.
@@ -27,6 +28,7 @@ public class DefaultAuthenticationResult implements AuthenticationResult {
 
     private final Authentication authentication;
 
+    @Nullable
     private final Service service;
 
     private boolean credentialProvided;
