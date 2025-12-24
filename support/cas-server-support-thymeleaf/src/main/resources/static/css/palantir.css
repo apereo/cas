@@ -1,0 +1,8 @@
+#applicationsTable th {
+    resize: horizontal;
+    overflow: auto;
+}
+
+.ui-tooltip-content {
+    color: black;
+}

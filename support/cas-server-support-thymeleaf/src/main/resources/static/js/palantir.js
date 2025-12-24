@@ -40,7 +40,7 @@ const CAS_FEATURES = [];
 
 let notyf = null;
 
-function fetchServices(callback) {
+async function fetchServices(callback) {
     if (actuatorEndpoints.registeredservices) {
         $.get(actuatorEndpoints.registeredservices, response => {
             let serviceCountByType = [0, 0, 0, 0, 0];
@@ -133,8 +133,8 @@ function fetchServices(callback) {
                 $("#saml2metadataproviders").toggle(metadataSourcesCount > 0);
             }
 
-            applicationsTable.on("draw", () => {
-                initializeServiceButtons();
+            applicationsTable.on("draw", async () => {
+                await initializeServiceButtons();
             });
 
             applicationsTable.search("").draw();
@@ -174,7 +174,7 @@ function navigateToApplication(serviceIdToFind) {
     }
 }
 
-function initializeFooterButtons() {
+async function initializeFooterButtons() {
     $("button[name=copyServiceDefinitionWizard]").off().on("click", () => {
         const editor = initializeAceEditor("wizardServiceEditor");
         copyToClipboard(editor.getValue());
@@ -882,6 +882,20 @@ async function initializeTicketsOperations() {
 }
 
 async function initializeSsoSessionOperations() {
+    const ssoSessionApplicationsTable = $("#ssoSessionApplicationsTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        columnDefs: [
+            {width: "40%", targets: 0},
+            {width: "60%", targets: 1}
+        ],
+        drawCallback: settings => {
+            $("#ssoSessionApplicationsTable tr").addClass("mdc-data-table__row");
+            $("#ssoSessionApplicationsTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    
     const ssoSessionDetailsTable = $("#ssoSessionDetailsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
@@ -970,8 +984,10 @@ async function initializeSsoSessionOperations() {
                 showConfirmButton: false,
                 didOpen: () => Swal.showLoading()
             });
-            ssoSessionsTable.clear();
 
+            ssoSessionsTable.clear();
+            ssoSessionApplicationsTable.clear();
+            
             $.ajax({
                 url: `${actuatorEndpoints.ssosessions}/users/${username}`,
                 type: "GET",
@@ -983,18 +999,29 @@ async function initializeSsoSessionOperations() {
                             authentication: session["authentication_attributes"]
                         };
 
+                        const services = {};
+                        for (const [key, value] of Object.entries(session["authenticated_services"])) {
+                            services[key] = {id: value.id};
+                        }
+                        
                         let serviceButtons = `
-                         <button type="button" name="removeSsoSession" href="#" 
+                            <button type="button" name="removeSsoSession" href="#" 
                                 data-ticketgrantingticket='${session.ticket_granting_ticket}'
                                 class="mdc-button mdc-button--raised min-width-32x">
-                            <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
-                        </button>
-                        <button type="button" name="viewSsoSession" href="#" 
+                                <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" name="viewSsoSession" href="#" 
                                 data-ticketgrantingticket='${session.ticket_granting_ticket}'
                                 class="mdc-button mdc-button--raised min-width-32x">
-                            <i class="mdi mdi-account-eye min-width-32x" aria-hidden="true"></i>
-                            <span id="sessionAttributes" class="d-none">${JSON.stringify(attributes)}</span>
-                        </button>
+                                <i class="mdi mdi-account-eye min-width-32x" aria-hidden="true"></i>
+                                <span id="sessionAttributes" class="d-none">${JSON.stringify(attributes)}</span>
+                                <span id="sessionServices" class="d-none">${JSON.stringify(services)}</span>
+                            </button>
+                            <button type="button" name="copySsoSessionTicketGrantingTicket" href="#" 
+                                data-ticketgrantingticket='${session.ticket_granting_ticket}'
+                                class="mdc-button mdc-button--raised min-width-32x">
+                                <i class="mdi mdi-content-copy min-width-32x" aria-hidden="true"></i>
+                            </button>
                     `;
 
                         ssoSessionsTable.row.add({
@@ -1009,10 +1036,20 @@ async function initializeSsoSessionOperations() {
                         });
                     }
                     ssoSessionsTable.draw();
+                    
                     Swal.close();
 
                     $("button[name=viewSsoSession]").off().on("click", function () {
-                        const attributes = JSON.parse($(this).children("span").first().text());
+                        ssoSessionApplicationsTable.clear();
+                        const sessionServices = JSON.parse($(this).children("#sessionServices").text());
+                        for (const [key, value] of Object.entries(sessionServices)) {
+                            ssoSessionApplicationsTable.row.add({
+                                0: `<code>${key}</code>`,
+                                1: `<code>${value.id}</code>`
+                            });
+                        }
+                        
+                        const attributes = JSON.parse($(this).children("#sessionAttributes").text());
                         for (const [key, value] of Object.entries(attributes.principal)) {
                             ssoSessionDetailsTable.row.add({
                                 0: `<code>Principal</code>`,
@@ -1028,7 +1065,8 @@ async function initializeSsoSessionOperations() {
                             });
                         }
                         ssoSessionDetailsTable.draw();
-
+                        ssoSessionApplicationsTable.draw();
+                        
                         let dialog = mdc.dialog.MDCDialog.attachTo(document.getElementById("ssoSession-dialog"));
                         dialog["open"]();
                     });
@@ -1061,6 +1099,12 @@ async function initializeSsoSessionOperations() {
                                 }
                             });
                     });
+
+                    $("button[name=copySsoSessionTicketGrantingTicket]").off().on("click", function () {
+                        const ticket = $(this).data("ticketgrantingticket");
+                        copyToClipboard(ticket);
+                    });
+
                 },
                 error: (xhr, status, error) => {
                     console.error("Error fetching data:", error);
@@ -1070,6 +1114,36 @@ async function initializeSsoSessionOperations() {
             });
         }
     });
+
+    $("button[name=removeAllSsoSessionsButton]").off().on("click", () => {
+        if (actuatorEndpoints.ssosessions) {
+
+            Swal.fire({
+                title: "Are you sure you want to delete all sessions for all users?",
+                text: "Once deleted, you may not be able to recover this entry.",
+                icon: "warning",
+                showConfirmButton: true,
+                showDenyButton: true
+            })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `${actuatorEndpoints.ssosessions}`,
+                            type: "DELETE",
+                            contentType: "application/x-www-form-urlencoded",
+                            success: (response, status, xhr) => ssoSessionsTable.clear().draw(),
+                            error: (xhr, status, error) => {
+                                console.error("Error fetching data:", error);
+                                displayBanner(xhr);
+                            }
+                        });
+                    }
+                });
+            
+        }
+    });
+
+    
 
 }
 
@@ -1997,7 +2071,7 @@ async function initializeCasFeatures() {
 
 }
 
-function initializeServiceButtons() {
+async function initializeServiceButtons() {
     const serviceEditor = initializeAceEditor("serviceEditor");
     let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("editServiceDialog"));
 
@@ -2136,16 +2210,14 @@ function initializeServiceButtons() {
             })
                 .then((result) => {
                     if (result.isConfirmed) {
-
                         $.ajax({
                             url: `${actuatorEndpoints.registeredservices}`,
                             type: isNewService ? "POST" : "PUT",
                             contentType: "application/json",
                             data: value,
-                            success: response => {
+                            success: async response => {
                                 editServiceDialog["close"]();
-                                editServiceWizardDialog["close"]();
-                                fetchServices(() => {
+                                await fetchServices(() => {
                                     let newServiceId = response.id;
                                     $("#applicationsTable tr").removeClass("selected");
 
@@ -2196,24 +2268,25 @@ function initializeServiceButtons() {
 }
 
 async function initializeServicesOperations() {
+    const columnDefinitions = [
+        {visible: true, targets: 0},
+        {visible: true, targets: 1},
+        {visible: true, targets: 2},
+        {visible: true, targets: 3},
+        {visible: true, targets: 4},
+        {visible: false, targets: 5}
+    ];
+    
     const applicationsTable = $("#applicationsTable").DataTable({
         pageLength: 25,
         autoWidth: false,
-        columnDefs: [
-            {width: "5%", targets: 0},
-            {width: "10%", targets: 1},
-            {width: "17%", targets: 2},
-            {width: "56%", targets: 3},
-            {width: "12%", targets: 4},
-            {visible: false, targets: 5}
-        ],
+        columnDefs: columnDefinitions,
         drawCallback: settings => {
             $("#applicationsTable tr").addClass("mdc-data-table__row");
             $("#applicationsTable td").addClass("mdc-data-table__cell");
         }
     });
     applicationsTable.on("click", "tbody tr", e => e.currentTarget.classList.remove("selected"));
-
 
     const saml2MetadataProvidersTable = $("#saml2MetadataProvidersTable").DataTable({
         pageLength: 25,
@@ -2244,12 +2317,12 @@ async function initializeServicesOperations() {
         }
     });
 
-    fetchServices();
-    initializeFooterButtons();
+    await fetchServices();
+    await initializeFooterButtons();
 
     let serviceDefinitionsEntries = "";
     for (let type in serviceDefinitions) {
-        serviceDefinitionsEntries += `<h3>${type}</h3>`;
+        serviceDefinitionsEntries += `<h3>${type} Templates</h3>`;
         const entries = serviceDefinitions[type];
         serviceDefinitionsEntries += "<div>";
         for (const entry of entries) {
@@ -2520,8 +2593,8 @@ async function initializeAllCharts() {
 
 }
 
-function updateNavigationSidebar() {
-    setTimeout(() => $("nav.sidebar-navigation").css("height", $("#dashboard .mdc-card").css("height")), 100);
+async function updateNavigationSidebar() {
+    $("nav.sidebar-navigation").css("height", $("#dashboard .mdc-card").css("height"));
 }
 
 async function initializePersonDirectoryOperations() {
@@ -2695,7 +2768,7 @@ async function initializeAuthenticationOperations() {
     });
 
     function configureSaml2ClientMetadataButtons() {
-        function showSamlMetadata(payload) {
+        async function showSamlMetadata(payload) {
             const saml2Editor = initializeAceEditor("delegatedClientsSaml2Editor", "xml");
             saml2Editor.setReadOnly(true);
 
@@ -2730,9 +2803,9 @@ async function initializeAuthenticationOperations() {
                 didOpen: () => Swal.showLoading()
             });
 
-            $.get(url, payload => {
-                showSamlMetadata(payload);
-                updateNavigationSidebar();
+            $.get(url, async payload => {
+                await showSamlMetadata(payload);
+                await updateNavigationSidebar();
                 Swal.close();
             })
                 .always(() => $(this).prop("disabled", false));
@@ -4146,6 +4219,8 @@ async function initializePalantir() {
                         initializeCasEventsOperations(),
                         initializeCasSpringWebflowOperations()
                     ]);
+
+                    window.addEventListener('resize', updateNavigationSidebar, { passive: true });
                 }
             });
         }, 2);
