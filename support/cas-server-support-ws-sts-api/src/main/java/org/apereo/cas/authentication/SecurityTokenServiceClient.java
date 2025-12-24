@@ -4,7 +4,6 @@ import module java.base;
 import module java.xml;
 import lombok.val;
 import org.apache.cxf.Bus;
-import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.cxf.ws.security.trust.STSClient;
 import org.jspecify.annotations.Nullable;
 
@@ -28,11 +27,11 @@ public class SecurityTokenServiceClient extends STSClient {
      */
     public Element requestSecurityTokenResponse(final String appliesTo) throws Exception {
         val action = isSecureConv ? namespace + "/RST/SCT" : null;
-        return requestSecurityTokenResponse(appliesTo, action, "/Issue", null);
+        return requestSecurityTokenResponse(appliesTo, action, "/Issue");
     }
 
     private Element requestSecurityTokenResponse(final String appliesTo, @Nullable final String action,
-                                                 final String requestType, @Nullable final SecurityToken target) throws Exception {
+                                                 final String requestType) throws Exception {
         val response = issue(appliesTo, action, requestType, null);
         return getDocumentElement(response.getResponse());
     }
