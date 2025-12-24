@@ -28,6 +28,7 @@ import jakarta.persistence.Transient;
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
 
     @Serial

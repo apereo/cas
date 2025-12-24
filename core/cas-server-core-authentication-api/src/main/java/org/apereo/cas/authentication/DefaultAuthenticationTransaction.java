@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultAuthenticationTransaction}.
@@ -25,10 +26,13 @@ public class DefaultAuthenticationTransaction implements RegisteredServiceAwareA
     @Serial
     private static final long serialVersionUID = 6213904009424725484L;
 
+    @Nullable
     private final Service service;
 
+    @Nullable
     private final RegisteredService registeredService;
 
+    @Nullable
     private final Collection<Credential> credentials;
 
     private final Collection<Authentication> authentications = new ArrayList<>();

@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import java.sql.Array;
 
 /**
@@ -109,7 +110,7 @@ public class SimplePersonAttributes implements PersonAttributes {
 
     @Override
     @JsonIgnore
-    public Object getAttributeValue(final String name) {
+    public @Nullable Object getAttributeValue(final String name) {
         val values = this.attributes.get(name);
         if (values == null || values.isEmpty()) {
             return null;
@@ -119,7 +120,7 @@ public class SimplePersonAttributes implements PersonAttributes {
 
     @Override
     @JsonIgnore
-    public List<Object> getAttributeValues(final String name) {
+    public @Nullable List<Object> getAttributeValues(final String name) {
         return this.attributes.get(name);
     }
 }

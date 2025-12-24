@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AuthenticationDateAttributeMetaDataPopulator}.
@@ -24,7 +25,7 @@ public class AuthenticationDateAttributeMetaDataPopulator extends BaseAuthentica
     }
 
     @Override
-    public boolean supports(final Credential credential) {
+    public boolean supports(@Nullable final Credential credential) {
         return credential != null && !(credential instanceof MultifactorAuthenticationCredential);
     }
 }

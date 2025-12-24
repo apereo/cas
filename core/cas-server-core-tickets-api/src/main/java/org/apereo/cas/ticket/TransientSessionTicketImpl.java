@@ -28,6 +28,7 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+@SuppressWarnings("NullAway.Init")
 public class TransientSessionTicketImpl extends AbstractTicket implements TransientSessionTicket {
     @Serial
     private static final long serialVersionUID = 7839186396717950243L;

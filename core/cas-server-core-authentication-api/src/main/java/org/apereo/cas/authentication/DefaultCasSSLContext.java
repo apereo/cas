@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.val;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
 
 /**
@@ -29,6 +30,7 @@ public class DefaultCasSSLContext implements CasSSLContext {
 
     private final HostnameVerifier hostnameVerifier;
 
+    @Nullable
     private final KeyStore casTrustStore;
 
     private final KeyManagerFactory keyManagerFactory;
@@ -75,15 +77,15 @@ public class DefaultCasSSLContext implements CasSSLContext {
         this.hostnameVerifier = hostnameVerifier;
     }
 
-    private static KeyManagerFactory getKeyManagerFactory(final String algorithm, final KeyStore keystore,
-                                                          final char[] password) throws Exception {
+    private static KeyManagerFactory getKeyManagerFactory(final String algorithm, final @Nullable KeyStore keystore,
+                                                          final char @Nullable [] password) throws Exception {
         val factory = KeyManagerFactory.getInstance(algorithm);
         factory.init(keystore, password);
         return factory;
     }
 
     private static Collection<X509TrustManager> getTrustManager(final String algorithm,
-                                                                final KeyStore keystore) throws Exception {
+                                                                final @Nullable KeyStore keystore) throws Exception {
         val factory = TrustManagerFactory.getInstance(algorithm);
         factory.init(keystore);
         return Arrays.stream(factory.getTrustManagers())

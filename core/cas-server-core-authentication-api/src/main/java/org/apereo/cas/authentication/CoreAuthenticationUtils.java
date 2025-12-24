@@ -77,25 +77,17 @@ public class CoreAuthenticationUtils {
      * @return the attribute merger
      */
     public static AttributeMerger getAttributeMerger(final PrincipalAttributesCoreProperties.MergingStrategyTypes mergingPolicy) {
-        switch (mergingPolicy) {
+        return switch (mergingPolicy) {
             case MULTIVALUED -> {
                 val merger = new MultivaluedAttributeMerger();
                 merger.setDistinctValues(true);
-                return merger;
+                yield merger;
             }
-            case ADD -> {
-                return new NoncollidingAttributeAdder();
-            }
-            case SOURCE -> {
-                return new ReturnOriginalAttributeMerger();
-            }
-            case DESTINATION -> {
-                return new ReturnChangesAttributeMerger();
-            }
-            default -> {
-                return new ReplacingAttributeAdder();
-            }
-        }
+            case ADD -> new NoncollidingAttributeAdder();
+            case SOURCE -> new ReturnOriginalAttributeMerger();
+            case DESTINATION -> new ReturnChangesAttributeMerger();
+            default -> new ReplacingAttributeAdder();
+        };
     }
 
     /**

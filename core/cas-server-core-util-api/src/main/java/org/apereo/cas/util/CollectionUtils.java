@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
 
@@ -123,7 +124,7 @@ public class CollectionUtils {
      * @param clazz the clazz
      * @return the t
      */
-    public static <T extends Collection> T toCollection(final Object obj, final Class<T> clazz) {
+    public static <T extends Collection> T toCollection(@Nullable final Object obj, final Class<T> clazz) {
         return FunctionUtils.doUnchecked(() -> {
             val results = toCollection(obj);
             if (clazz.isInterface()) {

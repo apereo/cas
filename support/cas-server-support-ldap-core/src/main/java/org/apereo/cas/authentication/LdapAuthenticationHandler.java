@@ -14,6 +14,7 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -114,7 +115,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc,
-                                                                                        final String originalPassword) throws Throwable {
+                                                                                        @Nullable final String originalPassword) throws Throwable {
         val response = getLdapAuthenticationResponse(upc);
         LOGGER.debug("LDAP response: [{}]", response);
         if (!passwordPolicyHandlingStrategy.supports(response)) {
@@ -145,7 +146,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @return Principal if the LDAP entry contains at least a principal ID attribute value.
      * @throws LoginException On security policy errors related to principal creation.
      */
-    protected Principal createPrincipal(final String username, final LdapEntry ldapEntry) throws Throwable {
+    protected @Nullable Principal createPrincipal(final String username, final LdapEntry ldapEntry) throws Throwable {
         LOGGER.debug("Creating LDAP principal for [{}] based on [{}] and attributes [{}]", username, ldapEntry.getDn(),
             ldapEntry.getAttributeNames());
         val id = getLdapPrincipalIdentifier(username, ldapEntry);

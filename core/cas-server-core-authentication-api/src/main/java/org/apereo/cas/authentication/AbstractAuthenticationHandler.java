@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Base class for all authentication handlers that support configurable naming.
@@ -58,7 +59,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      */
     private Map<String, Serializable> tags = new LinkedHashMap<>();
 
-    protected AbstractAuthenticationHandler(final String name, final PrincipalFactory principalFactory, final Integer order) {
+    protected AbstractAuthenticationHandler(@Nullable final String name, final PrincipalFactory principalFactory, final Integer order) {
         this.name = StringUtils.isNotBlank(name) ? name : getClass().getSimpleName();
         this.principalFactory = Objects.requireNonNullElseGet(principalFactory, DefaultPrincipalFactory::new);
         this.order = Objects.requireNonNullElseGet(order, () -> RandomUtils.nextInt(1, Integer.MAX_VALUE));

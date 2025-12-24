@@ -9,6 +9,7 @@ import org.apereo.cas.util.CollectionUtils;
 import com.mongodb.client.model.Filters;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.data.mongodb.core.MongoOperations;
 
 /**
@@ -33,8 +34,9 @@ public class MongoDbAuthenticationHandler extends AbstractUsernamePasswordAuthen
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
-                                                                                        final String originalPassword) throws Throwable {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential transformedCredential,
+        @Nullable final String originalPassword) throws Throwable {
         val collection = mongoTemplate.getCollection(properties.getCollection());
         try (val it = collection.find(Filters.eq(properties.getUsernameAttribute(), transformedCredential.getUsername())).iterator()) {
             if (it.hasNext()) {

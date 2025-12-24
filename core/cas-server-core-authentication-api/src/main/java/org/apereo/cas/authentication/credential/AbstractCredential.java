@@ -24,6 +24,7 @@ import org.springframework.binding.validation.ValidationContext;
 @Setter
 @Getter
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+@SuppressWarnings("NullAway.Init")
 public abstract class AbstractCredential implements Credential {
     @Serial
     private static final long serialVersionUID = 8196868021183513898L;

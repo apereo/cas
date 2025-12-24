@@ -12,6 +12,7 @@ import com.nimbusds.jose.proc.SimpleSecurityContext;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminGetUserRequest;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminInitiateAuthRequest;
@@ -46,8 +47,9 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential credential,
+        @Nullable final String originalPassword)
         throws GeneralSecurityException {
         try {
             val authParams = new HashMap<String, String>();
@@ -92,7 +94,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             val principal = principalFactory.createPrincipal(userResult.username(), attributes);
             return createHandlerResult(credential, principal, new ArrayList<>());
         } catch (final NotAuthorizedException e) {
-            val message = e.getMessage();
+            val message = Objects.requireNonNull(e.getMessage());
             if (message.contains("expired")) {
                 throw new AccountExpiredException(message);
             }

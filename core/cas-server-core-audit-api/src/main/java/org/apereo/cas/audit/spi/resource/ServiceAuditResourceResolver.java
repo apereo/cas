@@ -42,8 +42,10 @@ public class ServiceAuditResourceResolver implements AuditResourceResolver {
         return new String[]{auditFormat.serialize(getServiceId(service))};
     }
 
-    private String getServiceId(final Service service) {
-        val serviceId = FunctionUtils.doUnchecked(() -> serviceSelectionStrategy.resolveService(service).getId());
-        return DigestUtils.abbreviate(serviceId, properties.getAbbreviationLength());
+    private String getServiceId(final Service givenService) {
+        return FunctionUtils.doUnchecked(() -> {
+            val service = Objects.requireNonNull(serviceSelectionStrategy.resolveService(givenService));
+            return DigestUtils.abbreviate(service.getId(), properties.getAbbreviationLength());
+        });
     }
 }

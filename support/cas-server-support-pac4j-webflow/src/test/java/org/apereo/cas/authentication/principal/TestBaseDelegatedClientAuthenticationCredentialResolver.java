@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal;
 import module java.base;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -17,8 +18,8 @@ public class TestBaseDelegatedClientAuthenticationCredentialResolver extends Bas
     }
 
     @Override
-    public List<DelegatedAuthenticationCandidateProfile> resolve(final RequestContext context,
-                                                                 final ClientCredential credentials) {
+    public @Nullable List<DelegatedAuthenticationCandidateProfile> resolve(final RequestContext context,
+                                                                           final ClientCredential credentials) {
         val profile = resolveUserProfile(context, credentials)
             .orElseThrow(() -> new IllegalArgumentException("Unable to resolve user profile"));
         

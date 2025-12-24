@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import module java.base;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Defines operations to create principals.
@@ -22,7 +23,7 @@ public interface PrincipalFactory extends Serializable {
      * @return the principal
      * @throws Throwable the throwable
      */
-    default Principal createPrincipal(final String id) throws Throwable {
+    default @Nullable Principal createPrincipal(final String id) throws Throwable {
         return createPrincipal(id, new HashMap<>());
     }
 
@@ -34,7 +35,7 @@ public interface PrincipalFactory extends Serializable {
      * @return the principal
      * @throws Throwable the throwable
      */
-    Principal createPrincipal(String id, Map<String, List<Object>> attributes) throws Throwable;
+    @Nullable Principal createPrincipal(String id, Map<String, List<Object>> attributes) throws Throwable;
 
     /**
      * Principal Without attributes.
@@ -43,7 +44,7 @@ public interface PrincipalFactory extends Serializable {
      * @return the principal
      * @throws Throwable the throwable
      */
-    default Principal withoutAttributes(final Principal principal) throws Throwable {
+    default @Nullable Principal withoutAttributes(final Principal principal) throws Throwable {
         return createPrincipal(principal.getId());
     }
 }

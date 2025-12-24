@@ -66,7 +66,7 @@ public interface AuthenticationResultBuilder extends Serializable {
      * @return the authentication result
      * @throws Throwable the throwable
      */
-    default AuthenticationResult build() throws Throwable {
+    default @Nullable AuthenticationResult build() throws Throwable {
         return build(null);
     }
 
@@ -77,5 +77,5 @@ public interface AuthenticationResultBuilder extends Serializable {
      * @return the authentication result
      * @throws Throwable the throwable
      */
-    AuthenticationResult build(@Nullable Service service) throws Throwable;
+    @Nullable AuthenticationResult build(@Nullable Service service) throws Throwable;
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.ticket;
 
 import module java.base;
 import org.apereo.cas.authentication.principal.Service;
+import org.jspecify.annotations.Nullable;
 
 
 /**
@@ -21,12 +22,7 @@ public class UnrecognizableServiceForServiceTicketValidationException extends Ab
     @Serial
     private static final long serialVersionUID = -8076771862820008358L;
 
-    /**
-     * Instantiates a new Unrecognizable service for service ticket validation exception.
-     *
-     * @param service the service
-     */
-    public UnrecognizableServiceForServiceTicketValidationException(final Service service) {
+    public UnrecognizableServiceForServiceTicketValidationException(@Nullable final Service service) {
         super(CODE, service);
     }
 }

@@ -7,6 +7,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -29,7 +30,7 @@ public class GroovyIPAddressIntelligenceService extends BaseIPAddressIntelligenc
     }
 
     @Override
-    public IPAddressIntelligenceResponse examineInternal(final RequestContext context, final String clientIpAddress) throws Throwable {
+    public @Nullable IPAddressIntelligenceResponse examineInternal(final RequestContext context, final String clientIpAddress) throws Throwable {
         val args = new Object[]{context, clientIpAddress, LOGGER};
         return watchableScript.execute(args, IPAddressIntelligenceResponse.class);
     }

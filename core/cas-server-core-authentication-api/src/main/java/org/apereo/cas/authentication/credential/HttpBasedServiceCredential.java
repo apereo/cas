@@ -26,6 +26,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@SuppressWarnings("NullAway.Init")
 public class HttpBasedServiceCredential extends AbstractCredential {
 
     @Serial

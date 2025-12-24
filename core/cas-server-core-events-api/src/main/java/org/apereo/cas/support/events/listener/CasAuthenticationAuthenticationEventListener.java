@@ -85,7 +85,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         val dto = prepareCasEvent(event);
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toInstant());
         dto.putEventId(messageSanitizer.sanitize(event.getTicketGrantingTicket().getId()));
-        dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
+        dto.setPrincipalId(Objects.requireNonNull(event.getTicketGrantingTicket().getAuthentication()).getPrincipal().getId());
         casEventRepository.save(dto);
     }
 
@@ -94,7 +94,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         val dto = prepareCasEvent(event);
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toInstant());
         dto.putEventId(messageSanitizer.sanitize(event.getTicketGrantingTicket().getId()));
-        dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
+        dto.setPrincipalId(Objects.requireNonNull(event.getTicketGrantingTicket().getAuthentication()).getPrincipal().getId());
         casEventRepository.save(dto);
     }
 

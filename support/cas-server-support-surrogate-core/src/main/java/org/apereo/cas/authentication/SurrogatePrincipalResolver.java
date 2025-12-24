@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 
 /**
@@ -21,6 +22,7 @@ import org.springframework.core.Ordered;
 @Slf4j
 @Setter
 @Accessors(chain = true)
+@SuppressWarnings("NullAway.Init")
 public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver {
     private SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder;
 
@@ -36,9 +38,9 @@ public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver
     }
 
     @Override
-    protected Principal buildResolvedPrincipal(final String id, final Map<String, List<Object>> attributes,
-                                               final Credential credential, final Optional<Principal> currentPrincipal,
-                                               final Optional<AuthenticationHandler> handler) throws Throwable {
+    protected @Nullable Principal buildResolvedPrincipal(final String id, final Map<String, List<Object>> attributes,
+                                                         final Credential credential, final Optional<Principal> currentPrincipal,
+                                                         final Optional<AuthenticationHandler> handler) throws Throwable {
         if (!supports(credential)) {
             return super.buildResolvedPrincipal(id, attributes, credential, currentPrincipal, handler);
         }
@@ -47,7 +49,7 @@ public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver
     }
 
     @Override
-    protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
+    protected @Nullable String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
         LOGGER.debug("Attempting to extract principal id for principal [{}]", currentPrincipal);
         if (!supports(credential)) {
             LOGGER.trace("Provided credential [{}] is not supported for surrogate authentication", credential);

@@ -66,8 +66,8 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
         return auditFormat.serialize(credential);
     }
 
-    private String getServiceId(final Service service) {
-        val serviceId = FunctionUtils.doUnchecked(() -> serviceSelectionStrategy.resolveService(service).getId());
-        return DigestUtils.abbreviate(serviceId, properties.getAbbreviationLength());
+    private String getServiceId(final Service givenService) throws Throwable {
+        val service = Objects.requireNonNull(serviceSelectionStrategy.resolveService(givenService));
+        return DigestUtils.abbreviate(service.getId(), properties.getAbbreviationLength());
     }
 }

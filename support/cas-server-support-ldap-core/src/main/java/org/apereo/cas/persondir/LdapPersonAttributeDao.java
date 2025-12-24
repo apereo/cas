@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.FilterTemplate;
 import org.ldaptive.LdapEntry;
@@ -39,6 +40,7 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Filt
 
     private SearchControls searchControls;
 
+    @Nullable
     private ConnectionFactory connectionFactory;
 
     private String searchFilter;
@@ -50,13 +52,13 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Filt
     private SearchResultHandler[] searchResultHandlers;
 
     @Override
-    protected List<PersonAttributes> getPeopleForQuery(final FilterTemplate filter, final String userName) {
+    protected List<PersonAttributes> getPeopleForQuery(@Nullable final FilterTemplate filter, final String userName) {
         try {
             Objects.requireNonNull(this.searchFilter, "Search filter cannot be null");
             val search = new SearchOperation(this.connectionFactory);
             search.setEntryHandlers(entryHandlers);
             search.setSearchResultHandlers(searchResultHandlers);
-            val request = createRequest(filter);
+            val request = createRequest(Objects.requireNonNull(filter));
             val response = search.execute(request);
 
             val peopleAttributes = new ArrayList<PersonAttributes>(response.entrySize());
@@ -86,16 +88,18 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Filt
     }
 
     @Override
-    protected FilterTemplate appendAttributeToQuery(final FilterTemplate filter, final String attribute, final List<Object> values) {
+    protected FilterTemplate appendAttributeToQuery(@Nullable final FilterTemplate filter,
+                                                    @Nullable final String attribute,
+                                                    @Nullable final List<Object> values) {
         val query = Objects.requireNonNullElseGet(filter, () -> {
             Objects.requireNonNull(this.searchFilter, "Search filter cannot be null");
             return new FilterTemplate(this.searchFilter);
         });
-        if (this.isUseAllQueryAttributes() && values.size() > 1 && (this.searchFilter.contains("{0}") || this.searchFilter.contains("{user}"))) {
+        if (isUseAllQueryAttributes() && Objects.requireNonNull(values).size() > 1 && (this.searchFilter.contains("{0}") || this.searchFilter.contains("{user}"))) {
             LOGGER.warn("Query value will be indeterminate due to multiple attributes and no username indicator. Use attribute [{}] in query instead", attribute);
         }
 
-        if (!values.isEmpty() && this.searchFilter.contains('{' + attribute + '}')) {
+        if (!Objects.requireNonNull(values).isEmpty() && this.searchFilter.contains('{' + attribute + '}')) {
             query.setParameter(attribute, values.getFirst().toString());
             LOGGER.debug("Updated LDAP search query parameter [{}]. Query: [{}]", attribute, query.format());
         }
@@ -103,7 +107,7 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Filt
     }
 
     @Override
-    protected FilterTemplate finalizeQueryBuilder(final FilterTemplate filterTemplate, final Map<String, List<Object>> query) {
+    protected FilterTemplate finalizeQueryBuilder(@Nullable final FilterTemplate filterTemplate, final Map<String, List<Object>> query) {
         Objects.requireNonNull(filterTemplate, "Filter template cannot be null");
         if (filterTemplate.getParameters().isEmpty()) {
             val username = getUsernameAttributeProvider().getUsernameFromQuery(query);

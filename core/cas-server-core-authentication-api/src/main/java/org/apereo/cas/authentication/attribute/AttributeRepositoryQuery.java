@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AttributeRepositoryQuery}.
@@ -22,10 +23,14 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @RequiredArgsConstructor
 public class AttributeRepositoryQuery {
+    @Nullable
     private final AuthenticationHandler authenticationHandler;
+    @Nullable
     private final Principal principal;
+    @Nullable
     private final Service service;
     private final Set<String> activeRepositoryIds;
+    @Nullable
     private final RegisteredService registeredService;
     private final String tenant;
 }

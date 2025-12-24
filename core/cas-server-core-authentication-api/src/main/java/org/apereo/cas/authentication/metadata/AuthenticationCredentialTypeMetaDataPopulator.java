@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
+import org.jspecify.annotations.Nullable;
 
 
 /**
@@ -19,7 +20,7 @@ public class AuthenticationCredentialTypeMetaDataPopulator extends BaseAuthentic
     }
 
     @Override
-    public boolean supports(final Credential credential) {
+    public boolean supports(@Nullable final Credential credential) {
         return credential != null;
     }
 }

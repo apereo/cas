@@ -13,7 +13,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -24,6 +24,7 @@ import org.springframework.context.ApplicationContext;
  */
 @Slf4j
 @Getter
+@SuppressWarnings("NullAway.Init")
 public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     @Serial
     private static final long serialVersionUID = -8504842011648432398L;
@@ -54,6 +55,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     /**
      * Authenticated principal.
      */
+    @Nullable
     private Principal principal;
 
     /**
@@ -123,6 +125,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
                                            final Principal principal,
                                            final PrincipalFactory principalFactory,
                                            final Map<String, List<Object>> principalAttributes,
+                                           @Nullable
                                            final Service service,
                                            final RegisteredService registeredService,
                                            final Authentication authentication) throws Throwable {
@@ -139,7 +142,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     @CanIgnoreReturnValue
-    public AuthenticationBuilder setPrincipal(final Principal p) {
+    public AuthenticationBuilder setPrincipal(@Nullable final Principal p) {
         this.principal = p;
         return this;
     }
@@ -189,7 +192,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     @CanIgnoreReturnValue
-    public AuthenticationBuilder addAttribute(final String key, final Object value) {
+    public AuthenticationBuilder addAttribute(final String key, @Nullable final Object value) {
         if (value instanceof final Map mappedValue) {
             val list = new ArrayList<>();
             list.add(mappedValue);
@@ -208,14 +211,14 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     @CanIgnoreReturnValue
-    public AuthenticationBuilder setSuccesses(final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
+    public AuthenticationBuilder setSuccesses(final Map<String, AuthenticationHandlerExecutionResult> successes) {
         this.successes.clear();
         return addSuccesses(successes);
     }
 
     @Override
     @CanIgnoreReturnValue
-    public AuthenticationBuilder addSuccesses(final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
+    public AuthenticationBuilder addSuccesses(@Nullable final Map<String, AuthenticationHandlerExecutionResult> successes) {
         if (successes != null) {
             successes.forEach(this::addSuccess);
         }
@@ -224,7 +227,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     @CanIgnoreReturnValue
-    public AuthenticationBuilder addFailures(final @NonNull Map<String, Throwable> failures) {
+    public AuthenticationBuilder addFailures(@Nullable final Map<String, Throwable> failures) {
         if (failures != null) {
             failures.forEach(this::addFailure);
         }
@@ -270,7 +273,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     @CanIgnoreReturnValue
-    public AuthenticationBuilder setFailures(final @NonNull Map<String, Throwable> failures) {
+    public AuthenticationBuilder setFailures(final Map<String, Throwable> failures) {
         this.failures.clear();
         return addFailures(failures);
     }
@@ -318,7 +321,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     @CanIgnoreReturnValue
-    public AuthenticationBuilder setAuthenticationDate(final ZonedDateTime dateTime) {
+    public AuthenticationBuilder setAuthenticationDate(@Nullable final ZonedDateTime dateTime) {
         if (dateTime != null) {
             this.authenticationDate = dateTime;
         }
@@ -343,7 +346,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return This builder instance.
      */
     @CanIgnoreReturnValue
-    public AuthenticationBuilder setCredentials(final @NonNull List<Credential> credentials) {
+    public AuthenticationBuilder setCredentials(final List<Credential> credentials) {
         this.credentials.clear();
         this.credentials.addAll(credentials);
         return this;

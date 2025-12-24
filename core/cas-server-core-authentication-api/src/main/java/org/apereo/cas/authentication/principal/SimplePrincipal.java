@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.jspecify.annotations.NonNull;
 
 /**
  * Simple implementation of a {@link Principal} that exposes an unmodifiable
@@ -25,6 +24,7 @@ import org.jspecify.annotations.NonNull;
 @ToString
 @Getter
 @NoArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class SimplePrincipal implements Principal {
 
     @Serial
@@ -42,7 +42,7 @@ public class SimplePrincipal implements Principal {
     @JsonCreator
     protected SimplePrincipal(
         @JsonProperty("id")
-        final @NonNull String id,
+        final String id,
         @JsonProperty("attributes")
         final Map<String, List<Object>> attributes) {
         this.id = id;
@@ -59,7 +59,7 @@ public class SimplePrincipal implements Principal {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof SimplePrincipal rhs) {
+        if (obj instanceof final SimplePrincipal rhs) {
             return id != null && id.equalsIgnoreCase(rhs.getId());
         }
         return false;

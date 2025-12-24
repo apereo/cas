@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Looks up the user's attribute Map in the backingMap.
@@ -16,6 +17,7 @@ import lombok.val;
  * @since 7.1.0
  */
 @NoArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class ComplexPersonAttributeDao extends AbstractQueryPersonAttributeDao<String> {
     @Getter
     private Map<String, Map<String, List<Object>>> backingMap = Map.of();
@@ -38,12 +40,12 @@ public class ComplexPersonAttributeDao extends AbstractQueryPersonAttributeDao<S
     }
 
     @Override
-    public Set<String> getPossibleUserAttributeNames(final PersonAttributeDaoFilter filter) {
+    public Set<String> getPossibleUserAttributeNames(@Nullable final PersonAttributeDaoFilter filter) {
         return Set.copyOf(this.possibleUserAttributeNames);
     }
 
     @Override
-    public Set<String> getAvailableQueryAttributes(final PersonAttributeDaoFilter filter) {
+    public Set<String> getAvailableQueryAttributes(@Nullable final PersonAttributeDaoFilter filter) {
         val usernameAttribute = getUsernameAttributeProvider().getUsernameAttribute();
         val list = new HashSet<String>();
         list.add(usernameAttribute);
@@ -51,7 +53,9 @@ public class ComplexPersonAttributeDao extends AbstractQueryPersonAttributeDao<S
     }
 
     @Override
-    protected String appendAttributeToQuery(final String queryBuilder, final String dataAttribute, final List<Object> queryValues) {
+    protected @Nullable String appendAttributeToQuery(@Nullable final String queryBuilder,
+                                                      @Nullable final String dataAttribute,
+                                                      @Nullable final List<Object> queryValues) {
         if (queryBuilder != null) {
             return queryBuilder;
         }
@@ -60,7 +64,7 @@ public class ComplexPersonAttributeDao extends AbstractQueryPersonAttributeDao<S
             ? queryAttributeName
             : getUsernameAttributeProvider().getUsernameAttribute();
 
-        if (keyAttributeName.equals(dataAttribute)) {
+        if (keyAttributeName.equals(dataAttribute) && queryValues != null && !queryValues.isEmpty()) {
             return String.valueOf(queryValues.getFirst());
         }
 
@@ -68,7 +72,7 @@ public class ComplexPersonAttributeDao extends AbstractQueryPersonAttributeDao<S
     }
 
     @Override
-    protected List<PersonAttributes> getPeopleForQuery(final String seedValue, final String queryUserName) {
+    protected @Nullable List<PersonAttributes> getPeopleForQuery(@Nullable final String seedValue, final String queryUserName) {
         if (seedValue != null && seedValue.contains(PersonAttributeDao.WILDCARD)) {
             val seedPattern = compilePattern(seedValue);
             val results = new ArrayList<PersonAttributes>();
@@ -99,7 +103,7 @@ public class ComplexPersonAttributeDao extends AbstractQueryPersonAttributeDao<S
         return list;
     }
 
-    private PersonAttributes createPerson(final String seedValue, final String queryUserName,
+    private PersonAttributes createPerson(final @Nullable String seedValue, final String queryUserName,
                                           final Map<String, List<Object>> attributes) {
         val userNameAttribute = getConfiguredUserNameAttribute();
         if (isUserNameAttributeConfigured() && attributes.containsKey(userNameAttribute)) {

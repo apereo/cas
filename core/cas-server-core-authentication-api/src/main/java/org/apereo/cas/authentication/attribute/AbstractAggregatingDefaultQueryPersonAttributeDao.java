@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.Nullable;
 
 
 /**
@@ -24,6 +25,7 @@ import org.apache.commons.lang3.ArrayUtils;
 @Slf4j
 @Getter
 @Setter
+@SuppressWarnings("NullAway.Init")
 public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends AbstractDefaultAttributePersonAttributeDao implements AggregatingPersonAttributeDao {
     protected List<PersonAttributeDao> personAttributeDaos;
 
@@ -59,9 +61,9 @@ public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends 
     }
 
     @Override
-    public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
-                                                                    final PersonAttributeDaoFilter filter,
-                                                                    final Set<PersonAttributes> resultPeople) {
+    public @Nullable Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
+                                                                              @Nullable final PersonAttributeDaoFilter filter,
+                                                                              @Nullable final Set<PersonAttributes> resultPeople) {
         Set<PersonAttributes> results = null;
         var isFirstQuery = true;
         for (val currentlyConsidering : this.personAttributeDaos) {
@@ -131,8 +133,8 @@ public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends 
     protected abstract Set<PersonAttributes> getAttributesFromDao(Map<String, List<Object>> seed,
                                                                   boolean isFirstQuery,
                                                                   PersonAttributeDao currentlyConsidering,
-                                                                  Set<PersonAttributes> resultPeople,
-                                                                  PersonAttributeDaoFilter filter);
+                                                                  @Nullable Set<PersonAttributes> resultPeople,
+                                                                  @Nullable PersonAttributeDaoFilter filter);
 
 
     /**
@@ -143,7 +145,7 @@ public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends 
      * @see PersonAttributeDao#getPossibleUserAttributeNames(PersonAttributeDaoFilter)
      */
     @Override
-    public final Set<String> getPossibleUserAttributeNames(final PersonAttributeDaoFilter filter) {
+    public final @Nullable Set<String> getPossibleUserAttributeNames(@Nullable final PersonAttributeDaoFilter filter) {
         Set<String> attrNames = null;
 
         for (val currentDao : this.personAttributeDaos) {
@@ -187,7 +189,7 @@ public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends 
      */
     @JsonIgnore
     @Override
-    public Set<String> getAvailableQueryAttributes(final PersonAttributeDaoFilter filter) {
+    public @Nullable Set<String> getAvailableQueryAttributes(@Nullable final PersonAttributeDaoFilter filter) {
         Set<String> queryAttrs = null;
 
         for (val currentDao : this.personAttributeDaos) {

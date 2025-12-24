@@ -87,7 +87,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param credentialsProvided  the credentials provided
      */
     public static void ensureServiceSsoAccessIsAllowed(@Nullable final RegisteredService registeredService,
-                                                       final Service service,
+                                                       @Nullable final Service service,
                                                        final TicketGrantingTicket ticketGrantingTicket,
                                                        final boolean credentialsProvided) {
 

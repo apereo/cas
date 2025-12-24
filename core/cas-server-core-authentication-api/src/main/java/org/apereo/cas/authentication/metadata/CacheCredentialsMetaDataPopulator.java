@@ -12,6 +12,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * We utilize the {@link AuthenticationMetaDataPopulator} to retrieve and store
@@ -26,6 +27,7 @@ import org.apache.commons.lang3.ArrayUtils;
 @RequiredArgsConstructor
 public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
+    @Nullable
     private final CipherExecutor<String, String> cipherExecutor;
 
     public CacheCredentialsMetaDataPopulator() {

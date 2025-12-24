@@ -42,8 +42,8 @@ public class RegisteredServiceAuthenticationPolicyResolver implements Authentica
     @Override
     public Set<AuthenticationPolicy> resolve(final AuthenticationTransaction transaction) throws Throwable {
         val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
-        val registeredService = this.servicesManager.findServiceBy(service);
-        val criteria = registeredService.getAuthenticationPolicy().getCriteria();
+        val registeredService = servicesManager.findServiceBy(service);
+        val criteria = Objects.requireNonNull(registeredService).getAuthenticationPolicy().getCriteria();
         val policies = new LinkedHashSet<AuthenticationPolicy>(1);
         if (criteria != null) {
             policies.add(criteria.toAuthenticationPolicy(registeredService));

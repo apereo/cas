@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.jspecify.annotations.Nullable;
 
 /**
  * <p>
@@ -138,7 +139,7 @@ public interface Authentication extends Serializable {
      * @param expectedType the expected type
      * @return the attribute
      */
-    <T> T getSingleValuedAttribute(String name, Class<T> expectedType);
+    @Nullable <T> T getSingleValuedAttribute(String name, Class<T> expectedType);
 
     /**
      * Gets single valued attribute.
@@ -146,7 +147,7 @@ public interface Authentication extends Serializable {
      * @param name the name
      * @return the single valued attribute
      */
-    default Object getSingleValuedAttribute(final String name) {
+    default @Nullable Object getSingleValuedAttribute(final String name) {
         return getSingleValuedAttribute(name, Object.class);
     }
 }

@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import lombok.Getter;
 import lombok.Setter;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 
 /**
@@ -23,12 +24,12 @@ public class DefaultAuthenticationServiceSelectionStrategy implements Authentica
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
-    public Service resolveServiceFrom(final Service service) {
+    public @Nullable Service resolveServiceFrom(@Nullable final Service service) {
         return service;
     }
 
     @Override
-    public boolean supports(final Service service) {
+    public boolean supports(@Nullable final Service service) {
         return true;
     }
 

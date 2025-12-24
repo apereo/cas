@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.merger.AttributeMerger;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 
 /**
@@ -26,7 +27,7 @@ public interface PrincipalElectionStrategy extends Serializable, Ordered {
      * @param principalAttributes the principal attributes
      * @return the principal
      */
-    Principal nominate(Collection<Authentication> authentications, Map<String, List<Object>> principalAttributes) throws Throwable;
+    @Nullable Principal nominate(Collection<Authentication> authentications, Map<String, List<Object>> principalAttributes) throws Throwable;
 
     /**
      * Nominate principal.
@@ -35,7 +36,7 @@ public interface PrincipalElectionStrategy extends Serializable, Ordered {
      * @param attributes the attributes
      * @return the principal
      */
-    Principal nominate(List<Principal> principals, Map<String, List<Object>> attributes) throws Throwable;
+    @Nullable Principal nominate(List<Principal> principals, Map<String, List<Object>> attributes) throws Throwable;
 
     @Override
     default int getOrder() {

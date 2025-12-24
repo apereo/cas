@@ -19,7 +19,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.ObjectMapper;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -45,6 +45,7 @@ import jakarta.persistence.Transient;
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @NoArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeTokenAccount>, Cloneable {
     /**
      * Table name used to hold otp scratch codes.
@@ -105,6 +106,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
 
     @Column
     @JsonProperty("lastUsedDateTime")
+    @Nullable
     private String lastUsedDateTime;
 
     @Column
@@ -116,7 +118,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     private String tenant;
 
     @Override
-    public int compareTo(@NonNull final OneTimeTokenAccount tokenAccount) {
+    public int compareTo(final OneTimeTokenAccount tokenAccount) {
         return Comparator
             .comparing((OneTimeTokenAccount account) -> account.getScratchCodes().toArray(),
                 Comparator.comparing(Arrays::toString))

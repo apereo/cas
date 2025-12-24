@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttributesProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link SyncopePersonAttributeDao}.
@@ -41,14 +42,15 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
 
     @Override
     public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(
-        final Map<String, List<Object>> map, final PersonAttributeDaoFilter filter,
-        final Set<PersonAttributes> resolvedPeople) {
+        final Map<String, List<Object>> map, @Nullable final PersonAttributeDaoFilter filter,
+        @Nullable final Set<PersonAttributes> resolvedPeople) {
         return map.entrySet()
             .stream()
             .filter(e -> !e.getValue().isEmpty())
             .filter(e -> properties.getSearchFilter().contains(e.getKey()))
             .findFirst()
-            .map(e -> Set.of(getPerson(e.getValue().getFirst().toString(), resolvedPeople, filter)))
+            .map(e -> Set.of(getPerson(e.getValue().getFirst().toString(),
+                Objects.requireNonNull(resolvedPeople), Objects.requireNonNull(filter))))
             .orElseGet(LinkedHashSet::new);
     }
 

@@ -30,8 +30,8 @@ public class LogoutWebApplicationServiceFactory extends WebApplicationServiceFac
     }
 
     @Override
-    protected @Nullable String getRequestedService(final HttpServletRequest request) {
-        if (request.getRequestURI().endsWith(CasProtocolConstants.ENDPOINT_LOGOUT)) {
+    protected @Nullable String getRequestedService(@Nullable final HttpServletRequest request) {
+        if (request != null && request.getRequestURI().endsWith(CasProtocolConstants.ENDPOINT_LOGOUT)) {
             val service = logoutProperties.getRedirectParameter()
                 .stream()
                 .map(paramName -> {

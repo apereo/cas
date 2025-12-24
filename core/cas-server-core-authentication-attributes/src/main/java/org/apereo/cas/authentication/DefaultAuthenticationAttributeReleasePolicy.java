@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Default AuthenticationAttributeReleasePolicy implementation.
@@ -142,7 +143,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
     }
 
     protected void decideAttributeReleaseBasedOnServiceAttributePolicy(final Map<String, List<Object>> attributes,
-                                                                       final String attributeValue,
+                                                                       @Nullable final String attributeValue,
                                                                        final String attributeName,
                                                                        final RegisteredService service,
                                                                        final boolean doesAttributePolicyAllow) {

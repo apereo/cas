@@ -19,6 +19,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.Assert;
 import jakarta.persistence.Transient;
@@ -47,6 +48,7 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
+    @Nullable
     private transient ExecutableCompiledScript executableScript;
 
     @Override
@@ -63,7 +65,7 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
             "context", context,
             "applicationContext", applicationContext,
             "logger", LOGGER);
-        executableScript.setBinding(args);
+        Objects.requireNonNull(executableScript).setBinding(args);
         val ex = executableScript.execute(args.values().toArray(), Optional.class);
         if (ex != null && ex.isPresent()) {
             val exception = (Exception) ex.get();
@@ -77,8 +79,9 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
         val supplier = Unchecked.supplier(() -> {
             initializeWatchableScriptIfNeeded();
             val args = CollectionUtils.wrap("failure", failure, "logger", LOGGER);
-            executableScript.setBinding(args);
-            return executableScript.execute("shouldResumeOnFailure", Boolean.class, args.values().toArray());
+            Objects.requireNonNull(executableScript).setBinding(args);
+            return Boolean.TRUE.equals(executableScript.execute("shouldResumeOnFailure",
+                Boolean.class, args.values().toArray()));
         });
         val result = supplier.get();
         Assert.notNull(result, "Authentication policy result cannot be null");

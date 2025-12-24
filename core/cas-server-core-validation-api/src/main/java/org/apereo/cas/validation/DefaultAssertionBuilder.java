@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultAssertionBuilder}.
@@ -23,6 +24,7 @@ public class DefaultAssertionBuilder {
     @Builder.Default
     private final List<Authentication> authentications = new ArrayList<>();
 
+    @Nullable
     private final Service service;
 
     private final boolean newLogin;

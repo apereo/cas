@@ -92,7 +92,7 @@ public abstract class BasePasswordlessCasWebflowAction extends BaseCasWebflowAct
         val userAttributes = CollectionUtils.toMultiValuedMap((Map) user.getAttributes());
         val resolvedPrincipal = authenticationSystemSupport.getPrincipalResolver()
             .resolve(new BasicIdentifiableCredential(user.getUsername()));
-        val attributes = CoreAuthenticationUtils.mergeAttributes(userAttributes, resolvedPrincipal.getAttributes());
+        val attributes = CoreAuthenticationUtils.mergeAttributes(userAttributes, Objects.requireNonNull(resolvedPrincipal).getAttributes());
         val principalId = resolvedPrincipal instanceof NullPrincipal ? user.getUsername() : resolvedPrincipal.getId();
         val principal = passwordlessPrincipalFactory.createPrincipal(principalId, attributes);
         return DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
@@ -103,7 +103,7 @@ public abstract class BasePasswordlessCasWebflowAction extends BaseCasWebflowAct
         val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
         val authenticationResult = builder.collect(authentication).build(service);
         WebUtils.putAuthenticationResultBuilder(builder, requestContext);
-        WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+        WebUtils.putAuthenticationResult(Objects.requireNonNull(authenticationResult), requestContext);
         WebUtils.putAuthentication(authentication, requestContext);
     }
 
