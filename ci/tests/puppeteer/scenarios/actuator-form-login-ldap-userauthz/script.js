@@ -11,7 +11,7 @@ const cas = require("../../cas.js");
     await cas.assertVisibility(page, "#username");
     await cas.assertVisibility(page, "#password");
 
-    const response = await cas.loginWith(page, "actuator", "123456");
+    const response = await cas.loginWith(page, "casadmin", "P@ssw0rd");
     await cas.log(`${response.status()} ${response.statusText()}`);
     await cas.sleep(1000);
     await cas.screenshot(page);
