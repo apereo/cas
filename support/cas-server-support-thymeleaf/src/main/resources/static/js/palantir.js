@@ -40,6 +40,25 @@ const CAS_FEATURES = [];
 
 let notyf = null;
 
+async function fetchCasFeatures() {
+    return new Promise((resolve, reject) => {
+        if (!actuatorEndpoints.casFeatures) {
+            console.error("CAS Features endpoint is not available.");
+            resolve(CAS_FEATURES);
+        } else if (CAS_FEATURES.length === 0) {
+            $.get(actuatorEndpoints.casFeatures, response => {
+                for (const element of response) {
+                    const featureName = element.trim().replace("CasFeatureModule.", "");
+                    CAS_FEATURES.push(featureName);
+                }
+                resolve(CAS_FEATURES);
+            });
+        } else {
+            resolve(CAS_FEATURES);
+        }
+    })
+}
+
 async function fetchServices(callback) {
     if (actuatorEndpoints.registeredservices) {
         $.get(actuatorEndpoints.registeredservices, response => {
@@ -2042,16 +2061,11 @@ async function initializeSystemOperations() {
 }
 
 async function initializeCasFeatures() {
-    return new Promise((resolve, reject) => {
-        if (actuatorEndpoints.casFeatures) {
-            $.get(actuatorEndpoints.casFeatures, response => {
-
-                $("#casFeaturesChipset").empty();
-                for (const element of response) {
-                    const featureName = element.trim().replace("CasFeatureModule.", "");
-                    CAS_FEATURES.push(featureName);
-
-                    let feature = `
+    return new Promise(async (resolve, reject) => {
+        const features = await fetchCasFeatures();
+        $("#casFeaturesChipset").empty();
+        for (const featureName of features) {
+            let feature = `
                             <div class="mdc-chip" role="row">
                                 <div class="mdc-chip__ripple"></div>
                                 <span role="gridcell">
@@ -2059,16 +2073,10 @@ async function initializeCasFeatures() {
                                 </span>
                             </div>
                         `.trim();
-                    $("#casFeaturesChipset").append($(feature));
-                }
-                resolve();
-            });
-        } else {
-            console.error("CAS Features endpoint is not available.");
-            resolve();
+            $("#casFeaturesChipset").append($(feature));
         }
+        resolve(CAS_FEATURES);
     });
-
 }
 
 async function initializeServiceButtons() {
@@ -2355,6 +2363,11 @@ async function initializeServicesOperations() {
         }
     });
 
+    if (Object.entries(serviceDefinitionsEntries).length > 0) {
+        $("#serviceTemplatesContainer").show();
+    } else {
+        $("#serviceTemplatesContainer").hide();
+    }
 }
 
 async function initializeAllCharts() {
