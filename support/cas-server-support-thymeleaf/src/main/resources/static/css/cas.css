@@ -1039,7 +1039,7 @@ main:has(.d-flex > section:only-of-type) {
 
 @media (min-width: 1400px) {
     .container-xxl {
-        max-width: 95%;
+        max-width: 98%;
     }
 }
 
