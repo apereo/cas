@@ -1,5 +1,5 @@
 {
-  "dependencies": "configuration-cloud-mongo",
+  "dependencies": "configuration-cloud-mongo,reports",
   "conditions": {
     "docker": "true"
   },
@@ -8,6 +8,12 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.service-registry.core.init-from-json=true",
+    "--cas.logout.follow-service-redirects=false",
+    
+    "--management.endpoint.env.show-values=ALWAYS",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
     
     "--cas.spring.cloud.mongo.uri=mongodb://root:secret@localhost:27017/cas?authSource=admin"
   ],

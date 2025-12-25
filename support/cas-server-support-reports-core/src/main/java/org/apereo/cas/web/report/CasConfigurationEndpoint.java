@@ -80,7 +80,7 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
             @Parameter(name = "name", required = true, description = "The name of the property to update")
         })
     public List<String> updateProperty(
-        @RequestBody final ConfigurationPropertyUpdateRequest value) {
+        @RequestBody final List<ConfigurationPropertyUpdateRequest> value) {
         val activeSources = applicationContext.getEnvironment().getPropertySources();
         return activeSources
             .stream()
@@ -95,7 +95,10 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
                 return null;
             })
             .filter(Objects::nonNull)
-            .map(source -> source.setProperty(value.name(), value.value()).getName())
+            .map(source -> {
+                value.forEach(v -> source.setProperty(v.name(), v.value()));
+                return source.getName();
+            })
             .toList();
     }
 
