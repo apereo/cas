@@ -4,7 +4,6 @@ import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
-import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -22,9 +21,6 @@ public class MongoDbPropertySourceLocator implements PropertySourceLocator {
     @Override
     public PropertySource<?> locate(final Environment environment) {
         val sourceName = MongoDbPropertySource.class.getSimpleName();
-        val composite = new CompositePropertySource(sourceName);
-        val source = new MongoDbPropertySource(sourceName, mongo);
-        composite.addFirstPropertySource(source);
-        return composite;
+        return new MongoDbPropertySource(sourceName, mongo);
     }
 }
