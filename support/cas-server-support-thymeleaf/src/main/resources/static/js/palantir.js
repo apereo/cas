@@ -944,7 +944,7 @@ async function initializeSsoSessionOperations() {
 
             Swal.fire({
                 title: "Are you sure you want to delete all sessions for the user?",
-                text: "Once deleted, you may not be able to recover this entry.",
+                text: "Once deleted, you may not be able to recover this and user's SSO session will be removed.",
                 icon: "warning",
                 showConfirmButton: true,
                 showDenyButton: true
@@ -1076,7 +1076,7 @@ async function initializeSsoSessionOperations() {
 
                         Swal.fire({
                             title: "Are you sure you want to delete this session?",
-                            text: "Once deleted, you may not be able to recover this entry.",
+                            text: "Once deleted, you may not be able to recover this session.",
                             icon: "warning",
                             showConfirmButton: true,
                             showDenyButton: true
@@ -1120,7 +1120,7 @@ async function initializeSsoSessionOperations() {
 
             Swal.fire({
                 title: "Are you sure you want to delete all sessions for all users?",
-                text: "Once deleted, you may not be able to recover this entry.",
+                text: "Once deleted, you may not be able to recover and ALL sso sessions for ALL users will be removed.",
                 icon: "warning",
                 showConfirmButton: true,
                 showDenyButton: true

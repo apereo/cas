@@ -76,8 +76,9 @@ public class DashboardController extends AbstractController {
             .map(entry -> Pair.of(entry.getKey(), casProperties.getServer().getPrefix() + entry.getValue().getHref()))
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
         mav.addObject("actuatorEndpoints", actuatorEndpoints);
-        mav.addObject("supportedServiceTypes", loadSupportedServiceDefinitions());
-        mav.addObject("serviceDefinitions", loadExampleServiceDefinitions());
+        val serviceDefinitions = loadSupportedServiceDefinitions();
+        mav.addObject("supportedServiceTypes", serviceDefinitions);
+        mav.addObject("serviceDefinitions", loadExampleServiceDefinitions(serviceDefinitions.keySet()));
         mav.addObject("availableMultifactorProviders", MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).keySet());
         mav.addObject("scriptFactoryAvailable", CasRuntimeHintsRegistrar.notInNativeImage()
             && ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory().isPresent());
@@ -97,7 +98,7 @@ public class DashboardController extends AbstractController {
             })));
     }
 
-    private Map<String, List<String>> loadExampleServiceDefinitions() throws IOException {
+    private Map<String, List<String>> loadExampleServiceDefinitions(final Set<String> serviceTypes) throws IOException {
         val jsonFilesMap = new HashMap<String, List<String>>();
         val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val resolver = new PathMatchingResourcePatternResolver();
@@ -106,9 +107,11 @@ public class DashboardController extends AbstractController {
         for (val resource : resources) {
             try (val input = resource.getInputStream()) {
                 val contents = new String(FileCopyUtils.copyToByteArray(input), StandardCharsets.UTF_8);
-                val definition = serializer.from(contents);
-                if (definition != null) {
-                    jsonFilesMap.computeIfAbsent(definition.getFriendlyName(), _ -> new ArrayList<>()).add(contents);
+                if (serviceTypes.stream().anyMatch(contents::contains)) {
+                    val definition = serializer.from(contents);
+                    if (definition != null) {
+                        jsonFilesMap.computeIfAbsent(definition.getFriendlyName(), _ -> new ArrayList<>()).add(contents);
+                    }
                 }
             }
         }

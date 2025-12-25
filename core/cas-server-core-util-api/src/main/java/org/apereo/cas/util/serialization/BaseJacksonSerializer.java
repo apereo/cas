@@ -12,6 +12,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hjson.JsonValue;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import tools.jackson.core.PrettyPrinter;
 import tools.jackson.core.TokenStreamFactory;
@@ -65,7 +66,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
     }
 
     @Override
-    public T from(final Reader json) {
+    public @Nullable T from(final Reader json) {
         return FunctionUtils.doAndHandle(() -> {
             val data = isJsonFormat() && isLenient()
                 ? readHumanJson(json)
@@ -75,7 +76,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
     }
 
     @Override
-    public T from(final InputStream json) {
+    public @Nullable T from(final InputStream json) {
         return FunctionUtils.doAndHandle(() -> {
             val jsonString = readJsonFrom(json);
             return readObjectFromString(jsonString);
@@ -83,7 +84,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
     }
 
     @Override
-    public T from(final File json) {
+    public @Nullable T from(final File json) {
         return FunctionUtils.doAndHandle(() -> {
             val data = isJsonFormat() && isLenient()
                 ? readHumanJson(FileUtils.readFileToString(json, StandardCharsets.UTF_8))
