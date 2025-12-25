@@ -714,6 +714,10 @@ span button.toolbar {
     height: 750px;
 }
 
+.h-550px {
+    height: 550px;
+}
+
 .h-450px {
     height: 450px;
 }

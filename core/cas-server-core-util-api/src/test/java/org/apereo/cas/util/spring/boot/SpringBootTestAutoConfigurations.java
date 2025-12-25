@@ -42,7 +42,9 @@ import org.springframework.boot.webmvc.autoconfigure.WebMvcAutoConfiguration;
 import org.springframework.boot.webmvc.autoconfigure.actuate.web.WebMvcEndpointManagementContextConfiguration;
 import org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.webmvc.test.autoconfigure.MockMvcAutoConfiguration;
+import org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshEndpointAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.resilience.annotation.EnableResilientMethods;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -78,6 +80,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     UserDetailsServiceAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     EndpointAutoConfiguration.class,
+    RefreshEndpointAutoConfiguration.class,
     WebEndpointAutoConfiguration.class,
     WebMvcEndpointManagementContextConfiguration.class,
     ServletEndpointManagementContextConfiguration.class,
@@ -88,7 +91,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     HealthContributorRegistryAutoConfiguration.class,
     HealthEndpointAutoConfiguration.class,
     InfoEndpointAutoConfiguration.class,
-    SslAutoConfiguration.class
+    SslAutoConfiguration.class,
+    ConfigurationPropertiesRebinderAutoConfiguration.class
 })
 @Import(ServletWebServerConfiguration.class)
 @Inherited

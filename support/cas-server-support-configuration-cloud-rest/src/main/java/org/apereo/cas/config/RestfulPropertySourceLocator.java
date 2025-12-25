@@ -70,7 +70,7 @@ public class RestfulPropertySourceLocator implements PropertySourceLocator {
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(basicAuthPassword)
                 .basicAuthUsername(basicAuthUsername)
-                .method(HttpMethod.valueOf(method.toUpperCase(Locale.ENGLISH)))
+                .method(HttpMethod.valueOf(Objects.requireNonNull(method).toUpperCase(Locale.ENGLISH)))
                 .url(url)
                 .headers(headers)
                 .build();
