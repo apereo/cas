@@ -77,7 +77,7 @@ class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
     void verifyPropertyUpdate() throws Throwable {
         assertEquals("https://cas.example.org:8443/cas", casServerPrefix.getObject().prefix());
         val results = JsonUtils.parse(mockMvc.perform(post("/actuator/casConfig/update")
-                .content(JsonUtils.render(Map.of("name", "cas.server.prefix", "value", "https://sso.apereo.org/cas")))
+                .content(JsonUtils.render(List.of(Map.of("name", "cas.server.prefix", "value", "https://sso.apereo.org/cas"))))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk())
             .andReturn()
