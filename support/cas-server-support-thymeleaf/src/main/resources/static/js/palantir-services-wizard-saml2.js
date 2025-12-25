@@ -139,7 +139,7 @@ function createRegisteredServiceSaml2Fields() {
         title: "Defines a comma-separated list of attribute names that should be encrypted in SAML assertions."
     })
         .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",")];
+            return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -162,7 +162,7 @@ function createRegisteredServiceSaml2Fields() {
         title: "Defines a comma-separated list of digest methods to use when signing SAML messages."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -175,7 +175,7 @@ function createRegisteredServiceSaml2Fields() {
         title: "Defines a comma-separated list of signature algorithms to use when signing SAML messages."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -188,7 +188,7 @@ function createRegisteredServiceSaml2Fields() {
         title: "Defines a comma-separated list of blacklisted signature algorithms to avoid when signing SAML messages."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -201,7 +201,7 @@ function createRegisteredServiceSaml2Fields() {
         title: "Defines a comma-separated list of whitelisted signature algorithms to avoid when signing SAML messages."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -229,7 +229,7 @@ function createRegisteredServiceSaml2Fields() {
         title: "Defines a comma-separated list of data encryption algorithms to use when encrypting SAML assertions."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -242,7 +242,7 @@ function createRegisteredServiceSaml2Fields() {
         title: "Defines a comma-separated list of key encryption algorithms to use when encrypting SAML assertions."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -255,7 +255,7 @@ function createRegisteredServiceSaml2Fields() {
         title: "Defines a comma-separated list of blacklisted algorithms to avoid when encrypting SAML assertions."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
     createInputField({
         cssClasses: "advanced-option",
@@ -267,7 +267,7 @@ function createRegisteredServiceSaml2Fields() {
         title: "Defines a comma-separated list of whitelisted algorithms to avoid when encrypting SAML assertions."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
 

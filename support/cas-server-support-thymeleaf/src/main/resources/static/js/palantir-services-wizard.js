@@ -135,7 +135,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         title: "Define the attributes to be excluded from release, separated by comma."
     })
         .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",")];
+            return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -148,7 +148,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         title: "Define the attributes to be encrypted for release, separated by comma."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -161,7 +161,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         title: "Define the attributes with static values for release, separated by comma."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -174,7 +174,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         title: "Define the attribute names for release, separated by comma."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -319,7 +319,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         title: "Define the attributes allowed to be released by this policy as a comma-separated list."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
 
@@ -333,7 +333,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         title: "Define the attributes allowed to be released by this policy as a comma-separated list."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -346,7 +346,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         title: "Define the entity attribute values allowed to be released by this policy as a comma-separated list."
     })
         .data("renderer", function (value) {
-            return ["java.util.LinkedHashSet", value.split(",")];
+            return ["java.util.LinkedHashSet", value.split(",").filter(v => v != null && v !== "")];
         });
     
     createInputField({
@@ -389,7 +389,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         title: "Define the attributes allowed to be released by this policy as a comma-separated list."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -402,7 +402,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         title: "Define the attributes allowed to be released by this policy as a comma-separated list."
     })
         .data("renderer", function (value) {
-            return ["java.util.ArrayList", value.split(",")];
+            return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -482,7 +482,7 @@ function createRegisteredServiceAttributeReleaseConsentPolicy() {
         title: "Define the attribute names for release, separated by comma."
     })
         .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",")];
+            return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createSelectField({
@@ -688,7 +688,7 @@ function createRegisteredServiceAttributeReleasePrincipalAttributesRepository() 
         containerId: "editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository",
         title: "Define the attribute repository IDs to be used, separated by comma."
     }).data("renderer", function (value) {
-        return ["java.util.HashSet", value.split(",")];
+        return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
     });
 
     createSelectField({
@@ -879,7 +879,7 @@ function createRegisteredServiceMultifactorPolicy() {
         title: "Define the multifactor authentication providers to be used, separated by comma."
     })
         .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",")];
+            return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createSelectField({
@@ -1596,7 +1596,7 @@ function createRegisteredServiceAuthenticationPolicy() {
         title: "Required Authentication Handler(s)"
     })
         .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",")];
+            return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -1609,7 +1609,7 @@ function createRegisteredServiceAuthenticationPolicy() {
         title: "Excluded Authentication Handler(s)"
     })
         .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",")];
+            return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
         });
 }
 
@@ -2153,7 +2153,7 @@ function createRegisteredServiceFields() {
         title: "Define the environment(s), separated by comma, in which this application operates (e.g., development, staging, production)"
     })
         .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",")];
+            return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
         });
 }
 
@@ -2204,6 +2204,9 @@ function generateServiceDefinition() {
                 const skipWhenTrue = $input.data("param-skip-true");
                 let value = $input.val();
 
+                if (value && Array.isArray(value)) {
+                    value = value.filter(v => v != null && v !== "").join(",");
+                }
                 if (paramName && paramName.trim().length > 0 && value && value.trim().length > 0) {
                     if (skipWhenFalse && (value === "false" || value === false)) {
                         console.debug(`Skipping parameter ${paramName} because its value is false`);
@@ -2484,21 +2487,23 @@ function appendOptionsToDropDown(config) {
         options
     } = config;
 
-    options.forEach(opt => {
-        const $opt = $("<option>")
-            .attr("value", opt.value)
-            .text(opt.text);
-        if (opt.data && Object.keys(opt.data).length > 0) {
-            Object.entries(opt.data).forEach(([key, value]) => {
-                $opt.data(key, value);
-            });
-        }
-        if (opt.selected) {
-            $opt.attr("selected", "selected");
-        }
+    if (options) {
+        options.forEach(opt => {
+            const $opt = $("<option>")
+                .attr("value", opt.value)
+                .text(opt.text);
+            if (opt.data && Object.keys(opt.data).length > 0) {
+                Object.entries(opt.data).forEach(([key, value]) => {
+                    $opt.data(key, value);
+                });
+            }
+            if (opt.selected) {
+                $opt.attr("selected", "selected");
+            }
 
-        selectElement.append($opt);
-    });
+            selectElement.append($opt);
+        });
+    }
 }
 
 function createSelectField(config) {
@@ -2508,13 +2513,12 @@ function createSelectField(config) {
         paramName,
         paramType = "",
         options,
-        helpText,
         serviceClass = "",
         cssClasses = "",
         changeEventHandlers = ""
     } = config;
 
-    const selectId = `registeredService${capitalize(paramName)}`;
+    const selectId = `registeredService${capitalize(paramName.replace(".", ""))}`;
     const $label = $("<label>")
         .addClass(serviceClass ?? "")
         .addClass("pt-2")
@@ -2544,6 +2548,60 @@ function createSelectField(config) {
     $(container).append($label);
 
     $(`#${containerId}`).append(container);
+    return $select;
+}
+
+function createMultiSelectField(config) {
+    const {
+        containerId,
+        paramName,
+        paramType = "",
+        options,
+        serviceClass = "",
+        cssClasses = "",
+        changeEventHandlers = "",
+        labelTitle
+    } = config;
+
+    const selectId = `registeredService${capitalize(paramName.replace(".", ""))}`;
+    const $select = $("<select multiple>")
+        .attr("id", selectId)
+        .attr("data-change-handler", `${changeEventHandlers},generateServiceDefinition`)
+        .attr("data-param-name", paramName)
+        .attr("data-param-type", paramType)
+        .addClass("jqueryui-multiselectmenu")
+        .addClass(serviceClass ?? "")
+        .addClass(cssClasses ?? "");
+
+    appendOptionsToDropDown({
+        selectElement: $select,
+        options: options
+    });
+    const container = $("<span>", {
+        id: `${selectId}SelectContainer`,
+        class: `d-flex mb-2 mt-2 ${serviceClass ?? ""} ${cssClasses ?? ""}`
+    });
+
+    const $label = $("<label>")
+        .addClass(serviceClass ?? "")
+        .addClass("pt-2")
+        .addClass("pr-2")
+        .addClass("mb-2")
+        .addClass(cssClasses ?? "")
+        .css("display", "block")
+        .css("min-width", "max-content")
+        .attr("for", selectId).text(`${labelTitle} `);
+    
+    container.append($label, $select);
+    $(`#${containerId}`).append(container);
+    new SlimSelect({
+        select: `#${selectId}`,
+        events: {
+            afterChange: (newVal) => {
+                generateServiceDefinition();
+            }
+        }
+    })
     return $select;
 }
 
@@ -2696,7 +2754,7 @@ function openRegisteredServiceWizardDialog() {
             const clazz = $(this).data("serviceClass");
             return clazz !== undefined && clazz !== null;
         }).remove();
-        $("#editServiceWizardForm select").selectmenu("refresh");
+        $("#editServiceWizardForm select.jqueryui-selectmenu").selectmenu("refresh");
 
         generateServiceDefinition();
         editServiceWizardDialog["open"]();

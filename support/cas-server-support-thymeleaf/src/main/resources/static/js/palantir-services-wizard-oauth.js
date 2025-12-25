@@ -31,6 +31,57 @@ function createRegisteredServiceUserProfileViewType() {
     });
 }
 
+function createOidcRegisteredServiceTlsClientSettings() {
+    createInputField({
+        cssClasses: "advanced-option",
+        labelTitle: "TLS Client Authentication Subject DN",
+        name: "registeredServiceTlsClientAuthSubjectDn",
+        paramName: "tlsClientAuthSubjectDn",
+        required: false,
+        containerId: "editServiceWizardMenuItemOAuthOidcTlsClientSettings",
+        title: "Define the TLS client authentication subject DN for this OAuth/OpenID Connect relying party."
+    });
+
+    createInputField({
+        cssClasses: "advanced-option",
+        labelTitle: "TLS Client Authentication SAN DNS",
+        name: "registeredServiceTlsClientAuthSanDns",
+        paramName: "tlsClientAuthSanDns",
+        required: false,
+        containerId: "editServiceWizardMenuItemOAuthOidcTlsClientSettings",
+        title: "Define the TLS client authentication SAN DNS for this OAuth/OpenID Connect relying party."
+    });
+
+    createInputField({
+        cssClasses: "advanced-option",
+        labelTitle: "TLS Client Authentication SAN URI",
+        name: "registeredServiceTlsClientAuthSanUri",
+        paramName: "tlsClientAuthSanUri",
+        required: false,
+        containerId: "editServiceWizardMenuItemOAuthOidcTlsClientSettings",
+        title: "Define the TLS client authentication SAN URI for this OAuth/OpenID Connect relying party."
+    });
+
+    createInputField({
+        cssClasses: "advanced-option",
+        labelTitle: "TLS Client Authentication SAN IP",
+        name: "registeredServiceTlsClientAuthSanIP",
+        paramName: "tlsClientAuthSanIp",
+        required: false,
+        containerId: "editServiceWizardMenuItemOAuthOidcTlsClientSettings",
+        title: "Define the TLS client authentication SAN IP for this OAuth/OpenID Connect relying party."
+    });
+
+    createInputField({
+        cssClasses: "advanced-option",
+        labelTitle: "TLS Client Authentication SAN Email",
+        name: "registeredServiceTlsClientAuthSanEmail",
+        paramName: "tlsClientAuthSanEmail",
+        required: false,
+        containerId: "editServiceWizardMenuItemOAuthOidcTlsClientSettings",
+        title: "Define the TLS client authentication SAN email for this OAuth/OpenID Connect relying party."
+    });
+}
 
 function createRegisteredServiceCodeExpirationPolicy() {
     createInputField({
@@ -107,7 +158,7 @@ function createRegisteredServiceOidcTokenExchangePolicy() {
         containerId: "editServiceWizardMenuItemOAuthOidcTokenExchangePolicy",
         title: "Define the resources allowed for token exchange, separated by comma."
     }).data("renderer", function (value) {
-        return ["java.util.HashSet", value.split(",")];
+        return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
     });
 
     createInputField({
@@ -120,7 +171,7 @@ function createRegisteredServiceOidcTokenExchangePolicy() {
         containerId: "editServiceWizardMenuItemOAuthOidcTokenExchangePolicy",
         title: "Define the audience allowed for token exchange, separated by comma."
     }).data("renderer", function (value) {
-        return ["java.util.HashSet", value.split(",")];
+        return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
     });
 
     createInputField({
@@ -133,7 +184,7 @@ function createRegisteredServiceOidcTokenExchangePolicy() {
         containerId: "editServiceWizardMenuItemOAuthOidcTokenExchangePolicy",
         title: "Define the token types allowed for token exchange, separated by comma."
     }).data("renderer", function (value) {
-        return ["java.util.HashSet", value.split(",")];
+        return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
     });
 
     createInputField({
@@ -146,7 +197,7 @@ function createRegisteredServiceOidcTokenExchangePolicy() {
         containerId: "editServiceWizardMenuItemOAuthOidcTokenExchangePolicy",
         title: "Define the actor token types allowed for token exchange, separated by comma."
     }).data("renderer", function (value) {
-        return ["java.util.HashSet", value.split(",")];
+        return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
     });
 
     createMappedInputField({
