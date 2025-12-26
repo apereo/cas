@@ -29,7 +29,7 @@ async function createRegisteredServiceOidcFields() {
     }).after(`
         <button class="mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button mr-2" 
                 type="button"
-                onclick="$('#registeredServiceClientId').val(generateRandom()).focus();">
+                onclick="$('#registeredServiceClientId').val(generateRandom()).focus();generateServiceDefinition()">
             <i class="mdi mdi-refresh" aria-hidden="true"></i>
             <span class="sr-only">Generate</span>
         </button>
@@ -46,7 +46,7 @@ async function createRegisteredServiceOidcFields() {
     .attr("type", "password")
     .after(`
         <button class="mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button mr-2" 
-                onclick="$('#registeredServiceClientSecret').val(generateRandom()).focus();"
+                onclick="$('#registeredServiceClientSecret').val(generateRandom()).focus(); generateServiceDefinition();"
                 type="button">
             <i class="mdi mdi-refresh" aria-hidden="true"></i>
             <span class="sr-only">Generate</span>

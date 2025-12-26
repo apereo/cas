@@ -582,8 +582,7 @@ function initializeJvmMetrics() {
             "jvm.threads.states"
         ].map(metric => fetchJvmThreadMetric(metric));
         const results = await Promise.all(promises);
-        const numbersArray = results.map(result => Number(result));
-        return numbersArray;
+        return results.map(result => Number(result));
     }
 
     async function fetchThreadDump() {

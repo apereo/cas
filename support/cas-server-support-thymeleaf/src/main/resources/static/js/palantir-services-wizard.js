@@ -2784,6 +2784,12 @@ function openRegisteredServiceWizardDialog() {
             break;
         case "OidcRegisteredService":
             $("#registeredServiceIdLabel span.mdc-floating-label").text("Redirect URI");
+            $(`h3.class-${className}`).each(function () {
+                const original = $(this).text();
+                const updated = original.replace("OAuth / ", "");
+                $(this).text(updated);
+            });
+            $("#editServiceWizardMenu").accordion("refresh");
             createOidcRegisteredServiceFields();
             break;
         }
