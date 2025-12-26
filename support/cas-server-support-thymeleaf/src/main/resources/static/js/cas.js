@@ -37,17 +37,23 @@ function copyClipboard(element) {
 }
 
 function getLastTwoWords(str) {
+    if (!str) {
+        return "";
+    }
     const parts = str.split(".");
     return parts.slice(-2).join(".");
 }
 
 function getLastWord(str) {
-    const parts = str.split(".");
-    return parts.slice(-1).join(".");
+    if (str) {
+        const parts = str.split(".");
+        return parts.slice(-1).join(".");
+    }
+    return "";
 }
 
 function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+    return str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
 }
 
 function formatDateYearMonthDayHourMinute(date) {

@@ -10,3 +10,9 @@
 .jqueryui-multiselectmenu {
     background-color: #d7ebf9;
 }
+
+.ui-selectmenu-menu {
+    overflow-y: "auto";
+    overflow-x: hidden;
+    max-height: 400px;
+}

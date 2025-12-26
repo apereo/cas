@@ -1,4 +1,4 @@
-const DEFAULT_INTERVAL = 15000;
+const DEFAULT_INTERVAL = 10000;
 
 /**
  * Internal Functions
@@ -1673,20 +1673,23 @@ async function initializeCasEventsOperations() {
                         },
                         success: (response, textStatus, xhr) => {
                             casEventsTable.clear();
-                            for (const entry of Object.values(response[1])) {
-                                const geoLocation = `${entry?.properties?.geoLatitude ?? ""} ${entry?.properties?.geoLongitude ?? ""} ${entry?.properties?.geoAccuracy ?? ""}`.trim();
-                                casEventsTable.row.add({
-                                    0: `<code>${entry?.creationTime ?? "N/A"}</code>`,
-                                    1: `<code>${getLastWord(entry?.type) ?? "N/A"}</code>`,
-                                    2: `<code>${entry?.properties?.eventId ?? "N/A"}</code>`,
-                                    3: `<code>${entry?.principalId ?? "N/A"}</code>`,
-                                    4: `<code>${entry?.properties?.clientip ?? "N/A"}</code>`,
-                                    5: `<code>${entry?.properties?.serverip ?? "N/A"}</code>`,
-                                    6: `<code>${entry?.properties?.agent ?? "N/A"}</code>`,
-                                    7: `<code>${entry?.properties?.tenant ?? "N/A"}</code>`,
-                                    8: `<code>${entry?.properties?.deviceFingerprint ?? "N/A"}</code>`,
-                                    9: `<code>${geoLocation.length == 0 ? "N/A" : geoLocation}</code>`
-                                });
+                            const jsonEvents = JSON.parse(response);
+                            if (jsonEvents.length > 0) {
+                                for (const entry of Object.values(jsonEvents[1])) {
+                                    const geoLocation = `${entry?.properties?.geoLatitude ?? ""} ${entry?.properties?.geoLongitude ?? ""} ${entry?.properties?.geoAccuracy ?? ""}`.trim();
+                                    casEventsTable.row.add({
+                                        0: `<code>${entry?.creationTime ?? "N/A"}</code>`,
+                                        1: `<code>${getLastWord(entry?.type) ?? "N/A"}</code>`,
+                                        2: `<code>${entry?.properties?.eventId ?? "N/A"}</code>`,
+                                        3: `<code>${entry?.principalId ?? "N/A"}</code>`,
+                                        4: `<code>${entry?.properties?.clientip ?? "N/A"}</code>`,
+                                        5: `<code>${entry?.properties?.serverip ?? "N/A"}</code>`,
+                                        6: `<code>${entry?.properties?.agent ?? "N/A"}</code>`,
+                                        7: `<code>${entry?.properties?.tenant ?? "N/A"}</code>`,
+                                        8: `<code>${entry?.properties?.deviceFingerprint ?? "N/A"}</code>`,
+                                        9: `<code>${geoLocation.length == 0 ? "N/A" : geoLocation}</code>`
+                                    });
+                                }
                             }
                             casEventsTable.draw();
                         },
@@ -1972,6 +1975,63 @@ async function initializeSystemOperations() {
         }
     }
 
+    async function configureSystemMetrics() {
+        $("#systemMetricNameFilter").selectmenu({
+            change: function () {
+                $(this).selectmenu("close");
+                const metric = $(this).val();
+                systemMetricsTagsTable.clear();
+                systemMetricsMeasurementsTable.clear();
+                $("#systemMetricNameDescriptionContainer").hide();
+                
+                if (metric && metric.length > 0) {
+                    $.get(`${actuatorEndpoints.metrics}/${metric}`, response => {
+                        let description = `${response.description ?? "No description is available"}. Metric is measured in ${response.baseUnit ?? "unknown units"}.`;
+                        $("#systemMetricNameDescription").text(description);
+                        $("#systemMetricNameDescriptionContainer").show();
+                        
+                        response.availableTags.forEach(entry => {
+                            systemMetricsTagsTable.row.add({
+                                0: `<code>${entry.tag}</code>`,
+                                1: `<code>${entry.values.join(",")}</code>`
+                            });
+                        });
+                        systemMetricsTagsTable.draw();
+                        response.measurements.forEach(entry => {
+                            systemMetricsMeasurementsTable.row.add({
+                                0: `<code>${entry.statistic}</code>`,
+                                1: `<code>${entry.value}</code>`
+                            });
+                        });
+                        systemMetricsMeasurementsTable.draw();
+                    });
+                }
+            }
+        });
+        
+        $("#systemMetricNameFilter").empty();
+        $("#systemMetricNameFilter").append(
+            $("<option>", {
+                value: "",
+                text: "Select a metric to view details..."
+            })
+        );
+        
+        if (actuatorEndpoints.metrics) {
+            $.get(actuatorEndpoints.metrics, response => {
+                for (const name of response.names) {
+                    $("#systemMetricNameFilter").append(
+                        $("<option>", {
+                            value: name,
+                            text: name
+                        })
+                    );
+                    $("#systemMetricNameFilter").selectmenu("refresh");
+                }
+            });
+        }
+    }
+    
     async function configureSystemData() {
         await fetchSystemData(response => {
 
@@ -2016,6 +2076,32 @@ async function initializeSystemOperations() {
         }
     });
 
+    const systemMetricsTagsTable = $("#systemMetricsTagsTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        columnDefs: [
+            {width: "50%", targets: 0},
+            {width: "50%", targets: 1}
+        ],
+        drawCallback: settings => {
+            $("#systemMetricsTagsTable tr").addClass("mdc-data-table__row");
+            $("#systemMetricsTagsTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    const systemMetricsMeasurementsTable = $("#systemMetricsMeasurementsTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        columnDefs: [
+            {width: "50%", targets: 0},
+            {width: "50%", targets: 1}
+        ],
+        drawCallback: settings => {
+            $("#systemMetricsMeasurementsTable tr").addClass("mdc-data-table__row");
+            $("#systemMetricsMeasurementsTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
     let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
 
     async function configureSystemInfo() {
@@ -2056,7 +2142,8 @@ async function initializeSystemOperations() {
     await configureSystemData()
         .then(configureStatistics())
         .then(configureHealthChart())
-        .then(configureSystemInfo);
+        .then(configureSystemInfo())
+        .then(configureSystemMetrics());
 }
 
 async function initializeCasFeatures() {
@@ -4095,11 +4182,17 @@ function processNavigationTabs() {
         $("#systemTabButton").addClass("d-none");
         $(`#attribute-tab-${Tabs.SYSTEM}`).addClass("d-none");
     }
+    if (!actuatorEndpoints.metrics) {
+        $("#systemmetricstab").parent().addClass("d-none");
+    }
+    if (!actuatorEndpoints.springWebflow) {
+        $("#caswebflowtab").parent().addClass("d-none");
+    }
     if (!actuatorEndpoints.ticketregistry) {
         $("#ticketsTabButton").addClass("d-none");
         $(`#attribute-tab-${Tabs.TICKETS}`).addClass("d-none");
     }
-    if (!actuatorEndpoints.ticketregistry) {
+    if (!actuatorEndpoints.scheduledtasks) {
         $("#tasksTabButton").addClass("d-none");
         $(`#attribute-tab-${Tabs.TASKS}`).addClass("d-none");
     }
