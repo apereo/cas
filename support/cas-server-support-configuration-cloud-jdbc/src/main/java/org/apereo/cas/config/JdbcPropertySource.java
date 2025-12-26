@@ -1,0 +1,52 @@
+package org.apereo.cas.config;
+
+import module java.base;
+import org.apereo.cas.configuration.api.MutablePropertySource;
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.Nullable;
+import org.springframework.core.env.EnumerablePropertySource;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+/**
+ * This is {@link JdbcPropertySource}.
+ *
+ * @author Misagh Moayyed
+ * @since 8.0.0
+ */
+@EqualsAndHashCode(callSuper = true)
+@Slf4j
+public class JdbcPropertySource extends EnumerablePropertySource<JdbcTemplate> implements MutablePropertySource<JdbcTemplate> {
+    public JdbcPropertySource(final String context, final JdbcTemplate jdbcTemplate) {
+        super(context, jdbcTemplate);
+    }
+
+    @Override
+    public MutablePropertySource setProperty(final String name, final Object value) {
+        val updated = getSource().update("UPDATE CAS_SETTINGS_TABLE SET value = ? WHERE name = ?", value, name);
+        if (updated == 0) {
+            getSource().update("INSERT INTO CAS_SETTINGS_TABLE(name, value) VALUES(?, ?)", name, value);
+        }
+        return this;
+    }
+
+    @Override
+    public String[] getPropertyNames() {
+        return getSource().queryForList("SELECT name FROM CAS_SETTINGS_TABLE", String.class)
+            .toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+    }
+
+    @Override
+    public @Nullable Object getProperty(final String name) {
+        try {
+            return getSource().queryForObject("SELECT value FROM CAS_SETTINGS_TABLE WHERE name = ?", Object.class, name);
+        } catch (final EmptyResultDataAccessException e) {
+            LOGGER.trace("No value could be found in the database for property name [{}]", name);
+            return null;
+        }
+    }
+}
+
