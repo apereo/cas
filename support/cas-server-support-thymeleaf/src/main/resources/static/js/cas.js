@@ -70,9 +70,9 @@ function formatDateYearMonthDay(date) {
 
 function toKebabCase(str) {
     return str
-        .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-        .replace(/[^a-zA-Z0-9.[\]]+/g, '-')
-        .replace(/^-+|-+$/g, '')
+        .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+        .replace(/[^a-zA-Z0-9.[\]]+/g, "-")
+        .replace(/^-+|-+$/g, "")
         .toLowerCase();
 }
 
@@ -125,6 +125,26 @@ function flattenJSON(data) {
 
     recurse(data, "");
     return result;
+}
+
+function base64Encode(str) {
+    return btoa(
+        encodeURIComponent(str)
+            .replace(/%([0-9A-F]{2})/g, (_, p1) =>
+                String.fromCharCode(`0x${p1}`)
+            )
+    );
+}
+
+function base64Decode(base64) {
+    return decodeURIComponent(
+        atob(base64)
+            .split("")
+            .map(c =>
+                `%${c.charCodeAt(0).toString(16).padStart(2, "0")}`
+            )
+            .join("")
+    );
 }
 
 function convertMemoryToGB(memoryStr) {
@@ -199,7 +219,7 @@ function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) {
-        return parts.pop().split(';').shift();
+        return parts.pop().split(";").shift();
     }
     return null;
 }
@@ -222,7 +242,7 @@ function preserveAnchorTagOnForm() {
 
 function preventFormResubmission() {
     $("form").submit(() => {
-        const dataDisableSubmitValue = $(this).attr('data-disable-submit');
+        const dataDisableSubmitValue = $(this).attr("data-disable-submit");
         if (dataDisableSubmitValue) {
             $(":submit").attr("disabled", true);
         }
@@ -331,32 +351,32 @@ function resourceLoadedSuccessfully() {
         $("#fm1 input[name=\"username\"],[name=\"password\"]").trigger("input");
         $("#fm1 input[name=\"username\"]").focus();
 
-        $(".reveal-password").on("click", function(ev) {
+        $(".reveal-password").on("click", function (ev) {
             ev.preventDefault();
 
-            const btn  = $(this);
-            const pwd  = $(".pwd");
+            const btn = $(this);
+            const pwd = $(".pwd");
             const icon = $(".reveal-password-icon");
 
             if (pwd.attr("type") === "text") {
                 pwd.attr("type", "password");
                 icon.removeClass("mdi-eye-off").addClass("mdi-eye");
-                btn.attr('aria-pressed', false);
+                btn.attr("aria-pressed", false);
             } else {
                 pwd.attr("type", "text");
                 icon.removeClass("mdi-eye").addClass("mdi-eye-off");
-                btn.attr('aria-pressed', true);
+                btn.attr("aria-pressed", true);
             }
         });
 
-        if (typeof hljs !== 'undefined') {
+        if (typeof hljs !== "undefined") {
             hljs.highlightAll();
         }
     });
 }
 
 function captureFingerprint(fieldName = "deviceFingerprint") {
-    if (typeof FingerprintJS !== 'undefined') {
+    if (typeof FingerprintJS !== "undefined") {
         (async () => {
             const fp = await FingerprintJS.load();
             const result = await fp.get();
@@ -377,7 +397,7 @@ function autoHideElement(id, timeout = 1500) {
     setTimeout(hideElement, timeout);
 }
 
-function initializeAceEditor(id, mode="json") {
+function initializeAceEditor(id, mode = "json") {
     ace.require("ace/ext/language_tools");
     const beautify = ace.require("ace/ext/beautify");
     const editor = ace.edit(id);

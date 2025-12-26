@@ -121,11 +121,13 @@
                                     unless you fully understand their purpose and implications. The generation process will only
                                     accept and process non-default values to keep the service definition clean and concise.
                                 </h4></div>
-                                <p>The following application type is chosen:</p>
-                                <pre><code id="serviceClassType" class="border-rounded language-html"></code></pre>
+                                <span class="hide">
+                                    <p>The following application type is chosen:</p>
+                                    <pre><code id="serviceClassType" class="border-rounded language-html"></code></pre>
+                                </span>
 
                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='hideAdvancedOptions',
-                                    label='#Hide Advanced Options', cssClass='pb-2', selected=true, dataAttrs='changeEventHandler=hideAdvancedRegisteredServiceOptions')}"/>
+                                    label='#Hide Advanced Options', cssClass='pb-2 pt-2', selected=true, dataAttrs='changeEventHandler=hideAdvancedRegisteredServiceOptions')}"/>
                                 
                                 <form id="editServiceWizardForm">
                                     <div id="editServiceWizardContainer" class="d-flex">
