@@ -2,16 +2,13 @@
 <Configuration shutdownHook="disable">
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}"/>
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="error" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.apache" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
+        <Logger name="org.apereo" level="error"/>
+        <Logger name="org.apache" level="warn"/>
+        <Logger name="org.springframework.boot" level="warn"/>
         <Root level="error">
             <AppenderRef ref="console"/>
         </Root>

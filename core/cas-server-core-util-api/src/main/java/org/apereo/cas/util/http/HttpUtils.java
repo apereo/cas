@@ -84,7 +84,7 @@ public class HttpUtils {
             return FunctionUtils.doAndRetry((Retryable<HttpResponse>) () -> {
                 LOGGER.trace("Sending HTTP request to [{}]", request.getUri());
                 val res = client.execute(request, HttpRequestUtils.HTTP_CLIENT_RESPONSE_HANDLER);
-                if (res == null || org.springframework.http.HttpStatus.valueOf(res.getCode()).isError()) {
+                if (res == null || org.springframework.http.HttpStatus.valueOf(res.getCode()).is5xxServerError()) {
                     throw new HttpRequestExecutionException(res);
                 }
                 return res;
