@@ -30,13 +30,16 @@ public class AmazonSimpleNotificationServiceSmsSender implements SmsSender {
         try {
             val smsAttributes = new HashMap<String, MessageAttributeValue>();
             if (StringUtils.isNotBlank(snsProperties.getSenderId())) {
-                smsAttributes.put("AWS.SNS.SMS.SenderID", MessageAttributeValue.builder().stringValue(snsProperties.getSenderId()).dataType("String").build());
+                smsAttributes.put("AWS.SNS.SMS.SenderID", MessageAttributeValue.builder()
+                    .stringValue(snsProperties.getSenderId()).dataType("String").build());
             }
             if (StringUtils.isNotBlank(snsProperties.getMaxPrice())) {
-                smsAttributes.put("AWS.SNS.SMS.MaxPrice", MessageAttributeValue.builder().stringValue(snsProperties.getMaxPrice()).dataType("Number").build());
+                smsAttributes.put("AWS.SNS.SMS.MaxPrice", MessageAttributeValue.builder()
+                    .stringValue(snsProperties.getMaxPrice()).dataType("Number").build());
             }
             if (StringUtils.isNotBlank(snsProperties.getSmsType())) {
-                smsAttributes.put("AWS.SNS.SMS.SMSType", MessageAttributeValue.builder().stringValue(snsProperties.getSmsType()).dataType("String").build());
+                smsAttributes.put("AWS.SNS.SMS.SMSType", MessageAttributeValue.builder()
+                    .stringValue(snsProperties.getSmsType()).dataType("String").build());
             }
             val result = snsClient.publish(PublishRequest.builder()
                 .message(message)

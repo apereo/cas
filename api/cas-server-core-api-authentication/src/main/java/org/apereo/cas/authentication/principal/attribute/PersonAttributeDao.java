@@ -150,7 +150,7 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
      * @return the people with multivalued attributes
      */
     default Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
-                                                                     final PersonAttributeDaoFilter filter) {
+                                                                     @Nullable final PersonAttributeDaoFilter filter) {
         return getPeopleWithMultivaluedAttributes(query, filter, Set.of());
     }
 

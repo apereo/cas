@@ -23,7 +23,9 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
     private final SyncopePrincipalAttributesProperties properties;
 
     @Override
-    public PersonAttributes getPerson(final String uid, final Set<PersonAttributes> resolvedPeople, final PersonAttributeDaoFilter filter) {
+    public PersonAttributes getPerson(final String uid,
+                                      @Nullable final Set<PersonAttributes> resolvedPeople,
+                                      @Nullable final PersonAttributeDaoFilter filter) {
         val attributes = new HashMap<String, List<Object>>();
         val results = syncopeUserSearch(uid);
         results.forEach(attributes::putAll);
@@ -35,22 +37,23 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    public Set<PersonAttributes> getPeople(final Map<String, Object> map, final PersonAttributeDaoFilter filter,
-                                           final Set<PersonAttributes> resolvedPeople) {
+    public Set<PersonAttributes> getPeople(final Map<String, Object> map,
+                                           @Nullable final PersonAttributeDaoFilter filter,
+                                           @Nullable final Set<PersonAttributes> resolvedPeople) {
         return getPeopleWithMultivaluedAttributes(PersonAttributeDao.stuffAttributesIntoList(map), filter);
     }
 
     @Override
     public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(
-        final Map<String, List<Object>> map, @Nullable final PersonAttributeDaoFilter filter,
+        final Map<String, List<Object>> map,
+        @Nullable final PersonAttributeDaoFilter filter,
         @Nullable final Set<PersonAttributes> resolvedPeople) {
         return map.entrySet()
             .stream()
             .filter(e -> !e.getValue().isEmpty())
             .filter(e -> properties.getSearchFilter().contains(e.getKey()))
             .findFirst()
-            .map(e -> Set.of(getPerson(e.getValue().getFirst().toString(),
-                Objects.requireNonNull(resolvedPeople), Objects.requireNonNull(filter))))
+            .map(e -> Set.of(getPerson(e.getValue().getFirst().toString(), resolvedPeople, filter)))
             .orElseGet(LinkedHashSet::new);
     }
 
