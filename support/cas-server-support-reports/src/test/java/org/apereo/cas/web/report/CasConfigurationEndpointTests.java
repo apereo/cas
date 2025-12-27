@@ -3,7 +3,7 @@ package org.apereo.cas.web.report;
 import module java.base;
 import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.api.SimpleMutablePropertySource;
+import org.apereo.cas.configuration.api.SimplePropertySource;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.JsonUtils;
 import lombok.val;
@@ -97,7 +97,7 @@ class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
 
         @Bean
         public InitializingBean simplePropertySourceLocator(final ConfigurableEnvironment environment) {
-            return () -> environment.getPropertySources().addFirst(new SimpleMutablePropertySource());
+            return () -> environment.getPropertySources().addFirst(new SimplePropertySource());
         }
 
         @Bean

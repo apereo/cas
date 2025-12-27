@@ -37,7 +37,13 @@ must happen at runtime so CAS gets a chance to initialize the right set of compo
 
 Encryption and decryption support may also be used inside the [CAS Command-line Shell](../installation/Configuring-Commandline-Shell.html).
 
-# Troubleshooting
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="casConfig" casModule="cas-server-support-reports" %}
+
+## Troubleshooting
 
 To enable additional logging, modify the logging configuration file to add the following:
 

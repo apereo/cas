@@ -59,7 +59,7 @@ public class CasDynamoDbCloudConfigBootstrapAutoConfiguration implements Propert
      * @param deleteTables         the delete tables
      * @throws Exception the exception
      */
-    public static void createSettingsTable(final DynamoDbClient amazonDynamoDBClient,
+    static void createSettingsTable(final DynamoDbClient amazonDynamoDBClient,
                                            final boolean deleteTables) throws Exception {
         val request = createCreateTableRequest();
         if (deleteTables) {
@@ -85,7 +85,7 @@ public class CasDynamoDbCloudConfigBootstrapAutoConfiguration implements Propert
             val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
             val amazonDynamoDBClient = builder.build(DynamoDbClient.builder(), DynamoDbClient.class);
             val preventTableCreationOnStartup = builder.getSetting("prevent-table-creation-on-startup", Boolean.class);
-            if (!preventTableCreationOnStartup) {
+            if (Boolean.FALSE.equals(preventTableCreationOnStartup)) {
                 createSettingsTable(amazonDynamoDBClient, false);
             }
             val scan = ScanRequest.builder().tableName(TABLE_NAME).build();

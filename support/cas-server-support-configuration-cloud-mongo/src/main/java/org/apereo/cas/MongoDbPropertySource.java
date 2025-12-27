@@ -19,13 +19,19 @@ import org.springframework.data.mongodb.core.query.Update;
  * @since 5.0.0
  */
 @EqualsAndHashCode(callSuper = true)
+@SuppressWarnings("NullAway.Init")
 public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperations>
     implements MutablePropertySource<MongoOperations> {
 
-    private final Set<String> propertyNames;
+    private Set<String> propertyNames;
 
     public MongoDbPropertySource(final String context, final MongoOperations mongo) {
         super(context, mongo);
+        refresh();
+    }
+
+    @Override
+    public void refresh() {
         val list = getSource().findAll(MongoDbProperty.class, MongoDbProperty.class.getSimpleName());
         this.propertyNames = new HashSet<>(list.stream().map(MongoDbProperty::getName).toList());
     }

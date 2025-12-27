@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration;
 
 import module java.base;
-import org.apereo.cas.configuration.api.SimpleMutablePropertySource;
+import org.apereo.cas.configuration.api.SimplePropertySource;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -13,7 +13,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link SimpleMutablePropertySourceTests}.
+ * This is {@link SimplePropertySourceTests}.
  *
  * @author Misagh Moayyed
  * @since 8.0.0
@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 @Tag("CasConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-class SimpleMutablePropertySourceTests {
+class SimplePropertySourceTests {
     @Test
     void verifyOperation() {
-        val propertySource = new SimpleMutablePropertySource();
+        val propertySource = new SimplePropertySource();
         assertNotNull(propertySource.getSource());
         assertNotNull(propertySource.getName());
         propertySource.setProperty("cas.test.property", "value1");

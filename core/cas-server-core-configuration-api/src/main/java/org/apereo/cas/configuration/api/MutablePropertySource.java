@@ -40,4 +40,10 @@ public interface MutablePropertySource<T> {
      * @see org.springframework.core.env.EnumerablePropertySource#getPropertyNames()
      */
     String[] getPropertyNames();
+
+    /**
+     * Refresh.
+     */
+    default void refresh() {
+    }
 }

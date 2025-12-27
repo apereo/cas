@@ -19,11 +19,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
  */
 @EqualsAndHashCode(callSuper = true)
 @Slf4j
+@SuppressWarnings("NullAway.Init")
 public class JdbcPropertySource extends EnumerablePropertySource<JdbcTemplate> implements MutablePropertySource<JdbcTemplate> {
-    private final Set<String> propertyNames;
+    private Set<String> propertyNames;
 
     public JdbcPropertySource(final String context, final JdbcTemplate jdbcTemplate) {
         super(context, jdbcTemplate);
+        refresh();
+    }
+
+    @Override
+    public void refresh() {
         this.propertyNames = new HashSet<>(getSource().queryForList("SELECT name FROM CAS_SETTINGS_TABLE", String.class));
     }
 
