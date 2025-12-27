@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -38,10 +39,15 @@ public class RequiredAttributesAuthenticationPolicy extends BaseAuthenticationPo
     private final Map<String, String> requiredAttributes;
 
     @Override
-    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authentication,
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(@Nullable final Authentication authentication,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
                                                              final Map<String, ? extends Serializable> context) {
+        if (authentication == null) {
+            LOGGER.warn("Authentication attempt is null and cannot satisfy policy");
+            return AuthenticationPolicyExecutionResult.failure();
+        }
+
         val allAttributes = CoreAuthenticationUtils.mergeAttributes(authentication.getAttributes(),
             authentication.getPrincipal().getAttributes());
         val result = Objects.requireNonNull(requiredAttributes).entrySet().stream().allMatch(entry -> {

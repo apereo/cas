@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
 
@@ -54,10 +55,17 @@ public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends Base
     }
 
     @Override
-    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authn,
-                                                             final Set<AuthenticationHandler> authenticationHandlers,
-                                                             final ConfigurableApplicationContext applicationContext,
-                                                             final Map<String, ? extends Serializable> context) {
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(
+        @Nullable final Authentication authn,
+        final Set<AuthenticationHandler> authenticationHandlers,
+        final ConfigurableApplicationContext applicationContext,
+        final Map<String, ? extends Serializable> context) {
+
+        if (authn == null) {
+            LOGGER.warn("Authentication attempt is null and cannot satisfy policy");
+            return AuthenticationPolicyExecutionResult.failure();
+        }
+
         var credsOk = true;
         val sum = authn.getSuccesses().size() + authn.getFailures().size();
         if (this.tryAll) {
@@ -66,7 +74,7 @@ public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends Base
 
         if (!credsOk) {
             LOGGER.warn("Number of provided credentials [{}] does not match the sum of authentication successes and failures [{}]. "
-                        + "Successful authentication handlers are [{}]", authn.getCredentials().size(), sum, authn.getSuccesses().keySet());
+                + "Successful authentication handlers are [{}]", authn.getCredentials().size(), sum, authn.getSuccesses().keySet());
             return AuthenticationPolicyExecutionResult.failure();
         }
 

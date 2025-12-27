@@ -270,8 +270,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     void verifyValidServiceTicketRuntimeExceptionWithSpec() throws Throwable {
-        this.serviceValidateController.addValidationSpecification(new MockValidationSpecification(false));
-        assertFalse(Objects.requireNonNull(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
+        serviceValidateController.addValidationSpecification(new MockValidationSpecification(false));
+        assertFalse(Objects.requireNonNull(serviceValidateController.handleRequestInternal(getHttpServletRequest(),
             new MockHttpServletResponse()).getView()).toString().contains(SUCCESS));
     }
 

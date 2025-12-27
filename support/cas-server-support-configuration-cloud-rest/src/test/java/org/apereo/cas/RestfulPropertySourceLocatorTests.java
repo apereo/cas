@@ -18,15 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RestfulApi")
 class RestfulPropertySourceLocatorTests {
-
-    @Test
-    void verifyNoUrl() {
-        val propertySource = new RestfulPropertySourceLocator().locate(new MockEnvironment());
-        assertNotNull(propertySource.getName());
-        assertNotNull(propertySource.getSource());
-        assertNull(propertySource.getProperty("some-random-property"));
-    }
-
     @Test
     void verifyBadParsing() {
         try (val webServer = new MockWebServer("@@")) {

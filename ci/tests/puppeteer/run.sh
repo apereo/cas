@@ -634,7 +634,7 @@ function buildAndRun() {
     rm -rf ${targetArtifact}
     BUILD_COMMAND=$(printf '%s' \
       "./gradlew ${BUILD_TASKS} -DskipSpringBootDevTools=true -DskipNestedConfigMetadataGen=true \
--x check -x test -x javadoc --build-cache --configure-on-demand --parallel\
+-x check -x test -x javadoc --quiet --build-cache --configure-on-demand --parallel\
 ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
 -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS:+ $BUILDFLAGS}")
     printcyan "Executing build command in the ${BUILD_SPAWN}:\n➡️  ${BUILD_COMMAND}"
