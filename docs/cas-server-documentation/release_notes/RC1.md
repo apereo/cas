@@ -95,6 +95,7 @@ should eventually allow the CAS deployer to modify configuration properties with
 The configuration sources that are affected include:
 
 - [Amazon S3](../configuration/Configuration-Server-Management-SpringCloud-AmazonS3.html)
+- [Amazon DynamoDb](../configuration/Configuration-Server-Management-SpringCloud-DynamoDb.html)
 - [JDBC](../configuration/Configuration-Server-Management-SpringCloud-JDBC.html)
 - [MongoDb](../configuration/Configuration-Server-Management-SpringCloud-MongoDb.html)
 - [REST](../configuration/Configuration-Server-Management-SpringCloud-REST.html)
