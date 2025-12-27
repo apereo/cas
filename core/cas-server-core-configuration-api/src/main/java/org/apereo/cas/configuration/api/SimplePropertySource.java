@@ -4,16 +4,16 @@ import module java.base;
 import org.springframework.core.env.MapPropertySource;
 
 /**
- * This is {@link SimpleMutablePropertySource}.
+ * This is {@link SimplePropertySource}.
  *
  * @author Misagh Moayyed
  * @since 8.0.0
  */
-public class SimpleMutablePropertySource extends MapPropertySource
+public class SimplePropertySource extends MapPropertySource
     implements MutablePropertySource<Map<String, Object>> {
 
-    public SimpleMutablePropertySource() {
-        super(SimpleMutablePropertySource.class.getName() + UUID.randomUUID(),
+    public SimplePropertySource() {
+        super(SimplePropertySource.class.getName() + UUID.randomUUID(),
             new ConcurrentHashMap<>());
     }
 

@@ -74,7 +74,7 @@ Remember that actuator endpoints typically are prefixed with <code>/actuator</co
 
 The following endpoints are provided by CAS:
 
-{% include_cached actuators.html endpoints="health" healthIndicators="refresh,configServerHealthIndicator" %}
+{% include_cached actuators.html endpoints="health,casConfig" healthIndicators="refresh,configServerHealthIndicator" %}
 
 {% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.config.server.health" %}
 

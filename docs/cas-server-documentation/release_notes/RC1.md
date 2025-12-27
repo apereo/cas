@@ -87,6 +87,22 @@ as opposed to the previous `7~9` seconds in earlier runs and with previous JDK v
      
 Support for this functionality will ultimately supersede CDS that is now available to 
 [CAS overlay installations](../installation/WAR-Overlay-Initializr.html).
+ 
+### Configuration Source Updates
+
+A number of CAS configuration sources are reworked to allow updating properties dynamically at runtime. The changes
+should eventually allow the CAS deployer to modify configuration properties without having to restart the server.
+The configuration sources that are affected include:
+
+- [Amazon S3](../configuration/Configuration-Server-Management-SpringCloud-AmazonS3.html)
+- [JDBC](../configuration/Configuration-Server-Management-SpringCloud-JDBC.html)
+- [MongoDb](../configuration/Configuration-Server-Management-SpringCloud-MongoDb.html)
+- [REST](../configuration/Configuration-Server-Management-SpringCloud-REST.html)
+
+Furthermore, the `casConfig` actuator endpoint is enhanced to allow updating a configuration property at runtime. 
+This functionality will eventually be employed by the [Palantir Admin Dashboard](../installation/Admin-Dashboard.html)
+to allow web-based operations to modify server configuration, assuming the underlying configuration source supports
+dynamic updates.
 
 ### Google Authenticator Scratch Codes
 
@@ -100,7 +116,8 @@ This may be a breaking change. You will need to adjust your database schema base
 ### Palantir Admin Dashboard
 
 [Palantir Admin Console](../installation/Admin-Dashboard.html) now supports a wizard-based web editor
-that allows **registering** registered services.
+that allows **registering** registered services. Support for editing existing services usin this wizard
+will be worked out in the future.
 
 <div class="alert alert-warning">:warning: <strong>Usage</strong><p>
 This functionality is brand new, and may still have many rough edges. Not every configuration property and setting

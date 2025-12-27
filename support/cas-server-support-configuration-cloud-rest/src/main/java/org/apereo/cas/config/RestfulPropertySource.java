@@ -34,6 +34,7 @@ import tools.jackson.databind.ObjectMapper;
  * @since 8.0.0
  */
 @Slf4j
+@SuppressWarnings("NullAway.Init")
 public class RestfulPropertySource extends EnumerablePropertySource<Environment>
     implements MutablePropertySource<Environment> {
 
@@ -46,11 +47,16 @@ public class RestfulPropertySource extends EnumerablePropertySource<Environment>
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final SpringCloudConfigurationProperties.Rest config;
-    private final Set<String> propertyNames;
+    private Set<String> propertyNames;
 
     public RestfulPropertySource(final String context, final SpringCloudConfigurationProperties.Rest config) {
         super(context);
         this.config = config;
+        refresh();
+    }
+
+    @Override
+    public void refresh() {
         this.propertyNames = fetchPropertyNames();
     }
 

@@ -5,6 +5,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.env.Environment;
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.regions.Region;
@@ -27,7 +28,7 @@ public class AmazonEnvironmentAwareClientBuilder {
      * @param key the key
      * @return the setting
      */
-    public String getSetting(final String key) {
+    public @Nullable String getSetting(final String key) {
         return environment.getProperty(this.propertyPrefix + '.' + key);
     }
 
@@ -51,7 +52,7 @@ public class AmazonEnvironmentAwareClientBuilder {
      * @param targetType the target type
      * @return the setting
      */
-    public <T> T getSetting(final String key, final Class<T> targetType) {
+    public @Nullable <T> T getSetting(final String key, final Class<T> targetType) {
         return environment.getProperty(this.propertyPrefix + '.' + key, targetType);
     }
 
