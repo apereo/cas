@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import module java.base;
+import org.apereo.cas.config.RestfulPropertySource;
 import org.apereo.cas.config.RestfulPropertySourceLocator;
 import org.apereo.cas.util.MockWebServer;
 import lombok.val;
@@ -20,22 +21,22 @@ class RestfulPropertySourceLocatorTests {
 
     @Test
     void verifyNoUrl() {
-        val environment = new MockEnvironment();
-        val loc = new RestfulPropertySourceLocator();
-        assertTrue(((Map) loc.locate(environment).getSource()).isEmpty());
+        val propertySource = new RestfulPropertySourceLocator().locate(new MockEnvironment());
+        assertNotNull(propertySource.getName());
+        assertNotNull(propertySource.getSource());
+        assertNull(propertySource.getProperty("some-random-property"));
     }
 
     @Test
     void verifyBadParsing() {
-        val loc = new RestfulPropertySourceLocator();
         try (val webServer = new MockWebServer("@@")) {
             webServer.start();
             val environment = new MockEnvironment();
-            environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".url", "http://localhost:" + webServer.getPort());
-            environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".basic-auth-username", "casuser");
-            environment.setProperty(RestfulPropertySourceLocator.CAS_CONFIGURATION_PREFIX + ".basic-auth-password", "password");
-
-            assertTrue(((Map) loc.locate(environment).getSource()).isEmpty());
+            environment.setProperty(RestfulPropertySource.CAS_CONFIGURATION_PREFIX + ".url", "http://localhost:" + webServer.getPort());
+            environment.setProperty(RestfulPropertySource.CAS_CONFIGURATION_PREFIX + ".basic-auth-username", "casuser");
+            environment.setProperty(RestfulPropertySource.CAS_CONFIGURATION_PREFIX + ".basic-auth-password", "password");
+            val propertySource = new RestfulPropertySourceLocator().locate(environment);
+            assertNull(propertySource.getProperty("some-random-property"));
         }
     }
 

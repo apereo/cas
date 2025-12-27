@@ -22,3 +22,12 @@ services:
       MODE: public
       BASKET: cas
       TOKEN: "SV00cPIKRdWjGkN1vkbEbPdhtvV5vIJ0ajygcdnZVBgl"
+  mockserver:
+    image: mockserver/mockserver:latest
+    container_name: mockserver
+    ports:
+      - "56565:1080"
+    volumes:
+      - ./mockserver/initializer.json:/config/initializer.json:ro
+    environment:
+      MOCKSERVER_INITIALIZATION_JSON_PATH: /config/initializer.json

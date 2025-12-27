@@ -32,4 +32,12 @@ public interface MutablePropertySource<T> {
      * @return the source
      */
     T getSource();
+
+    /**
+     * Get property names..
+     *
+     * @return property names
+     * @see org.springframework.core.env.EnumerablePropertySource#getPropertyNames()
+     */
+    String[] getPropertyNames();
 }

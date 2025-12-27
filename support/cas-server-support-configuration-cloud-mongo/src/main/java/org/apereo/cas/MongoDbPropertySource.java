@@ -22,21 +22,27 @@ import org.springframework.data.mongodb.core.query.Update;
 public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperations>
     implements MutablePropertySource<MongoOperations> {
 
+    private final Set<String> propertyNames;
+
     public MongoDbPropertySource(final String context, final MongoOperations mongo) {
         super(context, mongo);
+        val list = getSource().findAll(MongoDbProperty.class, MongoDbProperty.class.getSimpleName());
+        this.propertyNames = new HashSet<>(list.stream().map(MongoDbProperty::getName).toList());
     }
 
     @Override
     public String[] getPropertyNames() {
-        val list = getSource().findAll(MongoDbProperty.class, MongoDbProperty.class.getSimpleName());
-        return list.stream().map(MongoDbProperty::getName).toArray(String[]::new);
+        return propertyNames.toArray(String[]::new);
     }
 
     @Override
     public @Nullable Object getProperty(final String name) {
-        val query = Query.query(Criteria.where("name").is(name));
-        val prop = getSource().findOne(query, MongoDbProperty.class, MongoDbProperty.class.getSimpleName());
-        return prop != null ? prop.getValue() : null;
+        if (propertyNames.contains(name)) {
+            val query = Query.query(Criteria.where("name").is(name));
+            val prop = getSource().findOne(query, MongoDbProperty.class, MongoDbProperty.class.getSimpleName());
+            return Objects.requireNonNull(prop).getValue();
+        }
+        return null;
     }
 
     @Override
@@ -50,6 +56,7 @@ public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperati
             MongoDbProperty.class,
             MongoDbProperty.class.getSimpleName()
         );
+        propertyNames.add(name);
         return this;
     }
 }

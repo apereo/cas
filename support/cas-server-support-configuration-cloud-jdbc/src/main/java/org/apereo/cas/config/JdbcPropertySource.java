@@ -20,8 +20,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @EqualsAndHashCode(callSuper = true)
 @Slf4j
 public class JdbcPropertySource extends EnumerablePropertySource<JdbcTemplate> implements MutablePropertySource<JdbcTemplate> {
+    private final Set<String> propertyNames;
+
     public JdbcPropertySource(final String context, final JdbcTemplate jdbcTemplate) {
         super(context, jdbcTemplate);
+        this.propertyNames = new HashSet<>(getSource().queryForList("SELECT name FROM CAS_SETTINGS_TABLE", String.class));
     }
 
     @Override
@@ -30,23 +33,25 @@ public class JdbcPropertySource extends EnumerablePropertySource<JdbcTemplate> i
         if (updated == 0) {
             getSource().update("INSERT INTO CAS_SETTINGS_TABLE(name, value) VALUES(?, ?)", name, value);
         }
+        propertyNames.add(name);
         return this;
     }
 
     @Override
     public String[] getPropertyNames() {
-        return getSource().queryForList("SELECT name FROM CAS_SETTINGS_TABLE", String.class)
-            .toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+        return propertyNames.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
     @Override
     public @Nullable Object getProperty(final String name) {
-        try {
-            return getSource().queryForObject("SELECT value FROM CAS_SETTINGS_TABLE WHERE name = ?", Object.class, name);
-        } catch (final EmptyResultDataAccessException e) {
-            LOGGER.trace("No value could be found in the database for property name [{}]", name);
-            return null;
+        if (propertyNames.contains(name)) {
+            try {
+                return getSource().queryForObject("SELECT value FROM CAS_SETTINGS_TABLE WHERE name = ?", Object.class, name);
+            } catch (final EmptyResultDataAccessException e) {
+                LOGGER.trace("No value could be found in the database for property name [{}]", name);
+            }
         }
+        return null;
     }
 }
 
