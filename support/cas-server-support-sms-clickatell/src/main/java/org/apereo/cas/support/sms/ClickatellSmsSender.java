@@ -68,9 +68,10 @@ public class ClickatellSmsSender implements SmsSender {
                 }
 
                 val messages = (List<Map>) body.get("messages");
-                val errors = messages.stream()
-                    .filter(m -> m.containsKey("accepted") && !Boolean.parseBoolean(m.get("accepted").toString()) && m.containsKey("error"))
-                    .map(m -> (String) m.get("error")).toList();
+                val errors = messages
+                    .stream()
+                    .filter(msg -> msg.containsKey("accepted") && !Boolean.parseBoolean(msg.get("accepted").toString()) && msg.containsKey("error"))
+                    .map(msg -> (String) msg.get("error")).toList();
                 if (errors.isEmpty()) {
                     return true;
                 }
