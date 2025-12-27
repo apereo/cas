@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.api.MutablePropertySource;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -18,7 +17,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.bootstrap.config.BootstrapPropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
-import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,9 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 56565)
 class CasRestfulCloudConfigBootstrapAutoConfigurationTests {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
-
     private static final String STATIC_AUTHN_USERS = "casuser::P@$$w0rd,admin::P@$$w0rd";
 
     @Autowired
