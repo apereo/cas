@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -38,11 +39,17 @@ public class NotPreventedAuthenticationPolicy extends AtLeastOneCredentialValida
     }
 
     @Override
-    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authentication,
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(@Nullable final Authentication authentication,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
                                                              final Map<String, ? extends Serializable> context) throws Exception {
-        val fail = authentication.getFailures().values()
+        if (authentication == null) {
+            LOGGER.warn("Authentication attempt is null and cannot satisfy policy");
+            return AuthenticationPolicyExecutionResult.failure();
+        }
+        
+        val fail = authentication.getFailures()
+            .values()
             .stream()
             .anyMatch(failure -> failure.getClass().isAssignableFrom(PreventedException.class));
         if (fail) {

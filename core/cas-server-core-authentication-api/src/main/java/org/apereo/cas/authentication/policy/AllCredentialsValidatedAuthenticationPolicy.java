@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -31,10 +32,15 @@ public class AllCredentialsValidatedAuthenticationPolicy extends BaseAuthenticat
     private static final long serialVersionUID = 6112280265093249844L;
 
     @Override
-    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authn,
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(@Nullable final Authentication authn,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
                                                              final Map<String, ? extends Serializable> context) {
+        if (authn == null) {
+            LOGGER.warn("Authentication attempt is null and cannot satisfy policy");
+            return AuthenticationPolicyExecutionResult.failure();
+        }
+
         LOGGER.debug("Successful authentications: [{}], credentials: [{}]",
             authn.getSuccesses().keySet(), authn.getCredentials());
         if (authn.getSuccesses().size() != authn.getCredentials().size()) {

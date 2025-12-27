@@ -49,16 +49,14 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     }
 
     protected @Nullable Authentication getAuthenticationSatisfiedByPolicy(
-        @Nullable
-        final Authentication authentication,
+        @Nullable final Authentication authentication,
         @Nullable final Service service,
-        @Nullable
-        final RegisteredService registeredService) throws AbstractTicketException {
+        @Nullable final RegisteredService registeredService) throws AbstractTicketException {
         val policy = configurationContext.getAuthenticationPolicy();
         try {
             val policyContext = Map.of(RegisteredService.class.getName(), Objects.requireNonNull(registeredService),
                 Service.class.getName(), Objects.requireNonNull(service));
-            val executionResult = policy.isSatisfiedBy(Objects.requireNonNull(authentication),
+            val executionResult = policy.isSatisfiedBy(authentication,
                 configurationContext.getApplicationContext(), policyContext);
             if (executionResult.isSuccess()) {
                 return authentication;
