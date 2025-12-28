@@ -97,6 +97,7 @@ The configuration sources that are affected include:
 - [Amazon S3](../configuration/Configuration-Server-Management-SpringCloud-AmazonS3.html)
 - [Amazon DynamoDb](../configuration/Configuration-Server-Management-SpringCloud-DynamoDb.html)
 - [Amazon Secret Manager](../configuration/Configuration-Server-Management-SpringCloud-AmazonSecretManager.html)
+- [Amazon Systems Manager Parameter Store (SSM)](../configuration/Configuration-Server-Management-SpringCloud-AmazonSSM.html)
 - [JDBC](../configuration/Configuration-Server-Management-SpringCloud-JDBC.html)
 - [MongoDb](../configuration/Configuration-Server-Management-SpringCloud-MongoDb.html)
 - [REST](../configuration/Configuration-Server-Management-SpringCloud-REST.html)
@@ -105,6 +106,10 @@ Furthermore, the `casConfig` actuator endpoint is enhanced to allow updating a c
 This functionality will eventually be employed by the [Palantir Admin Dashboard](../installation/Admin-Dashboard.html)
 to allow web-based operations to modify server configuration, assuming the underlying configuration source supports
 dynamic updates.
+
+<div class="alert alert-info">:information_source: <strong>Note</strong>
+<p>If CAS is configured using <code>.properties</code>, <code>.yml</code>, or <code>.yaml</code> 
+configuration files, you will not be able to take advantage of this capability yet.</p></div>
 
 ### Google Authenticator Scratch Codes
 
