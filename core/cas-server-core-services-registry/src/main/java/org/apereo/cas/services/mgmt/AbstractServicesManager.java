@@ -326,14 +326,28 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
 
             val cachedServices = configurationContext.getServicesCache().asMap();
             if (cachedServices.isEmpty()) {
-                LOGGER.info("Loaded [{}] service(s) directly from service registry [{}].", servicesMap.size(),
-                    configurationContext.getServiceRegistry().getName());
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Loaded [{}] service(s) directly from service registry [{}].",
+                        countLoadedServices(servicesMap),
+                        configurationContext.getServiceRegistry().getName());
+                }
                 return servicesMap.values();
             }
-            LOGGER.info("Loaded [{}] service(s) from cache [{}].", cachedServices.size(),
-                configurationContext.getServiceRegistry().getName());
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Loaded [{}] service(s) from cache [{}].",
+                    countLoadedServices(cachedServices),
+                    configurationContext.getServiceRegistry().getName());
+            }
             return cachedServices.values();
         });
+    }
+
+    private static long countLoadedServices(final Map<Long, RegisteredService> servicesMap) {
+        return servicesMap
+            .values()
+            .stream()
+            .filter(Predicate.not(RegisteredService::isInternal))
+            .count();
     }
 
     private Map<Long, RegisteredService> cacheRegisteredServices(final Map<Long, RegisteredService> servicesMap) {
