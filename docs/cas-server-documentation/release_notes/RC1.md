@@ -96,6 +96,7 @@ The configuration sources that are affected include:
 
 - [Amazon S3](../configuration/Configuration-Server-Management-SpringCloud-AmazonS3.html)
 - [Amazon DynamoDb](../configuration/Configuration-Server-Management-SpringCloud-DynamoDb.html)
+- [Amazon Secret Manager](../configuration/Configuration-Server-Management-SpringCloud-AmazonSecretManager.html)
 - [JDBC](../configuration/Configuration-Server-Management-SpringCloud-JDBC.html)
 - [MongoDb](../configuration/Configuration-Server-Management-SpringCloud-MongoDb.html)
 - [REST](../configuration/Configuration-Server-Management-SpringCloud-REST.html)
