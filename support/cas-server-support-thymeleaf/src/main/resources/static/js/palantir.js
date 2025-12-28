@@ -2144,6 +2144,58 @@ async function initializeSystemOperations() {
         .then(configureHealthChart())
         .then(configureSystemInfo())
         .then(configureSystemMetrics());
+
+    $("button[name=shutdownServerButton]").off().on("click", function () {
+        Swal.fire({
+            title: "Are you sure you want to shut the server down?",
+            text: "Once confirmed, the server will begin shutdown procedures.",
+            icon: "warning",
+            showConfirmButton: true,
+            showDenyButton: true
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: actuatorEndpoints.shutdown,
+                        type: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        success: response => {
+                            Swal.fire("Shutting Down...", "CAS will start to shutdown shortly. You may close this window.", "info");
+                        },
+                        error: (xhr, status, error) => {
+                            console.error("Error deleting resource:", error);
+                            displayBanner(xhr);
+                        }
+                    });
+                }
+            });
+    });
+
+    $("button[name=restartServerButton]").off().on("click", function () {
+        Swal.fire({
+            title: "Are you sure you want to restart the server?",
+            text: "Once confirmed, the server will begin restarting.",
+            icon: "warning",
+            showConfirmButton: true,
+            showDenyButton: true
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: actuatorEndpoints.restart,
+                        type: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        success: response => {
+                            Swal.fire("Restarting...", "CAS is restarting. You may close this window.", "info");
+                        },
+                        error: (xhr, status, error) => {
+                            console.error("Error deleting resource:", error);
+                            displayBanner(xhr);
+                        }
+                    });
+                }
+            });
+    });
 }
 
 async function initializeCasFeatures() {
@@ -4273,7 +4325,12 @@ function processNavigationTabs() {
     if (!actuatorEndpoints.multitenancy || !CAS_FEATURES.includes("Multitenancy")) {
         $("#tenantsTabButton").addClass("d-none");
     }
-
+    if (!actuatorEndpoints.restart) {
+        $("#restartServerButton").addClass("d-none");
+    }
+    if (!actuatorEndpoints.shutdown) {
+        $("#shutdownServerButton").addClass("d-none");
+    }
     return $("nav.sidebar-navigation ul li:visible").length;
 }
 

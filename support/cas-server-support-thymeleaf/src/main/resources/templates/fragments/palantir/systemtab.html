@@ -31,6 +31,15 @@
                                class="border-rounded language-html"
                                th:text="${clientInfo.clientIpAddress}"></code></pre>
                 </div>
+                
+                <div class="d-flex">
+                    <button type="button" name="shutdownServerButton" id="shutdownServerButton" class="mdc-button mdc-button--raised">
+                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-power" aria-hidden="true"></i>Shut Down</span>
+                    </button>
+                    <button type="button" name="restartServerButton" id="restartServerButton" class="mdc-button mdc-button--raised">
+                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-restart" aria-hidden="true"></i>Restart</span>
+                    </button>
+                </div>
             </div>
 
             <div id="systemstatus-tab">

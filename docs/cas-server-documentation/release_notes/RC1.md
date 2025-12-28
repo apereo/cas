@@ -123,7 +123,7 @@ This may be a breaking change. You will need to adjust your database schema base
 ### Palantir Admin Dashboard
 
 [Palantir Admin Console](../installation/Admin-Dashboard.html) now supports a wizard-based web editor
-that allows **registering** registered services. Support for editing existing services usin this wizard
+that allows **registering** registered services. Support for editing existing services using this wizard
 will be worked out in the future.
 
 <div class="alert alert-warning">:warning: <strong>Usage</strong><p>
