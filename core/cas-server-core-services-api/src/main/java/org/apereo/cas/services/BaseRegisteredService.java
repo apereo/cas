@@ -97,8 +97,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     @Override
     public int compareTo(
-        @NonNull
-        final RegisteredService other) {
+        @NonNull final RegisteredService other) {
         return Comparator
             .comparingInt(RegisteredService::getEvaluationPriority)
             .thenComparingInt(RegisteredService::getEvaluationOrder)

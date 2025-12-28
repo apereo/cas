@@ -9,6 +9,8 @@ const cas = require("../../cas.js");
     await cas.assertCookie(page);
     await cas.gotoLogout(page);
 
+    await cas.refreshContext();
+    
     await cas.gotoLogin(page);
     await cas.loginWith(page, "cassystem@system.org");
     await cas.sleep(1000);

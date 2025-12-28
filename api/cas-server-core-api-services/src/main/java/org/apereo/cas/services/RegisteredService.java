@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.principal.Service;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.core.Ordered;
 
 /**
@@ -217,5 +219,18 @@ public interface RegisteredService extends RegisteredServiceDefinition, Comparab
             setId(System.nanoTime());
         }
         return this;
+    }
+
+
+    /**
+     * Determine whether the service is marked as internal.
+     *
+     * @return true/false
+     */
+    @JsonIgnore
+    default boolean isInternal() {
+        val property = RegisteredServiceProperty.RegisteredServiceProperties.INTERNAL_SERVICE_DEFINITION;
+        return property.isAssignedTo(this, BooleanUtils::toBoolean)
+            && property.getPropertyBooleanValue(this);
     }
 }
