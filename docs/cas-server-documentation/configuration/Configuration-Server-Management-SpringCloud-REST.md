@@ -20,9 +20,13 @@ belong to a Spring Cloud Configuration server. While this module is primarily us
 Spring Cloud Configuration server, it nonetheless may also be used inside a CAS server overlay 
 directly to fetch settings from a source.</p></div>
 
+<div class="alert alert-info mt-3">:information_source: <strong>Usage</strong>
+<p>This capability supports dynamic configuration updates at runtime.</p></div>
+
+
 {% include_cached casproperties.html properties="cas.spring.cloud.rest" %}
 
-# REST API
+## REST API
   
 The REST endpoints expected by this capability are as follows:
 
@@ -31,3 +35,9 @@ The REST endpoints expected by this capability are as follows:
 | `/`      | `GET`  | Fetch a specific property requested by the `name` query parameter. Produce `200` status code with the property value in the response body, or `4xx` for unknown/unaailable properties. |
 | `/names` | `GET`  | Produce a list of all supported and available property names.                                                                                                                          |
 | `/`      | `POST` | Receive a `name` and `value` in the requesty body to update a prooerty value.                                                                                                          |
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="casConfig" casModule="cas-server-support-reports" %}

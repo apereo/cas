@@ -25,4 +25,13 @@ The `DynamoDbCasProperties` table is automatically created by CAS with the follo
 }
 ```
 
+<div class="alert alert-info mt-3">:information_source: <strong>Usage</strong>
+<p>This capability supports dynamic configuration updates at runtime.</p></div>
+
 {% include_cached casproperties.html properties="cas.spring.cloud.dynamo-db" %}
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="casConfig" casModule="cas-server-support-reports" %}
