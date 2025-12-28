@@ -66,11 +66,11 @@ function formatDateYearMonthDayHourMinute(date) {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
-function formatDateYearMonthDay(date) {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = (d.getMonth() + 1).toString().padStart(2, "0");
-    const day = d.getDate().toString().padStart(2, "0");
+function formatDateYearMonthDay(givenDate) {
+    const date = new Date(givenDate);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
 }
 
@@ -260,6 +260,30 @@ function preventFormResubmission() {
     });
 }
 
+function captureAndStoreUsername() {
+    const $panel = $("#publicWorkstationSwitchButtonPanel");
+
+    if ($panel.length > 0 && $panel.is(":visible")) {
+        console.log("Public workstation mode is enabled; skipping username capture.");
+        return;
+    }
+    
+    $("form").submit(function () {
+        const username = $(this).find('input[name="username"]').val();
+        if (username) {
+            localStorage.setItem("username", username);
+        }
+        return true;
+    });
+    const savedUsername = localStorage.getItem("username");
+    $("#fm1 label[for='username']").removeClass("highlight-username");
+    if (savedUsername) {
+        $("#fm1 input[name='username']").val(savedUsername);
+        $("#fm1 input[name='password']").focus();
+        $("#fm1 label[for='username']").addClass("highlight-username");
+    }
+}
+
 function writeToLocalStorage(browserStorage) {
     if (typeof (Storage) === "undefined") {
         console.log("Browser does not support local storage for write ops");
@@ -356,6 +380,10 @@ function resourceLoadedSuccessfully() {
         preventFormResubmission();
         $("#fm1 input[name=\"username\"],[name=\"password\"]").trigger("input");
         $("#fm1 input[name=\"username\"]").focus();
+
+        if (rememberUsername && rememberUsername === "true") {
+            captureAndStoreUsername();
+        }
 
         $(".reveal-password").on("click", function (ev) {
             ev.preventDefault();

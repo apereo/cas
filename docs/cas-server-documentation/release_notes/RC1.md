@@ -247,3 +247,4 @@ records, etc are processed and loaded.
 - Spring Webflow actions may optionally run in the context of a transaction if the underlying action is configured to do so.
 - [OpenID Connect Claims Mapping rules](../authentication/OIDC-Authentication-Claims-Mapping.html) now support external Groovy scripts.
 - [Releasing a principal id based on attributes](../integration/Attribute-Release-PrincipalId-Attribute.html) now supports multiple comma-separated attributes as fallback options.
+- [CAS themes](../ux/User-Interface-Customization-Themes-Static.html) are now, optionally, able to capture and remember the submitted username.
