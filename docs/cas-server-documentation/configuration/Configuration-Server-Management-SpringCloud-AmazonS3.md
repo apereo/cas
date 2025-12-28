@@ -16,4 +16,13 @@ Support is provided via the following dependency in the WAR overlay:
 
 <div class="alert alert-info mt-3">:information_source: <strong>Usage</strong><p>The configuration modules provided here may also be used verbatim inside a CAS server overlay and do not exclusively belong to a Spring Cloud Configuration server. While this module is primarily useful when inside the Spring Cloud Configuration server, it nonetheless may also be used inside a CAS server overlay directly to fetch settings from a source.</p></div>
 
+<div class="alert alert-info mt-3">:information_source: <strong>Usage</strong>
+<p>This capability supports dynamic configuration updates at runtime.</p></div>
+
 {% include_cached casproperties.html properties="cas.spring.cloud.aws.s3" %}
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="casConfig" casModule="cas-server-support-reports" %}

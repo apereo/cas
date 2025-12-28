@@ -29,4 +29,13 @@ MongoDb documents are required to be found in the collection `MongoDbProperty`, 
 }
 ```
 
+<div class="alert alert-info mt-3">:information_source: <strong>Usage</strong>
+<p>This capability supports dynamic configuration updates at runtime.</p></div>
+
 {% include_cached casproperties.html properties="cas.spring.cloud.mongo" %}
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="casConfig" casModule="cas-server-support-reports" %}
