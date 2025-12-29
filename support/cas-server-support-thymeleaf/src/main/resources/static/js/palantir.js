@@ -80,7 +80,7 @@ function updateConfigPropertyValue(name) {
             showCancelButton: true,
             icon: "question",
             title: `What's the new configuration value for ${name}?`,
-            text: "This functionality process can only update configuration properties if the underlying configuration source supports dynamic updates.",
+            text: "This functionality can only update configuration properties if the underlying configuration source supports dynamic updates.",
         })
             .then((result) => {
                 if (result.isConfirmed) {
