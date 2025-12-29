@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.CasCoreConfigurationUtils;
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -82,7 +83,8 @@ public class DashboardController extends AbstractController {
         mav.addObject("availableMultifactorProviders", MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).keySet());
         mav.addObject("scriptFactoryAvailable", CasRuntimeHintsRegistrar.notInNativeImage()
             && ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory().isPresent());
-
+        mav.addObject("mutablePropertySourcesAvailable",
+            !CasCoreConfigurationUtils.getMutablePropertySources(applicationContext).isEmpty());
         return mav;
     }
 

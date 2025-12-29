@@ -2,8 +2,10 @@ package org.apereo.cas.web.report;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.CasCoreConfigurationUtils;
 import org.apereo.cas.configuration.api.MutablePropertySource;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -81,19 +83,9 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
         })
     public List<String> updateProperty(
         @RequestBody final List<ConfigurationPropertyUpdateRequest> value) {
-        val activeSources = applicationContext.getEnvironment().getPropertySources();
+        val activeSources = CasCoreConfigurationUtils.getMutablePropertySources(applicationContext);
         return activeSources
             .stream()
-            .map(source -> {
-                if (source instanceof final MutablePropertySource mutable) {
-                    return mutable;
-                }
-                if (source instanceof final BootstrapPropertySource bootstrap
-                    && bootstrap.getDelegate() instanceof final MutablePropertySource mutable) {
-                    return mutable;
-                }
-                return null;
-            })
             .filter(Objects::nonNull)
             .map(source -> {
                 value.forEach(v -> source.setProperty(v.name(), v.value()));
