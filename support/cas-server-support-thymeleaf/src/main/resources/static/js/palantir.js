@@ -40,6 +40,56 @@ const CAS_FEATURES = [];
 
 let notyf = null;
 
+function effectiveConfigPropertyValue(name) {
+    $.get(`${actuatorEndpoints.env}/${name}`, response => {
+        Swal.fire({
+            title: 'Effective Property Value',
+            html: `
+                The effective configuration value for <code>${name}</code> is:<p/>
+                <pre><code class="border-rounded language-html">${name}=${response.property.value}</code></pre>
+            `,
+            icon: 'info',
+            width: '50%',
+            showDenyButton: true,
+            confirmButtonText: 'OK',
+            denyButtonText: 'Copy',
+            didOpen: () => {
+                hljs.highlightAll();
+                Swal.getDenyButton().addEventListener('click', async () => {
+                    const text = `${name}=${response.property.value}`;
+                    copyToClipboard(text);
+                    setTimeout(() => Swal.resetValidationMessage(), 100);
+                });
+            }
+        });
+    })
+    .fail((xhr, status, error) => {
+        console.error("Error fetching data:", error);
+        displayBanner(xhr);
+    });
+}
+
+function updateConfigPropertyValue(name) {
+    if (mutablePropertySourcesAvailable && actuatorEndpoints.casConfig) {
+        Swal.fire({
+            input: "text",
+            inputAttributes: {
+                autocapitalize: "off"
+            },
+            showConfirmButton: true,
+            showCancelButton: true,
+            icon: "question",
+            title: `What's the new configuration value for ${name}?`,
+            text: "This functionality process can only update configuration properties if the underlying configuration source supports dynamic updates.",
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+
+                }
+            });
+    }
+}
+
 async function fetchCasFeatures() {
     return new Promise((resolve, reject) => {
         if (!actuatorEndpoints.casFeatures) {
@@ -3231,9 +3281,21 @@ async function initializeConsentOperations() {
 }
 
 async function initializeConfigurationOperations() {
+    const toolbar = document.createElement("div");
+    if (mutablePropertySourcesAvailable) {
+        toolbar.innerHTML = `
+            <button type="button" id="newConfigPropertyButton" class="mdc-button mdc-button--raised">
+                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New Property</span>
+            </button>
+        `;
+    }
+
     const configurationTable = $("#configurationTable").DataTable({
         pageLength: 10,
         autoWidth: false,
+        layout: {
+            topStart: toolbar
+        },
         columnDefs: [
             {visible: false, targets: 0}
         ],
@@ -3251,7 +3313,7 @@ async function initializeConfigurationOperations() {
                     if (last !== group) {
                         $(rows).eq(i).before(
                             `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                            <td colspan="2">${group}</td></tr>`.trim());
+                                            <td colspan="3">${group}</td></tr>`.trim());
                         last = group;
                     }
                 });
@@ -3290,16 +3352,37 @@ async function initializeConfigurationOperations() {
                 const properties = flattenJSON(source.properties);
                 for (const [key, value] of Object.entries(properties)) {
                     if (!key.endsWith(".origin")) {
+                        const propertyName = key.replace(".value", "");
+                        let buttons = `
+                            <button type="button" name="effectiveConfigPropertyValueButton" href="#" 
+                                    data-key='${propertyName}'
+                                    onclick="effectiveConfigPropertyValue('${propertyName}')"
+                                    class="mdc-button mdc-button--raised min-width-32x">
+                                <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
+                            </button>
+                        `;
+                        if (mutablePropertySourcesAvailable) {
+                            buttons += `
+                                <button type="button" name="updateConfigPropertyValueButton" href="#" 
+                                        data-key='${propertyName}'
+                                        onclick="updateConfigPropertyValue('${propertyName}')"
+                                        class="mdc-button mdc-button--raised min-width-32x">
+                                    <i class="mdi mdi-content-save-edit min-width-32x" aria-hidden="true"></i>
+                                </button>
+                            `;
+                        }
+                        
                         configurationTable.row.add({
                             0: `${camelcaseToTitleCase(source.name)}`,
-                            1: `<code>${key.replace(".value", "")}</code>`,
-                            2: `<code>${value}</code>`
+                            1: `<code>${propertyName}</code>`,
+                            2: `<code>${value}</code>`,
+                            3: buttons
                         });
                     }
                 }
             }
             configurationTable.draw();
-
+            
             $("#casActiveProfiles").empty();
             for (const element of response.activeProfiles) {
                 let feature = `
@@ -3313,7 +3396,6 @@ async function initializeConfigurationOperations() {
             `.trim();
                 $("#casActiveProfiles").append($(feature));
             }
-
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
             displayBanner(xhr);
@@ -3394,7 +3476,7 @@ async function initializeConfigurationOperations() {
             pageLength: 10,
             drawCallback: settings => {
                 $("#configSearchResultsTable tr").addClass("mdc-data-table__row");
-                $("#configSearchResultsTable td").addClass("mdc-data-table__cell");
+                $("#configSearchResultsTable td").addClass("mdc-data-table__cell").addClass("text-wrap");
             }
         });
         configSearchResultsTable.clear();

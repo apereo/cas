@@ -1,11 +1,17 @@
 package org.apereo.cas.configuration;
 
 import module java.base;
+import org.apereo.cas.configuration.api.MutablePropertySource;
 import com.google.common.base.Splitter;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.config.YamlProcessor;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
+import org.springframework.cloud.bootstrap.config.BootstrapPropertySource;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
 
 /**
@@ -31,6 +37,32 @@ public final class CasCoreConfigurationUtils {
         factory.setSingleton(true);
         factory.afterPropertiesSet();
         return (Map) Objects.requireNonNull(factory.getObject());
+    }
+
+    /**
+     * Gets mutable property sources.
+     *
+     * @param applicationContext the application context
+     * @return the mutable property sources
+     */
+    @SuppressWarnings("NullAway")
+    public static List<MutablePropertySource> getMutablePropertySources(
+        final ConfigurableApplicationContext applicationContext) {
+        val activeSources = applicationContext.getEnvironment().getPropertySources();
+        return activeSources
+            .stream()
+            .map(source -> {
+                if (source instanceof final MutablePropertySource mutable) {
+                    return mutable;
+                }
+                if (source instanceof final BootstrapPropertySource bootstrap
+                    && bootstrap.getDelegate() instanceof final MutablePropertySource mutable) {
+                    return mutable;
+                }
+                return null;
+            })
+            .filter(Objects::nonNull)
+            .toList();
     }
 
     /**

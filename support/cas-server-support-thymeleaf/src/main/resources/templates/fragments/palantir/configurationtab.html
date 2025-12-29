@@ -23,12 +23,19 @@
             </ul>
 
             <div id="environment-tab">
+                <p>
+                    You can view all active property sources, (e.g. system properties, environment variables,  etc.)
+                    and determine which property source contributed which value. You can also examine the effective value for a
+                    particular configuration property directly, or add/update a property value at runtime assuming the
+                    underlying configuration property source supports dynamic updates.
+                </p>
                  <table id="configurationTable" class="mdc-data-table__table table table-striped noborder">
                     <thead>
                     <tr class="mdc-data-table__header-row">
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Source</th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
                     </tr>
                     </thead>
                     <tbody class="mdc-data-table__content">
