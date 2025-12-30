@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -32,12 +33,14 @@ public class CasJdbcCloudConfigBootstrapAutoConfiguration {
     private static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.jdbc";
 
     @Bean
+    @ConditionalOnMissingBean(name = "jdbcPropertySourceLocator")
     public PropertySourceLocator jdbcPropertySourceLocator(
         @Qualifier("jdbcCloudConfigurationTemplate") final JdbcTemplate jdbcTemplate) {
         return new JdbcPropertySourceLocator(jdbcTemplate);
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "jdbcCloudConfigurationTemplate")
     public JdbcTemplate jdbcCloudConfigurationTemplate(final ConfigurableEnvironment environment) {
         val connection = new JdbcCloudConnection(environment);
         val dataSource = JpaBeans.newDataSource(connection);

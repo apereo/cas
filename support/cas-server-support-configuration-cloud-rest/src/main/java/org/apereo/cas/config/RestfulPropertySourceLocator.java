@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
@@ -16,6 +18,7 @@ import org.springframework.core.env.PropertySource;
  * @since 6.2.0
  */
 @Slf4j
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class RestfulPropertySourceLocator implements PropertySourceLocator {
     @Override
     public PropertySource<?> locate(final Environment environment) {

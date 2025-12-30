@@ -8,9 +8,10 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.PropertySource;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
 
@@ -24,18 +25,20 @@ import software.amazon.awssdk.services.s3.S3Configuration;
 @Getter
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "aws-s3")
 @AutoConfiguration
-public class CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration implements PropertySourceLocator {
+public class CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration {
     /**
      * Amazon S3 CAS configuration key prefix.
      */
     public static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.aws.s3";
 
-    @Override
-    public PropertySource<?> locate(final Environment environment) {
+    @Bean
+    @ConditionalOnMissingBean(name = "s3BucketPropertySourceLocator")
+    public PropertySourceLocator amazonS3BucketPropertySourceLocator(final Environment environment) {
         val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
-        val clientBuilder = S3Client.builder().serviceConfiguration(S3Configuration.Builder::pathStyleAccessEnabled).forcePathStyle(true);
+        val clientBuilder = S3Client.builder().serviceConfiguration(S3Configuration.Builder::pathStyleAccessEnabled)
+            .forcePathStyle(true);
         val s3Client = builder.build(clientBuilder, S3Client.class);
         val bucketName = builder.getSetting("bucket-name", "cas-properties");
-        return new S3BucketPropertySource(S3BucketPropertySource.class.getName(), s3Client, bucketName);
+        return new AmazonS3PropertySourceLocator(s3Client, bucketName);
     }
 }

@@ -16,3 +16,8 @@
     overflow-x: hidden;
     max-height: 400px;
 }
+
+.ui-widget-overlay {
+    background: var(--cas-theme-primary);
+    backdrop-filter: blur(6px);
+}
