@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -31,6 +32,7 @@ public class CasAmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurati
     public static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.aws.ssm";
 
     @Bean
+    @ConditionalOnMissingBean(name = "amazonSimpleSystemsManagementPropertySourceLocator")
     public PropertySourceLocator amazonSimpleSystemsManagementPropertySourceLocator(
         final Environment environment) {
         val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);

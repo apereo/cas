@@ -35,10 +35,10 @@
         const supportedServiceTypes = /*[[${supportedServiceTypes}]]*/;
         const availableMultifactorProviders = /*[[${availableMultifactorProviders}]]*/;
         const scriptFactoryAvailable = /*[[${scriptFactoryAvailable}]]*/;
-        const mutablePropertySourcesAvailable = /*[[${mutablePropertySourcesAvailable}]]*/;
+        const mutablePropertySources = /*[[${mutablePropertySources}]]*/;
+        const mutablePropertySourcesAvailable = mutablePropertySources.length > 0;
         /*]]>*/
     </script>
-    
     <script type="text/javascript" th:src="@{/js/palantir.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-cas.js}"></script>
@@ -52,6 +52,7 @@
 
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="dashboard" class="d-none">
+        <div th:utext="${#lists}"
         <div th:replace="~{fragments/palantir/navigationsidebar :: main}"/>
         <div class="mdc-card p-2 m-1" style="min-height: 100vh;">
             <div th:replace="~{fragments/palantir/dashboardtabs :: main}"/>

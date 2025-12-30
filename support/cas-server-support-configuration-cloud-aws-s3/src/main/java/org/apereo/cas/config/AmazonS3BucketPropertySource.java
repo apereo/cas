@@ -18,19 +18,19 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 /**
- * This is {@link S3BucketPropertySource}.
+ * This is {@link AmazonS3BucketPropertySource}.
  *
  * @author Misagh Moayyed
  * @since 8.0.0
  */
 @Slf4j
 @SuppressWarnings("NullAway.Init")
-public class S3BucketPropertySource extends EnumerablePropertySource<S3Client> implements MutablePropertySource<S3Client> {
+public class AmazonS3BucketPropertySource extends EnumerablePropertySource<S3Client> implements MutablePropertySource<S3Client> {
     private final Map<String, S3Property> properties = new ConcurrentHashMap<>();
 
     private final String bucketName;
 
-    public S3BucketPropertySource(final String name, final S3Client s3Client, final String bucketName) {
+    public AmazonS3BucketPropertySource(final String name, final S3Client s3Client, final String bucketName) {
         super(name, s3Client);
         this.bucketName = bucketName;
         refresh();

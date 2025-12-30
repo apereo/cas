@@ -7,6 +7,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Bean;
 
@@ -23,6 +24,7 @@ import org.springframework.context.annotation.Bean;
 public class CasDynamoDbCloudConfigBootstrapAutoConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean(name = "dynamoDbPropertySourceLocator")
     public PropertySourceLocator dynamoDbPropertySourceLocator() {
         return new DynamoDbPropertySourceLocator();
     }

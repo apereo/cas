@@ -5,6 +5,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
+import org.apereo.cas.configuration.api.MutablePropertySource;
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -25,6 +26,7 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -68,7 +70,7 @@ public class DashboardController extends AbstractController {
         mav.addObject("httpRequestMethod", request.getMethod());
         mav.addObject("httpRequestHeaders", HttpRequestUtils.getRequestHeaders(request));
         mav.addObject("clientInfo", ClientInfoHolder.getClientInfo());
-        
+
         val basePath = webEndpointProperties.getBasePath();
         val endpoints = endpointLinksResolver.resolveLinks(basePath);
         val actuatorEndpoints = endpoints
@@ -83,8 +85,9 @@ public class DashboardController extends AbstractController {
         mav.addObject("availableMultifactorProviders", MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).keySet());
         mav.addObject("scriptFactoryAvailable", CasRuntimeHintsRegistrar.notInNativeImage()
             && ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory().isPresent());
-        mav.addObject("mutablePropertySourcesAvailable",
-            !CasCoreConfigurationUtils.getMutablePropertySources(applicationContext).isEmpty());
+
+        val mutablePropertySources = CasCoreConfigurationUtils.getMutablePropertySources(applicationContext);
+        mav.addObject("mutablePropertySources", mutablePropertySources.stream().map(MutablePropertySource::getName).toList());
         return mav;
     }
 

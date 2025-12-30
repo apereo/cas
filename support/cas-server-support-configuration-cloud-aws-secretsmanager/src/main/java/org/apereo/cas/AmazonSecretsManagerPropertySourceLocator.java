@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
@@ -16,6 +18,7 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
  * @since 8.0.0
  */
 @RequiredArgsConstructor
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class AmazonSecretsManagerPropertySourceLocator implements PropertySourceLocator, DisposableBean {
     private final SecretsManagerClient secretsManagerClient;
 

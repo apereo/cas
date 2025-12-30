@@ -43,19 +43,19 @@ let notyf = null;
 function effectiveConfigPropertyValue(name) {
     $.get(`${actuatorEndpoints.env}/${name}`, response => {
         Swal.fire({
-            title: 'Effective Property Value',
+            title: "Effective Property Value",
             html: `
                 The effective configuration value for <code>${name}</code> is:<p/>
                 <pre><code class="border-rounded language-html">${name}=${response.property.value}</code></pre>
             `,
-            icon: 'info',
-            width: '50%',
+            icon: "info",
+            width: "50%",
             showDenyButton: true,
-            confirmButtonText: 'OK',
-            denyButtonText: 'Copy',
+            confirmButtonText: "OK",
+            denyButtonText: "Copy",
             didOpen: () => {
                 hljs.highlightAll();
-                Swal.getDenyButton().addEventListener('click', async () => {
+                Swal.getDenyButton().addEventListener("click", async () => {
                     const text = `${name}=${response.property.value}`;
                     copyToClipboard(text);
                     setTimeout(() => Swal.resetValidationMessage(), 100);
@@ -63,31 +63,219 @@ function effectiveConfigPropertyValue(name) {
             }
         });
     })
-    .fail((xhr, status, error) => {
-        console.error("Error fetching data:", error);
-        displayBanner(xhr);
-    });
+        .fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayBanner(xhr);
+        });
 }
 
-function updateConfigPropertyValue(name) {
-    if (mutablePropertySourcesAvailable && actuatorEndpoints.casConfig) {
+function updateConfigPropertyValue(button, name) {
+    if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+        const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable();
+        const currentRow = mutableConfigurationTable.row($(button).closest('tr'));
+        const rowData = currentRow.data();
         Swal.fire({
             input: "text",
             inputAttributes: {
                 autocapitalize: "off"
             },
             showConfirmButton: true,
+            inputValue: $(rowData[2]).text().trim(),
             showCancelButton: true,
             icon: "question",
             title: `What's the new configuration value for ${name}?`,
-            text: "This functionality can only update configuration properties if the underlying configuration source supports dynamic updates.",
+            text: "This functionality can only update configuration properties if the underlying configuration source supports dynamic updates."
         })
             .then((result) => {
                 if (result.isConfirmed) {
+                    console.log(`Updating property ${name} to value ${result.value}`);
+                    Swal.fire({
+                        icon: "info",
+                        title: `Updating...`,
+                        text: `Updating property ${name} to value ${result.value}...`,
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+                    
+                    setTimeout(() => {
+                        $.ajax({
+                            url: `${actuatorEndpoints.casconfig}/update`,
+                            method: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify([{
+                                name: name,
+                                value: result.value
+                            }])
+                        })
+                            .done(function (data, textStatus, jqXHR) {
+                                const sources = data.join(",");
+                                console.log("Updated property via configuration sources", sources);
 
+                                mutableConfigurationTable.search(String(name));
+                                const foundRows = mutableConfigurationTable.rows({search: "applied"}).count();
+                                console.log("Found rows:", foundRows);
+                                mutableConfigurationTable.draw();
+                                const currentRow = mutableConfigurationTable.row($(button).closest('tr'));
+                                const rowData = currentRow.data();
+                                rowData[2] = `<code>${result.value}</code>`;
+                                $(currentRow.node()).addClass('selected');
+                                currentRow.data(rowData).draw(false);
+
+                                refreshCasServerConfiguration(`${sources}: Property ${name} Updated`);
+                                setTimeout(() => {
+                                    mutableConfigurationTable.rows().every(function () {
+                                        $(this.node()).removeClass('selected');
+                                    });
+                                    mutableConfigurationTable.draw(false);
+                                }, 5000);
+                            })
+                            .fail(function (jqXHR, textStatus, errorThrown) {
+                                Swal.close();
+                                console.error("Error:", textStatus, errorThrown);
+                                Swal.fire("Error", `Failed to update property ${name}`, "error");
+                                displayBanner(jqXHR);
+                            });
+                    }, 1000);
                 }
             });
     }
+}
+
+function createNewConfigurationProperty(button) {
+    $('#newConfigurationDialog').dialog({
+        autoOpen: false,
+        modal: true,
+        width: 600,
+        buttons: {
+            OK: function () {
+                if (!$("#newConfigurationForm")[0].reportValidity()) {
+                    return;
+                }
+
+                const name = $('#newConfigPropertyName').val();
+                const value = $('#newConfigPropertyValue').val();
+                console.log(`Creating new property ${name} with value ${value}`);
+
+                $.ajax({
+                    url: `${actuatorEndpoints.casconfig}/update`,
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify([{
+                        name: name,
+                        value: value
+                    }]),
+                    success: response => {
+                        $(this).dialog('close');
+                        $.get(actuatorEndpoints.env, res => {
+                            reloadConfigurationTable(res);
+                            refreshCasServerConfiguration(`New Property ${name} Created`);
+                        })
+                            .fail((xhr) => { displayBanner(xhr); });
+                    },
+                    error: (xhr, status, error) => {
+                        console.error(`Error: ${status} / ${error} / ${xhr.responseText}`);
+                        displayBanner(xhr);
+                    }
+                });
+            },
+            Cancel: function () {
+                $(this).dialog('close');
+            }
+        },
+        open: function () {
+            $('#newConfigPropertyValue').val('').focus();
+            $('#newConfigPropertyName').val('').focus();
+        }
+    });
+    $('#newConfigurationDialog').dialog('open');
+}
+
+function refreshCasServerConfiguration(title) {
+    if (actuatorEndpoints.refresh) {
+        Swal.fire({
+            showConfirmButton: true,
+            showCancelButton: true,
+            icon: "success",
+            title: title,
+            html: `Do you want to refresh the CAS runtime context to apply the changes?
+            <p class="text-justify"/>CAS will rebind external configuration properties <strong>internally without a restart</strong>, 
+            allowing components to be refreshed to reflect the changes. In-flight requests and operations keep running normally
+            using the existing/old CAS components until they are fully refreshed in the runtime application context.
+            `,
+        })
+            .then((reloadResult) => {
+                if (reloadResult.isConfirmed) {
+                    Swal.close();
+                    $.post(actuatorEndpoints.refresh)
+                        .done(() => {
+                            Swal.fire("Success!", "CAS configuration has been reloaded successfully.", "success");
+                        })
+                        .fail((jqXHR, textStatus, errorThrown) => {
+                            console.error("Error:", textStatus, errorThrown);
+                            Swal.fire("Error", "Failed to reload CAS configuration.", "error");
+                            displayBanner(jqXHR);
+                        });
+                }
+            });
+    }
+}
+
+function reloadConfigurationTable(response) {
+    const configurationTable = $("#configurationTable").DataTable();
+    configurationTable.clear();
+
+    const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable();
+    mutableConfigurationTable.clear();
+    
+    for (const source of response.propertySources) {
+        const properties = flattenJSON(source.properties);
+        for (const [key, value] of Object.entries(properties)) {
+            if (!key.endsWith(".origin")) {
+                const propertyName = key.replace(".value", "");
+                let buttons = `
+                            <button type="button" name="effectiveConfigPropertyValueButton" href="#" 
+                                    data-key='${propertyName}'
+                                    onclick="effectiveConfigPropertyValue('${propertyName}')"
+                                    class="mdc-button mdc-button--raised min-width-32x">
+                                <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
+                            </button>
+                        `;
+                configurationTable.row.add({
+                    0: `${camelcaseToTitleCase(source.name)}`,
+                    1: `<code>${propertyName}</code>`,
+                    2: `<code>${value}</code>`,
+                    3: buttons
+                });
+                
+                if (mutablePropertySources.some(entry => source.name.endsWith(entry))) {
+                    const propertyName = key.replace(".value", "");
+                    let buttons = `
+                            <button type="button" name="effectiveConfigPropertyValueButton" href="#" 
+                                    data-key='${propertyName}'
+                                    onclick="effectiveConfigPropertyValue('${propertyName}')"
+                                    class="mdc-button mdc-button--raised min-width-32x">
+                                <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" name="updateConfigPropertyValueButton" href="#" 
+                                    data-key='${propertyName}'
+                                    onclick="updateConfigPropertyValue(this, '${propertyName}')"
+                                    class="mdc-button mdc-button--raised min-width-32x">
+                                <i class="mdi mdi-content-save-edit min-width-32x" aria-hidden="true"></i>
+                            </button>
+                        `;
+                    mutableConfigurationTable.row.add({
+                        0: `${camelcaseToTitleCase(source.name)}`,
+                        1: `<code>${propertyName}</code>`,
+                        2: `<code>${value}</code>`,
+                        3: buttons
+                    });
+                }
+            }
+        }
+    }
+    configurationTable.search("").draw();
+    mutableConfigurationTable.search("").draw();
 }
 
 async function fetchCasFeatures() {
@@ -106,7 +294,7 @@ async function fetchCasFeatures() {
         } else {
             resolve(CAS_FEATURES);
         }
-    })
+    });
 }
 
 async function fetchServices(callback) {
@@ -963,7 +1151,7 @@ async function initializeSsoSessionOperations() {
         }
     });
 
-    
+
     const ssoSessionDetailsTable = $("#ssoSessionDetailsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
@@ -1055,7 +1243,7 @@ async function initializeSsoSessionOperations() {
 
             ssoSessionsTable.clear();
             ssoSessionApplicationsTable.clear();
-            
+
             $.ajax({
                 url: `${actuatorEndpoints.ssosessions}/users/${username}`,
                 type: "GET",
@@ -1071,7 +1259,7 @@ async function initializeSsoSessionOperations() {
                         for (const [key, value] of Object.entries(session["authenticated_services"])) {
                             services[key] = {id: value.id};
                         }
-                        
+
                         let serviceButtons = `
                             <button type="button" name="removeSsoSession" href="#" 
                                 data-ticketgrantingticket='${session.ticket_granting_ticket}'
@@ -1104,7 +1292,7 @@ async function initializeSsoSessionOperations() {
                         });
                     }
                     ssoSessionsTable.draw();
-                    
+
                     Swal.close();
 
                     $("button[name=viewSsoSession]").off().on("click", function () {
@@ -1116,7 +1304,7 @@ async function initializeSsoSessionOperations() {
                                 1: `<code>${value.id}</code>`
                             });
                         }
-                        
+
                         const attributes = JSON.parse($(this).children("#sessionAttributes").text());
                         for (const [key, value] of Object.entries(attributes.principal)) {
                             ssoSessionDetailsTable.row.add({
@@ -1134,7 +1322,7 @@ async function initializeSsoSessionOperations() {
                         }
                         ssoSessionDetailsTable.draw();
                         ssoSessionApplicationsTable.draw();
-                        
+
                         let dialog = mdc.dialog.MDCDialog.attachTo(document.getElementById("ssoSession-dialog"));
                         dialog["open"]();
                     });
@@ -1207,11 +1395,10 @@ async function initializeSsoSessionOperations() {
                         });
                     }
                 });
-            
+
         }
     });
 
-    
 
 }
 
@@ -1994,7 +2181,7 @@ async function initializeSystemOperations() {
                 error: function (xhr, textStatus, errorThrown) {
                     if (xhr.status === 503) {
                         const response = xhr.responseJSON;
-                        updateHealthChart(response)
+                        updateHealthChart(response);
                     } else {
                         console.error("Error fetching health data:", errorThrown);
                         displayBanner(xhr);
@@ -2033,13 +2220,13 @@ async function initializeSystemOperations() {
                 systemMetricsTagsTable.clear();
                 systemMetricsMeasurementsTable.clear();
                 $("#systemMetricNameDescriptionContainer").hide();
-                
+
                 if (metric && metric.length > 0) {
                     $.get(`${actuatorEndpoints.metrics}/${metric}`, response => {
                         let description = `${response.description ?? "No description is available"}. Metric is measured in ${response.baseUnit ?? "unknown units"}.`;
                         $("#systemMetricNameDescription").text(description);
                         $("#systemMetricNameDescriptionContainer").show();
-                        
+
                         response.availableTags.forEach(entry => {
                             systemMetricsTagsTable.row.add({
                                 0: `<code>${entry.tag}</code>`,
@@ -2058,7 +2245,7 @@ async function initializeSystemOperations() {
                 }
             }
         });
-        
+
         $("#systemMetricNameFilter").empty();
         $("#systemMetricNameFilter").append(
             $("<option>", {
@@ -2066,7 +2253,7 @@ async function initializeSystemOperations() {
                 text: "Select a metric to view details..."
             })
         );
-        
+
         if (actuatorEndpoints.metrics) {
             $.get(actuatorEndpoints.metrics, response => {
                 for (const name of response.names) {
@@ -2081,7 +2268,7 @@ async function initializeSystemOperations() {
             });
         }
     }
-    
+
     async function configureSystemData() {
         await fetchSystemData(response => {
 
@@ -2472,7 +2659,7 @@ async function initializeServicesOperations() {
         {visible: true, targets: 4},
         {visible: false, targets: 5}
     ];
-    
+
     const applicationsTable = $("#applicationsTable").DataTable({
         pageLength: 25,
         autoWidth: false,
@@ -3281,21 +3468,9 @@ async function initializeConsentOperations() {
 }
 
 async function initializeConfigurationOperations() {
-    const toolbar = document.createElement("div");
-    if (mutablePropertySourcesAvailable) {
-        toolbar.innerHTML = `
-            <button type="button" id="newConfigPropertyButton" class="mdc-button mdc-button--raised">
-                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New Property</span>
-            </button>
-        `;
-    }
-
     const configurationTable = $("#configurationTable").DataTable({
         pageLength: 10,
         autoWidth: false,
-        layout: {
-            topStart: toolbar
-        },
         columnDefs: [
             {visible: false, targets: 0}
         ],
@@ -3313,7 +3488,61 @@ async function initializeConfigurationOperations() {
                     if (last !== group) {
                         $(rows).eq(i).before(
                             `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                            <td colspan="3">${group}</td></tr>`.trim());
+                                <td colspan="3">${group}</td>
+                            </tr>`.trim());
+                        last = group;
+                    }
+                });
+        }
+    });
+
+    const toolbar = document.createElement("div");
+    let toolbarEntries = `
+            <button type="button" id="reloadConfigurationTableButton" 
+                    onclick="$.get(actuatorEndpoints.env, res => { reloadConfigurationTable(res); }).fail((xhr) => { displayBanner(xhr); });"
+                    class="mdc-button mdc-button--raised">
+                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-database-arrow-down" aria-hidden="true"></i>Reload</span>
+            </button>
+    `;
+    if (mutablePropertySourcesAvailable) {
+        toolbarEntries += `
+            <button type="button" onclick="createNewConfigurationProperty(this);" id="newConfigPropertyButton" class="mdc-button mdc-button--raised">
+                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New Property</span>
+            </button>
+            <button type="button" id="refreshConfigurationButton"
+                    onclick="refreshCasServerConfiguration('Configuration Reload');" 
+                    class="mdc-button mdc-button--raised">
+                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>Refresh CAS</span>
+            </button>
+        `;
+    }
+
+    toolbar.innerHTML = toolbarEntries;
+    const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        layout: {
+            topStart: toolbar
+        },
+        columnDefs: [
+            {visible: false, targets: 0}
+        ],
+        order: [0, "asc"],
+        drawCallback: settings => {
+            $("#mutableConfigurationTable tr").addClass("mdc-data-table__row");
+            $("#mutableConfigurationTable td").addClass("mdc-data-table__cell");
+
+            const api = settings.api;
+            const rows = api.rows({page: "current"}).nodes();
+            let last = null;
+            api.column(0, {page: "current"})
+                .data()
+                .each((group, i) => {
+                    if (last !== group) {
+                        $(rows).eq(i).before(
+                            `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
+                                <td colspan="3">${group}</td>
+                            </tr>`.trim());
                         last = group;
                     }
                 });
@@ -3346,42 +3575,11 @@ async function initializeConfigurationOperations() {
     }
 
     configurationTable.clear();
+    mutableConfigurationTable.clear();
+    
     if (actuatorEndpoints.env) {
         $.get(actuatorEndpoints.env, response => {
-            for (const source of response.propertySources) {
-                const properties = flattenJSON(source.properties);
-                for (const [key, value] of Object.entries(properties)) {
-                    if (!key.endsWith(".origin")) {
-                        const propertyName = key.replace(".value", "");
-                        let buttons = `
-                            <button type="button" name="effectiveConfigPropertyValueButton" href="#" 
-                                    data-key='${propertyName}'
-                                    onclick="effectiveConfigPropertyValue('${propertyName}')"
-                                    class="mdc-button mdc-button--raised min-width-32x">
-                                <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
-                            </button>
-                        `;
-                        if (mutablePropertySourcesAvailable) {
-                            buttons += `
-                                <button type="button" name="updateConfigPropertyValueButton" href="#" 
-                                        data-key='${propertyName}'
-                                        onclick="updateConfigPropertyValue('${propertyName}')"
-                                        class="mdc-button mdc-button--raised min-width-32x">
-                                    <i class="mdi mdi-content-save-edit min-width-32x" aria-hidden="true"></i>
-                                </button>
-                            `;
-                        }
-                        
-                        configurationTable.row.add({
-                            0: `${camelcaseToTitleCase(source.name)}`,
-                            1: `<code>${propertyName}</code>`,
-                            2: `<code>${value}</code>`,
-                            3: buttons
-                        });
-                    }
-                }
-            }
-            configurationTable.draw();
+            reloadConfigurationTable(response);
             
             $("#casActiveProfiles").empty();
             for (const element of response.activeProfiles) {
@@ -3401,6 +3599,8 @@ async function initializeConfigurationOperations() {
             displayBanner(xhr);
         });
     }
+
+
 
     const configPropsTable = $("#configPropsTable").DataTable({
         pageLength: 10,
@@ -4380,6 +4580,9 @@ function processNavigationTabs() {
         $("#config-encryption-tab").addClass("d-none");
         $("#casConfigSecurity").parent().remove();
     }
+    if (!actuatorEndpoints.refresh) {
+        $("#refreshConfigurationButton").addClass("d-none");
+    }
     if (!actuatorEndpoints.configurationmetadata) {
         $("#casConfigSearch").addClass("d-none");
     }
@@ -4412,6 +4615,9 @@ function processNavigationTabs() {
     }
     if (!actuatorEndpoints.shutdown) {
         $("#shutdownServerButton").addClass("d-none");
+    }
+    if (!mutablePropertySourcesAvailable) {
+        $("#mutableConfigSources").addClass("d-none");
     }
     return $("nav.sidebar-navigation ul li:visible").length;
 }
@@ -4464,7 +4670,7 @@ async function initializePalantir() {
                         initializeCasSpringWebflowOperations()
                     ]);
 
-                    window.addEventListener('resize', updateNavigationSidebar, { passive: true });
+                    window.addEventListener("resize", updateNavigationSidebar, {passive: true});
                 }
             });
         }, 2);
