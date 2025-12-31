@@ -54,7 +54,7 @@ function effectiveConfigPropertyValue(name) {
             confirmButtonText: "OK",
             denyButtonText: "Copy",
             didOpen: () => {
-                hljs.highlightAll();
+                highlightElements();
                 Swal.getDenyButton().addEventListener("click", async () => {
                     const text = `${name}=${response.property.value}`;
                     copyToClipboard(text);
@@ -247,7 +247,7 @@ function createNewConfigurationProperty(button) {
 }
 
 function refreshCasServerConfiguration(title) {
-    if (actuatorEndpoints.refresh) {
+    if (actuatorEndpoints.refresh || actuatorEndpoints.busrefresh) {
         Swal.fire({
             showConfirmButton: true,
             showCancelButton: true,
@@ -268,8 +268,19 @@ function refreshCasServerConfiguration(title) {
             .then((reloadResult) => {
                 if (reloadResult.isConfirmed) {
                     Swal.close();
-                    $.post(actuatorEndpoints.refresh)
+                    Swal.fire({
+                        icon: "info",
+                        title: title,
+                        text: "Please wait while the CAS application context is being refreshed...",
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        didOpen: () => Swal.showLoading()
+                    });
+                    
+                    const endpoint = actuatorEndpoints.busrefresh || actuatorEndpoints.refresh;
+                    $.post(endpoint)
                         .done(() => {
+                            Swal.close();
                             Swal.fire("Success!", "CAS configuration has been reloaded successfully.", "success");
                         })
                         .fail((jqXHR, textStatus, errorThrown) => {
@@ -2423,7 +2434,7 @@ async function initializeSystemOperations() {
             }
             systemTable.draw();
 
-            hljs.highlightAll();
+            highlightElements();
             $("#casServerPrefix").text(casServerPrefix);
             $("#casServerHost").text(response.server["host"]);
         });
@@ -3634,7 +3645,7 @@ async function initializeConfigurationOperations() {
                 contentType: "text/plain"
             }, data => {
                 $("#configEncryptionResult pre code").text(data);
-                hljs.highlightAll();
+                highlightElements();
                 $("#configEncryptionResult").removeClass("d-none");
             }).fail((xhr, status, error) => {
                 displayBanner(xhr);
@@ -4251,6 +4262,13 @@ function showSaml2IdPMetadata() {
     });
 }
 
+function highlightElements() {
+    document
+        .querySelectorAll('pre code[data-highlighted]')
+        .forEach(el => delete el.dataset.highlighted);
+    hljs.highlightAll();
+}
+
 function showOidcJwks() {
     $.get(`${casServerPrefix}/oidc/jwks`, response => {
         let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("oidcOpConfigurationDialog"));
@@ -4268,7 +4286,7 @@ function showOidcJwks() {
 async function initializeOidcProtocolOperations() {
     if (CAS_FEATURES.includes("OpenIDConnect")) {
         $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, response => {
-            hljs.highlightAll();
+            highlightElements();
             $("#oidcIssuer").text(response.issuer);
         });
 
@@ -4434,7 +4452,7 @@ async function initializeSAML2ProtocolOperations() {
     if (CAS_FEATURES.includes("SAMLIdentityProvider")) {
         if (actuatorEndpoints.info) {
             $.get(actuatorEndpoints.info, response => {
-                hljs.highlightAll();
+                highlightElements();
                 $("#saml2EntityId").text(response.saml2.entityId);
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
@@ -4648,7 +4666,7 @@ function processNavigationTabs() {
         $("#config-encryption-tab").addClass("d-none");
         $("#casConfigSecurity").parent().remove();
     }
-    if (!actuatorEndpoints.refresh) {
+    if (!actuatorEndpoints.refresh && !actuatorEndpoints.busrefresh) {
         $("#refreshConfigurationButton").addClass("d-none");
     }
     if (!actuatorEndpoints.configurationmetadata) {
