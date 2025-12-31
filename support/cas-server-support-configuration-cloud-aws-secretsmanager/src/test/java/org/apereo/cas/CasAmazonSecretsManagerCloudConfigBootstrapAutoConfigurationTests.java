@@ -104,5 +104,7 @@ class CasAmazonSecretsManagerCloudConfigBootstrapAutoConfigurationTests {
         propertySource.setProperty("cas.server.prefix", "https://apereo.org/cas");
         val prefix = environment.getProperty("cas.server.prefix");
         assertEquals("https://apereo.org/cas", prefix);
+        propertySource.removeProperty("cas.server.prefix");
+        assertNull(environment.getProperty("cas.server.prefix"));
     }
 }

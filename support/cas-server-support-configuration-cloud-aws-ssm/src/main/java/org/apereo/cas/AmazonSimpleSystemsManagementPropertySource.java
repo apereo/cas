@@ -77,6 +77,15 @@ public class AmazonSimpleSystemsManagementPropertySource extends EnumerablePrope
     }
 
     @Override
+    public void removeProperty(final String name) {
+        val path = properties.containsKey(name)
+            ? properties.get(name).path()
+            : StringUtils.join("/cas/", profiles.getLast(), "/", name);
+        getSource().deleteParameter(builder -> builder.name(path).build());
+        properties.remove(name);
+    }
+
+    @Override
     public MutablePropertySource setProperty(final String name, final Object value) {
         val path = properties.containsKey(name)
             ? properties.get(name).path()

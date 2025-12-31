@@ -61,6 +61,27 @@ public class RestfulPropertySource extends EnumerablePropertySource<Environment>
     }
 
     @Override
+    public void removeProperty(final String name) {
+        HttpResponse response = null;
+        try {
+            val executionRequest = executionRequestBuilder()
+                .parameters(Map.of("name", name))
+                .method(HttpMethod.DELETE)
+                .build();
+            response = HttpUtils.execute(executionRequest);
+            val status = response != null ? HttpStatus.valueOf(response.getCode()) : HttpStatus.INTERNAL_SERVER_ERROR;
+            LOGGER.debug("Removing property [{}] resulted in HTTP status [{}]", name, status);
+            if (status.is2xxSuccessful()) {
+                propertyNames.remove(name);
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
     public MutablePropertySource setProperty(final String name, final Object value) {
         HttpResponse response = null;
         try {

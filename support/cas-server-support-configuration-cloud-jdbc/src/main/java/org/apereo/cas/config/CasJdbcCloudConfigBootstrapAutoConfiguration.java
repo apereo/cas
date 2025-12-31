@@ -30,7 +30,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @AutoConfiguration
 public class CasJdbcCloudConfigBootstrapAutoConfiguration {
 
-    private static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.jdbc";
+    /**
+     * The CAS Jdbc configuration key prefix.
+     */
+    public static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.jdbc";
 
     @Bean
     @ConditionalOnMissingBean(name = "jdbcPropertySourceLocator")
@@ -43,7 +46,7 @@ public class CasJdbcCloudConfigBootstrapAutoConfiguration {
     @ConditionalOnMissingBean(name = "jdbcCloudConfigurationTemplate")
     public JdbcTemplate jdbcCloudConfigurationTemplate(final ConfigurableEnvironment environment) {
         val connection = new JdbcCloudConnection(environment);
-        val dataSource = JpaBeans.newDataSource(connection);
+        val dataSource = JpaBeans.newDataSource(connection.setAutocommit(true));
         return new JdbcTemplate(dataSource);
     }
 

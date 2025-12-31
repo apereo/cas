@@ -97,5 +97,7 @@ class DynamoDbCloudConfigBootstrapConfigurationTests {
         propertySource.setProperty("cas.server.prefix", "https://example.org/cas");
         val prefix = environment.getProperty("cas.server.prefix");
         assertEquals("https://example.org/cas", prefix);
+        propertySource.removeProperty("cas.server.prefix");
+        assertNull(environment.getProperty("cas.server.prefix"));
     }
 }

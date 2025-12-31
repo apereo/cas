@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 class CasJdbcCloudConfigBootstrapAutoConfigurationTests {
     private static final String STATIC_AUTHN_USERS = "casuser::WHATEVER";
+    private static final String DB_FILE = System.getProperty("java.io.tmpdir") + "/hsqldb/cas-hsqldb-cloud-config";
+    private static final String DB_URL = "jdbc:hsqldb:file:" + DB_FILE + ";shutdown=true;hsqldb.lock_file=false";
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -40,9 +43,26 @@ class CasJdbcCloudConfigBootstrapAutoConfigurationTests {
     @Autowired
     private ConfigurableEnvironment environment;
 
+
+    static {
+        val path = Path.of(DB_FILE).getParent();
+        if (Files.exists(path)) {
+            try {
+                Files.walk(path)
+                    .sorted(Comparator.reverseOrder())
+                    .forEach(p -> {
+                        FileUtils.deleteQuietly(p.toFile());
+                    });
+            } catch (final IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        System.setProperty(CasJdbcCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + ".url", DB_URL);
+    }
+
     @BeforeAll
     public static void initialize() throws Exception {
-        val jpa = new Jpa();
+        val jpa = new Jpa().setUrl(DB_URL);
         val ds = JpaBeans.newDataSource(jpa);
         try (val connection = ds.getConnection();
              val statement = connection.createStatement()) {
@@ -75,6 +95,9 @@ class CasJdbcCloudConfigBootstrapAutoConfigurationTests {
             .orElseThrow();
         propertySource.setProperty("cas.server.prefix", "https://example.org/cas");
         propertySource.setProperty("cas.server.prefix", "https://sso.example.org/cas");
+        assertEquals("https://sso.example.org/cas", propertySource.getProperty("cas.server.prefix"));
+        propertySource.removeProperty("cas.server.prefix");
+        assertNull(propertySource.getProperty("cas.server.prefix"));
     }
 
     static class Jpa extends AbstractJpaProperties {

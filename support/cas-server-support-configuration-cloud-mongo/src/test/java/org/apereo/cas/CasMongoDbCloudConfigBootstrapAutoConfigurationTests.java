@@ -57,7 +57,8 @@ class CasMongoDbCloudConfigBootstrapAutoConfigurationTests {
     private Supplier<String> casServerPrefixSupplier;
 
     static {
-        System.setProperty("cas.spring.cloud.mongo.uri", CasMongoDbCloudConfigBootstrapAutoConfigurationTests.MONGODB_URI);
+        System.setProperty(CasMongoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_MONGODB_URI,
+            CasMongoDbCloudConfigBootstrapAutoConfigurationTests.MONGODB_URI);
     }
 
     @BeforeAll
@@ -97,6 +98,9 @@ class CasMongoDbCloudConfigBootstrapAutoConfigurationTests {
         propertySource.setProperty("cas.server.prefix", "https://example.org/cas");
         val prefix = environment.getProperty("cas.server.prefix");
         assertEquals("https://example.org/cas", prefix);
+        propertySource.removeProperty("cas.server.prefix");
+        val prefixAfterDelete = environment.getProperty("cas.server.prefix");
+        assertNull(prefixAfterDelete);
     }
 
     @TestConfiguration(proxyBeanMethods = false)

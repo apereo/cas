@@ -10,6 +10,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.core.env.EnumerablePropertySource;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
@@ -88,6 +89,13 @@ public class DynamoDbPropertySource extends EnumerablePropertySource<DynamoDbCli
             .map(DynamoDbPropertySource::retrieveSetting)
             .map(DymamoDbProperty::name)
             .toList());
+    }
+
+    @Override
+    public void removeProperty(final String name) {
+        val key = Map.of(DynamoDbColumnNames.NAME.getColumnName(), AttributeValue.builder().s(name).build());
+        getSource().deleteItem(DeleteItemRequest.builder().tableName(TABLE_NAME).key(key).build());
+        propertyNames.remove(name);
     }
 
     private static DymamoDbProperty retrieveSetting(final Map<String, AttributeValue> entry) {
