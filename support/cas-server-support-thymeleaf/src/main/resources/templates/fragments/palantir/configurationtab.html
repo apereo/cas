@@ -81,12 +81,33 @@
                                     if (sources.length === 1) {
                                         sources[0].selected = true;
                                     }
-                                    createMultiSelectField({
-                                        containerId: "newConfigurationMainPanel",
-                                        labelTitle: "Property Source(s):",
-                                        paramName: "propertySources",
-                                        title: "Select the property source(s) to which the new configuration property should be added.",
-                                        options: sources
+
+                                    const container = $("<span>", {
+                                        id: `propertySourcesSelectContainer`,
+                                        class: `d-flex mb-2 mt-2`
+                                    });
+
+                                    const select = $("<select multiple>")
+                                        .attr("id", "propertySourcesSelect")
+                                        .addClass("jqueryui-multiselectmenu");
+
+                                    sources.forEach(o => {
+                                        select.append(
+                                            $("<option>").val(o.value).text(o.text).prop("selected", o.selected)
+                                        );
+                                    });
+
+                                    const label = $("<label>")
+                                        .addClass("pt-2")
+                                        .addClass("pr-2")
+                                        .addClass("mb-2")
+                                        .css("display", "block")
+                                        .css("min-width", "max-content")
+                                        .attr("for", "propertySourcesSelectContainer").text("Property Source(s):");
+                                    container.append(label, select);
+                                    $(`#newConfigurationMainPanel`).append(container);
+                                    new SlimSelect({
+                                        select: `#propertySourcesSelect`
                                     });
                                 </script>
                             </div>
