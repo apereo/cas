@@ -16,6 +16,7 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -70,7 +71,7 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
      * Update property and return list of sources that operated.
      *
      * @param values the values
-     * @return the list
+     * @return the list of property sources that operated
      */
     @PostMapping(value = "/update",
         produces = MediaType.APPLICATION_JSON_VALUE,
@@ -96,9 +97,41 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
             .toList();
     }
 
+    /**
+     * Remove property.
+     *
+     * @param request the request
+     * @return the list of property sources that operated
+     */
+    @DeleteMapping
+    @Operation(summary = "Remove configuration property",
+        parameters = {
+            @Parameter(name = "name", required = true, description = "The name of the property to remove"),
+            @Parameter(name = "propertySource", required = false, description = "The name of the property source that should be updated")
+        })
+    public List<String> removeProperty(@RequestBody final ConfigurationPropertyDeleteRequest request) {
+        val activeSources = CasCoreConfigurationUtils.getMutablePropertySources(applicationContext);
+        return activeSources
+            .stream()
+            .map(source -> Stream.of(request)
+                .filter(v -> StringUtils.isBlank(v.propertySource()) || v.propertySource().equalsIgnoreCase(source.getName()))
+                .map(v -> {
+                    source.removeProperty(v.name());
+                    return source.getName();
+                })
+                .toList())
+            .flatMap(Collection::stream)
+            .toList();
+    }
+
     public record ConfigurationPropertyUpdateRequest(
         @NonNull String name,
         @NonNull String value,
+        @Nullable String propertySource) {
+    }
+
+    public record ConfigurationPropertyDeleteRequest(
+        @NonNull String name,
         @Nullable String propertySource) {
     }
 }
