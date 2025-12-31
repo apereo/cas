@@ -59,6 +59,15 @@ public class AmazonS3BucketPropertySource extends EnumerablePropertySource<S3Cli
     }
 
     @Override
+    public void removeProperty(final String name) {
+        if (properties.containsKey(name)) {
+            val objectKey = properties.get(name).source();
+            getSource().deleteObject(builder -> builder.bucket(bucketName).key(objectKey));
+            properties.remove(name);
+        }
+    }
+
+    @Override
     public @Nullable Object getProperty(final String name) {
         return properties.containsKey(name) ? properties.get(name).value() : null;
     }

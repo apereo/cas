@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.api;
 
 import module java.base;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link MutablePropertySource}.
@@ -46,4 +47,19 @@ public interface MutablePropertySource<T> {
      */
     default void refresh() {
     }
+
+    /**
+     * Gets property.
+     *
+     * @param name the name
+     * @return the property
+     */
+    @Nullable Object getProperty(String name);
+
+    /**
+     * Remove property.
+     *
+     * @param name the name
+     */
+    void removeProperty(String name);
 }

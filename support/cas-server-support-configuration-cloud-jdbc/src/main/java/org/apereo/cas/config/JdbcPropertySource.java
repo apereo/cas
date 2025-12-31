@@ -34,6 +34,12 @@ public class JdbcPropertySource extends EnumerablePropertySource<JdbcTemplate> i
     }
 
     @Override
+    public void removeProperty(final String name) {
+        getSource().update("DELETE FROM CAS_SETTINGS_TABLE WHERE name = ?", name);
+        propertyNames.remove(name);
+    }
+
+    @Override
     public MutablePropertySource setProperty(final String name, final Object value) {
         val updated = getSource().update("UPDATE CAS_SETTINGS_TABLE SET value = ? WHERE name = ?", value, name);
         if (updated == 0) {

@@ -30,5 +30,7 @@ class SimplePropertySourceTests {
         assertNotNull(propertySource.getName());
         propertySource.setProperty("cas.test.property", "value1");
         assertEquals("value1", propertySource.getProperty("cas.test.property"));
+        propertySource.removeProperty("cas.test.property");
+        assertNull(propertySource.getProperty("cas.test.property"));
     }
 }

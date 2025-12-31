@@ -40,5 +40,14 @@
     "httpResponse": {
       "statusCode": 200
     }
+  },
+  {
+    "httpRequest": {
+      "method": "DELETE",
+      "path": "/casconfig"
+    },
+    "httpResponse": {
+      "statusCode": 200
+    }
   }
 ]

@@ -109,6 +109,8 @@ class CasAmazonS3BucketsCloudConfigBootstrapAutoConfigurationTests {
         propertySource.refresh();
         val prefix = environment.getProperty("cas.server.prefix");
         assertEquals("https://example.org/cas", prefix);
+        propertySource.removeProperty("server.port");
+        assertNull(environment.getProperty("server.port"));
     }
 
     private static void deleteBucket(final S3Client s3Client) {

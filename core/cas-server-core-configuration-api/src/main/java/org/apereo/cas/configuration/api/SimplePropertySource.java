@@ -22,4 +22,9 @@ public class SimplePropertySource extends MapPropertySource
         getSource().put(name, value);
         return this;
     }
+
+    @Override
+    public void removeProperty(final String name) {
+        getSource().remove(name);
+    }
 }

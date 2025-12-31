@@ -10,6 +10,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.core.env.EnumerablePropertySource;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.CreateSecretRequest;
+import software.amazon.awssdk.services.secretsmanager.model.DeleteSecretRequest;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest;
 import software.amazon.awssdk.services.secretsmanager.model.PutSecretValueRequest;
@@ -68,6 +69,12 @@ public class AmazonSecretsManagerPropertySource extends EnumerablePropertySource
                     .toList()
             );
         }
+    }
+
+    @Override
+    public void removeProperty(final String name) {
+        getSource().deleteSecret(DeleteSecretRequest.builder().secretId(name).build());
+        propertyNames.remove(name);
     }
 
     @Override
