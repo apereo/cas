@@ -3,17 +3,16 @@ package org.apereo.cas.web.report;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
-import org.apereo.cas.configuration.api.MutablePropertySource;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
+import io.micrometer.common.util.StringUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.cloud.bootstrap.config.BootstrapPropertySource;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -70,7 +69,7 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
     /**
      * Update property and return list of sources that operated.
      *
-     * @param value the value
+     * @param values the values
      * @return the list
      */
     @PostMapping(value = "/update",
@@ -79,23 +78,27 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Update configuration value",
         parameters = {
             @Parameter(name = "value", required = true, description = "The value to set"),
-            @Parameter(name = "name", required = true, description = "The name of the property to update")
+            @Parameter(name = "name", required = true, description = "The name of the property to update"),
+            @Parameter(name = "propertySource", required = false, description = "The name of the property source that should be updated")
         })
     public List<String> updateProperty(
-        @RequestBody final List<ConfigurationPropertyUpdateRequest> value) {
+        @RequestBody final List<ConfigurationPropertyUpdateRequest> values) {
         val activeSources = CasCoreConfigurationUtils.getMutablePropertySources(applicationContext);
         return activeSources
             .stream()
-            .filter(Objects::nonNull)
-            .map(source -> {
-                value.forEach(v -> source.setProperty(v.name(), v.value()));
-                return source.getName();
-            })
+            .map(source -> values
+                .stream()
+                .filter(v -> StringUtils.isBlank(v.propertySource()) || v.propertySource().equalsIgnoreCase(source.getName()))
+                .map(v -> source.setProperty(v.name(), v.value()))
+                .map(_ -> source.getName())
+                .toList())
+            .flatMap(Collection::stream)
             .toList();
     }
 
     public record ConfigurationPropertyUpdateRequest(
         @NonNull String name,
-        @NonNull String value) {
+        @NonNull String value,
+        @Nullable String propertySource) {
     }
 }

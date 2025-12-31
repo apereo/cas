@@ -72,7 +72,8 @@ function effectiveConfigPropertyValue(name) {
 function updateConfigPropertyValue(button, name) {
     if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
         const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable();
-        const currentRow = mutableConfigurationTable.row($(button).closest('tr'));
+        const currentRow = mutableConfigurationTable.row($(button).closest("tr"));
+        const propertySource = $(button).data("source").replace("bootstrapProperties-", "");
         const rowData = currentRow.data();
         Swal.fire({
             input: "text",
@@ -88,7 +89,7 @@ function updateConfigPropertyValue(button, name) {
         })
             .then((result) => {
                 if (result.isConfirmed) {
-                    console.log(`Updating property ${name} to value ${result.value}`);
+                    console.log(`Updating property ${name} to value ${result.value} in source ${propertySource}`);
                     Swal.fire({
                         icon: "info",
                         title: `Updating...`,
@@ -97,16 +98,19 @@ function updateConfigPropertyValue(button, name) {
                         showConfirmButton: false,
                         didOpen: () => Swal.showLoading()
                     });
-                    
+
                     setTimeout(() => {
                         $.ajax({
                             url: `${actuatorEndpoints.casconfig}/update`,
                             method: "POST",
                             contentType: "application/json",
-                            data: JSON.stringify([{
-                                name: name,
-                                value: result.value
-                            }])
+                            data: JSON.stringify([
+                                {
+                                    name: name,
+                                    value: result.value,
+                                    propertySource: propertySource
+                                }
+                            ])
                         })
                             .done(function (data, textStatus, jqXHR) {
                                 const sources = data.join(",");
@@ -116,16 +120,16 @@ function updateConfigPropertyValue(button, name) {
                                 const foundRows = mutableConfigurationTable.rows({search: "applied"}).count();
                                 console.log("Found rows:", foundRows);
                                 mutableConfigurationTable.draw();
-                                const currentRow = mutableConfigurationTable.row($(button).closest('tr'));
+                                const currentRow = mutableConfigurationTable.row($(button).closest("tr"));
                                 const rowData = currentRow.data();
                                 rowData[2] = `<code>${result.value}</code>`;
-                                $(currentRow.node()).addClass('selected');
+                                $(currentRow.node()).addClass("selected");
                                 currentRow.data(rowData).draw(false);
 
                                 refreshCasServerConfiguration(`${sources}: Property ${name} Updated`);
                                 setTimeout(() => {
                                     mutableConfigurationTable.rows().every(function () {
-                                        $(this.node()).removeClass('selected');
+                                        $(this.node()).removeClass("selected");
                                     });
                                     mutableConfigurationTable.draw(false);
                                 }, 5000);
@@ -143,7 +147,7 @@ function updateConfigPropertyValue(button, name) {
 }
 
 function createNewConfigurationProperty(button) {
-    $('#newConfigurationDialog').dialog({
+    $("#newConfigurationDialog").dialog({
         autoOpen: false,
         modal: true,
         width: 600,
@@ -153,25 +157,36 @@ function createNewConfigurationProperty(button) {
                     return;
                 }
 
-                const name = $('#newConfigPropertyName').val();
-                const value = $('#newConfigPropertyValue').val();
-                console.log(`Creating new property ${name} with value ${value}`);
+                const name = $("#newConfigPropertyName").val();
+                const value = $("#newConfigPropertyValue").val();
+                const sources = $("#propertySourcesSelect").val();
+                console.log(`Creating new property ${name} with value ${value} in source ${sources}`);
+
+                let payload;
+                if (sources.length === 0) {
+                    payload = [{name: name, value: value}];
+                } else {
+                    payload = sources.map(entry => ({
+                        name: name,
+                        value: value,
+                        propertySource: entry
+                    }));
+                }
 
                 $.ajax({
                     url: `${actuatorEndpoints.casconfig}/update`,
                     method: "POST",
                     contentType: "application/json",
-                    data: JSON.stringify([{
-                        name: name,
-                        value: value
-                    }]),
+                    data: JSON.stringify(payload),
                     success: response => {
-                        $(this).dialog('close');
+                        $(this).dialog("close");
                         $.get(actuatorEndpoints.env, res => {
                             reloadConfigurationTable(res);
                             refreshCasServerConfiguration(`New Property ${name} Created`);
                         })
-                            .fail((xhr) => { displayBanner(xhr); });
+                            .fail((xhr) => {
+                                displayBanner(xhr);
+                            });
                     },
                     error: (xhr, status, error) => {
                         console.error(`Error: ${status} / ${error} / ${xhr.responseText}`);
@@ -180,15 +195,15 @@ function createNewConfigurationProperty(button) {
                 });
             },
             Cancel: function () {
-                $(this).dialog('close');
+                $(this).dialog("close");
             }
         },
         open: function () {
-            $('#newConfigPropertyValue').val('').focus();
-            $('#newConfigPropertyName').val('').focus();
+            $("#newConfigPropertyValue").val("").focus();
+            $("#newConfigPropertyName").val("").focus();
         }
     });
-    $('#newConfigurationDialog').dialog('open');
+    $("#newConfigurationDialog").dialog("open");
 }
 
 function refreshCasServerConfiguration(title) {
@@ -202,7 +217,7 @@ function refreshCasServerConfiguration(title) {
             <p class="text-justify"/>CAS will rebind external configuration properties <strong>internally without a restart</strong>, 
             allowing components to be refreshed to reflect the changes. In-flight requests and operations keep running normally
             using the existing/old CAS components until they are fully refreshed in the runtime application context.
-            `,
+            `
         })
             .then((reloadResult) => {
                 if (reloadResult.isConfirmed) {
@@ -227,7 +242,7 @@ function reloadConfigurationTable(response) {
 
     const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable();
     mutableConfigurationTable.clear();
-    
+
     for (const source of response.propertySources) {
         const properties = flattenJSON(source.properties);
         for (const [key, value] of Object.entries(properties)) {
@@ -247,7 +262,7 @@ function reloadConfigurationTable(response) {
                     2: `<code>${value}</code>`,
                     3: buttons
                 });
-                
+
                 if (mutablePropertySources.some(entry => source.name.endsWith(entry))) {
                     const propertyName = key.replace(".value", "");
                     let buttons = `
@@ -259,6 +274,7 @@ function reloadConfigurationTable(response) {
                             </button>
                             <button type="button" name="updateConfigPropertyValueButton" href="#" 
                                     data-key='${propertyName}'
+                                    data-source='${source.name}'
                                     onclick="updateConfigPropertyValue(this, '${propertyName}')"
                                     class="mdc-button mdc-button--raised min-width-32x">
                                 <i class="mdi mdi-content-save-edit min-width-32x" aria-hidden="true"></i>
@@ -3576,11 +3592,11 @@ async function initializeConfigurationOperations() {
 
     configurationTable.clear();
     mutableConfigurationTable.clear();
-    
+
     if (actuatorEndpoints.env) {
         $.get(actuatorEndpoints.env, response => {
             reloadConfigurationTable(response);
-            
+
             $("#casActiveProfiles").empty();
             for (const element of response.activeProfiles) {
                 let feature = `
@@ -3599,7 +3615,6 @@ async function initializeConfigurationOperations() {
             displayBanner(xhr);
         });
     }
-
 
 
     const configPropsTable = $("#configPropsTable").DataTable({
