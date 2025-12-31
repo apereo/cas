@@ -98,6 +98,8 @@ class CasJdbcCloudConfigBootstrapAutoConfigurationTests {
         assertEquals("https://sso.example.org/cas", propertySource.getProperty("cas.server.prefix"));
         propertySource.removeProperty("cas.server.prefix");
         assertNull(propertySource.getProperty("cas.server.prefix"));
+        propertySource.removeAll();
+        assertEquals(0, propertySource.getPropertyNames().length);
     }
 
     static class Jpa extends AbstractJpaProperties {

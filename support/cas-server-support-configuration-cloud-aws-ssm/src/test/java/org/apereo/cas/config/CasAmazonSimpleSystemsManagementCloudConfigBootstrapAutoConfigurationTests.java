@@ -106,5 +106,7 @@ class CasAmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurationTests
         assertEquals("https://apereo.org/cas", prefix);
         propertySource.removeProperty("cas.server.prefix");
         assertNull(environment.getProperty("cas.server.prefix"));
+        propertySource.removeAll();
+        assertEquals(0, propertySource.getPropertyNames().length);
     }
 }

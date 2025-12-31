@@ -27,4 +27,10 @@ public class SimplePropertySource extends MapPropertySource
     public void removeProperty(final String name) {
         getSource().remove(name);
     }
+
+    @Override
+    public void removeAll() {
+        getSource().clear();
+    }
+
 }

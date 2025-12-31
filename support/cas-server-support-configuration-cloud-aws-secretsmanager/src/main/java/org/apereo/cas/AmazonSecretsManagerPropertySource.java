@@ -72,6 +72,12 @@ public class AmazonSecretsManagerPropertySource extends EnumerablePropertySource
     }
 
     @Override
+    public void removeAll() {
+        propertyNames.forEach(this::removeProperty);
+        propertyNames.clear();
+    }
+
+    @Override
     public void removeProperty(final String name) {
         getSource().deleteSecret(DeleteSecretRequest.builder().secretId(name).build());
         propertyNames.remove(name);

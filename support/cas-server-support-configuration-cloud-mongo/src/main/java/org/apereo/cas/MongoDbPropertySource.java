@@ -37,6 +37,12 @@ public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperati
     }
 
     @Override
+    public void removeAll() {
+        getSource().dropCollection(MongoDbProperty.class);
+        propertyNames.clear();
+    }
+
+    @Override
     public void removeProperty(final String name) {
         val query = Query.query(Criteria.where("name").is(name));
         getSource().remove(query, MongoDbProperty.class, MongoDbProperty.class.getSimpleName());

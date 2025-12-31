@@ -62,4 +62,9 @@ public interface MutablePropertySource<T> {
      * @param name the name
      */
     void removeProperty(String name);
+
+    /**
+     * Remove all.
+     */
+    void removeAll();
 }

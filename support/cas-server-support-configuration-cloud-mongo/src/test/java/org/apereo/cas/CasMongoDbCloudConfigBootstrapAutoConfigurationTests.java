@@ -101,6 +101,9 @@ class CasMongoDbCloudConfigBootstrapAutoConfigurationTests {
         propertySource.removeProperty("cas.server.prefix");
         val prefixAfterDelete = environment.getProperty("cas.server.prefix");
         assertNull(prefixAfterDelete);
+
+        propertySource.removeAll();
+        assertEquals(0, propertySource.getPropertyNames().length);
     }
 
     @TestConfiguration(proxyBeanMethods = false)

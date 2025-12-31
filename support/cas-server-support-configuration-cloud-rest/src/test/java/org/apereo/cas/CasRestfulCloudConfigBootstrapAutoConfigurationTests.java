@@ -56,5 +56,7 @@ class CasRestfulCloudConfigBootstrapAutoConfigurationTests {
         propertySource.setProperty("cas.server.prefix", "https://example.org/cas");
         assertTrue(List.of(propertySource.getPropertyNames()).contains("cas.server.prefix"));
         propertySource.removeProperty("cas.server.prefix");
+        propertySource.removeAll();
+        assertEquals(0, propertySource.getPropertyNames().length);
     }
 }

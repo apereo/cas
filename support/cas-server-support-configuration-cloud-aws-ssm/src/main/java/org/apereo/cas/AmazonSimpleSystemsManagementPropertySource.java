@@ -86,6 +86,12 @@ public class AmazonSimpleSystemsManagementPropertySource extends EnumerablePrope
     }
 
     @Override
+    public void removeAll() {
+        properties.keySet().forEach(this::removeProperty);
+        properties.clear();
+    }
+
+    @Override
     public MutablePropertySource setProperty(final String name, final Object value) {
         val path = properties.containsKey(name)
             ? properties.get(name).path()

@@ -34,6 +34,12 @@ public class JdbcPropertySource extends EnumerablePropertySource<JdbcTemplate> i
     }
 
     @Override
+    public void removeAll() {
+        getSource().update("DELETE FROM CAS_SETTINGS_TABLE");
+        propertyNames.clear();
+    }
+
+    @Override
     public void removeProperty(final String name) {
         getSource().update("DELETE FROM CAS_SETTINGS_TABLE WHERE name = ?", name);
         propertyNames.remove(name);
