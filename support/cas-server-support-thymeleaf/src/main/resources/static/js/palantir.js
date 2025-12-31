@@ -300,7 +300,19 @@ function reloadConfigurationTable(response) {
     const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable();
     mutableConfigurationTable.clear();
 
+    $("#casPropertySourcesChipset").empty();
+    
     for (const source of response.propertySources) {
+        let propertySourceChip = `
+            <div class="mdc-chip" role="row">
+                <div class="mdc-chip__ripple"></div>
+                <span role="gridcell">
+                  <span class="mdc-chip__text">${source.name}</span>
+                </span>
+            </div>
+        `.trim();
+        $("#casPropertySourcesChipset").append($(propertySourceChip));
+
         const properties = flattenJSON(source.properties);
         for (const [key, value] of Object.entries(properties)) {
             if (!key.endsWith(".origin")) {
@@ -319,6 +331,8 @@ function reloadConfigurationTable(response) {
                     2: `<code>${value}</code>`,
                     3: buttons
                 });
+
+                
 
                 if (mutablePropertySources.some(entry => source.name.endsWith(entry))) {
                     const propertyName = key.replace(".value", "");
