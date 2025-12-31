@@ -3,7 +3,6 @@ package org.apereo.cas.web.report;
 import module java.base;
 import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.api.MutablePropertySource;
 import org.apereo.cas.configuration.api.SimplePropertySource;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.JsonUtils;
@@ -58,7 +57,7 @@ class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("simplePropertySource")
     private PropertySource simplePropertySource;
-    
+
     @Test
     void verifyEncryptionDecryption() throws Throwable {
         val value = UUID.randomUUID().toString();
@@ -102,6 +101,16 @@ class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
         mockMvc.perform(post("/actuator/refresh")).andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
         assertEquals("https://sso.apereo.org/cas", casServerPrefix.getObject().prefix());
+
+        mockMvc.perform(delete("/actuator/casConfig")
+                .content(JsonUtils.render(
+                    Map.of(
+                        "name", "cas.server.prefix",
+                        "propertySource", simplePropertySource.getName()
+                    )
+                ))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk());
     }
 
     @TestConfiguration(proxyBeanMethods = false)
@@ -112,11 +121,10 @@ class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
         public PropertySource simplePropertySource() {
             return new SimplePropertySource();
         }
-        
+
         @Bean
         public InitializingBean simplePropertySourceLocator(
-            @Qualifier("simplePropertySource")
-            final PropertySource simplePropertySource,
+            @Qualifier("simplePropertySource") final PropertySource simplePropertySource,
             final ConfigurableEnvironment environment) {
             return () -> environment.getPropertySources().addFirst(simplePropertySource);
         }

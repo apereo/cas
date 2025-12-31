@@ -69,6 +69,46 @@ function effectiveConfigPropertyValue(name) {
         });
 }
 
+function deleteConfigPropertyValue(button, name) {
+    if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+        const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable();
+        const currentRow = mutableConfigurationTable.row($(button).closest("tr"));
+        const propertySource = $(button).data("source").replace("bootstrapProperties-", "");
+        Swal.fire({
+            title: `Are you sure you want to delete this entry from ${propertySource}?`,
+            text: "Once removed, you may not be able to revert this.",
+            icon: "question",
+            showConfirmButton: true,
+            showDenyButton: true
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `${actuatorEndpoints.casconfig}`,
+                        method: "DELETE",
+                        contentType: "application/json",
+                        data: JSON.stringify(
+                            {
+                                name: name,
+                                propertySource: propertySource
+                            }
+                        )
+                    })
+                        .done(function (data, textStatus, jqXHR) {
+                            const sources = data.join(",");
+                            console.log("Removed property from configuration sources", sources);
+                            currentRow.remove().draw(false);
+                            refreshCasServerConfiguration(`${sources}: Property ${name} Removed`);
+                        })
+                        .fail(function (jqXHR, textStatus, errorThrown) {
+                            console.error("Error:", textStatus, errorThrown);
+                            displayBanner(jqXHR);
+                        });
+                }
+            });
+    }
+}
+
 function updateConfigPropertyValue(button, name) {
     if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
         const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable();
@@ -213,10 +253,16 @@ function refreshCasServerConfiguration(title) {
             showCancelButton: true,
             icon: "success",
             title: title,
+            width: "35%",
+            confirmButtonText: 'Refresh',
             html: `Do you want to refresh the CAS runtime context to apply the changes?
-            <p class="text-justify"/>CAS will rebind external configuration properties <strong>internally without a restart</strong>, 
+            <p class="text-justify"/>CAS will rebind components to external configuration properties <strong>internally without a restart</strong>, 
             allowing components to be refreshed to reflect the changes. In-flight requests and operations keep running normally
             using the existing/old CAS components until they are fully refreshed in the runtime application context.
+            <p class="text-justify"/>
+            <strong>Note: Not every component is refreshable.</strong> Configuration properties that control
+            fundamental aspects of CAS operation may not be dynamically reloaded. In such cases, a full restart of the CAS server
+            may be required for the changes to take effect.
             `
         })
             .then((reloadResult) => {
@@ -278,6 +324,13 @@ function reloadConfigurationTable(response) {
                                     onclick="updateConfigPropertyValue(this, '${propertyName}')"
                                     class="mdc-button mdc-button--raised min-width-32x">
                                 <i class="mdi mdi-content-save-edit min-width-32x" aria-hidden="true"></i>
+                            </button>
+                            <button type="button" name="deleteConfigPropertyValueButton" href="#" 
+                                    data-key='${propertyName}'
+                                    data-source='${source.name}'
+                                    onclick="deleteConfigPropertyValue(this, '${propertyName}')"
+                                    class="mdc-button mdc-button--raised min-width-32x">
+                                <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
                             </button>
                         `;
                     mutableConfigurationTable.row.add({
@@ -3526,7 +3579,7 @@ async function initializeConfigurationOperations() {
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New Property</span>
             </button>
             <button type="button" id="refreshConfigurationButton"
-                    onclick="refreshCasServerConfiguration('Configuration Reload');" 
+                    onclick="refreshCasServerConfiguration('Context Refresh');" 
                     class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>Refresh CAS</span>
             </button>
