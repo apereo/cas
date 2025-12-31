@@ -26,7 +26,6 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
