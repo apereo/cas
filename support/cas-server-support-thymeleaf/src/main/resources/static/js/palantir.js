@@ -251,7 +251,7 @@ function refreshCasServerConfiguration(title) {
         Swal.fire({
             showConfirmButton: true,
             showCancelButton: true,
-            icon: "success",
+            icon: "question",
             title: title,
             width: "35%",
             confirmButtonText: 'Refresh',
