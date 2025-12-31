@@ -5,13 +5,10 @@ import org.apereo.cas.configuration.api.MutablePropertySource;
 import com.google.common.base.Splitter;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.config.YamlProcessor;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.cloud.bootstrap.config.BootstrapPropertySource;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
 
 /**
