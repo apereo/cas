@@ -34,7 +34,7 @@ The REST endpoints expected by this capability are as follows:
 |----------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `/`      | `GET`  | Fetch a specific property requested by the `name` query parameter. Produce `200` status code with the property value in the response body, or `4xx` for unknown/unaailable properties. |
 | `/names` | `GET`  | Produce a list of all supported and available property names.                                                                                                                          |
-| `/`      | `POST` | Receive a `name` and `value` in the requesty body to update a prooerty value.                                                                                                          |
+| `/`      | `POST` | Receive a `name` and `value` in the requesty body to update a property value.                                                                                                          |
 
 ## Actuator Endpoints
 
