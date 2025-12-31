@@ -111,6 +111,8 @@ class CasAmazonS3BucketsCloudConfigBootstrapAutoConfigurationTests {
         assertEquals("https://example.org/cas", prefix);
         propertySource.removeProperty("server.port");
         assertNull(environment.getProperty("server.port"));
+        propertySource.removeAll();
+        assertEquals(0, propertySource.getPropertyNames().length);
     }
 
     private static void deleteBucket(final S3Client s3Client) {

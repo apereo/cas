@@ -98,6 +98,18 @@ public class DynamoDbPropertySource extends EnumerablePropertySource<DynamoDbCli
         propertyNames.remove(name);
     }
 
+    @Override
+    public void removeAll() {
+        val scan = ScanRequest.builder().tableName(TABLE_NAME).build();
+        val result = getSource().scan(scan);
+        result.items().forEach(item -> {
+            val key = Map.of(DynamoDbColumnNames.NAME.getColumnName(),
+                item.get(DynamoDbColumnNames.NAME.getColumnName()));
+            getSource().deleteItem(DeleteItemRequest.builder().tableName(TABLE_NAME).key(key).build());
+        });
+        propertyNames.clear();
+    }
+
     private static DymamoDbProperty retrieveSetting(final Map<String, AttributeValue> entry) {
         val name = Objects.requireNonNull(entry.get(DynamoDbColumnNames.NAME.getColumnName())).s();
         val value = Objects.requireNonNull(entry.get(DynamoDbColumnNames.VALUE.getColumnName())).s();
