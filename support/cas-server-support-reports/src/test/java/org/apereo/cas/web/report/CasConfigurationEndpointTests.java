@@ -111,6 +111,15 @@ class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
                 ))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk());
+
+        mockMvc.perform(delete("/actuator/casConfig")
+                .content(JsonUtils.render(
+                    Map.of(
+                        "propertySource", simplePropertySource.getName()
+                    )
+                ))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk());
     }
 
     @TestConfiguration(proxyBeanMethods = false)
