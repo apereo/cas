@@ -106,14 +106,28 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
     @DeleteMapping
     @Operation(summary = "Remove configuration property",
         parameters = {
-            @Parameter(name = "name", required = true, description = "The name of the property to remove"),
+            @Parameter(name = "name", required = false, description = "The name of the property to remove. Leave blank to remove all properties"),
             @Parameter(name = "propertySource", required = false, description = "The name of the property source that should be updated")
         })
     public List<String> removeProperty(@RequestBody final ConfigurationPropertyDeleteRequest request) {
         val activeSources = CasCoreConfigurationUtils.getMutablePropertySources(applicationContext);
+        if (StringUtils.isBlank(request.name())) {
+            return activeSources
+                .stream()
+                .map(source -> Stream.of(request)
+                    .filter(v -> StringUtils.isBlank(v.propertySource()) || v.propertySource().equalsIgnoreCase(source.getName()))
+                    .map(v -> {
+                        source.removeAll();
+                        return source.getName();
+                    })
+                    .toList())
+                .flatMap(Collection::stream)
+                .toList();
+        }
         return activeSources
             .stream()
             .map(source -> Stream.of(request)
+                .filter(v -> StringUtils.isNotBlank(v.name()))
                 .filter(v -> StringUtils.isBlank(v.propertySource()) || v.propertySource().equalsIgnoreCase(source.getName()))
                 .map(v -> {
                     source.removeProperty(v.name());
@@ -131,7 +145,7 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
     public record ConfigurationPropertyDeleteRequest(
-        @NonNull String name,
+        String name,
         @Nullable String propertySource) {
     }
 }

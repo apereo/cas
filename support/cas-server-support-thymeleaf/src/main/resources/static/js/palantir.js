@@ -187,8 +187,31 @@ function updateConfigPropertyValue(button, name) {
 }
 
 function deleteAllConfigurationProperties(button) {
-    function deletePropertiesFromSource(source) {
+    function deletePropertiesFromSource(propertySource) {
         Swal.close();
+        $.ajax({
+            url: `${actuatorEndpoints.casconfig}`,
+            method: "DELETE",
+            contentType: "application/json",
+            data: JSON.stringify(
+                {
+                    propertySource: propertySource
+                }
+            )
+        })
+            .done(function (data, textStatus, jqXHR) {
+                $.get(actuatorEndpoints.env, res => {
+                    reloadConfigurationTable(res);
+                    refreshCasServerConfiguration(`${propertySource}: All Properties Removed`);
+                })
+                    .fail((xhr) => {
+                        displayBanner(xhr);
+                    });
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error("Error:", textStatus, errorThrown);
+                displayBanner(jqXHR);
+            });
     }
     
     if (mutablePropertySources.length === 1) {
