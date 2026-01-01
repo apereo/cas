@@ -82,6 +82,10 @@
                                         sources[0].selected = true;
                                     }
 
+                                    const section = $("<section>", {
+                                        id: `propertySourcesSection`,
+                                    });
+                                    
                                     const container = $("<span>", {
                                         id: `propertySourcesSelectContainer`,
                                         class: `d-flex mb-2 mt-2`
@@ -105,13 +109,16 @@
                                         .css("min-width", "max-content")
                                         .attr("for", "propertySourcesSelectContainer").text("Property Source(s):");
                                     container.append(label, select);
-                                    $(`#newConfigurationMainPanel`).append(container);
+                                    section.append(container);
+                                    
+                                    $(`#newConfigurationMainPanel`).append(section);
                                     new SlimSelect({
                                         select: `#propertySourcesSelect`
                                     });
                                 </script>
                             </div>
                         </section>
+                        <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptConfigProperty', label='#Encrypt Value')}"/>
                   </form>
                 </div>
             </div>

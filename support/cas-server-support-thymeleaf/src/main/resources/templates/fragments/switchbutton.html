@@ -16,14 +16,17 @@
 
         <script th:inline="javascript">
             window.switchButtonChangeHandler = function (el) {
-                const attrMap = {};
-                $(el).data('attrs').split(',').forEach(pair => {
-                    const [key, value] = pair.split('=');
-                    attrMap[key] = value;
-                });
-                const fnName = attrMap["changeEventHandler"];
-                if (fnName && typeof window[fnName] === "function") {
-                    window[fnName](el);
+                const attributes = $(el).data('attrs');
+                if (attributes) {
+                    const attrMap = {};
+                    attributes.split(',').forEach(pair => {
+                        const [key, value] = pair.split('=');
+                        attrMap[key] = value;
+                    });
+                    const fnName = attrMap["changeEventHandler"];
+                    if (fnName && typeof window[fnName] === "function") {
+                        window[fnName](el);
+                    }
                 }
             };
         </script>
