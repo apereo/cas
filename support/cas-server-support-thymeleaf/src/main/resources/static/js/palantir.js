@@ -115,74 +115,12 @@ function updateConfigPropertyValue(button, name) {
         const currentRow = mutableConfigurationTable.row($(button).closest("tr"));
         const propertySource = $(button).data("source").replace("bootstrapProperties-", "");
         const rowData = currentRow.data();
-        Swal.fire({
-            input: "text",
-            inputAttributes: {
-                autocapitalize: "off"
-            },
-            showConfirmButton: true,
-            inputValue: $(rowData[2]).text().trim(),
-            showCancelButton: true,
-            icon: "question",
-            title: `What's the new configuration value for ${name}?`,
-            text: "This functionality can only update configuration properties if the underlying configuration source supports dynamic updates."
+
+        openNewConfigurationPropertyDialog( {
+            name: name,
+            propertySource: propertySource,
+            updateEntry: true
         })
-            .then((result) => {
-                if (result.isConfirmed) {
-                    console.log(`Updating property ${name} to value ${result.value} in source ${propertySource}`);
-                    Swal.fire({
-                        icon: "info",
-                        title: `Updating...`,
-                        text: `Updating property ${name} to value ${result.value}...`,
-                        allowOutsideClick: false,
-                        showConfirmButton: false,
-                        didOpen: () => Swal.showLoading()
-                    });
-
-                    setTimeout(() => {
-                        $.ajax({
-                            url: `${actuatorEndpoints.casconfig}/update`,
-                            method: "POST",
-                            contentType: "application/json",
-                            data: JSON.stringify([
-                                {
-                                    name: name,
-                                    value: result.value,
-                                    propertySource: propertySource
-                                }
-                            ])
-                        })
-                            .done(function (data, textStatus, jqXHR) {
-                                const sources = data.join(",");
-                                console.log("Updated property via configuration sources", sources);
-
-                                mutableConfigurationTable.search(String(name));
-                                const foundRows = mutableConfigurationTable.rows({search: "applied"}).count();
-                                console.log("Found rows:", foundRows);
-                                mutableConfigurationTable.draw();
-                                const currentRow = mutableConfigurationTable.row($(button).closest("tr"));
-                                const rowData = currentRow.data();
-                                rowData[2] = `<code>${result.value}</code>`;
-                                $(currentRow.node()).addClass("selected");
-                                currentRow.data(rowData).draw(false);
-
-                                refreshCasServerConfiguration(`${sources}: Property ${name} Updated`);
-                                setTimeout(() => {
-                                    mutableConfigurationTable.rows().every(function () {
-                                        $(this.node()).removeClass("selected");
-                                    });
-                                    mutableConfigurationTable.draw(false);
-                                }, 5000);
-                            })
-                            .fail(function (jqXHR, textStatus, errorThrown) {
-                                Swal.close();
-                                console.error("Error:", textStatus, errorThrown);
-                                Swal.fire("Error", `Failed to update property ${name}`, "error");
-                                displayBanner(jqXHR);
-                            });
-                    }, 1000);
-                }
-            });
     }
 }
 
@@ -232,19 +170,55 @@ function deleteAllConfigurationProperties(button) {
     }
 }
 
+function importConfigurationProperties(button) {
+
+}
+
+async function encryptConfigProperty(value) {
+    try {
+        const data = await $.ajax({
+            method: "POST",
+            url: `${actuatorEndpoints.casconfig}/encrypt`,
+            data: value,
+            contentType: "text/plain; charset=utf-8",
+            dataType: "text"
+        });
+        return data;
+    } catch (xhr) {
+        displayBanner(xhr);
+        throw xhr;
+    }
+}
+
 function createNewConfigurationProperty(button) {
+    openNewConfigurationPropertyDialog({
+        name: "",
+        propertySource: "",
+        updateEntry: false
+    });
+    
+}
+
+function openNewConfigurationPropertyDialog(config) {
     $("#newConfigurationDialog").dialog({
         autoOpen: false,
         modal: true,
         width: 600,
+        height: "auto",
         buttons: {
-            OK: function () {
+            OK: async function () {
                 if (!$("#newConfigurationForm")[0].reportValidity()) {
                     return;
                 }
 
                 const name = $("#newConfigPropertyName").val();
-                const value = $("#newConfigPropertyValue").val();
+                let value = $("#newConfigPropertyValue").val();
+                const encrypt = $("#encryptConfigProperty").val();
+
+                if (encrypt && encrypt === "true" && actuatorEndpoints.casconfig) {
+                    value = await encryptConfigProperty(value);
+                }
+
                 const sources = $("#propertySourcesSelect").val();
                 console.log(`Creating new property ${name} with value ${value} in source ${sources}`);
 
@@ -285,8 +259,20 @@ function createNewConfigurationProperty(button) {
             }
         },
         open: function () {
-            $("#newConfigPropertyValue").val("").focus();
-            $("#newConfigPropertyName").val("").focus();
+            $(this).css("overflow", "visible");
+            
+            $("#newConfigPropertyName").val(config.name ?? "");
+            $("#newConfigPropertyValue").val("");
+            $("#propertySourcesSelect").val(config.propertySource ?? "")
+            if (config.updateEntry) {
+                $("#newConfigPropertyName").parent().hide();
+                $("#propertySourcesSection").hide();
+                $("#newConfigPropertyValue").focus();
+            } else {
+                $("#propertySourcesSection").show();
+                $("#newConfigPropertyName").parent().show();
+                $("#newConfigPropertyName").focus();
+            }
         }
     });
     $("#newConfigurationDialog").dialog("open");
@@ -316,7 +302,7 @@ function refreshCasServerConfiguration(title) {
                     Swal.close();
                     Swal.fire({
                         icon: "info",
-                        title: title,
+                        title: "Refreshing CAS Server",
                         text: "Please wait while the CAS application context is being refreshed...",
                         allowOutsideClick: false,
                         showConfirmButton: false,
@@ -3660,6 +3646,9 @@ async function initializeConfigurationOperations() {
             </button>
             <button type="button" onclick="deleteAllConfigurationProperties(this);" id="deleteAllConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-broom" aria-hidden="true"></i>Delete All</span>
+            </button>
+            <button type="button" onclick="importConfigurationProperties(this);" id="importConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
+                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-import" aria-hidden="true"></i>Import</span>
             </button>
             <button type="button" id="refreshConfigurationButton"
                     onclick="refreshCasServerConfiguration('Context Refresh');" 
