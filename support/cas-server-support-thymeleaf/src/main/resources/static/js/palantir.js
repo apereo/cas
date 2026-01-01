@@ -186,6 +186,29 @@ function updateConfigPropertyValue(button, name) {
     }
 }
 
+function deleteAllConfigurationProperties(button) {
+    function deletePropertiesFromSource(source) {
+        Swal.close();
+    }
+    
+    if (mutablePropertySources.length === 1) {
+        deletePropertiesFromSource(mutablePropertySources[0]);
+    } else {
+        Swal.fire({
+            title: "Which property source do you want to clear?",
+            input: "select",
+            icon: "question",
+            inputOptions: mutablePropertySources,
+            inputPlaceholder: "Choose a property source...",
+            showCancelButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deletePropertiesFromSource(result.value);
+            }
+        });
+    }
+}
+
 function createNewConfigurationProperty(button) {
     $("#newConfigurationDialog").dialog({
         autoOpen: false,
@@ -1751,6 +1774,15 @@ async function initializeLoggingOperations() {
         $("#loggingDataStreamOps").parent().addClass("d-none");
     }
 
+}
+
+async function restoreActiveTabs() {
+    const storedTabs = localStorage.getItem("ActiveTabs");
+    const activeTabs = storedTabs ? JSON.parse(storedTabs) : {};
+    for (const [key, value] of Object.entries(activeTabs)) {
+        $(`#${key}`).tabs("option", "active", Number(value));
+        $(`#${key}`).tabs("refresh");
+    }
 }
 
 async function initializeCasSpringWebflowOperations() {
@@ -3603,6 +3635,9 @@ async function initializeConfigurationOperations() {
             <button type="button" onclick="createNewConfigurationProperty(this);" id="newConfigPropertyButton" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New Property</span>
             </button>
+            <button type="button" onclick="deleteAllConfigurationProperties(this);" id="deleteAllConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
+                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-broom" aria-hidden="true"></i>Delete All</span>
+            </button>
             <button type="button" id="refreshConfigurationButton"
                     onclick="refreshCasServerConfiguration('Context Refresh');" 
                     class="mdc-button mdc-button--raised">
@@ -4767,7 +4802,8 @@ async function initializePalantir() {
                         initializeTrustedMultifactorOperations(),
                         initializeAuditEventsOperations(),
                         initializeCasEventsOperations(),
-                        initializeCasSpringWebflowOperations()
+                        initializeCasSpringWebflowOperations(),
+                        restoreActiveTabs()
                     ]);
 
                     window.addEventListener("resize", updateNavigationSidebar, {passive: true});
@@ -4802,7 +4838,19 @@ function selectSidebarMenuButton(selectedItem) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    $(".jqueryui-tabs").tabs().off().on("click", () => updateNavigationSidebar());
+    $(".jqueryui-tabs").tabs({
+        activate: function () {
+            const tabId = $(this).attr("id");
+            if (tabId) {
+                const active = $(this).tabs("option", "active");
+                const storedTabs = localStorage.getItem("ActiveTabs");
+                const activeTabs = storedTabs ? JSON.parse(storedTabs) : {};
+                activeTabs[tabId] = active;
+                localStorage.setItem("ActiveTabs", JSON.stringify(activeTabs));
+            }
+        }
+    }).off().on("click", () => updateNavigationSidebar());
+    
     $(".jqueryui-menu").menu();
     $(".jqueryui-selectmenu").selectmenu({
         width: "360px",
