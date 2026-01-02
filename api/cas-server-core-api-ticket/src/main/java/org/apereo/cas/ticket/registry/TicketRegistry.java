@@ -162,7 +162,8 @@ public interface TicketRegistry {
      * <p>
      * The returning stream may be bound to an IO channel (such as database connection),
      * so it should be properly closed after usage.
-     *
+     * <p>
+     * JpaTicketRegistry implementation of this method needs to be always called with transaction present.
      * @return the tickets stream
      */
     default Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
@@ -190,7 +191,8 @@ public interface TicketRegistry {
 
     /**
      * Gets sessions for principal.
-     *
+     * <p>
+     * JpaTicketRegistry implementation of this method needs to be always called with transaction present.
      * @param principalId the principal id
      * @return the sessions for
      */
@@ -202,6 +204,8 @@ public interface TicketRegistry {
 
     /**
      * Gets tickets with authentication attributes.
+     * <p>
+     * JpaTicketRegistry implementation of this method needs to be always called with transaction present.
      *
      * @param queryAttributes the query attributes
      * @return the tickets with authentication attributes
