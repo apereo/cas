@@ -4175,6 +4175,9 @@ ext.libraries = [
                 dependencies.create(libs.jquery.ui.get()) {
                     exclude(group: "org.webjars", module: "jquery")
                 },
+                dependencies.create(libs.jsyaml.get()) {
+                    exclude(group: "org.webjars", module: "jquery")
+                },
                 dependencies.create(libs.notyf.get()) {
                     exclude(group: "org.webjars", module: "jquery")
                 },

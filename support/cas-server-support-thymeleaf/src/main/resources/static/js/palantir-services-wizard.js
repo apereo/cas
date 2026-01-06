@@ -2828,7 +2828,7 @@ function openRegisteredServiceWizardDialog() {
             showCancelButton: true
         }).then((result) => {
             if (result.isConfirmed) {
-                openWizardDialog(result.value);
+                openWizardDialog(mutablePropertySources[Number(result.value)]);
             }
         });
     }
