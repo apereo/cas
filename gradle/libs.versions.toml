@@ -29,7 +29,7 @@ caffeine = "3.2.3"
 casClient = "4.0.4"
 cbor = "4.5.6"
 chartJs = "4.5.1"
-checkstyle = "12.3.1"
+checkstyle = "13.0.0"
 classgraph = "4.8.184"
 commonsBeans = "1.11.0"
 commonsCli = "1.11.0"
@@ -139,6 +139,7 @@ jsonassert = "1.5.3"
 jsoup = "1.21.2"
 jspecify = "1.0.0"
 jsr305 = "3.0.2"
+jsYaml = "4.1.1"
 jta = "2.0.1"
 jtds = "1.3.1"
 junit = "6.0.1"
@@ -482,6 +483,7 @@ jsonassert = { module = "org.skyscreamer:jsonassert", version.ref = "jsonassert"
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
 jsr305 = { module = "com.google.code.findbugs:jsr305", version.ref = "jsr305" }
+jsyaml = { module = "org.webjars.npm:js-yaml", version.ref = "jsYaml" }
 jtds = { module = "net.sourceforge.jtds:jtds", version.ref = "jtds" }
 jul-to-slf4j = { module = "org.slf4j:jul-to-slf4j", version.ref = "slf4j" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }

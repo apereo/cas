@@ -116,11 +116,12 @@ function updateConfigPropertyValue(button, name) {
         const propertySource = $(button).data("source").replace("bootstrapProperties-", "");
         const rowData = currentRow.data();
 
-        openNewConfigurationPropertyDialog( {
+        openNewConfigurationPropertyDialog({
             name: name,
+            value: $(rowData[2]).text(),
             propertySource: propertySource,
             updateEntry: true
-        })
+        });
     }
 }
 
@@ -151,7 +152,7 @@ function deleteAllConfigurationProperties(button) {
                 displayBanner(jqXHR);
             });
     }
-    
+
     if (mutablePropertySources.length === 1) {
         deletePropertiesFromSource(mutablePropertySources[0]);
     } else {
@@ -171,19 +172,110 @@ function deleteAllConfigurationProperties(button) {
 }
 
 function importConfigurationProperties(button) {
+    function parseProperties(text) {
+        const result = {};
+        text.split(/\r?\n/).forEach(line => {
+            line = line.trim();
+            if (!line || line.startsWith('#') || line.startsWith('!')) return;
+
+            const idx = line.indexOf('=');
+            if (idx === -1) return;
+            const key = line.substring(0, idx).trim();
+            result[key] = line.substring(idx + 1).trim();
+        });
+        return result;
+    }
+
+    function importProperties(payload) {
+        $.ajax({
+            url: `${actuatorEndpoints.casconfig}/update`,
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: response => {
+                Swal.close();
+                $.get(actuatorEndpoints.env, res => {
+                    reloadConfigurationTable(res);
+                    refreshCasServerConfiguration(`New Property ${name} Created`);
+                })
+                    .fail((xhr) => {
+                        displayBanner(xhr);
+                    });
+            },
+            error: (xhr, status, error) => {
+                Swal.close();
+                console.error(`Error: ${status} / ${error} / ${xhr.responseText}`);
+                displayBanner(xhr);
+            }
+        });
+    }
+
+    Swal.fire({
+        title: "Are you sure you want to import configuration properties?",
+        input: "select",
+        inputOptions: mutablePropertySources,
+        html: `
+            <p class="text-justify">Properties will be imported and applied to the CAS server configuration. You may import multiple files at once.
+            Supported file formats are .properties and .yml/.yaml files. You may choose the target property source to which the properties will be applied.</p>
+        `,
+        icon: "question",
+        showConfirmButton: true,
+        showDenyButton: true
+    }) .then((result) => {
+        if (result.isConfirmed) {
+            const propertySource = mutablePropertySources[Number(result.value)];
+            
+            $("#configurationFilesToImport").click();
+            $("#configurationFilesToImport").change(event => {
+                const files = Array.from(event.target.files);
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    reader.readAsText(file);
+                    reader.onload = e => {
+                        const content = e.target.result;
+                        const ext = file.name.split('.').pop().toLowerCase();
+
+                        Swal.fire({
+                            icon: "info",
+                            title: `${propertySource}: Importing Properties`,
+                            text: "Please wait while the configuration properties are being imported...",
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            didOpen: () => Swal.showLoading()
+                        });
+                        if (ext === 'properties') {
+                            const props = parseProperties(content);
+                            const payload = Object.entries(props).map(([key, value]) => ({
+                                name: key,
+                                value
+                            }));
+                            importProperties(payload);
+                        } else if (ext === 'yml' || ext === 'yaml') {
+                            const props = flattenJSON(jsyaml.load(content));
+                            const payload = Object.entries(props).map(([key, value]) => ({
+                                name: key,
+                                value
+                            }));
+                            importProperties(payload);
+                        }
+                    };
+                });
+                $("#configurationFilesToImport").val("");
+            });
+        }
+    });
 
 }
 
 async function encryptConfigProperty(value) {
     try {
-        const data = await $.ajax({
+        return await $.ajax({
             method: "POST",
             url: `${actuatorEndpoints.casconfig}/encrypt`,
             data: value,
             contentType: "text/plain; charset=utf-8",
             dataType: "text"
         });
-        return data;
     } catch (xhr) {
         displayBanner(xhr);
         throw xhr;
@@ -196,7 +288,7 @@ function createNewConfigurationProperty(button) {
         propertySource: "",
         updateEntry: false
     });
-    
+
 }
 
 function openNewConfigurationPropertyDialog(config) {
@@ -260,10 +352,10 @@ function openNewConfigurationPropertyDialog(config) {
         },
         open: function () {
             $(this).css("overflow", "visible");
-            
+
             $("#newConfigPropertyName").val(config.name ?? "");
-            $("#newConfigPropertyValue").val("");
-            $("#propertySourcesSelect").val(config.propertySource ?? "")
+            $("#newConfigPropertyValue").val(config.value ?? "");
+            $("#propertySourcesSelect").val(config.propertySource ?? "");
             if (config.updateEntry) {
                 $("#newConfigPropertyName").parent().hide();
                 $("#propertySourcesSection").hide();
@@ -286,7 +378,7 @@ function refreshCasServerConfiguration(title) {
             icon: "question",
             title: title,
             width: "35%",
-            confirmButtonText: 'Refresh',
+            confirmButtonText: "Refresh",
             html: `Do you want to refresh the CAS runtime context to apply the changes?
             <p class="text-justify"/>CAS will rebind components to external configuration properties <strong>internally without a restart</strong>, 
             allowing components to be refreshed to reflect the changes. In-flight requests and operations keep running normally
@@ -308,7 +400,7 @@ function refreshCasServerConfiguration(title) {
                         showConfirmButton: false,
                         didOpen: () => Swal.showLoading()
                     });
-                    
+
                     const endpoint = actuatorEndpoints.busrefresh || actuatorEndpoints.refresh;
                     $.post(endpoint)
                         .done(() => {
@@ -333,7 +425,7 @@ function reloadConfigurationTable(response) {
     mutableConfigurationTable.clear();
 
     $("#casPropertySourcesChipset").empty();
-    
+
     for (const source of response.propertySources) {
         let propertySourceChip = `
             <div class="mdc-chip" role="row">
@@ -364,7 +456,6 @@ function reloadConfigurationTable(response) {
                     3: buttons
                 });
 
-                
 
                 if (mutablePropertySources.some(entry => source.name.endsWith(entry))) {
                     const propertyName = key.replace(".value", "");
@@ -641,7 +732,7 @@ async function initializeFooterButtons() {
                 Swal.fire({
                     title: "Are you sure you want to import this entry?",
                     text: "Once imported, the entry should take immediate effect.",
-                    icon: "warning",
+                    icon: "question",
                     showConfirmButton: true,
                     showDenyButton: true
                 })
@@ -1327,7 +1418,7 @@ async function initializeSsoSessionOperations() {
             Swal.fire({
                 title: "Are you sure you want to delete all sessions for the user?",
                 text: "Once deleted, you may not be able to recover this and user's SSO session will be removed.",
-                icon: "warning",
+                icon: "question",
                 showConfirmButton: true,
                 showDenyButton: true
 
@@ -1459,7 +1550,7 @@ async function initializeSsoSessionOperations() {
                         Swal.fire({
                             title: "Are you sure you want to delete this session?",
                             text: "Once deleted, you may not be able to recover this session.",
-                            icon: "warning",
+                            icon: "question",
                             showConfirmButton: true,
                             showDenyButton: true
                         })
@@ -1499,11 +1590,10 @@ async function initializeSsoSessionOperations() {
 
     $("button[name=removeAllSsoSessionsButton]").off().on("click", () => {
         if (actuatorEndpoints.ssosessions) {
-
             Swal.fire({
                 title: "Are you sure you want to delete all sessions for all users?",
                 text: "Once deleted, you may not be able to recover and ALL sso sessions for ALL users will be removed.",
-                icon: "warning",
+                icon: "question",
                 showConfirmButton: true,
                 showDenyButton: true
             })
@@ -2521,7 +2611,7 @@ async function initializeSystemOperations() {
         Swal.fire({
             title: "Are you sure you want to shut the server down?",
             text: "Once confirmed, the server will begin shutdown procedures.",
-            icon: "warning",
+            icon: "question",
             showConfirmButton: true,
             showDenyButton: true
         })
@@ -2547,7 +2637,7 @@ async function initializeSystemOperations() {
         Swal.fire({
             title: "Are you sure you want to restart the server?",
             text: "Once confirmed, the server will begin restarting.",
-            icon: "warning",
+            icon: "question",
             showConfirmButton: true,
             showDenyButton: true
         })
@@ -2658,7 +2748,7 @@ async function initializeServiceButtons() {
             Swal.fire({
                 title: "Are you sure you want to delete this entry?",
                 text: "Once deleted, you may not be able to recover this entry.",
-                icon: "warning",
+                icon: "question",
                 showConfirmButton: true,
                 showDenyButton: true
             })
@@ -2722,7 +2812,7 @@ async function initializeServiceButtons() {
             Swal.fire({
                 title: `Are you sure you want to ${isNewService ? "create" : "update"} this entry?`,
                 text: "Once updated, you may not be able to revert this entry.",
-                icon: "warning",
+                icon: "question",
                 showConfirmButton: true,
                 showDenyButton: true
             })
@@ -3155,7 +3245,7 @@ async function initializePersonDirectoryOperations() {
             Swal.fire({
                 title: `Are you sure you want to delete the cache for ${username}?`,
                 text: `Once the cached entry is removed, attribute repositories would be forced to fetch attributes for ${username} again`,
-                icon: "warning",
+                icon: "question",
                 showConfirmButton: true,
                 showDenyButton: true
             })
@@ -3552,7 +3642,7 @@ async function initializeConsentOperations() {
                 Swal.fire({
                     title: `Are you sure you want to delete this entry for ${principal}?`,
                     text: "Once deleted, you may not be able to recover this entry.",
-                    icon: "warning",
+                    icon: "question",
                     showConfirmButton: true,
                     showDenyButton: true
                 })
@@ -3956,7 +4046,7 @@ async function initializeTrustedMultifactorOperations() {
                     Swal.fire({
                         title: "Are you sure you want to delete this entry?",
                         text: "Once deleted, you may not be able to recover this entry.",
-                        icon: "warning",
+                        icon: "question",
                         showConfirmButton: true,
                         showDenyButton: true
                     })
@@ -4096,7 +4186,7 @@ async function initializeMultifactorOperations() {
                     Swal.fire({
                         title: "Are you sure you want to delete this entry?",
                         text: "Once deleted, you may not be able to recover this entry.",
-                        icon: "warning",
+                        icon: "question",
                         showConfirmButton: true,
                         showDenyButton: true
                     })
@@ -4185,7 +4275,7 @@ async function initializeThrottlesOperations() {
                 Swal.fire({
                     title: "Are you sure you want to delete this entry?",
                     text: "Once deleted, you may not be able to recover this entry.",
-                    icon: "warning",
+                    icon: "question",
                     showConfirmButton: true,
                     showDenyButton: true
                 })
@@ -4220,7 +4310,7 @@ async function initializeThrottlesOperations() {
             Swal.fire({
                 title: "Are you sure you want to release throttled entries?",
                 text: "Released entries, when eligible, will be removed from the authentication throttling store.",
-                icon: "warning",
+                icon: "question",
                 showConfirmButton: true,
                 showDenyButton: true
             })
@@ -4242,7 +4332,7 @@ async function initializeThrottlesOperations() {
             Swal.fire({
                 title: "Are you sure you want to clear throttled entries?",
                 text: "All entries will be removed from the authentication throttling store.",
-                icon: "warning",
+                icon: "question",
                 showConfirmButton: true,
                 showDenyButton: true
             })
@@ -4325,7 +4415,7 @@ function showSaml2IdPMetadata() {
 
 function highlightElements() {
     document
-        .querySelectorAll('pre code[data-highlighted]')
+        .querySelectorAll("pre code[data-highlighted]")
         .forEach(el => delete el.dataset.highlighted);
     hljs.highlightAll();
 }
@@ -4371,7 +4461,7 @@ async function initializeOidcProtocolOperations() {
             Swal.fire({
                 title: "Are you sure you want to rotate keys?",
                 text: "Once rotated, the change will take effect immediately.",
-                icon: "warning",
+                icon: "question",
                 showConfirmButton: true,
                 showDenyButton: true
             })
@@ -4400,7 +4490,7 @@ async function initializeOidcProtocolOperations() {
             Swal.fire({
                 title: "Are you sure you want to revoke keys?",
                 text: "Once revoked, the change will take effect immediately.",
-                icon: "warning",
+                icon: "question",
                 showConfirmButton: true,
                 showDenyButton: true
             })
@@ -4589,7 +4679,7 @@ async function initializeSAML2ProtocolOperations() {
             Swal.fire({
                 title: "Are you sure you want to invalidate the cache entry?",
                 text: "Once deleted, the change will take effect immediately.",
-                icon: "warning",
+                icon: "question",
                 showConfirmButton: true,
                 showDenyButton: true
             })
@@ -4862,7 +4952,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     }).off().on("click", () => updateNavigationSidebar());
-    
+
     $(".jqueryui-menu").menu();
     $(".jqueryui-selectmenu").selectmenu({
         width: "360px",

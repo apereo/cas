@@ -29,7 +29,7 @@ Release Date: 2017-12-01
 
 Copyright &copy; 2005, Yale University
 
-Copyright &copy; 2025, Apereo, Inc.
+Copyright &copy; 2026, Apereo, Inc.
 
 <a name="head1"/>
 
