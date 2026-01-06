@@ -1081,6 +1081,26 @@ function initializeJvmMetrics() {
     }
 }
 
+function waitForActuator(endpoint, intervalMs = 2000) {
+    return new Promise((resolve) => {
+        function poll() {
+            $.ajax({
+                url: endpoint,
+                method: "GET",
+                dataType: "json",
+                timeout: 3000
+            })
+                .done(function (data) {
+                    resolve(data);
+                })
+                .fail(function () {
+                    setTimeout(poll, intervalMs);
+                });
+        }
+        poll();
+    });
+}
+
 async function initializeScheduledTasksOperations() {
 
     const threadDumpTable = $("#threadDumpTable").DataTable({
@@ -1368,7 +1388,6 @@ async function initializeSsoSessionOperations() {
         }
     });
 
-
     const ssoSessionDetailsTable = $("#ssoSessionDetailsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
@@ -1614,8 +1633,7 @@ async function initializeSsoSessionOperations() {
 
         }
     });
-
-
+    
 }
 
 async function initializeLoggingOperations() {
@@ -2610,7 +2628,7 @@ async function initializeSystemOperations() {
     $("button[name=shutdownServerButton]").off().on("click", function () {
         Swal.fire({
             title: "Are you sure you want to shut the server down?",
-            text: "Once confirmed, the server will begin shutdown procedures.",
+            text: "Once confirmed, the server will begin shutdown procedures. Note that this operation does not support clustered deployments.",
             icon: "question",
             showConfirmButton: true,
             showDenyButton: true
@@ -2636,7 +2654,7 @@ async function initializeSystemOperations() {
     $("button[name=restartServerButton]").off().on("click", function () {
         Swal.fire({
             title: "Are you sure you want to restart the server?",
-            text: "Once confirmed, the server will begin restarting.",
+            text: "Once confirmed, the server will begin restarting. Note that this operation does not support clustered deployments.",
             icon: "question",
             showConfirmButton: true,
             showDenyButton: true
@@ -2648,7 +2666,17 @@ async function initializeSystemOperations() {
                         type: "POST",
                         headers: {"Content-Type": "application/json"},
                         success: response => {
-                            Swal.fire("Restarting...", "CAS is restarting. You may close this window.", "info");
+                            Swal.fire({
+                                icon: "info",
+                                title: `Restarting CAS`,
+                                text: "Please wait while the CAS server is restarting...",
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                                didOpen: () => Swal.showLoading()
+                            });
+                            waitForActuator(actuatorEndpoints.info).then(function () {
+                                Swal.close();
+                            });
                         },
                         error: (xhr, status, error) => {
                             console.error("Error deleting resource:", error);
