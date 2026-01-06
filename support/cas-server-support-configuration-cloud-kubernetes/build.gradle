@@ -8,6 +8,7 @@ ext {
 }
 dependencies {
     implementation libraries.springcloudkubernetesconfig
+    implementation libraries.springcloudkubernetesclient
     implementation libraries.springcloudbootstrap
 
     implementation project(":core:cas-server-core-configuration-api")

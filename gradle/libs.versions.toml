@@ -41,7 +41,7 @@ commonsIo = "2.21.0"
 commonsJexl = "3.6.1"
 commonsLang = "3.20.0"
 commonsLang2 = "2.6"
-commonsPool = "2.13.1"
+commonsPool = "2.13.0"
 commonsText = "1.15.0"
 commonsValidator = "1.10.1"
 cosmosdb = "4.76.0"
@@ -219,7 +219,7 @@ springCloudCommons = "5.0.0"
 springCloudConfig = "5.0.0"
 springCloudConsul = "5.0.0"
 springCloudEureka = "5.0.0"
-springCloudKubernetesConfig = "5.0.0"
+springCloudKubernetes = "5.0.0"
 springCloudVault = "5.0.0"
 springCloudZookeeper = "5.0.0"
 springDataCassandra = "5.0.1"
@@ -705,7 +705,8 @@ spring-cloud-starter-bus-amqp = { module = "org.springframework.cloud:spring-clo
 spring-cloud-starter-bus-kafka = { module = "org.springframework.cloud:spring-cloud-starter-bus-kafka", version.ref = "springCloudBus" }
 spring-cloud-starter-consul-config = { module = "org.springframework.cloud:spring-cloud-starter-consul-config", version.ref = "springCloudConsul" }
 spring-cloud-starter-consul-discovery = { module = "org.springframework.cloud:spring-cloud-starter-consul-discovery", version.ref = "springCloudConsul" }
-spring-cloud-starter-kubernetes-fabric8-config = { module = "org.springframework.cloud:spring-cloud-starter-kubernetes-fabric8-config", version.ref = "springCloudKubernetesConfig" }
+spring-cloud-starter-kubernetes-fabric8-config = { module = "org.springframework.cloud:spring-cloud-starter-kubernetes-fabric8-config", version.ref = "springCloudKubernetes" }
+spring-cloud-starter-kubernetes-client = { module = "org.springframework.cloud:spring-cloud-starter-kubernetes-client", version.ref = "springCloudKubernetes" }
 spring-cloud-starter-netflix-eureka-client = { module = "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client", version.ref = "springCloudEureka" }
 spring-cloud-starter-vault-config = { module = "org.springframework.cloud:spring-cloud-starter-vault-config", version.ref = "springCloudVault" }
 spring-cloud-starter-zookeeper-core = { module = "org.springframework.cloud:spring-cloud-starter-zookeeper", version.ref = "springCloudZookeeper" }
