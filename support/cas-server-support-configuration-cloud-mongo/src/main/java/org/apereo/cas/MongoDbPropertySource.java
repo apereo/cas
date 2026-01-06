@@ -60,7 +60,7 @@ public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperati
         if (propertyNames.contains(name)) {
             val query = Query.query(Criteria.where("name").is(name));
             val prop = getSource().findOne(query, MongoDbProperty.class, MongoDbProperty.class.getSimpleName());
-            return Objects.requireNonNull(prop).getValue();
+            return prop != null ? Objects.requireNonNull(prop).getValue() : null;
         }
         return null;
     }
