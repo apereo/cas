@@ -1,16 +1,17 @@
 {
-  "dependencies": "duo",
+  "dependencies": "duo,reports",
   "conditions": {
     "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST",
     "docker": "true"
   },
-
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.service-registry.core.init-from-json=true",
-    
+
+    "--cas.ticket.st.time-to-kill-in-seconds=30",
+
     "--cas.authn.accept.users=duocode::Mellon",
     "--cas.authn.mfa.duo[0].account-status-enabled=true",
 
@@ -23,7 +24,9 @@
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=duoAdmin",
-    "--management.endpoints.access.default=UNRESTRICTED"
+    "--management.endpoints.access.default=UNRESTRICTED",
+    
+    "--cas.authn.authentication-attribute-release.only-release=authnContextClass"
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

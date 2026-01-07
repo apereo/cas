@@ -98,11 +98,8 @@ public interface AuditTrailManager extends Cleanable {
      */
     ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults()
         .findAndAddModules()
-        .changeDefaultPropertyInclusion(handler -> {
-            handler.withValueInclusion(JsonInclude.Include.NON_EMPTY);
-            handler.withContentInclusion(JsonInclude.Include.NON_EMPTY);
-            return handler;
-        })
+        .changeDefaultPropertyInclusion(handler -> handler.withValueInclusion(JsonInclude.Include.NON_EMPTY)
+            .withContentInclusion(JsonInclude.Include.NON_EMPTY))
         .configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, true)
         .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
         .build();

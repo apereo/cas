@@ -48,11 +48,8 @@ public class CasConfigurationMetadataCatalog {
     public static void export(final File destination, final Object data) {
         FunctionUtils.doUnchecked(_ -> {
             val mapper = YAMLMapper.builder()
-                .changeDefaultPropertyInclusion(handler -> {
-                    handler.withValueInclusion(JsonInclude.Include.NON_DEFAULT);
-                    handler.withContentInclusion(JsonInclude.Include.NON_DEFAULT);
-                    return handler;
-                })
+                .changeDefaultPropertyInclusion(handler -> handler.withValueInclusion(JsonInclude.Include.NON_DEFAULT)
+                    .withContentInclusion(JsonInclude.Include.NON_DEFAULT))
                 .configure(EnumFeature.WRITE_ENUMS_USING_TO_STRING, true)
                 .configure(SerializationFeature.INDENT_OUTPUT, true)
                 .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
