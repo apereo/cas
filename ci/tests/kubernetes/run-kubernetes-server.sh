@@ -1,5 +1,7 @@
 #!/bin/bash
+set -euo pipefail
 
+RED="\e[31m"
 GREEN="\e[32m"
 ENDCOLOR="\e[0m"
 
@@ -7,9 +9,60 @@ function printgreen() {
   printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
 }
 
-printgreen "Checking minikube and kubectl versions..."
-minikube version
-kubectl version --client
+function printred() {
+  printf "🚨  ${RED}$1${ENDCOLOR}\n"
+}
+
+OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+ARCH="$(uname -m)"
+
+case "$ARCH" in
+  x86_64|amd64) ARCH="amd64" ;;
+  arm64|aarch64) ARCH="arm64" ;;
+  *)
+    printred "Unsupported architecture: $ARCH"
+    exit 1
+    ;;
+esac
+
+if [[ "$OS" == "darwin" ]]; then
+  PLATFORM="darwin"
+elif [[ "$OS" == "linux" ]]; then
+  PLATFORM="linux"
+else
+  printred "Unsupported OS: $OS"
+  exit 1
+fi
+
+printgreen "Detected platform: $PLATFORM/$ARCH"
+
+install_kubectl() {
+  if command -v kubectl >/dev/null 2>&1; then
+    printgreen "kubectl is already installed: $(kubectl version --client)"
+    return
+  fi
+
+  printgreen "Installing kubectl..."
+  KUBECTL_VERSION="$(curl -fsSL https://dl.k8s.io/release/stable.txt)"
+  curl -fsSLO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/${PLATFORM}/${ARCH}/kubectl"
+  chmod +x kubectl
+  sudo mv kubectl /usr/local/bin/kubectl
+}
+
+install_minikube() {
+  if command -v minikube >/dev/null 2>&1; then
+    printgreen "minikube is already installed: $(minikube version)"
+    return
+  fi
+
+  printgreen "Installing minikube..."
+  curl -fsSLO "https://github.com/kubernetes/minikube/releases/latest/download/minikube-${PLATFORM}-${ARCH}"
+  chmod +x "minikube-${PLATFORM}-${ARCH}"
+  sudo mv "minikube-${PLATFORM}-${ARCH}" /usr/local/bin/minikube
+}
+
+install_kubectl
+install_minikube
 
 minikube stop 2>/dev/null
 minikube delete 2>/dev/null
