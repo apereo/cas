@@ -1,5 +1,5 @@
 {
-  "dependencies": "configuration-cloud-kubernetes,reports",
+  "dependencies": "configuration-cloud-kubernetes,reports,palantir",
   "conditions": {
     "docker": "true"
   },
