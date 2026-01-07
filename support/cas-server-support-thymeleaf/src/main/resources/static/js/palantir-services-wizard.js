@@ -1,5 +1,104 @@
 let editServiceWizardDialog = undefined;
 
+function validateServiceIdPattern(button) {
+    $('<div>', {
+        html: `
+<section class="cas-field form-group my-3 mdc-input-group d-flex">
+    <div id="validateServiceIdPanel"
+         class="mdc-input-group-field mdc-input-group-field-append w-100">
+        <label for="serviceIdPattern"
+               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+            <span class="mdc-notched-outline">
+                <span class="mdc-notched-outline__leading"></span>
+                <span class="mdc-notched-outline__notch">
+                    <span class="mdc-floating-label">Pattern</span>
+                </span>
+                <span class="mdc-notched-outline__trailing"></span>
+            </span>
+            <input class="mdc-text-field__input form-control" type="text"
+                   name="serviceIdPattern" tabindex="0" id="serviceIdPattern"
+                   size="50"
+                   oninput="validatePattern()"
+                   autocomplete="off" required/>
+        </label>
+        <label for="serviceIdTestValue"
+               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+            <span class="mdc-notched-outline">
+                <span class="mdc-notched-outline__leading"></span>
+                <span class="mdc-notched-outline__notch">
+                    <span class="mdc-floating-label">Test</span>
+                </span>
+                <span class="mdc-notched-outline__trailing"></span>
+            </span>
+            <input class="mdc-text-field__input form-control" type="text"
+                   name="serviceIdTestValue" tabindex="0" id="serviceIdTestValue"
+                   oninput="validatePattern()"
+                   size="50" autocomplete="off" required/>
+        </label>
+        
+        <script type="text/javascript">
+            cas.init();
+            $("#serviceIdPattern").val($("#registeredServiceId").val()).focus();
+            function validatePattern() {
+                console.log("Validating pattern...");
+                
+                const pattern = $("#serviceIdPattern").val();
+                const testValue = $("#serviceIdTestValue").val();
+                
+                if (pattern.length > 0 && testValue.length > 0) {
+                    $("#serviceIdPatternTestResult").removeClass("hide");
+                    try {
+                        const regex = new RegExp(pattern, "i");
+                        const match = regex.test(testValue);
+                        
+                        if (match) {
+                            console.log("Found", match[0]);
+                            $("#serviceIdPatternTestResult")
+                                .addClass("banner-success")
+                                .removeClass("banner-danger")
+                                .text("✅ The given pattern matches the test value.");
+                        } else {
+                            $("#serviceIdPatternTestResult")
+                                .removeClass("banner-success")
+                                .addClass("banner-danger")
+                                .text("❌ The given pattern does NOT match the test value.");
+                        }
+                    } catch(e) {
+                        $("#serviceIdPatternTestResult")
+                            .removeClass("banner-success")
+                            .addClass("banner-danger")
+                            .text("❌ " + e);
+                    }
+                } else {
+                    $("#serviceIdPatternTestResult").addClass("hide");
+                }
+                
+            }
+        </script>
+    </div>
+</section>
+<div id="serviceIdPatternTestResult" class="p-2 banner hide"></div>
+`
+    }).dialog({
+        title: 'Validate Pattern',
+        modal: true,
+        width: 600,
+        closeOnEscape: false,
+        buttons: {
+            "Use Pattern": function () {
+                $("#registeredServiceId").val($("#serviceIdPattern").val()).focus();
+                $(this).dialog('close');
+            },
+            Cancel: function () {
+                $(this).dialog('close');
+            }
+        },
+        close: function () {
+            $(this).dialog('destroy').remove();
+        }
+    });
+}
+
 function handleAttributeReleasePolicyChange(select) {
     let type = getLastWord($(select).val());
     $(`#editServiceWizardMenuItemAttributeReleasePolicy .${type}`).show();
@@ -2040,7 +2139,14 @@ function createRegisteredServiceFields() {
         dataType: "regex",
         containerId: "editServiceWizardGeneralContainer",
         title: "Define a pattern that determines which requests are mapped to this application. This is typically a URL pattern or a regular regular expression."
-    });
+    }).after(`
+        <button class="mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button mr-2" 
+                type="button"
+                onclick="validateServiceIdPattern(this)">
+            <i class="mdi mdi-check-circle" aria-hidden="true"></i>
+            <span class="sr-only">Validate</span>
+        </button>
+    `);;
 
     createInputField({
         labelTitle: "Description",
@@ -2668,7 +2774,9 @@ function createInputField(config) {
     })
     .on("blur", function () {
         if (!this.checkValidity()) {
-            this.reportValidity();
+            $(this).parent().addClass("missing-required-field");
+        } else {
+            $(this).parent().removeClass("missing-required-field");
         }
     });
 
@@ -2828,7 +2936,7 @@ function openRegisteredServiceWizardDialog() {
             showCancelButton: true
         }).then((result) => {
             if (result.isConfirmed) {
-                openWizardDialog(mutablePropertySources[Number(result.value)]);
+                openWizardDialog(result.value);
             }
         });
     }
