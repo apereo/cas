@@ -151,6 +151,10 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: AppArmor User Namespace Restrictions
         run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+      - name: Set up kubectl
+        uses: Azure/setup-kubectl@v4
+      - name: Set up minikube
+        uses: medyagh/setup-minikube@latest
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:
@@ -206,6 +210,10 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: AppArmor User Namespace Restrictions
         run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+      - name: Set up kubectl
+        uses: Azure/setup-kubectl@v4
+      - name: Set up minikube
+        uses: medyagh/setup-minikube@latest
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:
@@ -261,6 +269,10 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: AppArmor User Namespace Restrictions
         run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+      - name: Set up kubectl
+        uses: Azure/setup-kubectl@v4
+      - name: Set up minikube
+        uses: medyagh/setup-minikube@latest
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:

@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cas-app
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cas-app-discovery
+  namespace: default
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints", "services", "pods", "configmaps", "secrets"]
+    verbs: ["get","list","watch","create","update","patch"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["get","list","watch","create","update","patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cas-app-discovery
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: cas-app
+    namespace: default
+roleRef:
+  kind: Role
+  name: cas-app-discovery
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cas
+  name: cas
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cas
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: cas
+    spec:
+      serviceAccountName: cas-app
+      volumes:
+        - name: host-mount
+          hostPath:
+            path: "/etc/cas"
+      containers:
+      - image: ${DOCKER_IMAGE}
+        name: cas
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: "/etc/cas"
+            name: host-mount
+        resources: {}
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cas
+  name: cas
+spec:
+  ports:
+  - name: 8080-8080
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  - name: 8443-8443
+    port: 8443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    app: cas
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: cas

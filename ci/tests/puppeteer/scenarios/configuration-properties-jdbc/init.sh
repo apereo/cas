@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-clear
 
 chmod +x "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 ${PWD}/ci/tests/httpbin/run-httpbin-server.sh
