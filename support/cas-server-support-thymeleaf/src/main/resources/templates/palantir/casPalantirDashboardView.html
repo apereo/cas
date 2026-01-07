@@ -25,6 +25,7 @@
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.animate.css}}" />
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.notyf.css}}" />
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.slimselect.css}}" />
+    <link rel="stylesheet" type="text/css" th:href="@{#{webjars.dataTables.jqueryui.css}}" />
 
     <link rel="stylesheet" type="text/css" th:href="@{/css/palantir.css}" />
 
@@ -47,6 +48,8 @@
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-oidc.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-saml2.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-wsfed.js}"></script>
+
+
 </head>
 
 <body>
@@ -74,6 +77,7 @@
             <div th:replace="~{fragments/palantir/multitenancytab :: main}"/>
         </div>
         <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
+        <script type="text/javascript" th:src="@{#{webjars.dataTables.jqueryui.js}}"></script>
 
     </div>
 </main>

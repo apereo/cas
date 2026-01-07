@@ -25,3 +25,8 @@
 .missing-required-field {
     background-color: rgb(255 221 221);
 }
+
+.dt-column-title {
+    font-weight: bold;
+    font-size: 12pt;
+}
