@@ -1,0 +1,33 @@
+cas:
+  server:
+    name: https://localhost:8443
+    prefix: ${cas.server.name}/cas
+  service-registry:
+    core:
+      init-from-json: true
+
+management:
+    endpoints:
+      access:
+        default: UNRESTRICTED
+      web:
+        exposure:
+          include: "*"
+    endpoint:
+      health:
+        show-details: always
+
+spring:
+  cloud:
+    kubernetes:
+      enabled: true
+      config:
+        enabled: false
+        name: cas
+        namespace: default
+        fail-fast: false
+  application:
+    name: cas
+  main:
+    lazy-initialization: false
+
