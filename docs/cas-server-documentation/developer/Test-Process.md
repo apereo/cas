@@ -165,7 +165,7 @@ To see the list of available test scenarios:
 ```
 
 Remote debugging may be available on port `5000`. To successfully run tests, 
-you also need to make sure [jq](https://stedolan.github.io/jq/) is installed.
+you also need to make sure [jq](https://stedolan.github.io/jq/) and [gum](https://github.com/charmbracelet/gum) are installed.
    
 The following command-line options are supported for test execution:
 
