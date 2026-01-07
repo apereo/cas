@@ -21,3 +21,7 @@
     background: var(--cas-theme-primary);
     backdrop-filter: blur(6px);
 }
+
+.missing-required-field {
+    background-color: rgb(255 221 221);
+}
