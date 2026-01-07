@@ -169,7 +169,7 @@ micrometerOtel = "1.6.1"
 mockito = "5.21.0"
 mockitoInline = "5.2.0"
 mongoDriver = "5.6.2"
-mongoSpringSession = "4.0.0-rc0"
+mongoSpringSession = "4.0.0-rc1"
 mssqlServer = "13.3.0.jre11-preview"
 mustache = "1.16"
 mysql = "9.5.0"
@@ -548,7 +548,7 @@ mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.
 mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "okhttp3" }
 mongodb-driver-core = { module = "org.mongodb:mongodb-driver-core", version.ref = "mongoDriver" }
 mongodb-driver-sync = { module = "org.mongodb:mongodb-driver-sync", version.ref = "mongoDriver" }
-#mongodb-spring-session = { module = "org.mongodb:mongodb-spring-session", version.ref = "mongoSpringSession" }
+mongodb-spring-session = { module = "org.mongodb:mongodb-spring-session", version.ref = "mongoSpringSession" }
 msal4j = { module = "com.microsoft.azure:msal4j", version.ref = "azuread" }
 mssql-jdbc = { module = "com.microsoft.sqlserver:mssql-jdbc", version.ref = "mssqlServer" }
 mysql-connectorj = { module = "com.mysql:mysql-connector-j", version.ref = "mysql" }
