@@ -35,7 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@EnableHazelcastHttpSession
+@EnableHazelcastHttpSession(disableSessionMapAutoconfiguration = true)
 @EnableConfigurationProperties({CasConfigurationProperties.class, SessionProperties.class, ServerProperties.class})
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SessionManagement, module = "hazelcast")
 @AutoConfiguration
