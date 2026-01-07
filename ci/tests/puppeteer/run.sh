@@ -669,6 +669,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
         fi
         echo -n '.'
         sleepfor 60
+        cat build.log
       done
       wait $pid
       if [ $? -ne 0 ]; then
