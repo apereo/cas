@@ -5,6 +5,14 @@ cas:
   service-registry:
     core:
       init-from-json: true
+  http-web-request:
+    header:
+      content-security-policy: ""
+  monitor:
+    endpoints:
+      endpoint:
+        defaults:
+          access: ANONYMOUS
 
 management:
     endpoints:
@@ -18,6 +26,10 @@ management:
         show-details: always
 
 spring:
+  security:
+    user:
+      name: casadmin
+      password: password
   cloud:
     kubernetes:
       enabled: true
@@ -30,4 +42,3 @@ spring:
     name: cas
   main:
     lazy-initialization: false
-
