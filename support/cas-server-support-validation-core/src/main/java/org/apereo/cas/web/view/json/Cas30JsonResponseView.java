@@ -51,11 +51,9 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         var jsonMapper = JsonMapper.builderWithJackson2Defaults()
             .defaultPrettyPrinter(new DefaultPrettyPrinter())
             .configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-            .changeDefaultPropertyInclusion(handler -> {
-                handler.withValueInclusion(JsonInclude.Include.NON_NULL);
-                handler.withContentInclusion(JsonInclude.Include.NON_NULL);
-                return handler;
-            });
+            .changeDefaultPropertyInclusion(handler ->
+                handler.withValueInclusion(JsonInclude.Include.NON_NULL)
+                    .withContentInclusion(JsonInclude.Include.NON_NULL));
         JSON_MAPPER = jsonMapper.build();
         JSON_VIEW = new JacksonJsonView(JSON_MAPPER);
     }

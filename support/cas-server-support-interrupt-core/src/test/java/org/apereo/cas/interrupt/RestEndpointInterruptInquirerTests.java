@@ -52,11 +52,8 @@ class RestEndpointInterruptInquirerTests {
         val data = JsonMapper.builder()
             .configure(EnumFeature.READ_ENUMS_USING_TO_STRING, false)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .changeDefaultPropertyInclusion(handler -> {
-                handler.withValueInclusion(JsonInclude.Include.NON_NULL);
-                handler.withContentInclusion(JsonInclude.Include.NON_NULL);
-                return handler;
-            })
+            .changeDefaultPropertyInclusion(handler -> handler.withValueInclusion(JsonInclude.Include.NON_NULL)
+                .withContentInclusion(JsonInclude.Include.NON_NULL))
             .build()
             .writeValueAsString(response);
         this.webServer = new MockWebServer(8888,
