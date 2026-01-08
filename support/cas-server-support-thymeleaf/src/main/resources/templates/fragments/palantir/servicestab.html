@@ -474,19 +474,19 @@
                                                   </div>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseCredentialPassword',
                                                         title='When enabled, the credential password is authorized to be released as an attribute',
-                                                        label='#Release Credential Password', cssClass='always-show',
+                                                        label='#Release Credential Password', cssClass='advanced-option',
                                                         dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.authorizedToReleaseCredentialPassword')}"/>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseProxyGrantingTicket',
                                                         title='When enabled, the proxy granting ticket is authorized to be released as an attribute',
-                                                        label='#Release Proxy-granting Ticket', cssClass='pt-2 always-show',
+                                                        label='#Release Proxy-granting Ticket', cssClass='pt-2 advanced-option',
                                                         dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.authorizedToReleaseProxyGrantingTicket')}"/>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseExcludeDefaultAttributes',
                                                         title='When enabled, default attributes are excluded from being released',
-                                                        label='#Exclude Default Attributes', cssClass='pt-2 always-show',
+                                                        label='#Exclude Default Attributes', cssClass='advanced-option',
                                                         dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.excludeDefaultAttributes')}"/>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseAuthenticationAttributes',
                                                         title='When enabled, authentication attributes are authorized to be released as attributes',
-                                                        label='#Release Authentication Attributes', cssClass='pt-2 always-show',
+                                                        label='#Release Authentication Attributes', cssClass='pt-2 advanced-option',
                                                         dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.authorizedToReleaseAuthenticationAttributes')}"/>
 
                                               </div>
