@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 RED="\e[31m"
 GREEN="\e[32m"
@@ -38,7 +37,7 @@ printgreen "Detected platform: $PLATFORM/$ARCH"
 
 install_kubectl() {
   if command -v kubectl >/dev/null 2>&1; then
-    printgreen "kubectl is already installed: $(kubectl version --client)"
+    printgreen "kubectl is already installed"
     return
   fi
 
@@ -51,7 +50,7 @@ install_kubectl() {
 
 install_minikube() {
   if command -v minikube >/dev/null 2>&1; then
-    printgreen "minikube is already installed: $(minikube version)"
+    printgreen "minikube is already installed"
     return
   fi
 
@@ -64,11 +63,14 @@ install_minikube() {
 install_kubectl
 install_minikube
 
-minikube stop 2>/dev/null
-minikube delete 2>/dev/null
+minikube stop >/dev/null 2>&1 || true
+minikube delete >/dev/null 2>&1 || true
 
 printgreen "Starting minikube..."
 minikube start --driver=docker
+
+minikube version
+kubectl version --client
 
 echo "Mounting volumes into minikube..."
 minikube mount ${SCENARIO_FOLDER}/k8config:/etc/cas/ &
