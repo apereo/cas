@@ -193,6 +193,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
     });
 
     createSelectField({
+        cssClasses: "advanced-option",
         containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
         labelTitle: "Canonicalization Mode:",
         paramName: "attributeReleasePolicy.canonicalizationMode",
@@ -220,7 +221,8 @@ function createRegisteredServiceAttributeReleasePolicy() {
         paramName: "attributeReleasePolicy.principalIdAttribute",
         required: false,
         containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
-        title: "Define the principal ID to include in attribute release."
+        title: "Define the principal ID to include in attribute release.",
+        cssClasses: "advanced-option"
     })
 
     
@@ -654,7 +656,7 @@ function handleAttributeReleasePolicyActivationCriteriaChange(select) {
 
 function createRegisteredServiceAttributeReleasePolicyActivationCriteria() {
     createSelectField({
-        cssClasses: "always-show",
+        cssClasses: "advanced-option",
         containerId: "editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria",
         labelTitle: "Activation Criteria:",
         changeEventHandlers: "handleAttributeReleasePolicyActivationCriteriaChange",
@@ -752,7 +754,7 @@ function handleAttributeReleasePolicyPrincipalAttributeRepositoryChange(select) 
 
 function createRegisteredServiceAttributeReleasePrincipalAttributesRepository() {
     createSelectField({
-        cssClasses: "always-show",
+        cssClasses: "advanced-option",
         containerId: "editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository",
         labelTitle: "Principal Attribute Repository:",
         changeEventHandlers: "handleAttributeReleasePolicyPrincipalAttributeRepositoryChange",
@@ -877,7 +879,7 @@ function handleAttributeReleasePolicyValueFilterChange(select) {
 
 function createRegisteredServiceAttributeReleaseValueFilters() {
     createSelectField({
-        cssClasses: "always-show",
+        cssClasses: "advanced-option",
         containerId: "editServiceWizardMenuItemAttributeReleaseValueFilters",
         labelTitle: "Value Filter:",
         changeEventHandlers: "handleAttributeReleasePolicyValueFilterChange",
