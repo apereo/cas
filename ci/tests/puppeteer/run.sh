@@ -162,7 +162,12 @@ function downloadAndRunExternalTomcat() {
 }
 
 function sleepfor() {
-  gum spin --spinner dot --title "Running task..." -- sleep $1
+  if [ -n "$CI" ]; then
+    echo "Waiting for task to complete..."
+    sleep "$1"
+  else
+    gum spin --spinner dot --title "Waiting for task to complete..." -- sleep "$1"
+  fi
 }
 
 function fetchCasVersion() {
