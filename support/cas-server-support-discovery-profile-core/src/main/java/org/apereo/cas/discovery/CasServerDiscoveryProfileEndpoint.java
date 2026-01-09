@@ -10,6 +10,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,7 +37,12 @@ public class CasServerDiscoveryProfileEndpoint extends BaseCasRestActuatorEndpoi
      *
      * @return the map
      */
-    @GetMapping
+    @GetMapping(produces = {
+        MediaType.APPLICATION_JSON_VALUE,
+        MediaType.APPLICATION_YAML_VALUE,
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V3_JSON
+    })
     @Operation(summary = "Produce CAS discovery profile")
     public Map<String, Object> discovery(final HttpServletRequest request, final HttpServletResponse response) {
         val results = new HashMap<String, Object>();
