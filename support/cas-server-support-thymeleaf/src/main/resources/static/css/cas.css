@@ -1067,9 +1067,12 @@ body {
 .sidebar-navigation ul {
     margin: 0;
     padding: 0;
+    height: 100%;
     text-align: center;
     color: white;
     list-style: none;
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar-navigation ul li {
@@ -1128,6 +1131,10 @@ body {
 
 .sidebar-navigation ul li.active i {
     color: #98D7EC;
+}
+
+.sidebar-navigation ul li.bottom {
+    margin-top: auto;
 }
 
 /** Notyf Options **/

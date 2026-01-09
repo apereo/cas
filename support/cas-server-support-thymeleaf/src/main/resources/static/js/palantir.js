@@ -18,7 +18,8 @@ const Tabs = {
     PROTOCOLS: 11,
     THROTTLES: 12,
     MFA: 13,
-    MULTITENANCY: 14
+    MULTITENANCY: 14,
+    SETTINGS: 100
 };
 
 /**
@@ -39,6 +40,287 @@ let currentActiveTab = Tabs.APPLICATIONS;
 const CAS_FEATURES = [];
 
 let notyf = null;
+
+function newExternalIdentityProvider() {
+    if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+        const dialogContainer = $("<div>", {
+            id: "newExternalIdentityProviderDialog"
+        });
+
+        const availableProviders = [];
+        if (CAS_FEATURES.includes("DelegatedAuthentication.cas")) {
+            availableProviders.push({
+                value: "CAS",
+                text: "CAS Server"
+            });
+        }
+        if (CAS_FEATURES.includes("DelegatedAuthentication.oidc")) {
+            availableProviders.push({
+                value: "OIDC",
+                text: "OpenID Connect Provider"
+            });
+            availableProviders.push({
+                value: "OAUTH2",
+                text: "OAuth2 Identity Provider"
+            });
+        }
+        if (CAS_FEATURES.includes("DelegatedAuthentication.saml")) {
+            availableProviders.push({
+                value: "SAML2",
+                text: "SAML2 Identity Provider"
+            });
+        }
+
+        createSelectField({
+            containerId: dialogContainer,
+            labelTitle: "Identity Provider Type:",
+            id: "externalIdPTypeSelect",
+            options: availableProviders,
+            cssClasses: "always-show"
+        });
+
+        createInputField({
+            labelTitle: "Client Name",
+            name: "externalIdentityProviderClientName",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define a unique name for the external identity provider client.",
+            cssClasses: "always-show"
+        });
+
+        createInputField({
+            labelTitle: "Display Name",
+            name: "externalIdentityProviderDisplayName",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the display name for the external identity provider.",
+            cssClasses: "always-show"
+        });
+
+        createInputField({
+            labelTitle: "Principal ID Attribute",
+            name: "externalIdentityProviderPrincipalIdAttribute",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the attribute that contains the principal ID from the identity provider.",
+            cssClasses: "always-show"
+        });
+
+        createSelectField({
+            containerId: dialogContainer,
+            labelTitle: "Auto Redirect:",
+            id: "externalIdentityProviderAutoRedirectType",
+            options: [
+                {value: "NONE", text: "NONE"},
+                {value: "CLIENT", text: "CLIENT"},
+                {value: "SERVER", text: "SERVER"}
+            ],
+            cssClasses: "always-show"
+        });
+
+
+        createInputField({
+            labelTitle: "Login URL",
+            name: "externalIdentityProviderCasLoginUrl",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the CAS server's login URL for redirecting authentication requests.",
+            cssClasses: "CAS hide"
+        });
+
+        createSelectField({
+            containerId: dialogContainer,
+            labelTitle: "Protocol:",
+            id: "externalIdentityProviderCasProtocol",
+            options: [
+                {value: "CAS30", text: "CAS 3.0"},
+                {value: "CAS20", text: "CAS 2.0"},
+                {value: "CAS10", text: "CAS 1.0"},
+                {value: "SAML", text: "SAML"}
+            ],
+            cssClasses: "CAS hide"
+        });
+
+        createInputField({
+            labelTitle: "Client ID",
+            name: "externalIdentityProviderOAuthOidcClientId",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the Client ID provided by the OAuth2/OIDC identity provider.",
+            cssClasses: "OAUTH2 OIDC hide"
+        });
+
+        createInputField({
+            labelTitle: "Client Secret",
+            name: "externalIdentityProviderOAuthOidcClientSecret",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the Client secret provided by the OAuth2/OIDC identity provider.",
+            cssClasses: "OAUTH2 OIDC hide"
+        });
+
+        createInputField({
+            labelTitle: "Authorize URL",
+            name: "externalIdentityProviderOAuthAuthorizeUrl",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the authorization URL of the OAuth2 identity provider.",
+            cssClasses: "OAUTH2 hide"
+        });
+        createInputField({
+            labelTitle: "Token URL",
+            name: "externalIdentityProviderOAuthTokenUrl",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the token URL of the OAuth2 identity provider.",
+            cssClasses: "OAUTH2 hide"
+        });
+        createInputField({
+            labelTitle: "Profile URL",
+            name: "externalIdentityProviderOAuthProfileUrl",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the profile URL of the OAuth2 identity provider.",
+            cssClasses: "OAUTH2 hide"
+        });
+        createInputField({
+            labelTitle: "Discovery URL",
+            name: "externalIdentityProviderOidcDiscoveryUrl",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the discovery URL of the OIDC identity provider.",
+            cssClasses: "OIDC hide"
+        });
+        createInputField({
+            labelTitle: "Scope",
+            name: "externalIdentityProviderOAuthScope",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the scope of the OAuth2 identity provider.",
+            cssClasses: "OAUTH2 OIDC hide"
+        });
+
+        createInputField({
+            labelTitle: "Keystore Password",
+            name: "externalIdentityProviderSaml2KeystorePassword",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the keystore password for the SAML2 identity provider.",
+            cssClasses: "SAML2 hide"
+        });
+        createInputField({
+            labelTitle: "Private Key Password",
+            name: "externalIdentityProviderSaml2PrivateKeyPassword",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the private key password for the SAML2 identity provider.",
+            cssClasses: "SAML2 hide"
+        });
+        createInputField({
+            labelTitle: "Keystore Path",
+            name: "externalIdentityProviderSaml2KeystorePath",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the keystore path for the SAML2 identity provider.",
+            cssClasses: "SAML2 hide"
+        });
+        createInputField({
+            labelTitle: "Service Provider Entity ID",
+            name: "externalIdentityProviderSaml2SpEntityId",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the service provider entity ID for the SAML2 identity provider.",
+            cssClasses: "SAML2 hide"
+        });
+        createInputField({
+            labelTitle: "Service Provider Metadata Location",
+            name: "externalIdentityProviderSaml2SpMetadataLocation",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the service provider metadata location for the SAML2 identity provider.",
+            cssClasses: "SAML2 hide"
+        });
+        createInputField({
+            labelTitle: "Identity Provider Metadata Location",
+            name: "externalIdentityProviderSaml2IdpMetadataLocation",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the identity provider metadata location for the SAML2 identity provider.",
+            cssClasses: "SAML2 hide"
+        });
+        createInputField({
+            labelTitle: "Destination Binding",
+            name: "externalIdentityProviderSaml2DestinationBinding",
+            required: true,
+            containerId: dialogContainer,
+            title: "Define the destination binding for the SAML2 identity provider.",
+            cssClasses: "SAML2 hide"
+        });
+        
+        function handleExternalIdentityProviderTypeChange(type) {
+            $(`#newExternalIdentityProviderDialog .${type}`).show();
+            $("#newExternalIdentityProviderDialog [id$='SelectContainer']")
+                .not(`.${type}`)
+                .not(".always-show")
+                .hide();
+            $("#newExternalIdentityProviderDialog [id$='FieldContainer']")
+                .not(`.${type}`)
+                .not(".always-show")
+                .hide();
+            $("#newExternalIdentityProviderDialog [id$='ButtonPanel']")
+                .not(`.${type}`)
+                .not(".always-show")
+                .hide();
+            $("#newExternalIdentityProviderDialog [id$='FieldContainer'] input")
+                .val("");
+        }
+
+        dialogContainer.dialog({
+            position: {
+                my: "center top",
+                at: "center top+100",
+                of: window
+            },
+            autoOpen: false,
+            modal: true,
+            width: 600,
+            height: "auto",
+            title: "New External Identity Provider",
+            buttons: {
+                OK: async function () {
+                    $(this).dialog("close");
+                    $.get(actuatorEndpoints.env, res => {
+                        reloadConfigurationTable(res);
+                        refreshCasServerConfiguration(`Identity Provider Created`);
+                    })
+                        .fail((xhr) => {
+                            displayBanner(xhr);
+                        });
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            },
+            open: function () {
+                cas.init();
+                $("#newExternalIdentityProviderDialog #externalIdentityProviderClientName").focus();
+                $("#newExternalIdentityProviderDialog .jqueryui-selectmenu").selectmenu({
+                    width: "330px",
+                    change: function (event, ui) {
+                        const type = ui.item.value;
+                        handleExternalIdentityProviderTypeChange(type);
+                    }
+                });
+                const currentType = $("#externalIdPTypeSelect").val();
+                handleExternalIdentityProviderTypeChange(currentType);
+            },
+            close: function () {
+                $(this).dialog("destroy");
+            }
+        });
+        dialogContainer.dialog("open");
+    }
+}
 
 function effectiveConfigPropertyValue(name) {
     $.get(`${actuatorEndpoints.env}/${name}`, response => {
@@ -176,10 +458,14 @@ function importConfigurationProperties(button) {
         const result = {};
         text.split(/\r?\n/).forEach(line => {
             line = line.trim();
-            if (!line || line.startsWith('#') || line.startsWith('!')) return;
+            if (!line || line.startsWith("#") || line.startsWith("!")) {
+                return;
+            }
 
-            const idx = line.indexOf('=');
-            if (idx === -1) return;
+            const idx = line.indexOf("=");
+            if (idx === -1) {
+                return;
+            }
             const key = line.substring(0, idx).trim();
             result[key] = line.substring(idx + 1).trim();
         });
@@ -221,10 +507,10 @@ function importConfigurationProperties(button) {
         icon: "question",
         showConfirmButton: true,
         showDenyButton: true
-    }) .then((result) => {
+    }).then((result) => {
         if (result.isConfirmed) {
             const propertySource = mutablePropertySources[Number(result.value)];
-            
+
             $("#configurationFilesToImport").click();
             $("#configurationFilesToImport").change(event => {
                 const files = Array.from(event.target.files);
@@ -233,7 +519,7 @@ function importConfigurationProperties(button) {
                     reader.readAsText(file);
                     reader.onload = e => {
                         const content = e.target.result;
-                        const ext = file.name.split('.').pop().toLowerCase();
+                        const ext = file.name.split(".").pop().toLowerCase();
 
                         Swal.fire({
                             icon: "info",
@@ -243,14 +529,14 @@ function importConfigurationProperties(button) {
                             showConfirmButton: false,
                             didOpen: () => Swal.showLoading()
                         });
-                        if (ext === 'properties') {
+                        if (ext === "properties") {
                             const props = parseProperties(content);
                             const payload = Object.entries(props).map(([key, value]) => ({
                                 name: key,
                                 value
                             }));
                             importProperties(payload);
-                        } else if (ext === 'yml' || ext === 'yaml') {
+                        } else if (ext === "yml" || ext === "yaml") {
                             const props = flattenJSON(jsyaml.load(content));
                             const payload = Object.entries(props).map(([key, value]) => ({
                                 name: key,
@@ -1097,6 +1383,7 @@ function waitForActuator(endpoint, intervalMs = 2000) {
                     setTimeout(poll, intervalMs);
                 });
         }
+
         poll();
     });
 }
@@ -1633,7 +1920,7 @@ async function initializeSsoSessionOperations() {
 
         }
     });
-    
+
 }
 
 async function initializeLoggingOperations() {
@@ -3501,10 +3788,27 @@ async function initializeAuthenticationOperations() {
         });
     }
 
+    const toolbar = document.createElement("div");
+    let toolbarEntries = "";
+
+    if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+        toolbarEntries += `
+            <button type="button" id="newExternalIdentityProvider"
+                    onclick="newExternalIdentityProvider()"
+                    class="mdc-button mdc-button--raised">
+                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus-thick" aria-hidden="true"></i>New</span>
+            </button>
+        `;
+    }
+
+    toolbar.innerHTML = toolbarEntries;
     const delegatedClientsTable = $("#delegatedClientsTable").DataTable({
         pageLength: 10,
         order: [0, "asc"],
         autoWidth: false,
+        layout: {
+            topStart: toolbar
+        },
         columnDefs: [
             {visible: false, targets: 0},
             {width: "40%", targets: 1},
@@ -4948,23 +5252,29 @@ async function initializePalantir() {
 
 function activateDashboardTab(idx) {
     try {
-        let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
-        tabs.activateTab(Number(idx));
-
-        currentActiveTab = Number(idx);
-        updateNavigationSidebar();
+        const tabIndex = Number(idx);
+        if (tabIndex === Tabs.SETTINGS) {
+            console.log("Activating settings tab");
+        } else {
+            let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
+            tabs.activateTab(tabIndex);
+            currentActiveTab = tabIndex;
+            updateNavigationSidebar();
+        }
     } catch (e) {
         console.error("An error occurred while activating tab:", e);
     }
 }
 
 function selectSidebarMenuButton(selectedItem) {
-    $("nav.sidebar-navigation ul li").removeClass("active");
-    $(selectedItem).addClass("active");
     const index = $(selectedItem).data("tab-index");
-
-    window.localStorage.setItem("PalantirSelectedTab", index);
-    return index;
+    console.log("Selected sidebar menu item index:", index);
+    if (index !== Tabs.SETTINGS) {
+        $("nav.sidebar-navigation ul li").removeClass("active");
+        $(selectedItem).addClass("active");
+        window.localStorage.setItem("PalantirSelectedTab", index);
+        return index;
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
