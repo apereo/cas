@@ -155,7 +155,7 @@ public class MonitoredRepository {
         matcher = pattern.matcher(pr.getBody());
         if (matcher.find()) {
             var startingVersion = Semver.coerce(matcher.group(1));
-            var endingVersion = Semver.coerce(matcher.group(4));
+            var endingVersion = Semver.coerce(matcher.group(5));
             return Optional.of(new DependencyRange(startingVersion, endingVersion));
         }
 
