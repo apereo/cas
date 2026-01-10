@@ -3,6 +3,8 @@ package org.apereo.cas.web.report;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
+import org.apereo.cas.configuration.api.MutablePropertySource;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.micrometer.common.util.StringUtils;
@@ -14,6 +16,9 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.EnumerablePropertySource;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -70,7 +75,7 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
     /**
      * Update property and return list of sources that operated.
      *
-     * @param values the values
+     * @param updateRequests the update requests
      * @return the list of property sources that operated
      */
     @PostMapping(value = "/update",
@@ -82,19 +87,56 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
             @Parameter(name = "name", required = true, description = "The name of the property to update"),
             @Parameter(name = "propertySource", required = false, description = "The name of the property source that should be updated")
         })
-    public List<String> updateProperty(
-        @RequestBody final List<ConfigurationPropertyUpdateRequest> values) {
+    public List<String> updateProperty(@RequestBody final List<ConfigurationPropertyUpdateRequest> updateRequests) {
         val activeSources = CasCoreConfigurationUtils.getMutablePropertySources(applicationContext);
+
+        val propertyGroups = new HashMap<String, Integer>();
+        for (val request : updateRequests) {
+            if (request.name().contains("[]")) {
+                val group = request.name().substring(0, request.name().indexOf('['));
+                propertyGroups.computeIfAbsent(group, _ -> {
+                    val usedIndexes = getUsedIndexesForPropertyGroup(request, activeSources);
+                    return usedIndexes.isEmpty() ? 0 : usedIndexes.getLast() + 1;
+                });
+            }
+        }
+
         return activeSources
             .stream()
-            .map(source -> values
+            .map(source -> updateRequests
                 .stream()
-                .filter(v -> StringUtils.isBlank(v.propertySource()) || v.propertySource().equalsIgnoreCase(source.getName()))
-                .map(v -> source.setProperty(v.name(), v.value()))
-                .map(_ -> source.getName())
+                .filter(request -> StringUtils.isBlank(request.propertySource()) || request.propertySource().equalsIgnoreCase(source.getName()))
+                .map(request -> {
+                    if (request.name().contains("[]")) {
+                        val group = request.name().substring(0, request.name().indexOf('['));
+                        val activeIndex = propertyGroups.get(group);
+                        val groupedProperty = request.name().replace("[]", "[%s]".formatted(activeIndex));
+                        source.setProperty(groupedProperty, request.value());
+                    } else {
+                        source.setProperty(request.name(), request.value());
+                    }
+                    return source.getName();
+                })
                 .toList())
             .flatMap(Collection::stream)
             .toList();
+    }
+
+    private static List<Integer> getUsedIndexesForPropertyGroup(
+        final ConfigurationPropertyUpdateRequest updateRequest,
+        final List<MutablePropertySource> sources) {
+        val group = updateRequest.name().substring(0, updateRequest.name().indexOf('['));
+        val indexedPattern = RegexUtils.createPattern(group + "\\[(\\d+)]");
+
+        val usedIndexes = sources
+            .stream()
+            .filter(ps -> ps instanceof EnumerablePropertySource<?>)
+            .map(ps -> (EnumerablePropertySource<?>) ps)
+            .flatMap(eps -> Arrays.stream(eps.getPropertyNames()))
+            .map(indexedPattern::matcher).filter(Matcher::find)
+            .map(matcher -> Integer.parseInt(matcher.group(1)))
+            .collect(Collectors.toCollection(TreeSet::new));
+        return usedIndexes.stream().toList();
     }
 
     /**
