@@ -28,6 +28,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
@@ -104,9 +105,9 @@ public class OAuth20Utils {
      * @param clazz           the clazz
      * @return the registered o auth service by client id
      */
-    public static <T extends OAuthRegisteredService> T getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager,
-                                                                                           final String clientId,
-                                                                                           final Class<T> clazz) {
+    public static <T extends OAuthRegisteredService> @Nullable T getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager,
+                                                                                                     final String clientId,
+                                                                                                     final Class<T> clazz) {
         return FunctionUtils.doIfNotBlank(clientId,
             () -> {
                 val query = RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", clientId).withIncludeAssignableTypes(true);
@@ -122,8 +123,8 @@ public class OAuth20Utils {
      * @param clientId        the client id by which the {@link OAuthRegisteredService} is to be located.
      * @return null, or the located {@link OAuthRegisteredService} instance in the service registry.
      */
-    public static OAuthRegisteredService getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager,
-                                                                             final String clientId) {
+    public static @Nullable OAuthRegisteredService getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager,
+                                                                                       final String clientId) {
         return getRegisteredOAuthServiceByClientId(servicesManager, clientId, OAuthRegisteredService.class);
     }
 
@@ -134,16 +135,16 @@ public class OAuth20Utils {
      * @param redirectUri     the redirect uri
      * @return the registered OAuth service by redirect uri
      */
-    public static OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager,
-                                                                                final String redirectUri) {
+    public static @Nullable OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager,
+                                                                                          final String redirectUri) {
         validateRedirectUri(redirectUri);
         return FunctionUtils.doIfNotBlank(redirectUri,
             () -> getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.matches(redirectUri)),
             () -> null);
     }
 
-    private static OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,
-                                                                               final Predicate<OAuthRegisteredService> predicate) {
+    private static @Nullable OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,
+                                                                                         final Predicate<OAuthRegisteredService> predicate) {
         val services = servicesManager.getAllServicesOfType(OAuthRegisteredService.class);
         return services
             .stream()
