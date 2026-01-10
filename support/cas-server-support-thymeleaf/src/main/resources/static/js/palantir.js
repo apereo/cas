@@ -94,46 +94,7 @@ function newExternalIdentityProvider() {
             options: availableProviders,
             cssClasses: "always-show"
         });
-
-        createInputField({
-            labelTitle: "Client Name",
-            name: "externalIdentityProviderClientName",
-            required: true,
-            containerId: dialogContainer,
-            title: "Define a unique name for the external identity provider client.",
-            cssClasses: "always-show"
-        });
-
-        createInputField({
-            labelTitle: "Display Name",
-            name: "externalIdentityProviderDisplayName",
-            required: true,
-            containerId: dialogContainer,
-            title: "Define the display name for the external identity provider.",
-            cssClasses: "always-show"
-        });
-
-        createInputField({
-            labelTitle: "Principal ID Attribute",
-            name: "externalIdentityProviderPrincipalIdAttribute",
-            required: true,
-            containerId: dialogContainer,
-            title: "Define the attribute that contains the principal ID from the identity provider.",
-            cssClasses: "always-show"
-        });
-
-        createSelectField({
-            containerId: dialogContainer,
-            labelTitle: "Auto Redirect:",
-            id: "externalIdentityProviderAutoRedirectType",
-            options: [
-                {value: "NONE", text: "NONE"},
-                {value: "CLIENT", text: "CLIENT"},
-                {value: "SERVER", text: "SERVER"}
-            ],
-            cssClasses: "always-show"
-        });
-
+        
 
         createInputField({
             labelTitle: "Login URL",
@@ -141,9 +102,9 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the CAS server's login URL for redirecting authentication requests.",
-            cssClasses: "CAS hide"
+            cssClasses: "CAS hide",
+            paramName: "login-url"
         });
-
         createSelectField({
             containerId: dialogContainer,
             labelTitle: "Protocol:",
@@ -154,7 +115,8 @@ function newExternalIdentityProvider() {
                 {value: "CAS10", text: "CAS 1.0"},
                 {value: "SAML", text: "SAML"}
             ],
-            cssClasses: "CAS hide"
+            cssClasses: "CAS hide",
+            paramName: "protocol"
         });
 
         createInputField({
@@ -163,25 +125,26 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the Client ID provided by the OAuth2/OIDC identity provider.",
-            cssClasses: "OAUTH2 OIDC hide"
+            cssClasses: "OAUTH2 OIDC hide",
+            paramName: "id"
         });
-
         createInputField({
             labelTitle: "Client Secret",
             name: "externalIdentityProviderOAuthOidcClientSecret",
             required: true,
             containerId: dialogContainer,
             title: "Define the Client secret provided by the OAuth2/OIDC identity provider.",
-            cssClasses: "OAUTH2 OIDC hide"
+            cssClasses: "OAUTH2 OIDC hide",
+            paramName: "secret"
         });
-
         createInputField({
             labelTitle: "Authorize URL",
             name: "externalIdentityProviderOAuthAuthorizeUrl",
             required: true,
             containerId: dialogContainer,
             title: "Define the authorization URL of the OAuth2 identity provider.",
-            cssClasses: "OAUTH2 hide"
+            cssClasses: "OAUTH2 hide",
+            paramName: "auth-url"
         });
         createInputField({
             labelTitle: "Token URL",
@@ -189,7 +152,8 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the token URL of the OAuth2 identity provider.",
-            cssClasses: "OAUTH2 hide"
+            cssClasses: "OAUTH2 hide",
+            paramName: "token-url"
         });
         createInputField({
             labelTitle: "Profile URL",
@@ -197,7 +161,8 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the profile URL of the OAuth2 identity provider.",
-            cssClasses: "OAUTH2 hide"
+            cssClasses: "OAUTH2 hide",
+            paramName: "profile-url"
         });
         createInputField({
             labelTitle: "Discovery URL",
@@ -205,7 +170,8 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the discovery URL of the OIDC identity provider.",
-            cssClasses: "OIDC hide"
+            cssClasses: "OIDC hide",
+            paramName: "discovery-uri"
         });
         createInputField({
             labelTitle: "Scope",
@@ -213,7 +179,8 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the scope of the OAuth2 identity provider.",
-            cssClasses: "OAUTH2 OIDC hide"
+            cssClasses: "OAUTH2 OIDC hide",
+            paramName: "scope"
         });
 
         createInputField({
@@ -222,7 +189,8 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the keystore password for the SAML2 identity provider.",
-            cssClasses: "SAML2 hide"
+            cssClasses: "SAML2 hide",
+            paramName: "keystore-password"
         });
         createInputField({
             labelTitle: "Private Key Password",
@@ -230,7 +198,8 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the private key password for the SAML2 identity provider.",
-            cssClasses: "SAML2 hide"
+            cssClasses: "SAML2 hide",
+            paramName: "private-key-password"
         });
         createInputField({
             labelTitle: "Keystore Path",
@@ -238,7 +207,8 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the keystore path for the SAML2 identity provider.",
-            cssClasses: "SAML2 hide"
+            cssClasses: "SAML2 hide",
+            paramName: "keystore-path"
         });
         createInputField({
             labelTitle: "Service Provider Entity ID",
@@ -246,7 +216,8 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the service provider entity ID for the SAML2 identity provider.",
-            cssClasses: "SAML2 hide"
+            cssClasses: "SAML2 hide",
+            paramName: "service-provider-entity-id"
         });
         createInputField({
             labelTitle: "Service Provider Metadata Location",
@@ -254,7 +225,8 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the service provider metadata location for the SAML2 identity provider.",
-            cssClasses: "SAML2 hide"
+            cssClasses: "SAML2 hide",
+            paramName: "metadata.service-provider.file-system.location"
         });
         createInputField({
             labelTitle: "Identity Provider Metadata Location",
@@ -262,7 +234,8 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the identity provider metadata location for the SAML2 identity provider.",
-            cssClasses: "SAML2 hide"
+            cssClasses: "SAML2 hide",
+            paramName: "metadata.identity-provider-metadata-path"
         });
         createInputField({
             labelTitle: "Destination Binding",
@@ -270,7 +243,48 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the destination binding for the SAML2 identity provider.",
-            cssClasses: "SAML2 hide"
+            cssClasses: "SAML2 hide",
+            paramName: "destination-binding"
+        });
+
+        createInputField({
+            labelTitle: "Client Name",
+            name: "externalIdentityProviderClientName",
+            required: false,
+            containerId: dialogContainer,
+            title: "Define a unique name for the external identity provider client.",
+            cssClasses: "always-show",
+            paramName: "client-name"
+        });
+        createInputField({
+            labelTitle: "Display Name",
+            name: "externalIdentityProviderDisplayName",
+            required: false,
+            containerId: dialogContainer,
+            title: "Define the display name for the external identity provider.",
+            cssClasses: "always-show",
+            paramName: "display-name"
+        });
+        createInputField({
+            labelTitle: "Principal ID Attribute",
+            name: "externalIdentityProviderPrincipalIdAttribute",
+            required: false,
+            containerId: dialogContainer,
+            title: "Define the attribute that contains the principal ID from the identity provider.",
+            cssClasses: "always-show",
+            paramName: "principal-id-attribute"
+        });
+        createSelectField({
+            containerId: dialogContainer,
+            labelTitle: "Auto Redirect:",
+            id: "externalIdentityProviderAutoRedirectType",
+            options: [
+                {value: "NONE", text: "NONE"},
+                {value: "CLIENT", text: "CLIENT"},
+                {value: "SERVER", text: "SERVER"}
+            ],
+            cssClasses: "always-show",
+            paramName: "auto-redirect-type"
         });
 
         function handleExternalIdentityProviderTypeChange(type) {
@@ -290,7 +304,8 @@ function newExternalIdentityProvider() {
             $("#newExternalIdentityProviderDialog [id$='FieldContainer'] input")
                 .val("");
         }
-
+        
+        
         dialogContainer.dialog({
             position: {
                 my: "center top",
@@ -304,14 +319,27 @@ function newExternalIdentityProvider() {
             title: "New External Identity Provider",
             buttons: {
                 OK: async function () {
-                    $(this).dialog("close");
-                    $.get(actuatorEndpoints.env, res => {
-                        reloadConfigurationTable(res);
-                        refreshCasServerConfiguration(`Identity Provider Created`);
-                    })
-                        .fail((xhr) => {
-                            displayBanner(xhr);
-                        });
+                    let proceed = true;
+                    const inputs = $("#newExternalIdentityProviderDialog input:visible").toArray();
+                    for (const input of inputs) {
+                        if (!input.checkValidity()) {
+                            input.reportValidity?.();
+                            input.focus();
+                            proceed = false;
+                            break;
+                        }
+                    }
+
+                    if (proceed) {
+                        $(this).dialog("close");
+                        $.get(actuatorEndpoints.env, res => {
+                            reloadConfigurationTable(res);
+                            refreshCasServerConfiguration(`Identity Provider Created`);
+                        })
+                            .fail((xhr) => {
+                                displayBanner(xhr);
+                            });
+                    }
                 },
                 Cancel: function () {
                     $(this).dialog("close");
