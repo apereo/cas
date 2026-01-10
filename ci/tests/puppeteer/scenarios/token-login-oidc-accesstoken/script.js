@@ -22,9 +22,9 @@ async function loginWithOidc(page, params = []) {
     await cas.gotoLogout(page);
 
     const queryParameters = new URLSearchParams(
-        params.map(p => [p.name, p.value])
+        params.map((p) => [p.name, p.value])
     ).toString();
-    
+
     const scopes = encodeURIComponent("openid profile email");
     const requestParams = `response_type=code&client_id=client&scope=${scopes}&redirect_uri=${service}&${queryParameters}`;
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?${requestParams}`;
@@ -33,8 +33,8 @@ async function loginWithOidc(page, params = []) {
     await cas.sleep(2000);
 
     await cas.logPage(page);
-    
-    const hasToken = params.some(p => p.name === "token");
+
+    const hasToken = params.some((p) => p.name === "token");
     if (!hasToken) {
         await cas.loginWith(page);
     }

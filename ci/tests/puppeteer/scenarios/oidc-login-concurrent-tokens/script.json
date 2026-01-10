@@ -1,5 +1,5 @@
 {
-  "dependencies": "oidc,redis-ticket-registry,reports,redis-modules",
+  "dependencies": "oidc,redis-ticket-registry,reports,redis-modules,session-ticket-registry",
   "conditions": {
     "docker": "true"
   },
@@ -32,6 +32,9 @@
 
     "--cas.ticket.registry.cleaner.schedule.enabled=false",
 
+    "--cas.authn.pac4j.core.session-replication.replicate-sessions=false",
+    "--cas.authn.oauth.session-replication.replicate-sessions=false",
+    
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
