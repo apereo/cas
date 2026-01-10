@@ -12,7 +12,6 @@ import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.jose.Header;
@@ -79,23 +78,37 @@ public class JwtBuilder {
     }
 
     /**
+     * Try parsing JWT.
+     *
+     * @param jwt the jwt
+     * @return the optional
+     */
+    public static Optional<JWTClaimsSet> tryParse(@Nullable final String jwt) {
+        try {
+            return Optional.of(JWTParser.parse(jwt).getJWTClaimsSet());
+        } catch (final Exception e) {
+            LOGGER.trace("Unable to parse [{}] JWT; trying JWT claim set...", jwt);
+            try {
+                return Optional.of(JWTClaimsSet.parse(jwt));
+            } catch (final Exception ex) {
+                LOGGER.trace("Unable to parse JWT", ex);
+                return Optional.empty();
+            }
+        }
+    }
+
+    /**
      * Parse jwt.
      *
      * @param jwt the jwt
      * @return the jwt
      */
     public static JWTClaimsSet parse(@Nullable final String jwt) {
-        try {
-            return JWTParser.parse(jwt).getJWTClaimsSet();
-        } catch (final Exception e) {
-            LOGGER.trace("Unable to parse [{}] JWT; trying JWT claim set...", jwt);
-            try {
-                return JWTClaimsSet.parse(jwt);
-            } catch (final Exception ex) {
-                LoggingUtils.error(LOGGER, ex);
-                throw new IllegalArgumentException("Unable to parse JWT");
-            }
+        val parsed = tryParse(jwt);
+        if (parsed.isPresent()) {
+            return parsed.get();
         }
+        throw new IllegalArgumentException("Unable to parse JWT");
     }
 
     /**
@@ -114,7 +127,7 @@ public class JwtBuilder {
             return encryptedJWT.getHeader();
         }
     }
-    
+
     /**
      * Build plain string.
      *
@@ -224,9 +237,9 @@ public class JwtBuilder {
                 .findFirst()
                 .orElseThrow(() -> UnauthorizedServiceException.denied(
                     """
-                    There is no application record registered with the CAS service registry that would match %s.
-                    Review the applications registered with the CAS service registry and make sure a matching record exists.
-                    """
+                        There is no application record registered with the CAS service registry that would match %s.
+                        Review the applications registered with the CAS service registry and make sure a matching record exists.
+                        """
                         .formatted(targetAudience).stripIndent().stripLeading())));
         return build(registeredService, claimsSet);
     }

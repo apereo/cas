@@ -112,10 +112,10 @@ The following endpoints are provided by CAS:
 
 {% include_cached actuators.html endpoints="tokenAuth" %}
 
-## OpenID Connect JWT Access Tokens
+## OpenID Connect Tokens
 
-CAS also allows OpenID Connect access tokens to be passed as the `token` parameter, when the access token
-is encoded as a JWT. The token is decoded and then fetched as a valid access token from the ticket registry,
+CAS also allows OpenID Connect access tokens and ID tokens to be passed as the `token` parameter. The token is 
+decoded and then fetched as a valid access token from the ticket registry,
 allowing CAS establish an authenticated session and subsequently create a single sign-on session.
 
 To learn more about OpenID Connect, [please review this guide](../authentication/OIDC-Authentication.html).
