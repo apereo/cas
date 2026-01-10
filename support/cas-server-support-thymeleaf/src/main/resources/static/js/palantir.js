@@ -303,6 +303,7 @@ function newExternalIdentityProvider() {
                 .hide();
             $("#newExternalIdentityProviderDialog [id$='FieldContainer'] input")
                 .val("");
+            $("#newExternalIdentityProviderDialog input:visible").first().focus();
         }
 
 
@@ -332,6 +333,8 @@ function newExternalIdentityProvider() {
 
                     if (proceed) {
                         $(this).dialog("close");
+
+                        
                         $.get(actuatorEndpoints.env, res => {
                             reloadConfigurationTable(res);
                             refreshCasServerConfiguration(`Identity Provider Created`);
@@ -346,8 +349,7 @@ function newExternalIdentityProvider() {
                 }
             },
             open: function () {
-                cas.init();
-                $("#newExternalIdentityProviderDialog #externalIdentityProviderClientName").focus();
+                cas.init("#newExternalIdentityProviderDialog");
                 $("#newExternalIdentityProviderDialog .jqueryui-selectmenu").selectmenu({
                     width: "330px",
                     change: function (event, ui) {
@@ -357,6 +359,7 @@ function newExternalIdentityProvider() {
                 });
                 const currentType = $("#externalIdPTypeSelect").val();
                 handleExternalIdentityProviderTypeChange(currentType);
+                
             },
             close: function () {
                 $(this).dialog("destroy");
