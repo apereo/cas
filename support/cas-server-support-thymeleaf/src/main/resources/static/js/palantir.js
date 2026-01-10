@@ -5336,7 +5336,7 @@ function activateDashboardTab(idx) {
                     }
                 },
                 open: function () {
-                    cas.init();
+                    cas.init("#palantirSettingsDialog");
                     try {
                         $("#palantirRefreshInterval").selectmenu("destroy");
                     } catch (e) {
