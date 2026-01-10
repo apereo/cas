@@ -446,19 +446,70 @@ form button i.mdi {
 /* custom components */
 
 .custom-select {
-    display: inline-block;
-    min-width: 80%;
-    height: 56px;
-    padding: .375rem 1.75rem .375rem .75rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: rgba(0, 0, 0, 0.87);
-    vertical-align: middle;
-    background: #fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
-    border: 1px solid #ced4da;
-    border-radius: .25rem;
+    appearance: none;
     -webkit-appearance: none;
+    -moz-appearance: none;
+
+    display: inline-flex;
+    align-items: center;
+
+    width: 100%;
+    height: 56px;
+
+    padding: 0.75rem 2.75rem 0.75rem 1rem;
+
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #1f2937; /* slate-800 */
+
+    background-color: #f8fafc;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234f46e5'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px;
+
+    border: 1px solid #c7d2fe;
+    border-radius: 10px;
+
+    transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background-color 0.2s ease;
+}
+
+/* Hover */
+.custom-select:hover {
+    background-color: lightskyblue;
+    border-color: #818cf8;
+}
+
+/* Focus */
+.custom-select:focus {
+    outline: none;
+    background-color: #ffffff;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+}
+
+/* Disabled */
+.custom-select:disabled {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    border-color: #e2e8f0;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2394a3b8'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    cursor: not-allowed;
+}
+
+.custom-select option {
+    color: #1f2937;
+    background-color: #ffffff;
+}
+
+/* Some browsers only */
+.custom-select option:hover,
+.custom-select option:checked {
+    background-color: #eef2ff;
+    color: #1e1b4b;
 }
 
 /* utilities */

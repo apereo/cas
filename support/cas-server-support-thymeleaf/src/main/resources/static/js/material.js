@@ -1,14 +1,14 @@
 let cas = {
-    init: () => {
-        cas.attachFields();
+    init: (selector = "") => {
+        cas.attachFields(selector);
         mdc.autoInit();
     },
     openMenu: () => {
         const menu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));
         menu.open = true;
     },
-    attachFields: () => {
-        let divs = document.querySelectorAll('.mdc-text-field');
+    attachFields: (selector = "") => {
+        let divs = document.querySelectorAll(`${selector} .mdc-text-field`);
         for (const div of divs) {
             new mdc.textField.MDCTextField(div);
             let field = mdc.textField.MDCTextField.attachTo(div);
@@ -17,32 +17,32 @@ let cas = {
             }
         }
 
-        let helpers = document.querySelectorAll('.mdc-text-field-helper-text');
+        let helpers = document.querySelectorAll(`${selector} .mdc-text-field-helper-text`);
         for (const helper of helpers) {
             new mdc.textField.MDCTextFieldHelperText(helper);
         }
         
-        let selectors = document.querySelectorAll('.mdc-select');
+        let selectors = document.querySelectorAll(`${selector} .mdc-select`);
         for (const selector of selectors) {
             const select = new mdc.select.MDCSelect(selector);
             select.listen('MDCSelect:change', () => $("#source").val(select.value));
             $('#source').val(select.value);
         }
 
-        let tooltips = document.querySelectorAll('.mdc-tooltip');
+        let tooltips = document.querySelectorAll(`${selector} .mdc-tooltip`);
         if (tooltips != null) {
             tooltips.forEach(t => new mdc.tooltip.MDCTooltip(t))
         }
-        let banners = document.querySelectorAll('.mdc-banner');
+        let banners = document.querySelectorAll(`${selector} .mdc-banner`);
         if (banners != null) {
             banners.forEach(b => new mdc.banner.MDCBanner(b))
         }
-        let dialogs = document.querySelectorAll('.mdc-dialog');
+        let dialogs = document.querySelectorAll(`${selector} .mdc-dialog`);
         if (dialogs != null) {
             dialogs.forEach(b => new mdc.dialog.MDCDialog.attachTo(b))
         }
 
-        for (const el of document.querySelectorAll('.mdc-switch')) {
+        for (const el of document.querySelectorAll(`${selector} .mdc-switch`)) {
             let switchElement = new mdc.switchControl.MDCSwitch(el);
             const switchInputs = document.querySelectorAll(`input[data-switch-btn="${el.id}"]`);
             if (switchInputs.length === 1) {
@@ -55,22 +55,22 @@ let cas = {
             }
         }
 
-        for (const el of document.querySelectorAll('.mdc-menu')) {
+        for (const el of document.querySelectorAll(`${selector} .mdc-menu`)) {
             new mdc.menu.MDCMenu(el);
         }
 
-        for (const el of document.querySelectorAll('.mdc-linear-progress')) {
+        for (const el of document.querySelectorAll(`${selector} .mdc-linear-progress`)) {
             new mdc.linearProgress.MDCLinearProgress(el);
         }
 
-        for (const el of document.querySelectorAll('.mdc-data-table')) {
+        for (const el of document.querySelectorAll(`${selector} .mdc-data-table`)) {
             new mdc.dataTable.MDCDataTable(el);
         }
-        for (const el of document.querySelectorAll('.mdc-snackbar')) {
+        for (const el of document.querySelectorAll(`${selector} .mdc-snackbar`)) {
             new mdc.snackbar.MDCSnackbar(el);
         }
 
-        let elms = document.querySelectorAll('.mdc-tab-bar');
+        let elms = document.querySelectorAll(`${selector} .mdc-tab-bar`);
         for (const elm of elms) {
             let tabs = mdc.tabBar.MDCTabBar.attachTo(elm);
 
@@ -82,7 +82,7 @@ let cas = {
             tabs.foundation.adapter.activateTabAtIndex(0);
         }
 
-        for (const el of document.querySelectorAll('.mdc-fab')) {
+        for (const el of document.querySelectorAll(`${selector} .mdc-fab`)) {
            new mdc.ripple.MDCRipple(el);
         }
 
