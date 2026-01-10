@@ -94,7 +94,7 @@ function newExternalIdentityProvider() {
             options: availableProviders,
             cssClasses: "always-show"
         });
-        
+
 
         createInputField({
             labelTitle: "Login URL",
@@ -304,8 +304,8 @@ function newExternalIdentityProvider() {
             $("#newExternalIdentityProviderDialog [id$='FieldContainer'] input")
                 .val("");
         }
-        
-        
+
+
         dialogContainer.dialog({
             position: {
                 my: "center top",
@@ -454,29 +454,43 @@ function updateConfigPropertyValue(button, name) {
 function deleteAllConfigurationProperties(button) {
     function deletePropertiesFromSource(propertySource) {
         Swal.close();
-        $.ajax({
-            url: `${actuatorEndpoints.casconfig}`,
-            method: "DELETE",
-            contentType: "application/json",
-            data: JSON.stringify(
-                {
-                    propertySource: propertySource
-                }
-            )
+
+        Swal.fire({
+            title: `Delete Configuration Properties`,
+            text: `Are you sure you want to delete all configuration properties from ${propertySource}? 
+                Once deleted, you may not be able to recover the configuration properties.`,
+            icon: "question",
+            showConfirmButton: true,
+            showDenyButton: true
         })
-            .done(function (data, textStatus, jqXHR) {
-                $.get(actuatorEndpoints.env, res => {
-                    reloadConfigurationTable(res);
-                    refreshCasServerConfiguration(`${propertySource}: All Properties Removed`);
-                })
-                    .fail((xhr) => {
-                        displayBanner(xhr);
-                    });
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.error("Error:", textStatus, errorThrown);
-                displayBanner(jqXHR);
+            .then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `${actuatorEndpoints.casconfig}`,
+                        method: "DELETE",
+                        contentType: "application/json",
+                        data: JSON.stringify(
+                            {
+                                propertySource: propertySource
+                            }
+                        )
+                    })
+                        .done(function (data, textStatus, jqXHR) {
+                            $.get(actuatorEndpoints.env, res => {
+                                reloadConfigurationTable(res);
+                                refreshCasServerConfiguration(`${propertySource}: All Properties Removed`);
+                            })
+                                .fail((xhr) => {
+                                    displayBanner(xhr);
+                                });
+                        })
+                        .fail(function (jqXHR, textStatus, errorThrown) {
+                            console.error("Error:", textStatus, errorThrown);
+                            displayBanner(jqXHR);
+                        });
+                }
             });
+
     }
 
     if (mutablePropertySources.length === 1) {
@@ -715,7 +729,8 @@ function refreshCasServerConfiguration(title) {
             using the existing/old CAS components until they are fully refreshed in the runtime application context.
             <p class="text-justify"/>
             <strong>Note: Not every component is refreshable.</strong> Configuration properties that control
-            fundamental aspects of CAS operation may not be dynamically reloaded. In such cases, a full restart of the CAS server
+            fundamental aspects of CAS operation <strong>(specially those that are not owned or controlled by CAS)</strong> 
+            may not be dynamically reloaded. In such cases, a full restart of the CAS server
             may be required for the changes to take effect.
             `
         })
@@ -1771,7 +1786,6 @@ async function initializeSsoSessionOperations() {
                 icon: "question",
                 showConfirmButton: true,
                 showDenyButton: true
-
             })
                 .then((result) => {
                     if (result.isConfirmed) {
