@@ -376,7 +376,7 @@ function newExternalIdentityProvider() {
                             data: JSON.stringify(payload),
                             success: response => {
                                 $(this).dialog("close");
-                                $.get(actuatorEndpoints.env, res => {
+                                $.get(actuatorEndpoints.env, async res => {
                                     reloadConfigurationTable(res);
                                     refreshCasServerConfiguration(`New Property ${name} Created`);
                                 })
@@ -731,6 +731,7 @@ function openNewConfigurationPropertyDialog(config) {
                         $.get(actuatorEndpoints.env, res => {
                             reloadConfigurationTable(res);
                             refreshCasServerConfiguration(`New Property ${name} Created`);
+                            loadExternalIdentityProvidersTable();
                         })
                             .fail((xhr) => {
                                 displayBanner(xhr);
@@ -803,6 +804,7 @@ function refreshCasServerConfiguration(title) {
                         .done(() => {
                             Swal.close();
                             Swal.fire("Success!", "CAS configuration has been reloaded successfully.", "success");
+                            loadExternalIdentityProvidersTable();
                         })
                         .fail((jqXHR, textStatus, errorThrown) => {
                             console.error("Error:", textStatus, errorThrown);
@@ -3774,6 +3776,87 @@ async function initializePersonDirectoryOperations() {
     }
 }
 
+function configureSaml2ClientMetadataButtons() {
+    async function showSamlMetadata(payload) {
+        const saml2Editor = initializeAceEditor("delegatedClientsSaml2Editor", "xml");
+        saml2Editor.setReadOnly(true);
+
+        saml2Editor.setValue(new XMLSerializer().serializeToString(payload));
+        saml2Editor.gotoLine(1);
+
+        const beautify = ace.require("ace/ext/beautify");
+        beautify.beautify(saml2Editor.session);
+
+        const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("delegatedClientsSaml2Dialog"));
+        dialog["open"]();
+    }
+
+    $("button[name=saml2ClientSpMetadata]").off().on("click", function () {
+        $(this).prop("disabled", true);
+        const url = `${casServerPrefix}/sp/${$(this).attr("clientName")}/metadata`;
+        $.get(url, payload => showSamlMetadata(payload))
+            .always(() => $(this).prop("disabled", false));
+
+    });
+    $("button[name=saml2ClientIdpMetadata]").off().on("click", function () {
+        $(this).prop("disabled", true);
+        const clientName = `${$(this).attr("clientName")}`;
+        const url = `${casServerPrefix}/sp/${clientName}/idp/metadata`;
+
+        Swal.fire({
+            icon: "info",
+            title: `Fetching SAML2 Identity Provider Metadata for ${clientName}`,
+            text: "Please wait while data is being retrieved...",
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        $.get(url, async payload => {
+            await showSamlMetadata(payload);
+            await updateNavigationSidebar();
+            Swal.close();
+        })
+            .always(() => $(this).prop("disabled", false));
+    });
+}
+
+async function loadExternalIdentityProvidersTable() {
+    const delegatedClientsTable = $("#delegatedClientsTable").DataTable();
+    delegatedClientsTable.clear();
+    if (actuatorEndpoints.delegatedClients) {
+        $.get(actuatorEndpoints.delegatedClients, response => {
+            for (const [key, idp] of Object.entries(response)) {
+                const details = flattenJSON(idp);
+                for (const [k, v] of Object.entries(details)) {
+                    if (Object.keys(v).length > 0 && k !== "type") {
+                        delegatedClientsTable.row.add({
+                            0: `${key}`,
+                            1: `<code>${toKebabCase(k)}</code>`,
+                            2: `<code>${v}</code>`,
+                            3: `${idp.type}`
+                        });
+                    }
+                }
+            }
+            delegatedClientsTable.draw();
+            $("#delegatedClientsContainer").removeClass("d-none");
+            $("#delegatedclients").removeClass("d-none");
+            updateNavigationSidebar();
+
+            configureSaml2ClientMetadataButtons();
+
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            $("#delegatedClientsContainer").addClass("d-none");
+            $("#delegatedclients").addClass("d-none");
+        });
+    } else {
+        $("#delegatedClientsContainer").addClass("d-none");
+        $("#delegatedclients").addClass("d-none");
+    }
+}
+
 async function initializeAuthenticationOperations() {
     const authenticationHandlersTable = $("#authenticationHandlersTable").DataTable({
         pageLength: 10,
@@ -3804,52 +3887,7 @@ async function initializeAuthenticationOperations() {
                 });
         }
     });
-
-    function configureSaml2ClientMetadataButtons() {
-        async function showSamlMetadata(payload) {
-            const saml2Editor = initializeAceEditor("delegatedClientsSaml2Editor", "xml");
-            saml2Editor.setReadOnly(true);
-
-            saml2Editor.setValue(new XMLSerializer().serializeToString(payload));
-            saml2Editor.gotoLine(1);
-
-            const beautify = ace.require("ace/ext/beautify");
-            beautify.beautify(saml2Editor.session);
-
-            const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("delegatedClientsSaml2Dialog"));
-            dialog["open"]();
-        }
-
-        $("button[name=saml2ClientSpMetadata]").off().on("click", function () {
-            $(this).prop("disabled", true);
-            const url = `${casServerPrefix}/sp/${$(this).attr("clientName")}/metadata`;
-            $.get(url, payload => showSamlMetadata(payload))
-                .always(() => $(this).prop("disabled", false));
-
-        });
-        $("button[name=saml2ClientIdpMetadata]").off().on("click", function () {
-            $(this).prop("disabled", true);
-            const clientName = `${$(this).attr("clientName")}`;
-            const url = `${casServerPrefix}/sp/${clientName}/idp/metadata`;
-
-            Swal.fire({
-                icon: "info",
-                title: `Fetching SAML2 Identity Provider Metadata for ${clientName}`,
-                text: "Please wait while data is being retrieved...",
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                didOpen: () => Swal.showLoading()
-            });
-
-            $.get(url, async payload => {
-                await showSamlMetadata(payload);
-                await updateNavigationSidebar();
-                Swal.close();
-            })
-                .always(() => $(this).prop("disabled", false));
-        });
-    }
-
+    
     authenticationHandlersTable.clear();
     if (actuatorEndpoints.authenticationHandlers) {
         $.get(actuatorEndpoints.authenticationHandlers, response => {
@@ -3899,7 +3937,13 @@ async function initializeAuthenticationOperations() {
     }
 
     const toolbar = document.createElement("div");
-    let toolbarEntries = "";
+    let toolbarEntries = `
+        <button type="button" id="loadExternalIdentityProvidersTableButton"
+                onclick="loadExternalIdentityProvidersTable()"
+                class="mdc-button mdc-button--raised">
+            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>Reload</span>
+        </button>
+    `;
 
     if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
         toolbarEntries += `
@@ -3912,7 +3956,7 @@ async function initializeAuthenticationOperations() {
     }
 
     toolbar.innerHTML = toolbarEntries;
-    const delegatedClientsTable = $("#delegatedClientsTable").DataTable({
+    $("#delegatedClientsTable").DataTable({
         pageLength: 10,
         order: [0, "asc"],
         autoWidth: false,
@@ -3966,38 +4010,7 @@ async function initializeAuthenticationOperations() {
         }
     });
 
-    delegatedClientsTable.clear();
-    if (actuatorEndpoints.delegatedClients) {
-        $.get(actuatorEndpoints.delegatedClients, response => {
-            for (const [key, idp] of Object.entries(response)) {
-                const details = flattenJSON(idp);
-                for (const [k, v] of Object.entries(details)) {
-                    if (Object.keys(v).length > 0 && k !== "type") {
-                        delegatedClientsTable.row.add({
-                            0: `${key}`,
-                            1: `<code>${toKebabCase(k)}</code>`,
-                            2: `<code>${v}</code>`,
-                            3: `${idp.type}`
-                        });
-                    }
-                }
-            }
-            delegatedClientsTable.draw();
-            $("#delegatedClientsContainer").removeClass("d-none");
-            $("#delegatedclients").removeClass("d-none");
-            updateNavigationSidebar();
-
-            configureSaml2ClientMetadataButtons();
-
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            $("#delegatedClientsContainer").addClass("d-none");
-            $("#delegatedclients").addClass("d-none");
-        });
-    } else {
-        $("#delegatedClientsContainer").addClass("d-none");
-        $("#delegatedclients").addClass("d-none");
-    }
+    await loadExternalIdentityProvidersTable();
 }
 
 async function initializeConsentOperations() {
