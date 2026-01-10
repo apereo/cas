@@ -2566,7 +2566,7 @@ function createSelectField(config) {
 
     const $select = $("<select>")
         .attr("id", selectId)
-        .attr("data-change-handler", `${changeEventHandlers},generateServiceDefinition`)
+        .attr("data-change-handler", `${`${changeEventHandlers},`}generateServiceDefinition`)
         .attr("data-param-name", paramName)
         .attr("data-param-type", paramType)
         .addClass("jqueryui-selectmenu");

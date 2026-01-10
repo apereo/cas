@@ -110,7 +110,7 @@ function newExternalIdentityProvider() {
             labelTitle: "Protocol:",
             id: "externalIdentityProviderCasProtocol",
             options: [
-                {value: "CAS30", text: "CAS 3.0"},
+                {value: "", text: "CAS 3.0", selected: true},
                 {value: "CAS20", text: "CAS 2.0"},
                 {value: "CAS10", text: "CAS 1.0"},
                 {value: "SAML", text: "SAML"}
@@ -279,7 +279,7 @@ function newExternalIdentityProvider() {
             labelTitle: "Auto Redirect:",
             id: "externalIdentityProviderAutoRedirectType",
             options: [
-                {value: "NONE", text: "NONE"},
+                {value: "", text: "NONE", selected: true},
                 {value: "CLIENT", text: "CLIENT"},
                 {value: "SERVER", text: "SERVER"}
             ],
@@ -332,16 +332,65 @@ function newExternalIdentityProvider() {
                     }
 
                     if (proceed) {
-                        $(this).dialog("close");
+                        const currentType = $("#externalIdPTypeSelect").val();
+                        let group = "";
+                        switch (currentType) {
+                        case "CAS":
+                            group = "cas.authn.pac4j.cas[]";
+                            break;
+                        case "OIDC":
+                            group = "cas.authn.pac4j.oidc[].generic";
+                            break;
+                        case "OAUTH2":
+                            group = "cas.authn.pac4j.oauth2[]";
+                            break;
+                        case "SAML2":
+                            group = "cas.authn.pac4j.saml[]";
+                            break;
+                        }
 
-                        
-                        $.get(actuatorEndpoints.env, res => {
-                            reloadConfigurationTable(res);
-                            refreshCasServerConfiguration(`Identity Provider Created`);
-                        })
-                            .fail((xhr) => {
+                        const formFields = $(
+                            `
+                            #newExternalIdentityProviderDialog input:visible,
+                            #newExternalIdentityProviderDialog label.${currentType} > select[data-param-name],
+                            #newExternalIdentityProviderDialog label.always-show > select[data-param-name]
+                            `
+                        ).toArray();
+
+                        const payload = formFields
+                            .filter(input => {
+                                const v = $(input).val();
+                                return v !== null && v !== "";
+                            })
+                            .map((input, index) => (
+                                {
+                                    name: `${group}.${$(input).data("param-name")}`,
+                                    value: $(input).val()
+                                }
+                            ));
+
+                        $.ajax({
+                            url: `${actuatorEndpoints.casconfig}/update`,
+                            method: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify(payload),
+                            success: response => {
+                                $(this).dialog("close");
+                                $.get(actuatorEndpoints.env, res => {
+                                    reloadConfigurationTable(res);
+                                    refreshCasServerConfiguration(`New Property ${name} Created`);
+                                })
+                                    .fail((xhr) => {
+                                        displayBanner(xhr);
+                                    });
+                            },
+                            error: (xhr, status, error) => {
+                                console.error(`Error: ${status} / ${error} / ${xhr.responseText}`);
                                 displayBanner(xhr);
-                            });
+                            }
+                        });
+
+
                     }
                 },
                 Cancel: function () {
@@ -359,7 +408,7 @@ function newExternalIdentityProvider() {
                 });
                 const currentType = $("#externalIdPTypeSelect").val();
                 handleExternalIdentityProviderTypeChange(currentType);
-                
+
             },
             close: function () {
                 $(this).dialog("destroy");
@@ -5370,7 +5419,6 @@ function activateDashboardTab(idx) {
 
 function selectSidebarMenuButton(selectedItem) {
     const index = $(selectedItem).data("tab-index");
-    console.log("Selected sidebar menu item index:", index);
     if (index !== Tabs.SETTINGS) {
         $("nav.sidebar-navigation ul li").removeClass("active");
         $(selectedItem).addClass("active");

@@ -87,6 +87,11 @@ class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
                         "name", "cas.server.prefix",
                         "value", "https://sso.apereo.org/cas",
                         "propertySource", simplePropertySource.getName()
+                    ),
+                    Map.of(
+                        "name", "cas.server.tomcat.http[].enabled",
+                        "value", "true",
+                        "propertySource", simplePropertySource.getName()
                     )
                 )))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -101,16 +106,6 @@ class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
         mockMvc.perform(post("/actuator/refresh")).andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
         assertEquals("https://sso.apereo.org/cas", casServerPrefix.getObject().prefix());
-
-        mockMvc.perform(delete("/actuator/casConfig")
-                .content(JsonUtils.render(
-                    Map.of(
-                        "name", "cas.server.prefix",
-                        "propertySource", simplePropertySource.getName()
-                    )
-                ))
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk());
 
         mockMvc.perform(delete("/actuator/casConfig")
                 .content(JsonUtils.render(
