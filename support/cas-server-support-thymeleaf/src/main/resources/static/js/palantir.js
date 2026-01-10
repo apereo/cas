@@ -1,5 +1,3 @@
-const DEFAULT_INTERVAL = 10000;
-
 /**
  * Internal Functions
  */
@@ -40,6 +38,24 @@ let currentActiveTab = Tabs.APPLICATIONS;
 const CAS_FEATURES = [];
 
 let notyf = null;
+
+class PalantirSettings {
+    constructor(data = {}) {
+        const parsedInterval = Number(data.refreshInterval);
+        this.refreshInterval = Number.isFinite(parsedInterval)
+            ? parsedInterval * 1000
+            : 10 * 1000;
+    }
+}
+
+function palantirSettings() {
+    try {
+        const raw = JSON.parse(localStorage.getItem("PalantirSettings")) ?? {};
+        return new PalantirSettings(raw);
+    } catch {
+        return new PalantirSettings();
+    }
+}
 
 function newExternalIdentityProvider() {
     if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
@@ -256,7 +272,7 @@ function newExternalIdentityProvider() {
             title: "Define the destination binding for the SAML2 identity provider.",
             cssClasses: "SAML2 hide"
         });
-        
+
         function handleExternalIdentityProviderTypeChange(type) {
             $(`#newExternalIdentityProviderDialog .${type}`).show();
             $("#newExternalIdentityProviderDialog [id$='SelectContainer']")
@@ -1188,7 +1204,7 @@ async function initializeHeimdallOperations() {
             if (currentActiveTab === Tabs.ACCESS_STRATEGY) {
                 fetchHeimdallResources();
             }
-        }, DEFAULT_INTERVAL);
+        }, palantirSettings().refreshInterval);
     }
 
 }
@@ -1471,7 +1487,7 @@ async function initializeScheduledTasksOperations() {
             if (currentActiveTab === Tabs.TASKS) {
                 initializeJvmMetrics();
             }
-        }, DEFAULT_INTERVAL);
+        }, palantirSettings().refreshInterval);
     }
 
     function fetchThreadDump() {
@@ -1501,7 +1517,7 @@ async function initializeScheduledTasksOperations() {
             if (currentActiveTab === Tabs.TASKS) {
                 fetchThreadDump();
             }
-        }, DEFAULT_INTERVAL);
+        }, palantirSettings().refreshInterval);
     }
 }
 
@@ -2904,7 +2920,7 @@ async function initializeSystemOperations() {
             configureHealthChart();
             configureStatistics();
         }
-    }, DEFAULT_INTERVAL);
+    }, palantirSettings().refreshInterval);
 
     await configureSystemData()
         .then(configureStatistics())
@@ -4453,7 +4469,7 @@ async function initializeMultitenancyOperations() {
         if (currentActiveTab === Tabs.MULTITENANCY) {
             fetchTenants();
         }
-    }, DEFAULT_INTERVAL);
+    }, palantirSettings().refreshInterval);
 }
 
 async function initializeMultifactorOperations() {
@@ -5254,7 +5270,48 @@ function activateDashboardTab(idx) {
     try {
         const tabIndex = Number(idx);
         if (tabIndex === Tabs.SETTINGS) {
-            console.log("Activating settings tab");
+            $("#palantirSettingsDialog").dialog({
+                position: {
+                    my: "center top",
+                    at: "center top+100",
+                    of: window
+                },
+                autoOpen: false,
+                modal: true,
+                width: 600,
+                height: "auto",
+                buttons: {
+                    OK: function () {
+                        const storedSettings = localStorage.getItem("PalantirSettings");
+                        const palantirSettings = storedSettings ? JSON.parse(storedSettings) : {};
+                        palantirSettings.refreshInterval = Number($("#palantirRefreshInterval").val());
+                        localStorage.setItem("PalantirSettings", JSON.stringify(palantirSettings));
+                        $(this).dialog("close");
+                        location.reload(true);
+                    },
+                    Cancel: function () {
+                        $(this).dialog("close");
+                    }
+                },
+                open: function () {
+                    cas.init();
+                    try {
+                        $("#palantirRefreshInterval").selectmenu("destroy");
+                    } catch (e) {
+                    } finally {
+                        $("#palantirRefreshInterval").selectmenu({
+                            appendTo: $(this).closest(".ui-dialog")
+                        });
+                        $("#palantirRefreshInterval")
+                            .val(palantirSettings().refreshInterval / 1000)
+                            .selectmenu("refresh");
+                    }
+                },
+                close: function () {
+                    $(this).dialog("destroy");
+                }
+            });
+            $("#palantirSettingsDialog").dialog("open");
         } else {
             let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
             tabs.activateTab(tabIndex);
@@ -5273,8 +5330,8 @@ function selectSidebarMenuButton(selectedItem) {
         $("nav.sidebar-navigation ul li").removeClass("active");
         $(selectedItem).addClass("active");
         window.localStorage.setItem("PalantirSelectedTab", index);
-        return index;
     }
+    return index;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
