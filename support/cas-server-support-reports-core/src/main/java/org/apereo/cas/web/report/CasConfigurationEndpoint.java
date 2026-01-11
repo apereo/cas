@@ -84,6 +84,12 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
             MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_FORM_URLENCODED_VALUE
         })
+    @Operation(summary = "Fetch configuration property",
+        parameters = {
+            @Parameter(name = "value", required = true, description = "The value to match"),
+            @Parameter(name = "name", required = true, description = "The name (pattern) of the property to fetch"),
+            @Parameter(name = "propertySource", required = false, description = "The name of the property source that should be examined")
+        })
     public List<MutableConfigurationProperty> retrieveProperty(
         @RequestBody final ConfigurationPropertyRetrievalRequest request) {
         val activeSources = CasCoreConfigurationUtils.getMutablePropertySources(applicationContext);

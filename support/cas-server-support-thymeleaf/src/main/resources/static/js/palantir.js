@@ -3943,6 +3943,14 @@ async function loadExternalIdentityProvidersTable() {
     const delegatedClientsTable = $("#delegatedClientsTable").DataTable();
     delegatedClientsTable.clear();
     if (actuatorEndpoints.delegatedClients) {
+        Swal.fire({
+            icon: "info",
+            title: `Loading Identity Providers`,
+            text: "Please wait while external identity providers are being retrieved...",
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => Swal.showLoading()
+        });
         $.get(actuatorEndpoints.delegatedClients, response => {
             for (const [key, idp] of Object.entries(response)) {
                 const details = flattenJSON(idp);
@@ -3961,13 +3969,14 @@ async function loadExternalIdentityProvidersTable() {
             $("#delegatedClientsContainer").removeClass("d-none");
             $("#delegatedclients").removeClass("d-none");
             updateNavigationSidebar();
-
             configureSaml2ClientMetadataButtons();
-
+            Swal.close();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
             $("#delegatedClientsContainer").addClass("d-none");
             $("#delegatedclients").addClass("d-none");
+            displayBanner(xhr);
+            Swal.close();
         });
     } else {
         $("#delegatedClientsContainer").addClass("d-none");
