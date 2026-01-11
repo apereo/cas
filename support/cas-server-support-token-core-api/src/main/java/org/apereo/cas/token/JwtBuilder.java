@@ -85,11 +85,11 @@ public class JwtBuilder {
      */
     public static Optional<JWTClaimsSet> tryParse(@Nullable final String jwt) {
         try {
-            return Optional.of(JWTParser.parse(jwt).getJWTClaimsSet());
+            return Optional.ofNullable(JWTParser.parse(jwt).getJWTClaimsSet());
         } catch (final Exception e) {
             LOGGER.trace("Unable to parse [{}] JWT; trying JWT claim set...", jwt);
             try {
-                return Optional.of(JWTClaimsSet.parse(jwt));
+                return Optional.ofNullable(JWTClaimsSet.parse(jwt));
             } catch (final Exception ex) {
                 LOGGER.trace("Unable to parse JWT", ex);
                 return Optional.empty();
@@ -103,12 +103,9 @@ public class JwtBuilder {
      * @param jwt the jwt
      * @return the jwt
      */
-    public static JWTClaimsSet parse(@Nullable final String jwt) {
+    public static @Nullable JWTClaimsSet parse(@Nullable final String jwt) {
         val parsed = tryParse(jwt);
-        if (parsed.isPresent()) {
-            return parsed.get();
-        }
-        throw new IllegalArgumentException("Unable to parse JWT");
+        return parsed.orElse(null);
     }
 
     /**
@@ -149,7 +146,7 @@ public class JwtBuilder {
      * @param jwtJson the jwt json
      * @return the jwt claims set
      */
-    public JWTClaimsSet unpack(final String jwtJson) {
+    public @Nullable JWTClaimsSet unpack(final String jwtJson) {
         return unpack(Optional.empty(), jwtJson);
     }
 
@@ -160,7 +157,7 @@ public class JwtBuilder {
      * @param jwtJson the jwt json
      * @return the string
      */
-    public JWTClaimsSet unpack(final Optional<RegisteredService> service, final String jwtJson) {
+    public @Nullable JWTClaimsSet unpack(final Optional<RegisteredService> service, final String jwtJson) {
         return FunctionUtils.doUnchecked(() -> {
             service.ifPresent(svc -> {
                 LOGGER.trace("Located service [{}] in service registry", svc);
