@@ -34,7 +34,7 @@ class OAuth20JwtBuilderTests extends AbstractOAuth20Tests {
 
     @Test
     void verifyBadJwt() {
-        assertThrows(IllegalArgumentException.class, () -> JwtBuilder.parse("badly-formatted-jwt"));
+        assertNull(JwtBuilder.parse("badly-formatted-jwt"));
     }
 
     @Test
