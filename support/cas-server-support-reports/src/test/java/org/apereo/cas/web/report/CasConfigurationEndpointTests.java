@@ -78,10 +78,11 @@ class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
         assertEquals(decrypted, value);
     }
 
+    
     @Test
     void verifyPropertyUpdate() throws Throwable {
         assertEquals("https://cas.example.org:8443/cas", casServerPrefix.getObject().prefix());
-        val results = JsonUtils.parse(mockMvc.perform(post("/actuator/casConfig/update")
+        var results = JsonUtils.parse(mockMvc.perform(post("/actuator/casConfig/update")
                 .content(JsonUtils.render(List.of(
                     Map.of(
                         "name", "cas.server.prefix",
@@ -102,6 +103,23 @@ class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
         assertNotNull(results);
         assertFalse(results.isEmpty());
         assertEquals("https://cas.example.org:8443/cas", casServerPrefix.getObject().prefix());
+
+
+        results = JsonUtils.parse(mockMvc.perform(post("/actuator/casConfig/retrieve")
+                .content(JsonUtils.render(
+                    Map.of(
+                        "name", "cas.server.prefix",
+                        "value", "https://sso.apereo.org/cas",
+                        "propertySource", simplePropertySource.getName()
+                    )
+                ))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString(), List.class);
+        assertNotNull(results);
+        assertFalse(results.isEmpty());
 
         mockMvc.perform(post("/actuator/refresh")).andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();

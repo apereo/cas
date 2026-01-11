@@ -802,12 +802,21 @@ function refreshCasServerConfiguration(title) {
                     const endpoint = actuatorEndpoints.busrefresh || actuatorEndpoints.refresh;
                     $.post(endpoint)
                         .done(() => {
-                            Swal.close();
-                            Swal.fire("Success!", "CAS configuration has been reloaded successfully.", "success");
-                            loadExternalIdentityProvidersTable();
+                            loadExternalIdentityProvidersTable().then(r => {
+                                Swal.close();
+                                Swal.fire({
+                                    title: "Success!",
+                                    text: "CAS configuration has been reloaded successfully.",
+                                    icon: "success",
+                                    timer: 1000,
+                                    timerProgressBar: true,
+                                    showConfirmButton: true
+                                });
+                            });
                         })
                         .fail((jqXHR, textStatus, errorThrown) => {
                             console.error("Error:", textStatus, errorThrown);
+                            Swal.close();
                             Swal.fire("Error", "Failed to reload CAS configuration.", "error");
                             displayBanner(jqXHR);
                         });
@@ -3776,12 +3785,121 @@ async function initializePersonDirectoryOperations() {
     }
 }
 
+function removeIdentityProvider(idp,type) {
+    if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+        Swal.fire({
+            title: `Are you sure you want to delete ${idp}?`,
+            text: `
+                Removing this identity provider is only possible if it's owned and managed by a dynamic configuration source. 
+                Once removed, you may not be able to revert this.
+            `,
+            icon: "question",
+            showConfirmButton: true,
+            showDenyButton: true
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `${actuatorEndpoints.casconfig}/retrieve`,
+                        method: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(
+                            {
+                                name: `cas.authn.pac4j.${type}\\[\\d+\\].*`,
+                                value: idp
+                            }
+                        )
+                    })
+                        .done(function (data, textStatus, jqXHR) {
+                            if (data.length === 0) {
+                                Swal.fire("Error", `
+                                No configuration entries could be found for the identity provider ${idp}.
+                                Are you sure it's managed via a dynamic configuration source?
+                                `, "error");
+                                return;
+                            }
+                            if (data.length === 1) {
+                                const group = `${data[0].name.match(/^(.*?\[\d+\])/)[1].replace("[", "\\[").replace("]", "\\]")}.*`;
+                                $.ajax({
+                                    url: `${actuatorEndpoints.casconfig}/retrieve`,
+                                    method: "POST",
+                                    contentType: "application/json",
+                                    data: JSON.stringify(
+                                        {
+                                            name: group,
+                                            propertySource: data[0].propertySource
+                                        }
+                                    )
+                                })
+                                    .done(function (data, textStatus, jqXHR) {
+                                        const payloadFor = (entry) => JSON.stringify({
+                                            name: entry.name,
+                                            propertySource: entry.propertySource
+                                        });
+
+                                        const requests = data.map(entry =>
+                                            Promise.resolve(
+                                                $.ajax({
+                                                    url: actuatorEndpoints.casconfig,
+                                                    method: "DELETE",
+                                                    contentType: "application/json",
+                                                    data: payloadFor(entry)
+                                                })
+                                            )
+                                        );
+                                        Promise.all(requests)
+                                            .then(() => {
+                                                $.get(actuatorEndpoints.env, res => {
+                                                    reloadConfigurationTable(res);
+                                                    refreshCasServerConfiguration(`The identity provider ${idp} has been removed.`);
+                                                })
+                                                    .fail((xhr) => {
+                                                        displayBanner(xhr);
+                                                    });
+                                            })
+                                            .catch(jqXHR => {
+                                                displayBanner(jqXHR);
+                                                Swal.fire("Error", "At least one delete request failed.", "error");
+                                            });
+                                    })
+                                    .fail(function (jqXHR, textStatus, errorThrown) {
+                                        console.error("Error:", textStatus, errorThrown);
+                                        displayBanner(jqXHR);
+                                    });
+                                
+                            }
+                        })
+                        .fail(function (jqXHR, textStatus, errorThrown) {
+                            console.error("Error:", textStatus, errorThrown);
+                            displayBanner(jqXHR);
+                        });
+                }
+            });
+    }
+}
+
 function configureSaml2ClientMetadataButtons() {
     async function showSamlMetadata(payload) {
         const saml2Editor = initializeAceEditor("delegatedClientsSaml2Editor", "xml");
         saml2Editor.setReadOnly(true);
 
-        saml2Editor.setValue(new XMLSerializer().serializeToString(payload));
+        function simplePrettyXml(xml) {
+            let pad = 0;
+            return xml
+                .replace(/(>)(<)(\/*)/g, "$1\n$2$3")
+                .split("\n")
+                .map(line => {
+                    let indent = 0;
+                    if (line.match(/^<\/\w/)) pad--;
+                    else if (line.match(/^<\w([^>]*[^/])?>$/)) indent = 1;
+                    const result = "  ".repeat(pad) + line;
+                    pad += indent;
+                    return result;
+                })
+                .join("\n");
+        }
+        
+        saml2Editor.setValue(simplePrettyXml(new XMLSerializer().serializeToString(payload)));
         saml2Editor.gotoLine(1);
 
         const beautify = ace.require("ace/ext/beautify");
@@ -3980,27 +4098,50 @@ async function initializeAuthenticationOperations() {
                 .each((group, i) => {
                     if (last !== group) {
                         let samlButtons = "";
+                        let toolbarButtons = "";
+
                         rows.data().each(entry => {
-                            if (entry[0] === group && entry[3] === "saml2") {
-                                samlButtons = `
-                                    <span class="px-2">
-                                            <button type="button" title="Service Provider Metadata" name="saml2ClientSpMetadata" href="#" clientName='${group}'
+                            if (entry[0] === group) {
+                                if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+                                    toolbarButtons = `
+                                        <span class="px-2" style="float: right;">
+                                            <button type="button" 
+                                                    name="removeIdentityProvider" 
+                                                    href="#"
+                                                    title="Remove Identity Provider"
+                                                    onclick="removeIdentityProvider('${group}', '${entry[3]}')" 
+                                                    data-client-name='${group}'
+                                                    data-type='${entry[3]}'
                                                     class="mdc-button mdc-button--raised toolbar">
+                                                <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
+                                            </button>
+                                        </span>
+                                    `.trim();
+                                }
+                                
+                                if (entry[3] === "saml2") {
+                                    samlButtons = `
+                                    <span class="px-2"  style="float: right;">
+                                            <button type="button" title="Service Provider Metadata" 
+                                                    name="saml2ClientSpMetadata" href="#" clientName='${group}'
+                                                    class="mdc-button mdc-button--raised toolbar pr-2">
                                                 <i class="mdi mdi-text-box min-width-32x" aria-hidden="true"></i>
                                                 Service Provider Metadata
                                             </button>
-                                            <button type="button" title="Identity Provider Metadata" name="saml2ClientIdpMetadata" href="#" clientName='${group}'
-                                                    class="mdc-button mdc-button--raised toolbar">
+                                            <button type="button" title="Identity Provider Metadata" 
+                                                    name="saml2ClientIdpMetadata" href="#" clientName='${group}'
+                                                    class="mdc-button mdc-button--raised toolbar pr-2">
                                                 <i class="mdi mdi-file-xml-box min-width-32x" aria-hidden="true"></i>
                                                 Identity Provider Metadata
                                             </button>
                                     </span>
                                     `.trim();
+                                }
                             }
                         });
                         $(rows).eq(i).before(
                             `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                <td colspan="3">${group} ${samlButtons.trim()} </td>
+                                <td colspan="3"><span class="idp-group">${group}</span>${toolbarButtons.trim()} ${samlButtons.trim()}</td>
                             </tr>`.trim()
                         );
                         configureSaml2ClientMetadataButtons();
@@ -4009,6 +4150,7 @@ async function initializeAuthenticationOperations() {
                 });
         }
     });
+
 
     await loadExternalIdentityProvidersTable();
 }

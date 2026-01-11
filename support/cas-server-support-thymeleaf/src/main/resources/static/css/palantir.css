@@ -30,3 +30,9 @@
     font-weight: bold;
     font-size: 12pt;
 }
+
+.idp-group {
+    display: inline-block;
+    vertical-align: middle;
+    padding-top: 8px;
+}

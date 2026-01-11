@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
+import org.apereo.cas.configuration.api.MutableConfigurationProperty;
 import org.apereo.cas.configuration.api.MutablePropertySource;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -68,6 +69,38 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
         parameters = @Parameter(name = "value", required = true, description = "The value to decrypt"))
     public ResponseEntity<@NonNull String> decrypt(@RequestBody final String value) {
         return ResponseEntity.ok(casConfigurationCipherExecutor.decode(value));
+    }
+
+
+    /**
+     * Retrieve properties matching a name.
+     *
+     * @param request the request
+     * @return the list
+     */
+    @PostMapping(value = "/retrieve",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = {
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE
+        })
+    public List<MutableConfigurationProperty> retrieveProperty(
+        @RequestBody final ConfigurationPropertyRetrievalRequest request) {
+        val activeSources = CasCoreConfigurationUtils.getMutablePropertySources(applicationContext);
+        return activeSources
+            .stream()
+            .filter(source -> StringUtils.isBlank(request.propertySource()) || request.propertySource().equalsIgnoreCase(source.getName()))
+            .map(source -> source.getPropertyNames(request.name()))
+            .flatMap(List::stream)
+            .toList()
+            .stream()
+            .filter(entry -> ((MutableConfigurationProperty) entry).value() != null)
+            .filter(entry -> {
+                val property = (MutableConfigurationProperty) entry;
+                return StringUtils.isBlank(request.value())
+                    || (property.value() != null && property.value().toString().equalsIgnoreCase(request.value()));
+            })
+            .toList();
     }
 
     /**
@@ -176,6 +209,12 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
                 .toList())
             .flatMap(Collection::stream)
             .toList();
+    }
+
+    public record ConfigurationPropertyRetrievalRequest(
+        @NonNull String name,
+        @NonNull String value,
+        @Nullable String propertySource) {
     }
 
     public record ConfigurationPropertyUpdateRequest(
