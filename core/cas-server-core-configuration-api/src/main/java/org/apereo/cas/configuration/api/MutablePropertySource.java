@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.api;
 
 import module java.base;
+import org.apereo.cas.util.RegexUtils;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import lombok.val;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -42,6 +44,29 @@ public interface MutablePropertySource<T> {
      */
     String[] getPropertyNames();
 
+    /**
+     * Gets property names.
+     *
+     * @param filterPattern the filter pattern
+     * @return the property names
+     */
+    default List<MutableConfigurationProperty> getPropertyNames(final String filterPattern) {
+        val pattern = RegexUtils.createPattern(filterPattern);
+        val propertyNames = getPropertyNames();
+        return Arrays.stream(propertyNames)
+            .parallel()
+            .map(pattern::matcher)
+            .filter(Matcher::find)
+            .map(Matcher::group)
+            .map(name -> {
+                val value = getProperty(name);
+                return value != null ? new MutableConfigurationProperty(name, value, getName()) : null;
+            })
+            .filter(Objects::nonNull)
+            .distinct()
+            .collect(Collectors.toList());
+    }
+    
     /**
      * Refresh.
      */
