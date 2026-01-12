@@ -426,6 +426,12 @@ function overrideConfigPropertyValue(name, value) {
     });
 }
 
+function searchForConfigPropertyButton(name) {
+    $("#configuration-tabs").tabs("option", "active", $("#casConfigSearch").index());
+    $("#configSearchQuery").val(`^${name}$`).focus().select();
+    $("#configSearchButton").click();
+}
+
 function effectiveConfigPropertyValue(name) {
     $.get(`${actuatorEndpoints.env}/${name}`, response => {
         Swal.fire({
@@ -865,6 +871,19 @@ function reloadConfigurationTable(response) {
                     </button>
                 `;
 
+                if (actuatorEndpoints.configurationmetadata) {
+                    buttons += `
+                            <button type="button" 
+                                    name="searchForConfigPropertyButton" href="#" 
+                                    data-key='${propertyName}'
+                                    data-value="'${value}'"
+                                    onclick="searchForConfigPropertyButton('${propertyName}')"
+                                    class="mdc-button mdc-button--raised min-width-32x">
+                                <i class="mdi mdi-help min-width-32x" aria-hidden="true"></i>
+                            </button>
+                    `;
+                }
+
                 if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
                     buttons += `
                             <button type="button" 
@@ -909,6 +928,19 @@ function reloadConfigurationTable(response) {
                                 <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
                             </button>
                         `;
+
+                    if (actuatorEndpoints.configurationmetadata) {
+                        buttons += `
+                            <button type="button" 
+                                    name="searchForConfigPropertyButton" href="#" 
+                                    data-key='${propertyName}'
+                                    data-value="'${value}'"
+                                    onclick="searchForConfigPropertyButton('${propertyName}')"
+                                    class="mdc-button mdc-button--raised min-width-32x">
+                                <i class="mdi mdi-help min-width-32x" aria-hidden="true"></i>
+                            </button>
+                        `;
+                    }
                     mutableConfigurationTable.row.add({
                         0: `${camelcaseToTitleCase(source.name)}`,
                         1: `<code>${propertyName}</code>`,
