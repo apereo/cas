@@ -2607,7 +2607,7 @@ function createMultiSelectField(config) {
     const selectId = `registeredService${capitalize(paramName.replace(".", ""))}`;
     const $select = $("<select multiple>")
         .attr("id", selectId)
-        .attr("data-change-handler", `${changeEventHandlers},generateServiceDefinition`)
+        .attr("data-change-handler", `${`${changeEventHandlers},`}generateServiceDefinition`)
         .attr("data-param-name", paramName)
         .attr("data-param-type", paramType)
         .addClass("jqueryui-multiselectmenu")
