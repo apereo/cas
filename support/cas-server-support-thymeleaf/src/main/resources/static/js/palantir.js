@@ -418,6 +418,14 @@ function newExternalIdentityProvider() {
     }
 }
 
+function overrideConfigPropertyValue(name, value) {
+    openNewConfigurationPropertyDialog({
+        name: name,
+        value: value,
+        updateEntry: true
+    });
+}
+
 function effectiveConfigPropertyValue(name) {
     $.get(`${actuatorEndpoints.env}/${name}`, response => {
         Swal.fire({
@@ -731,7 +739,6 @@ function openNewConfigurationPropertyDialog(config) {
                         $.get(actuatorEndpoints.env, res => {
                             reloadConfigurationTable(res);
                             refreshCasServerConfiguration(`New Property ${name} Created`);
-                            loadExternalIdentityProvidersTable();
                         })
                             .fail((xhr) => {
                                 displayBanner(xhr);
@@ -756,7 +763,7 @@ function openNewConfigurationPropertyDialog(config) {
             if (config.updateEntry) {
                 $("#newConfigPropertyName").parent().hide();
                 $("#propertySourcesSection").hide();
-                $("#newConfigPropertyValue").focus();
+                $("#newConfigPropertyValue").focus().select();
             } else {
                 $("#propertySourcesSection").show();
                 $("#newConfigPropertyName").parent().show();
@@ -850,13 +857,26 @@ function reloadConfigurationTable(response) {
             if (!key.endsWith(".origin")) {
                 const propertyName = key.replace(".value", "");
                 let buttons = `
-                            <button type="button" name="effectiveConfigPropertyValueButton" href="#" 
+                    <button type="button" name="effectiveConfigPropertyValueButton" href="#" 
+                            data-key='${propertyName}'
+                            onclick="effectiveConfigPropertyValue('${propertyName}')"
+                            class="mdc-button mdc-button--raised min-width-32x">
+                        <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
+                    </button>
+                `;
+
+                if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+                    buttons += `
+                            <button type="button" 
+                            name="overrideConfigPropertyValueButton" href="#" 
                                     data-key='${propertyName}'
-                                    onclick="effectiveConfigPropertyValue('${propertyName}')"
+                                    data-value="'${value}'"
+                                    onclick="overrideConfigPropertyValue('${propertyName}', '${value}')"
                                     class="mdc-button mdc-button--raised min-width-32x">
-                                <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
+                                <i class="mdi mdi-arrow-left-circle min-width-32x" aria-hidden="true"></i>
                             </button>
-                        `;
+                    `;
+                }
                 configurationTable.row.add({
                     0: `${camelcaseToTitleCase(source.name)}`,
                     1: `<code>${propertyName}</code>`,
@@ -5591,7 +5611,7 @@ function selectSidebarMenuButton(selectedItem) {
     return index;
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+function initializeTabs() {
     $(".jqueryui-tabs").tabs({
         activate: function () {
             const tabId = $(this).attr("id");
@@ -5604,8 +5624,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     }).off().on("click", () => updateNavigationSidebar());
+}
 
+function initializeMenus() {
     $(".jqueryui-menu").menu();
+}
+
+function initializeDropDowns() {
     $(".jqueryui-selectmenu").selectmenu({
         width: "360px",
         change: function (event, ui) {
@@ -5622,7 +5647,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
+}
 
+function initializeDatePickers() {
     $("input.jquery-datepicker").datepicker({
         showAnim: "slideDown",
         onSelect: function (date, ins) {
@@ -5631,6 +5658,13 @@ document.addEventListener("DOMContentLoaded", () => {
             $(`#${$(ins).prop("id")}`).prev().find(".mdc-notched-outline__notch").hide();
         }
     });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    initializeTabs();
+    initializeMenus();
+    initializeDropDowns();
+    initializeDatePickers();
 
     $("nav.sidebar-navigation ul li").off().on("click", function () {
         hideBanner();
