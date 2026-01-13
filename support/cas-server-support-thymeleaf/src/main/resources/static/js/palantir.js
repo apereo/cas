@@ -1,24 +1,36 @@
 /**
  * Internal Functions
  */
-const Tabs = {
-    APPLICATIONS: 0,
-    SYSTEM: 1,
-    TICKETS: 2,
-    TASKS: 3,
-    ACCESS_STRATEGY: 4,
-    LOGGING: 5,
-    SSO_SESSIONS: 6,
-    CONFIGURATION: 7,
-    PERSON_DIRECTORY: 8,
-    AUTHENTICATION: 9,
-    CONSENT: 10,
-    PROTOCOLS: 11,
-    THROTTLES: 12,
-    MFA: 13,
-    MULTITENANCY: 14,
-    SETTINGS: 100
-};
+class PalantirDashboardTab {
+    constructor(name, index, shortcut) {
+        this.name = name;
+        this.index = index;
+        this.shortcut = shortcut;
+    }
+}
+
+class Tabs {
+    static APPLICATIONS = new PalantirDashboardTab("Applications Tab", 0, "a");
+    static SYSTEM = new PalantirDashboardTab("System Tab", 1, "s");
+    static TICKETS = new PalantirDashboardTab("Tickets Tab", 2, "t");
+    static TASKS = new PalantirDashboardTab("Tasks Tab", 3, "");
+    static ACCESS_STRATEGY = new PalantirDashboardTab("Access Strategy Tab", 4, "z");
+    static LOGGING = new PalantirDashboardTab("Logging Tab", 5, "l");
+    static SSO_SESSIONS = new PalantirDashboardTab("SSO Sessions Tab", 6, "o");
+    static CONFIGURATION = new PalantirDashboardTab("Configuration Tab", 7, "c");
+    static PERSON_DIRECTORY = new PalantirDashboardTab("Person Directory Tab", 8, "d");
+    static AUTHENTICATION = new PalantirDashboardTab("Authentication Tab", 9, "h");
+    static CONSENT = new PalantirDashboardTab("Consent Tab", 10, "");
+    static PROTOCOLS = new PalantirDashboardTab("Protocols Tab", 11, "p");
+    static THROTTLES = new PalantirDashboardTab("Throttles Tab", 12, "");
+    static MFA = new PalantirDashboardTab("MFA Tab", 13, "m");
+    static MULTITENANCY = new PalantirDashboardTab("Multitenancy Tab", 14, "");
+    static SETTINGS = new PalantirDashboardTab("Settings Dialog", 100, ",");
+
+    static values() {
+        return Object.values(Tabs);
+    }
+}
 
 /**
  * Charts objects.
@@ -33,7 +45,7 @@ let httpRequestsByUrlChart = null;
 let auditEventsChart = null;
 let threadDumpChart = null;
 
-let currentActiveTab = Tabs.APPLICATIONS;
+let currentActiveTab = Tabs.APPLICATIONS.index;
 
 const CAS_FEATURES = [];
 
@@ -1100,8 +1112,8 @@ function navigateToApplication(serviceIdToFind) {
         const matchingRows = applicationsTable.rows({search: "applied"});
         matchingRows.nodes().to$().addClass("selected");
         applicationsTable.draw();
-        activateDashboardTab(Tabs.APPLICATIONS);
-        selectSidebarMenuTab(Tabs.APPLICATIONS);
+        activateDashboardTab(Tabs.APPLICATIONS.index);
+        selectSidebarMenuTab(Tabs.APPLICATIONS.index);
     } else {
         displayBanner(`Could not find a registered service with id ${serviceIdToFind}`);
         applicationsTable.search("").draw();
@@ -1359,7 +1371,7 @@ async function initializeHeimdallOperations() {
         fetchHeimdallResources(heimdallViewResourceEditor);
 
         setInterval(() => {
-            if (currentActiveTab === Tabs.ACCESS_STRATEGY) {
+            if (currentActiveTab === Tabs.ACCESS_STRATEGY.index) {
                 fetchHeimdallResources();
             }
         }, palantirSettings().refreshInterval);
@@ -1642,7 +1654,7 @@ async function initializeScheduledTasksOperations() {
     if (actuatorEndpoints.metrics) {
         initializeJvmMetrics();
         setInterval(() => {
-            if (currentActiveTab === Tabs.TASKS) {
+            if (currentActiveTab === Tabs.TASKS.index) {
                 initializeJvmMetrics();
             }
         }, palantirSettings().refreshInterval);
@@ -1672,7 +1684,7 @@ async function initializeScheduledTasksOperations() {
     if (actuatorEndpoints.threaddump) {
         fetchThreadDump();
         setInterval(() => {
-            if (currentActiveTab === Tabs.TASKS) {
+            if (currentActiveTab === Tabs.TASKS.index) {
                 fetchThreadDump();
             }
         }, palantirSettings().refreshInterval);
@@ -2227,12 +2239,12 @@ async function initializeLoggingOperations() {
     let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
     tabs.listen("MDCTabBar:activated", ev => {
         let index = ev.detail.index;
-        if (index === Tabs.LOGGING) {
+        if (index === Tabs.LOGGING.index) {
             updateLoggersTable();
         }
     });
 
-    if (currentActiveTab === Tabs.LOGGING) {
+    if (currentActiveTab === Tabs.LOGGING.index) {
         updateLoggersTable();
     }
 
@@ -2279,7 +2291,7 @@ async function initializeLoggingOperations() {
 
         function startStreamingLogFile() {
             return setInterval(() => {
-                if (currentActiveTab === Tabs.LOGGING) {
+                if (currentActiveTab === Tabs.LOGGING.index) {
                     const logFileStream = $("#logFileStream");
 
                     $.ajax({
@@ -2300,7 +2312,7 @@ async function initializeLoggingOperations() {
 
         function startStreamingLogData() {
             return setInterval(() => {
-                if (currentActiveTab === Tabs.LOGGING) {
+                if (currentActiveTab === Tabs.LOGGING.index) {
                     fetchLogsFrom(actuatorEndpoints.cloudwatchlogs);
                     fetchLogsFrom(actuatorEndpoints.gcplogs);
                     fetchLogsFrom(actuatorEndpoints.loggingconfig);
@@ -2360,6 +2372,36 @@ async function restoreActiveTabs() {
         $(`#${key}`).tabs("option", "active", Number(value));
         $(`#${key}`).tabs("refresh");
     }
+}
+
+async function initializeHotKeyOperations() {
+    const shortcuts = Tabs.values()
+        .filter(tab => tab.shortcut)
+        .map(tab => tab.shortcut)
+        .join(',');
+    hotkeys(shortcuts, function (event, handler) {
+        const tab = Object.values(Tabs).find(
+            t => t instanceof PalantirDashboardTab && t.shortcut === handler.key
+        );
+        if (tab) {
+            $(`nav.sidebar-navigation ul li[data-tab-index=${tab.index}]:visible`).click();
+        }
+    });
+    
+    $(`nav.sidebar-navigation ul li:visible`).each(function () {
+       const index = $(this).data("tab-index");
+        const tab = Object.values(Tabs).find(
+            t => t instanceof PalantirDashboardTab && t.index === index
+        );
+        if (tab && tab.shortcut) {
+            $("#palantirShortcutsPanel").append(`
+                <div class="shortcut-item">
+                  <kbd class="key">${tab.shortcut}</kbd>
+                  <span>${tab.name}</span>
+                </div>
+              `);
+        }
+    });
 }
 
 async function initializeCasSpringWebflowOperations() {
@@ -2604,7 +2646,7 @@ async function initializeCasEventsOperations() {
 
         function fetchCasEvents() {
             return setInterval(() => {
-                if (currentActiveTab === Tabs.LOGGING) {
+                if (currentActiveTab === Tabs.LOGGING.index) {
                     $.ajax({
                         url: `${actuatorEndpoints.events}`,
                         type: "GET",
@@ -2666,7 +2708,7 @@ async function initializeAuditEventsOperations() {
 
         function fetchAuditLog() {
             return setInterval(() => {
-                if (currentActiveTab === Tabs.LOGGING) {
+                if (currentActiveTab === Tabs.LOGGING.index) {
                     const interval = $("#auditEventsIntervalFilter").val();
                     const count = $("#auditEventsCountFilter").val();
 
@@ -3065,14 +3107,14 @@ async function initializeSystemOperations() {
 
     tabs.listen("MDCTabBar:activated", ev => {
         let index = ev.detail.index;
-        if (index === Tabs.SYSTEM) {
+        if (index === Tabs.SYSTEM.index) {
             configureSystemInfo();
         }
     });
 
 
     setInterval(() => {
-        if (currentActiveTab === Tabs.SYSTEM) {
+        if (currentActiveTab === Tabs.SYSTEM.index) {
             configureSystemData();
             configureHealthChart();
             configureStatistics();
@@ -3837,7 +3879,7 @@ async function initializePersonDirectoryOperations() {
     }
 }
 
-function removeIdentityProvider(idp,type) {
+function removeIdentityProvider(idp, type) {
     if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
         Swal.fire({
             title: `Are you sure you want to delete ${idp}?`,
@@ -3918,7 +3960,7 @@ function removeIdentityProvider(idp,type) {
                                         console.error("Error:", textStatus, errorThrown);
                                         displayBanner(jqXHR);
                                     });
-                                
+
                             }
                         })
                         .fail(function (jqXHR, textStatus, errorThrown) {
@@ -3942,15 +3984,18 @@ function configureSaml2ClientMetadataButtons() {
                 .split("\n")
                 .map(line => {
                     let indent = 0;
-                    if (line.match(/^<\/\w/)) pad--;
-                    else if (line.match(/^<\w([^>]*[^/])?>$/)) indent = 1;
+                    if (line.match(/^<\/\w/)) {
+                        pad--;
+                    } else if (line.match(/^<\w([^>]*[^/])?>$/)) {
+                        indent = 1;
+                    }
                     const result = "  ".repeat(pad) + line;
                     pad += indent;
                     return result;
                 })
                 .join("\n");
         }
-        
+
         saml2Editor.setValue(simplePrettyXml(new XMLSerializer().serializeToString(payload)));
         saml2Editor.gotoLine(1);
 
@@ -4066,7 +4111,7 @@ async function initializeAuthenticationOperations() {
                 });
         }
     });
-    
+
     authenticationHandlersTable.clear();
     if (actuatorEndpoints.authenticationHandlers) {
         $.get(actuatorEndpoints.authenticationHandlers, response => {
@@ -4179,7 +4224,7 @@ async function initializeAuthenticationOperations() {
                                         </span>
                                     `.trim();
                                 }
-                                
+
                                 if (entry[3] === "saml2") {
                                     samlButtons = `
                                     <span class="px-2"  style="float: right;">
@@ -4776,7 +4821,7 @@ async function initializeMultitenancyOperations() {
 
     fetchTenants();
     setInterval(() => {
-        if (currentActiveTab === Tabs.MULTITENANCY) {
+        if (currentActiveTab === Tabs.MULTITENANCY.index) {
             fetchTenants();
         }
     }, palantirSettings().refreshInterval);
@@ -5404,12 +5449,12 @@ async function initializeSAML2ProtocolOperations() {
 function processNavigationTabs() {
     if (!actuatorEndpoints.registeredservices) {
         $("#applicationsTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.APPLICATIONS}`).addClass("d-none");
+        $(`#attribute-tab-${Tabs.APPLICATIONS.index}`).addClass("d-none");
     }
     if (!actuatorEndpoints.metrics || !actuatorEndpoints.httpexchanges || !actuatorEndpoints.auditevents
         || !actuatorEndpoints.heapdump || !actuatorEndpoints.health || !actuatorEndpoints.statistics) {
         $("#systemTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.SYSTEM}`).addClass("d-none");
+        $(`#attribute-tab-${Tabs.SYSTEM.index}`).addClass("d-none");
     }
     if (!actuatorEndpoints.metrics) {
         $("#systemmetricstab").parent().addClass("d-none");
@@ -5419,27 +5464,27 @@ function processNavigationTabs() {
     }
     if (!actuatorEndpoints.ticketregistry) {
         $("#ticketsTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.TICKETS}`).addClass("d-none");
+        $(`#attribute-tab-${Tabs.TICKETS.index}`).addClass("d-none");
     }
     if (!actuatorEndpoints.scheduledtasks) {
         $("#tasksTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.TASKS}`).addClass("d-none");
+        $(`#attribute-tab-${Tabs.TASKS.index}`).addClass("d-none");
     }
     if (!actuatorEndpoints.persondirectory) {
         $("#personDirectoryTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.PERSON_DIRECTORY}`).addClass("d-none");
+        $(`#attribute-tab-${Tabs.PERSON_DIRECTORY.index}`).addClass("d-none");
     }
     if (!actuatorEndpoints.authenticationHandlers || !actuatorEndpoints.authenticationPolicies) {
         $("#authenticationTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.AUTHENTICATION}`).addClass("d-none");
+        $(`#attribute-tab-${Tabs.AUTHENTICATION.index}`).addClass("d-none");
     }
     if (!actuatorEndpoints.serviceaccess) {
         $("#accessStrategyTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.ACCESS_STRATEGY}`).addClass("d-none");
+        $(`#attribute-tab-${Tabs.ACCESS_STRATEGY.index}`).addClass("d-none");
     }
     if (!actuatorEndpoints.ssosessions) {
         $("#ssoSessionsTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.SSO_SESSIONS}`).addClass("d-none");
+        $(`#attribute-tab-${Tabs.SSO_SESSIONS.index}`).addClass("d-none");
     }
     if (!actuatorEndpoints.auditlog) {
         $("#auditEvents").parent().addClass("d-none");
@@ -5449,15 +5494,15 @@ function processNavigationTabs() {
     }
     if ((!actuatorEndpoints.loggingconfig || !actuatorEndpoints.loggers) && !actuatorEndpoints.auditlog) {
         $("#loggingTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.LOGGING}`).addClass("d-none");
+        $(`#attribute-tab-${Tabs.LOGGING.index}`).addClass("d-none");
     }
     if (!actuatorEndpoints.env || !actuatorEndpoints.configprops) {
         $("#configurationTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.CONFIGURATION}`).addClass("d-none");
+        $(`#attribute-tab-${Tabs.CONFIGURATION.index}`).addClass("d-none");
     }
     if (!actuatorEndpoints.attributeconsent || !CAS_FEATURES.includes("Consent")) {
         $("#consentTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.CONSENT}`).addClass("d-none");
+        $(`#attribute-tab-${Tabs.CONSENT.index}`).addClass("d-none");
     }
     if (!actuatorEndpoints.casvalidate) {
         $("#casprotocol").parent().remove();
@@ -5488,16 +5533,16 @@ function processNavigationTabs() {
     if (!actuatorEndpoints.samlvalidate && !actuatorEndpoints.casvalidate
         && !actuatorEndpoints.samlpostprofileresponse && !actuatorEndpoints.oidcjwks) {
         $("#protocolsTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.PROTOCOLS}`).addClass("d-none");
+        $(`#attribute-tab-${Tabs.PROTOCOLS.index}`).addClass("d-none");
     }
     if (!actuatorEndpoints.throttles) {
         $("#throttlesTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.THROTTLES}`).addClass("d-none");
+        $(`#attribute-tab-${Tabs.THROTTLES.index}`).addClass("d-none");
     }
     if (!actuatorEndpoints.mfadevices || availableMultifactorProviders.length === 0) {
         $("#mfaTabButton").addClass("d-none");
         $("#mfaDevicesTab").parent().addClass("d-none");
-        $(`#attribute-tab-${Tabs.MFA}`).addClass("d-none");
+        $(`#attribute-tab-${Tabs.MFA.index}`).addClass("d-none");
     }
     if (!actuatorEndpoints.multifactortrusteddevices || availableMultifactorProviders.length === 0) {
         $("#trustedMfaDevicesTab").parent().addClass("d-none");
@@ -5533,7 +5578,7 @@ async function initializePalantir() {
                 } else {
                     let selectedTab = window.localStorage.getItem("PalantirSelectedTab");
                     if (!$(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).is(":visible")) {
-                        selectedTab = Tabs.APPLICATIONS;
+                        selectedTab = Tabs.APPLICATIONS.index;
                     }
                     $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
                     activateDashboardTab(selectedTab);
@@ -5563,6 +5608,7 @@ async function initializePalantir() {
                         initializeAuditEventsOperations(),
                         initializeCasEventsOperations(),
                         initializeCasSpringWebflowOperations(),
+                        initializeHotKeyOperations(),
                         restoreActiveTabs()
                     ]);
 
@@ -5579,7 +5625,7 @@ async function initializePalantir() {
 function activateDashboardTab(idx) {
     try {
         const tabIndex = Number(idx);
-        if (tabIndex === Tabs.SETTINGS) {
+        if (tabIndex === Tabs.SETTINGS.index) {
             $("#palantirSettingsDialog").dialog({
                 position: {
                     my: "center top",
@@ -5635,7 +5681,7 @@ function activateDashboardTab(idx) {
 
 function selectSidebarMenuButton(selectedItem) {
     const index = $(selectedItem).data("tab-index");
-    if (index !== Tabs.SETTINGS) {
+    if (index !== Tabs.SETTINGS.index) {
         $("nav.sidebar-navigation ul li").removeClass("active");
         $(selectedItem).addClass("active");
         window.localStorage.setItem("PalantirSelectedTab", index);

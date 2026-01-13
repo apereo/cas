@@ -4190,6 +4190,9 @@ ext.libraries = [
                 dependencies.create(libs.jquery.ui.get()) {
                     exclude(group: "org.webjars", module: "jquery")
                 },
+                dependencies.create(libs.hotkeysjs.get()) {
+                    exclude(group: "org.webjars", module: "jquery")
+                },
                 dependencies.create(libs.jsyaml.get()) {
                     exclude(group: "org.webjars", module: "jquery")
                 },
