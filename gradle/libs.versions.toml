@@ -87,6 +87,7 @@ hibernate = "7.2.0.Final"
 hibernateValidator = "9.1.0.Final"
 highlightJs = "11.11.1"
 hikari = "7.0.2"
+hotkeysJs = "4.0.0"
 hjson = "3.1.0"
 hsql = "2.7.4"
 httpCore = "5.4"
@@ -407,6 +408,7 @@ hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", 
 highlightjs = { module = "org.webjars:highlightjs", version.ref = "highlightJs" }
 hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
 hjson = { module = "org.hjson:hjson", version.ref = "hjson" }
+hotkeysjs = { module = "org.webjars.npm:hotkeys-js", version.ref = "hotkeysJs" }
 hsqldb = { module = "org.hsqldb:hsqldb", version.ref = "hsql" }
 httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "httpclient4" }
 httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5", version.ref = "httpclient" }
