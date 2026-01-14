@@ -28,6 +28,9 @@
     color: whitesmoke !important;
     border-radius: 8px !important;
     height: 30px !important;
+    padding-left: 5px !important;
+    font-family: var(--mdc-typography-font-family) !important;
+    font-size: 11pt !important;
 }
 
 .ui-selectmenu-menu {
