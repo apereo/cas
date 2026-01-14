@@ -49,6 +49,7 @@ let currentActiveTab = Tabs.APPLICATIONS.index;
 
 const CAS_FEATURES = [];
 
+
 let notyf = null;
 
 class PalantirSettings {
@@ -57,6 +58,47 @@ class PalantirSettings {
         this.refreshInterval = Number.isFinite(parsedInterval)
             ? parsedInterval * 1000
             : 10 * 1000;
+    }
+}
+
+class CasDiscoveryProfile {
+    static profile = null;
+    static loading = false;
+
+    static fromProfile(profileJson) {
+        const instance = new CasDiscoveryProfile();
+        Object.assign(instance, profileJson);
+        return instance;
+    }
+    
+    static fetchIfNeeded() {
+        if (this.profile) {
+            return $.Deferred().resolve(this.profile).promise();
+        }
+
+        if (this.loading || !actuatorEndpoints.discoveryprofile) {
+            return $.Deferred().reject("No endpoint or already loading").promise();
+        }
+
+        this.loading = true;
+        const deferred = $.Deferred();
+
+        $.get(actuatorEndpoints.discoveryprofile, response => {
+            this.profile = CasDiscoveryProfile.fromProfile(response.profile);
+            deferred.resolve(this.profile);
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayBanner(xhr);
+            deferred.reject(xhr);
+        }).always(() => {
+            this.loading = false;
+        });
+
+        return deferred.promise();
+    }
+
+    static availableAttributes() {
+        return this.profile?.availableAttributes ?? [];
     }
 }
 
@@ -500,7 +542,7 @@ function deleteConfigPropertyValue(button, name) {
                     })
                         .done(function (data, textStatus, jqXHR) {
                             const sources = data.join(",");
-                            console.log("Removed property from configuration sources", sources);
+                            
                             currentRow.remove().draw(false);
                             refreshCasServerConfiguration(`${sources}: Property ${name} Removed`);
                         })
@@ -734,7 +776,6 @@ function openNewConfigurationPropertyDialog(config) {
                 }
 
                 const sources = $("#propertySourcesSelect").val();
-                console.log(`Creating new property ${name} with value ${value} in source ${sources}`);
 
                 let payload;
                 if (sources.length === 0) {
@@ -1446,6 +1487,20 @@ async function initializeAccessStrategyOperations() {
             });
         }
     });
+}
+
+function hideElements(elements) {
+    $(elements)
+        .hide()
+        .addClass("hide")
+        .addClass("d-none");
+}
+
+function showElements(elements) {
+    $(elements)
+        .show()
+        .removeClass("hide")
+        .removeClass("d-none");
 }
 
 function hideBanner() {
@@ -2374,22 +2429,35 @@ async function restoreActiveTabs() {
     }
 }
 
+
 async function initializeHotKeyOperations() {
-    const shortcuts = Tabs.values()
+    let shortcuts = Tabs.values()
         .filter(tab => tab.shortcut)
         .map(tab => tab.shortcut)
-        .join(',');
+        .join(",");
+    shortcuts += ",w";
+    
     hotkeys(shortcuts, function (event, handler) {
-        const tab = Object.values(Tabs).find(
-            t => t instanceof PalantirDashboardTab && t.shortcut === handler.key
-        );
-        if (tab) {
-            $(`nav.sidebar-navigation ul li[data-tab-index=${tab.index}]:visible`).click();
+        const key = handler.key.toLowerCase();
+        switch (key) {
+        case "w":
+            event.preventDefault();
+            $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.APPLICATIONS.index}]:visible`).click();
+            openRegisteredServiceWizardDialog();
+            break;
+        default:
+            const tab = Object.values(Tabs).find(
+                t => t instanceof PalantirDashboardTab && t.shortcut === handler.key
+            );
+            if (tab) {
+                event.preventDefault();
+                $(`nav.sidebar-navigation ul li[data-tab-index=${tab.index}]:visible`).click();
+            }
         }
     });
-    
+
     $(`nav.sidebar-navigation ul li:visible`).each(function () {
-       const index = $(this).data("tab-index");
+        const index = $(this).data("tab-index");
         const tab = Object.values(Tabs).find(
             t => t instanceof PalantirDashboardTab && t.index === index
         );
@@ -2402,7 +2470,14 @@ async function initializeHotKeyOperations() {
               `);
         }
     });
+    $("#palantirShortcutsPanel").append(`
+        <div class="shortcut-item">
+          <kbd class="key">w</kbd>
+          <span>Application Wizard Dialog</span>
+        </div>
+      `);
 }
+
 
 async function initializeCasSpringWebflowOperations() {
     function drawFlowStateDiagram() {
@@ -2669,7 +2744,7 @@ async function initializeCasEventsOperations() {
                                         6: `<code>${entry?.properties?.agent ?? "N/A"}</code>`,
                                         7: `<code>${entry?.properties?.tenant ?? "N/A"}</code>`,
                                         8: `<code>${entry?.properties?.deviceFingerprint ?? "N/A"}</code>`,
-                                        9: `<code>${geoLocation.length == 0 ? "N/A" : geoLocation}</code>`
+                                        9: `<code>${geoLocation.length === 0 ? "N/A" : geoLocation}</code>`
                                     });
                                 }
                             }
@@ -4064,20 +4139,20 @@ async function loadExternalIdentityProvidersTable() {
             }
             delegatedClientsTable.draw();
             $("#delegatedClientsContainer").removeClass("d-none");
-            $("#delegatedclients").removeClass("d-none");
+            $("#delegatedclients").parent().removeClass("d-none");
             updateNavigationSidebar();
             configureSaml2ClientMetadataButtons();
             Swal.close();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
             $("#delegatedClientsContainer").addClass("d-none");
-            $("#delegatedclients").addClass("d-none");
+            $("#delegatedclients").parent().addClass("d-none");
             displayBanner(xhr);
             Swal.close();
         });
     } else {
         $("#delegatedClientsContainer").addClass("d-none");
-        $("#delegatedclients").addClass("d-none");
+        $("#delegatedclients").parent().addClass("d-none");
     }
 }
 
@@ -4438,7 +4513,7 @@ async function initializeConfigurationOperations() {
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New Property</span>
             </button>
             <button type="button" onclick="deleteAllConfigurationProperties(this);" id="deleteAllConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
-                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-broom" aria-hidden="true"></i>Delete All</span>
+                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-delete" aria-hidden="true"></i>Delete All</span>
             </button>
             <button type="button" onclick="importConfigurationProperties(this);" id="importConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-import" aria-hidden="true"></i>Import</span>
@@ -5716,7 +5791,6 @@ function initializeDropDowns() {
             const handlerNames = $select.data("change-handler").split(",");
             for (const handlerName of handlerNames) {
                 if (handlerName && handlerName.length > 0 && typeof window[handlerName] === "function") {
-                    // console.log("Invoking change handler:", handlerName);
                     const result = window[handlerName]($select, ui);
                     if (result !== undefined && result === false) {
                         break;
