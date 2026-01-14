@@ -2,39 +2,39 @@ let editServiceWizardDialog = undefined;
 
 function validateServiceIdPattern(button) {
     $("#validateServiceIdDialog").dialog({
-        title: 'Validate Pattern',
+        title: "Validate Pattern",
         modal: true,
         width: 600,
         closeOnEscape: false,
         buttons: {
             "Use Pattern": function () {
                 $("#registeredServiceId").val($("#serviceIdPattern").val()).focus();
-                $(this).dialog('close');
+                $(this).dialog("close");
             },
             Cancel: function () {
-                $(this).dialog('close');
+                $(this).dialog("close");
             }
         },
         close: function () {
-            $(this).dialog('destroy');
+            $(this).dialog("destroy");
         }
     });
 }
 
 function handleAttributeReleasePolicyChange(select) {
     let type = getLastWord($(select).val());
-    $(`#editServiceWizardMenuItemAttributeReleasePolicy .${type}`).show();
-    $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='FieldContainer']")
+    showElements($(`#editServiceWizardMenuItemAttributeReleasePolicy .${type}`));
+    hideElements($("#editServiceWizardMenuItemAttributeReleasePolicy [id$='FieldContainer']")
         .not(`.${type}`)
-        .not(".always-show")
-        .hide();
-    $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='MapContainer']")
+        .not(".always-show"));
+    hideElements($("#editServiceWizardMenuItemAttributeReleasePolicy [id$='SelectContainer']")
         .not(`.${type}`)
-        .hide();
-    $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='ButtonPanel']")
+        .not(".always-show"));
+    hideElements($("#editServiceWizardMenuItemAttributeReleasePolicy [id$='MapContainer']")
+        .not(`.${type}`));
+    hideElements($("#editServiceWizardMenuItemAttributeReleasePolicy [id$='ButtonPanel']")
         .not(`.${type}`)
-        .not(".always-show")
-        .hide();
+        .not(".always-show"));
 
     $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='FieldContainer'] input")
         .val("");
@@ -51,6 +51,7 @@ function handleAttributeReleasePolicyChange(select) {
 
 function createRegisteredServiceAttributeReleasePolicy() {
     createSelectField({
+        cssClasses: "always-show",
         containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
         labelTitle: "Type:",
         paramName: "attributeReleasePolicy",
@@ -145,21 +146,28 @@ function createRegisteredServiceAttributeReleasePolicy() {
         containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
         title: "Define the principal ID to include in attribute release.",
         cssClasses: "advanced-option"
-    })
+    });
 
-    
-    createInputField({
-        cssClasses: "hide ReturnAllAttributeReleasePolicy",
-        labelTitle: "Excluded Attributes",
-        name: "registeredServiceAttrReleaseExcludedAttrs",
-        paramName: "attributeReleasePolicy.excludedAttributes",
-        required: false,
-        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
-        title: "Define the attributes to be excluded from release, separated by comma."
-    })
-        .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
+    CasDiscoveryProfile.fetchIfNeeded()
+        .done(async () => {
+            const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
+                value: attr,
+                text: attr
+            }));
+            createMultiSelectField({
+                cssClasses: "hide ReturnAllAttributeReleasePolicy",
+                containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+                labelTitle: "Excluded Attributes:",
+                paramName: "attributeReleasePolicy.excludedAttributes",
+                title: "Define the attributes to be excluded from release, separated by comma.",
+                options: options,
+                allowCreateOption: true
+            }).data("renderer", function (value) {
+                return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
+            });
+            cas.init("#editServiceWizardMenuItemAttributeReleasePolicy");
         });
+
 
     createInputField({
         cssClasses: "hide ReturnEncryptedAttributeReleasePolicy",
@@ -331,7 +339,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
         title: "Define the requester ID pattern to match for this policy."
     });
-    
+
     createInputField({
         cssClasses: "hide AuthnRequestRequesterIdAttributeReleasePolicy",
         labelTitle: "Allowed Attributes (separated by comma)",
@@ -371,7 +379,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         .data("renderer", function (value) {
             return ["java.util.LinkedHashSet", value.split(",").filter(v => v != null && v !== "")];
         });
-    
+
     createInputField({
         cssClasses: "hide MetadataEntityAttributesAttributeReleasePolicy",
         labelTitle: "Entity Attribute",
@@ -468,7 +476,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
         title: "Define the attribute name to store the EduPersonTargetedID."
     });
 
-    
+
 }
 
 function createRegisteredServiceAttributeReleaseConsentPolicy() {
@@ -1669,7 +1677,7 @@ function createRegisteredServiceContacts(index) {
             })
             .data("beforeGenerate", function ($input, serviceDefinition) {
                 if (serviceDefinition["contacts"] && $input.val().length > 0) {
-                    let currentContact = serviceDefinition["contacts"][1][index-1];
+                    let currentContact = serviceDefinition["contacts"][1][index - 1];
                     if (!currentContact) {
                         currentContact = {
                             "@class": "org.apereo.cas.services.DefaultRegisteredServiceContact"
@@ -2029,7 +2037,7 @@ function createRegisteredServiceUsernameAttributeProvider() {
             "salt": value.trim()
         };
     });
-    
+
 }
 
 function createRegisteredServiceExpirationPolicy() {
@@ -2070,7 +2078,8 @@ function createRegisteredServiceFields() {
             <i class="mdi mdi-check-circle" aria-hidden="true"></i>
             <span class="sr-only">Validate</span>
         </button>
-    `);;
+    `);
+    ;
 
     createInputField({
         labelTitle: "Description",
@@ -2505,7 +2514,7 @@ function createMappedInputField(config) {
         configureInputRenderer();
         generateServiceDefinition();
     });
-    
+
     configureRemoveMapRowEventHandler();
     configureInputEventHandler();
     configureInputRenderer();
@@ -2555,7 +2564,7 @@ function createSelectField(config) {
     } else {
         selectId = `registeredService${capitalize(paramName.replace(".", ""))}`;
     }
-    
+
     const $label = $("<label>")
         .addClass(serviceClass ?? "")
         .addClass("pt-2")
@@ -2601,7 +2610,8 @@ function createMultiSelectField(config) {
         serviceClass = "",
         cssClasses = "",
         changeEventHandlers = "",
-        labelTitle
+        labelTitle,
+        allowCreateOption = false
     } = config;
 
     const selectId = `registeredService${capitalize(paramName.replace(".", ""))}`;
@@ -2629,20 +2639,28 @@ function createMultiSelectField(config) {
         .addClass("pr-2")
         .addClass("mb-2")
         .addClass(cssClasses ?? "")
-        .css("display", "block")
         .css("min-width", "max-content")
         .attr("for", selectId).text(`${labelTitle} `);
-    
+
     container.append($label, $select);
     $(`#${containerId}`).append(container);
-    new SlimSelect({
-        select: `#${selectId}`,
-        events: {
-            afterChange: (newVal) => {
-                generateServiceDefinition();
-            }
+
+    let settings = {
+        dropdownParent: "body",
+        plugins: ["remove_button"],
+        onItemAdd(value, item) {
+            generateServiceDefinition();
+        },
+        onItemRemove(value) {
+            generateServiceDefinition();
         }
-    })
+    };
+    if (allowCreateOption) {
+        settings.create = true;
+        settings.persist = false;
+    }
+    new TomSelect(`#${selectId}`, settings);
+
     return $select;
 }
 
@@ -2706,13 +2724,13 @@ function createInputField(config) {
             generateServiceDefinition();
         }
     })
-    .on("blur", function () {
-        if (!this.checkValidity()) {
-            $(this).parent().addClass("missing-required-field");
-        } else {
-            $(this).parent().removeClass("missing-required-field");
-        }
-    });
+        .on("blur", function () {
+            if (!this.checkValidity()) {
+                $(this).parent().addClass("missing-required-field");
+            } else {
+                $(this).parent().removeClass("missing-required-field");
+            }
+        });
 
     Object.entries(data).forEach(([key, value]) => {
         input.data(key, value);
@@ -2744,7 +2762,10 @@ function createInputField(config) {
 function openRegisteredServiceWizardDialog() {
     function openWizardDialog(serviceClass) {
         $("#editServiceWizardGeneralContainer").find("input").val("");
-
+        $('.jqueryui-multiselectmenu').each(function () {
+            this.tomselect?.clear();
+        });
+        
         const editor = initializeAceEditor("wizardServiceEditor");
         editor.setReadOnly(true);
         editor.setValue("");
@@ -2804,7 +2825,13 @@ function openRegisteredServiceWizardDialog() {
             const clazz = $(this).data("serviceClass");
             return clazz !== undefined && clazz !== null;
         }).remove();
-        $("#editServiceWizardForm select.jqueryui-selectmenu").selectmenu("refresh");
+
+        const dropdown = $("#editServiceWizardForm select.jqueryui-selectmenu");
+        try {
+            dropdown.selectmenu("refresh");
+        } catch (e) {
+            dropdown.selectmenu();
+        }
 
         generateServiceDefinition();
         editServiceWizardDialog["open"]();
@@ -2874,7 +2901,6 @@ function openRegisteredServiceWizardDialog() {
             input: "select",
             icon: "question",
             inputOptions: sortedServiceTypes,
-            inputPlaceholder: "Select an application type...",
             showCancelButton: true
         }).then((result) => {
             if (result.isConfirmed) {

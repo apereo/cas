@@ -109,6 +109,7 @@
                                         .addClass("pt-2")
                                         .addClass("pr-2")
                                         .addClass("mb-2")
+                                        .attr("id", "mylabel")
                                         .css("display", "block")
                                         .css("min-width", "max-content")
                                         .attr("for", "propertySourcesSelectContainer").text("Property Source(s):");
@@ -116,9 +117,11 @@
                                     section.append(container);
                                     
                                     $(`#newConfigurationMainPanel`).append(section);
-                                    new SlimSelect({
-                                        select: `#propertySourcesSelect`
-                                    });
+                                    
+                                    let settings = {
+                                        plugins: ['remove_button']
+                                    };
+                                    new TomSelect("#propertySourcesSelect", settings);
                                 </script>
                             </div>
                         </section>

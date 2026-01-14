@@ -207,7 +207,6 @@ sentry = "8.29.0"
 shibbolethUtilJavaSupport = "9.1.6"
 slackClient = "1.46.0"
 slf4j = "2.0.17"
-slimSelect = "3.3.0"
 snakeYaml = "2.5"
 socketJsClient = "1.5.1"
 splunkLogging = "1.11.8"
@@ -618,7 +617,6 @@ ses = { module = "software.amazon.awssdk:ses", version.ref = "amazonSdk" }
 shib-support = { module = "net.shibboleth:shib-support", version.ref = "shibbolethUtilJavaSupport" }
 slack-api-client = { module = "com.slack.api:slack-api-client", version.ref = "slackClient" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
-slimselect = { module = "org.webjars.npm:slim-select", version.ref = "slimSelect" }
 snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeYaml" }
 sns = { module = "software.amazon.awssdk:sns", version.ref = "amazonSdk" }
 sockjs-client = { module = "org.webjars:sockjs-client", version.ref = "socketJsClient" }
