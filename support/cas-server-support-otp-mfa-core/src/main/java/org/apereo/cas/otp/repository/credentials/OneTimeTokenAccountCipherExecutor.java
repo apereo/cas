@@ -1,7 +1,7 @@
 package org.apereo.cas.otp.repository.credentials;
 
+import module java.base;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
-
 import lombok.Getter;
 
 /**

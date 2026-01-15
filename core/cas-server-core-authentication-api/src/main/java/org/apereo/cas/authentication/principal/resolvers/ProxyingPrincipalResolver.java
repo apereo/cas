@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
@@ -11,11 +12,11 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
-import java.util.List;
-import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides the most basic means of principal resolution.
+ *
  * @author Marvin S. Addison
  * @since 4.0.0
  */
@@ -26,10 +27,10 @@ public class ProxyingPrincipalResolver implements PrincipalResolver {
     private final PrincipalFactory principalFactory;
 
     @Override
-    public Principal resolve(final Credential credential,
-                             final Optional<Principal> currentPrincipal,
-                             final Optional<AuthenticationHandler> handler,
-                             final Optional<Service> service) throws Throwable {
+    public @Nullable Principal resolve(final Credential credential,
+                                       final Optional<Principal> currentPrincipal,
+                                       final Optional<AuthenticationHandler> handler,
+                                       final Optional<Service> service) throws Throwable {
         val id = currentPrincipal.map(Principal::getId).orElseGet(credential::getId);
         val attributes = CollectionUtils.<String, List<Object>>wrap(
             HttpBasedServiceCredential.class.getName(), CollectionUtils.wrapList(credential.getId()));

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.introspection;
 
+import module java.base;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.springframework.core.Ordered;
 

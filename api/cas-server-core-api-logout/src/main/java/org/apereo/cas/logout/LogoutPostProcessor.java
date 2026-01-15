@@ -1,8 +1,8 @@
 package org.apereo.cas.logout;
 
+import module java.base;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.NamedObject;
-
 import org.springframework.core.Ordered;
 
 /**

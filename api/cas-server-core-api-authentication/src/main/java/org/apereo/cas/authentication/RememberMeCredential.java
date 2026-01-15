@@ -1,4 +1,5 @@
 package org.apereo.cas.authentication;
+import module java.base;
 
 /**
  * Credential that wish to handle remember me scenarios need

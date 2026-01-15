@@ -1,15 +1,12 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAuthenticationServiceSelectionPlan}.
@@ -35,7 +32,7 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
     }
 
     @Override
-    public Service resolveService(final Service service) throws Throwable {
+    public @Nullable Service resolveService(@Nullable final Service service) throws Throwable {
         val strategy = this.strategies
             .stream()
             .filter(selectionStrategy -> selectionStrategy.supports(service))
@@ -49,7 +46,7 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
     }
 
     @Override
-    public <T extends Service> T resolveService(final Service service, final Class<T> clazz) throws Throwable {
+    public <T extends Service> @Nullable T resolveService(final Service service, final Class<T> clazz) throws Throwable {
         val result = resolveService(service);
         if (result == null) {
             return null;

@@ -1,13 +1,13 @@
 package org.apereo.cas.adaptors.yubikey.web.flow;
 
-
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -23,7 +23,7 @@ public class YubiKeyAuthenticationPrepareLoginAction extends BaseCasWebflowActio
     protected final TenantExtractor tenantExtractor;
     
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val registrationEnabled = casProperties.getAuthn().getMfa().getYubikey().isMultipleDeviceRegistrationEnabled()
             && MultifactorAuthenticationWebflowUtils.isMultifactorDeviceRegistrationEnabled(requestContext);
         MultifactorAuthenticationWebflowUtils.putYubiKeyMultipleDeviceRegistrationEnabled(requestContext, registrationEnabled);

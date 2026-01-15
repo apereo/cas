@@ -1,5 +1,6 @@
 package org.apereo.cas.token.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -14,9 +15,6 @@ import org.apereo.cas.web.UrlValidator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.io.Serial;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * This is {@link TokenWebApplicationServiceResponseBuilder}.

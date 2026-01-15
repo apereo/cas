@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.account;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountCustomizer;
@@ -10,9 +11,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link SimplePasswordlessUserAccountStore}.

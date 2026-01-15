@@ -1,8 +1,7 @@
 package org.apereo.inspektr.audit.support;
 
+import module java.base;
 import lombok.val;
-import java.util.Calendar;
-import java.util.List;
 
 /**
  * Produces a where clause to select audit records older than some arbitrary

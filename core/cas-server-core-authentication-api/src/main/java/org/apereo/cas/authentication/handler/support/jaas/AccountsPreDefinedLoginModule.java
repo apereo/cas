@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.handler.support.jaas;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.google.common.base.Splitter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,25 +9,13 @@ import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.security.auth.Subject;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.login.FailedLoginException;
-import javax.security.auth.login.LoginException;
-import javax.security.auth.spi.LoginModule;
-
-import java.security.Principal;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * This is {@link AccountsPreDefinedLoginModule}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@SuppressWarnings("NullAway.Init")
 public class AccountsPreDefinedLoginModule implements LoginModule {
     private Subject subject;
 

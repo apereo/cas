@@ -1,5 +1,6 @@
 package org.apereo.cas.metadata.rest;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.test.CasTestExtension;

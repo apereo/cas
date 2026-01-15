@@ -1,5 +1,6 @@
 package org.apereo.cas.rest.audit;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import lombok.val;

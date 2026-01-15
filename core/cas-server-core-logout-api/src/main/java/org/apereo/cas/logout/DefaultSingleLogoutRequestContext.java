@@ -1,24 +1,18 @@
 package org.apereo.cas.logout;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
 import jakarta.persistence.Transient;
-
-import java.io.Serial;
-import java.net.URL;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Define a logout request for a service accessed by a user.

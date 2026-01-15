@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import module java.base;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -12,10 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.net.URI;
 
 /**
  * This is {@link RedirectUnauthorizedServiceUrlAction}.
@@ -32,7 +33,7 @@ public class RedirectUnauthorizedServiceUrlAction extends BaseCasWebflowAction {
     private final ObjectProvider<@NonNull ScriptResourceCacheManager> scriptResourceCacheManager;
     
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         var redirectUrl = determineUnauthorizedServiceRedirectUrl(requestContext);
         if (redirectUrl != null) {
             val url = redirectUrl.toString();

@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.twilio;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailedException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -12,8 +13,6 @@ import com.twilio.rest.verify.v2.service.VerificationCheck;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * This is {@link CasDefaultTwilioMultifactorAuthenticationService}.

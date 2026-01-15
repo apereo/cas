@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.pub;
 
+import module java.base;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.RedisTicketDocument;

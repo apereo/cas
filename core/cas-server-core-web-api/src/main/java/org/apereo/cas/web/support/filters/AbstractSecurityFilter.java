@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.filters;
 
+import module java.base;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.Getter;

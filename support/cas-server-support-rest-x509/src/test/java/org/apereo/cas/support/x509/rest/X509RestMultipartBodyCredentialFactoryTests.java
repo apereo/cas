@@ -1,7 +1,7 @@
 package org.apereo.cas.support.x509.rest;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
-
 import lombok.Cleanup;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -11,11 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.LinkedMultiValueMap;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

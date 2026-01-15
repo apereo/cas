@@ -1,6 +1,6 @@
 package org.apereo.inspektr.audit.support;
 
-import java.util.List;
+import module java.base;
 
 /**
  * Interface describing match criteria in terms of a SQL select clause.

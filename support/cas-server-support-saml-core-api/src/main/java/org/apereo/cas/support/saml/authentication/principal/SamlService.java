@@ -1,18 +1,16 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import java.io.Serial;
 
 /**
  * Class to represent that this service wants to use SAML. We use this in

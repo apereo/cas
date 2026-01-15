@@ -1,8 +1,6 @@
 package org.apereo.cas.support.wsfederation.attributes;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
+import module java.base;
 
 /**
  * This interface provides a mechanism to alter the SAML attributes before they

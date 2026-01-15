@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
@@ -26,8 +27,6 @@ import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link TokenAuthenticationEndpoint}.

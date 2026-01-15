@@ -1,16 +1,13 @@
 package org.apereo.cas.pm;
 
+import module java.base;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-
 import jakarta.validation.constraints.Size;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Optional;
 
 /**
  * This is {@link PasswordChangeRequest}.

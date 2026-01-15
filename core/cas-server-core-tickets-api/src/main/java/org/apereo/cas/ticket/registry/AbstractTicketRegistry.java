@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
@@ -31,20 +32,8 @@ import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
-import java.time.ZonedDateTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Base ticket registry class that implements common ticket-related ops.
@@ -116,7 +105,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public @Nullable Ticket getTicket(final String ticketId) {
         val returnTicket = getTicket(ticketId, ticket -> {
             if (ticket.isExpired()) {
                 val ticketAgeSeconds = getTicketAgeSeconds(ticket);
@@ -329,7 +318,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return count.intValue();
     }
 
-    protected Ticket encodeTicket(final Ticket ticket) throws Exception {
+    protected @Nullable Ticket encodeTicket(final Ticket ticket) throws Exception {
         if (!isCipherExecutorEnabled()) {
             LOGGER.trace(TICKET_ENCRYPTION_LOG_MESSAGE);
             return ticket;
@@ -343,7 +332,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return encodedTicket;
     }
 
-    protected Ticket decodeTicket(final Ticket ticketToProcess) {
+    protected @Nullable Ticket decodeTicket(final Ticket ticketToProcess) {
         if (ticketToProcess instanceof EncodedTicket && !isCipherExecutorEnabled()) {
             LOGGER.warn("Found removable encoded ticket [{}] yet cipher operations are disabled.", ticketToProcess.getId());
             FunctionUtils.doUnchecked(_ -> deleteTicket(ticketToProcess));

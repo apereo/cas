@@ -2,6 +2,7 @@ package org.apereo.inspektr.common.web;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import module java.base;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import jakarta.servlet.Filter;
@@ -10,7 +11,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 /**
  * Creates a {@link ClientInfo} object from the http request

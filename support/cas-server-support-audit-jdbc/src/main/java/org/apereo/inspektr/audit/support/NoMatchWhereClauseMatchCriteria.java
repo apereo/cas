@@ -1,4 +1,5 @@
 package org.apereo.inspektr.audit.support;
+import module java.base;
 
 /**
  * Constructs a where clause that matches no records.

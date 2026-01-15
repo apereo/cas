@@ -1,5 +1,6 @@
 package org.apereo.cas.logging;
 
+import module java.base;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -16,8 +17,6 @@ import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.jspecify.annotations.Nullable;
-import java.util.ArrayDeque;
-import java.util.Queue;
 
 /**
  * This is {@link CasAppender}.

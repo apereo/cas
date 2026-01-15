@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
@@ -7,7 +8,6 @@ import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryConfig
 import org.apereo.cas.support.saml.authentication.SamlRestServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

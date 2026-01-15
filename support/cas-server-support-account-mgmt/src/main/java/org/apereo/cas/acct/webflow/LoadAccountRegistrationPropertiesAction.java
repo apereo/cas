@@ -1,16 +1,14 @@
 package org.apereo.cas.acct.webflow;
 
+import module java.base;
 import org.apereo.cas.acct.AccountRegistrationProperty;
 import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Comparator;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link LoadAccountRegistrationPropertiesAction}.
@@ -23,7 +21,7 @@ public class LoadAccountRegistrationPropertiesAction extends BaseCasWebflowActio
     private final AccountRegistrationService accountRegistrationService;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val properties = accountRegistrationService.getAccountRegistrationPropertyLoader().load();
         requestContext.getFlowScope().put("registrationProperties", properties
             .values()

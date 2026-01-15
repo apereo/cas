@@ -1,4 +1,5 @@
 package org.apereo.cas.support.saml;
+import module java.base;
 
 /**
  * Class that exposes relevant constants and parameters to

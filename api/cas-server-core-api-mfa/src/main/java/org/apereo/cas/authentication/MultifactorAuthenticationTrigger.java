@@ -1,15 +1,13 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.NamedObject;
-
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.util.Optional;
 
 /**
  * This is {@link MultifactorAuthenticationTrigger}.
@@ -32,10 +30,10 @@ public interface MultifactorAuthenticationTrigger extends Ordered, NamedObject {
      * @throws Throwable the throwable
      */
     Optional<MultifactorAuthenticationProvider> isActivated(Authentication authentication,
-                                                            RegisteredService registeredService,
+                                                            @Nullable RegisteredService registeredService,
                                                             HttpServletRequest httpServletRequest,
                                                             HttpServletResponse httpServletResponse,
-                                                            Service service) throws Throwable;
+                                                            @Nullable Service service) throws Throwable;
 
     /**
      * Supports.
@@ -47,9 +45,9 @@ public interface MultifactorAuthenticationTrigger extends Ordered, NamedObject {
      * @return true/false
      */
     default boolean supports(final HttpServletRequest request,
-                             final RegisteredService registeredService,
+                             @Nullable final RegisteredService registeredService,
                              final Authentication authentication,
-                             final Service service) {
+                             @Nullable final Service service) {
         return true;
     }
 

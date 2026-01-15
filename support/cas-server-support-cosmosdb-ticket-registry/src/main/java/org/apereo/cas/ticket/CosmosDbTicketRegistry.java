@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.ticket.registry.AbstractTicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.LoggingUtils;
@@ -16,17 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * This is {@link CosmosDbTicketRegistry}.
@@ -55,7 +48,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+    public @Nullable Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
             val encTicketId = digestIdentifier(ticketId);
             val metadata = StringUtils.isNotBlank(ticketId) ? ticketCatalog.find(ticketId) : null;
@@ -130,7 +123,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     public long deleteSingleTicket(final Ticket ticketToDelete) {
         val encTicketId = digestIdentifier(ticketToDelete.getId());
         val metadata = ticketCatalog.find(ticketToDelete);
-        val container = getTicketContainer(metadata);
+        val container = getTicketContainer(Objects.requireNonNull(metadata));
         val result = container.deleteItem(encTicketId, new PartitionKey(metadata.getPrefix()), new CosmosItemRequestOptions());
         return HttpStatus.valueOf(result.getStatusCode()).is2xxSuccessful() ? 1 : 0;
     }
@@ -138,7 +131,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     protected Ticket addSingleTicket(final Ticket ticket) {
         val metadata = ticketCatalog.find(ticket);
-        val container = getTicketContainer(metadata);
+        val container = getTicketContainer(Objects.requireNonNull(metadata));
         val document = getCosmosDbTicketDocument(ticket, metadata);
         container.upsertItem(document);
         return ticket;
@@ -149,7 +142,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
         val operations = new HashMap<String, List<CosmosItemOperation>>();
         val results = toSave.peek(ticket -> {
             val ticketDefinition = ticketCatalog.find(ticket);
-            val document = getCosmosDbTicketDocument(ticket, ticketDefinition);
+            val document = getCosmosDbTicketDocument(ticket, Objects.requireNonNull(ticketDefinition));
             val commands = operations.getOrDefault(ticketDefinition.getProperties().getStorageName(), new ArrayList<>());
             commands.add(CosmosBulkOperations.getCreateItemOperation(document, new PartitionKey(ticketDefinition.getPrefix())));
             operations.put(ticketDefinition.getProperties().getStorageName(), commands);

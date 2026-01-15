@@ -1,9 +1,8 @@
 package org.apereo.cas.pac4j.client;
 
+import module java.base;
 import org.springframework.web.servlet.ModelAndView;
-
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 /**
  * This is {@link DelegatedClientAuthenticationFailureEvaluator}.

@@ -1,8 +1,8 @@
 package org.apereo.cas.util.io;
 
+import module java.base;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
-import java.io.File;
 
 /**
  * This is {@link FileWatcherService}.

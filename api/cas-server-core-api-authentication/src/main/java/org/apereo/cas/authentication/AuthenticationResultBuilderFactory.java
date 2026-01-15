@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import java.io.Serializable;
+import module java.base;
 
 /**
  * This is {@link AuthenticationResultBuilderFactory}, which is responsible to

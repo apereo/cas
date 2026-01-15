@@ -1,7 +1,7 @@
 package org.apereo.cas.web.cookie;
 
+import module java.base;
 import org.apereo.cas.authentication.RememberMeCredential;
-
 import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

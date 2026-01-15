@@ -1,18 +1,16 @@
 package org.apereo.cas.ws.idp.services;
 
+import module java.base;
+import module java.xml;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-
-import javax.xml.stream.XMLStreamWriter;
-import java.util.Set;
 
 /**
  * This is {@link DefaultWSFederationRelyingPartyAttributeWriter}.

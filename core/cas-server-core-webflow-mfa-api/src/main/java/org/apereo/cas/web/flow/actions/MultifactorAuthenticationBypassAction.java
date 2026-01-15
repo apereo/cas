@@ -1,14 +1,15 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -25,7 +26,7 @@ public class MultifactorAuthenticationBypassAction extends AbstractMultifactorAu
     protected final TenantExtractor tenantExtractor;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val service = WebUtils.getService(requestContext);
@@ -60,7 +61,7 @@ public class MultifactorAuthenticationBypassAction extends AbstractMultifactorAu
     }
 
     protected boolean isMultifactorAuthenticationBypass(final RequestContext requestContext,
-                                                        final RegisteredService service,
+                                                        @Nullable final RegisteredService service,
                                                         final MultifactorAuthenticationProvider provider) {
         val failureEval = provider.getFailureModeEvaluator();
         return requestContext.getCurrentTransition().getId().equals(CasWebflowConstants.TRANSITION_ID_BYPASS)

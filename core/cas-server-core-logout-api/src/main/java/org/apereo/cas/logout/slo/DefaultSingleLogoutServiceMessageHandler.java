@@ -1,5 +1,6 @@
 package org.apereo.cas.logout.slo;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.CasRegisteredService;

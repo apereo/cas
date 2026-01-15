@@ -1,8 +1,7 @@
 package org.apereo.cas.consent;
 
+import module java.base;
 import lombok.Getter;
-
-import java.util.Arrays;
 
 /**
  * This is {@link ConsentReminderOptions}.

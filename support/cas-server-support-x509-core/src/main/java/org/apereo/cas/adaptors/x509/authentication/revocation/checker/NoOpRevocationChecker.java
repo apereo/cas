@@ -1,4 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
+import module java.base;
 
 /**
  * NO-OP implementation certificate revocation checker.

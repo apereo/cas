@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -9,7 +10,6 @@ import lombok.Getter;
 import lombok.val;
 import okhttp3.CertificatePinner;
 import org.springframework.util.ReflectionUtils;
-import java.util.Objects;
 
 /**
  * This is {@link DuoSecurityClient}.

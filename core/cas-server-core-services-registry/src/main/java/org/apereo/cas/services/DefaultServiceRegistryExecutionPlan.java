@@ -1,16 +1,10 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultServiceRegistryExecutionPlan}.

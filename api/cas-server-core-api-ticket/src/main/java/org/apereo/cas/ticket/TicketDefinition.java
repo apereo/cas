@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.springframework.core.Ordered;
-import java.io.Serializable;
 
 /**
  * This is {@link TicketDefinition}. Ticket definition describes additional Properties and misc settings

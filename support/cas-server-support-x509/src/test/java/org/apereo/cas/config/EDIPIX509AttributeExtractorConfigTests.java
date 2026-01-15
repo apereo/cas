@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.BaseX509Tests;
 import org.apereo.cas.adaptors.x509.authentication.principal.EDIPIX509AttributeExtractor;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509AttributeExtractor;
@@ -12,9 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.io.IOException;
 import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import static org.junit.jupiter.api.Assertions.*;
 

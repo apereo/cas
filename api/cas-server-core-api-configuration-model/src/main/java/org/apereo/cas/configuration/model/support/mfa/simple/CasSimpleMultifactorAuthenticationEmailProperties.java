@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa.simple;
 
+import module java.base;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
@@ -8,8 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import java.io.Serial;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationEmailProperties}.

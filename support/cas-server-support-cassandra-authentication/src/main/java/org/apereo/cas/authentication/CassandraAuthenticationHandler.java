@@ -1,17 +1,13 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-
-import java.util.ArrayList;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link CassandraAuthenticationHandler}.
@@ -36,7 +32,7 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws Throwable {
+                                                                                        @Nullable final String originalPassword) throws Throwable {
         val username = credential.getUsername();
         val attributes = this.cassandraRepository.getUser(username);
 

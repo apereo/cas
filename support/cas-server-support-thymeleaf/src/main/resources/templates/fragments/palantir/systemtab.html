@@ -8,11 +8,12 @@
 <body>
 <span th:fragment="main">
     <div class="attribute-tab w-100 d-none" id="attribute-tab-1">
-        <div class="jqueryui-tabs">
+        <div class="jqueryui-tabs" id="system-tabs">
           <ul>
             <li><a id="systeminfotab" href="#systeminfo-tab">System Info</a></li>
             <li><a id="systemstatustab" href="#systemstatus-tab">System Status</a></li>
             <li><a id="httprequeststab" href="#httprequests-tab">HTTP Requests</a></li>
+            <li><a id="systemmetricstab" href="#systemmetrics-tab">System Metrics</a></li>
             <li><a id="casfeaturestab" href="#casfeaturestab-tab">Feature Catalog</a></li>
             <li><a id="caswebflowtab" href="#caswebflowtab-tab">Authentication Flows</a></li>
           </ul>
@@ -24,6 +25,20 @@
 
                     <p>CAS Server host currently active and handling requests is:</p>
                     <pre><code id="casServerHost" class="border-rounded language-html"></code></pre>
+
+                    <p>CAS Server understands your client IP address to be:</p>
+                    <pre><code id="casServerClientIp"
+                               class="border-rounded language-html"
+                               th:text="${clientInfo.clientIpAddress}"></code></pre>
+                </div>
+                
+                <div class="d-flex">
+                    <button type="button" name="shutdownServerButton" id="shutdownServerButton" class="mdc-button mdc-button--raised">
+                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-power" aria-hidden="true"></i>Shut Down</span>
+                    </button>
+                    <button type="button" name="restartServerButton" id="restartServerButton" class="mdc-button mdc-button--raised">
+                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-restart" aria-hidden="true"></i>Restart</span>
+                    </button>
                 </div>
             </div>
 
@@ -35,7 +50,7 @@
                             <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
                         </tr>
                     </thead>
-                        <tbody class="mdc-data-table__content">
+                    <tbody class="mdc-data-table__content">
                     </tbody>
                 </table>
 
@@ -48,6 +63,44 @@
                 </div>
             </div>
 
+            <div id="systemmetrics-tab">
+                <label for="systemMetricNameFilter">
+                    Available Metrics:
+                    <select id="systemMetricNameFilter" class="jqueryui-selectmenu">
+                        
+                    </select>
+                </label>
+
+                <pre id="systemMetricNameDescriptionContainer" class="mb-0 hide">
+                    <code id="systemMetricNameDescription"
+                          class="border-rounded language-html">This is a metric we have here</code>
+                </pre>
+
+
+                <h3>Tags</h3>
+                <table id="systemMetricsTagsTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                        <tr class="mdc-data-table__header-row">
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Tag</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+                <h3>Measurements</h3>
+                <table id="systemMetricsMeasurementsTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                        <tr class="mdc-data-table__header-row">
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Statistic</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+            </div>
+            
             <div id="httprequests-tab">
                 <div id="httpRequests" class="text-center">
                     <div class="elevation-surface mdc-elevation--z20">

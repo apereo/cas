@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.shell.commands.CasShellCommand;
@@ -39,16 +40,16 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.shell.boot.SpringShellProperties;
 import org.springframework.shell.core.NonInteractiveShellRunner;
 import org.springframework.shell.core.ShellRunner;
+import org.springframework.shell.core.autoconfigure.SpringShellProperties;
+import org.springframework.shell.core.command.AbstractCommand;
 import org.springframework.shell.core.command.CommandContext;
 import org.springframework.shell.core.command.CommandParser;
 import org.springframework.shell.core.command.CommandRegistry;
 import org.springframework.shell.core.command.ExitStatus;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.support.CommandFactoryBean;
-import org.springframework.shell.core.commands.AbstractCommand;
 import org.springframework.shell.jline.JLineInputProvider;
 import org.springframework.shell.jline.JLineShellRunner;
 import org.springframework.shell.jline.PromptProvider;

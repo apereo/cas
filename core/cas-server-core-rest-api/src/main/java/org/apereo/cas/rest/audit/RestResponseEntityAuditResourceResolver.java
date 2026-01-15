@@ -1,14 +1,14 @@
 package org.apereo.cas.rest.audit;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.HashMap;
 
 /**
  * This is {@link RestResponseEntityAuditResourceResolver}.
@@ -21,7 +21,7 @@ public class RestResponseEntityAuditResourceResolver extends ReturnValueAsString
     private final boolean includeEntityBody;
 
     @Override
-    public String[] resolveFrom(final JoinPoint auditableTarget, final Object returnValue) {
+    public String[] resolveFrom(final JoinPoint auditableTarget, @Nullable final Object returnValue) {
         if (returnValue instanceof final ResponseEntity entity) {
             return getAuditResourceFromResponseEntity(entity);
         }

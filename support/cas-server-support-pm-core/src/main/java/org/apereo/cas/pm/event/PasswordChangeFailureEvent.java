@@ -1,11 +1,11 @@
 package org.apereo.cas.pm.event;
 
+import module java.base;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-import java.io.Serial;
 
 
 /**

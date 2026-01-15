@@ -1,10 +1,8 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.util.spring.boot.AbstractCasSpringBootServletInitializer;
-
 import org.springframework.core.metrics.ApplicationStartup;
-
-import java.util.List;
 
 /**
  * This is {@link CasConfigurationServerServletInitializer}.

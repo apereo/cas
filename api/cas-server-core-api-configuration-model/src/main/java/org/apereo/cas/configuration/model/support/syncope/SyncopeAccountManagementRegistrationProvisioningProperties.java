@@ -1,15 +1,11 @@
 package org.apereo.cas.configuration.model.support.syncope;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link SyncopeAccountManagementRegistrationProvisioningProperties}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
@@ -7,14 +8,10 @@ import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Optional;
 
 /**
  * This is {@link HandlePasswordExpirationWarningMessagesAction}.
@@ -29,7 +26,7 @@ public class HandlePasswordExpirationWarningMessagesAction extends BaseCasWebflo
     public static final String ATTRIBUTE_NAME_EXPIRATION_WARNING_FOUND = "passwordExpirationWarningFound";
 
     @Override
-    protected Event doExecuteInternal(final RequestContext context) {
+    protected @Nullable Event doExecuteInternal(final RequestContext context) {
         val attributes = context.getCurrentEvent().getAttributes();
         val warnings = (Collection<MessageDescriptor>)
             attributes.get(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, Collection.class, new LinkedHashSet<>());

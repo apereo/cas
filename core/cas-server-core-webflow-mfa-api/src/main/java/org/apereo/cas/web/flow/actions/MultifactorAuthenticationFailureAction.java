@@ -1,12 +1,13 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -22,7 +23,7 @@ public class MultifactorAuthenticationFailureAction extends AbstractMultifactorA
     protected final TenantExtractor tenantExtractor;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val service = WebUtils.getRegisteredService(requestContext);
         val failureMode = provider.getFailureModeEvaluator().evaluate(service, provider);
         LOGGER.debug("Final failure mode has been determined to be [{}]", failureMode);

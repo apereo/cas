@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.bucket4j.consumer.DefaultBucketConsumer;
 import org.apereo.cas.bucket4j.producer.BucketStore;
@@ -44,7 +45,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.execution.Action;
-import java.io.Serial;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationConfiguration}.

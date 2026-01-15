@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt.webflow;
 
+import module java.base;
 import org.apereo.cas.config.CasInterruptAutoConfiguration;
 import org.apereo.cas.config.CasInterruptWebflowAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -10,13 +11,15 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.token.authentication.OAuth20AccessTokenAuthenticationHandler;
+import org.apereo.cas.token.authentication.OidcTokenAuthenticationHandler;
 import org.apereo.cas.token.authentication.TokenAuthenticationHandler;
 import org.apereo.cas.token.authentication.TokenAuthenticationPostProcessor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -106,33 +109,35 @@ public class CasTokenAuthenticationAutoConfiguration {
     @ConditionalOnClass(CasOidcAutoConfiguration.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
     static class TokenOidcAuthenticationConfiguration {
-        @ConditionalOnMissingBean(name = "oauthAccessTokenAuthenticationHandler")
+        
+        @ConditionalOnMissingBean(name = "oidcTokenAuthenticationHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuthenticationHandler oauthAccessTokenAuthenticationHandler(
+        public AuthenticationHandler oidcTokenAuthenticationHandler(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier("tokenPrincipalFactory")
             final PrincipalFactory tokenPrincipalFactory) {
             val token = casProperties.getAuthn().getToken();
-            val handler = new OAuth20AccessTokenAuthenticationHandler(tokenPrincipalFactory, applicationContext, token);
+            val handler = new OidcTokenAuthenticationHandler(tokenPrincipalFactory, oidcConfigurationContext, token);
             handler.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(token.getCredentialCriteria()));
             handler.setState(token.getState());
             return handler;
         }
 
-        @ConditionalOnMissingBean(name = "oauthAccessTokenAuthenticationEventExecutionPlanConfigurer")
+        @ConditionalOnMissingBean(name = "oidcTokenAuthenticationEventExecutionPlanConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuthenticationEventExecutionPlanConfigurer oauthAccessTokenAuthenticationEventExecutionPlanConfigurer(
-            @Qualifier("oauthAccessTokenAuthenticationHandler")
-            final AuthenticationHandler oauthAccessTokenAuthenticationHandler,
+        public AuthenticationEventExecutionPlanConfigurer oidcTokenAuthenticationEventExecutionPlanConfigurer(
+            @Qualifier("oidcTokenAuthenticationHandler")
+            final AuthenticationHandler oidcTokenAuthenticationHandler,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
             final PrincipalResolver defaultPrincipalResolver) {
-            return plan ->
-                plan.registerAuthenticationHandlerWithPrincipalResolver(oauthAccessTokenAuthenticationHandler, defaultPrincipalResolver);
+            return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(oidcTokenAuthenticationHandler, defaultPrincipalResolver);
         }
     }
 }

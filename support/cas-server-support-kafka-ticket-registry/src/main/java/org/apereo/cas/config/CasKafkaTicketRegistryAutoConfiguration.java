@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -42,8 +43,6 @@ import org.springframework.kafka.support.serializer.JacksonJsonSerializer;
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
 import org.springframework.messaging.handler.annotation.support.MessageHandlerMethodFactory;
 import tools.jackson.databind.json.JsonMapper;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * This is {@link CasKafkaTicketRegistryAutoConfiguration}.

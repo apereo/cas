@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
+import module java.base;
 
 /**
  * This is {@link CheckDuplicateGradleConfiguration}.

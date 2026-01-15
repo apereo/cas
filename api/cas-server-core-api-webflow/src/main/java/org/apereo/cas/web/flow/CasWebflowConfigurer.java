@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.mapping.Mapping;
@@ -24,8 +25,6 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ViewFactory;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link CasWebflowConfigurer}.

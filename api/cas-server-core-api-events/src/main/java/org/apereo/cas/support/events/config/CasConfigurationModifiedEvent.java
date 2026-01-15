@@ -1,13 +1,11 @@
 package org.apereo.cas.support.events.config;
 
+import module java.base;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.jspecify.annotations.Nullable;
-import java.io.Serial;
-import java.nio.file.Path;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link CasConfigurationModifiedEvent}.

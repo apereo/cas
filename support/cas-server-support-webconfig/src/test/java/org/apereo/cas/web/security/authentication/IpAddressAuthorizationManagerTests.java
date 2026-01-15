@@ -1,5 +1,6 @@
 package org.apereo.cas.web.security.authentication;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -15,7 +16,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationResult;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

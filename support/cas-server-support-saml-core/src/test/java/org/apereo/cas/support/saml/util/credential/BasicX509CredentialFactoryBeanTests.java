@@ -1,14 +1,12 @@
 package org.apereo.cas.support.saml.util.credential;
 
+import module java.base;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.core.io.ClassPathResource;
-
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

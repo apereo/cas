@@ -1,6 +1,6 @@
 package org.apereo.cas.interrupt;
 
-import java.util.List;
+import module java.base;
 
 /**
  * This is {@link InterruptInquiryExecutionPlan}.

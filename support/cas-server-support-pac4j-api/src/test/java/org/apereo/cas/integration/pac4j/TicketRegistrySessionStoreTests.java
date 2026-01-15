@@ -1,5 +1,6 @@
 package org.apereo.cas.integration.pac4j;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.TicketRegistrySessionStore;
@@ -27,7 +28,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

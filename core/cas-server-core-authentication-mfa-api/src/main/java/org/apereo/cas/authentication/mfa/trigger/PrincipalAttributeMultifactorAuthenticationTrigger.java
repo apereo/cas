@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
@@ -20,17 +21,14 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.BiPredicate;
-import static org.springframework.util.StringUtils.*;
+import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
 /**
  * This is {@link PrincipalAttributeMultifactorAuthenticationTrigger}.
@@ -55,10 +53,10 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
-                                                                   final RegisteredService registeredService,
+                                                                   @Nullable final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final HttpServletResponse response,
-                                                                   final Service service) {
+                                                                   @Nullable final Service service) {
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
             return Optional.empty();
@@ -79,8 +77,8 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
     }
 
     protected Set<Event> resolveMultifactorAuthenticationProvider(final Optional<RequestContext> context,
-                                                                  final RegisteredService registeredService,
-                                                                  final Service service,
+                                                                  @Nullable final RegisteredService registeredService,
+                                                                  @Nullable final Service service,
                                                                   final Principal principal) {
         val events = determineMultifactorAuthenticationEvent(context, registeredService, service, principal);
         val deny = casProperties.getAuthn().getMfa().getTriggers().getPrincipal().isDenyIfUnmatched();
@@ -91,8 +89,8 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
     }
 
     protected Set<Event> determineMultifactorAuthenticationEvent(final Optional<RequestContext> context,
-                                                                 final RegisteredService registeredService,
-                                                                 final Service service,
+                                                                 @Nullable final RegisteredService registeredService,
+                                                                 @Nullable final Service service,
                                                                  final Principal principal) {
         val globalPrincipalAttributeValueRegex = casProperties.getAuthn().getMfa()
             .getTriggers().getPrincipal().getGlobalPrincipalAttributeValueRegex();
@@ -118,8 +116,8 @@ public class PrincipalAttributeMultifactorAuthenticationTrigger implements Multi
     }
 
     protected Set<Event> resolveSingleMultifactorProvider(final Optional<RequestContext> context,
-                                                          final RegisteredService registeredService,
-                                                          final Service service,
+                                                          @Nullable final RegisteredService registeredService,
+                                                          @Nullable final Service service,
                                                           final Principal principal,
                                                           final Collection<MultifactorAuthenticationProvider> providers) {
         val properties = casProperties.getAuthn().getMfa().getTriggers().getPrincipal();

@@ -1,9 +1,9 @@
 package org.apereo.cas.support.oauth;
 
+import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.Strings;
-import java.util.Arrays;
 
 /**
  * The OAuth client authentication methods.

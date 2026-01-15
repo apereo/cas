@@ -13,10 +13,12 @@
 </span>
 
 <script th:inline="javascript">
+    const rememberUsername = /*[[${#cas.theme('cas.login-form.remember-username.enabled')}]]*/
+    const trackGeoLocation = /*[[${trackGeoLocation}]]*/ === "true";
+    
     if (typeof resourceLoadedSuccessfully === "function") {
         resourceLoadedSuccessfully();
     }
-    let trackGeoLocation = /*[[${trackGeoLocation}]]*/ === "true";
 </script>
 
 <script th:replace="~{fragments/googleanalytics :: ga}"></script>

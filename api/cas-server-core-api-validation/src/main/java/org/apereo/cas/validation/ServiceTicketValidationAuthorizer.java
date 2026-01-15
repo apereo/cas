@@ -1,7 +1,7 @@
 package org.apereo.cas.validation;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.expiration;
 
+import module java.base;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
@@ -8,9 +9,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.time.Clock;
-import java.time.Instant;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

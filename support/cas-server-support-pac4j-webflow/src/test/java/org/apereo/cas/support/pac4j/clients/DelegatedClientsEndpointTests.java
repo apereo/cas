@@ -1,16 +1,15 @@
 package org.apereo.cas.support.pac4j.clients;
 
+import module java.base;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpoint;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

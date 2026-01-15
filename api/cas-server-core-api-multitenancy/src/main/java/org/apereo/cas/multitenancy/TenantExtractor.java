@@ -1,5 +1,6 @@
 package org.apereo.cas.multitenancy;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
@@ -8,8 +9,6 @@ import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link TenantExtractor}.

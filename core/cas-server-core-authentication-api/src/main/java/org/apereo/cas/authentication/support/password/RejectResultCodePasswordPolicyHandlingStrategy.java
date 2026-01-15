@@ -1,14 +1,10 @@
 package org.apereo.cas.authentication.support.password;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
 
 /**
  * This is {@link RejectResultCodePasswordPolicyHandlingStrategy}.
@@ -50,22 +46,10 @@ public class RejectResultCodePasswordPolicyHandlingStrategy<AuthnResponse> exten
         return true;
     }
 
-    /**
-     * Is authentication response with result boolean.
-     *
-     * @param response the response
-     * @return true/false
-     */
     protected boolean isAuthenticationResponseWithResult(final AuthnResponse response) {
         return false;
     }
 
-    /**
-     * Gets authentication response result codes.
-     *
-     * @param response the response
-     * @return the authentication response result codes
-     */
     protected Collection<String> getAuthenticationResponseResultCodes(final AuthnResponse response) {
         return new ArrayList<>();
     }

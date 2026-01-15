@@ -1,8 +1,8 @@
 package org.apereo.cas.dynamodb;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.boot.health.contributor.AbstractHealthIndicator;
@@ -12,8 +12,6 @@ import org.springframework.context.ApplicationContext;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
-
-import java.util.HashMap;
 
 /**
  * This is {@link DynamoDbHealthIndicator}.

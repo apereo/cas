@@ -1,16 +1,11 @@
 package org.apereo.cas.uma.web.controllers.permission;
 
+import module java.base;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import tools.jackson.databind.ObjectMapper;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
 
 /**
  * This is {@link UmaPermissionRegistrationRequest}.

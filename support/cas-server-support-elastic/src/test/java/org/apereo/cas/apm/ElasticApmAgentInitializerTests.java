@@ -1,5 +1,6 @@
 package org.apereo.cas.apm;
 
+import module java.base;
 import org.apereo.cas.config.CasElasticApmAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -20,7 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import java.util.ServiceLoader;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

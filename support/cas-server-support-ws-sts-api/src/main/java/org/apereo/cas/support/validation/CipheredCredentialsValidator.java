@@ -1,7 +1,7 @@
 package org.apereo.cas.support.validation;
 
+import module java.base;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.wss4j.common.ext.WSSecurityException;

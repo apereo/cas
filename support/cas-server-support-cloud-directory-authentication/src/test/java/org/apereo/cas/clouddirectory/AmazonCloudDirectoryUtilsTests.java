@@ -1,11 +1,10 @@
 package org.apereo.cas.clouddirectory;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.clouddirectory.AmazonCloudDirectoryProperties;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.clouddirectory.model.ObjectReference;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

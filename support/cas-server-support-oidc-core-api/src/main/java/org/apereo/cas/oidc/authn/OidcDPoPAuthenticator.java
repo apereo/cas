@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.authn;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -9,7 +10,6 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jwt.SignedJWT;
 import com.nimbusds.oauth2.sdk.dpop.JWKThumbprintConfirmation;
@@ -24,10 +24,6 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.CommonProfile;
-
-import java.net.URI;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcDPoPAuthenticator}.
@@ -75,7 +71,7 @@ public class OidcDPoPAuthenticator implements Authenticator {
             .collect(Collectors.toSet());
         val seconds = Beans.newDuration(casProperties.getAuthn().getOidc().getCore().getSkew()).toSeconds();
         val endpointURI = new URI(webContext.getRequestURL());
-        val verifier = new DPoPTokenRequestVerifier(algorithms, endpointURI, seconds, 0, null);
+        val verifier = new DPoPTokenRequestVerifier(algorithms, endpointURI, seconds, seconds, null);
         val signedProof = getSignedProofOfPosessionJwt(dPopProof);
         val dPopIssuer = new DPoPIssuer(new ClientID(clientId));
         return verifier.verify(dPopIssuer, signedProof, null);

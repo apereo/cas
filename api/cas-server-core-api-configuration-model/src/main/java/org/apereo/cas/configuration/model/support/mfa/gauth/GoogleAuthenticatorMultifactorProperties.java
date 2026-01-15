@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa.gauth;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
@@ -10,7 +11,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serial;
 
 /**
  * This is {@link GoogleAuthenticatorMultifactorProperties}.

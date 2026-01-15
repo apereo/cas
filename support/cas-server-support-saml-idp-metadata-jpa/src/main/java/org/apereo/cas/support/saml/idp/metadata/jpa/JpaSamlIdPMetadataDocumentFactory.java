@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.jpa;
 
+import module java.base;
 import org.apereo.cas.jpa.AbstractJpaEntityFactory;
 import org.apereo.cas.support.saml.idp.metadata.jpa.generic.JpaSamlIdPMetadataDocument;
 import org.apereo.cas.support.saml.idp.metadata.jpa.mysql.MySQLSamlIdPMetadataDocument;

@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -18,7 +19,6 @@ import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.DefaultCasProtocolValidationSpecification;
 import org.apereo.cas.validation.ValidationResponseType;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,11 +28,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
-
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.util.Objects;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -274,8 +270,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     void verifyValidServiceTicketRuntimeExceptionWithSpec() throws Throwable {
-        this.serviceValidateController.addValidationSpecification(new MockValidationSpecification(false));
-        assertFalse(Objects.requireNonNull(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
+        serviceValidateController.addValidationSpecification(new MockValidationSpecification(false));
+        assertFalse(Objects.requireNonNull(serviceValidateController.handleRequestInternal(getHttpServletRequest(),
             new MockHttpServletResponse()).getView()).toString().contains(SUCCESS));
     }
 

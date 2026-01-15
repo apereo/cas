@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn.web;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.SessionTerminationHandler;
 import org.apereo.cas.test.CasTestExtension;

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
@@ -21,10 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import jakarta.persistence.Table;
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link JpaTicketEntityFactory}.

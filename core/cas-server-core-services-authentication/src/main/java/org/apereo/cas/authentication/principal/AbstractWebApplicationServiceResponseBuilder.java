@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -14,10 +15,6 @@ import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-import java.io.Serial;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Abstract response builder that provides wrappers for building
@@ -63,6 +60,7 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
         return DefaultResponse.getPostResponse(determineServiceResponseUrl(service), parameters);
     }
 
+    @SuppressWarnings("NullAway")
     protected Response.ResponseType getWebApplicationServiceResponseType(final WebApplicationService finalService) {
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val methodRequest = Optional.ofNullable(request)

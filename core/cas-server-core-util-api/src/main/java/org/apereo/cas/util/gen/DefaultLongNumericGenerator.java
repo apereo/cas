@@ -1,6 +1,6 @@
 package org.apereo.cas.util.gen;
 
-import java.util.concurrent.atomic.AtomicLong;
+import module java.base;
 
 /**
  * The default numeric generator for generating long values. Implementation

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.attribute;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
@@ -9,12 +10,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link PrincipalAttributeRepositoryFetcher}.
@@ -36,8 +32,10 @@ public class PrincipalAttributeRepositoryFetcher {
     @Builder.Default
     private final Map<String, List<Object>> queryAttributes = new HashMap<>();
 
+    @Nullable
     private final Principal currentPrincipal;
 
+    @Nullable
     private final Service service;
 
     /**

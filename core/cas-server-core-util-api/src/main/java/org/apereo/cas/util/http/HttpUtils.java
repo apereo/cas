@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -39,17 +40,9 @@ import org.apache.hc.core5.pool.PoolConcurrencyPolicy;
 import org.apache.hc.core5.pool.PoolReusePolicy;
 import org.apache.hc.core5.ssl.SSLContexts;
 import org.apache.hc.core5.util.Timeout;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.retry.Retryable;
 import org.springframework.http.MediaType;
-import javax.net.ssl.SSLHandshakeException;
-import java.io.Serial;
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link HttpUtils}.
@@ -91,7 +84,7 @@ public class HttpUtils {
             return FunctionUtils.doAndRetry((Retryable<HttpResponse>) () -> {
                 LOGGER.trace("Sending HTTP request to [{}]", request.getUri());
                 val res = client.execute(request, HttpRequestUtils.HTTP_CLIENT_RESPONSE_HANDLER);
-                if (res == null || org.springframework.http.HttpStatus.valueOf(res.getCode()).isError()) {
+                if (res == null || org.springframework.http.HttpStatus.valueOf(res.getCode()).is5xxServerError()) {
                     throw new HttpRequestExecutionException(res);
                 }
                 return res;
@@ -137,7 +130,7 @@ public class HttpUtils {
      *
      * @param response the response to close
      */
-    public void close(final HttpResponse response) {
+    public void close(final @Nullable HttpResponse response) {
         if (response instanceof final CloseableHttpResponse closeableHttpResponse) {
             FunctionUtils.doAndHandle(_ -> closeableHttpResponse.close());
         }

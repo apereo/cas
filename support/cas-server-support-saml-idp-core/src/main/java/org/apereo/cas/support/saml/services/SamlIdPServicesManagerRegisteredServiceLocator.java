@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.BaseServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.services.RegisteredService;
@@ -19,9 +20,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.core.Ordered;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link SamlIdPServicesManagerRegisteredServiceLocator}.

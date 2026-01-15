@@ -1,12 +1,11 @@
 package org.apereo.cas.otp.repository.token;
 
+import module java.base;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.thread.Cleanable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 /**
  * This is {@link OneTimeTokenRepositoryCleaner}.

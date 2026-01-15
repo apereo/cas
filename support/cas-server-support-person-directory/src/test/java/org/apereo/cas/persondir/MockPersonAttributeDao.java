@@ -1,5 +1,6 @@
 package org.apereo.cas.persondir;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
@@ -8,9 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import lombok.ToString;
 import org.jspecify.annotations.NonNull;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link MockPersonAttributeDao}.

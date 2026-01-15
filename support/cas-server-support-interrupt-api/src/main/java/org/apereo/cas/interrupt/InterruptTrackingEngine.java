@@ -1,7 +1,7 @@
 package org.apereo.cas.interrupt;
 
+import module java.base;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Optional;
 
 /**
  * This is {@link InterruptTrackingEngine}.

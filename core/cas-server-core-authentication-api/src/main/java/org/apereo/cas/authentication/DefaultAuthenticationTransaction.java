@@ -1,20 +1,15 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultAuthenticationTransaction}.
@@ -31,10 +26,13 @@ public class DefaultAuthenticationTransaction implements RegisteredServiceAwareA
     @Serial
     private static final long serialVersionUID = 6213904009424725484L;
 
+    @Nullable
     private final Service service;
 
+    @Nullable
     private final RegisteredService registeredService;
 
+    @Nullable
     private final Collection<Credential> credentials;
 
     private final Collection<Authentication> authentications = new ArrayList<>();

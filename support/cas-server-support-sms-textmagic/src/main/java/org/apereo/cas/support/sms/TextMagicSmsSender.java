@@ -1,5 +1,6 @@
 package org.apereo.cas.support.sms;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.sms.TextMagicProperties;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.LoggingUtils;
@@ -12,10 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
-import javax.net.ssl.X509TrustManager;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link TextMagicSmsSender}.

@@ -1,14 +1,10 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link AttributeQueryTicketProperties}.

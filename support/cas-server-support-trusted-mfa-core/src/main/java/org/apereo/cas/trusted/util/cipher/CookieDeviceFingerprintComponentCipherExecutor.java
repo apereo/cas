@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.util.cipher;
 
+import module java.base;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 

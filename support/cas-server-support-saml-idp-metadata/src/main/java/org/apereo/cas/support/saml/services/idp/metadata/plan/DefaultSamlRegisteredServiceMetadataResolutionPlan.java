@@ -1,12 +1,9 @@
 package org.apereo.cas.support.saml.services.idp.metadata.plan;
 
+import module java.base;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * This is {@link DefaultSamlRegisteredServiceMetadataResolutionPlan}.

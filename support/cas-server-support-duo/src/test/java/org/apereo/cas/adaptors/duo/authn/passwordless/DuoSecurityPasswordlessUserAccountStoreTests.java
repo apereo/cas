@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn.passwordless;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityClient;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
@@ -26,8 +27,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.execution.Action;
-import java.net.URI;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

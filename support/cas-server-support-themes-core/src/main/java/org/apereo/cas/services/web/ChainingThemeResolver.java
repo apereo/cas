@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import module java.base;
 import org.apereo.cas.web.theme.AbstractThemeResolver;
 import org.apereo.cas.web.theme.ThemeResolver;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -7,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * This is {@link ChainingThemeResolver}.

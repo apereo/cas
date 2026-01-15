@@ -1,5 +1,6 @@
 package org.apereo.cas.otp.repository.token;
 
+import module java.base;
 import org.apereo.cas.authentication.OneTimeToken;
 
 /**

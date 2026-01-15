@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall.authorizer.resource.policy;
 
+import module java.base;
 import org.apereo.cas.grouper.DefaultGrouperFacade;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
@@ -18,11 +19,6 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.io.Serial;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link RequiredGrouperGroupsAuthorizationPolicy}.

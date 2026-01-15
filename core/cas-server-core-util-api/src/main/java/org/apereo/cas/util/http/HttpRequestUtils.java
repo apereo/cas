@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.LoggingUtils;
@@ -17,6 +18,7 @@ import org.apache.hc.core5.http.HttpVersion;
 import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpResponse;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -24,15 +26,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link HttpRequestUtils}.
@@ -72,14 +65,14 @@ public class HttpRequestUtils {
 
     private static final int GEO_LOC_TIME_INDEX = 3;
 
-    private static final int PING_URL_TIMEOUT = 5_000;
+    private static final int PING_URL_TIMEOUT = 3_000;
 
     /**
      * Gets http servlet request from request attributes.
      *
      * @return the http servlet request from request attributes
      */
-    public static HttpServletRequest getHttpServletRequestFromRequestAttributes() {
+    public static @Nullable HttpServletRequest getHttpServletRequestFromRequestAttributes() {
         val requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         return Optional.ofNullable(requestAttributes).map(ServletRequestAttributes::getRequest).orElse(null);
     }
@@ -89,7 +82,7 @@ public class HttpRequestUtils {
      *
      * @return the http servlet response from request attributes
      */
-    public static HttpServletResponse getHttpServletResponseFromRequestAttributes() {
+    public static @Nullable HttpServletResponse getHttpServletResponseFromRequestAttributes() {
         val requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         return Optional.ofNullable(requestAttributes).map(ServletRequestAttributes::getResponse).orElse(null);
     }
@@ -163,7 +156,7 @@ public class HttpRequestUtils {
      * @param request the request
      * @return the http servlet request user agent
      */
-    public static String getHttpServletRequestUserAgent(final HttpServletRequest request) {
+    public static @Nullable String getHttpServletRequestUserAgent(final @Nullable HttpServletRequest request) {
         if (request != null) {
             return request.getHeader(HttpHeaders.USER_AGENT);
         }
@@ -177,7 +170,8 @@ public class HttpRequestUtils {
      * @param request            the request
      * @return the service, or null.
      */
-    public static WebApplicationService getService(final List<ArgumentExtractor> argumentExtractors, final HttpServletRequest request) {
+    public static @Nullable WebApplicationService getService(final List<ArgumentExtractor> argumentExtractors,
+                                                             final HttpServletRequest request) {
         return argumentExtractors
             .stream()
             .map(argumentExtractor -> argumentExtractor.extractService(request))
@@ -210,15 +204,23 @@ public class HttpRequestUtils {
      * @return the http status
      */
     public static HttpStatus pingUrl(final String location) {
+        HttpURLConnection connection = null;
         try {
             val url = new URI(location).toURL();
-            val connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(PING_URL_TIMEOUT);
             connection.setReadTimeout(PING_URL_TIMEOUT);
-            connection.setRequestMethod(HttpMethod.HEAD.name());
+            connection.setRequestMethod(HttpMethod.GET.name());
+            connection.setInstanceFollowRedirects(false);
+            connection.setUseCaches(false);
+            connection.setRequestProperty("Range", "bytes=0-0");
             return HttpStatus.valueOf(connection.getResponseCode());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
         return HttpStatus.SERVICE_UNAVAILABLE;
 

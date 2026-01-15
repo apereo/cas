@@ -1,10 +1,10 @@
 package org.apereo.cas.util.jpa;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import java.math.BigInteger;
 
 /**
  * This is {@link StringToNumberAttributeConverter}.

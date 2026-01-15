@@ -1,9 +1,9 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
 

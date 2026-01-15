@@ -1,12 +1,9 @@
 package org.apereo.cas.validation;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Represents a security assertion obtained from a successfully validated ticket.

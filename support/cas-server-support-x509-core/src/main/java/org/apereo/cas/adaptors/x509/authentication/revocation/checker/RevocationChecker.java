@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
-import java.security.GeneralSecurityException;
+import module java.base;
 import java.security.cert.X509Certificate;
 
 

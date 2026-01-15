@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.Credential;
@@ -18,11 +19,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Delegates to one or more principal resolves in series to resolve a principal. The input to first configured resolver
@@ -55,8 +52,8 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public Principal resolve(final Credential credential, final Optional<Principal> principal,
-                             final Optional<AuthenticationHandler> handler, final Optional<Service> service) throws Throwable {
+    public @Nullable Principal resolve(final Credential credential, final Optional<Principal> principal,
+                                       final Optional<AuthenticationHandler> handler, final Optional<Service> service) throws Throwable {
         val principalResolvers = determinePrincipalResolvers(credential);
         val principals = resolvePrincipals(principalResolvers, credential, principal, handler, service);
         if (principals.isEmpty()) {

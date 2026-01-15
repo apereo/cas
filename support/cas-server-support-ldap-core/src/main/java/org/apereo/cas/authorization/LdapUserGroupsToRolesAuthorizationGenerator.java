@@ -1,5 +1,6 @@
 package org.apereo.cas.authorization;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -10,10 +11,6 @@ import org.apache.commons.lang3.Strings;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchOperation;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Provides a simple generator implementation that obtains user roles from an LDAP search.

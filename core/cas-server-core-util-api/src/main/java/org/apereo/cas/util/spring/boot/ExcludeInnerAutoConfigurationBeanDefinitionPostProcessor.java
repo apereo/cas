@@ -1,11 +1,11 @@
 package org.apereo.cas.util.spring.boot;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import java.util.ArrayList;
 
 
 /**

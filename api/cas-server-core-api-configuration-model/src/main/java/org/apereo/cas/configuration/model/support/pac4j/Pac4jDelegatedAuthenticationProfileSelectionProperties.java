@@ -1,17 +1,12 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import module java.base;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link Pac4jDelegatedAuthenticationProfileSelectionProperties}.

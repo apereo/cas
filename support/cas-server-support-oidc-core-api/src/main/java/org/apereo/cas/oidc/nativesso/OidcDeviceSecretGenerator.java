@@ -1,4 +1,5 @@
 package org.apereo.cas.oidc.nativesso;
+import module java.base;
 
 /**
  * This is {@link OidcDeviceSecretGenerator}.
