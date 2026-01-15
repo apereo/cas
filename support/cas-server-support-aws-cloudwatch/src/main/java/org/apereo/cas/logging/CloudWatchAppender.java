@@ -1,5 +1,6 @@
 package org.apereo.cas.logging;
 
+import module java.base;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -26,15 +27,6 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.DescribeLogStreamsRe
 import software.amazon.awssdk.services.cloudwatchlogs.model.InputLogEvent;
 import software.amazon.awssdk.services.cloudwatchlogs.model.InvalidSequenceTokenException;
 import software.amazon.awssdk.services.cloudwatchlogs.model.PutLogEventsRequest;
-import java.io.Serializable;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CloudWatchAppender}.

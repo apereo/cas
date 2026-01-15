@@ -1,7 +1,7 @@
 package org.apereo.cas.validation;
 
+import module java.base;
 import org.springframework.core.Ordered;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

@@ -1,14 +1,11 @@
 package org.apereo.cas.support.realm;
 
+import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
-
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import java.util.Arrays;
 
 /**
  * This is {@link RealmPasswordVerificationCallbackHandler}.

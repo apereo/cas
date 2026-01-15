@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
@@ -18,15 +19,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.AttributeMap;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
 
 /**
  * This is {@link AbstractCasWebflowEventResolver} that provides parent
@@ -53,7 +52,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     }
 
     @Override
-    public Event resolveSingle(final RequestContext context) throws Throwable {
+    public @Nullable Event resolveSingle(final RequestContext context) throws Throwable {
         val events = resolve(context);
         if (events == null || events.isEmpty()) {
             LOGGER.trace("No event could be determined");
@@ -103,17 +102,17 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
     protected Event grantTicketGrantingTicketToAuthenticationResult(final RequestContext context,
                                                                     final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                    final Service service) {
+                                                                    @Nullable final Service service) {
         WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, context);
         WebUtils.putServiceIntoFlowScope(context, service);
         return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 
-    protected Service resolveServiceFromAuthenticationRequest(final Service service) throws Throwable {
+    protected Service resolveServiceFromAuthenticationRequest(@Nullable final Service service) throws Throwable {
         return configurationContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
     }
 
-    protected Service resolveServiceFromAuthenticationRequest(final RequestContext context) throws Throwable {
+    protected @Nullable Service resolveServiceFromAuthenticationRequest(final RequestContext context) throws Throwable {
         val ctxService = WebUtils.getService(context);
         return resolveServiceFromAuthenticationRequest(ctxService);
     }

@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.test.CasTestExtension;

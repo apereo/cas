@@ -1,4 +1,5 @@
 package org.apereo.cas.qr.validation;
+import module java.base;
 
 /**
  * This is {@link QRAuthenticationTokenValidatorService}.

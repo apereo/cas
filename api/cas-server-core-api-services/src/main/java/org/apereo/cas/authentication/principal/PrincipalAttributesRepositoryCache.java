@@ -1,9 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link PrincipalAttributesRepositoryCache}.

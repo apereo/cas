@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.rest.authentication.RestAuthenticationService;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import javax.security.auth.login.FailedLoginException;
 
 /**
  * CAS RESTful resource for validating user credentials.

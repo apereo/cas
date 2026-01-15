@@ -1,9 +1,8 @@
 package org.apereo.cas.validation;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicketValidationException;
-
-import java.io.Serial;
 
 
 /**

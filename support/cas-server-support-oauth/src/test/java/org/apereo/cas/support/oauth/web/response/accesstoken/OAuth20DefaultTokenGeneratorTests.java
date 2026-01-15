@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
+import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.OAuth20TestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -33,10 +34,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

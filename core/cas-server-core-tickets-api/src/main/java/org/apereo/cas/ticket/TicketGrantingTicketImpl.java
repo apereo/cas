@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
@@ -15,15 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -39,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 @NoArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
     @Serial
@@ -52,6 +46,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * Service that produced a proxy-granting ticket.
      */
+    @Nullable
     private Service proxiedBy;
 
     /**
@@ -63,6 +58,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * The {@link TicketGrantingTicket} this is associated with.
      */
+    @Nullable
     private TicketGrantingTicket ticketGrantingTicket;
 
     /**
@@ -81,8 +77,10 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public TicketGrantingTicketImpl(
         @JsonProperty("id")
         final String id,
+        @Nullable
         @JsonProperty("proxiedBy")
         final Service proxiedBy,
+        @Nullable
         @JsonProperty("ticketGrantingTicket")
         final TicketGrantingTicket ticketGrantingTicket,
         @JsonProperty("authentication")

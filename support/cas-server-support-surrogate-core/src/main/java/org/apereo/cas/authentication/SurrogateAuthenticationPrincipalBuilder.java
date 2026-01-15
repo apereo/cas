@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
-
-import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link SurrogateAuthenticationPrincipalBuilder}.
@@ -27,7 +27,7 @@ public interface SurrogateAuthenticationPrincipalBuilder {
      * @return the principal
      * @throws Throwable the throwable
      */
-    Principal buildSurrogatePrincipal(Credential credential, Principal primaryPrincipal, RegisteredService registeredService) throws Throwable;
+    Principal buildSurrogatePrincipal(Credential credential, Principal primaryPrincipal, @Nullable RegisteredService registeredService) throws Throwable;
 
     /**
      * Build surrogate principal without a service.

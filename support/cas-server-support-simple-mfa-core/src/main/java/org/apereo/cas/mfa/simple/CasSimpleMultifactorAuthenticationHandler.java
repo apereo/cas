@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailedException;
@@ -19,7 +20,6 @@ import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.util.Objects;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationHandler}.

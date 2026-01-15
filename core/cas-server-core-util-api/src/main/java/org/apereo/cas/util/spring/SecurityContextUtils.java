@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.principal.Principal;
@@ -16,8 +17,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.Serial;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link SecurityContextUtils}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.CasServerCoreProperties;
 import org.apereo.cas.configuration.model.core.CasServerHostProperties;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
@@ -72,15 +73,6 @@ import org.springframework.boot.context.properties.source.ConfigurationPropertyN
 import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.util.ReflectionUtils;
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.Clock;
-import java.time.Instant;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link CasConfigurationProperties}.

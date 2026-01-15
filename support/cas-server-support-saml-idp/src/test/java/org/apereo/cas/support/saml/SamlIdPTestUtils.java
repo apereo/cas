@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.RandomUtils;
 import lombok.experimental.UtilityClass;
@@ -12,7 +13,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import java.util.Objects;
 
 /**
  * This is {@link SamlIdPTestUtils}.

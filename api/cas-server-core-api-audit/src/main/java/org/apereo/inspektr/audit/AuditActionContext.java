@@ -7,9 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import module java.base;
 
 /**
  * Immutable container holding the core elements of an audit-able action that need to be recorded

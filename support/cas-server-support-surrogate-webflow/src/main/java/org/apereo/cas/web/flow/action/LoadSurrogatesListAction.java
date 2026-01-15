@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.action;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;
@@ -13,10 +14,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link LoadSurrogatesListAction}.
@@ -60,7 +60,7 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         try {
             if (WebUtils.hasSurrogateAuthenticationRequest(requestContext)) {
                 WebUtils.removeSurrogateAuthenticationRequest(requestContext);

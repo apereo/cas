@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
@@ -12,12 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
-import java.io.Closeable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link DefaultPrincipalAttributesRepositoryCache}.

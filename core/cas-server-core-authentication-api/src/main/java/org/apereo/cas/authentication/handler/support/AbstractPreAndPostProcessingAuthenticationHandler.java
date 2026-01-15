@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
+import module java.base;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
@@ -9,10 +10,7 @@ import org.apereo.cas.authentication.PrePostAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
-import org.jspecify.annotations.NonNull;
-import javax.security.auth.login.FailedLoginException;
-import java.util.ArrayList;
-import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Abstract authentication handler that allows deployers to utilize the bundled
@@ -25,7 +23,7 @@ import java.util.List;
  */
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler implements PrePostAuthenticationHandler {
 
-    protected AbstractPreAndPostProcessingAuthenticationHandler(final String name,
+    protected AbstractPreAndPostProcessingAuthenticationHandler(final @Nullable String name,
                                                                 final PrincipalFactory principalFactory,
                                                                 final Integer order) {
         super(name, principalFactory, order);
@@ -54,9 +52,9 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * @param warnings   the warnings
      * @return the constructed handler result
      */
-    protected AuthenticationHandlerExecutionResult createHandlerResult(final @NonNull Credential credential,
-                                                                       final @NonNull Principal principal,
-                                                                       final @NonNull List<MessageDescriptor> warnings) {
+    protected AuthenticationHandlerExecutionResult createHandlerResult(final Credential credential,
+                                                                       @Nullable final Principal principal,
+                                                                       @Nullable final List<MessageDescriptor> warnings) {
         return new DefaultAuthenticationHandlerExecutionResult(this, credential, principal, warnings);
     }
 
@@ -70,8 +68,8 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * @param principal  the resolved principal
      * @return the constructed handler result
      */
-    protected AuthenticationHandlerExecutionResult createHandlerResult(final @NonNull Credential credential,
-                                                                       final @NonNull Principal principal) {
+    protected AuthenticationHandlerExecutionResult createHandlerResult(final Credential credential,
+                                                                       final Principal principal) {
         return new DefaultAuthenticationHandlerExecutionResult(this, credential,
             principal, new ArrayList<>());
     }

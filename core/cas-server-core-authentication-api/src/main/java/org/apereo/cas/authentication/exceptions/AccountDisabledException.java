@@ -1,10 +1,7 @@
 package org.apereo.cas.authentication.exceptions;
 
+import module java.base;
 import lombok.NoArgsConstructor;
-
-import javax.security.auth.login.AccountException;
-
-import java.io.Serial;
 
 /**
  * Describes an authentication error condition where a user account has been administratively disabled.

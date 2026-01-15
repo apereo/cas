@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TransientSessionTicket;
-
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.jee.context.JEEContext;

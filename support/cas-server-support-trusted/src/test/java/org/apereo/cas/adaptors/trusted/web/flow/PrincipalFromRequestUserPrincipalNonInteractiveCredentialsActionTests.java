@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import module java.base;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;

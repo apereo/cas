@@ -1,4 +1,5 @@
 package org.apereo.cas.adaptors.yubikey;
+import module java.base;
 
 /**
  * This is {@link AcceptAllYubiKeyAccountValidator}.

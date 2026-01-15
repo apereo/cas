@@ -1,5 +1,6 @@
 package org.apereo.cas.jdbc;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -26,12 +27,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-import javax.sql.DataSource;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Set;
+import module java.sql;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

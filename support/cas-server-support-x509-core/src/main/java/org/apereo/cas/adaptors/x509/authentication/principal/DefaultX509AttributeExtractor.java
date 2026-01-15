@@ -1,13 +1,10 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import java.security.cert.X509Certificate;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Get the default set of attributes from an X509 certificate.

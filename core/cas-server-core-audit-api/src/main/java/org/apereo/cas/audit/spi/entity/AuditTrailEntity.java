@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi.entity;
 
+import module java.base;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,8 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import java.time.ZonedDateTime;
-import java.util.Locale;
 
 /**
  * This is {@link AuditTrailEntity} that represents the audit table.
@@ -28,6 +27,7 @@ import java.util.Locale;
 @Getter
 @Setter
 @NoArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class AuditTrailEntity {
 
     @org.springframework.data.annotation.Id

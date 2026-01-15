@@ -1,11 +1,8 @@
 package org.apereo.cas.util.spring;
 
+import module java.base;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.time.Clock;
-import java.time.ZonedDateTime;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

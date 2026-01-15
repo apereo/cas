@@ -1,5 +1,6 @@
 package org.apereo.cas.impl;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.config.CasMongoDbPasswordlessAuthenticationAutoConfiguration;

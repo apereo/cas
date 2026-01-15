@@ -1,5 +1,6 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
@@ -15,12 +16,6 @@ import jcifs.spnego.Authentication;
 import jcifs.spnego.AuthenticationException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import javax.security.auth.login.FailedLoginException;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 /**
  * Implementation of an AuthenticationHandler for SPNEGO supports. This Handler

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.principal.provision.DelegatedAuthenticationFailureException;
 import org.apereo.cas.services.RegisteredService;
@@ -13,12 +14,12 @@ import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.web.view.DynamicHtmlView;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.CallContext;
@@ -31,12 +32,6 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DelegatedClientAuthenticationRedirectAction}.
@@ -58,7 +53,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
     protected final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val ticket = requestContext.getFlowScope().get(TransientSessionTicket.class.getName(), TransientSessionTicket.class);
         val client = locateClientIdentityProvider(ticket, requestContext);
         initializeClientIdentityProvider(client);
@@ -120,7 +115,7 @@ public class DelegatedClientAuthenticationRedirectAction extends BaseCasWebflowA
         val result = configContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         result.throwExceptionIfNeeded();
 
-        if (!registeredService.getProperties().isEmpty()) {
+        if (!Objects.requireNonNull(registeredService).getProperties().isEmpty()) {
             val delegatedAuthnProperties = Arrays.stream(RegisteredServiceProperties.values())
                 .filter(prop -> prop.isMemberOf(RegisteredServicePropertyGroups.DELEGATED_AUTHN))
                 .collect(Collectors.toList());

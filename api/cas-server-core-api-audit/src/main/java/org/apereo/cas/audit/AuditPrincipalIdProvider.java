@@ -1,8 +1,9 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
-
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 
 /**
@@ -26,7 +27,8 @@ public interface AuditPrincipalIdProvider extends Ordered {
      * @param exception      the exception that may have occurred as part of the current executing op. May be null.
      * @return computed principal id
      */
-    String getPrincipalIdFrom(JoinPoint auditTarget, Authentication authentication, Object resultValue, Exception exception);
+    @Nullable String getPrincipalIdFrom(JoinPoint auditTarget, @Nullable Authentication authentication,
+                                        @Nullable Object resultValue, @Nullable Exception exception);
 
     /**
      * Whether this provider can support the authentication transaction to provide a principal id.
@@ -37,5 +39,6 @@ public interface AuditPrincipalIdProvider extends Ordered {
      * @param exception      the exception that may have occurred as part of the current executing op. May be null.
      * @return true /false
      */
-    boolean supports(JoinPoint auditTarget, Authentication authentication, Object resultValue, Exception exception);
+    boolean supports(JoinPoint auditTarget, @Nullable Authentication authentication,
+                     @Nullable Object resultValue, @Nullable Exception exception);
 }

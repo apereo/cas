@@ -1,13 +1,11 @@
 package org.apereo.cas.util.transforms;
 
+import module java.base;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.val;
-
-import java.util.Locale;
 
 /**
  * A transformer that converts the form uid to either lowercase or

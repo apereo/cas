@@ -1,15 +1,12 @@
 package org.apereo.cas.configuration.model.support.mfa.trusteddevice;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * Common configuration for device fingerprint components.

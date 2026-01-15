@@ -1695,21 +1695,7 @@ ext.libraries = [
                     exclude(group: "org.springframework.boot", module: "spring-boot-starter")
                     exclude(group: "com.vaadin.external.google", module: "android-json")
                 },
-                dependencies.create(libs.spring.shell.starter.test.get()) {
-                    exclude(group: "org.springframework", module: "spring-beans")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-context")
-                    exclude(group: "org.springframework", module: "spring-context-support")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "jline", module: "jline")
-                    exclude(group: "commons-io", module: "commons-io")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "ch.qos.logback", module: "logback-core")
-                    exclude(group: "ch.qos.logback", module: "logback-classic")
-                    exclude(group: "com.h2database", module: "h2")
-                },
+                
                 dependencies.create(libs.mockwebserver.get()) {
                 },
                 dependencies.create(libs.junit.jupiter.api.get()) {
@@ -3218,6 +3204,21 @@ ext.libraries = [
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-build")
                 }
         ],
+        springcloudkubernetesclient: [
+                dependencies.create(libs.spring.cloud.starter.kubernetes.client.get()) {
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-actuator")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-autoconfigure")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-validation")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                    exclude(group: "org.springframework.cloud", module: "spring-cloud-build")
+                }
+        ],
         springcloudbus             : [
                 dependencies.create(libs.spring.cloud.bus.get()) {
                     exclude(group: "org.springframework.cloud", module: "spring-cloud-context")
@@ -3765,24 +3766,36 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                 }
         ],
-//        springsessionmongo         : [
-//                dependencies.create(libs.spring.session.data.mongodb.get()) {
-//                    exclude(group: "org.springframework", module: "spring-web")
-//                    exclude(group: "org.springframework", module: "spring-core")
-//                    exclude(group: "org.springframework", module: "spring-webmvc")
-//                    exclude(group: "org.springframework", module: "spring-context")
-//                    exclude(group: "org.springframework.session", module: "spring-session")
-//                },
-//                dependencies.create(libs.spring.boot.session.mongodb.get()) {
-//                    exclude(group: "org.springframework", module: "spring-web")
-//                    exclude(group: "org.springframework", module: "spring-core")
-//                    exclude(group: "org.springframework", module: "spring-webmvc")
-//                    exclude(group: "org.springframework", module: "spring-context")
-//                }
-//        ],
-
+        springsessionmongo         : [
+                dependencies.create(libs.mongodb.spring.session.get()) {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework.session", module: "spring-session")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                }
+        ],
         springshell                : [
                 dependencies.create(libs.spring.shell.starter.jansi.get()) {
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-context-support")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "jline", module: "jline")
+                    exclude(group: "commons-io", module: "commons-io")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "com.h2database", module: "h2")
+                }
+        ],
+        springshelltests : [
+                dependencies.create(libs.spring.shell.starter.test.get()) {
                     exclude(group: "org.springframework", module: "spring-beans")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -4175,6 +4188,12 @@ ext.libraries = [
                     exclude(group: "org.webjars", module: "jquery")
                 },
                 dependencies.create(libs.jquery.ui.get()) {
+                    exclude(group: "org.webjars", module: "jquery")
+                },
+                dependencies.create(libs.hotkeysjs.get()) {
+                    exclude(group: "org.webjars", module: "jquery")
+                },
+                dependencies.create(libs.jsyaml.get()) {
                     exclude(group: "org.webjars", module: "jquery")
                 },
                 dependencies.create(libs.notyf.get()) {

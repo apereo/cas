@@ -1,5 +1,6 @@
 package org.apereo.cas.redis.core;
 
+import module java.base;
 import lombok.val;
 import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Factory;
@@ -7,8 +8,6 @@ import net.jpountz.lz4.LZ4FastDecompressor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 /**
  * This is {@link Lz4CompressionRedisSerializer}.

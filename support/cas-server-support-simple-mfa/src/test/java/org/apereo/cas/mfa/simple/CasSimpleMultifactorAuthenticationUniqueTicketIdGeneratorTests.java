@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;

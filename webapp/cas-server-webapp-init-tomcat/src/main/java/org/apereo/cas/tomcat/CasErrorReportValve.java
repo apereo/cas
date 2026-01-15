@@ -1,5 +1,6 @@
 package org.apereo.cas.tomcat;
 
+import module java.base;
 import org.apache.catalina.valves.ErrorReportValve;
 
 /**

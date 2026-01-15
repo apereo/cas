@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
+import module java.base;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 /**

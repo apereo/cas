@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import module java.base;
 import org.apereo.cas.util.http.HttpUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

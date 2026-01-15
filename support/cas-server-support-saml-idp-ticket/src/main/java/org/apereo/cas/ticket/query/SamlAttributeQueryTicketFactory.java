@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.query;
 
+import module java.base;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;

@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantDefinition;
@@ -10,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.function.Function;
 
 /**
  * This is {@link DefaultCipherExecutorResolver}.

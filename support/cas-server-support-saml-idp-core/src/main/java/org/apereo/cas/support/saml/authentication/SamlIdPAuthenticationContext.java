@@ -1,20 +1,14 @@
 package org.apereo.cas.support.saml.authentication;
 
+import module java.base;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
-
 import lombok.val;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.messaging.context.SAMLProtocolContext;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link SamlIdPAuthenticationContext}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import com.mongodb.ReadConcern;
 import com.mongodb.WriteConcern;
 import lombok.val;

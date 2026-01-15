@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope.passwordless;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.syncope.BaseSyncopeTests;

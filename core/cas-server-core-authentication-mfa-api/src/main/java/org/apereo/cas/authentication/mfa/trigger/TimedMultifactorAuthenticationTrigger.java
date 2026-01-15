@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
@@ -9,7 +10,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -17,17 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.TextStyle;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Optional;
 
 /**
  * This is {@link TimedMultifactorAuthenticationTrigger}.
@@ -73,12 +64,6 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
         return checkTimedMultifactorProvidersForRequest(registeredService);
     }
 
-    /**
-     * Check timed multifactor providers for request optional.
-     *
-     * @param service the service
-     * @return the provider
-     */
     protected Optional<MultifactorAuthenticationProvider> checkTimedMultifactorProvidersForRequest(final RegisteredService service) {
         val timedMultifactor = casProperties.getAuthn().getAdaptive().getPolicy().getRequireTimedMultifactor();
         val now = LocalDateTime.now(ZoneId.systemDefault());
@@ -86,7 +71,8 @@ public class TimedMultifactorAuthenticationTrigger implements MultifactorAuthent
         val dayNamesForToday = Arrays.stream(TextStyle.values())
             .map(style -> dow.getDisplayName(style, Locale.getDefault())).toList();
 
-        val timed = timedMultifactor.stream()
+        val timed = timedMultifactor
+            .stream()
             .filter(t -> {
                 var providerEvent = !t.getOnDays().isEmpty() && t.getOnDays().stream().anyMatch(dayNamesForToday::contains);
                 if (t.getOnOrAfterHour() >= 0) {

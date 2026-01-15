@@ -1,8 +1,7 @@
 package org.apereo.cas.gua.api;
 
+import module java.base;
 import com.google.common.io.ByteSource;
-
-import java.io.Serializable;
 
 /**
  * This is {@link UserGraphicalAuthenticationRepository}.

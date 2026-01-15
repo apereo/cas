@@ -1,11 +1,10 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.web.support.InvalidCookieException;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

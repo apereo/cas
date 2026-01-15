@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
+import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
@@ -31,8 +32,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import javax.security.auth.login.FailedLoginException;
-import java.util.List;
 
 /**
  * CAS RESTful resource for vending and deleting TGTs.

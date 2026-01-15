@@ -1,15 +1,10 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.handler.TenantAuthenticationHandlerBuilder;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.multitenancy.TenantExtractor;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AuthenticationEventExecutionPlan}.
@@ -210,7 +205,7 @@ public interface AuthenticationEventExecutionPlan {
      * @param transaction the transaction
      * @return the principal resolver for authentication transaction
      */
-    PrincipalResolver getPrincipalResolver(AuthenticationHandler handler, AuthenticationTransaction transaction);
+    @Nullable PrincipalResolver getPrincipalResolver(AuthenticationHandler handler, AuthenticationTransaction transaction);
 
     /**
      * Gets authentication policies.

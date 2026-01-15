@@ -1,5 +1,6 @@
 package org.apereo.cas.throttle;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.ThrottledSubmission;
 import org.apereo.cas.web.support.ThrottledSubmissionsStore;
@@ -7,11 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link BaseMappableThrottledSubmissionsStore}.
@@ -70,7 +67,7 @@ public abstract class BaseMappableThrottledSubmissionsStore<T extends ThrottledS
     }
 
     @Override
-    public T get(final String key) {
+    public @Nullable T get(final String key) {
         return backingMap.get(key);
     }
 

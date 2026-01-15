@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AuthenticationServiceSelectionPlan}.
@@ -28,7 +30,7 @@ public interface AuthenticationServiceSelectionPlan {
      * @return the service
      * @throws Throwable the throwable
      */
-    Service resolveService(Service service) throws Throwable;
+    @Nullable Service resolveService(@Nullable Service service) throws Throwable;
 
     /**
      * Resolve service t.
@@ -39,5 +41,5 @@ public interface AuthenticationServiceSelectionPlan {
      * @return the t
      * @throws Throwable the throwable
      */
-    <T extends Service> T resolveService(Service service, Class<T> clazz) throws Throwable;
+    @Nullable <T extends Service> T resolveService(Service service, Class<T> clazz) throws Throwable;
 }

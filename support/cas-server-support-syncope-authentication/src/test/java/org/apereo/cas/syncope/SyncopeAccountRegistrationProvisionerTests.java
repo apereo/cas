@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope;
 
+import module java.base;
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -14,8 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.Map;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

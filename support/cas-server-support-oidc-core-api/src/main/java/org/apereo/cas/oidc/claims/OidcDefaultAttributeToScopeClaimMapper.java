@@ -1,16 +1,11 @@
 package org.apereo.cas.oidc.claims;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceChainingAttributeReleasePolicy;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link OidcDefaultAttributeToScopeClaimMapper}.

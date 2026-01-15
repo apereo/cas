@@ -1,7 +1,7 @@
 package org.apereo.cas.util.gen;
 
+import module java.base;
 import org.apereo.cas.util.EncodingUtils;
-
 import lombok.NoArgsConstructor;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
@@ -15,7 +16,6 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.ArrayList;
 
 /**
  * Abstract class that provides the {@link #doPreExecute} hook to set the find the provider for this webflow to be used by
@@ -24,6 +24,7 @@ import java.util.ArrayList;
  * @author Travis Schmidt
  * @since 5.3.4
  */
+@SuppressWarnings("NullAway.Init")
 public abstract class AbstractMultifactorAuthenticationAction<T extends MultifactorAuthenticationProvider> extends BaseCasWebflowAction {
     /**
      * The resolved provider for this flow.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.delegation;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.config.CasDelegatedAuthenticationCasAutoConfiguration;
 import org.apereo.cas.configuration.support.TriStateBoolean;
@@ -22,7 +23,6 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

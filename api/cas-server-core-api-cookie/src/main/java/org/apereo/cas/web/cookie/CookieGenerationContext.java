@@ -1,5 +1,6 @@
 package org.apereo.cas.web.cookie;
 
+import module java.base;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,9 +10,6 @@ import lombok.With;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link CookieGenerationContext}.

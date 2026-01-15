@@ -1,9 +1,9 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.spring.CasEventListener;
-
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;

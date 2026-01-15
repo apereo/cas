@@ -1,12 +1,12 @@
 package org.apereo.cas.shell.commands.util;
 
+import module java.base;
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.util.function.Supplier;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

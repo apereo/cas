@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring.beans;
 
+import module java.base;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -11,13 +12,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.PropertyResolver;
-import java.io.Serializable;
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.function.Supplier;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link CompoundCondition}.

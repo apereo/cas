@@ -1,11 +1,11 @@
 package org.apereo.cas.acme;
 
+import module java.base;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link DefaultAcmeChallengeRepository}.

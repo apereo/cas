@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.push;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 
 /**

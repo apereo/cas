@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks.rotation;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
@@ -10,7 +11,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.springframework.core.io.Resource;
-import java.util.Optional;
 
 /**
  * This is {@link OidcDefaultJsonWebKeystoreRotationService}.

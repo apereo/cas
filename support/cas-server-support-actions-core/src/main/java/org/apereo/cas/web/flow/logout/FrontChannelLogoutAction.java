@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.logout;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutRequestStatus;
@@ -17,8 +18,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Comparator;
-import java.util.HashMap;
 
 /**
  * Logout action for front SLO : find the next eligible service and perform front logout.

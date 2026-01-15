@@ -1,5 +1,6 @@
 package org.apereo.cas.services.query;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

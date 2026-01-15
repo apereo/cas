@@ -30,8 +30,10 @@ buildscript {
 }
 
 ext {
-    srcTagMap = new ConcurrentHashMap<File, Set<String>>()
+    ci = System.getenv("CI") || providers.systemProperty("CI").present
     
+    srcTagMap = new ConcurrentHashMap<File, Set<String>>()
+
     repositoryUsername = providers.systemProperty("repositoryUsername").getOrElse(System.getenv("REPOSITORY_USER"))
     repositoryPassword = providers.systemProperty("repositoryPassword").getOrElse(System.getenv("REPOSITORY_PWD"))
 
@@ -55,8 +57,7 @@ ext {
     remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend").getOrElse("false") == "true" ? "y" : "n"
     generateGitProperties = publishFlag || providers.systemProperty("generateGitProperties").present
     generateTimestamps = publishFlag || providers.systemProperty("generateTimestamps").present
-    
-    ci = System.getenv("CI") || providers.systemProperty("CI").present
+
 
     excludedFilesFromTestCoverage = [
         '**/docs/**',
@@ -172,7 +173,9 @@ allprojects {
     java {
         toolchain {
             languageVersion = JavaLanguageVersion.of(project.targetCompatibility)
-            vendor = JvmVendorSpec.JETBRAINS
+            if (!ci) {
+                vendor = JvmVendorSpec.JETBRAINS
+            }
         }
     }
 

@@ -1,12 +1,11 @@
 package org.apereo.cas.support.events.logout;
 
+import module java.base;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-import java.io.Serial;
 
 /**
  * Concrete subclass of {@link AbstractCasEvent} representing a request for SLO.

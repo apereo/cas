@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,15 +17,6 @@ import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.annotation.Id;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Base class for mutable, persistable registered services.
@@ -105,8 +97,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
 
     @Override
     public int compareTo(
-        @NonNull
-        final RegisteredService other) {
+        @NonNull final RegisteredService other) {
         return Comparator
             .comparingInt(RegisteredService::getEvaluationPriority)
             .thenComparingInt(RegisteredService::getEvaluationOrder)

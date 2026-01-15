@@ -1,5 +1,6 @@
 package org.apereo.cas.support.inwebo.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.support.inwebo.authentication.InweboCredential;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.support.inwebo.service.response.InweboResult;
@@ -7,11 +8,11 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -30,7 +31,7 @@ public class InweboCheckAuthenticationAction extends BaseCasWebflowAction {
     private final CasWebflowEventResolver casWebflowEventResolver;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val login = authentication.getPrincipal().getId();
         val otp = requestContext.getRequestParameters().get(InweboWebflowConstants.OTP);

@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.plans;
 
+import module java.base;
 import org.apereo.cas.api.AuthenticationRiskContingencyPlan;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
@@ -15,8 +16,6 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ApplicationContext;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * This is {@link BaseAuthenticationRiskContingencyPlan}.

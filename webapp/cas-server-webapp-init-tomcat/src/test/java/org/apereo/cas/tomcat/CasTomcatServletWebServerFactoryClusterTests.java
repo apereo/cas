@@ -1,5 +1,6 @@
 package org.apereo.cas.tomcat;
 
+import module java.base;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -25,8 +26,6 @@ import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.boot.web.server.autoconfigure.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.web.server.servlet.ConfigurableServletWebServerFactory;
 import org.springframework.http.HttpMethod;
-import java.util.Map;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -49,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
     ServerProperties.class,
     TomcatServerProperties.class
 })
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 @Slf4j
 @ExtendWith(CasTestExtension.class)
 class CasTomcatServletWebServerFactoryClusterTests {

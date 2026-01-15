@@ -1,5 +1,6 @@
 package org.apereo.cas.jdbc;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -17,12 +18,7 @@ import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import module java.sql;
 
 /**
  * Class that if provided a query that returns a password (parameter of query

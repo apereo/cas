@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.attribute;
 
+import module java.base;
 import org.apache.commons.lang3.StringUtils;
-import java.util.Locale;
 
 /**
  * The enum Case canonicalization mode.

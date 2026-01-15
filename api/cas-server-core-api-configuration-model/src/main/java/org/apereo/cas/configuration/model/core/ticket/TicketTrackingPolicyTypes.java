@@ -1,4 +1,5 @@
 package org.apereo.cas.configuration.model.core.ticket;
+import module java.base;
 
 /**
  * This is {@link TicketTrackingPolicyTypes}.

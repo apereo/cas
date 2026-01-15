@@ -1,15 +1,12 @@
 package org.apereo.cas.services.resource;
 
+import module java.base;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-
-import java.io.File;
-import java.util.Arrays;
 
 /**
  * This is {@link DeleteResourceBasedRegisteredServiceWatcher}.

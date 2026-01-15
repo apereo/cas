@@ -1,12 +1,9 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.io.Serializable;
-import java.util.Set;
 
 /**
  * This is {@link RegisteredServiceMultifactorPolicy} that describes how a service

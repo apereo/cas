@@ -1,9 +1,9 @@
 package org.apereo.cas.pm;
 
+import module java.base;
 import org.apereo.cas.authentication.RootCasException;
 import lombok.Getter;
 import org.apache.commons.lang3.ArrayUtils;
-import java.io.Serial;
 
 /**
  * Raised by {@link PasswordManagementService} if it is also responsible for validating

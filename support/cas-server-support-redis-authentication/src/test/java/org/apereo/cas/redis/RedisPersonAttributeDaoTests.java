@@ -1,5 +1,6 @@
 package org.apereo.cas.redis;
 
+import module java.base;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
@@ -30,9 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

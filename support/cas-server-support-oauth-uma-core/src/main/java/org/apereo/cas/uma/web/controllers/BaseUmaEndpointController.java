@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.web.controllers;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.Ticket;

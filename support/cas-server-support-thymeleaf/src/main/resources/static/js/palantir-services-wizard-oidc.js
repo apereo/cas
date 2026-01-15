@@ -18,7 +18,7 @@ function createOidcRegisteredServiceFields() {
     $registeredServiceUsernameAttributeProvider.selectmenu("refresh");
 }
 
-function createRegisteredServiceOidcFields() {
+async function createRegisteredServiceOidcFields() {
     createInputField({
         labelTitle: "Client ID",
         name: "registeredServiceClientId",
@@ -26,7 +26,14 @@ function createRegisteredServiceOidcFields() {
         required: true,
         containerId: "editServiceWizardOAuthOidcContainer",
         title: "Define the client identifier for this OAuth/OpenID Connect relying party."
-    });
+    }).after(`
+        <button class="mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button mr-2" 
+                type="button"
+                onclick="$('#registeredServiceClientId').val(generateRandom()).focus();generateServiceDefinition()">
+            <i class="mdi mdi-refresh" aria-hidden="true"></i>
+            <span class="sr-only">Generate</span>
+        </button>
+    `);
 
     createInputField({
         labelTitle: "Client Secret",
@@ -35,8 +42,17 @@ function createRegisteredServiceOidcFields() {
         required: false,
         containerId: "editServiceWizardOAuthOidcContainer",
         title: "Define the client secret for this OAuth/OpenID Connect relying party."
-    }).attr("type", "password")
-    ;
+    })
+    .attr("type", "password")
+    .after(`
+        <button class="mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button mr-2" 
+                onclick="$('#registeredServiceClientSecret').val(generateRandom()).focus(); generateServiceDefinition();"
+                type="button">
+            <i class="mdi mdi-refresh" aria-hidden="true"></i>
+            <span class="sr-only">Generate</span>
+        </button>
+    `);
+
 
     createInputField({
         cssClasses: "advanced-option",
@@ -50,43 +66,56 @@ function createRegisteredServiceOidcFields() {
         title: "Time, measured in UTC epoch, at which the client secret will expire or 0 if it will not expire."
     });
 
-    createInputField({
-        labelTitle: "Scope(s)",
-        name: "registeredServiceScopes",
-        paramName: "scopes",
-        required: false,
-        containerId: "editServiceWizardOAuthOidcContainer",
-        title: "Define the scope(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>openid,profile,email</code>)."
-    })
-        .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",")];
-        });
+    const features = await fetchCasFeatures();
+    if (features.includes("OpenIDConnect")) {
+        await $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, response => {
+            const supportedScopes = response.scopes_supported.map(scope => ({value: scope, text: scope.toUpperCase()}));
+            const supportedGrantTypes = response.grant_types_supported.map(scope => ({
+                value: scope,
+                text: scope.toUpperCase()
+            }));
+            const supportedResponseTypes = response.response_types_supported.map(scope => ({
+                value: scope,
+                text: scope.toUpperCase()
+            }));
 
-    createInputField({
-        cssClasses: "advanced-option",
-        labelTitle: "Supported Grant Type(s)",
-        name: "registeredServiceSupportedGrantTypes",
-        paramName: "supportedGrantTypes",
-        required: false,
-        containerId: "editServiceWizardOAuthOidcContainer",
-        title: "Define the supported grant type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>authorization_code,refresh_token,client_credentials</code>)."
-    })
-        .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",")];
-        });
+            createMultiSelectField({
+                containerId: "editServiceWizardOAuthOidcContainer",
+                labelTitle: "Scope(s):",
+                paramName: "scopes",
+                title: "Define the scope(s) for this OAuth/OpenID Connect relying party.",
+                options: supportedScopes
+            })
+                .data("renderer", function (value) {
+                    return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
+                });
 
-    createInputField({
-        cssClasses: "advanced-option",
-        labelTitle: "Supported Response Type(s)",
-        name: "registeredServiceSupportedResponseTypes",
-        paramName: "supportedResponseTypes",
-        required: false,
-        containerId: "editServiceWizardOAuthOidcContainer",
-        title: "Define the supported response type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>code,id_token,token</code>)."
-    })
-        .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",")];
+            createMultiSelectField({
+                cssClasses: "advanced-option",
+                containerId: "editServiceWizardOAuthOidcContainer",
+                labelTitle: "Grant Type(s):",
+                paramName: "supportedGrantTypes",
+                title: "Define the supported grant type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>authorization_code,refresh_token,client_credentials</code>).",
+                options: supportedGrantTypes
+            })
+                .data("renderer", function (value) {
+                    return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
+                });
+
+            createMultiSelectField({
+                cssClasses: "advanced-option",
+                containerId: "editServiceWizardOAuthOidcContainer",
+                labelTitle: "Response Type(s):",
+                paramName: "supportedResponseTypes",
+                title: "Define the supported response type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>code,id_token,token</code>).",
+                options: supportedResponseTypes
+            })
+                .data("renderer", function (value) {
+                    return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
+                });
         });
+    }
+
 
     createInputField({
         cssClasses: "advanced-option",
@@ -98,7 +127,7 @@ function createRegisteredServiceOidcFields() {
         title: "Define the audience(s) for this OAuth/OpenID Connect relying party, separated by comma."
     })
         .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",")];
+            return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
         });
 
     createInputField({
@@ -261,55 +290,6 @@ function createRegisteredServiceOidcFields() {
         title: "Define the token endpoint authentication method for this OAuth/OpenID Connect relying party. Examples include <code>client_secret_basic,client_secret_jwt,etc</code>"
     });
 
-    createInputField({
-        cssClasses: "advanced-option",
-        labelTitle: "TLS Client Authentication Subject DN",
-        name: "registeredServiceTlsClientAuthSubjectDn",
-        paramName: "tlsClientAuthSubjectDn",
-        required: false,
-        containerId: "editServiceWizardOAuthOidcContainer",
-        title: "Define the TLS client authentication subject DN for this OAuth/OpenID Connect relying party."
-    });
-
-    createInputField({
-        cssClasses: "advanced-option",
-        labelTitle: "TLS Client Authentication SAN DNS",
-        name: "registeredServiceTlsClientAuthSanDns",
-        paramName: "tlsClientAuthSubjectDn",
-        required: false,
-        containerId: "editServiceWizardOAuthOidcContainer",
-        title: "Define the TLS client authentication SAN DNS for this OAuth/OpenID Connect relying party."
-    });
-
-    createInputField({
-        cssClasses: "advanced-option",
-        labelTitle: "TLS Client Authentication SAN URI",
-        name: "registeredServiceTlsClientAuthSanUri",
-        paramName: "tlsClientAuthSanUri",
-        required: false,
-        containerId: "editServiceWizardOAuthOidcContainer",
-        title: "Define the TLS client authentication SAN URI for this OAuth/OpenID Connect relying party."
-    });
-
-    createInputField({
-        cssClasses: "advanced-option",
-        labelTitle: "TLS Client Authentication SAN IP",
-        name: "registeredServiceTlsClientAuthSanIP",
-        paramName: "tlsClientAuthSanIp",
-        required: false,
-        containerId: "editServiceWizardOAuthOidcContainer",
-        title: "Define the TLS client authentication SAN IP for this OAuth/OpenID Connect relying party."
-    });
-
-    createInputField({
-        cssClasses: "advanced-option",
-        labelTitle: "TLS Client Authentication SAN Email",
-        name: "registeredServiceTlsClientAuthSanEmail",
-        paramName: "tlsClientAuthSanEmail",
-        required: false,
-        containerId: "editServiceWizardOAuthOidcContainer",
-        title: "Define the TLS client authentication SAN email for this OAuth/OpenID Connect relying party."
-    });
 
     createInputField({
         cssClasses: "advanced-option",

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
@@ -14,7 +15,6 @@ import org.springframework.boot.webmvc.autoconfigure.error.ErrorViewResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Action;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

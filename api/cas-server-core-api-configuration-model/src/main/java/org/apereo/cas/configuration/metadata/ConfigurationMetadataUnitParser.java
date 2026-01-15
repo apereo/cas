@@ -1,14 +1,11 @@
 package org.apereo.cas.configuration.metadata;
 
+import module java.base;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Set;
 
 /**
  * This is {@link ConfigurationMetadataUnitParser}.

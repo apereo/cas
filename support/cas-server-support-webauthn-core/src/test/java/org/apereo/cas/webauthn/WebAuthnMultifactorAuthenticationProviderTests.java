@@ -1,8 +1,8 @@
 package org.apereo.cas.webauthn;
 
+import module java.base;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.BaseAbstractMultifactorAuthenticationProviderTests;
-
 import org.junit.jupiter.api.Tag;
 
 /**

@@ -1,14 +1,11 @@
 package org.apereo.cas.logout;
 
+import module java.base;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link DefaultLogoutExecutionPlan}.

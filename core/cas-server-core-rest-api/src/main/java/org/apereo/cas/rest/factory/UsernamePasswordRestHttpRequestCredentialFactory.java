@@ -1,5 +1,6 @@
 package org.apereo.cas.rest.factory;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
@@ -12,8 +13,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link UsernamePasswordRestHttpRequestCredentialFactory}.

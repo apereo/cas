@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -16,8 +17,6 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link OAuth20JwtBuilder}.

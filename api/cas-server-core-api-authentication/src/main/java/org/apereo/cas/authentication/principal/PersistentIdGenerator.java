@@ -1,11 +1,9 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
-
-import java.io.Serializable;
-import java.util.Optional;
 
 /**
  * Generates a unique consistent Id based on the principal.

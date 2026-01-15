@@ -1,20 +1,11 @@
 package org.apereo.cas.util.ssl;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-
-import javax.net.ssl.X509KeyManager;
-
-import java.net.Socket;
-import java.security.Principal;
-import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This is {@link CompositeX509KeyManager}.

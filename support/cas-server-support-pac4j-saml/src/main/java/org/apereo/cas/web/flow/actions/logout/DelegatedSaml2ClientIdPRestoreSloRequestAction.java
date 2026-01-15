@@ -1,8 +1,10 @@
 package org.apereo.cas.web.flow.actions.logout;
 
+import module java.base;
 import org.apereo.cas.support.saml.idp.slo.SamlIdPProfileSingleLogoutRequestProcessor;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -17,7 +19,7 @@ public class DelegatedSaml2ClientIdPRestoreSloRequestAction extends BaseCasWebfl
     private final SamlIdPProfileSingleLogoutRequestProcessor delegatedSaml2IdPSloRequestProcessor;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         delegatedSaml2IdPSloRequestProcessor.restore(requestContext);
         return null;
     }

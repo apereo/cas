@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.policy;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -13,12 +13,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Authentication policy that is satisfied by at least one successfully authenticated credential.
@@ -45,10 +41,15 @@ public class AtLeastOneCredentialValidatedAuthenticationPolicy extends BaseAuthe
     private final boolean tryAll;
 
     @Override
-    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authn,
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(@Nullable final Authentication authn,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
                                                              final Map<String, ? extends Serializable> context) throws Exception {
+        if (authn == null) {
+            LOGGER.warn("Authentication attempt is null and cannot satisfy policy");
+            return AuthenticationPolicyExecutionResult.failure();
+        }
+
         if (this.tryAll) {
             val match = authenticationHandlers.stream()
                 .allMatch(handler -> authn.getSuccesses().containsKey(handler.getName()));

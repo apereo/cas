@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -9,8 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Collection;
-import java.util.Set;
 
 /**
  * This is {@link CasWebflowExceptionCatalog}.

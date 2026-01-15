@@ -1,10 +1,9 @@
 package org.apereo.cas.support.saml.idp.metadata.jpa.postgres;
 
+import module java.base;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
-
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
@@ -13,7 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.io.Serial;
 
 /**
  * This is {@link PostgresSamlIdPMetadataDocument}.

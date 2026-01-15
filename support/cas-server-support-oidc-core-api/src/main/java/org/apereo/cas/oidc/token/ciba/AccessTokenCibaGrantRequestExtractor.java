@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token.ciba;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
@@ -21,7 +22,6 @@ import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.beans.factory.ObjectProvider;
-import java.util.Locale;
 
 /**
  * This is {@link AccessTokenCibaGrantRequestExtractor}.

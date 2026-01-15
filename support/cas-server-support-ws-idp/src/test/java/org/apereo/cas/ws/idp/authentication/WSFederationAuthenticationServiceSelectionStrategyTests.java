@@ -1,17 +1,16 @@
 package org.apereo.cas.ws.idp.authentication;
 
+import module java.base;
 import org.apereo.cas.BaseCoreWsSecurityIdentityProviderConfigurationTests;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

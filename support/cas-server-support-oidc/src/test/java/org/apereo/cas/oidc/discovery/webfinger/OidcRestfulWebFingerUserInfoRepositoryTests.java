@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.discovery.webfinger;
 
+import module java.base;
 import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.oidc.discovery.webfinger.userinfo.OidcRestfulWebFingerUserInfoRepository;
 import org.apereo.cas.util.CollectionUtils;

@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import module java.base;
 import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;

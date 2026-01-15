@@ -1,5 +1,6 @@
 package org.apereo.cas.palantir.controller;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.val;

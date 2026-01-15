@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import lombok.Setter;
@@ -14,12 +15,6 @@ import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.springframework.beans.factory.DisposableBean;
-import java.io.File;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 /**
  * This is {@link JsonWebKeySetStringCipherExecutor}.

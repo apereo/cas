@@ -1,14 +1,13 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
-
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-
-import java.io.Serial;
 
 /**
  * Represents a service which wishes to use the CAS protocol.
@@ -26,9 +25,9 @@ public class SimpleWebApplicationServiceImpl extends AbstractWebApplicationServi
     private static final long serialVersionUID = 8334068957483758042L;
 
     @JsonCreator
-    protected SimpleWebApplicationServiceImpl(@JsonProperty("id") final String id,
+    protected SimpleWebApplicationServiceImpl(@Nullable @JsonProperty("id") final String id,
                                               @JsonProperty("originalUrl") final String originalUrl,
-                                              @JsonProperty("artifactId") final String artifactId) {
+                                              @Nullable @JsonProperty("artifactId") final String artifactId) {
         super(id, originalUrl, artifactId);
     }
 }

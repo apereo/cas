@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
@@ -13,6 +14,7 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -23,15 +25,6 @@ import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.springframework.beans.factory.DisposableBean;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-import javax.security.auth.login.LoginException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 
 /**
  * LDAP authentication handler that uses the ldaptive {@code Authenticator} component underneath.
@@ -45,6 +38,7 @@ import java.util.Map;
 @Setter
 @Getter
 @Monitorable
+@SuppressWarnings("NullAway.Init")
 public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements DisposableBean {
 
     /**
@@ -92,7 +86,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                                      final AuthenticationPasswordPolicyHandlingStrategy strategy) {
         super(name, principalFactory, order);
         this.authenticator = authenticator;
-        this.passwordPolicyHandlingStrategy = strategy;
+        setPasswordPolicyHandlingStrategy(strategy);
     }
 
     @Override
@@ -121,7 +115,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc,
-                                                                                        final String originalPassword) throws Throwable {
+                                                                                        @Nullable final String originalPassword) throws Throwable {
         val response = getLdapAuthenticationResponse(upc);
         LOGGER.debug("LDAP response: [{}]", response);
         if (!passwordPolicyHandlingStrategy.supports(response)) {
@@ -149,10 +143,10 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      *
      * @param username  Username that was successfully authenticated which is used for principal ID when principal id is not specified.
      * @param ldapEntry LDAP entry that may contain principal attributes.
-     * @return Principal if the LDAP entry contains at least a principal ID attribute value, null otherwise.
+     * @return Principal if the LDAP entry contains at least a principal ID attribute value.
      * @throws LoginException On security policy errors related to principal creation.
      */
-    protected Principal createPrincipal(final String username, final LdapEntry ldapEntry) throws Throwable {
+    protected @Nullable Principal createPrincipal(final String username, final LdapEntry ldapEntry) throws Throwable {
         LOGGER.debug("Creating LDAP principal for [{}] based on [{}] and attributes [{}]", username, ldapEntry.getDn(),
             ldapEntry.getAttributeNames());
         val id = getLdapPrincipalIdentifier(username, ldapEntry);

@@ -1,18 +1,15 @@
 package org.apereo.cas.jdbc;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import javax.security.auth.login.FailedLoginException;
-import javax.sql.DataSource;
-import java.util.ArrayList;
+import module java.sql;
 
 /**
  * Class that given a table, username field and password field will query a

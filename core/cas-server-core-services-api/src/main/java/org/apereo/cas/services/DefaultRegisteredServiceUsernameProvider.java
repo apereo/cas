@@ -1,12 +1,11 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.Serial;
 
 /**
  * Resolves the username for the service to be the default principal id.

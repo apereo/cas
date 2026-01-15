@@ -1,9 +1,8 @@
 package org.apereo.cas.oidc.dynareg;
 
+import module java.base;
 import org.apereo.cas.util.serialization.BaseJacksonSerializer;
-
 import org.springframework.context.ConfigurableApplicationContext;
-import java.io.Serial;
 
 
 /**

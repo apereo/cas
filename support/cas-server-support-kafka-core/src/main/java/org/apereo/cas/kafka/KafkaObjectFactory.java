@@ -1,5 +1,7 @@
 package org.apereo.cas.kafka;
 
+import module java.base;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
@@ -9,14 +11,11 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
-import org.jspecify.annotations.NonNull;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link KafkaObjectFactory}.
@@ -28,6 +27,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Setter
+@SuppressWarnings("NullAway.Init")
 public class KafkaObjectFactory<K, V> {
     private final String bootstrapAddress;
 
@@ -77,7 +77,7 @@ public class KafkaObjectFactory<K, V> {
     public Map<String, Object> getConsumerConfiguration() {
         val props = new HashMap<String, Object>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, this.consumerGroupId);
+        FunctionUtils.doIfNotNull(this.consumerGroupId, id -> props.put(ConsumerConfig.GROUP_ID_CONFIG, id));
         return props;
     }
 
@@ -88,9 +88,9 @@ public class KafkaObjectFactory<K, V> {
      * @param valueDeserializer the value deserializer
      * @return the kafka listener container factory
      */
-    public ConcurrentKafkaListenerContainerFactory<@NonNull K, @NonNull V> getKafkaListenerContainerFactory(final Deserializer<K> keyDeserializer,
-                                                                                                            final Deserializer<V> valueDeserializer) {
-        val listenerContainerFactory = new ConcurrentKafkaListenerContainerFactory<@NonNull K, @NonNull V>();
+    public ConcurrentKafkaListenerContainerFactory<K, V> getKafkaListenerContainerFactory(final Deserializer<K> keyDeserializer,
+                                                                                          final Deserializer<V> valueDeserializer) {
+        val listenerContainerFactory = new ConcurrentKafkaListenerContainerFactory<K, V>();
         val consumerFactory = new DefaultKafkaConsumerFactory<>(getConsumerConfiguration(), keyDeserializer, valueDeserializer);
         listenerContainerFactory.setConsumerFactory(consumerFactory);
         return listenerContainerFactory;
@@ -103,8 +103,8 @@ public class KafkaObjectFactory<K, V> {
      * @param valueSerializer the value serializer
      * @return the kafka template
      */
-    public KafkaTemplate<@NonNull K, @NonNull V> getKafkaTemplate(final Serializer<K> keySerializer,
-                                                                  final Serializer<V> valueSerializer) {
+    public KafkaTemplate<K, V> getKafkaTemplate(final Serializer<K> keySerializer,
+                                                final Serializer<V> valueSerializer) {
         val producerFactory = new DefaultKafkaProducerFactory<>(getProducerConfiguration(), keySerializer, valueSerializer);
         return new KafkaTemplate<>(producerFactory);
     }

@@ -1,14 +1,12 @@
 package org.apereo.cas.support.inwebo.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.io.Serial;
 
 /**
  * The Inwebo credentials.

@@ -1,9 +1,9 @@
 package org.apereo.cas.util.jwt;
 
+import module java.base;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.IdentifiableKey;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Builder;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -13,14 +13,6 @@ import org.jooq.lambda.Unchecked;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
-
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * This is {@link JsonWebTokenSigner}.

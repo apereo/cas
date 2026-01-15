@@ -1,17 +1,14 @@
 package org.apereo.cas.memcached.kryo.serial;
 
+import module java.base;
 import org.apereo.cas.memcached.kryo.CasKryoPool;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import com.esotericsoftware.kryo.io.Input;
 import com.google.common.collect.ImmutableList;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayInputStream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

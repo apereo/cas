@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.token;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
@@ -8,7 +9,6 @@ import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthe
 import org.apereo.cas.impl.BasePasswordlessUserAccountStoreTests;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -18,11 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

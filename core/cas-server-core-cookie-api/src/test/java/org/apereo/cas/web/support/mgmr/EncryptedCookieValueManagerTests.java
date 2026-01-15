@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.mgmr;
 
+import module java.base;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutorResolver;

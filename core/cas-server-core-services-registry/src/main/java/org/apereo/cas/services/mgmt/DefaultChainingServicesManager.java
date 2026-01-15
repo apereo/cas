@@ -1,5 +1,6 @@
 package org.apereo.cas.services.mgmt;
 
+import module java.base;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -8,23 +9,10 @@ import org.apereo.cas.services.ChainingServicesManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
-
 import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * This is {@link DefaultChainingServicesManager}.

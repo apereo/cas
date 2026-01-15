@@ -1,9 +1,8 @@
 package org.apereo.cas.oidc.discovery.webfinger.userinfo;
 
+import module java.base;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepository;
 import org.apereo.cas.util.CollectionUtils;
-
-import java.util.Map;
 
 /**
  * This is {@link OidcEchoingWebFingerUserInfoRepository}.

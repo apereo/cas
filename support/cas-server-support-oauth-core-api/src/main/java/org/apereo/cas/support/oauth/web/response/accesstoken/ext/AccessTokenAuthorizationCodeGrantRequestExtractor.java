@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import module java.base;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;

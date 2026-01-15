@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.assurance;
 
+import module java.base;
 import org.jose4j.jwt.JwtClaims;
-import java.util.Map;
 
 /**
  * This is {@link AssuranceVerifiedClaimsProducer}.

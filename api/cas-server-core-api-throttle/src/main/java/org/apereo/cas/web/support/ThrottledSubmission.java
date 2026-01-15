@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -11,10 +12,6 @@ import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import lombok.val;
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.Clock;
-import java.time.ZonedDateTime;
 
 /**
  * This is {@link ThrottledSubmission}.

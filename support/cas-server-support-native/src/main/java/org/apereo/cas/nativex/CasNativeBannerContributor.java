@@ -1,11 +1,11 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.util.spring.boot.BannerContributor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.graalvm.home.Version;
 import org.springframework.core.env.Environment;
-import java.util.Formatter;
 
 /**
  * This is {@link CasNativeBannerContributor}.

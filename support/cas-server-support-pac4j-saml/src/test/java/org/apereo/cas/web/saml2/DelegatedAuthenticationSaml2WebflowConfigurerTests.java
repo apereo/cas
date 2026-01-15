@@ -1,5 +1,6 @@
 package org.apereo.cas.web.saml2;
 
+import module java.base;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;

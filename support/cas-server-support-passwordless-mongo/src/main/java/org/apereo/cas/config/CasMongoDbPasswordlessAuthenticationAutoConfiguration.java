@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccountCustomizer;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
@@ -31,7 +32,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
-import java.util.List;
 
 /**
  * This is {@link CasMongoDbPasswordlessAuthenticationAutoConfiguration}.

@@ -1,8 +1,9 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AuthenticationAwareTicket}.
@@ -17,5 +18,5 @@ public interface AuthenticationAwareTicket extends Ticket {
      *
      * @return the authentication
      */
-    Authentication getAuthentication();
+    @Nullable Authentication getAuthentication();
 }

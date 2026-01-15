@@ -1,15 +1,13 @@
 package org.apereo.cas.authentication.surrogate;
 
+import module java.base;
 import org.apereo.cas.authentication.CredentialTrait;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-
-import java.io.Serial;
 
 /**
  * This is {@link SurrogateCredentialTrait}.

@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.util.EncodingUtils;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -16,16 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jooq.lambda.Unchecked;
-
-import java.io.Serial;
-import java.nio.charset.StandardCharsets;
-import java.security.Security;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 /**
  * Return only the collection of allowed attributes out of what's resolved

@@ -1,17 +1,16 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.cipher.BaseBinaryCipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
-
 import com.google.common.io.ByteSource;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,12 +1,12 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import module java.base;
 import com.yubico.client.v2.ResponseStatus;
 import com.yubico.client.v2.VerificationResponse;
 import com.yubico.client.v2.YubicoClient;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.util.Date;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
