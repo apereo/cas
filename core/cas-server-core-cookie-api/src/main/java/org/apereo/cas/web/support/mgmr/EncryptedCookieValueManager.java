@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.mgmr;
 
+import module java.base;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutorResolver;
@@ -13,8 +14,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * Provides basic encryption/decryption support for cookie values.

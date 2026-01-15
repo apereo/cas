@@ -1,20 +1,17 @@
 package org.apereo.cas.web.flow.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.InvalidProxyGrantingTicketForServiceTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.LinkedHashSet;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,12 +1,12 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apereo.cas.util.crypto.DecodableCipher;
 import org.apereo.cas.util.crypto.EncodableCipher;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
-import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**

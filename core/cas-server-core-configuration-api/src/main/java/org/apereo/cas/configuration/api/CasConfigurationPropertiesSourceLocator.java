@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.api;
 
+import module java.base;
 import org.apereo.cas.configuration.loader.CasConfigurationPropertiesLoader;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import lombok.val;
@@ -10,14 +11,6 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ResourceLoader;
-import java.io.File;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ServiceLoader;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasConfigurationPropertiesSourceLocator}.

@@ -1,12 +1,12 @@
 package org.apereo.cas.util.serialization;
 
+import module java.base;
 import org.apereo.cas.util.RegexUtils;
 import lombok.val;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonParser;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link PatternJsonDeserializer}.

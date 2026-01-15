@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 

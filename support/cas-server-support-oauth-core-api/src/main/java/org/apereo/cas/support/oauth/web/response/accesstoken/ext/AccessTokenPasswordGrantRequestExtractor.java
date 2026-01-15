@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.DefaultAuthenticationResult;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -16,7 +17,6 @@ import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.beans.factory.ObjectProvider;
-import java.util.Objects;
 
 /**
  * This is {@link AccessTokenPasswordGrantRequestExtractor}.

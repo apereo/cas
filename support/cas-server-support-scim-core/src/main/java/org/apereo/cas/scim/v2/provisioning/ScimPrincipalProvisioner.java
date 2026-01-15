@@ -1,5 +1,6 @@
 package org.apereo.cas.scim.v2.provisioning;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -13,7 +14,6 @@ import de.captaingoldfish.scim.sdk.common.resources.User;
 import de.captaingoldfish.scim.sdk.common.response.ListResponse;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.util.Optional;
 
 /**
  * This is {@link ScimPrincipalProvisioner}.

@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.binding.convert.converters.Converter;
 

@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.support;
 
-import java.util.List;
+import module java.base;
 
 /**
  * This is {@link ConfigurationPropertyBindingResult}.

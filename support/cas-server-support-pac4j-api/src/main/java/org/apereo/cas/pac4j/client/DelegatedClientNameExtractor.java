@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.client;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -11,7 +12,6 @@ import org.pac4j.jee.context.JEEContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 /**
  * This is {@link DelegatedClientNameExtractor}.

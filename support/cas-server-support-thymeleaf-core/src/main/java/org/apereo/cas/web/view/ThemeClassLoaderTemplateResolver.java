@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import module java.base;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.theme.ThemeResolver;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +11,6 @@ import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresource.ClassLoaderTemplateResource;
 import org.thymeleaf.templateresource.ITemplateResource;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 /**
  * This is {@link ThemeClassLoaderTemplateResolver}.

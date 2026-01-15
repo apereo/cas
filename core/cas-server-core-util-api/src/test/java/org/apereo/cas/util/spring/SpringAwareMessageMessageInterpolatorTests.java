@@ -1,18 +1,14 @@
 package org.apereo.cas.util.spring;
 
+import module java.base;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
-
 import jakarta.validation.MessageInterpolator;
 import jakarta.validation.metadata.ConstraintDescriptor;
-
-import java.util.Locale;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

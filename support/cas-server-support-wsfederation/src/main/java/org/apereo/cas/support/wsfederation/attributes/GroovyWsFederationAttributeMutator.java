@@ -1,12 +1,10 @@
 package org.apereo.cas.support.wsfederation.attributes;
 
+import module java.base;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link GroovyWsFederationAttributeMutator}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.loader;
 
+import module java.base;
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -11,8 +12,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
 import org.yaml.snakeyaml.error.YAMLException;
-import java.util.Locale;
-import java.util.Properties;
 
 /**
  * This is {@link YamlConfigurationPropertiesLoader}.

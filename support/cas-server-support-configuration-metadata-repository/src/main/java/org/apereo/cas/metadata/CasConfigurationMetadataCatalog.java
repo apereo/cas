@@ -1,5 +1,6 @@
 package org.apereo.cas.metadata;
 
+import module java.base;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.PropertyOwner;
@@ -21,13 +22,6 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.dataformat.yaml.YAMLMapper;
-import java.io.File;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasConfigurationMetadataCatalog}.
@@ -54,11 +48,8 @@ public class CasConfigurationMetadataCatalog {
     public static void export(final File destination, final Object data) {
         FunctionUtils.doUnchecked(_ -> {
             val mapper = YAMLMapper.builder()
-                .changeDefaultPropertyInclusion(handler -> {
-                    handler.withValueInclusion(JsonInclude.Include.NON_DEFAULT);
-                    handler.withContentInclusion(JsonInclude.Include.NON_DEFAULT);
-                    return handler;
-                })
+                .changeDefaultPropertyInclusion(handler -> handler.withValueInclusion(JsonInclude.Include.NON_DEFAULT)
+                    .withContentInclusion(JsonInclude.Include.NON_DEFAULT))
                 .configure(EnumFeature.WRITE_ENUMS_USING_TO_STRING, true)
                 .configure(SerializationFeature.INDENT_OUTPUT, true)
                 .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)

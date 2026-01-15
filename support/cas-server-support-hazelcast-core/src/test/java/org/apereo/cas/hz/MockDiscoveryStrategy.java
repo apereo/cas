@@ -1,14 +1,11 @@
 package org.apereo.cas.hz;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
-
 import com.hazelcast.config.Config;
 import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.NetworkConfig;
-
-import java.util.Optional;
-
 import static org.mockito.Mockito.*;
 
 /**

@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import module java.base;
+import module java.sql;
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
 import org.apereo.cas.jpa.JpaEntityFactory;
@@ -20,18 +22,6 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * <p>Implementation of {@link AuditTrailManager} to persist the
@@ -62,6 +52,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Setter
 @RequiredArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
 
     /**

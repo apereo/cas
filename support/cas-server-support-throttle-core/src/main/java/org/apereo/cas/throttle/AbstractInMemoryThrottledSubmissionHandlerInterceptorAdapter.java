@@ -1,5 +1,6 @@
 package org.apereo.cas.throttle;
 
+import module java.base;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionHandlerInterceptor;
 import org.apereo.cas.web.support.ThrottledSubmission;
 import org.apereo.cas.web.support.ThrottledSubmissionReceiver;
@@ -9,9 +10,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Implementation of a {@link InMemoryThrottledSubmissionHandlerInterceptor} that keeps track of a mapping
@@ -63,7 +61,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         if (store.contains(key)) {
             val submission = store.get(key);
             LOGGER.trace("Found existing throttled submission [{}] for key [{}]", submission, key);
-            if (!submission.hasExpiredAlready()) {
+            if (!Objects.requireNonNull(submission).hasExpiredAlready()) {
                 LOGGER.warn("Throttled submission [{}] remains throttled; submission expires at [{}]", key, submission.getExpiration());
                 request.setAttribute(ThrottledSubmission.class.getSimpleName(), submission);
                 return true;

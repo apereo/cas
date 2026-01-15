@@ -1,18 +1,11 @@
 package org.apereo.cas.adaptors.x509.util;
 
+import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-
-import javax.security.auth.x500.X500Principal;
-import java.math.BigInteger;
-import java.security.PublicKey;
 import java.security.cert.Certificate;
-import java.security.cert.X509CRL;
-import java.security.cert.X509CRLEntry;
 import java.security.cert.X509Certificate;
-import java.util.Date;
-import java.util.Set;
 
 /**
  * Mock implementation of X.509 CRL.

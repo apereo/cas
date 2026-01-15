@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -15,8 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link RegisteredServiceAuthenticationHandlerResolver}
@@ -73,10 +73,10 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
 
     protected Set<AuthenticationHandler> filterExcludedAuthenticationHandlers(
         final Set<AuthenticationHandler> candidateHandlers,
-        final Service service,
-        final RegisteredService registeredService) {
+        @Nullable final Service service,
+        @Nullable final RegisteredService registeredService) {
 
-        val authenticationPolicy = registeredService.getAuthenticationPolicy();
+        val authenticationPolicy = Objects.requireNonNull(registeredService).getAuthenticationPolicy();
         val excludedHandlers = authenticationPolicy.getExcludedAuthenticationHandlers();
         LOGGER.debug("Authentication transaction excludes [{}] for service [{}]", excludedHandlers, service);
 
@@ -100,10 +100,10 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
 
     protected Set<AuthenticationHandler> filterRequiredAuthenticationHandlers(
         final Set<AuthenticationHandler> candidateHandlers,
-        final Service service, final RegisteredService registeredService,
+        @Nullable final Service service, @Nullable final RegisteredService registeredService,
         final AuthenticationTransaction transaction) {
 
-        val authenticationPolicy = registeredService.getAuthenticationPolicy();
+        val authenticationPolicy = Objects.requireNonNull(registeredService).getAuthenticationPolicy();
         val requiredHandlers = authenticationPolicy.getRequiredAuthenticationHandlers();
         LOGGER.debug("Authentication transaction requires [{}] for service [{}]", requiredHandlers, service);
         val handlerSet = new LinkedHashSet<>(candidateHandlers);

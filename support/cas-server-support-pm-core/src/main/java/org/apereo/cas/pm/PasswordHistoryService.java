@@ -1,10 +1,8 @@
 package org.apereo.cas.pm;
 
+import module java.base;
 import org.apereo.cas.pm.impl.history.PasswordHistoryEntity;
-
 import org.springframework.core.Ordered;
-
-import java.util.Collection;
 
 /**
  * This is {@link PasswordHistoryService}.

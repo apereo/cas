@@ -1,11 +1,11 @@
 package org.apereo.cas.dynamodb;
 
+import module java.base;
 import org.apereo.cas.aws.AmazonClientConfigurationBuilder;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -14,8 +14,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.dax.ClusterDaxClient;
 import software.amazon.dax.Configuration;
-
-import java.net.URI;
 
 /**
  * This is {@link AmazonDynamoDbClientFactory}.

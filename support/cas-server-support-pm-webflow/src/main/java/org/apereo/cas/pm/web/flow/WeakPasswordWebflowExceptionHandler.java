@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow;
 
+import module java.base;
 import org.apereo.cas.pm.WeakPasswordException;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
 import lombok.Getter;

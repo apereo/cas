@@ -1,11 +1,10 @@
 package org.apereo.cas.logout;
 
+import module java.base;
 import org.apereo.cas.web.HttpMessage;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.MediaType;
-import java.io.Serial;
-import java.net.URL;
 
 /**
  * A logout http message that is accompanied by a special content type

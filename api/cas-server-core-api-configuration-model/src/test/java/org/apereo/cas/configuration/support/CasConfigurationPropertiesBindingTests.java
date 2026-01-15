@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.support;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.mail.autoconfigure.MailProperties;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 
 const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions({ options: [ "--accept-lang=de", "--lang=de"] }));
@@ -30,7 +31,15 @@ const cas = require("../../cas.js");
     await cas.loginDuoSecurityBypassCode(page, "duocode");
     await cas.sleep(6000);
     await cas.screenshot(page);
-    await cas.assertTicketParameter(page);
+
+    const ticket = await cas.assertTicketParameter(page);
+    const json = await cas.validateTicket(service, ticket);
+    const authenticationSuccess = json.serviceResponse.authenticationSuccess;
+    assert(authenticationSuccess.user === "duocode");
+
+    const attributes = authenticationSuccess.attributes;
+    assert(Object.keys(attributes).length === 1);
+    assert(attributes.authnContextClass[0] === "mfa-duo");
     await cas.closeBrowser(browser);
 
 })();

@@ -1,7 +1,7 @@
 package org.apereo.cas.web.support;
 
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import module java.base;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link ThrottledSubmissionsStore}.
@@ -50,7 +50,7 @@ public interface ThrottledSubmissionsStore<T extends ThrottledSubmission> {
      * @param key the key
      * @return the zoned date time
      */
-    T get(String key);
+    @Nullable T get(String key);
 
     /**
      * Get entries.

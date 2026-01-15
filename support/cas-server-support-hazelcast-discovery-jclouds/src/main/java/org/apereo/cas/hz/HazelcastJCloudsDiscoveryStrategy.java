@@ -1,8 +1,8 @@
 package org.apereo.cas.hz;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastJCloudsDiscoveryProperties;
-
 import com.hazelcast.config.Config;
 import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.config.JoinConfig;
@@ -10,9 +10,6 @@ import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.jclouds.JCloudsDiscoveryStrategyFactory;
 import lombok.val;
 import org.springframework.util.StringUtils;
-
-import java.util.HashMap;
-import java.util.Optional;
 
 /**
  * This is {@link HazelcastJCloudsDiscoveryStrategy}.

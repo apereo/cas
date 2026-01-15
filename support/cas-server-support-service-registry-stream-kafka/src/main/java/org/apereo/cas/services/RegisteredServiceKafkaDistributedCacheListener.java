@@ -1,10 +1,10 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;

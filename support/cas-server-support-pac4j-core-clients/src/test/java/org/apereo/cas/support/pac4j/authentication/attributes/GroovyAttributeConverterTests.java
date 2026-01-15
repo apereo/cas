@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication.attributes;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultitenancyAutoConfiguration;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;

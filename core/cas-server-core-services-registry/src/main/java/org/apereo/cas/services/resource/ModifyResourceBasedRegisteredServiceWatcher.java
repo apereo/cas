@@ -1,15 +1,11 @@
 package org.apereo.cas.services.resource;
 
+import module java.base;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreSaveEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * This is {@link ModifyResourceBasedRegisteredServiceWatcher}.
@@ -35,14 +31,14 @@ public class ModifyResourceBasedRegisteredServiceWatcher extends BaseResourceBas
                 .forEach(newService -> {
                     val oldService = serviceRegistryDao.findServiceById(newService.getId());
 
-                    if (!newService.equals(oldService)) {
+                    if (newService.equals(oldService)) {
+                        LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. Entry may have already been saved "
+                            + "in the event processing pipeline", newService.getId(), file.getName());
+                    } else {
                         LOGGER.debug("Updating service definitions with [{}]", newService);
                         serviceRegistryDao.publishEvent(new CasRegisteredServicePreSaveEvent(this, newService, clientInfo));
                         serviceRegistryDao.update(newService);
                         serviceRegistryDao.publishEvent(new CasRegisteredServiceSavedEvent(this, newService, clientInfo));
-                    } else {
-                        LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. Entry may have already been saved "
-                                     + "in the event processing pipeline", newService.getId(), file.getName());
                     }
                 });
         }

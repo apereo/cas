@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.util.LoggingUtils;
@@ -16,9 +17,6 @@ import org.springframework.http.ResponseEntity;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link RestResourceUtils}.

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.events.listener;
 
+import module java.base;
 import org.apereo.cas.util.spring.CasEventListener;
-
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;

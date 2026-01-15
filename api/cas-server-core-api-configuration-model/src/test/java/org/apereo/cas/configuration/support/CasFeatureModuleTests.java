@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import module java.base;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import lombok.Getter;
 import lombok.Setter;

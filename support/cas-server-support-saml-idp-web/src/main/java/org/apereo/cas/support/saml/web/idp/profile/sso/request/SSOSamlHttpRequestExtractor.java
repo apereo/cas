@@ -1,12 +1,11 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso.request;
 
+import module java.base;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SignableSAMLObject;
-
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 /**
  * This is {@link SSOSamlHttpRequestExtractor}.

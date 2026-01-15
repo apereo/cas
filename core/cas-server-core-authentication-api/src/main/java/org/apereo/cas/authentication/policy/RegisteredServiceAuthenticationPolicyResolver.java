@@ -1,20 +1,17 @@
 package org.apereo.cas.authentication.policy;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationPolicyResolver;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * This is {@link RegisteredServiceAuthenticationPolicyResolver}
@@ -45,8 +42,8 @@ public class RegisteredServiceAuthenticationPolicyResolver implements Authentica
     @Override
     public Set<AuthenticationPolicy> resolve(final AuthenticationTransaction transaction) throws Throwable {
         val service = authenticationServiceSelectionPlan.resolveService(transaction.getService());
-        val registeredService = this.servicesManager.findServiceBy(service);
-        val criteria = registeredService.getAuthenticationPolicy().getCriteria();
+        val registeredService = servicesManager.findServiceBy(service);
+        val criteria = Objects.requireNonNull(registeredService).getAuthenticationPolicy().getCriteria();
         val policies = new LinkedHashSet<AuthenticationPolicy>(1);
         if (criteria != null) {
             policies.add(criteria.toAuthenticationPolicy(registeredService));

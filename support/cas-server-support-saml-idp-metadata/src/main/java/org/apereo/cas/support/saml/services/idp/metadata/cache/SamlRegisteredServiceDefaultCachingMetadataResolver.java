@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.monitor.Monitorable;
@@ -29,8 +30,6 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.core.retry.Retryable;
 import org.springframework.util.Assert;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * An adaptation of metadata resolver which handles the resolution of metadata resources

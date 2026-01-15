@@ -1,6 +1,5 @@
-// CHECKSTYLE:OFF
 package org.apereo.cas.support.inwebo.service.soap.generated;
-
+import module java.base;
 import jakarta.xml.bind.annotation.XmlRegistry;
 
 /**
@@ -13,13 +12,13 @@ import jakarta.xml.bind.annotation.XmlRegistry;
 public class ObjectFactory {
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: soap
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: soap.
      */
     public ObjectFactory() {
     }
 
     /**
-     * Create an instance of {@link LoginSearch }
+     * Create an instance of {@link LoginSearch }.
      *
      * @return the LoginSearch
      */
@@ -28,7 +27,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LoginSearchResponse }
+     * Create an instance of {@link LoginSearchResponse }.
      *
      * @return the LoginSearchResponse
      */
@@ -37,7 +36,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LoginSearchResult }
+     * Create an instance of {@link LoginSearchResult }.
      *
      * @return the LoginSearchResult
      */
@@ -46,21 +45,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link LoginQuery }
+     * Create an instance of {@link LoginQuery }.
      */
     public LoginQuery createLoginQuery() {
         return new LoginQuery();
     }
 
     /**
-     * Create an instance of {@link LoginQueryResponse }
+     * Create an instance of {@link LoginQueryResponse }.
      */
     public LoginQueryResponse createLoginQueryResponse() {
         return new LoginQueryResponse();
     }
 
     /**
-     * Create an instance of {@link LoginQueryResult }
+     * Create an instance of {@link LoginQueryResult }.
      */
     public LoginQueryResult createLoginQueryResult() {
         return new LoginQueryResult();

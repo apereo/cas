@@ -1,9 +1,7 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * This is {@link RegisteredServiceIndexService}.

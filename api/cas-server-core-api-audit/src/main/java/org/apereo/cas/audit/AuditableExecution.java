@@ -1,4 +1,5 @@
 package org.apereo.cas.audit;
+import module java.base;
 
 /**
  * This is {@link AuditableExecution}. This is a strategy interface which acts as an abstraction for audit trail execution

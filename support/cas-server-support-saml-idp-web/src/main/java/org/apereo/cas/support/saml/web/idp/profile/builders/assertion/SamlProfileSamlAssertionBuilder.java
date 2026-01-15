@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.assertion;
 
+import module java.base;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
@@ -29,11 +30,6 @@ import org.opensaml.saml.saml2.core.Statement;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This is {@link SamlProfileSamlAssertionBuilder}.

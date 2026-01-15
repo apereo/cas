@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.adaptors.rest.RestAuthenticationHandler;
 import org.apereo.cas.adaptors.rest.TenantRestAuthenticationHandlerBuilder;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;

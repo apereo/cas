@@ -1,13 +1,11 @@
 package org.apereo.cas.scim.v2.persondirectory;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.scim.ScimPrincipalAttributesProperties;
 import org.apereo.cas.scim.v2.BaseScimService;
 import de.captaingoldfish.scim.sdk.common.resources.User;
 import de.captaingoldfish.scim.sdk.common.resources.multicomplex.MultiComplexNode;
 import lombok.val;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link ScimPersonAttributeService}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication.clients;
 
+import module java.base;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.NamedObject;
 import org.pac4j.core.client.Client;

@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex.features;
 
+import module java.base;
 import org.graalvm.nativeimage.hosted.Feature;
 
 /**

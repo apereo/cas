@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -10,16 +11,10 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import tools.jackson.databind.ObjectMapper;
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ConsentAccountProfilePrepareAction}.
@@ -35,7 +30,7 @@ public class ConsentAccountProfilePrepareAction extends BaseCasWebflowAction {
     private final ConsentEngine consentEngine;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
         val decisions = consentEngine.getConsentRepository().findConsentDecisions(principal.getId());

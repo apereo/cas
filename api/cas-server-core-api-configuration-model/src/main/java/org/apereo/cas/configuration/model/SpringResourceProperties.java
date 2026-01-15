@@ -1,17 +1,14 @@
 package org.apereo.cas.configuration.model;
 
+import module java.base;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.springframework.core.io.Resource;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link SpringResourceProperties}.

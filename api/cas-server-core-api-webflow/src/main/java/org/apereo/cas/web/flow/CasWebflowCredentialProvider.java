@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.jspecify.annotations.NonNull;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.List;
 
 /**
  * This is {@link CasWebflowCredentialProvider}.

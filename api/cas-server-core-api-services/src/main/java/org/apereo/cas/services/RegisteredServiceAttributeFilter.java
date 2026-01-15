@@ -1,11 +1,8 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Defines the general contract of the attribute release policy for a registered service.

@@ -1,5 +1,6 @@
 package org.apereo.cas.acme;
 
+import module java.base;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,6 @@ import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.util.CSRBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

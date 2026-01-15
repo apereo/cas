@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.jwt;
 
+import module java.base;
 import org.apereo.cas.shell.commands.CasShellCommand;
 import org.apereo.cas.util.RandomUtils;
 import com.nimbusds.jose.Algorithm;
@@ -18,8 +19,6 @@ import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.profile.JwtGenerator;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link GenerateJwtCommand}.

@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication.support.password;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -33,15 +33,15 @@ public class GroovyPasswordEncoder extends AbstractPasswordEncoder implements Di
     }
 
     @Override
-    public boolean matchesNonNull(final @NonNull String rawPassword, final @NonNull String encodedPassword) {
+    public boolean matchesNonNull(final String rawPassword, final String encodedPassword) {
         return FunctionUtils.doUnchecked(() -> {
             val args = new Object[]{rawPassword, encodedPassword, LOGGER, this.applicationContext};
-            return watchableScript.execute("matches", Boolean.class, args);
+            return Boolean.TRUE.equals(watchableScript.execute("matches", Boolean.class, args));
         });
     }
 
     @Override
-    public byte @NonNull [] encodedNonNullPassword(final @NonNull CharSequence rawPassword, final byte @NonNull [] salt) {
+    public byte[] encodedNonNullPassword(final CharSequence rawPassword, final byte[] salt) {
         return FunctionUtils.doUnchecked(() -> {
             val args = new Object[]{rawPassword, salt, LOGGER, this.applicationContext};
             return watchableScript.execute(args, byte[].class);

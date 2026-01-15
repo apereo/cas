@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.io.Serializable;
 
 /**
  * Describes an authentication credential. Implementations SHOULD also implement {@link CredentialMetadata} if

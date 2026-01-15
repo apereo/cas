@@ -1,14 +1,11 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.val;
 import org.apache.commons.beanutils.BeanUtils;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.springframework.http.HttpMethod;
-
-import java.io.Serial;
-import java.util.HashMap;
 
 /**
  * This is {@link HttpServletRequestXMLMessageDecodersMap}.

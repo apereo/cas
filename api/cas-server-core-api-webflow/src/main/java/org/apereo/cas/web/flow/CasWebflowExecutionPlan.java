@@ -1,9 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.springframework.web.servlet.HandlerInterceptor;
-
-import java.util.Collection;
 
 /**
  * This is {@link CasWebflowExecutionPlan}.

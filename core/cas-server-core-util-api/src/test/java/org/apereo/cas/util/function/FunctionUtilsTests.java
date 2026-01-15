@@ -1,5 +1,6 @@
 package org.apereo.cas.util.function;
 
+import module java.base;
 import org.apereo.cas.util.CompressionUtils;
 import com.google.common.base.Suppliers;
 import lombok.val;
@@ -9,10 +10,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.retry.RetryException;
 import org.springframework.core.retry.Retryable;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

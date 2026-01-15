@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.dynareg;
 
+import module java.base;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreJacksonDeserializer;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -10,10 +11,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.jose4j.jwk.JsonWebKeySet;
 import tools.jackson.databind.annotation.JsonDeserialize;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link OidcClientRegistrationRequest}.

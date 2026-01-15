@@ -1,12 +1,12 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.persondir.ActiveDirectoryLdapEntryHandler;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import java.util.Date;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

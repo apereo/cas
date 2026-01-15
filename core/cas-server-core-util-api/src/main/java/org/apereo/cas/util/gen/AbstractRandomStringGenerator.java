@@ -1,14 +1,11 @@
 package org.apereo.cas.util.gen;
 
+import module java.base;
 import org.apereo.cas.util.RandomUtils;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
-import java.nio.charset.StandardCharsets;
-import java.security.SecureRandom;
 
 /**
  * This is {@link AbstractRandomStringGenerator}.

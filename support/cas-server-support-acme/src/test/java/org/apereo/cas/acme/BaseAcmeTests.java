@@ -1,5 +1,6 @@
 package org.apereo.cas.acme;
 
+import module java.base;
 import org.apereo.cas.config.CasAcmeAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;

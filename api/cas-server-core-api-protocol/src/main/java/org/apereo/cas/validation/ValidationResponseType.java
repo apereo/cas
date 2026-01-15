@@ -1,4 +1,5 @@
 package org.apereo.cas.validation;
+import module java.base;
 
 /**
  * Enumerates the list of response types

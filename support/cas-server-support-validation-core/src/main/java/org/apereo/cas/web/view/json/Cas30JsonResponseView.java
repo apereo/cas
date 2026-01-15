@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view.json;
 
+import module java.base;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
@@ -21,10 +22,6 @@ import tools.jackson.databind.cfg.DateTimeFeature;
 import tools.jackson.databind.json.JsonMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Renders the model prepared by CAS in JSON format.
@@ -54,11 +51,9 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         var jsonMapper = JsonMapper.builderWithJackson2Defaults()
             .defaultPrettyPrinter(new DefaultPrettyPrinter())
             .configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-            .changeDefaultPropertyInclusion(handler -> {
-                handler.withValueInclusion(JsonInclude.Include.NON_NULL);
-                handler.withContentInclusion(JsonInclude.Include.NON_NULL);
-                return handler;
-            });
+            .changeDefaultPropertyInclusion(handler ->
+                handler.withValueInclusion(JsonInclude.Include.NON_NULL)
+                    .withContentInclusion(JsonInclude.Include.NON_NULL));
         JSON_MAPPER = jsonMapper.build();
         JSON_VIEW = new JacksonJsonView(JSON_MAPPER);
     }

@@ -1,13 +1,12 @@
 package org.apereo.cas.audit.spi.principal;
 
+import module java.base;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.aspectj.lang.JoinPoint;
-
-import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultAuditPrincipalIdProvider}.
@@ -21,16 +20,20 @@ public class DefaultAuditPrincipalIdProvider implements AuditPrincipalIdProvider
     private int order = Integer.MAX_VALUE;
 
     @Override
-    public String getPrincipalIdFrom(final JoinPoint auditTarget, final Authentication authentication,
-                                     final Object returnValue, final Exception exception) {
+    public @Nullable String getPrincipalIdFrom(final JoinPoint auditTarget,
+                                               @Nullable final Authentication authentication,
+                                               @Nullable final Object returnValue,
+                                               @Nullable final Exception exception) {
         return Optional.ofNullable(authentication)
             .map(authn -> authn.getPrincipal().getId())
             .orElse(null);
     }
 
     @Override
-    public boolean supports(final JoinPoint auditTarget, final Authentication authentication,
-                            final Object resultValue, final Exception exception) {
+    public boolean supports(final JoinPoint auditTarget,
+                            @Nullable final Authentication authentication,
+                            @Nullable final Object resultValue,
+                            @Nullable final Exception exception) {
         return authentication != null;
     }
 }

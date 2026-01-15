@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-
+import module java.base;
 import org.apereo.cas.config.CasRedisMultifactorAuthenticationTrustAutoConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
@@ -15,12 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

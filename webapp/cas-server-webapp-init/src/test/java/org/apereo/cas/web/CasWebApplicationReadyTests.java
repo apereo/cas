@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreConfigurationMetadataAutoConfiguration;
 import org.apereo.cas.config.CasWebApplicationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 @ExtendWith(CasTestExtension.class)
 class CasWebApplicationReadyTests {
     @Test

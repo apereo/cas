@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.mgmr;
 
+import module java.base;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
@@ -13,8 +14,6 @@ import org.apache.commons.lang3.ClassUtils;
 import org.jooq.lambda.Unchecked;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Locale;
-import java.util.Optional;
 
 /**
  * This is {@link DefaultCookieSameSitePolicy}.

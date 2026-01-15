@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import module java.base;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.junit.jupiter.api.Tag;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

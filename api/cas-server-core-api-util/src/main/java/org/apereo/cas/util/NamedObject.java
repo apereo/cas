@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
 

@@ -1,13 +1,11 @@
 package org.apereo.cas.authentication.support.password;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.MessageDescriptor;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultPasswordPolicyHandlingStrategy}.
@@ -19,7 +17,8 @@ import java.util.List;
 public class DefaultPasswordPolicyHandlingStrategy<AuthnResponse> implements AuthenticationPasswordPolicyHandlingStrategy<AuthnResponse, PasswordPolicyContext> {
 
     @Override
-    public List<MessageDescriptor> handle(final AuthnResponse response, final PasswordPolicyContext configuration) throws Throwable {
+    public @Nullable List<MessageDescriptor> handle(@Nullable final AuthnResponse response,
+                                                    @Nullable final PasswordPolicyContext configuration) throws Throwable {
         if (configuration == null) {
             LOGGER.debug("No password policy configuration is defined");
             return new ArrayList<>();

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import org.apereo.cas.throttle.AbstractInspektrAuditHandlerInterceptorAdapter;
 import org.apereo.cas.throttle.ThrottledSubmissionHandlerConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
@@ -10,9 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.stream.Collectors;
 
 /**
  * Works in conjunction with a Mongo database to block attempts to dictionary attack users.

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.query.BasicRegisteredServiceQueryIndex;
 import org.apereo.cas.services.query.RegisteredServiceQueryAttribute;
@@ -11,9 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.BiPredicate;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link BaseServicesManagerRegisteredServiceLocator}.
@@ -35,7 +34,7 @@ public abstract class BaseServicesManagerRegisteredServiceLocator implements Ser
     };
 
     @Override
-    public RegisteredService locate(final Collection<? extends RegisteredService> candidates, final Service service) {
+    public @Nullable RegisteredService locate(final Collection<? extends RegisteredService> candidates, final Service service) {
         return candidates
             .stream()
             .filter(registeredService -> supports(registeredService, service))
