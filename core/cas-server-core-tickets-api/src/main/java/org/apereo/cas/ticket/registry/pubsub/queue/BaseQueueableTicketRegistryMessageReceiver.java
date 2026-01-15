@@ -1,9 +1,9 @@
 package org.apereo.cas.ticket.registry.pubsub.queue;
 
+import module java.base;
 import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
 import org.apereo.cas.util.PublisherIdentifier;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

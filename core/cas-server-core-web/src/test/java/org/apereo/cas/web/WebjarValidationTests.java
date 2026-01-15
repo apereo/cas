@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -8,10 +9,6 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
-
-import java.io.IOException;
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

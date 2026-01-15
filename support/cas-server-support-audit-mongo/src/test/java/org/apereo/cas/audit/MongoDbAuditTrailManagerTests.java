@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.config.CasSupportMongoDbAuditAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;

@@ -1,5 +1,6 @@
 package org.apereo.cas.persondir;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.BasePersonAttributeDao;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.attribute.SimpleUsernameAttributeProvider;
@@ -23,12 +24,6 @@ import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.http.HttpMethod;
 import tools.jackson.databind.ObjectMapper;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * Provides the ability to contact a URL resource to ask for attributes.

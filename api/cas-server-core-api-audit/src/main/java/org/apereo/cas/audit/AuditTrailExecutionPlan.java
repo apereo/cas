@@ -1,10 +1,8 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link AuditTrailExecutionPlan}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.util.app;
 
+import module java.base;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -8,10 +9,6 @@ import org.springframework.boot.context.metrics.buffering.BufferingApplicationSt
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.metrics.ApplicationStartup;
 import org.springframework.core.metrics.jfr.FlightRecorderApplicationStartup;
-import java.util.List;
-import java.util.Objects;
-import java.util.ServiceLoader;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ApplicationUtils}.

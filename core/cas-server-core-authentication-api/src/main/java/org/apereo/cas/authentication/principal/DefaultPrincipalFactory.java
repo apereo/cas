@@ -1,10 +1,8 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import lombok.EqualsAndHashCode;
-
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Factory to create {@link SimplePrincipal} objects.
@@ -18,7 +16,7 @@ public class DefaultPrincipalFactory implements PrincipalFactory {
     private static final long serialVersionUID = -3999695695604948495L;
 
     @Override
-    public Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) throws Throwable {
+    public @Nullable Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) throws Throwable {
         return new SimplePrincipal(id, attributes);
     }
 }

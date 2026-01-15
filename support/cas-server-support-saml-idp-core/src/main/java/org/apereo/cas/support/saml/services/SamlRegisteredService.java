@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import module java.base;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
@@ -13,14 +14,6 @@ import lombok.Setter;
 import lombok.ToString;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import tools.jackson.databind.annotation.JsonDeserialize;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * The {@link SamlRegisteredService} is responsible for managing the SAML metadata for a given SP.

@@ -1,12 +1,10 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-
 import lombok.val;
 import org.apache.commons.lang3.Strings;
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link TransientSessionTicketFactory}.
@@ -51,7 +49,7 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      * @return the delegated authentication request ticket
      * @throws Throwable the throwable
      */
-    T create(Service service, Map<String, Serializable> properties) throws Throwable;
+    T create(@Nullable Service service, Map<String, Serializable> properties) throws Throwable;
 
     /**
      * Create transient session ticket.
@@ -72,7 +70,7 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      * @param properties the properties
      * @return the t
      */
-    T create(String id, Service service, Map<String, Serializable> properties);
+    T create(String id, @Nullable Service service, Map<String, Serializable> properties);
 
     /**
      * Create delegated authentication request ticket.
@@ -81,7 +79,7 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      * @return the delegated authentication request ticket
      * @throws Throwable the throwable
      */
-    default T create(final Service service) throws Throwable {
+    default T create(@Nullable final Service service) throws Throwable {
         return create(service, new LinkedHashMap<>());
     }
 

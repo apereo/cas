@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.executor;
 
-import java.io.IOException;
+import module java.base;
 
 /**
  * Provides a strategy pattern interface for transforming an object into a byte array and vice versa.

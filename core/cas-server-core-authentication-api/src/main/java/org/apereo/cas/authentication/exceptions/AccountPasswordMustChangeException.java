@@ -1,10 +1,8 @@
 package org.apereo.cas.authentication.exceptions;
 
+import module java.base;
 import lombok.NoArgsConstructor;
-
-import javax.security.auth.login.CredentialExpiredException;
-
-import java.io.Serial;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Describes an authentication error condition where a user account's password must change before login.
@@ -18,12 +16,7 @@ public class AccountPasswordMustChangeException extends CredentialExpiredExcepti
     @Serial
     private static final long serialVersionUID = 7487835035108753209L;
 
-    /**
-     * Instantiates a new account password must change exception.
-     *
-     * @param msg the msg
-     */
-    public AccountPasswordMustChangeException(final String msg) {
+    public AccountPasswordMustChangeException(@Nullable final String msg) {
         super(msg);
     }
 }

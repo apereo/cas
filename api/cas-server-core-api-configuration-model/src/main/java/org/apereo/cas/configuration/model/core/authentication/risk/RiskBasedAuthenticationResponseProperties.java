@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication.risk;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
@@ -8,8 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link RiskBasedAuthenticationResponseProperties}.

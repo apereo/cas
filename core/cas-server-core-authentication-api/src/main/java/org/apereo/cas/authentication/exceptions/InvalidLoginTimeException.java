@@ -1,10 +1,7 @@
 package org.apereo.cas.authentication.exceptions;
 
+import module java.base;
 import lombok.NoArgsConstructor;
-
-import javax.security.auth.login.AccountException;
-
-import java.io.Serial;
 
 /**
  * Describes an error condition where authentication occurs at a time that is disallowed by security policy

@@ -1,5 +1,6 @@
 package org.apereo.cas.jmx.services;
 
+import module java.base;
 import org.apereo.cas.jmx.BaseCasJmxTests;
 import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;

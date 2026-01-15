@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.ecp;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.Credential;
@@ -27,10 +28,6 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationCo
 import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.LinkedHashMap;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ECPSamlIdPProfileHandlerController}.

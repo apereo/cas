@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.CaseCanonicalizationMode;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.AccessLevel;
@@ -13,9 +14,6 @@ import lombok.val;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import jakarta.persistence.PostLoad;
-import java.io.Serial;
-import java.util.Locale;
-import java.util.Optional;
 
 /**
  * This is {@link BaseRegisteredServiceUsernameAttributeProvider}.

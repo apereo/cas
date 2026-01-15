@@ -1,8 +1,8 @@
 package org.apereo.cas.util.crypto;
 
+import module java.base;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -10,13 +10,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cryptacular.util.CertUtil;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.InputStreamSource;
-
-import java.io.InputStream;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 
 
 /**

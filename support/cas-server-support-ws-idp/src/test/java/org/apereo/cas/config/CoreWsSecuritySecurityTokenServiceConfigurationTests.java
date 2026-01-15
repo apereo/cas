@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.BaseCoreWsSecurityIdentityProviderConfigurationTests;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
-
 import org.apache.cxf.sts.token.realm.RealmProperties;
 import org.apache.cxf.ws.security.sts.provider.SecurityTokenServiceProvider;
 import org.junit.jupiter.api.Tag;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

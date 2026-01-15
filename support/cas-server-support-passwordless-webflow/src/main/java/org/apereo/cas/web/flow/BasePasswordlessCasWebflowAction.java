@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -16,13 +17,11 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link BasePasswordlessCasWebflowAction}.
@@ -93,24 +92,24 @@ public abstract class BasePasswordlessCasWebflowAction extends BaseCasWebflowAct
         val userAttributes = CollectionUtils.toMultiValuedMap((Map) user.getAttributes());
         val resolvedPrincipal = authenticationSystemSupport.getPrincipalResolver()
             .resolve(new BasicIdentifiableCredential(user.getUsername()));
-        val attributes = CoreAuthenticationUtils.mergeAttributes(userAttributes, resolvedPrincipal.getAttributes());
+        val attributes = CoreAuthenticationUtils.mergeAttributes(userAttributes, Objects.requireNonNull(resolvedPrincipal).getAttributes());
         val principalId = resolvedPrincipal instanceof NullPrincipal ? user.getUsername() : resolvedPrincipal.getId();
         val principal = passwordlessPrincipalFactory.createPrincipal(principalId, attributes);
         return DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
     }
 
     protected void populateContextWithAuthenticationResult(final RequestContext requestContext, final Authentication authentication,
-                                                           final WebApplicationService service) throws Throwable {
+                                                           @Nullable final WebApplicationService service) throws Throwable {
         val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
         val authenticationResult = builder.collect(authentication).build(service);
         WebUtils.putAuthenticationResultBuilder(builder, requestContext);
-        WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+        WebUtils.putAuthenticationResult(Objects.requireNonNull(authenticationResult), requestContext);
         WebUtils.putAuthentication(authentication, requestContext);
     }
 
     protected Optional<MultifactorAuthenticationProvider> resolveMultifactorAuthenticationProvider(
         final RequestContext requestContext, final Authentication authentication,
-        final WebApplicationService service) {
+        @Nullable final WebApplicationService service) {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);

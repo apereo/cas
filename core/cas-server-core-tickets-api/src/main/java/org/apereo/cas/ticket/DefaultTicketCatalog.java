@@ -1,16 +1,11 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultTicketCatalog}.
@@ -41,7 +36,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
     }
 
     @Override
-    public TicketDefinition find(final String ticketId) {
+    public @Nullable TicketDefinition find(final String ticketId) {
         val index = ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR);
         val prefix = index == -1 ? ticketId : ticketId.substring(0, index);
 
@@ -58,7 +53,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
     }
 
     @Override
-    public TicketDefinition find(final Ticket ticket) {
+    public @Nullable TicketDefinition find(final Ticket ticket) {
         LOGGER.trace("Locating ticket definition for ticket [{}]", ticket);
         return find(ticket.getId());
     }

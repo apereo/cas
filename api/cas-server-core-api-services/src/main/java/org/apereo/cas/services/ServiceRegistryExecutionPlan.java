@@ -1,8 +1,6 @@
 package org.apereo.cas.services;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Predicate;
+import module java.base;
 
 /**
  * This is {@link ServiceRegistryExecutionPlan}.

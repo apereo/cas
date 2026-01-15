@@ -1,11 +1,9 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
-
-import java.io.Serial;
-import java.net.URL;
 
 /**
  * A proxy policy that disallows proxying.

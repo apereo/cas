@@ -1,9 +1,8 @@
 package org.apereo.cas.throttle;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.ThrottledSubmission;
-
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is {@link ConcurrentThrottledSubmissionsStore}.

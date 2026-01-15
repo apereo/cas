@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.logout;
 
+import module java.base;
 import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
@@ -20,8 +21,6 @@ import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
-import java.net.URI;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

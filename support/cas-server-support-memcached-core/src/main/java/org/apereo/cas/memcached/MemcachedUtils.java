@@ -1,9 +1,9 @@
 package org.apereo.cas.memcached;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
 import org.apereo.cas.memcached.kryo.CasKryoPool;
 import org.apereo.cas.memcached.kryo.CasKryoTranscoder;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -11,9 +11,6 @@ import net.spy.memcached.transcoders.SerializingTranscoder;
 import net.spy.memcached.transcoders.Transcoder;
 import net.spy.memcached.transcoders.WhalinTranscoder;
 import net.spy.memcached.transcoders.WhalinV1Transcoder;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * This is {@link MemcachedUtils}.

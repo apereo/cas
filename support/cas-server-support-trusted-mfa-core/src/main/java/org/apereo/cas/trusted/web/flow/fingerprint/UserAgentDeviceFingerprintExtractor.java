@@ -1,12 +1,12 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 /**
  * Provides the User Agent for device fingerprint generation.

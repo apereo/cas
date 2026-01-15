@@ -1,15 +1,10 @@
 package org.apereo.cas.audit.spi;
 
+import module java.base;
 import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link MockAuditTrailManager}.

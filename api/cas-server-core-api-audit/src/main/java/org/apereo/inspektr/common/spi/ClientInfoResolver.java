@@ -1,7 +1,9 @@
 package org.apereo.inspektr.common.spi;
 
+import module java.base;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface for resolving the {@link ClientInfo} object.
@@ -19,5 +21,5 @@ public interface ClientInfoResolver {
      * @param retVal    the return value from the method call.
      * @return the constructed ClientInfo object.  Should never return null!
      */
-    ClientInfo resolveFrom(JoinPoint joinPoint, Object retVal);
+    ClientInfo resolveFrom(JoinPoint joinPoint, @Nullable Object retVal);
 }

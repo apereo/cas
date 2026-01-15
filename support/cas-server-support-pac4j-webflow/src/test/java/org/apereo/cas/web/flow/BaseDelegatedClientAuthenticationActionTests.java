@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
@@ -33,8 +34,6 @@ import org.springframework.webflow.engine.support.BeanFactoryVariableValueFactor
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
-import java.util.Locale;
-import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

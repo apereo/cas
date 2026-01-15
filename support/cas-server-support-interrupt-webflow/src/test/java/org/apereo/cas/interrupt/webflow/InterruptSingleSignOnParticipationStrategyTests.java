@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt.webflow;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.test.CasTestExtension;

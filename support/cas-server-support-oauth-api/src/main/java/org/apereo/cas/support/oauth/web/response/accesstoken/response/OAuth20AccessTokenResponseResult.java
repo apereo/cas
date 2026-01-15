@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableEntity;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
@@ -15,8 +16,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 import lombok.val;
 import org.pac4j.core.profile.UserProfile;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link OAuth20AccessTokenResponseResult}.

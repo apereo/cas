@@ -1,8 +1,8 @@
 package org.apereo.cas.validation;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,10 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.util.function.Function;
 
 /**
  * Base validation specification for the CAS protocol. This specification checks

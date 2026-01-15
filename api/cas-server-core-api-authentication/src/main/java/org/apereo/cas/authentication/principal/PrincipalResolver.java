@@ -1,10 +1,11 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.util.NamedObject;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
-import java.util.Optional;
 
 /**
  * Resolves a {@link Principal} from a {@link Credential} using an arbitrary strategy.
@@ -45,7 +46,7 @@ public interface PrincipalResolver extends Ordered, NamedObject {
      * @return the principal
      * @throws Throwable the throwable
      */
-    default Principal resolve(final Credential credential) throws Throwable {
+    default @Nullable Principal resolve(final Credential credential) throws Throwable {
         return resolve(credential, Optional.empty(), Optional.empty(), Optional.empty());
     }
 
@@ -58,7 +59,7 @@ public interface PrincipalResolver extends Ordered, NamedObject {
      * @return the principal
      * @throws Throwable the throwable
      */
-    default Principal resolve(final Credential credential, final Optional<AuthenticationHandler> handler) throws Throwable {
+    default @Nullable Principal resolve(final Credential credential, final Optional<AuthenticationHandler> handler) throws Throwable {
         return resolve(credential, Optional.empty(), handler, Optional.empty());
     }
 
@@ -72,9 +73,9 @@ public interface PrincipalResolver extends Ordered, NamedObject {
      * @return Resolved principal, or null if the principal could not be resolved.
      * @throws Throwable the throwable
      */
-    Principal resolve(Credential credential, Optional<Principal> principal,
-                      Optional<AuthenticationHandler> handler,
-                      Optional<Service> service) throws Throwable;
+    @Nullable Principal resolve(Credential credential, Optional<Principal> principal,
+                                Optional<AuthenticationHandler> handler,
+                                Optional<Service> service) throws Throwable;
 
     /**
      * Determines whether this instance supports principal resolution from the given credential. This method SHOULD

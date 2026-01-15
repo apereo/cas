@@ -1,7 +1,7 @@
 package org.apereo.cas.util.logging;
 
+import module java.base;
 import org.apereo.cas.util.LogMessageSummarizer;
-
 import org.slf4j.Logger;
 
 /**

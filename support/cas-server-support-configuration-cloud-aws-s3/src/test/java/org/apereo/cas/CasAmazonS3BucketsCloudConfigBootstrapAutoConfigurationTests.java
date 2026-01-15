@@ -1,8 +1,10 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.config.CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.api.MutablePropertySource;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -15,7 +17,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.bootstrap.config.BootstrapPropertySource;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockEnvironment;
+import org.yaml.snakeyaml.Yaml;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -60,6 +65,9 @@ class CasAmazonS3BucketsCloudConfigBootstrapAutoConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ConfigurableEnvironment environment;
+    
     @BeforeAll
     public static void initialize() {
         val environment = new MockEnvironment();
@@ -73,13 +81,38 @@ class CasAmazonS3BucketsCloudConfigBootstrapAutoConfigurationTests {
         deleteBucket(s3Client);
         s3Client.createBucket(CreateBucketRequest.builder().bucket(BUCKET_NAME).build());
         val properties = "cas.authn.accept.users=" + STATIC_AUTHN_USERS;
-        val request = PutObjectRequest.builder().bucket(BUCKET_NAME).key("cas.properties").build();
+        var request = PutObjectRequest.builder().bucket(BUCKET_NAME).key("cas.properties").build();
         s3Client.putObject(request, RequestBody.fromString(properties));
+
+        request = PutObjectRequest.builder().bucket(BUCKET_NAME).key("cas.yml").build();
+        val yaml = new Yaml();
+        val yamlString = yaml.dump(Map.of("server", Map.of("port", 8080)));
+        s3Client.putObject(request, RequestBody.fromString(yamlString));
     }
 
     @Test
     void verifyOperation() {
         assertEquals(STATIC_AUTHN_USERS, casProperties.getAuthn().getAccept().getUsers());
+
+        val propertySource = environment.getPropertySources()
+            .stream()
+            .filter(source -> source instanceof BootstrapPropertySource<?>)
+            .map(BootstrapPropertySource.class::cast)
+            .map(BootstrapPropertySource::getDelegate)
+            .filter(MutablePropertySource.class::isInstance)
+            .map(MutablePropertySource.class::cast)
+            .findFirst()
+            .orElseThrow();
+        propertySource.setProperty("spring.security.user.roles[0]", "ADMIN");
+        propertySource.setProperty("server.port", "9090");
+        propertySource.setProperty("cas.server.prefix", "https://example.org/cas");
+        propertySource.refresh();
+        val prefix = environment.getProperty("cas.server.prefix");
+        assertEquals("https://example.org/cas", prefix);
+        propertySource.removeProperty("server.port");
+        assertNull(environment.getProperty("server.port"));
+        propertySource.removeAll();
+        assertEquals(0, propertySource.getPropertyNames().length);
     }
 
     private static void deleteBucket(final S3Client s3Client) {

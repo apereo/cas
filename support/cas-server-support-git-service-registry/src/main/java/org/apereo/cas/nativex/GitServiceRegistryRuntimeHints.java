@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.eclipse.jgit.dircache.DirCache;
 import org.eclipse.jgit.internal.JGitText;
@@ -8,7 +9,6 @@ import org.eclipse.jgit.transport.HttpConfig;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.List;
 
 /**
  * This is {@link GitServiceRegistryRuntimeHints}.

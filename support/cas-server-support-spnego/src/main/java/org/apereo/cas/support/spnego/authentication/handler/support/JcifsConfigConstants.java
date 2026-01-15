@@ -1,4 +1,5 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
+import module java.base;
 
 /**
  * This is {@link JcifsConfigConstants}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;

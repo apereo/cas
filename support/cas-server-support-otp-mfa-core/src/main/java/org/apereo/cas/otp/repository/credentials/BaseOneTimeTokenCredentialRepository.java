@@ -1,5 +1,6 @@
 package org.apereo.cas.otp.repository.credentials;
 
+import module java.base;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorScratchCodeProperties;
@@ -12,9 +13,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link BaseOneTimeTokenCredentialRepository}.

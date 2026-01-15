@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.calcs;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationVerifiedEvent;
@@ -13,8 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
-import java.time.Clock;
-import java.time.Instant;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

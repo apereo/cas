@@ -1,9 +1,9 @@
 package org.apereo.cas.pac4j.client.authz;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**

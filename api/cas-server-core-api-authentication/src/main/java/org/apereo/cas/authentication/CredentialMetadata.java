@@ -1,10 +1,8 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Describes a credential provided for authentication. Implementations should expect instances of this type to be
@@ -94,7 +92,7 @@ public interface CredentialMetadata extends Serializable {
      * @param clazz the clazz
      * @return the property
      */
-    <T extends Serializable> T getProperty(String key, Class<T> clazz);
+    <T extends Serializable> @Nullable T getProperty(String key, Class<T> clazz);
 
     /**
      * Contains property?.

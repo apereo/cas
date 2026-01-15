@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.composite;
 
+import module java.base;
 import org.apereo.cas.authentication.ChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
@@ -10,10 +11,9 @@ import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Comparator;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link PrepareMultifactorProviderSelectionAction}.
@@ -26,7 +26,7 @@ public class PrepareMultifactorProviderSelectionAction extends BaseCasWebflowAct
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val attributes = requestContext.getCurrentEvent().getAttributes();
         val registeredService = attributes.get(RegisteredService.class.getName(), RegisteredService.class);
         val service = attributes.get(Service.class.getName(), Service.class);

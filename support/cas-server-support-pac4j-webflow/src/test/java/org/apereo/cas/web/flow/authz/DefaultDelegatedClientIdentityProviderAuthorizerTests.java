@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.authz;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -24,9 +25,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,11 +1,8 @@
 package org.apereo.cas.authentication.exceptions;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
-
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Describes an error condition where a principal could not be resolved.

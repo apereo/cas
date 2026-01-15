@@ -1,9 +1,8 @@
 package org.apereo.cas.configuration.support;
 
+import module java.base;
 import org.springframework.beans.factory.DisposableBean;
-
-import javax.sql.DataSource;
-import java.io.IOException;
+import module java.sql;
 
 /**
  * This is {@link CloseableDataSource}.

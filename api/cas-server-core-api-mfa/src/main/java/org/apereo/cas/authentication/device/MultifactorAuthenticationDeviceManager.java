@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.device;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
-import java.util.List;
 
 /**
  * This is {@link MultifactorAuthenticationDeviceManager}.

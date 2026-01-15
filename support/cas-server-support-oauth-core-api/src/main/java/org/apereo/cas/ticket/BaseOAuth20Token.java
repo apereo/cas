@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -11,12 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jspecify.annotations.NonNull;
-import java.io.Serial;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * An OAuth code implementation.
@@ -26,6 +21,7 @@ import java.util.Set;
  */
 @NoArgsConstructor
 @Getter
+@SuppressWarnings("NullAway.Init")
 public abstract class BaseOAuth20Token extends AbstractTicket implements OAuth20Token {
 
     @Serial

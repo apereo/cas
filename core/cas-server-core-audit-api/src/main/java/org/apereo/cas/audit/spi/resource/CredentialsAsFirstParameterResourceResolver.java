@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi.resource;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.RegisteredServiceAwareAuthenticationTransaction;
@@ -14,6 +15,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManager.AuditFormats;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Converts the Credential object into a String resource identifier.
@@ -27,7 +29,7 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
     protected final AuditEngineProperties properties;
 
     @Override
-    public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
+    public String[] resolveFrom(final JoinPoint joinPoint, @Nullable final Object retval) {
         return toResources(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
     }
 
@@ -64,8 +66,8 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
         return auditFormat.serialize(credential);
     }
 
-    private String getServiceId(final Service service) {
-        val serviceId = FunctionUtils.doUnchecked(() -> serviceSelectionStrategy.resolveService(service).getId());
-        return DigestUtils.abbreviate(serviceId, properties.getAbbreviationLength());
+    private String getServiceId(final Service givenService) throws Throwable {
+        val service = Objects.requireNonNull(serviceSelectionStrategy.resolveService(givenService));
+        return DigestUtils.abbreviate(service.getId(), properties.getAbbreviationLength());
     }
 }

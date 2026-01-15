@@ -1,7 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication.clients;
 
+import module java.base;
 import org.pac4j.core.client.BaseClient;
-import java.util.Map;
 
 /**
  * This is {@link DelegatedClientsEndpointContributor}.

@@ -1,6 +1,7 @@
 package org.apereo.inspektr.audit.spi.support;
 
 import org.apereo.inspektr.common.spi.BaseJoinPointArgumentAuditPrincipalIdProvider;
+import module java.base;
 import org.apereo.cas.web.support.WebUtils;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.webflow.execution.RequestContext;

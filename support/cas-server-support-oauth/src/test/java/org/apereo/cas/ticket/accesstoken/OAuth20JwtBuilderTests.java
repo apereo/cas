@@ -1,14 +1,12 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.token.JwtBuilder;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.util.Date;
-import java.util.Optional;
-import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,7 +34,7 @@ class OAuth20JwtBuilderTests extends AbstractOAuth20Tests {
 
     @Test
     void verifyBadJwt() {
-        assertThrows(IllegalArgumentException.class, () -> JwtBuilder.parse("badly-formatted-jwt"));
+        assertNull(JwtBuilder.parse("badly-formatted-jwt"));
     }
 
     @Test

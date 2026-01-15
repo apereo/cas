@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.PrincipalProvisioner;
 import org.apereo.cas.configuration.model.support.scim.ScimProvisioningProperties;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -10,10 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * This is {@link PrincipalProvisionerAction}.
@@ -31,7 +31,7 @@ public class PrincipalProvisionerAction extends BaseCasWebflowAction {
     private final ScimProvisioningProperties properties;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val credential = WebUtils.getCredential(requestContext);
         val authentication = WebUtils.getAuthentication(requestContext);
         if (credential == null || authentication == null) {

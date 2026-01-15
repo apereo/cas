@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml.util;
 
+import module java.base;
+import module java.xml;
+import module java.xml.crypto;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -34,32 +37,8 @@ import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.opensaml.core.xml.schema.impl.XSURIBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.NameIDType;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.dataformat.xml.XmlFactory;
-import javax.xml.XMLConstants;
-import javax.xml.crypto.dsig.CanonicalizationMethod;
-import javax.xml.crypto.dsig.DigestMethod;
-import javax.xml.crypto.dsig.SignatureMethod;
-import javax.xml.crypto.dsig.Transform;
-import javax.xml.crypto.dsig.XMLSignatureFactory;
-import javax.xml.crypto.dsig.dom.DOMSignContext;
-import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
-import javax.xml.crypto.dsig.spec.TransformParameterSpec;
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
-import java.nio.charset.Charset;
-import java.security.PrivateKey;
-import java.security.Provider;
-import java.security.PublicKey;
-import java.time.ZonedDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 /**
  * An abstract builder to serve as the template handler

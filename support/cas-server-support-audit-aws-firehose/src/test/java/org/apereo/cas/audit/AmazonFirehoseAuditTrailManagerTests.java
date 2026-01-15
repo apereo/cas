@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import org.apereo.cas.config.CasSupportAmazonFirehoseAuditAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -17,8 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import software.amazon.awssdk.core.SdkSystemSetting;
-import java.time.Clock;
-import java.time.LocalDateTime;
 
 /**
  * This is {@link AmazonFirehoseAuditTrailManagerTests}.

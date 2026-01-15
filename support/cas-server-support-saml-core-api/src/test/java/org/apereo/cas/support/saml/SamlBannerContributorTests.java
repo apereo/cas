@@ -1,15 +1,12 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
 import org.apereo.cas.support.saml.banner.SamlBannerContributor;
 import lombok.val;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.env.MockEnvironment;
-import java.io.PrintStream;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.Formatter;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

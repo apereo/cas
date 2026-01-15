@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.JdbcAuditTrailEntityFactory;
 import org.apereo.cas.audit.generic.JdbcAuditTrailEntity;
@@ -48,8 +49,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 import jakarta.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.util.Locale;
+import module java.sql;
 
 /**
  * This is {@link CasJdbcAuditAutoConfiguration}.

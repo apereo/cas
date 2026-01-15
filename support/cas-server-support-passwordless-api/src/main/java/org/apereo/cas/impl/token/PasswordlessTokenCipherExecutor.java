@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.token;
 
+import module java.base;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 /**

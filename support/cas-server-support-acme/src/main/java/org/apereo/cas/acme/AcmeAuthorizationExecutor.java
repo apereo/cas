@@ -1,10 +1,10 @@
 package org.apereo.cas.acme;
 
+import module java.base;
 import org.shredzone.acme4j.Authorization;
 import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.challenge.Http01Challenge;
 import org.shredzone.acme4j.util.CSRBuilder;
-import java.util.Optional;
 
 /**
  * This is {@link AcmeAuthorizationExecutor}.

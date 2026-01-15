@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.flow;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
@@ -7,13 +8,11 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.authentication.CasWebflowExceptionHandler;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

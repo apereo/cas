@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -8,10 +9,6 @@ import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.UserProfile;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link DelegatedAuthenticationCandidateProfile}.

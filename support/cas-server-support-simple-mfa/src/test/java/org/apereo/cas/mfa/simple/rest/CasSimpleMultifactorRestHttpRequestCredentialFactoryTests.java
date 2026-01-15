@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple.rest;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.LinkedMultiValueMap;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

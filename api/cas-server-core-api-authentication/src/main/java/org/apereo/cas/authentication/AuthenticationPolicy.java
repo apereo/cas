@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Strategy interface for pluggable authentication security policies.
@@ -46,7 +45,7 @@ public interface AuthenticationPolicy extends Ordered, Serializable, NamedObject
      * @return Authentication policy execution result
      * @throws Throwable the throwable
      */
-    AuthenticationPolicyExecutionResult isSatisfiedBy(Authentication authentication,
+    AuthenticationPolicyExecutionResult isSatisfiedBy(@Nullable Authentication authentication,
                                                       Set<AuthenticationHandler> authenticationHandlers,
                                                       ConfigurableApplicationContext applicationContext,
                                                       Map<String, ? extends Serializable> context) throws Throwable;
@@ -61,7 +60,7 @@ public interface AuthenticationPolicy extends Ordered, Serializable, NamedObject
      * @throws Throwable the throwable
      */
     default AuthenticationPolicyExecutionResult isSatisfiedBy(
-        final Authentication authentication,
+        @Nullable final Authentication authentication,
         final Set<AuthenticationHandler> authenticationHandlers,
         final ConfigurableApplicationContext applicationContext) throws Throwable {
         return isSatisfiedBy(authentication, authenticationHandlers, applicationContext, Map.of());
@@ -77,7 +76,7 @@ public interface AuthenticationPolicy extends Ordered, Serializable, NamedObject
      * @throws Throwable the throwable
      */
     default AuthenticationPolicyExecutionResult isSatisfiedBy(
-        final Authentication authentication,
+        @Nullable final Authentication authentication,
         final ConfigurableApplicationContext applicationContext,
         final Map<String, ? extends Serializable> context) throws Throwable {
         return isSatisfiedBy(authentication, Set.of(), applicationContext, context);
@@ -92,7 +91,7 @@ public interface AuthenticationPolicy extends Ordered, Serializable, NamedObject
      * @throws Throwable the throwable
      */
     default AuthenticationPolicyExecutionResult isSatisfiedBy(
-        final Authentication authentication,
+        @Nullable final Authentication authentication,
         final ConfigurableApplicationContext applicationContext) throws Throwable {
         return isSatisfiedBy(authentication, Set.of(), applicationContext, Map.of());
     }

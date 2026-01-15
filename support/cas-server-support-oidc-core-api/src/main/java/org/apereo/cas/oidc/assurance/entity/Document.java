@@ -1,10 +1,9 @@
 package org.apereo.cas.oidc.assurance.entity;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link Document}.

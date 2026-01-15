@@ -1,12 +1,11 @@
 package org.apereo.cas;
 
+import module java.base;
+import module java.sql;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockServletContext;
-
 import jakarta.servlet.ServletContextEvent;
-import java.sql.DriverManager;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

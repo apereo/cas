@@ -1,5 +1,6 @@
 package org.apereo.cas.acct;
 
+import module java.base;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
 
 /**

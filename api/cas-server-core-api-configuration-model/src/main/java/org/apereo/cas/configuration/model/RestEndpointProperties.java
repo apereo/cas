@@ -1,12 +1,10 @@
 package org.apereo.cas.configuration.model;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
 
 /**
  * This is {@link RestEndpointProperties}.

@@ -1,15 +1,12 @@
 package org.apereo.cas.jmx.ticket;
 
+import module java.base;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link TicketRegistryManagedResource}.

@@ -1,15 +1,11 @@
 package org.apereo.cas.adaptors.generic;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-
 import lombok.val;
-
-import javax.security.auth.login.FailedLoginException;
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * AuthenticationHandler which fails to authenticate a user purporting to be one

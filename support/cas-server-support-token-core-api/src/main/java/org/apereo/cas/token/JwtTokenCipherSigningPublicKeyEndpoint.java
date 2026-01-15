@@ -1,5 +1,6 @@
 package org.apereo.cas.token;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -18,10 +19,6 @@ import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.http.MediaType;
-import java.io.StringWriter;
-import java.security.KeyFactory;
-import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.spec.RSAPublicKeySpec;
 
 /**
  * This is {@link JwtTokenCipherSigningPublicKeyEndpoint}.

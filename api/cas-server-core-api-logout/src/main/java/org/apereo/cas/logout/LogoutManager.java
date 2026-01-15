@@ -1,9 +1,8 @@
 package org.apereo.cas.logout;
 
+import module java.base;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
-
-import java.util.List;
 
 /**
  * A logout manager handles the Single Log Out process.

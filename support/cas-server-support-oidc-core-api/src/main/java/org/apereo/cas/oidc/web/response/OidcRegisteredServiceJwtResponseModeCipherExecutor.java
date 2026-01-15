@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.response;
 
+import module java.base;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
@@ -16,7 +17,6 @@ import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jspecify.annotations.NonNull;
-import java.util.Optional;
 
 /**
  * This is {@link OidcRegisteredServiceJwtResponseModeCipherExecutor}.

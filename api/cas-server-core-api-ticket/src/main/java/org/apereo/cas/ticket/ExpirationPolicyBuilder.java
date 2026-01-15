@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceDefinition;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.io.Serializable;
 
 /**
  * Strategy that contains configuration and metadata to construct ticket expiration policies.

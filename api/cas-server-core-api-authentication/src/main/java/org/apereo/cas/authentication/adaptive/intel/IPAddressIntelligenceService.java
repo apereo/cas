@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -43,5 +45,5 @@ public interface IPAddressIntelligenceService extends NamedObject {
      * @return the ip address intelligence response
      * @throws Throwable the throwable
      */
-    IPAddressIntelligenceResponse examine(RequestContext context, String clientIpAddress) throws Throwable;
+    @Nullable IPAddressIntelligenceResponse examine(RequestContext context, String clientIpAddress) throws Throwable;
 }

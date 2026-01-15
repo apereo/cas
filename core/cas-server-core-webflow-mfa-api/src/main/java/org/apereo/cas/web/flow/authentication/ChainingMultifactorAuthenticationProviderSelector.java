@@ -1,15 +1,14 @@
 package org.apereo.cas.web.flow.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.DefaultChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.util.List;
 
 /**
  * This is {@link ChainingMultifactorAuthenticationProviderSelector}.
@@ -24,7 +23,7 @@ public class ChainingMultifactorAuthenticationProviderSelector extends RankedMul
 
     @Override
     protected MultifactorAuthenticationProvider selectMultifactorAuthenticationProvider(
-        final RegisteredService service,
+        @Nullable final RegisteredService service,
         final List<MultifactorAuthenticationProvider> providers) {
 
         if (providers.size() > 1) {

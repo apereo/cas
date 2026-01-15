@@ -1,16 +1,14 @@
 package org.apereo.cas.oidc.token;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.val;
-
-import java.io.Serial;
 
 /**
  * This is {@link OidcIdTokenExpirationPolicyBuilder}.

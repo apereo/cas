@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks.rotation;
 
+import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -9,7 +10,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
-import java.io.File;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

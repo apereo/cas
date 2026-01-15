@@ -1,11 +1,9 @@
 package org.apereo.cas.support.events;
 
+import module java.base;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.util.function.FunctionUtils;
-
-import java.time.ZonedDateTime;
-import java.util.stream.Stream;
 
 /**
  * This is {@link DynamoDbCasEventRepository}.

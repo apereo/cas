@@ -1,12 +1,9 @@
 package org.apereo.cas.qr.validation;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
-
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link QRAuthenticationTokenValidationResult}.

@@ -1,7 +1,9 @@
 package org.apereo.inspektr.audit.spi;
 
+import module java.base;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An SPI interface needed to be implemented by individual applications requiring an audit trail record keeping
@@ -19,7 +21,7 @@ public interface AuditResourceResolver {
      * @param returnValue The returned value
      * @return The resource String.
      */
-    String[] resolveFrom(JoinPoint target, Object returnValue);
+    @Nullable String[] resolveFrom(JoinPoint target, @Nullable Object returnValue);
 
     /**
      * Resolve the auditable resource for an audit-able action that has
@@ -29,7 +31,7 @@ public interface AuditResourceResolver {
      * @param exception The exception incurred when the join point proceeds.
      * @return The resource String.
      */
-    String[] resolveFrom(JoinPoint target, Exception exception);
+    @Nullable String[] resolveFrom(JoinPoint target, Exception exception);
 
     /**
      * Sets audit format.

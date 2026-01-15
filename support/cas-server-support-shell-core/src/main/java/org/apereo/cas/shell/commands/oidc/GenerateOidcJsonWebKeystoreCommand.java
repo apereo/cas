@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.oidc;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.jwks.generator.OidcDefaultJsonWebKeystoreGeneratorService;
 import org.apereo.cas.shell.commands.CasShellCommand;

@@ -1,6 +1,6 @@
 package org.apereo.cas.util.crypto;
 
-import java.security.Key;
+import module java.base;
 
 /**
  * This is {@link IdentifiableKey}.

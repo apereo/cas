@@ -1,11 +1,10 @@
 package org.apereo.cas.services.web;
 
+import module java.base;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * This is {@link CasThemeResourceBundleMessageSource}.

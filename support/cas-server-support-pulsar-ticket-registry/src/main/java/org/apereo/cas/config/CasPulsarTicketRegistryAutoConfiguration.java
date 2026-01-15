@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -32,8 +33,6 @@ import org.springframework.pulsar.core.PulsarAdministration;
 import org.springframework.pulsar.core.PulsarTemplate;
 import org.springframework.pulsar.listener.AckMode;
 import org.springframework.util.ReflectionUtils;
-import java.util.Objects;
-import java.util.UUID;
 
 /**
  * This is {@link CasPulsarTicketRegistryAutoConfiguration}.

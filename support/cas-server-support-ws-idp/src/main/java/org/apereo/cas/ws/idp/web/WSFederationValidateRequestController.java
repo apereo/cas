@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.web;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -17,8 +18,6 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Locale;
 
 /**
  * This is {@link WSFederationValidateRequestController}.

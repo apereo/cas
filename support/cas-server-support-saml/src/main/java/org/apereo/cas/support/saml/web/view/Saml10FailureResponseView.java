@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.view;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
@@ -8,11 +9,8 @@ import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.web.support.ArgumentExtractor;
-
 import lombok.val;
 import org.opensaml.saml.saml1.core.Response;
-
-import java.util.Map;
 
 /**
  * Represents a failed attempt at validating a ticket, responding via a SAML SOAP message.

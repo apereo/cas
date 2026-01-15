@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
@@ -11,6 +12,7 @@ import com.nimbusds.jose.proc.SimpleSecurityContext;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import software.amazon.awssdk.services.cognitoidentityprovider.CognitoIdentityProviderClient;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminGetUserRequest;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.AdminInitiateAuthRequest;
@@ -18,15 +20,6 @@ import software.amazon.awssdk.services.cognitoidentityprovider.model.AuthFlowTyp
 import software.amazon.awssdk.services.cognitoidentityprovider.model.InvalidPasswordException;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.NotAuthorizedException;
 import software.amazon.awssdk.services.cognitoidentityprovider.model.UserNotFoundException;
-import javax.security.auth.login.AccountExpiredException;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.CredentialExpiredException;
-import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 /**
  * This is {@link AmazonCognitoAuthenticationAuthenticationHandler}.
@@ -54,8 +47,9 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential credential,
+        @Nullable final String originalPassword)
         throws GeneralSecurityException {
         try {
             val authParams = new HashMap<String, String>();
@@ -100,7 +94,7 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
             val principal = principalFactory.createPrincipal(userResult.username(), attributes);
             return createHandlerResult(credential, principal, new ArrayList<>());
         } catch (final NotAuthorizedException e) {
-            val message = e.getMessage();
+            val message = Objects.requireNonNull(e.getMessage());
             if (message.contains("expired")) {
                 throw new AccountExpiredException(message);
             }

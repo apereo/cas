@@ -1,11 +1,9 @@
 package org.apereo.cas.services.resource;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.RegexUtils;
-
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.regex.Pattern;
 
 /**
  * This is {@link RegisteredServiceResourceNamingStrategy}.  Interface to provide naming strategy

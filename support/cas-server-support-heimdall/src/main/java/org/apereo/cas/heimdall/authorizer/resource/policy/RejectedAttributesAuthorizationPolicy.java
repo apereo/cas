@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall.authorizer.resource.policy;
 
+import module java.base;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.AuthorizationResult;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
@@ -10,7 +11,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.val;
-import java.io.Serial;
 
 /**
  * This is {@link RejectedAttributesAuthorizationPolicy}.

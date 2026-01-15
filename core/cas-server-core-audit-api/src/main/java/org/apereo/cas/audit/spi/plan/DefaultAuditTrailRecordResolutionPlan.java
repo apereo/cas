@@ -1,15 +1,12 @@
 package org.apereo.cas.audit.spi.plan;
 
+import module java.base;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.Getter;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link DefaultAuditTrailRecordResolutionPlan}.

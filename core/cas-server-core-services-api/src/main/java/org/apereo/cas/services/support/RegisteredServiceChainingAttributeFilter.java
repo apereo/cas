@@ -1,7 +1,7 @@
 package org.apereo.cas.services.support;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,12 +10,6 @@ import lombok.ToString;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The filter that chains other filters inside it.

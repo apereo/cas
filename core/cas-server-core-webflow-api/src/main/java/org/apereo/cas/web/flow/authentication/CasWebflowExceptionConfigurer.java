@@ -1,4 +1,5 @@
 package org.apereo.cas.web.flow.authentication;
+import module java.base;
 
 /**
  * This is {@link CasWebflowExceptionConfigurer}.

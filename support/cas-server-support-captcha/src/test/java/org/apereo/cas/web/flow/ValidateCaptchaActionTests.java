@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
@@ -24,9 +25,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.webflow.execution.Action;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

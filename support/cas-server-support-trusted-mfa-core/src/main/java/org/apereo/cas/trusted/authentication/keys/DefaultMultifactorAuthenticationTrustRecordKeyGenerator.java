@@ -1,8 +1,8 @@
 package org.apereo.cas.trusted.authentication.keys;
 
+import module java.base;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
