@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.consent;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
@@ -9,11 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * This is {@link ConsentCoreProperties}.

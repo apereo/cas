@@ -3,6 +3,7 @@ package org.apereo.inspektr.audit.support;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import lombok.val;
+import module java.base;
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -24,11 +25,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

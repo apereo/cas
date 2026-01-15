@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication.support.password;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
 import org.apereo.cas.util.crypto.GlibcCryptPasswordEncoder;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

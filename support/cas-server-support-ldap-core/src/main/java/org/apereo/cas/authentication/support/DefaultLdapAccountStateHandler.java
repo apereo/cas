@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.support;
 
+import module java.base;
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.AuthenticationAccountStateHandler;
 import org.apereo.cas.authentication.MessageDescriptor;
@@ -10,11 +11,11 @@ import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.util.DateTimeUtils;
-
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
@@ -23,22 +24,6 @@ import org.ldaptive.auth.ext.FreeIPAAccountState;
 import org.ldaptive.auth.ext.PasswordExpirationAccountState;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.springframework.util.LinkedCaseInsensitiveMap;
-
-import javax.security.auth.login.AccountExpiredException;
-import javax.security.auth.login.AccountLockedException;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.CredentialExpiredException;
-import javax.security.auth.login.FailedLoginException;
-import javax.security.auth.login.LoginException;
-
-import java.io.Serializable;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Default account state handler.
@@ -97,15 +82,15 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
     }
 
     @Override
-    public List<MessageDescriptor> handle(final AuthenticationResponse response,
+    public List<MessageDescriptor> handle(@Nullable final AuthenticationResponse response,
                                           final PasswordPolicyContext configuration) throws LoginException {
         LOGGER.debug("Attempting to handle LDAP account state for [{}]", response);
-        if (!this.attributesToErrorMap.isEmpty() && response.isSuccess()) {
+        if (!this.attributesToErrorMap.isEmpty() && Objects.requireNonNull(response).isSuccess()) {
             LOGGER.debug("Handling policy based on pre-defined attributes");
             handlePolicyAttributes(response);
         }
 
-        val state = response.getAccountState();
+        val state = Objects.requireNonNull(response).getAccountState();
         if (state == null && !response.isSuccess()) {
             handleFailingResponse(response, configuration);
         }

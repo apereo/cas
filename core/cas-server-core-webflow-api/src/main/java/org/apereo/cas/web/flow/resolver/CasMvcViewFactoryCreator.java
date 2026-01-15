@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver;
 
+import module java.base;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -21,11 +22,6 @@ import org.springframework.webflow.mvc.view.AbstractMvcView;
 import org.springframework.webflow.mvc.view.AbstractMvcViewFactory;
 import org.springframework.webflow.mvc.view.FlowViewResolver;
 import org.springframework.webflow.validation.WebFlowMessageCodesResolver;
-import java.util.Objects;
-import java.util.Spliterators;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * This is {@link CasMvcViewFactoryCreator}.

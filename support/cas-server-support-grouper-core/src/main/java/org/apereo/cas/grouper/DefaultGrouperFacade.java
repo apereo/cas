@@ -1,5 +1,6 @@
 package org.apereo.cas.grouper;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import edu.internet2.middleware.grouperClient.api.GcGetGroups;
@@ -10,8 +11,6 @@ import edu.internet2.middleware.grouperClient.ws.beans.WsSubjectLookup;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * This is {@link DefaultGrouperFacade} that acts as a wrapper

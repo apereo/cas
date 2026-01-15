@@ -1,18 +1,13 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import module java.base;
 import org.apereo.cas.ticket.BaseOAuth20ExpirationPolicyTests;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
-import java.io.File;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

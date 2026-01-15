@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -18,8 +19,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.view.RedirectView;
-import java.util.List;
-import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -57,7 +56,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "cas.http-web-request.header.content-security-policy=policy"
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 @ExtendWith(CasTestExtension.class)
 class WiringConfigurationTests {
     @Autowired

@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web.flow;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

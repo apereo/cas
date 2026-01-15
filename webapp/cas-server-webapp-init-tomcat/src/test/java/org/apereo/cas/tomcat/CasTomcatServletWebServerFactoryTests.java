@@ -1,5 +1,6 @@
 package org.apereo.cas.tomcat;
 
+import module java.base;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.val;
@@ -62,7 +63,7 @@ import org.springframework.boot.web.server.servlet.ConfigurableServletWebServerF
     ServerProperties.class,
     TomcatServerProperties.class
 })
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 class CasTomcatServletWebServerFactoryTests {
     @Autowired
     protected CasConfigurationProperties casProperties;

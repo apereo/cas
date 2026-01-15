@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.mail;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.notifications.BaseNotificationTests;
@@ -11,8 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.Locale;
-import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

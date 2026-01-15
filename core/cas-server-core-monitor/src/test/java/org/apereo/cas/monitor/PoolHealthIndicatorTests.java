@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Tag;
@@ -7,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.health.contributor.Health;
 import org.springframework.boot.health.contributor.Status;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

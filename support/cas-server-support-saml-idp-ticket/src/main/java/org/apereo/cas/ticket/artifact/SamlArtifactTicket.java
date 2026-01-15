@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.artifact;
 
+import module java.base;
 import org.apereo.cas.ticket.ServiceTicket;
 
 /**

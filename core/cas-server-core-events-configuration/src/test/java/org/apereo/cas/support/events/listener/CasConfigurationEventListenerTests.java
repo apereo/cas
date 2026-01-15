@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.listener;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreConfigurationWatchAutoConfiguration;
 import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreEventsConfigEnvironmentAutoConfiguration;
@@ -18,7 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

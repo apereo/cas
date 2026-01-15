@@ -1,4 +1,5 @@
 package org.apereo.cas.support.inwebo.web.flow.actions;
+import module java.base;
 
 /**
  * The webflow constants.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.v3;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;

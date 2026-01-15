@@ -1,11 +1,9 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import module java.base;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-
 import net.shibboleth.shared.resolver.CriteriaSet;
-
-import java.util.Optional;
 
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.services;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.oauth.OAuthCoreProperties;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
@@ -9,9 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
-import java.io.Serial;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * An extension of the {@link BaseRegisteredService} that defines the

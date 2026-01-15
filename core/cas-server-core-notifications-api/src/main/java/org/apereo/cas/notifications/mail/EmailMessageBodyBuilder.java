@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.mail;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -18,16 +19,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * This is {@link EmailMessageBodyBuilder}.

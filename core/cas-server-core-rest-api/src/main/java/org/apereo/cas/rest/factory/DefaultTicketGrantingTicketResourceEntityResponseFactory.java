@@ -1,5 +1,6 @@
 package org.apereo.cas.rest.factory;
 
+import module java.base;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -13,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import jakarta.servlet.http.HttpServletRequest;
-import java.net.URI;
 
 /**
  * This is {@link DefaultTicketGrantingTicketResourceEntityResponseFactory}.

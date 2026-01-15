@@ -1,14 +1,11 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.ticket.Ticket;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.webflow.execution.RequestContext;
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * This is {@link DelegationWebflowUtils}.

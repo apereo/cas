@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import module java.base;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.thread.Cleanable;

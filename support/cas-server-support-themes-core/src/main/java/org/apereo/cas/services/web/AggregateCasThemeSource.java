@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.web.theme.ResourceBundleThemeSource;
@@ -10,9 +11,6 @@ import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.StaticMessageSource;
-import java.io.IOException;
-import java.util.Locale;
-import java.util.Properties;
 
 /**
  * This is {@link AggregateCasThemeSource} which merges all the theme resource bundles that it can find.

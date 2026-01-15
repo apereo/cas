@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +14,7 @@ import lombok.val;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.Unchecked;
-
-import java.io.Serial;
-import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link WSFederationAuthenticationServiceSelectionStrategy}.
@@ -46,10 +44,10 @@ public class WSFederationAuthenticationServiceSelectionStrategy extends BaseAuth
         });
     }
 
-    private static Optional<NameValuePair> getReplyAsParameter(final Service service) {
+    private static Optional<NameValuePair> getReplyAsParameter(@Nullable final Service service) {
         return Optional.ofNullable(service)
             .map(Unchecked.function(svc -> {
-                val builder = new URIBuilder(svc.getId());
+                val builder = new URIBuilder(Objects.requireNonNull(svc).getId());
                 return builder.getQueryParams()
                     .stream()
                     .filter(p -> p.getName().equals(WSFederationConstants.WREPLY))
@@ -59,11 +57,12 @@ public class WSFederationAuthenticationServiceSelectionStrategy extends BaseAuth
     }
 
     @Override
-    public Service resolveServiceFrom(final Service service) {
+    public @Nullable Service resolveServiceFrom(@Nullable final Service service) {
         val replyParamRes = getReplyAsParameter(service);
         if (replyParamRes.isPresent()) {
             val serviceReply = replyParamRes.get().getValue();
-            LOGGER.trace("Located service id [{}] from service authentication request at [{}]", serviceReply, service.getId());
+            LOGGER.trace("Located service id [{}] from service authentication request at [{}]",
+                serviceReply, Objects.requireNonNull(service).getId());
             return createService(serviceReply, service);
         }
         LOGGER.trace("Resolved final service as [{}]", service);
@@ -71,7 +70,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy extends BaseAuth
     }
 
     @Override
-    public boolean supports(final Service service) {
+    public boolean supports(@Nullable final Service service) {
         if (service == null) {
             LOGGER.trace("Provided service is undefined");
             return false;

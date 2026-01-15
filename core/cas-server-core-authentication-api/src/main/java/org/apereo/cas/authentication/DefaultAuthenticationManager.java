@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -25,19 +26,11 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAuthenticationManager}, which provides common operations
@@ -114,9 +107,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             .forEach(result -> builder.addAttribute(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName()));
     }
 
-    protected Principal resolvePrincipal(final AuthenticationHandler handler, final PrincipalResolver resolver,
-                                         final Credential credential, final Principal principal,
-                                         final Service service) {
+    protected @Nullable Principal resolvePrincipal(final AuthenticationHandler handler, final PrincipalResolver resolver,
+                                                   final Credential credential, final Principal principal,
+                                                   final Service service) {
         if (resolver.supports(credential)) {
             try {
                 val resolved = resolver.resolve(credential, Optional.ofNullable(principal),
@@ -155,7 +148,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
     protected void authenticateAndResolvePrincipal(final AuthenticationBuilder authenticationBuilder,
                                                    final Credential credential,
-                                                   final PrincipalResolver principalResolver,
+                                                   @Nullable final PrincipalResolver principalResolver,
                                                    final AuthenticationHandler handler,
                                                    final Service service) throws Throwable {
         val clientInfo = ClientInfoHolder.getClientInfo();
@@ -193,14 +186,14 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                 authenticationBuilder.setPrincipal(principal);
             }
             LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);
-            publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal, clientInfo));
+            publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, Objects.requireNonNull(principal), clientInfo));
         } finally {
             AuthenticationHolder.clear();
         }
     }
 
-    protected PrincipalResolver getPrincipalResolverLinkedToHandlerIfAny(final AuthenticationHandler handler,
-                                                                         final AuthenticationTransaction transaction) {
+    protected @Nullable PrincipalResolver getPrincipalResolverLinkedToHandlerIfAny(final AuthenticationHandler handler,
+                                                                                   final AuthenticationTransaction transaction) {
         return this.authenticationEventExecutionPlan.getPrincipalResolver(handler, transaction);
     }
 
@@ -319,7 +312,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         resultBuilder.collect(transaction.getAuthentications());
         resultBuilder.collect(authentication);
 
-        val resultAuthentication = resultBuilder.build().getAuthentication();
+        val resultAuthentication = Objects.requireNonNull(resultBuilder.build()).getAuthentication();
         LOGGER.trace("Final authentication used for authentication policy evaluation is [{}]", resultAuthentication);
 
         policies.forEach(policy -> {

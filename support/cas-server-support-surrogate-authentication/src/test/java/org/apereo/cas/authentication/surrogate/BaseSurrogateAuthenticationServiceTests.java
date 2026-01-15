@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.surrogate;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
@@ -30,8 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import java.util.Optional;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

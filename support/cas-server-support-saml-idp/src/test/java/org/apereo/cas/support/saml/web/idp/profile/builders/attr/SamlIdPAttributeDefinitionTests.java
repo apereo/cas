@@ -1,18 +1,15 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.attr;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionResolutionContext;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
@@ -7,12 +8,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jooq.lambda.Unchecked;
 import jakarta.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * This is {@link DefaultPrincipalAttributesMapper}.
@@ -29,9 +25,7 @@ public class DefaultPrincipalAttributesMapper implements PrincipalAttributesMapp
         return ApplicationContextProvider.getScriptResourceCacheManager()
             .map(cacheMgr -> {
                 val script = cacheMgr.resolveScriptableResource(file, attributeName, file);
-                return FunctionUtils.doIf(script != null,
-                    Unchecked.supplier(() -> fetchAttributeValueFromScript(script, attributeName, resolvedAttributes)),
-                    TreeMap<String, List<Object>>::new).get();
+                return fetchAttributeValueFromScript(Objects.requireNonNull(script), attributeName, resolvedAttributes);
             })
             .orElseThrow(() -> new RuntimeException("No groovy script cache manager is available to execute attribute mappings"));
     }
@@ -42,7 +36,7 @@ public class DefaultPrincipalAttributesMapper implements PrincipalAttributesMapp
         return ApplicationContextProvider.getScriptResourceCacheManager()
             .map(cacheMgr -> FunctionUtils.doUnchecked(() -> {
                 val script = cacheMgr.resolveScriptableResource(inlineGroovy, attributeName, inlineGroovy);
-                return fetchAttributeValueFromScript(script, attributeName, resolvedAttributes);
+                return fetchAttributeValueFromScript(Objects.requireNonNull(script), attributeName, resolvedAttributes);
             }))
             .orElseThrow(() -> new RuntimeException("No groovy script cache manager is available to execute attribute mappings"));
     }

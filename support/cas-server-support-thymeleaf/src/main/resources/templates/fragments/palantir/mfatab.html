@@ -9,11 +9,17 @@
 <span th:fragment="main">
     <div class="attribute-tab w-100 d-none" id="attribute-tab-13">
         
-        <div class="jqueryui-tabs">
+        <div class="jqueryui-tabs" id="mfa-tabs">
             <ul>
+                <li><a id="mfaProvidersTab" href="#mfaproviders-tab">Multifactor Authentication Providers</a></li>
                 <li><a id="mfaDevicesTab" href="#mfadevices-tab">Multifactor Authentication Devices</a></li>
                 <li><a id="trustedMfaDevicesTab" href="#trustedmfadevices-tab">Trusted Multifactor Authentication Devices</a></li>
             </ul>
+            <div id="mfaproviders-tab">
+                <p>Here are the current multifactor authentication providers registered with CAS.</p>
+                <div class="grid-4" id="mfaProvidersGridPanel" ></div>
+            </div>
+            
             <div id="mfadevices-tab">
                 <p>You can examine multifactor registered devices for a given user.</p>
                 <form id="fmMfaDevices" class="d-block" onsubmit="return false;">

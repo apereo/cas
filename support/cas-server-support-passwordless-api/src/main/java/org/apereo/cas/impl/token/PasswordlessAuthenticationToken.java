@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.token;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -15,13 +16,6 @@ import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.springframework.data.annotation.Id;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link PasswordlessAuthenticationToken}.

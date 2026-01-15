@@ -1,5 +1,6 @@
 package org.apereo.cas.mongo;
 
+import module java.base;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;

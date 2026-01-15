@@ -1,6 +1,6 @@
 package org.apereo.inspektr.audit.support;
 
-import java.util.List;
+import module java.base;
 
 /**
  * Match criteria defined in terms of a SQL where clause limiter.  The

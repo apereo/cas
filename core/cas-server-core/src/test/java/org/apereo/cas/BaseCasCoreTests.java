@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
@@ -52,10 +53,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link BaseCasCoreTests}.

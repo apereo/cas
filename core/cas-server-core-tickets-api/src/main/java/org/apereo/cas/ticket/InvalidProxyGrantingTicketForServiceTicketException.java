@@ -1,8 +1,7 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-
-import java.io.Serial;
 
 
 /**

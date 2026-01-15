@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoDbTicketRegistryProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -15,8 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.index.IndexDefinition;
-import java.time.Duration;
-import java.util.ArrayList;
 
 /**
  * This is {@link MongoDbTicketRegistryFacilitator}.

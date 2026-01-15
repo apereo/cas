@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -8,7 +9,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +16,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
-
-import java.util.EnumSet;
-import java.util.Objects;
 
 /**
  * This is {@link OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator}.

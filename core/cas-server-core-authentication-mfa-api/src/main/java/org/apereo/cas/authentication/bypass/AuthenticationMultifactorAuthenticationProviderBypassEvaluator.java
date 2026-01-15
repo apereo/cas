@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.bypass;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
@@ -8,10 +9,10 @@ import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationP
 import org.apereo.cas.services.RegisteredService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.Serial;
 
 /**
  * Multifactor Bypass Provider based on Authentication.
@@ -44,9 +45,9 @@ public class AuthenticationMultifactorAuthenticationProviderBypassEvaluator exte
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecuteInternal(
         final Authentication authentication,
-        final RegisteredService registeredService,
+        @Nullable final RegisteredService registeredService,
         final MultifactorAuthenticationProvider provider,
-        final HttpServletRequest request) {
+        @Nullable final HttpServletRequest request) {
         val principal = resolvePrincipal(authentication.getPrincipal());
         val bypassByAuthn = locateMatchingAttributeBasedOnAuthenticationAttributes(bypassProperties, authentication);
         if (bypassByAuthn) {

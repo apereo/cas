@@ -1,13 +1,11 @@
 package org.apereo.cas.oidc.web.flow.account;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Set;
 
 /**
  * This is {@link AccountOAuth20AccessToken}.

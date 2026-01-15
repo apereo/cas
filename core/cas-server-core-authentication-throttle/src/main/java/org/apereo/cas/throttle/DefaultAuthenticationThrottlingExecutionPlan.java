@@ -1,11 +1,9 @@
 package org.apereo.cas.throttle;
 
+import module java.base;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import org.springframework.web.servlet.HandlerInterceptor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link DefaultAuthenticationThrottlingExecutionPlan}.

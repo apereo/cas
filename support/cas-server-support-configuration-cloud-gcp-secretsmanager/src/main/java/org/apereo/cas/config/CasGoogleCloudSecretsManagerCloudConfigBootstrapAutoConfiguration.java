@@ -1,9 +1,9 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceSettings;
@@ -29,8 +29,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Bean;
-
-import java.util.Optional;
 
 /**
  * This is {@link CasGoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration}.

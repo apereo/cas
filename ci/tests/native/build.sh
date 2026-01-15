@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BUILD_OPTIONS="-x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache -DskipNestedConfigMetadataGen=true"
+BUILD_OPTIONS="--quiet -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache -DskipNestedConfigMetadataGen=true -DskipNullAway=true"
 BUILD_TASKS=":webapp:cas-server-webapp-native:build :webapp:cas-server-webapp-native:nativeCompile"
 
 RED="\e[31m"

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.theme.ThemeResolver;
@@ -11,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
 import org.thymeleaf.templateresource.ITemplateResource;
-import java.util.Map;
 
 /**
  * This is {@link ThemeFileTemplateResolver}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintExtractor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;

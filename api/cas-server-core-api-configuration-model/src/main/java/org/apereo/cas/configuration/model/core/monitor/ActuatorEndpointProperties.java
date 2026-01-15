@@ -1,18 +1,12 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * This is {@link ActuatorEndpointProperties}.
@@ -48,7 +42,7 @@ public class ActuatorEndpointProperties implements Serializable {
     /**
      * Define the security access level of the endpoint.
      */
-    private List<EndpointAccessLevel> access = Stream.of(EndpointAccessLevel.DENY).toList();
+    private EndpointAccessLevel access = EndpointAccessLevel.DENY;
 
     /**
      * Define the security access level for the endpoint.

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
@@ -9,20 +10,17 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.util.Optional;
 
 /**
  * This is {@link RegisteredServiceMultifactorAuthenticationTrigger}.
@@ -47,10 +45,10 @@ public class RegisteredServiceMultifactorAuthenticationTrigger implements Multif
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
-                                                                   final RegisteredService registeredService,
+                                                                   @Nullable final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
                                                                    final HttpServletResponse response,
-                                                                   final Service service) throws Throwable {
+                                                                   @Nullable final Service service) throws Throwable {
         if (registeredService == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
             return Optional.empty();

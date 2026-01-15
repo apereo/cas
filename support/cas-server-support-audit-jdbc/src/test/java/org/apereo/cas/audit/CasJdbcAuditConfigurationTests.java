@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasJdbcAuditAutoConfiguration;
@@ -19,12 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.IntStream;
 
 /**
  * This is {@link CasJdbcAuditConfigurationTests}.

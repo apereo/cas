@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
@@ -37,8 +38,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.scheduling.annotation.Scheduled;
-import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * This is {@link OidcJwksConfiguration}.

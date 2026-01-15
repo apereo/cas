@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.util.app.ApplicationUtils;
 import org.apereo.cas.util.spring.boot.AbstractCasBanner;
 import org.apereo.cas.util.spring.boot.CasBanner;
@@ -9,9 +10,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.env.Environment;
 import org.springframework.mock.env.MockEnvironment;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

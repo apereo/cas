@@ -1,13 +1,12 @@
 package org.apereo.cas.shell.commands.jasypt;
 
+import module java.base;
 import org.apereo.cas.shell.commands.CasShellCommand;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
-import java.security.Provider;
-import java.security.Security;
 
 /**
  * This is {@link JasyptListProvidersCommand}.

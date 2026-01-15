@@ -1,27 +1,15 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.merger.AttributeMerger;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.io.Serial;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultAuthenticationResultBuilder}.
@@ -48,7 +36,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      * Based on that restriction, it's safe to grab the first principal id in the chain
      * when composing the authentication chain for the caller.
      */
-    private static Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,
+    private static @Nullable Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,
                                                  final Set<Authentication> authentications,
                                                  final Map<String, List<Object>> principalAttributes) throws Throwable {
         return principalElectionStrategy.nominate(new LinkedHashSet<>(authentications), principalAttributes);
@@ -95,7 +83,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
     
     @Override
-    public AuthenticationResult build(final Service service) throws Throwable {
+    public @Nullable AuthenticationResult build(@Nullable final Service service) throws Throwable {
         val authentication = buildAuthentication(principalElectionStrategy);
         if (authentication == null) {
             LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain");
@@ -148,7 +136,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         return this.authentications.isEmpty();
     }
 
-    private Authentication buildAuthentication(final PrincipalElectionStrategy principalElectionStrategy) throws Throwable {
+    private @Nullable Authentication buildAuthentication(final PrincipalElectionStrategy principalElectionStrategy) throws Throwable {
         if (isEmpty()) {
             LOGGER.warn("No authentication event has been recorded; CAS cannot finalize the authentication result");
             return null;

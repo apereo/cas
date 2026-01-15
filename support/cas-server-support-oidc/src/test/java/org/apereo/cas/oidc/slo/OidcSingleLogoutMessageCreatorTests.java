@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.slo;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
@@ -17,7 +18,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

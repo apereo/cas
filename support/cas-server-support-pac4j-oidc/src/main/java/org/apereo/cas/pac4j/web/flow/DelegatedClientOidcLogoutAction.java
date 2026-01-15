@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -9,14 +10,12 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.credentials.SessionKeyCredentials;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link DelegatedClientOidcLogoutAction}.
@@ -51,7 +50,7 @@ public class DelegatedClientOidcLogoutAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val clientCredential = WebUtils.getCredential(requestContext, ClientCredential.class);
         if (clientCredential != null && clientCredential.getCredentials() instanceof final SessionKeyCredentials sessionKeyCredentials) {

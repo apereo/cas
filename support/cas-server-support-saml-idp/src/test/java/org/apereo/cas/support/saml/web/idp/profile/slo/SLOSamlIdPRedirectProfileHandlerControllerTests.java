@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
+import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
@@ -26,7 +27,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,4 +1,5 @@
 package org.apereo.cas.configuration.model.core.web.session;
+import module java.base;
 
 /**
  * This is {@link SessionStorageTypes}.

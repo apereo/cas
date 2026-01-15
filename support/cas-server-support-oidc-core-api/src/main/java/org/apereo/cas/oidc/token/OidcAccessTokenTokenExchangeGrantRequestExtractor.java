@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
@@ -21,9 +22,6 @@ import org.jspecify.annotations.NonNull;
 import org.pac4j.core.context.WebContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.Assert;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link OidcAccessTokenTokenExchangeGrantRequestExtractor}.

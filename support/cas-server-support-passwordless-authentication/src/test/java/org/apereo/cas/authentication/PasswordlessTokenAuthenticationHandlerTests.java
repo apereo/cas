@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
@@ -17,8 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
-import javax.security.auth.login.FailedLoginException;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

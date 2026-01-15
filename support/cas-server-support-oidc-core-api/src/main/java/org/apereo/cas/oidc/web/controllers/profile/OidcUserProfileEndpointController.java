@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers.profile;
 
+import module java.base;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
@@ -33,9 +34,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcUserProfileEndpointController}.
@@ -93,7 +91,7 @@ public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpoin
                     .collect(Collectors.toSet());
 
                 val seconds = Beans.newDuration(getConfigurationContext().getCasProperties().getAuthn().getOidc().getCore().getSkew()).toSeconds();
-                val verifier = new DPoPProtectedResourceRequestVerifier(acceptedAlgs, seconds, 0, null);
+                val verifier = new DPoPProtectedResourceRequestVerifier(acceptedAlgs, seconds, seconds, null);
                 val signedProof = SignedJWT.parse(dPopProof);
                 val dPoPIssuer = new DPoPIssuer(new ClientID(accessToken.getClientId()));
                 Assert.notNull(JWTParser.parse(accessTokenId), "Provided access token id must be a (signed) JWT");

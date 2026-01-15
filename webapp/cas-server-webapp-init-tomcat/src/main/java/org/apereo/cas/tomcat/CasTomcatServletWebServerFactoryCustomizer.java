@@ -1,5 +1,6 @@
 package org.apereo.cas.tomcat;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
@@ -40,10 +41,6 @@ import org.springframework.boot.web.server.servlet.ConfigurableServletWebServerF
 import org.springframework.core.io.Resource;
 import org.springframework.util.ReflectionUtils;
 import jakarta.servlet.ServletException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link CasTomcatServletWebServerFactoryCustomizer}.

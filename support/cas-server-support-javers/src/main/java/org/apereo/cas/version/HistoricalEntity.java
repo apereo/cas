@@ -1,8 +1,6 @@
 package org.apereo.cas.version;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import module java.base;
 
 /**
  * This is {@link HistoricalEntity}.

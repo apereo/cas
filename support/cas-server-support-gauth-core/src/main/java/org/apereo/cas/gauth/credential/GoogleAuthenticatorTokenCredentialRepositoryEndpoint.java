@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
+import module java.base;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -28,10 +29,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Collection;
-import java.util.Objects;
 
 /**
  * This is {@link GoogleAuthenticatorTokenCredentialRepositoryEndpoint}.

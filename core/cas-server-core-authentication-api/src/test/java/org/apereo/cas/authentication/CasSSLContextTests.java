@@ -1,16 +1,11 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import javax.net.ssl.HttpsURLConnection;
-
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

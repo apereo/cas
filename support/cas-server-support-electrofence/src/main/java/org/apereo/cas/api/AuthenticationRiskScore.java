@@ -1,12 +1,12 @@
 package org.apereo.cas.api;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
 import org.apereo.inspektr.common.web.ClientInfo;
-import java.math.BigDecimal;
 
 /**
  * This is {@link AuthenticationRiskScore}.

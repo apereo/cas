@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -8,17 +9,10 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.code.OAuth20Code;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.view.RedirectView;
-
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,12 +1,12 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisionerConfigurer;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.List;
 
 /**
  * This is {@link CasAccountManagementRuntimeHints}.

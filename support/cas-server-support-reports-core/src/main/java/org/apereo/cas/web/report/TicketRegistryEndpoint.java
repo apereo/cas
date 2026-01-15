@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -26,11 +27,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import jakarta.validation.Valid;
-import java.time.Clock;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link TicketRegistryEndpoint}.

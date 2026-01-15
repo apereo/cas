@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
 import org.apereo.cas.config.CasSamlIdPRestfulMetadataAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationPreProcessor;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessTokenRepository;
@@ -18,12 +19,12 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link AcceptPasswordlessAuthenticationAction}.
@@ -53,8 +54,8 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
-        val passwordlessUserAccount = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        val passwordlessUserAccount = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
         try {
             val token = requestContext.getRequestParameters().getRequired("token");
             val passwordlessToken = passwordlessTokenRepository.findToken(passwordlessUserAccount.getUsername())
@@ -95,7 +96,7 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
             authenticationResultBuilder = processor.process(authenticationResultBuilder, principal, service, credential, token);
         }
         val authenticationResult = authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
-        WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+        WebUtils.putAuthenticationResult(Objects.requireNonNull(authenticationResult), requestContext);
         WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
         WebUtils.putCredential(requestContext, credential);
     }

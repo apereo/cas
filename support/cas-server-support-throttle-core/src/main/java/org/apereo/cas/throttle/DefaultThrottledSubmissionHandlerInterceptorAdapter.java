@@ -1,10 +1,10 @@
 package org.apereo.cas.throttle;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Locale;
 
 /**
  * Attempts to throttle by both IP Address, username or header. Protects against instances where there is a NAT, such as

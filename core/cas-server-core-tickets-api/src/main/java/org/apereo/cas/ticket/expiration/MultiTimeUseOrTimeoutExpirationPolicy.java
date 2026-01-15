@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.expiration;
 
+import module java.base;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -11,8 +12,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.Assert;
-import java.io.Serial;
-import java.time.ZonedDateTime;
 
 /**
  * ExpirationPolicy that is based on certain number of uses of a ticket or a

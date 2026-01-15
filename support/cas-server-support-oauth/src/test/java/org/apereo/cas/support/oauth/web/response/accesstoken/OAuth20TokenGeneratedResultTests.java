@@ -1,15 +1,11 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
+import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

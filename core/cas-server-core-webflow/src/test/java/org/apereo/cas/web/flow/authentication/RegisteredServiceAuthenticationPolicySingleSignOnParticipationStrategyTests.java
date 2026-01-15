@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
@@ -31,9 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

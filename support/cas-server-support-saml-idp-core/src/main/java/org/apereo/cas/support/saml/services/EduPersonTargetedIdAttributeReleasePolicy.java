@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
@@ -7,7 +8,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMe
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -18,11 +18,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link EduPersonTargetedIdAttributeReleasePolicy}.

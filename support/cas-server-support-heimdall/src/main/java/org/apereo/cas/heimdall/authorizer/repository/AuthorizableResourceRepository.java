@@ -1,11 +1,9 @@
 package org.apereo.cas.heimdall.authorizer.repository;
 
+import module java.base;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 import org.springframework.beans.factory.DisposableBean;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link AuthorizableResourceRepository}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
+import module java.base;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
@@ -9,14 +10,6 @@ import org.apereo.cas.redis.core.CasRedisTemplate;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.springframework.data.redis.core.ScanOptions;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * This is {@link RedisYubiKeyAccountRegistry}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer;
 
+import module java.base;
 import lombok.Getter;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -10,9 +11,6 @@ import org.springframework.webflow.engine.model.TransitionModel;
 import org.springframework.webflow.engine.model.VarModel;
 import org.springframework.webflow.engine.model.builder.FlowModelBuilder;
 import org.springframework.webflow.engine.model.builder.FlowModelBuilderException;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * This is {@link DynamicFlowModelBuilder}.

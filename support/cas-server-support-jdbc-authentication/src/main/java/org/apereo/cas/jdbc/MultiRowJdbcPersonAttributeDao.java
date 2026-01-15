@@ -1,5 +1,6 @@
 package org.apereo.cas.jdbc;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
@@ -7,14 +8,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.jdbc.core.RowMapper;
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import module java.sql;
 
 /**
  * An {@link PersonAttributeDao}

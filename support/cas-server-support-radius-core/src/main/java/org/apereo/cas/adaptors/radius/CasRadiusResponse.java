@@ -1,8 +1,7 @@
 package org.apereo.cas.adaptors.radius;
 
+import module java.base;
 import net.jradius.packet.attribute.RadiusAttribute;
-
-import java.util.List;
 
 /**
  * Acts as a DTO, to carry the response returned by the

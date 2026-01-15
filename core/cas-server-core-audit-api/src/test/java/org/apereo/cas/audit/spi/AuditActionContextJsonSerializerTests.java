@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi;
 
+import module java.base;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
@@ -12,9 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

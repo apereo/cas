@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -19,7 +20,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,14 +1,12 @@
 package org.apereo.cas.authentication.audit;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableExecutionResult;
-
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
-
-import java.util.HashMap;
-import java.util.Objects;
+import org.jspecify.annotations.Nullable;
 
 
 /**
@@ -21,7 +19,7 @@ import java.util.Objects;
 public class SurrogateEligibilityVerificationAuditResourceResolver extends ReturnValueAsStringResourceResolver {
 
     @Override
-    public String[] resolveFrom(final JoinPoint auditableTarget, final Object returnValue) {
+    public String[] resolveFrom(final JoinPoint auditableTarget, @Nullable final Object returnValue) {
         Objects.requireNonNull(returnValue, "AuditableExecutionResult must not be null");
         val surrogateEligibilityResult = (AuditableExecutionResult) returnValue;
         val outcome = "Surrogate Authentication " + BooleanUtils

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.action;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
@@ -19,8 +20,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
-import java.util.LinkedHashMap;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

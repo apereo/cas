@@ -1,8 +1,7 @@
 package org.apereo.cas.clouddirectory;
 
-
+import module java.base;
 import org.apereo.cas.configuration.model.support.clouddirectory.AmazonCloudDirectoryProperties;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import software.amazon.awssdk.services.clouddirectory.model.AttributeKey;

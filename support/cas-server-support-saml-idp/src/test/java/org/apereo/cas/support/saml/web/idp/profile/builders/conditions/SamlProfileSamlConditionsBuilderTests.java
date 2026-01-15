@@ -1,9 +1,9 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.conditions;
 
+import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -11,9 +11,6 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.logging;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
@@ -16,11 +17,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * This is {@link GoogleCloudLogsEndpoint}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
@@ -85,13 +86,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.Action;
-import javax.security.auth.login.AccountExpiredException;
-import javax.security.auth.login.AccountLockedException;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.CredentialExpiredException;
-import javax.security.auth.login.FailedLoginException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasCoreWebflowConfiguration}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import module java.base;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -15,11 +16,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;

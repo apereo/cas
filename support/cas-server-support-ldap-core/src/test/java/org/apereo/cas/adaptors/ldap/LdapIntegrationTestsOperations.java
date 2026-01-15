@@ -1,12 +1,12 @@
 package org.apereo.cas.adaptors.ldap;
 
+import module java.base;
 import org.apereo.cas.util.LdapTestUtils;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.ldaptive.BindConnectionInitializer;
 import org.springframework.core.io.ClassPathResource;
-import java.io.InputStream;
 
 /**
  * Base class for LDAP tests that provision and de-provision DIRECTORY data as part of test setup/tear-down.

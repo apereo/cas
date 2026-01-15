@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.notifications.BaseNotificationTests;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.push.NotificationSender;

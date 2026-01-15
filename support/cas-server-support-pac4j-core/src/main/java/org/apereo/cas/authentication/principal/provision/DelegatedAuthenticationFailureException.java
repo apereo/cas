@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication.principal.provision;
 
+import module java.base;
 import org.apereo.cas.authentication.RootCasException;
-
-import java.io.Serial;
 
 /**
  * This is {@link DelegatedAuthenticationFailureException}.

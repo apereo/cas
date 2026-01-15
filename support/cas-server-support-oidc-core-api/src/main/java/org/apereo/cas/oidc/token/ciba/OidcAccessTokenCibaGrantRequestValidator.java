@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token.ciba;
 
+import module java.base;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcCibaRequest;
@@ -19,7 +20,6 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.core.Ordered;
-import java.util.Locale;
 
 /**
  * This is {@link OidcAccessTokenCibaGrantRequestValidator}.

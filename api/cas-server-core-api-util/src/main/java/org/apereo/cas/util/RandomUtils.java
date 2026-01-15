@@ -1,15 +1,12 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.stream.IntStream;
 
 /**
  * This is {@link RandomUtils}

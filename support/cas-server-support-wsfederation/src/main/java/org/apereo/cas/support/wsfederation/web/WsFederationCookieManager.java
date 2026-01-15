@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation.web;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -13,10 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link WsFederationCookieManager}.

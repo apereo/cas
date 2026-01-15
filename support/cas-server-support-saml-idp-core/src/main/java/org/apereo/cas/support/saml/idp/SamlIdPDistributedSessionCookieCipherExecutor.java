@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp;
 
+import module java.base;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 /**

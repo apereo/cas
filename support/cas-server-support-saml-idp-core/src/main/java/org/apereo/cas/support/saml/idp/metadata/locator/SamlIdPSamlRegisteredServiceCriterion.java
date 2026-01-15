@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import module java.base;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-
 import net.shibboleth.shared.resolver.Criterion;
 
 

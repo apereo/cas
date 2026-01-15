@@ -1,6 +1,6 @@
 package org.apereo.cas.acme;
 
-import java.util.Collection;
+import module java.base;
 
 /**
  * This is {@link AcmeCertificateManager}.

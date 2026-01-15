@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationEventExecutionPlan;
@@ -21,9 +22,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

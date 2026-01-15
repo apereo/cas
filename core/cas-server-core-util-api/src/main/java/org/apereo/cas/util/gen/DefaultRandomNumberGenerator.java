@@ -1,4 +1,5 @@
 package org.apereo.cas.util.gen;
+import module java.base;
 
 /**
  * Implementation of the RandomStringGenerator that allows you to define the

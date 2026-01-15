@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple.validation;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
@@ -15,10 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
-import javax.security.auth.login.FailedLoginException;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link DefaultCasSimpleMultifactorAuthenticationService}.

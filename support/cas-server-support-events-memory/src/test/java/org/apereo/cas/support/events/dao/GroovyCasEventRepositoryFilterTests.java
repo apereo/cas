@@ -1,8 +1,8 @@
 package org.apereo.cas.support.events.dao;
 
+import module java.base;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.dao.filter.GroovyCasEventRepositoryFilter;
-
 import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

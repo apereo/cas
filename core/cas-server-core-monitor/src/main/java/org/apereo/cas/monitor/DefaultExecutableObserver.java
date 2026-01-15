@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import io.micrometer.common.KeyValue;
 import io.micrometer.common.KeyValues;
 import io.micrometer.observation.Observation;
@@ -9,7 +10,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.springframework.beans.factory.ObjectProvider;
-import java.util.Map;
 
 /**
  * This is {@link DefaultExecutableObserver}.

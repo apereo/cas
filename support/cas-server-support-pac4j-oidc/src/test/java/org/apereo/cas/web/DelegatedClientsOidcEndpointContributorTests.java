@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.config.CasDelegatedAuthenticationOidcAutoConfiguration;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpointContributor;

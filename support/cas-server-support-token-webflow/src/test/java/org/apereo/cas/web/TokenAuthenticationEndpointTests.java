@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.config.CasTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasTokenAuthenticationWebflowAutoConfiguration;

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
@@ -19,9 +20,6 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
 import tools.jackson.databind.ObjectMapper;
-import java.io.Serial;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * This is {@link RemoteEndpointServiceAccessStrategy} that reaches out

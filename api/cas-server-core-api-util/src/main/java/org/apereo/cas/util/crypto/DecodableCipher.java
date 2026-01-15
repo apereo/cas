@@ -1,13 +1,11 @@
 package org.apereo.cas.util.crypto;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link DecodableCipher}.

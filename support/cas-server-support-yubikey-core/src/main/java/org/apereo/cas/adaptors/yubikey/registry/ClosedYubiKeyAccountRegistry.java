@@ -1,13 +1,10 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
+import module java.base;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
 import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * This is {@link ClosedYubiKeyAccountRegistry}.

@@ -1,7 +1,9 @@
 package org.apereo.inspektr.audit.spi.support;
 
+import module java.base;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Uses the success/failure suffixes when an object is returned (or NULL is returned).
@@ -16,7 +18,7 @@ public class ObjectCreationAuditActionResolver extends AbstractSuffixAwareAuditA
     }
 
     @Override
-    public String resolveFrom(final JoinPoint auditableTarget, final Object returnValue, final Audit audit) {
+    public String resolveFrom(final JoinPoint auditableTarget, @Nullable final Object returnValue, final Audit audit) {
         return audit.action() + (returnValue == null ? getFailureSuffix() : getSuccessSuffix());
     }
 

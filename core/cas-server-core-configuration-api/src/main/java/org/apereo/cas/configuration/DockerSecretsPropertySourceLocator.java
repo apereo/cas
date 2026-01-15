@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration;
 
+import module java.base;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -10,11 +11,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ResourceLoader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link DockerSecretsPropertySourceLocator}.

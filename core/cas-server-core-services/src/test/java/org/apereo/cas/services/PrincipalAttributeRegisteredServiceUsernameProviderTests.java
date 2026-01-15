@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -18,10 +19,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import tools.jackson.databind.ObjectMapper;
-import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
+import module java.base;
 import org.apereo.cas.config.CasEventsInfluxDbRepositoryAutoConfiguration;
 import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
@@ -18,8 +19,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.time.Duration;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

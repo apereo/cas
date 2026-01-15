@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication.clients;
 
+import module java.base;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.http.HttpExecutionRequest;
@@ -19,14 +20,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import tools.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link RestfulDelegatedIdentityProviderFactory}.

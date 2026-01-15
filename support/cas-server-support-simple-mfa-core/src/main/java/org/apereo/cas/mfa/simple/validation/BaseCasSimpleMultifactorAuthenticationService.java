@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple.validation;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
@@ -10,7 +11,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import javax.security.auth.login.FailedLoginException;
 
 /**
  * This is {@link BaseCasSimpleMultifactorAuthenticationService}.

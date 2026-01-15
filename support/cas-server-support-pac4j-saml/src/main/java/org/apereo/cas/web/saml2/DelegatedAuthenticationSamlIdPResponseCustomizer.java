@@ -1,5 +1,6 @@
 package org.apereo.cas.web.saml2;
 
+import module java.base;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
@@ -13,7 +14,6 @@ import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
-import java.util.Objects;
 
 /**
  * This is {@link DelegatedAuthenticationSamlIdPResponseCustomizer}.

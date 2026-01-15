@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
@@ -12,8 +13,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.context.ApplicationContext;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This is {@link PrincipalResolutionContext}.

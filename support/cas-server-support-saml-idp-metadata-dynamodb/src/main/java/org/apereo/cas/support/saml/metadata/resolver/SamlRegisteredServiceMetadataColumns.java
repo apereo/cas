@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
+import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

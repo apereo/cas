@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring.boot;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.boot.actuate.autoconfigure.beans.BeansEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.condition.ConditionsReportEndpointAutoConfiguration;
@@ -41,17 +42,13 @@ import org.springframework.boot.webmvc.autoconfigure.WebMvcAutoConfiguration;
 import org.springframework.boot.webmvc.autoconfigure.actuate.web.WebMvcEndpointManagementContextConfiguration;
 import org.springframework.boot.webmvc.autoconfigure.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.webmvc.test.autoconfigure.MockMvcAutoConfiguration;
+import org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshEndpointAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.resilience.annotation.EnableResilientMethods;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
  * This is {@link SpringBootTestAutoConfigurations}.
@@ -83,6 +80,7 @@ import java.lang.annotation.Target;
     UserDetailsServiceAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     EndpointAutoConfiguration.class,
+    RefreshEndpointAutoConfiguration.class,
     WebEndpointAutoConfiguration.class,
     WebMvcEndpointManagementContextConfiguration.class,
     ServletEndpointManagementContextConfiguration.class,
@@ -93,7 +91,8 @@ import java.lang.annotation.Target;
     HealthContributorRegistryAutoConfiguration.class,
     HealthEndpointAutoConfiguration.class,
     InfoEndpointAutoConfiguration.class,
-    SslAutoConfiguration.class
+    SslAutoConfiguration.class,
+    ConfigurationPropertiesRebinderAutoConfiguration.class
 })
 @Import(ServletWebServerConfiguration.class)
 @Inherited

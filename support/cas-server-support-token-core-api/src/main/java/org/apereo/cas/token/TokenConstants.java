@@ -1,4 +1,5 @@
 package org.apereo.cas.token;
+import module java.base;
 
 /**
  * This is {@link TokenConstants}, an interface to hold constants relates to token authentication.

@@ -1,9 +1,7 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * This is {@link SpnegoCasMultifactorWebflowCustomizer}.

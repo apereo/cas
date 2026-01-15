@@ -1,15 +1,15 @@
 package org.apereo.inspektr.audit;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apereo.cas.util.thread.Cleanable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.cfg.DateTimeFeature;
 import tools.jackson.databind.json.JsonMapper;
-import java.util.List;
-import java.util.Map;
 
 /**
  * An interface used to make an audit trail record.
@@ -98,11 +98,8 @@ public interface AuditTrailManager extends Cleanable {
      */
     ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults()
         .findAndAddModules()
-        .changeDefaultPropertyInclusion(handler -> {
-            handler.withValueInclusion(JsonInclude.Include.NON_EMPTY);
-            handler.withContentInclusion(JsonInclude.Include.NON_EMPTY);
-            return handler;
-        })
+        .changeDefaultPropertyInclusion(handler -> handler.withValueInclusion(JsonInclude.Include.NON_EMPTY)
+            .withContentInclusion(JsonInclude.Include.NON_EMPTY))
         .configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, true)
         .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
         .build();
@@ -113,7 +110,7 @@ public interface AuditTrailManager extends Cleanable {
      * @param arg the arg
      * @return the string
      */
-    static String toJson(final Object arg) {
+    static String toJson(@Nullable final Object arg) {
         try {
             return MAPPER.writeValueAsString(arg);
         } catch (final Exception e) {

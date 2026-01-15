@@ -1,18 +1,11 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
-import java.io.Serial;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultAuthenticationTransactionFactory}.
@@ -34,7 +27,8 @@ public class DefaultAuthenticationTransactionFactory implements AuthenticationTr
      * @param credentials the credentials
      * @return the set
      */
-    private static Set<Credential> sanitizeCredentials(final Credential[] credentials) {
+    @SuppressWarnings("NullAway")
+    private static Set<Credential> sanitizeCredentials(@Nullable final Credential[] credentials) {
         if (credentials != null && credentials.length > 0) {
             return Arrays.stream(credentials)
                 .filter(Objects::nonNull)
@@ -44,7 +38,7 @@ public class DefaultAuthenticationTransactionFactory implements AuthenticationTr
     }
 
     @Override
-    public AuthenticationTransaction newTransaction(final Service service, final Credential... credentials) {
+    public AuthenticationTransaction newTransaction(@Nullable final Service service, @Nullable final Credential... credentials) {
         val credentialSet = sanitizeCredentials(credentials);
         val registeredService = servicesManager.findServiceBy(service);
         return new DefaultAuthenticationTransaction(service, registeredService, credentialSet);

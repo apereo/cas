@@ -1,5 +1,6 @@
 package org.apereo.cas.web.saml2;
 
+import module java.base;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

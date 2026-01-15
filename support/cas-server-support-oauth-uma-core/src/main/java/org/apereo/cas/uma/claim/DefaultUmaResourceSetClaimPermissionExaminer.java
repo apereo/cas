@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.claim;
 
+import module java.base;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.util.CollectionUtils;
 import com.google.common.collect.Sets;

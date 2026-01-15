@@ -1,9 +1,7 @@
 package org.apereo.cas.authentication.principal.attribute;
 
-import java.io.Serializable;
-import java.security.Principal;
-import java.util.List;
-import java.util.Map;
+import module java.base;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An immutable representation of a person with a uid (username) and attributes. A user's attributes can be of any type
@@ -31,7 +29,7 @@ public interface PersonAttributes extends Principal, Serializable {
      * @param name The name of the attribute to get the value for
      * @return The first value for the attribute
      */
-    Object getAttributeValue(String name);
+    @Nullable Object getAttributeValue(String name);
 
     /**
      * All values of the attribute, null if no values exist.
@@ -39,5 +37,5 @@ public interface PersonAttributes extends Principal, Serializable {
      * @param name The name of the attribute to get the values for
      * @return All values for the attribute
      */
-    List<Object> getAttributeValues(String name);
+    @Nullable List<Object> getAttributeValues(String name);
 }

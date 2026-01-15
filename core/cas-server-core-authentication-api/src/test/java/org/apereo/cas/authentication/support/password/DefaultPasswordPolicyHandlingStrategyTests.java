@@ -1,13 +1,10 @@
 package org.apereo.cas.authentication.support.password;
 
+import module java.base;
 import org.apereo.cas.DefaultMessageDescriptor;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

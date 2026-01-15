@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.ldap;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.BaseDelegatedClientAuthenticationCredentialResolver;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCandidateProfile;
@@ -11,14 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.LdapAttribute;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link LdapDelegatedClientAuthenticationCredentialResolver}.
@@ -33,7 +30,7 @@ public class LdapDelegatedClientAuthenticationCredentialResolver extends BaseDel
     }
 
     @Override
-    public List<DelegatedAuthenticationCandidateProfile> resolve(final RequestContext context, final ClientCredential credentials) {
+    public @Nullable List<DelegatedAuthenticationCandidateProfile> resolve(final RequestContext context, final ClientCredential credentials) {
         val profile = resolveUserProfile(context, credentials).orElseThrow();
         val ldapServers = configContext.getCasProperties().getAuthn().getPac4j().getProfileSelection().getLdap();
         return ldapServers

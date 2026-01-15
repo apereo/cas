@@ -1,5 +1,6 @@
 package org.apereo.cas.bucket4j.producer;
 
+import module java.base;
 import io.github.bucket4j.AbstractBucket;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.kafka.KafkaObjectFactory;
@@ -38,8 +39,6 @@ import org.springframework.kafka.core.KafkaAdminOperations;
 import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.support.serializer.JacksonJsonDeserializer;
 import org.springframework.kafka.support.serializer.JacksonJsonSerializer;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * This is {@link CasServicesStreamingKafkaAutoConfiguration}.

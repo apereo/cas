@@ -1,11 +1,9 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link PrincipalResolverUtils}.

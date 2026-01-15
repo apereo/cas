@@ -1,5 +1,6 @@
 package org.apereo.cas.tomcat;
 
+import module java.base;
 import org.apereo.cas.config.CasEmbeddedContainerTomcatAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.*;
     "server.port=8183",
     "server.ssl.enabled=false"
 }, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@Tag("WebApp")
+@Tag("ApacheTomcat")
 @EnableConfigurationProperties({
     CasConfigurationProperties.class,
     ServerProperties.class,

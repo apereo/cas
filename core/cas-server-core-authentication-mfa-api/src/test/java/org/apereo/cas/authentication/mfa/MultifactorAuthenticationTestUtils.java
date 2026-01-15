@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.mfa;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetadata;
@@ -21,10 +22,6 @@ import org.apereo.cas.validation.RequestedAuthenticationContextValidator;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import static org.mockito.Mockito.*;
 
 /**

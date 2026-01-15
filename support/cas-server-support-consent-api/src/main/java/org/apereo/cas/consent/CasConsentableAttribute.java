@@ -1,14 +1,11 @@
 package org.apereo.cas.consent;
 
+import module java.base;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * This is {@link CasConsentableAttribute}.

@@ -1,12 +1,10 @@
 package org.apereo.cas.support.realm;
 
+import module java.base;
 import lombok.val;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import javax.security.auth.callback.Callback;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

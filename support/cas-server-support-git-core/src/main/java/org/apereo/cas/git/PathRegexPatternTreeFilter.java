@@ -1,11 +1,10 @@
 package org.apereo.cas.git;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
-
-import java.util.regex.Pattern;
 
 /**
  * This is {@link PathRegexPatternTreeFilter}.

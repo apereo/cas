@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import lombok.Setter;
 import lombok.ToString;

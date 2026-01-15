@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.properties;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.shell.commands.CasShellCommand;
@@ -12,10 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.StreamSupport;
 
 /**
  * This is {@link FindPropertiesCommand}.

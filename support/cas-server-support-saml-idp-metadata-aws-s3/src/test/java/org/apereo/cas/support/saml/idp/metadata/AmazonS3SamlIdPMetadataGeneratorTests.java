@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
+import module java.base;
 import org.apereo.cas.config.CasAmazonS3SamlMetadataAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.BaseSamlIdPMetadataTests;
@@ -20,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import software.amazon.awssdk.services.s3.S3Client;
-import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

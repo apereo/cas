@@ -1,11 +1,9 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-
 import lombok.Getter;
-
-import java.io.Serial;
-import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Exception to alert that there was an error validating the ticket.
@@ -23,6 +21,7 @@ public abstract class AbstractTicketValidationException extends AbstractTicketEx
     @Serial
     private static final long serialVersionUID = 3257004341537093175L;
 
+    @Nullable
     private final Service service;
 
     /**
@@ -35,19 +34,19 @@ public abstract class AbstractTicketValidationException extends AbstractTicketEx
         this(CODE, service);
     }
 
-    protected AbstractTicketValidationException(final String code, final Service service) {
+    protected AbstractTicketValidationException(final String code, @Nullable final Service service) {
         super(code);
         this.service = service;
     }
 
     protected AbstractTicketValidationException(final String code, final String msg,
-                                                final List<Object> args, final Service service) {
+                                                final List<Object> args, @Nullable final Service service) {
         super(code, msg, args);
         this.service = service;
     }
 
     protected AbstractTicketValidationException(final String code, final Throwable throwable,
-                                                final List<Object> args, final Service service) {
+                                                final List<Object> args, @Nullable final Service service) {
         super(code, throwable, args);
         this.service = service;
     }

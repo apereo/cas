@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall.authzen;
 
+import module java.base;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,9 +9,6 @@ import lombok.ToString;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import org.springframework.validation.annotation.Validated;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
 
 /**
  * This is {@link AuthZenResource}.

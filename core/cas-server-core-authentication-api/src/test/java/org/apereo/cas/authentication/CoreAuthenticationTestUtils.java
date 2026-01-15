@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.attribute.StubPersonAttributeDao;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
@@ -25,14 +26,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.springframework.context.support.StaticApplicationContext;
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 /**

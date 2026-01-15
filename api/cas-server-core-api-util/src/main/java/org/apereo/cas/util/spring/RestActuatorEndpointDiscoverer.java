@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring;
 
+import module java.base;
 import lombok.Getter;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
@@ -17,8 +18,6 @@ import org.springframework.boot.actuate.endpoint.web.PathMapper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.MergedAnnotations;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * This is {@link RestActuatorEndpointDiscoverer}.

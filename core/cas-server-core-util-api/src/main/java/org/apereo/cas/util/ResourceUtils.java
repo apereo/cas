@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
@@ -20,19 +22,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
 import org.springframework.core.io.support.ResourcePatternUtils;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.jar.JarFile;
 import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
 import static org.springframework.util.ResourceUtils.FILE_URL_PREFIX;
 import static org.springframework.util.ResourceUtils.extractArchiveURL;
@@ -69,17 +58,27 @@ public class ResourceUtils {
      * @return the resource from
      * @throws IOException the exception
      */
-    public static AbstractResource getRawResourceFrom(final String location) throws IOException {
+    public static AbstractResource getRawResourceFrom(final @Nullable String location) throws IOException {
         if (StringUtils.isBlank(location)) {
             throw new IllegalArgumentException("Provided location does not exist and is empty");
         }
-        if (location.toLowerCase(Locale.ENGLISH).startsWith(HTTP_URL_PREFIX)) {
+        if (isUrl(location)) {
             return new UrlResource(location);
         }
-        if (location.toLowerCase(Locale.ENGLISH).startsWith(CLASSPATH_URL_PREFIX)) {
+        if (isClasspathResource(location)) {
             return new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
         }
         return new FileSystemResource(Strings.CI.remove(location, FILE_URL_PREFIX));
+    }
+
+    /**
+     * Is classpath resource?.
+     *
+     * @param location the location
+     * @return true/false
+     */
+    public static boolean isClasspathResource(final String location) {
+        return StringUtils.isNotBlank(location) && location.toLowerCase(Locale.ENGLISH).startsWith(CLASSPATH_URL_PREFIX);
     }
 
     /**
@@ -181,7 +180,7 @@ public class ResourceUtils {
      * @param resource        the resource
      * @return the resource
      */
-    public static Resource exportClasspathResourceToFile(final File parentDirectory, final Resource resource) {
+    public static @Nullable Resource exportClasspathResourceToFile(final File parentDirectory, final Resource resource) {
         LOGGER.trace("Preparing classpath resource [{}]", resource);
         if (resource == null) {
             LOGGER.warn("No resource defined to prepare.");
@@ -211,7 +210,7 @@ public class ResourceUtils {
      * @param resource the resource
      * @return the file
      */
-    public static Resource prepareClasspathResourceIfNeeded(final Resource resource) {
+    public static @Nullable Resource prepareClasspathResourceIfNeeded(final Resource resource) {
         if (resource == null) {
             LOGGER.debug("No resource defined to prepare.");
             return null;
@@ -231,9 +230,10 @@ public class ResourceUtils {
      * @return the file
      */
     @SuppressWarnings("JdkObsolete")
-    public static Resource prepareClasspathResourceIfNeeded(final Resource resource,
-                                                            final boolean isDirectory,
-                                                            final String containsName) {
+    public static @Nullable Resource prepareClasspathResourceIfNeeded(final Resource resource,
+                                                                      final boolean isDirectory,
+                                                                      @Nullable
+                                                                      final String containsName) {
         try {
             LOGGER.trace("Preparing possible classpath resource [{}]", resource);
             if (resource == null) {
@@ -355,7 +355,7 @@ public class ResourceUtils {
      * @return true/false
      */
     public static boolean isUrl(final String resource) {
-        return StringUtils.isNotBlank(resource) && resource.startsWith("http");
+        return StringUtils.isNotBlank(resource) && resource.toLowerCase(Locale.ENGLISH).startsWith(HTTP_URL_PREFIX);
     }
 
     /**

@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import java.io.Serial;
 
 /**
  * Null principal implementation that allows us to construct {@link Authentication}s in the event that no

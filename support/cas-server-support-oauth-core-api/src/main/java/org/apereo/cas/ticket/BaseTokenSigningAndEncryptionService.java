@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.token.JwtBuilder;
@@ -14,14 +15,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
-
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * This is {@link BaseTokenSigningAndEncryptionService}.
@@ -42,7 +35,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
             val jwt = Objects.requireNonNull(verifySignature(token, jsonWebKey),
                 "Unable to verify signature of the token using the JSON web key public key");
             val result = new String(jwt, StandardCharsets.UTF_8);
-            val claims = JwtBuilder.parse(result);
+            val claims = JwtBuilder.tryParse(result).orElseThrow();
 
             FunctionUtils.throwIf(StringUtils.isBlank(claims.getIssuer()),
                 () -> new IllegalArgumentException("Claims do not contain an issuer"));
@@ -103,7 +96,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
             Objects.requireNonNull(jsonWebKey.getPrivateKey(), "JSON web key used to sign the token has no associated private key");
             return signToken(registeredService, claims, jsonWebKey);
         }
-        val claimSet = JwtBuilder.parse(claims.toJson());
+        val claimSet = JwtBuilder.tryParse(claims.toJson()).orElseThrow();
         return JwtBuilder.buildPlain(claimSet, Optional.of(registeredService));
     }
 

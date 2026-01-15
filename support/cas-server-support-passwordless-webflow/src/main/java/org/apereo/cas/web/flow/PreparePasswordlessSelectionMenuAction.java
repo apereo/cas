@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -13,10 +14,10 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Optional;
 
 /**
  * This is {@link PreparePasswordlessSelectionMenuAction}.
@@ -47,8 +48,8 @@ public class PreparePasswordlessSelectionMenuAction extends BasePasswordlessCasW
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
-        val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        val user = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
         FunctionUtils.throwIf(!user.isAllowSelectionMenu(), () -> new IllegalStateException("Passwordless account is not allowed to select options"));
         PasswordlessWebflowUtils.putMultifactorAuthenticationAllowed(requestContext, isMultifactorAuthenticationAllowed(requestContext));
         PasswordlessWebflowUtils.putDelegatedAuthenticationAllowed(requestContext, isDelegatedAuthenticationAllowed(requestContext));
@@ -61,13 +62,13 @@ public class PreparePasswordlessSelectionMenuAction extends BasePasswordlessCasW
     }
 
     protected boolean isDelegatedAuthenticationAllowed(final RequestContext requestContext) throws Throwable {
-        val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+        val user = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
         val producer = providerConfigurationProducer.getIfAvailable();
         return isDelegatedAuthenticationActiveFor(requestContext, user) && producer != null && !producer.produce(requestContext).isEmpty();
     }
 
     protected boolean isMultifactorAuthenticationAllowed(final RequestContext requestContext) throws Throwable {
-        val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+        val user = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
         val mfaTriggersAvailable = !multifactorTriggerSelectionStrategy.getMultifactorAuthenticationTriggers().isEmpty();
         return mfaTriggersAvailable
             && shouldActivateMultifactorAuthenticationFor(requestContext, user)
@@ -75,7 +76,7 @@ public class PreparePasswordlessSelectionMenuAction extends BasePasswordlessCasW
     }
 
     protected Optional<MultifactorAuthenticationProvider> isMultifactorAuthenticationPossible(final RequestContext requestContext) throws Throwable {
-        val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+        val user = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
         val authentication = buildAuthentication(user);
         val service = WebUtils.getService(requestContext);
         return resolveMultifactorAuthenticationProvider(requestContext, authentication, service);

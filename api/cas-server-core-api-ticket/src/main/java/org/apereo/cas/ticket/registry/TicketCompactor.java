@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import module java.base;
 import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.Ticket;
 import lombok.Getter;
@@ -8,8 +9,6 @@ import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-import java.time.Instant;
-import java.util.List;
 
 /**
  * This is {@link TicketCompactor}.

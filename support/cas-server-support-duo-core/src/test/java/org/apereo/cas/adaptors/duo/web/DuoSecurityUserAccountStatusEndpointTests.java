@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.web;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;

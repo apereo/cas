@@ -1,17 +1,14 @@
 package org.apereo.cas.adaptors.radius;
 
+import module java.base;
 import org.apereo.cas.adaptors.radius.server.BlockingRadiusServer;
 import org.apereo.cas.adaptors.radius.server.RadiusServerConfigurationContext;
-
 import lombok.val;
 import net.jradius.exception.TimeoutException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

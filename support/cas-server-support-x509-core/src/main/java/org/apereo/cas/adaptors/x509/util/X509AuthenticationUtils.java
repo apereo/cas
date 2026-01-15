@@ -1,10 +1,8 @@
 package org.apereo.cas.adaptors.x509.util;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.x509.SubjectDnPrincipalResolverProperties;
-
 import lombok.experimental.UtilityClass;
-
-import javax.security.auth.x500.X500Principal;
 
 
 /**

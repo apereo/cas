@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;

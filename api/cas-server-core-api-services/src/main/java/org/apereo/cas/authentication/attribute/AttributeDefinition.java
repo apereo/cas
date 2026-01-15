@@ -1,12 +1,9 @@
 package org.apereo.cas.authentication.attribute;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link AttributeDefinition}.

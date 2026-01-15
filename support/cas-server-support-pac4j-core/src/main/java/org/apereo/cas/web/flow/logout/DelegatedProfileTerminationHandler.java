@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.logout;
 
+import module java.base;
 import org.apereo.cas.logout.SessionTerminationHandler;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -11,8 +12,6 @@ import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.webflow.execution.RequestContext;
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * This is {@link DelegatedProfileTerminationHandler}.

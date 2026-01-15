@@ -1,12 +1,10 @@
 package org.apereo.cas.support.saml.util;
 
+import module java.base;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CompressionUtils;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link NonInflatingSaml20ObjectBuilder}.
