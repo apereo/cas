@@ -213,12 +213,6 @@ with Spring Boot `4`.
 
 Support for [SpringBoot Admin](../monitoring/Configuring-SpringBootAdmin.html) is not yet compatible with Spring Boot `4`.
 We plan to re-add support for Spring Boot Admin in the future once compatibility is restored.
-      
-#### Spring Session 
-
-[Spring Session with MongoDb](../webflow/Webflow-Customization-Sessions-ServerSide-MongoDb.html) 
-is not yet compatible with Spring Boot `4`. We plan to re-add support for these features 
-in the future once compatibility is restored.
 
 #### Jackson & JSON Processing
 
