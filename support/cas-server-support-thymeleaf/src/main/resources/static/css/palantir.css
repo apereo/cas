@@ -59,10 +59,37 @@
     padding-top: 8px;
 }
 
-.shortcut-grid {
+.grid-2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px 16px;
+}
+
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px 5px;
+}
+
+.mfa-card {
+    background: linear-gradient(
+            135deg,
+            #114376 -1%,
+            #1f5fa3 58%,
+            #4f8fd9 15%,
+            #a9d6f5 100%
+    );
+    color: whitesmoke;
+    border-radius: 20px 20px 0 0 !important;
+    box-shadow:
+            16px 16px 24px rgba(0, 0, 0, 0.25),
+            -6px -6px 14px rgba(255, 255, 255, 0.25);
+    transform-style: preserve-3d;
+    transform: rotateX(0) rotateY(0);
+    transition: transform 0.3s ease;
+}
+.mfa-card:hover {
+    transform: rotateX(18deg) rotateY(-6deg);
 }
 
 .shortcut-item {

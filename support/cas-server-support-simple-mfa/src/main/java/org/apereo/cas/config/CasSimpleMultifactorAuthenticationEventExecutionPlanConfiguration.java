@@ -105,13 +105,13 @@ class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator,
         final CasConfigurationProperties casProperties) {
         val simple = casProperties.getAuthn().getMfa().getSimple();
-        val p = new CasSimpleMultifactorAuthenticationProvider();
-        p.setBypassEvaluator(casSimpleMultifactorBypassEvaluator);
-        p.setFailureMode(simple.getFailureMode());
-        p.setFailureModeEvaluator(failureModeEvaluator);
-        p.setOrder(simple.getRank());
-        p.setId(simple.getId());
-        return p;
+        val provider = new CasSimpleMultifactorAuthenticationProvider();
+        provider.setBypassEvaluator(casSimpleMultifactorBypassEvaluator);
+        provider.setFailureMode(simple.getFailureMode());
+        provider.setFailureModeEvaluator(failureModeEvaluator);
+        provider.setOrder(simple.getRank());
+        provider.setId(simple.getId());
+        return provider;
     }
 
     @Bean
