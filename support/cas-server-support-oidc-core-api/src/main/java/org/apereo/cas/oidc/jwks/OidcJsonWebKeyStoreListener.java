@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks;
 
+import module java.base;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreModifiedEvent;
 import org.apereo.cas.util.spring.CasEventListener;
 import org.springframework.context.event.EventListener;

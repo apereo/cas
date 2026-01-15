@@ -1,17 +1,16 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Locale;
 
 /**
  * This is {@link RedirectToServiceAction}.
@@ -25,7 +24,7 @@ public class RedirectToServiceAction extends BaseCasWebflowAction {
     private final ResponseBuilderLocator<WebApplicationService> responseBuilderLocator;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val service = WebUtils.getService(requestContext);
         LOGGER.debug("Located service [{}] from the context", service);
 

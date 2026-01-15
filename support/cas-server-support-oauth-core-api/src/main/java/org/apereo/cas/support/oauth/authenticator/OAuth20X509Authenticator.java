@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -24,7 +25,6 @@ import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.http.credentials.X509Credentials;
 import org.pac4j.http.credentials.authenticator.X509Authenticator;
-import java.util.Optional;
 
 /**
  * This is {@link OAuth20X509Authenticator}.

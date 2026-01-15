@@ -1,10 +1,9 @@
 package org.apereo.cas.oidc.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
-
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**

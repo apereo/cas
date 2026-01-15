@@ -1,17 +1,10 @@
 package org.apereo.cas.util.io;
 
+import module java.base;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.springframework.core.io.FileSystemResource;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.file.Files;
 
 /**
  * This is {@link TemporaryFileSystemResource}.

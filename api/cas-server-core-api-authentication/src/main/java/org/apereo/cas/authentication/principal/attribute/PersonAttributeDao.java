@@ -1,17 +1,12 @@
 package org.apereo.cas.authentication.principal.attribute;
 
+import module java.base;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * Defines methods for finding a {@link PersonAttributes} or Set of IPersons based on a user ID or a Map of user attributes to
@@ -142,8 +137,8 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
      * @throws IllegalArgumentException If {@code query} is {@code null.}
      */
     default Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
-                                                                     final PersonAttributeDaoFilter filter,
-                                                                     final Set<PersonAttributes> resultPeople) {
+                                                                     @Nullable final PersonAttributeDaoFilter filter,
+                                                                     @Nullable final Set<PersonAttributes> resultPeople) {
         return new LinkedHashSet<>();
     }
 
@@ -155,7 +150,7 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
      * @return the people with multivalued attributes
      */
     default Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
-                                                                     final PersonAttributeDaoFilter filter) {
+                                                                     @Nullable final PersonAttributeDaoFilter filter) {
         return getPeopleWithMultivaluedAttributes(query, filter, Set.of());
     }
 
@@ -191,7 +186,7 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
      * @param filter the filter
      * @return A {@link Set} of possible attribute names for user queries.
      */
-    default Set<String> getPossibleUserAttributeNames(final PersonAttributeDaoFilter filter) {
+    default Set<String> getPossibleUserAttributeNames(final @Nullable PersonAttributeDaoFilter filter) {
         return new LinkedHashSet<>();
     }
 
@@ -205,7 +200,7 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
      * @param filter the filter
      * @return The set of attributes that can be used to query for user ids in this dao, null if the set is unknown.
      */
-    default Set<String> getAvailableQueryAttributes(final PersonAttributeDaoFilter filter) {
+    default Set<String> getAvailableQueryAttributes(final @Nullable PersonAttributeDaoFilter filter) {
         return new LinkedHashSet<>();
     }
 

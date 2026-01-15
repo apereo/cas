@@ -1,12 +1,12 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
+import module java.base;
+import module java.xml;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
-import org.w3c.dom.Element;
 
 /**
  * This is {@link BaseElementMetadataResolver}.

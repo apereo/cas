@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.consent.ConsentDecision;
 import org.apereo.cas.nativex.CasConsentRuntimeHints;
 import lombok.val;

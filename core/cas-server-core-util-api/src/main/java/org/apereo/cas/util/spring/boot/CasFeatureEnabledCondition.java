@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring.boot;
 
+import module java.base;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -11,9 +12,6 @@ import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotatedTypeMetadata;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link CasFeatureEnabledCondition}.

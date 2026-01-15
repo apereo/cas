@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication.credential;
 
+import module java.base;
 import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,10 +11,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.io.Serial;
-import java.net.URI;
-import java.net.URL;
 
 /**
  * A credential representing an HTTP endpoint given by a URL. Authenticating the credential usually involves
@@ -30,6 +26,7 @@ import java.net.URL;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@SuppressWarnings("NullAway.Init")
 public class HttpBasedServiceCredential extends AbstractCredential {
 
     @Serial

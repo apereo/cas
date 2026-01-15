@@ -1,4 +1,6 @@
 package org.apereo.cas.authentication.principal;
+import module java.base;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link ServiceMatchingStrategy}.
@@ -34,5 +36,5 @@ public interface ServiceMatchingStrategy {
      * @param serviceToMatch the match service
      * @return true /false
      */
-    boolean matches(Service service, Service serviceToMatch);
+    boolean matches(@Nullable Service service, @Nullable Service serviceToMatch);
 }

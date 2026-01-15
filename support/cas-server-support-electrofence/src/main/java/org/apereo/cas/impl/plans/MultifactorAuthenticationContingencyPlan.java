@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.plans;
 
+import module java.base;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;

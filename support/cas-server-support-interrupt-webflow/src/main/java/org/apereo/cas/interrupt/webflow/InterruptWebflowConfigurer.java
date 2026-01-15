@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt.webflow;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptCoreProperties;

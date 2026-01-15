@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;

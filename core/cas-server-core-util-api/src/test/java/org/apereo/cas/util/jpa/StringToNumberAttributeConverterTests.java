@@ -1,5 +1,6 @@
 package org.apereo.cas.util.jpa;
 
+import module java.base;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.cipher.JasyptNumberCipherExecutor;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;

@@ -1,4 +1,5 @@
 package org.apereo.cas.logout.slo;
+import module java.base;
 
 /**
  * Contract that defines the format of the logout message sent to a client to indicate

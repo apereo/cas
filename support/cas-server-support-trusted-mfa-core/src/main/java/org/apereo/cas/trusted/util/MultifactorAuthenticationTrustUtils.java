@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.util;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.trusted.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
@@ -11,9 +12,6 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.webflow.execution.RequestContext;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link MultifactorAuthenticationTrustUtils}.

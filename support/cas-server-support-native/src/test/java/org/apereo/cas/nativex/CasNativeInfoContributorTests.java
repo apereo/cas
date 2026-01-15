@@ -1,10 +1,10 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.actuate.info.Info;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

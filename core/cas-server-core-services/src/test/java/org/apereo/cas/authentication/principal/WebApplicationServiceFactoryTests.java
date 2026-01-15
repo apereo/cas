@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.config.BaseAutoConfigurationTests;
 import org.apereo.cas.test.CasTestExtension;

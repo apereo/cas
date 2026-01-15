@@ -1,13 +1,12 @@
 package org.apereo.cas.audit.spi.principal;
 
+import module java.base;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
-
-import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link ChainingAuditPrincipalIdProvider}.
@@ -37,8 +36,10 @@ public record ChainingAuditPrincipalIdProvider(List<AuditPrincipalIdProvider> pr
     }
 
     @Override
-    public String getPrincipalIdFrom(final JoinPoint auditTarget, final Authentication authentication,
-                                     final Object resultValue, final Exception exception) {
+    public @Nullable String getPrincipalIdFrom(final JoinPoint auditTarget,
+                                               @Nullable final Authentication authentication,
+                                               @Nullable final Object resultValue,
+                                               @Nullable final Exception exception) {
         val result = providers
             .stream()
             .filter(BeanSupplier::isNotProxy)
@@ -49,9 +50,12 @@ public record ChainingAuditPrincipalIdProvider(List<AuditPrincipalIdProvider> pr
     }
 
     @Override
-    public boolean supports(final JoinPoint auditTarget, final Authentication authentication,
-                            final Object resultValue, final Exception exception) {
-        return providers.stream()
+    public boolean supports(final JoinPoint auditTarget,
+                            @Nullable final Authentication authentication,
+                            @Nullable final Object resultValue,
+                            @Nullable final Exception exception) {
+        return providers
+            .stream()
             .filter(BeanSupplier::isNotProxy)
             .anyMatch(p -> p.supports(auditTarget, authentication, resultValue, exception));
     }

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.mdui;
 
+import module java.base;
 import org.apereo.cas.services.WebBasedRegisteredService;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -9,7 +9,6 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

@@ -1,9 +1,9 @@
 package org.apereo.cas.oidc.discovery.webfinger;
 
+import module java.base;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.ResponseEntity;
-import java.util.Map;
 
 /**
  * This is {@link OidcWebFingerDiscoveryService}.

@@ -1,11 +1,9 @@
 package org.apereo.cas.impl.plans;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.io.Serial;
 
 /**
  * This is {@link RiskyAuthenticationException}.

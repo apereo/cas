@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
@@ -19,12 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link AdaptiveMultifactorAuthenticationTrigger}.
@@ -45,7 +45,7 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
-    private static boolean checkUserAgentOrClientIp(final String clientIp, final String agent,
+    private static boolean checkUserAgentOrClientIp(@Nullable final String clientIp, @Nullable final String agent,
                                                     final String mfaMethod, final String pattern) {
         if (StringUtils.isNotBlank(agent) && RegexUtils.find(pattern, agent)) {
             LOGGER.debug("Current user agent [{}] at [{}] matches the provided pattern [{}] for "

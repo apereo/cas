@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
@@ -9,9 +10,7 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
-import java.util.Objects;
-import java.util.stream.Stream;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultAuthenticationSystemSupport}.
@@ -39,7 +38,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     private final PrincipalFactory principalFactory;
 
     private final TenantExtractor tenantExtractor;
-    
+
     private final TenantsManager tenantsManager;
 
     @Override
@@ -54,8 +53,8 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     }
 
     @Override
-    public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Service service,
-                                                                              final Credential... credential) throws Throwable {
+    public AuthenticationResultBuilder handleInitialAuthenticationTransaction(@Nullable final Service service,
+                                                                              @Nullable final Credential... credential) throws Throwable {
         val builder = authenticationResultBuilderFactory.newBuilder();
         if (credential != null) {
             Stream.of(credential).filter(Objects::nonNull).forEach(builder::collect);
@@ -64,9 +63,10 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     }
 
     @Override
-    public AuthenticationResultBuilder handleAuthenticationTransaction(final Service service,
-                                                                       final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                       final Credential... credentials) throws Throwable {
+    public AuthenticationResultBuilder handleAuthenticationTransaction(
+        @Nullable final Service service,
+        final AuthenticationResultBuilder authenticationResultBuilder,
+        @Nullable final Credential... credentials) throws Throwable {
 
         val transaction = authenticationTransactionFactory.newTransaction(service, credentials)
             .collect(authenticationResultBuilder.getAuthentications());
@@ -75,13 +75,13 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     }
 
     @Override
-    public AuthenticationResult finalizeAllAuthenticationTransactions(@NonNull final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                      final Service service) throws Throwable {
+    public @Nullable AuthenticationResult finalizeAllAuthenticationTransactions(final AuthenticationResultBuilder authenticationResultBuilder,
+                                                                                @Nullable final Service service) throws Throwable {
         return authenticationResultBuilder.build(service);
     }
 
     @Override
-    public AuthenticationResult finalizeAuthenticationTransaction(final Service service, final Credential... credential) throws Throwable {
+    public @Nullable AuthenticationResult finalizeAuthenticationTransaction(@Nullable final Service service, final Credential... credential) throws Throwable {
         return finalizeAllAuthenticationTransactions(handleInitialAuthenticationTransaction(service, credential), service);
     }
 }

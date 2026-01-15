@@ -4,6 +4,7 @@ import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import module java.base;
 
 /**
  * Abstract class that encapsulates the required suffixes.

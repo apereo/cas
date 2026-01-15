@@ -4,7 +4,9 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import module java.base;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Default implementation that gets it from the {@link ThreadLocal}.
@@ -15,7 +17,7 @@ import org.aspectj.lang.JoinPoint;
 @Slf4j
 public class DefaultClientInfoResolver implements ClientInfoResolver {
     @Override
-    public ClientInfo resolveFrom(final JoinPoint joinPoint, final Object retVal) {
+    public ClientInfo resolveFrom(final JoinPoint joinPoint, @Nullable final Object retVal) {
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (clientInfo != null) {
             return resolveClientInfo(clientInfo);

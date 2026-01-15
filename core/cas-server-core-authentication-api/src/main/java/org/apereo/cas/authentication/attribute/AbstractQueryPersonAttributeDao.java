@@ -1,20 +1,14 @@
 package org.apereo.cas.authentication.attribute;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.LinkedCaseInsensitiveMap;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Provides common functionality for DAOs using a set of attribute values from the seed to
@@ -25,10 +19,12 @@ import java.util.stream.Collectors;
  * @since 7.1.0
  */
 @Slf4j
+@SuppressWarnings("NullAway.Init")
 public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaultAttributePersonAttributeDao {
     @Getter
     private Map<String, Set<String>> queryAttributeMapping;
     @Getter
+    @Nullable
     private Map<String, Set<String>> resultAttributeMapping;
     @Getter
     @Setter
@@ -66,9 +62,9 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
     }
 
     @Override
-    public final Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
-                                                                          final PersonAttributeDaoFilter filter,
-                                                                          final Set<PersonAttributes> resultPeople) {
+    public final @Nullable Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
+                                                                                    @Nullable final PersonAttributeDaoFilter filter,
+                                                                                    @Nullable final Set<PersonAttributes> resultPeople) {
         var queryBuilder = generateQuery(query);
         if (queryBuilder == null && (queryAttributeMapping != null || useAllQueryAttributes)) {
             LOGGER.debug("No queryBuilder was generated for query [{}], null will be returned", query);
@@ -94,7 +90,7 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
      * @param queryUserName The username passed in the query map, if no username attribute existed in the query Map null is provided.
      * @return The list of IPersons found by the query. The user attributes should be using the raw names from the data layer.
      */
-    protected abstract List<PersonAttributes> getPeopleForQuery(QB queryBuilder, String queryUserName);
+    protected abstract @Nullable List<PersonAttributes> getPeopleForQuery(@Nullable QB queryBuilder, String queryUserName);
 
     /**
      * Append the attribute and its canonicalized value/s to the
@@ -121,7 +117,9 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
      * @param queryValues    The values for the data attribute
      * @return An updated queryBuilder
      */
-    protected QB appendCanonicalizedAttributeToQuery(final QB queryBuilder, final String queryAttribute, final String dataAttribute, final List<Object> queryValues) {
+    protected @Nullable QB appendCanonicalizedAttributeToQuery(@Nullable final QB queryBuilder,
+                                                               final String queryAttribute,
+                                                               final @Nullable String dataAttribute, final List<Object> queryValues) {
         val canonicalizedQueryValues = canonicalizeAttribute(queryAttribute, queryValues, caseInsensitiveQueryAttributes);
         LOGGER.debug("Adding attribute [{}] with value [{}] to query builder [{}]", queryAttribute, queryValues, queryBuilder);
         return appendAttributeToQuery(queryBuilder, dataAttribute, canonicalizedQueryValues);
@@ -135,7 +133,9 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
      * @param queryValues   The values for the data attribute
      * @return An updated queryBuilder
      */
-    protected abstract QB appendAttributeToQuery(QB queryBuilder, String dataAttribute, List<Object> queryValues);
+    protected abstract @Nullable QB appendAttributeToQuery(@Nullable QB queryBuilder,
+                                                           @Nullable String dataAttribute,
+                                                           @Nullable List<Object> queryValues);
 
     /**
      * Generates a query using the queryBuilder object passed by the subclass. Attribute/Value pairs are added to the
@@ -146,7 +146,7 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
      * @param query The query Map to populate the queryBuilder with.
      * @return The fully populated query builder.
      */
-    protected final QB generateQuery(final Map<String, List<Object>> query) {
+    protected final @Nullable QB generateQuery(final Map<String, List<Object>> query) {
         QB queryBuilder = null;
 
         if (queryAttributeMapping != null && !queryAttributeMapping.isEmpty()) {
@@ -180,7 +180,7 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
         return queryBuilder;
     }
 
-    protected QB finalizeQueryBuilder(final QB queryBuilder, final Map<String, List<Object>> query) {
+    protected @Nullable QB finalizeQueryBuilder(@Nullable final QB queryBuilder, final Map<String, List<Object>> query) {
         return queryBuilder;
     }
 
@@ -194,7 +194,7 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
     protected final PersonAttributes mapPersonAttributes(final PersonAttributes person) {
         var personAttributes = person.getAttributes();
 
-        val mappedAttributes = new LinkedCaseInsensitiveMap<@NonNull List<Object>>();
+        val mappedAttributes = new LinkedCaseInsensitiveMap<List<Object>>();
         if (resultAttributeMapping == null) {
             if (caseInsensitiveResultAttributes != null && !caseInsensitiveResultAttributes.isEmpty()) {
                 for (val attribute : personAttributes.entrySet()) {
@@ -248,7 +248,7 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
      * @param config map of attribute names to canonicalization key for the attribute
      * @return if configured to do so, returns a canonicalized list of values.
      */
-    protected List<Object> canonicalizeAttribute(final String key, final List<Object> value, final Map<String, CaseCanonicalizationMode> config) {
+    protected @Nullable List<Object> canonicalizeAttribute(final String key, final @Nullable List<Object> value, final Map<String, CaseCanonicalizationMode> config) {
         if (value == null || value.isEmpty() || config == null || !config.containsKey(key)) {
             return value;
         }
@@ -310,7 +310,7 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
     }
 
     @Override
-    public Set<String> getPossibleUserAttributeNames(final PersonAttributeDaoFilter filter) {
+    public Set<String> getPossibleUserAttributeNames(@Nullable final PersonAttributeDaoFilter filter) {
         return Set.copyOf(this.possibleUserAttributeNames);
     }
 }

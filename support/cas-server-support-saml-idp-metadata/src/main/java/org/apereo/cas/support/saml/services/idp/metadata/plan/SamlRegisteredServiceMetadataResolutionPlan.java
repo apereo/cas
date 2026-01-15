@@ -1,8 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.plan;
 
+import module java.base;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
-
-import java.util.Collection;
 
 /**
  * This is {@link SamlRegisteredServiceMetadataResolutionPlan} that allows modules to register

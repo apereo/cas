@@ -1,9 +1,8 @@
 package org.apereo.cas.web.cookie;
 
+import module java.base;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.util.Optional;
 
 /**
  * This is {@link CookieSameSitePolicy}.

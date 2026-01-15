@@ -1,11 +1,9 @@
 package org.apereo.cas.otp.repository.credentials;
 
+import module java.base;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link OneTimeTokenAccountSerializer}.

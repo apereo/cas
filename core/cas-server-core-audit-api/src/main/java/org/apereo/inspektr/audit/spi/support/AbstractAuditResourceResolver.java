@@ -2,9 +2,10 @@ package org.apereo.inspektr.audit.spi.support;
 
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import module java.base;
 import lombok.Setter;
 import org.aspectj.lang.JoinPoint;
-import java.util.function.Function;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Abstract AuditResourceResolver for when the resource is the same regardless of an exception or not.
@@ -20,7 +21,7 @@ public abstract class AbstractAuditResourceResolver implements AuditResourceReso
     protected Function<String[], String[]> resourcePostProcessor = Function.identity();
 
     @Override
-    public final String[] resolveFrom(final JoinPoint joinPoint, final Object retVal) {
+    public final String[] resolveFrom(final JoinPoint joinPoint, @Nullable final Object retVal) {
         return createResource(joinPoint.getArgs());
     }
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks.generator.jpa;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.support.JpaPersistenceUnitProvider;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreEntity;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionOperations;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import java.util.Optional;
 
 /**
  * This is {@link OidcJpaJsonWebKeystoreGeneratorService}.

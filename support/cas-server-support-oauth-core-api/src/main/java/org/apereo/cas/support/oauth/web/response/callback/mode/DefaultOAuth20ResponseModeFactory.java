@@ -1,14 +1,11 @@
 package org.apereo.cas.support.oauth.web.response.callback.mode;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link DefaultOAuth20ResponseModeFactory}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
+import module java.base;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;

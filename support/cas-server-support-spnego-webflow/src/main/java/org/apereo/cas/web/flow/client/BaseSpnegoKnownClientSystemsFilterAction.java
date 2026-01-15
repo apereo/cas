@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow.client;
 
+import module java.base;
 import org.apereo.cas.support.spnego.util.ReverseDNSRunnable;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,10 +11,9 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.regex.Pattern;
 
 /**
  * Abstract class for defining a simple binary filter to determine whether a
@@ -59,7 +58,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends BaseCasWebflowActi
      * {@link #no()} otherwise.
      */
     @Override
-    protected Event doExecuteInternal(final RequestContext context) throws Exception {
+    protected @Nullable Event doExecuteInternal(final RequestContext context) throws Exception {
         val remoteIp = getRemoteIp(context);
         LOGGER.debug("Current user IP [{}]", remoteIp);
         if (shouldDoSpnego(remoteIp)) {

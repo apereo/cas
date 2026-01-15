@@ -1,12 +1,8 @@
 package org.apereo.cas.rest.plan;
 
+import module java.base;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
-
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * This is {@link DefaultServiceTicketResourceEntityResponseFactoryPlan}.

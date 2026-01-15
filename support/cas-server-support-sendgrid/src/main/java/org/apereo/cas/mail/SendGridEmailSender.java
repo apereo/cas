@@ -1,10 +1,10 @@
 package org.apereo.cas.mail;
 
+import module java.base;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.mail.EmailSender;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -18,8 +18,6 @@ import lombok.val;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
-import java.util.List;
 
 /**
  * This is {@link SendGridEmailSender}.

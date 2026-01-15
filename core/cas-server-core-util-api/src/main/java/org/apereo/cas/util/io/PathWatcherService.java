@@ -1,5 +1,6 @@
 package org.apereo.cas.util.io;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -10,15 +11,6 @@ import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
-import java.io.File;
-import java.nio.file.ClosedWatchServiceException;
-import java.nio.file.Path;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import static java.nio.file.StandardWatchEventKinds.*;
 
 /**
@@ -105,7 +97,7 @@ public class PathWatcherService implements WatcherService, Runnable, DisposableB
     }
 
     @Override
-    public void start(final String name) {
+    public void start(final @Nullable String name) {
         if (shouldEnableWatchService()) {
             LOGGER.trace("Starting watcher thread");
             thread = Thread.ofVirtual().name(name).start(this);

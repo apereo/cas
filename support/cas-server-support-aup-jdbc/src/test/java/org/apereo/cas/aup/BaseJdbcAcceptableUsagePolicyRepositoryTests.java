@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasAcceptableUsagePolicyJdbcAutoConfiguration;
 import org.apereo.cas.config.CasAcceptableUsagePolicyWebflowAutoConfiguration;
@@ -32,9 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.support.TransactionOperations;
-import javax.sql.DataSource;
-import java.util.List;
-import java.util.Map;
+import module java.sql;
 
 /**
  * This is {@link BaseJdbcAcceptableUsagePolicyRepositoryTests}.

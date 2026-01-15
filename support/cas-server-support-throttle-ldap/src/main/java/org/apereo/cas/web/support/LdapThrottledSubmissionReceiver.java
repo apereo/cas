@@ -1,17 +1,14 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import org.apereo.cas.throttle.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.ReturnAttributes;
-
-import java.util.HashMap;
-import java.util.Set;
 
 /**
  * This is {@link LdapThrottledSubmissionReceiver}.

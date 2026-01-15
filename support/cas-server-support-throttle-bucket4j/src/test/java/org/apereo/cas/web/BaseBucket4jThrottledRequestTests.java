@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.config.CasBucket4jThrottlingAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;

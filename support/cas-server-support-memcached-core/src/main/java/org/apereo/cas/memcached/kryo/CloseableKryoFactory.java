@@ -1,5 +1,6 @@
 package org.apereo.cas.memcached.kryo;
 
+import module java.base;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaListSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaMapSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaSetSerializer;
@@ -36,44 +37,6 @@ import org.joda.time.DateTime;
 import org.jspecify.annotations.NonNull;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import org.springframework.beans.factory.FactoryBean;
-import javax.security.auth.login.AccountNotFoundException;
-import java.net.URI;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.security.GeneralSecurityException;
-import java.time.Clock;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link CloseableKryoFactory}.

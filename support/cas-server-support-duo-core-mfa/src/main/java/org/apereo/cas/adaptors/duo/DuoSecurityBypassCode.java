@@ -1,13 +1,11 @@
 package org.apereo.cas.adaptors.duo;
 
+import module java.base;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link DuoSecurityBypassCode}.

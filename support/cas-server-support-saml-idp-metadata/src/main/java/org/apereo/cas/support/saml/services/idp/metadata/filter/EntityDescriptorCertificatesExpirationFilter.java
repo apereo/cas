@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.filter;
 
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

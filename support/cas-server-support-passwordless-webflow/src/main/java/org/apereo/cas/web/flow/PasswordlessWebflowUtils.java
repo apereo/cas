@@ -1,15 +1,13 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This is {@link PasswordlessWebflowUtils}.
@@ -86,7 +84,7 @@ public class PasswordlessWebflowUtils {
      * @param clazz the clazz
      * @return the passwordless authentication account
      */
-    public static <T> T getPasswordlessAuthenticationAccount(final Event event, final Class<T> clazz) {
+    public static @Nullable <T> T getPasswordlessAuthenticationAccount(final Event event, final Class<T> clazz) {
         if (event != null) {
             return event.getAttributes().get("passwordlessAccount", clazz);
         }
@@ -101,7 +99,7 @@ public class PasswordlessWebflowUtils {
      * @param clazz          the clazz
      * @return the passwordless authentication account
      */
-    public static <T> T getPasswordlessAuthenticationAccount(final RequestContext requestContext, final Class<T> clazz) {
+    public static @Nullable <T> T getPasswordlessAuthenticationAccount(final RequestContext requestContext, final Class<T> clazz) {
         var result = getPasswordlessAuthenticationAccount(requestContext.getCurrentEvent(), clazz);
         if (result == null) {
             result = requestContext.getFlowScope().get("passwordlessAccount", clazz);

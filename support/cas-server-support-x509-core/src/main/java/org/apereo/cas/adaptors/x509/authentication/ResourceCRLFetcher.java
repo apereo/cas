@@ -1,20 +1,13 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-
-import java.net.URI;
-import java.net.URL;
-import java.security.cert.X509CRL;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Handles the fetching of CRL objects based on resources.

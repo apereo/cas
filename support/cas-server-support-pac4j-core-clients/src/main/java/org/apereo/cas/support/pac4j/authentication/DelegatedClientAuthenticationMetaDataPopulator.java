@@ -1,11 +1,11 @@
 package org.apereo.cas.support.pac4j.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.ClientCredential;
-
 import lombok.ToString;
 import lombok.val;
 

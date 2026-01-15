@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.config.CasStatelessTicketRegistryAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -11,7 +12,6 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
-import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

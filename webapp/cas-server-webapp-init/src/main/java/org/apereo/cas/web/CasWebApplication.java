@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.app.ApplicationUtils;
 import org.apereo.cas.util.spring.boot.CasBanner;
@@ -16,8 +17,6 @@ import org.springframework.resilience.annotation.EnableResilientMethods;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link CasWebApplication} that houses the main method.

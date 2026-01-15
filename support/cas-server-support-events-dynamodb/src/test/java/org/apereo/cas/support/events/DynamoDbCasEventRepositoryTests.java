@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events;
 
+import module java.base;
 import org.apereo.cas.config.CasEventsDynamoDbRepositoryAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;

@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow;
 
-
+import module java.base;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.web.server.autoconfigure.ServerProperties;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -25,7 +26,7 @@ public class WsFederationClientRedirectAction extends BaseCasWebflowAction {
     private final ServerProperties serverProperties;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val clients = WebUtils.getWsFederationDelegatedClients(requestContext, WsFedClient.class);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         clients

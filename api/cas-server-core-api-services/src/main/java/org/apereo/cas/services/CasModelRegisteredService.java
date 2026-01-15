@@ -1,11 +1,9 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.util.Set;
 
 /**
  * This is {@link CasModelRegisteredService}.

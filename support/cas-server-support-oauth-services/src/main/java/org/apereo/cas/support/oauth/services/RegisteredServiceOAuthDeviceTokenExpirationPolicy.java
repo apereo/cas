@@ -1,8 +1,7 @@
 package org.apereo.cas.support.oauth.services;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.io.Serializable;
 
 /**
  * This is {@link RegisteredServiceOAuthDeviceTokenExpirationPolicy}.

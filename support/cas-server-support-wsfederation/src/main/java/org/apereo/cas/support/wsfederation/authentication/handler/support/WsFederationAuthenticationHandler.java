@@ -1,16 +1,13 @@
 package org.apereo.cas.support.wsfederation.authentication.handler.support;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
-
 import lombok.val;
-
-import javax.security.auth.login.FailedLoginException;
-import java.util.ArrayList;
 
 /**
  * This handler authenticates Security token/credentials.

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.loader;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -12,8 +13,6 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
-import java.util.LinkedHashMap;
-import java.util.Locale;
 
 /**
  * This is {@link GroovyConfigurationPropertiesLoader}.

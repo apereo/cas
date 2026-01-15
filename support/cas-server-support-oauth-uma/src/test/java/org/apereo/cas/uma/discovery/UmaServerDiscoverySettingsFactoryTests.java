@@ -1,10 +1,9 @@
 package org.apereo.cas.uma.discovery;
 
+import module java.base;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

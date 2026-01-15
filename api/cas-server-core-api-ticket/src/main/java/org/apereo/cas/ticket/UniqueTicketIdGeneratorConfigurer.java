@@ -1,8 +1,7 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.Collection;
 
 /**
  * This is {@link UniqueTicketIdGeneratorConfigurer}.

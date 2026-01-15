@@ -1,11 +1,11 @@
 package org.apereo.cas.util.logging;
 
+import module java.base;
 import org.apereo.cas.util.LogMessageSummarizer;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
-import java.util.Arrays;
 
 /**
  * Default implementation of {@link LogMessageSummarizer} summarizes throwable if log level higher than debug.

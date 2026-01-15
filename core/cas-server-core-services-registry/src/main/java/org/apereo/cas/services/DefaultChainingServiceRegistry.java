@@ -1,18 +1,13 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import com.google.common.base.Predicates;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultChainingServiceRegistry}.
@@ -36,7 +31,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     }
 
     @Override
-    public RegisteredService save(final RegisteredService registeredService) {
+    public @Nullable RegisteredService save(final RegisteredService registeredService) {
         var savedService = (RegisteredService) null;
         for (val serviceRegistry : serviceRegistries) {
             var toSave = Optional.ofNullable(savedService).orElse(registeredService);

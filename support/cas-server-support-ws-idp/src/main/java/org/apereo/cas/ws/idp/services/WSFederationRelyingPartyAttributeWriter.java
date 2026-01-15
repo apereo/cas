@@ -1,8 +1,8 @@
 package org.apereo.cas.ws.idp.services;
 
+import module java.base;
+import module java.xml;
 import org.apereo.cas.authentication.principal.Principal;
-
-import javax.xml.stream.XMLStreamWriter;
 
 /**
  * This is {@link WSFederationRelyingPartyAttributeWriter}.

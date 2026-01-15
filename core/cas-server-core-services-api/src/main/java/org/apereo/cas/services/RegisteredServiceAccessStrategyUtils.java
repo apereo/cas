@@ -1,12 +1,12 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
-import java.util.function.Predicate;
 
 /**
  * This is {@link RegisteredServiceAccessStrategyUtils} that encapsulates common
@@ -87,7 +87,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param credentialsProvided  the credentials provided
      */
     public static void ensureServiceSsoAccessIsAllowed(@Nullable final RegisteredService registeredService,
-                                                       final Service service,
+                                                       @Nullable final Service service,
                                                        final TicketGrantingTicket ticketGrantingTicket,
                                                        final boolean credentialsProvided) {
 

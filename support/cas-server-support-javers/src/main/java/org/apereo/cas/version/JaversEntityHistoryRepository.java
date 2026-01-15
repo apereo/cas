@@ -1,13 +1,11 @@
 package org.apereo.cas.version;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.javers.core.Javers;
 import org.javers.repository.jql.QueryBuilder;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This is {@link JaversEntityHistoryRepository}.

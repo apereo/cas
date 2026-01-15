@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.metadata;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
@@ -10,7 +11,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.util.StringUtils;
 
@@ -25,7 +25,7 @@ import org.springframework.util.StringUtils;
 public class MultifactorAuthenticationProviderMetadataPopulator extends BaseAuthenticationMetaDataPopulator {
     private final String authenticationContextAttribute;
 
-    private final ObjectProvider<? extends @NonNull MultifactorAuthenticationProvider> provider;
+    private final ObjectProvider<? extends MultifactorAuthenticationProvider> provider;
 
     private final ServicesManager servicesManager;
 

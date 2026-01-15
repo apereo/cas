@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.webauthn.WebAuthnCredentialRegistrationCipherExecutor;
 import com.yubico.data.AssertionResponse;
@@ -53,7 +54,6 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
-import java.util.List;
 
 /**
  * This is {@link WebAuthnRuntimeHints}.

@@ -1,14 +1,10 @@
 package org.apereo.cas.configuration.metadata;
 
+import module java.base;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import lombok.val;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link ConfigurationMetadataClassSourceLocator}.

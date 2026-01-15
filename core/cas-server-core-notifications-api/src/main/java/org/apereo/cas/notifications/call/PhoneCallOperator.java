@@ -1,4 +1,5 @@
 package org.apereo.cas.notifications.call;
+import module java.base;
 
 /**
  * This is {@link PhoneCallOperator}.

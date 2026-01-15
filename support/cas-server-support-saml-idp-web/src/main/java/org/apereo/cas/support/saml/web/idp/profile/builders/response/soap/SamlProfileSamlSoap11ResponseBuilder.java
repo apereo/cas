@@ -1,10 +1,10 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.soap;
 
+import module java.base;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPSOAP11Encoder;
@@ -14,9 +14,6 @@ import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Header;
-
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * The {@link SamlProfileSamlSoap11ResponseBuilder} is responsible for

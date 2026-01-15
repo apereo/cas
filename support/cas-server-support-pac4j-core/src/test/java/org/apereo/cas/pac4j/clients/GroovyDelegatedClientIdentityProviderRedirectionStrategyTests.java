@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.clients;
 
+import module java.base;
 import org.apereo.cas.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.pac4j.client.GroovyDelegatedClientIdentityProviderRedirectionStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -10,7 +11,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
-import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

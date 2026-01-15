@@ -1,10 +1,10 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.cosmosdb.CosmosDbDocument;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
-
 import com.azure.cosmos.CosmosContainer;
 import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
@@ -14,9 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * This is {@link CosmosDbServiceRegistry}.

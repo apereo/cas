@@ -1,10 +1,8 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import lombok.Getter;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link DefaultPrincipalResolutionExecutionPlan}.

@@ -1,10 +1,10 @@
 package org.apereo.cas.web.flow.account;
 
+import module java.base;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apereo.inspektr.audit.AuditActionContext;
-import java.io.Serial;
 
 /**
  * This is {@link AccountAuditActionContext}.

@@ -1,10 +1,9 @@
 package org.apereo.cas.shell.commands.properties;
 
+import module java.base;
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.io.File;
-import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

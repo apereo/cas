@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn.passwordless;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
@@ -11,9 +12,6 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link DuoSecurityPasswordlessUserAccountStore}.

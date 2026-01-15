@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidationResult;
@@ -12,12 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CompositeProviderSelectionMultifactorWebflowEventResolver}.
@@ -39,8 +37,8 @@ public class CompositeProviderSelectionMultifactorWebflowEventResolver extends S
     @Override
     protected Optional<Pair<Collection<Event>, Collection<MultifactorAuthenticationProvider>>> filterEventsByMultifactorAuthenticationProvider(
         final Collection<Event> resolveEvents, final Authentication authentication,
-        final RegisteredService registeredService, final HttpServletRequest request,
-        final Service service) throws Throwable {
+        @Nullable final RegisteredService registeredService, final HttpServletRequest request,
+        @Nullable final Service service) throws Throwable {
 
         val composite = resolveEvents
             .stream()

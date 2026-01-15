@@ -1,9 +1,7 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.io.Serializable;
-import java.util.Map;
 
 /**
  * This is {@link BrowserStorage}.

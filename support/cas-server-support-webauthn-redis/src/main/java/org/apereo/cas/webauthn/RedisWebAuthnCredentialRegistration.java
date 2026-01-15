@@ -1,14 +1,12 @@
 package org.apereo.cas.webauthn;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link RedisWebAuthnCredentialRegistration}.

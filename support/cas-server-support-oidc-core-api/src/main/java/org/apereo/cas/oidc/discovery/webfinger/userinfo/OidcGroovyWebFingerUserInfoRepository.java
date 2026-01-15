@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.discovery.webfinger.userinfo;
 
+import module java.base;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepository;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
@@ -7,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
-import java.util.Map;
 
 /**
  * This is {@link OidcGroovyWebFingerUserInfoRepository}.

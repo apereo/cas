@@ -1,5 +1,6 @@
 package org.apereo.cas.authorization;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -12,8 +13,6 @@ import lombok.val;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchOperation;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import java.util.List;
-import java.util.function.Function;
 
 /**
  * This is {@link BaseUseAttributesAuthorizationGenerator}.

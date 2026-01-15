@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator;
 
+import module java.base;
 import org.pac4j.core.context.WebContext;
 import org.springframework.core.Ordered;
 

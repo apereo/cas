@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -15,9 +16,6 @@ import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 import tools.jackson.databind.ObjectMapper;
-import java.io.Serial;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link DefaultBrowserStorage}.

@@ -12,15 +12,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.Assert;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * A POJO style aspect modularizing management of an audit trail data concern.
@@ -33,13 +32,14 @@ import java.util.Objects;
 @Slf4j
 @Setter
 @RequiredArgsConstructor
+@SuppressWarnings("NullAway")
 public class AuditTrailManagementAspect {
 
     private final PrincipalResolver defaultAuditPrincipalResolver;
     private final List<AuditTrailManager> auditTrailManagers;
-    private final Map<String, @NonNull AuditActionResolver> auditActionResolvers;
-    private final Map<String, @NonNull AuditResourceResolver> auditResourceResolvers;
-    private final Map<String, @NonNull PrincipalResolver> auditPrincipalResolvers;
+    private final Map<String, AuditActionResolver> auditActionResolvers;
+    private final Map<String, AuditResourceResolver> auditResourceResolvers;
+    private final Map<String, PrincipalResolver> auditPrincipalResolvers;
     private final AuditTrailManager.AuditFormats auditFormat;
     private final AuditActionDateProvider auditActionDateProvider;
 
@@ -64,16 +64,16 @@ public class AuditTrailManagementAspect {
         Object retVal = null;
         String currentPrincipal = null;
         val actions = new String[audits.value().length];
-        val auditableResources = new String[audits.value().length][];
+        var auditableResources = new String[audits.value().length][];
         try {
             retVal = joinPoint.proceed();
 
             currentPrincipal = getCurrentPrincipal(joinPoint, audits, retVal);
 
             for (var i = 0; i < audits.value().length; i++) {
-                val auditActionResolver = auditActionResolvers.get(audits.value()[i].actionResolverName());
+                val auditActionResolver = Objects.requireNonNull(auditActionResolvers.get(audits.value()[i].actionResolverName()));
 
-                val auditResourceResolver = auditResourceResolvers.get(audits.value()[i].resourceResolverName());
+                val auditResourceResolver = Objects.requireNonNull(auditResourceResolvers.get(audits.value()[i].resourceResolverName()));
                 auditResourceResolver.setAuditFormat(this.auditFormat);
 
                 auditableResources[i] = auditResourceResolver.resolveFrom(joinPoint, retVal);
@@ -86,11 +86,12 @@ public class AuditTrailManagementAspect {
 
             if (currentPrincipal != null) {
                 for (var i = 0; i < audits.value().length; i++) {
-                    var auditResourceResolver = this.auditResourceResolvers.get(audits.value()[i].resourceResolverName());
+                    var auditResourceResolver = Objects.requireNonNull(auditResourceResolvers.get(audits.value()[i].resourceResolverName()));
                     auditResourceResolver.setAuditFormat(this.auditFormat);
 
                     auditableResources[i] = auditResourceResolver.resolveFrom(joinPoint, e);
-                    actions[i] = auditActionResolvers.get(audits.value()[i].actionResolverName()).resolveFrom(joinPoint, e, audits.value()[i]);
+                    val auditActionResolver = Objects.requireNonNull(auditActionResolvers.get(audits.value()[i].actionResolverName()));
+                    actions[i] = auditActionResolver.resolveFrom(joinPoint, e, audits.value()[i]);
                 }
             }
             throw t;
@@ -122,7 +123,7 @@ public class AuditTrailManagementAspect {
         auditResourceResolver.setAuditFormat(this.auditFormat);
 
         String currentPrincipal = null;
-        var auditResource = new String[]{null};
+        var auditResource = ArrayUtils.EMPTY_STRING_ARRAY;
         String action = null;
         Object retVal = null;
         try {
@@ -145,7 +146,7 @@ public class AuditTrailManagementAspect {
         }
     }
 
-    private String getCurrentPrincipal(final ProceedingJoinPoint joinPoint, final Audits audits, final Object retVal) {
+    private @Nullable String getCurrentPrincipal(final ProceedingJoinPoint joinPoint, final Audits audits, final Object retVal) {
         String currentPrincipal = null;
         for (var i = 0; i < audits.value().length; i++) {
             var resolverName = audits.value()[i].principalResolverName();
@@ -156,16 +157,16 @@ public class AuditTrailManagementAspect {
         }
 
         if (currentPrincipal == null) {
-            currentPrincipal = this.defaultAuditPrincipalResolver.resolveFrom(joinPoint, retVal);
+            currentPrincipal = defaultAuditPrincipalResolver.resolveFrom(joinPoint, retVal);
         }
         return currentPrincipal;
     }
 
-    private String getCurrentPrincipal(final ProceedingJoinPoint joinPoint, final Audit audit, final Object retVal) {
+    private @Nullable String getCurrentPrincipal(final ProceedingJoinPoint joinPoint, final Audit audit, final Object retVal) {
         String currentPrincipal = null;
         var resolverName = audit.principalResolverName();
         if (!resolverName.trim().isEmpty()) {
-            val resolver = auditPrincipalResolvers.get(resolverName);
+            val resolver = Objects.requireNonNull(auditPrincipalResolvers.get(resolverName));
             currentPrincipal = resolver.resolveFrom(joinPoint, retVal);
         }
         if (currentPrincipal == null) {
@@ -174,8 +175,11 @@ public class AuditTrailManagementAspect {
         return currentPrincipal;
     }
 
-    private void executeAuditCode(@NonNull final String currentPrincipal, final String[] auditableResources,
-                                  final ProceedingJoinPoint joinPoint, final Object retVal, final String action) {
+    private void executeAuditCode(@Nullable final String currentPrincipal,
+                                  final String[] auditableResources,
+                                  final ProceedingJoinPoint joinPoint,
+                                  @Nullable final Object retVal,
+                                  @Nullable final String action) {
         val clientInfo = clientInfoResolver.resolveFrom(joinPoint, retVal);
         val actionDate = auditActionDateProvider.get();
         val runtimeInfo = new AspectJAuditPointRuntimeInfo(joinPoint);
@@ -207,7 +211,7 @@ public class AuditTrailManagementAspect {
     }
 
     private static String getDiagnosticInfo(final AuditPointRuntimeInfo runtimeInfo) {
-        return "Check the correctness of @Audit annotation at the following audit point: " + runtimeInfo.toString();
+        return "Check the correctness of @Audit annotation at the following audit point: " + runtimeInfo;
     }
 
     private static Exception wrapIfNecessary(final Throwable throwable) {

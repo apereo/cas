@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.device;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +12,6 @@ import lombok.ToString;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link MultifactorAuthenticationRegisteredDevice}.

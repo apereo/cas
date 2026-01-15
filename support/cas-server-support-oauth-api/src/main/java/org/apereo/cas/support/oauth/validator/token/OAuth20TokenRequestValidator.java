@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import module java.base;
 import org.apereo.cas.support.oauth.validator.OAuth20RequestValidator;
 
 /**

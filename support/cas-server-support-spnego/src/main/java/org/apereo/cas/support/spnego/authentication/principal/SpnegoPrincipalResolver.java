@@ -1,14 +1,12 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
-
 import lombok.ToString;
 import lombok.val;
-
-import java.util.Optional;
 
 /**
  * Implementation of a CredentialToPrincipalResolver that takes a

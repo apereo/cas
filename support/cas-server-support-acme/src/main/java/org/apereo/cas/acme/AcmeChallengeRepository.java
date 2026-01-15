@@ -1,4 +1,5 @@
 package org.apereo.cas.acme;
+import module java.base;
 
 /**
  * This is {@link AcmeChallengeRepository}.

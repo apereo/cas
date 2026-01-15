@@ -1,4 +1,5 @@
 package org.apereo.cas.configuration.model.core.authentication;
+import module java.base;
 
 /**
  * This is {@link AttributeRepositoryStates}.

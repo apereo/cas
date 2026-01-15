@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.call;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.phone.PhoneProperties;
 import org.apereo.cas.util.ResourceUtils;
 import lombok.Builder;
@@ -9,10 +10,6 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * This is {@link PhoneCallBodyBuilder}.

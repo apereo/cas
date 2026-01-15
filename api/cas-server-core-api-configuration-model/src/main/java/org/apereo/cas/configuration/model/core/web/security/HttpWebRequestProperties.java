@@ -1,14 +1,10 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link HttpWebRequestProperties}.

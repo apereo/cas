@@ -1,15 +1,13 @@
 package org.apereo.cas.trusted.authentication;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
-import java.util.Optional;
 
 /**
  * This is {@link DefaultMultifactorAuthenticationTrustedDeviceBypassEvaluator}.

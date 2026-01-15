@@ -1,9 +1,7 @@
 package org.apereo.cas.authentication.principal.merger;
 
+import module java.base;
 import lombok.val;
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Merger which implements accumulation of Map entries such that entries once

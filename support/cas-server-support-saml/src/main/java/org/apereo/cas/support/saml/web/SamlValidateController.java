@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web;
 
+import module java.base;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;

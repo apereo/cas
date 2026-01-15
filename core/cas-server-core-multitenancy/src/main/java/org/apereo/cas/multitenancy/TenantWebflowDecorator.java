@@ -1,5 +1,6 @@
 package org.apereo.cas.multitenancy;
 
+import module java.base;
 import org.apereo.cas.web.flow.decorator.WebflowDecorator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.webflow.execution.RequestContext;

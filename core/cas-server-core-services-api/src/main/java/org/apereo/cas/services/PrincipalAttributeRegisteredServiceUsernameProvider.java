@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -13,10 +14,6 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Determines the username for this registered service based on a principal attribute.

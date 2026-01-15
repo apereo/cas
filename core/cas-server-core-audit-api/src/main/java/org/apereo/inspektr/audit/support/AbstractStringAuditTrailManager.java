@@ -5,11 +5,10 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import module java.base;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.core.util.MinimalPrettyPrinter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Abstract AuditTrailManager that turns the AuditActionContext into a printable String.
@@ -57,8 +56,9 @@ public abstract class AbstractStringAuditTrailManager implements AuditTrailManag
         return getAuditLineString(auditActionContext);
     }
 
-    protected void buildSingleAuditLineForField(final AuditableFields field, final Object value, final StringBuilder builder) {
-        if (isFieldAuditable(field)) {
+    protected void buildSingleAuditLineForField(final AuditableFields field,
+                                                @Nullable final Object value, final StringBuilder builder) {
+        if (isFieldAuditable(field) && value != null) {
             if (useSingleLine) {
                 builder.append(value);
                 builder.append(getEntrySeparator());
@@ -144,7 +144,7 @@ public abstract class AbstractStringAuditTrailManager implements AuditTrailManag
         if (isFieldAuditable(AuditableFields.DEVICE_FINGERPRINT)) {
             map.put("deviceFingerprint", readFieldValue(clientInfo.getDeviceFingerprint()));
         }
-        if (isFieldAuditable(AuditableFields.TENANT)) {
+        if (isFieldAuditable(AuditableFields.TENANT) && StringUtils.isNotBlank(clientInfo.getTenant())) {
             map.put("tenant", readFieldValue(clientInfo.getTenant()));
         }
         return map;

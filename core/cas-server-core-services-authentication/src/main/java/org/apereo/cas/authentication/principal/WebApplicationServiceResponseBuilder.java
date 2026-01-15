@@ -1,21 +1,16 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Response.ResponseType;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.UrlValidator;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import org.springframework.util.StringUtils;
-
-import java.io.Serial;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Default response builder that passes back the ticket

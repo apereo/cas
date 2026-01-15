@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall.authorizer.resource;
 
+import module java.base;
 import org.apereo.cas.heimdall.authorizer.resource.policy.ResourceAuthorizationPolicy;
 import org.apereo.cas.util.serialization.PatternJsonDeserializer;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -13,13 +14,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import tools.jackson.databind.annotation.JsonDeserialize;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link AuthorizableResource}.

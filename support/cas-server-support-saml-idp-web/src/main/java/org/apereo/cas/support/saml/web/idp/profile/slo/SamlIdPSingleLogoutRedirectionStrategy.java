@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
+import module java.base;
 import org.apereo.cas.logout.LogoutRedirectionResponse;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -29,8 +30,6 @@ import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link SamlIdPSingleLogoutRedirectionStrategy}.

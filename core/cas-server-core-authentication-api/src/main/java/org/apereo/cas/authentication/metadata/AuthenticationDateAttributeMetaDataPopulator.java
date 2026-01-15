@@ -1,16 +1,14 @@
 package org.apereo.cas.authentication.metadata;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
-
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AuthenticationDateAttributeMetaDataPopulator}.
@@ -27,7 +25,7 @@ public class AuthenticationDateAttributeMetaDataPopulator extends BaseAuthentica
     }
 
     @Override
-    public boolean supports(final Credential credential) {
+    public boolean supports(@Nullable final Credential credential) {
         return credential != null && !(credential instanceof MultifactorAuthenticationCredential);
     }
 }
