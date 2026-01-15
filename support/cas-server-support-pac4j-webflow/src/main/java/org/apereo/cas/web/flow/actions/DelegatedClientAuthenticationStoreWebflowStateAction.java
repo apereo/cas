@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.TransientSessionTicket;
@@ -9,12 +10,12 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.util.InitializableObject;
@@ -22,8 +23,6 @@ import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Optional;
 
 /**
  * This is {@link DelegatedClientAuthenticationStoreWebflowStateAction}.
@@ -45,7 +44,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
     protected final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
@@ -86,7 +85,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
     }
 
     protected boolean isDelegatedClientAuthorizedForService(final Client client,
-                                                            final Service service,
+                                                            @Nullable final Service service,
                                                             final RequestContext requestContext) {
         return configContext.getDelegatedClientIdentityProviderAuthorizers()
             .stream()

@@ -1,5 +1,6 @@
 package org.apereo.cas.redis.core;
 
+import module java.base;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisClusterNodeProperties;
@@ -9,9 +10,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.io.File;
-import java.util.UUID;
-import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

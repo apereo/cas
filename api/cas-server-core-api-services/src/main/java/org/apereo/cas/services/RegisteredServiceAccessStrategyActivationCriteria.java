@@ -1,9 +1,8 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
-
-import java.io.Serializable;
 
 /**
  * This is {@link RegisteredServiceAccessStrategyActivationCriteria}.

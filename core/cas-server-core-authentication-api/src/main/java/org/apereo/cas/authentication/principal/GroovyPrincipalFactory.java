@@ -1,14 +1,13 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Factory to create {@link SimplePrincipal} objects.
@@ -30,7 +29,7 @@ public class GroovyPrincipalFactory extends DefaultPrincipalFactory {
     }
 
     @Override
-    public Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) throws Throwable {
+    public @Nullable Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) throws Throwable {
         return watchableScript.execute(new Object[]{id, attributes, LOGGER}, Principal.class);
     }
 }

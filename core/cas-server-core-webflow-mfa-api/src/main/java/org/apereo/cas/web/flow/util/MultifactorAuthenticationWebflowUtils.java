@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.util;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
@@ -15,12 +16,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link MultifactorAuthenticationWebflowUtils}.

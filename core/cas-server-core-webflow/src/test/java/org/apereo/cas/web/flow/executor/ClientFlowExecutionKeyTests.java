@@ -1,13 +1,11 @@
 package org.apereo.cas.web.flow.executor;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
-
-import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

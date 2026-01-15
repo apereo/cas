@@ -1,18 +1,11 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation;
 
+import module java.base;
 import org.apereo.cas.util.DateTimeUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.io.Serial;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.security.cert.X509CRLEntry;
-import java.time.ZonedDateTime;
 
 
 /**

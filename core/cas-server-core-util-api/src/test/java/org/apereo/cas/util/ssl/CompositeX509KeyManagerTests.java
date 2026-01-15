@@ -1,18 +1,9 @@
 package org.apereo.cas.util.ssl;
 
+import module java.base;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.X509KeyManager;
-
-import java.net.Socket;
-import java.security.KeyStore;
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

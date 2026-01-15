@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.flow;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -18,8 +19,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Action;
-import java.io.Serializable;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

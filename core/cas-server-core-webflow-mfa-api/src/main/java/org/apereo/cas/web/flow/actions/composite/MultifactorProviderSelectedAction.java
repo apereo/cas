@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.composite;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -43,7 +45,7 @@ public class MultifactorProviderSelectedAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val mfaOptional = casProperties.getAuthn().getMfa().getCore().getProviderSelection().isProviderSelectionOptional();
         val selectedProvider = WebUtils.getRequestParameterOrAttribute(requestContext, PARAMETER_SELECTED_MFA_PROVIDER)
             .orElseGet(() -> requestContext.getFlashScope().get(PARAMETER_SELECTED_MFA_PROVIDER, MultifactorAuthenticationProvider.class).getId());

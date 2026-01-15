@@ -1,5 +1,6 @@
 package org.apereo.cas.lucene;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Splitter;
@@ -26,13 +27,6 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.NIOFSDirectory;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 
 /**
  * This is {@link LuceneSearchService}.

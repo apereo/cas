@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.principal.PrincipalResolver;

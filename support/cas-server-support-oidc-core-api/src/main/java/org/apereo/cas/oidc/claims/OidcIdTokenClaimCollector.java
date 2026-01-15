@@ -1,8 +1,7 @@
 package org.apereo.cas.oidc.claims;
 
+import module java.base;
 import org.jose4j.jwt.JwtClaims;
-
-import java.util.List;
 
 /**
  * This is {@link OidcIdTokenClaimCollector}.

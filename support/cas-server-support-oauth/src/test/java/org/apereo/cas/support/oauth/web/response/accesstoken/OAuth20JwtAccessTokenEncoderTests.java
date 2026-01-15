@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
+import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -19,9 +20,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.events.listener;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;

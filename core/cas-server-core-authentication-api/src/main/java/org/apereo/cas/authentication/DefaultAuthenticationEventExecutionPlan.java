@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.TenantAuthenticationHandlerBuilder;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -17,17 +18,8 @@ import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * This is {@link DefaultAuthenticationEventExecutionPlan}.
@@ -53,7 +45,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     private final List<AuthenticationPolicyResolver> authenticationPolicyResolvers = new ArrayList<>();
 
-    private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
+    private final Map<AuthenticationHandler, @Nullable PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
 
     private final AuthenticationHandlerResolver defaultAuthenticationHandlerResolver;
 
@@ -135,7 +127,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
 
     @Override
     public boolean registerAuthenticationHandlerWithPrincipalResolver(final AuthenticationHandler handler,
-                                                                      final PrincipalResolver principalResolver) {
+                                                                      final @Nullable PrincipalResolver principalResolver) {
         return FunctionUtils.doIf(BeanSupplier.isNotProxy(handler), () -> {
             LOGGER.trace("Registering handler [{}] with [{}] principal resolver into the execution plan",
                 handler.getName(), Optional.ofNullable(principalResolver).map(PrincipalResolver::getName).orElse("no"));
@@ -281,7 +273,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
-    public PrincipalResolver getPrincipalResolver(final AuthenticationHandler handler,
+    public @Nullable PrincipalResolver getPrincipalResolver(final AuthenticationHandler handler,
                                                   final AuthenticationTransaction transaction) {
         return authenticationHandlerPrincipalResolverMap.get(handler);
     }

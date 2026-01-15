@@ -1,5 +1,6 @@
 package org.apereo.inspektr.common.spi;
 
+import module java.base;
 import org.aspectj.lang.JoinPoint;
 import org.jspecify.annotations.Nullable;
 

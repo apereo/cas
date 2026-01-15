@@ -1,6 +1,8 @@
 package org.apereo.cas.util.crypto;
 
+import module java.base;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link EncodableCipher}.
@@ -18,7 +20,7 @@ public interface EncodableCipher<I, O> {
      * @param parameters the parameters
      * @return the encrypted value or null
      */
-    O encode(I value, Object[] parameters);
+    O encode(@Nullable I value, Object[] parameters);
 
     /**
      * Encrypt the value.

@@ -1,13 +1,11 @@
 package org.apereo.cas.logout;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link LogoutRedirectionResponse}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.oracle;
 
+import module java.base;
 import org.apereo.cas.audit.generic.JdbcAuditTrailEntity;
 import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
 import lombok.Getter;

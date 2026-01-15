@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import lombok.val;

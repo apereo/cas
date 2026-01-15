@@ -1,5 +1,6 @@
 package org.apereo.cas.acct.webflow;
 
+import module java.base;
 import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;

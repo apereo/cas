@@ -1,12 +1,13 @@
 package org.apereo.cas.authentication.support.password;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationAccountStateHandler;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Container for password policy configuration.
@@ -24,6 +25,7 @@ public class PasswordPolicyContext {
     /**
      * Directory-specific account state handler component.
      */
+    @Nullable
     private AuthenticationAccountStateHandler accountStateHandler;
 
     private boolean alwaysDisplayPasswordExpirationWarning;

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.idtoken;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.spi.PrincipalResolver;

@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.function.Consumer;
 
 /**
  * This is {@link ConsumerExecutionAction}.

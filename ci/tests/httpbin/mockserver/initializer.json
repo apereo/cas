@@ -1,0 +1,53 @@
+[
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/casconfig/names"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": [
+        "cas.authn.accept.users"
+      ]
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/casconfig",
+      "queryStringParameters": {
+        "name": [
+          "cas.authn.accept.users"
+        ]
+      }
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "type": "STRING",
+        "string": "casuser::P@$$w0rd,admin::P@$$w0rd"
+      },
+      "headers": {
+        "Content-Type": ["text/plain; charset=utf-8"]
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/casconfig"
+    },
+    "httpResponse": {
+      "statusCode": 200
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "DELETE",
+      "path": "/casconfig"
+    },
+    "httpResponse": {
+      "statusCode": 200
+    }
+  }
+]

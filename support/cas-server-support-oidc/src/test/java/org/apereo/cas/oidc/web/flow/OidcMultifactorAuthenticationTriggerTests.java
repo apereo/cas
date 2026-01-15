@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.flow;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;

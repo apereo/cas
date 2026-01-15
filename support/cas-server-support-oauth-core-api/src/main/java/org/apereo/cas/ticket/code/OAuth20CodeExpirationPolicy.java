@@ -1,14 +1,12 @@
 package org.apereo.cas.ticket.code;
 
+import module java.base;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import java.io.Serial;
 
 /**
  * This is {@link OAuth20CodeExpirationPolicy}.

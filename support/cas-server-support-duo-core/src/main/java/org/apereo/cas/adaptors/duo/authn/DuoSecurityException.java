@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import module java.base;
 import org.apereo.cas.authentication.RootCasException;
-import java.io.Serial;
 
 /**
  * This is {@link DuoSecurityException}.

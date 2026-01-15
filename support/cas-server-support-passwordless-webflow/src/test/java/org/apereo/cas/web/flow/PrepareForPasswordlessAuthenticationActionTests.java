@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.services.DefaultRegisteredServicePasswordlessPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.execution.Action;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,17 +1,10 @@
 package org.apereo.cas.web.flow.authentication;
 
+import module java.base;
 import org.apereo.cas.util.MockRequestContext;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import javax.security.auth.login.AccountExpiredException;
-import javax.security.auth.login.AccountLockedException;
-import javax.security.auth.login.CredentialExpiredException;
-
-import java.util.LinkedHashSet;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

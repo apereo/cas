@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantExtractor;
@@ -19,17 +20,6 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * The {@link AbstractServiceFactory} is the parent class providing
@@ -79,7 +69,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         return url.substring(0, jsessionPosition) + url.substring(questionMarkPosition);
     }
 
-    protected static @Nullable String getSourceParameter(final HttpServletRequest request, final String... paramNames) {
+    protected static @Nullable String getSourceParameter(@Nullable final HttpServletRequest request, final String... paramNames) {
         if (request != null) {
             val parameterMap = request.getParameterMap();
             return Stream.of(paramNames)
@@ -90,7 +80,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         return null;
     }
 
-    protected Map<String, List> extractQueryParameters(final Service service) {
+    protected Map<String, List> extractQueryParameters(@Nullable final Service service) {
         val attributes = new LinkedHashMap<String, List>();
         if (service instanceof final WebApplicationService webApplicationService) {
             val originalUrl = webApplicationService.getOriginalUrl();
@@ -109,7 +99,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         return attributes;
     }
 
-    protected Service populateAttributes(final Service service, final HttpServletRequest request) {
+    protected @Nullable Service populateAttributes(@Nullable final Service service, final HttpServletRequest request) {
         val attributes = (Map) request.getParameterMap()
             .entrySet()
             .stream()
@@ -137,11 +127,13 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
                 .forEach(header -> collectHttpRequestProperty("header-%s".formatted(header), request.getHeader(header), attributes)));
         }
 
-        LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());
-        service.setAttributes(attributes);
-        tenantExtractor.extract(request)
-            .map(TenantDefinition::getId)
-            .ifPresent(service::setTenant);
+        if (service != null) {
+            LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());
+            service.setAttributes(attributes);
+            tenantExtractor.extract(request)
+                .map(TenantDefinition::getId)
+                .ifPresent(service::setTenant);
+        }
         return service;
     }
 
@@ -153,16 +145,16 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
     }
 
     @Override
-    public <T extends Service> T createService(final String id, final Class<T> clazz) {
+    public @Nullable <T extends Service> T createService(final String id, final Class<T> clazz) {
         var service = createService(id);
-        if (!clazz.isAssignableFrom(service.getClass())) {
+        if (service != null && !clazz.isAssignableFrom(service.getClass())) {
             throw new ClassCastException("Service [" + service.getId() + " is of type " + service.getClass() + " when we were expecting " + clazz);
         }
         return (T) service;
     }
 
     @Override
-    public <T extends Service> T createService(final HttpServletRequest request, final Class<T> clazz) {
+    public @Nullable <T extends Service> T createService(final HttpServletRequest request, final Class<T> clazz) {
         var service = createService(request);
         if (service != null && !clazz.isAssignableFrom(service.getClass())) {
             throw new ClassCastException("Service [" + service.getId() + " is of type " + service.getClass() + " when we were expecting " + clazz);
@@ -171,7 +163,7 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
     }
 
     @Override
-    public T createService(final String id, final HttpServletRequest request) {
+    public @Nullable T createService(final String id, final HttpServletRequest request) {
         val service = createService(id);
         return (T) populateAttributes(service, request);
     }

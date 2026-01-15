@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.radius;
 
-import java.io.Serializable;
-import java.util.Optional;
+import module java.base;
 
 /**
  * Interface representing a Radius Server.

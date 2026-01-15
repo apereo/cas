@@ -1,8 +1,8 @@
 package org.apereo.cas.services.publisher;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.PublisherIdentifier;
-
 import org.springframework.context.ApplicationEvent;
 
 /**

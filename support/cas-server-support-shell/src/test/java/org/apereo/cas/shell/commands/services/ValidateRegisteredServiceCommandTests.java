@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.services;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
@@ -8,8 +9,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

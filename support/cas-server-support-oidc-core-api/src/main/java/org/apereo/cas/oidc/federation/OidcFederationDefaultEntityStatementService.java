@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.federation;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.util.DateTimeUtils;
@@ -10,8 +11,6 @@ import com.nimbusds.openid.connect.sdk.federation.entities.FederationEntityMetad
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import java.time.Clock;
-import java.time.LocalDate;
 
 /**
  * This is {@link OidcFederationDefaultEntityStatementService}.

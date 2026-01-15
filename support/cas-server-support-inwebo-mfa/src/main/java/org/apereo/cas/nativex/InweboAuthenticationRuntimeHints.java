@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;
 import org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl;
@@ -11,7 +12,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.ws.soap.client.core.SoapFaultMessageResolver;
 import org.springframework.ws.soap.saaj.SaajSoapMessageFactory;
 import org.springframework.ws.transport.http.HttpUrlConnectionMessageSender;
-import java.util.List;
 
 /**
  * This is {@link InweboAuthenticationRuntimeHints}.

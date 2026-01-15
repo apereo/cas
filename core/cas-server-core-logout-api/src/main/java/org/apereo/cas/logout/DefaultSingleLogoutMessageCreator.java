@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import module java.base;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
@@ -8,7 +9,6 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.ISOStandardDateFormat;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -31,12 +31,13 @@ public class DefaultSingleLogoutMessageCreator implements SingleLogoutMessageCre
 
     @Override
     public SingleLogoutMessage create(final SingleLogoutRequestContext request) throws Throwable {
+        val authentication = request.getExecutionRequest().getTicketGrantingTicket().getAuthentication();
         val logoutRequest = String.format("<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\"%s\" Version=\"2.0\" "
                                           + "IssueInstant=\"%s\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">%s"
                                           + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>",
             GENERATOR.getNewTicketId("LR"),
             new ISOStandardDateFormat().getCurrentDateAndTime(),
-            request.getExecutionRequest().getTicketGrantingTicket().getAuthentication().getPrincipal().getId(),
+            Objects.requireNonNull(authentication).getPrincipal().getId(),
             request.getTicketId());
 
         val builder = SingleLogoutMessage.builder();

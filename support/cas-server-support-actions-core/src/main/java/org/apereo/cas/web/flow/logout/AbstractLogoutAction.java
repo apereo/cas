@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.logout;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.services.ServicesManager;
@@ -10,10 +11,10 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 /**
  * Abstract logout action, which prevents caching on logout.
@@ -60,7 +61,7 @@ public abstract class AbstractLogoutAction extends BaseCasWebflowAction {
     protected final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext context) {
+    protected @Nullable Event doExecuteInternal(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         preventCaching(response);

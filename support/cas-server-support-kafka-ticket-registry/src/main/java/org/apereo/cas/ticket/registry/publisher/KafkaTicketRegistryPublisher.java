@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.publisher;
 
+import module java.base;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.events.KafkaMessagePublishedEvent;
 import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.kafka.core.KafkaOperations;
-import java.util.Objects;
 
 /**
  * This is {@link KafkaTicketRegistryPublisher}.

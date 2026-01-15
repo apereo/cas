@@ -1,4 +1,5 @@
 package org.apereo.cas.qr;
+import module java.base;
 
 /**
  * This is {@link QRAuthenticationConstants}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.executor.ClientFlowExecutionRepository;
 import lombok.val;
@@ -9,7 +10,6 @@ import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
 import org.springframework.binding.message.DefaultMessageContext;
 import org.springframework.webflow.engine.impl.FlowExecutionImpl;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 

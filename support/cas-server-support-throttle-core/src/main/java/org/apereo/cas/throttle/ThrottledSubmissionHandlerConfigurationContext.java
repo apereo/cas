@@ -1,10 +1,10 @@
 package org.apereo.cas.throttle;
 
+import module java.base;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.ThrottledSubmission;
 import org.apereo.cas.web.support.ThrottledSubmissionsStore;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

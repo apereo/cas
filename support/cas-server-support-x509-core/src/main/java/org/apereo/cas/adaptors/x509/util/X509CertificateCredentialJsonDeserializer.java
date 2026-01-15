@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.util;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
@@ -8,9 +9,7 @@ import org.springframework.core.io.InputStreamResource;
 import tools.jackson.core.JsonParser;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
-import java.io.ByteArrayInputStream;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 
 /**
  * This is {@link X509CertificateCredentialJsonDeserializer}.

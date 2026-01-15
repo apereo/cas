@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.account;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
@@ -20,10 +21,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import tools.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Optional;
 
 /**
  * This is {@link RestfulPasswordlessUserAccountStore}.

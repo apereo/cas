@@ -1,5 +1,6 @@
 package org.apereo.cas.support.realm;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -7,10 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.sts.RealmParser;
 import org.apache.cxf.sts.token.realm.RealmProperties;
 import org.apache.cxf.ws.security.sts.provider.STSException;
-
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
 
 /**
  * This is {@link UriRealmParser}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.ticket.rpt;
 
+import module java.base;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -17,8 +18,6 @@ import org.jose4j.jwt.NumericDate;
 import org.jspecify.annotations.NonNull;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.ObjectProvider;
-import java.util.ArrayList;
-import java.util.UUID;
 
 /**
  * This is {@link UmaIdTokenGeneratorService}.

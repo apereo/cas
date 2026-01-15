@@ -1,10 +1,10 @@
 package org.apereo.cas.oidc.web;
 
+import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Tag;
@@ -15,9 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

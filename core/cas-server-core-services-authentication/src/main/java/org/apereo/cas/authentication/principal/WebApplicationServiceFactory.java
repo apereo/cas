@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
@@ -11,9 +12,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * The {@link WebApplicationServiceFactory} is responsible for
@@ -31,7 +29,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
     }
 
     private static AbstractWebApplicationService determineWebApplicationFormat(
-        final HttpServletRequest request,
+        @Nullable final HttpServletRequest request,
         final AbstractWebApplicationService webApplicationService) {
         val format = Optional.ofNullable(request)
             .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_FORMAT))
@@ -48,7 +46,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
     }
 
     @Override
-    public @Nullable WebApplicationService createService(final HttpServletRequest request) {
+    public @Nullable WebApplicationService createService(@Nullable final HttpServletRequest request) {
         val serviceToUse = getRequestedService(request);
         if (StringUtils.isBlank(serviceToUse)) {
             LOGGER.trace("No service is specified in the request. Skipping service creation");
@@ -64,7 +62,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
     }
 
     protected WebApplicationService newWebApplicationService(
-        final HttpServletRequest request, final String serviceToUse) {
+        @Nullable final HttpServletRequest request, final String serviceToUse) {
         val artifactId = Optional.ofNullable(request)
             .map(httpServletRequest -> httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_TICKET))
             .orElse(null);
@@ -84,22 +82,24 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         return newService;
     }
 
-    protected @Nullable String getRequestedService(final HttpServletRequest request) {
-        val targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
-        val service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
-        val serviceAttribute = request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
+    protected @Nullable String getRequestedService(@Nullable final HttpServletRequest request) {
+        if (request != null) {
+            val targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
+            val service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
+            val serviceAttribute = request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
 
-        if (StringUtils.isNotBlank(targetService)) {
-            return targetService;
-        }
-        if (StringUtils.isNotBlank(service)) {
-            return service;
-        }
-        if (serviceAttribute != null) {
-            if (serviceAttribute instanceof final Service svc) {
-                return svc.getId();
+            if (StringUtils.isNotBlank(targetService)) {
+                return targetService;
             }
-            return serviceAttribute.toString();
+            if (StringUtils.isNotBlank(service)) {
+                return service;
+            }
+            if (serviceAttribute != null) {
+                if (serviceAttribute instanceof final Service svc) {
+                    return svc.getId();
+                }
+                return serviceAttribute.toString();
+            }
         }
         return null;
     }

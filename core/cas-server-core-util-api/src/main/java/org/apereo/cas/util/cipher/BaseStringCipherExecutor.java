@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.util.EncodingUtils;
@@ -20,12 +21,6 @@ import org.jooq.lambda.Unchecked;
 import org.jose4j.json.JsonUtil;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.PublicJsonWebKey;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.LinkedHashMap;
-import java.util.Objects;
-import java.util.concurrent.Executors;
 
 /**
  * The {@link BaseStringCipherExecutor} is the default

@@ -1,15 +1,15 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
-
-import java.util.HashMap;
 
 /**
  * This is {@link SamlRequestAuditResourceResolver}.
@@ -19,7 +19,7 @@ import java.util.HashMap;
  */
 public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourceResolver {
     @Override
-    public String[] resolveFrom(final JoinPoint joinPoint, final Object returnValue) {
+    public String[] resolveFrom(final JoinPoint joinPoint, @Nullable final Object returnValue) {
         if (returnValue instanceof final Pair context) {
             return getAuditResourceFromSamlRequest((XMLObject) context.getLeft());
         }
@@ -41,13 +41,13 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
 
     protected String[] getAuditResourceFromSamlLogoutRequest(final LogoutRequest returnValue) {
         val values = new HashMap<>();
-        values.put("issuer", returnValue.getIssuer().getValue());
+        values.put("issuer", Objects.requireNonNull(returnValue.getIssuer()).getValue());
         return new String[]{auditFormat.serialize(values)};
     }
 
     protected String[] getAuditResourceFromSamlAuthnRequest(final AuthnRequest returnValue) {
         val values = new HashMap<>();
-        values.put("issuer", returnValue.getIssuer().getValue());
+        values.put("issuer", Objects.requireNonNull(returnValue.getIssuer()).getValue());
         values.put("binding", returnValue.getProtocolBinding());
         values.put("destination", returnValue.getDestination());
         return new String[]{auditFormat.serialize(values)};

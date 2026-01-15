@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.surrogate;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServicePrincipalAccessStrategyEnforcer;
 import org.apereo.cas.services.ServicesManager;
@@ -10,8 +11,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import tools.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.util.Map;
 
 /**
  * This is {@link JsonResourceSurrogateAuthenticationService}.

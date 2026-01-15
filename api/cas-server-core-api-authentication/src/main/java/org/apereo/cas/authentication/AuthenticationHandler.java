@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
@@ -8,9 +9,6 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
-import java.io.Serializable;
-import java.security.GeneralSecurityException;
-import java.util.Map;
 
 /**
  * An authentication handler authenticates a single credential. In many cases credentials are authenticated by

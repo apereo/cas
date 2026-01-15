@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,14 +9,6 @@ import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.jspecify.annotations.NonNull;
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
 
 /**
  * Simple implementation of a {@link Principal} that exposes an unmodifiable
@@ -31,6 +24,7 @@ import java.util.TreeMap;
 @ToString
 @Getter
 @NoArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class SimplePrincipal implements Principal {
 
     @Serial
@@ -48,7 +42,7 @@ public class SimplePrincipal implements Principal {
     @JsonCreator
     protected SimplePrincipal(
         @JsonProperty("id")
-        final @NonNull String id,
+        final String id,
         @JsonProperty("attributes")
         final Map<String, List<Object>> attributes) {
         this.id = id;
@@ -65,7 +59,7 @@ public class SimplePrincipal implements Principal {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof SimplePrincipal rhs) {
+        if (obj instanceof final SimplePrincipal rhs) {
             return id != null && id.equalsIgnoreCase(rhs.getId());
         }
         return false;

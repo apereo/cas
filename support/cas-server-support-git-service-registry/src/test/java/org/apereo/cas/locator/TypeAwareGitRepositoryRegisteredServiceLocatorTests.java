@@ -1,17 +1,14 @@
 package org.apereo.cas.locator;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.git.services.GitServiceRegistryProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.locator.TypeAwareGitRepositoryRegisteredServiceLocator;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -10,10 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Contains information about a successful authentication produced by an {@link AuthenticationHandler}.
@@ -29,6 +27,7 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
+@SuppressWarnings("NullAway.Init")
 public class DefaultAuthenticationHandlerExecutionResult implements AuthenticationHandlerExecutionResult {
 
     @Serial
@@ -47,11 +46,13 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
     /**
      * Resolved principal for authenticated credential.
      */
+    @Nullable
     private Principal principal;
 
     /**
      * List of warnings issued by the authentication source while authenticating the credential.
      */
+    @Nullable
     private List<MessageDescriptor> warnings = new ArrayList<>();
 
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential) {
@@ -59,18 +60,18 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
     }
 
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential,
-                                                       final Principal principal) {
+                                                       @Nullable final Principal principal) {
         this(source, credential, principal, new ArrayList<>());
     }
 
 
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential,
-                                                       final @NonNull List<MessageDescriptor> warnings) {
+                                                       final List<MessageDescriptor> warnings) {
         this(source, credential, null, warnings);
     }
 
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential,
-                                                       final Principal principal, final @NonNull List<MessageDescriptor> warnings) {
+                                                       final @Nullable Principal principal, @Nullable final List<MessageDescriptor> warnings) {
         this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), credential, principal, warnings);
     }
 
@@ -81,14 +82,14 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
     @Override
     @CanIgnoreReturnValue
     public AuthenticationHandlerExecutionResult addWarning(final MessageDescriptor message) {
-        this.warnings.add(message);
+        Objects.requireNonNull(this.warnings).add(message);
         return this;
     }
 
     @Override
     @CanIgnoreReturnValue
     public AuthenticationHandlerExecutionResult clearWarnings() {
-        this.warnings.clear();
+        Objects.requireNonNull(this.warnings).clear();
         return this;
     }
 }

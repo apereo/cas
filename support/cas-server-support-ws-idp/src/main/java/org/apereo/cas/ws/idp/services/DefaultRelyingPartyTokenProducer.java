@@ -1,5 +1,7 @@
 package org.apereo.cas.ws.idp.services;
 
+import module java.base;
+import module java.xml;
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
 import org.apereo.cas.util.LoggingUtils;
@@ -8,7 +10,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,17 +20,7 @@ import org.apache.cxf.rt.security.SecurityConstants;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.cxf.ws.security.trust.STSUtils;
-import org.w3c.dom.Element;
-
 import jakarta.servlet.http.HttpServletRequest;
-import javax.xml.XMLConstants;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import java.io.StringWriter;
 
 /**
  * This is {@link DefaultRelyingPartyTokenProducer}.

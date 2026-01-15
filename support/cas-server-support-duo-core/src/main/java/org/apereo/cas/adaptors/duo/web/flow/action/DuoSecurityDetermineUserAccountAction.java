@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationRegistrationCipherExecutor;
@@ -20,10 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * This is {@link DuoSecurityDetermineUserAccountAction}.
@@ -46,7 +46,7 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
     protected final TenantExtractor tenantExtractor;
     
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         val account = getDuoSecurityUserAccount(principal);

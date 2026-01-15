@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
 import net.shibboleth.shared.xml.ParserPool;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.core.xml.XMLObject;

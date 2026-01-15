@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -26,8 +27,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.execution.Action;
-import java.time.Duration;
-import java.util.Collection;
 
 /**
  * This is {@link CasOneTimeTokenAuthenticationAutoConfiguration}.

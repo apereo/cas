@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.queue;
 
+import module java.base;
 import org.apereo.cas.config.CasAMQPTicketRegistryAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;

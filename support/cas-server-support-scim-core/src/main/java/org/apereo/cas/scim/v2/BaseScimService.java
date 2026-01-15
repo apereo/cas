@@ -1,5 +1,6 @@
 package org.apereo.cas.scim.v2;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.scim.ScimProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -17,9 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
 
 /**
  * This is {@link BaseScimService}.

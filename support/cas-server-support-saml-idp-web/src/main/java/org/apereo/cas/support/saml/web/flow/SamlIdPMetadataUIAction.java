@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -12,6 +13,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -31,7 +33,7 @@ public class SamlIdPMetadataUIAction extends BaseCasWebflowAction {
     private final AuthenticationServiceSelectionPlan serviceSelectionStrategy;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val service = serviceSelectionStrategy.resolveService(WebUtils.getService(requestContext));
         if (service != null) {
             val samlService = servicesManager.findServiceBy(service, SamlRegisteredService.class);

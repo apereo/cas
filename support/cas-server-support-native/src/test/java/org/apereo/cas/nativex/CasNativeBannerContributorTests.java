@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.config.CasNativeSupportAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.CasBanner;
@@ -10,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.env.MockEnvironment;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

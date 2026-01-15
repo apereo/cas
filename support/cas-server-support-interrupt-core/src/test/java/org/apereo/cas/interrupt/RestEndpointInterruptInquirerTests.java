@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.model.support.interrupt.RestfulInterruptProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -22,7 +23,6 @@ import org.springframework.http.MediaType;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
-import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -52,11 +52,8 @@ class RestEndpointInterruptInquirerTests {
         val data = JsonMapper.builder()
             .configure(EnumFeature.READ_ENUMS_USING_TO_STRING, false)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .changeDefaultPropertyInclusion(handler -> {
-                handler.withValueInclusion(JsonInclude.Include.NON_NULL);
-                handler.withContentInclusion(JsonInclude.Include.NON_NULL);
-                return handler;
-            })
+            .changeDefaultPropertyInclusion(handler -> handler.withValueInclusion(JsonInclude.Include.NON_NULL)
+                .withContentInclusion(JsonInclude.Include.NON_NULL))
             .build()
             .writeValueAsString(response);
         this.webServer = new MockWebServer(8888,

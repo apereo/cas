@@ -1,16 +1,11 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link HttpCorsRequestProperties}.

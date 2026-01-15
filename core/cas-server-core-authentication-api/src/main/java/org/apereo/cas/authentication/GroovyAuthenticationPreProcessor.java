@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.Getter;
@@ -31,13 +32,13 @@ public class GroovyAuthenticationPreProcessor implements AuthenticationPreProces
     @Override
     public boolean process(final AuthenticationTransaction transaction) throws Throwable {
         val args = new Object[]{transaction, LOGGER};
-        return watchableScript.execute(args, Boolean.class);
+        return Boolean.TRUE.equals(watchableScript.execute(args, Boolean.class));
     }
 
     @Override
     public boolean supports(final Credential credential) throws Throwable {
         val args = new Object[]{credential, LOGGER};
-        return watchableScript.execute("supports", Boolean.class, args);
+        return Boolean.TRUE.equals(watchableScript.execute("supports", Boolean.class, args));
     }
 
     @Override

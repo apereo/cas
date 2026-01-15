@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.syncope.BaseSyncopeTests;

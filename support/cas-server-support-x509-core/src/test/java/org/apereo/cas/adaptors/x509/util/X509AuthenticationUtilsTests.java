@@ -1,13 +1,10 @@
 package org.apereo.cas.adaptors.x509.util;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.x509.SubjectDnPrincipalResolverProperties;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

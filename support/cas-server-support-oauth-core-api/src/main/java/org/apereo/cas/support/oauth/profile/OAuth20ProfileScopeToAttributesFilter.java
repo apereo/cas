@@ -1,15 +1,12 @@
 package org.apereo.cas.support.oauth.profile;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import lombok.val;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link OAuth20ProfileScopeToAttributesFilter}.

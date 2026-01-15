@@ -1,14 +1,11 @@
 package org.apereo.cas.configuration.model.support.throttle;
 
+import module java.base;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * Configuration properties class for cas.throttle.

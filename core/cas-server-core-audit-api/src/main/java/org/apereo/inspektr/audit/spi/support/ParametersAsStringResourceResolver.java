@@ -1,7 +1,7 @@
 package org.apereo.inspektr.audit.spi.support;
 
+import module java.base;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import java.util.Arrays;
 
 /**
  * Returns the parameters as an array of strings.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.delegation;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
@@ -15,12 +16,11 @@ import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link PasswordlessDetermineDelegatedAuthenticationAction}.
@@ -52,7 +52,7 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         if (user == null) {
             LOGGER.error("Unable to locate passwordless account in the flow");

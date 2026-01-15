@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -19,11 +20,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.List;
 
 /**
  * Action to generate a service ticket for a given Ticket Granting Ticket and
@@ -62,7 +63,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
      * So we will grab the available authentication and produce the final result based on that.
      */
     @Override
-    protected Event doExecuteInternal(final RequestContext context) throws Exception {
+    protected @Nullable Event doExecuteInternal(final RequestContext context) throws Exception {
         val service = WebUtils.getService(context);
         LOGGER.trace("Service asking for service ticket is [{}]", service);
 

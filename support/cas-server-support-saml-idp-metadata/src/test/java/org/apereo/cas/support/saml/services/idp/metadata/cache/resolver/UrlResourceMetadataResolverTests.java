@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import module java.base;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
@@ -14,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.test.context.TestPropertySource;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

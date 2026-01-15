@@ -1,17 +1,14 @@
 package org.apereo.cas.web.flow.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * This is {@link RankedMultifactorAuthenticationProviderSelector}
@@ -26,7 +23,7 @@ public class RankedMultifactorAuthenticationProviderSelector implements Multifac
 
     @Override
     public MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,
-                                                     final RegisteredService service,
+                                                     @Nullable final RegisteredService service,
                                                      final Principal principal) {
         val sorted = new ArrayList<>(providers);
         if (sorted.isEmpty()) {
@@ -36,15 +33,8 @@ public class RankedMultifactorAuthenticationProviderSelector implements Multifac
         return selectMultifactorAuthenticationProvider(service, sorted);
     }
 
-    /**
-     * Select multifactor authentication provider.
-     *
-     * @param service   the service
-     * @param providers the providers
-     * @return the multifactor authentication provider
-     */
     protected MultifactorAuthenticationProvider selectMultifactorAuthenticationProvider(
-        final RegisteredService service,
+        @Nullable final RegisteredService service,
         final List<MultifactorAuthenticationProvider> providers) {
         val provider = providers.getLast();
         LOGGER.debug("Selected the provider [{}] for service [{}] out of [{}] providers", provider, service, providers.size());

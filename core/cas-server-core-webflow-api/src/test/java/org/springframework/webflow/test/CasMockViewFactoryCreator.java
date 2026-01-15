@@ -1,4 +1,5 @@
 package org.springframework.webflow.test;
+import module java.base;
 
 /**
  * This is {@link CasMockViewFactoryCreator}.

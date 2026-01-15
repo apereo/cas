@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.mail;
 
+import module java.base;
 import org.apereo.cas.configuration.support.ConfigurationPropertiesBindingContext;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -19,9 +20,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import jakarta.mail.internet.MimeMessage;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * This is {@link DefaultEmailSender}.
@@ -75,7 +73,7 @@ public class DefaultEmailSender implements EmailSender {
         messageHelper.setTo(recipients.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
 
         val emailProperties = emailRequest.getEmailProperties();
-        messageHelper.setText(emailRequest.getBody(), emailProperties.isHtml());
+        messageHelper.setText(StringUtils.defaultString(emailRequest.getBody()), emailProperties.isHtml());
 
         val subject = determineEmailSubject(emailRequest, messageSource);
         messageHelper.setSubject(subject);

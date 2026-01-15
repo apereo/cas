@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
 import org.apereo.cas.config.BaseSamlConfigurationTests;
 import org.apereo.cas.support.saml.util.NonInflatingSaml20ObjectBuilder;
 import org.apereo.cas.test.CasTestExtension;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

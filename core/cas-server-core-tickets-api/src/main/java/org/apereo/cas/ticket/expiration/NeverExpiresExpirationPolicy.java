@@ -1,19 +1,15 @@
 package org.apereo.cas.ticket.expiration;
 
+import module java.base;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import java.io.Serial;
-import java.time.Clock;
-import java.time.ZonedDateTime;
 
 /**
  * {@link NeverExpiresExpirationPolicy} always answers false when asked if a Ticket is

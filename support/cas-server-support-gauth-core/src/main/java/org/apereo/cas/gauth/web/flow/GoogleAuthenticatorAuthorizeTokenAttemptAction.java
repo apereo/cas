@@ -1,14 +1,15 @@
 package org.apereo.cas.gauth.web.flow;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Objects;
 
 /**
  * This is {@link GoogleAuthenticatorAuthorizeTokenAttemptAction}.
@@ -24,7 +25,7 @@ public class GoogleAuthenticatorAuthorizeTokenAttemptAction extends BaseCasWebfl
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val maxAllowedAttempts = casProperties.getAuthn().getMfa().getGauth().getCore().getMaximumAuthenticationAttempts();
         val credential = Objects.requireNonNull(WebUtils.getCredential(requestContext));
         var attemptCounter = requestContext.getFlowScope().get(FLOW_SCOPE_ATTEMPT_COUNTER, Integer.class, 0);

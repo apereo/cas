@@ -1,13 +1,10 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.lang3.StringUtils;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.util.Arrays;
-import java.util.Optional;
 
 /**
  * This is {@link DigestUtils}

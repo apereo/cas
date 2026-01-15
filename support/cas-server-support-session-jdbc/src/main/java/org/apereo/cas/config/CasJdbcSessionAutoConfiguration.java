@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -22,7 +23,7 @@ import org.springframework.session.jdbc.config.annotation.SpringSessionDataSourc
 import org.springframework.session.jdbc.config.annotation.SpringSessionTransactionManager;
 import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
 import org.springframework.transaction.PlatformTransactionManager;
-import javax.sql.DataSource;
+import module java.sql;
 
 /**
  * This is {@link CasJdbcSessionAutoConfiguration}.

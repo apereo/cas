@@ -1,9 +1,7 @@
 package org.apereo.cas.validation;
 
+import module java.base;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link DefaultServiceTicketValidationAuthorizersExecutionPlan}.

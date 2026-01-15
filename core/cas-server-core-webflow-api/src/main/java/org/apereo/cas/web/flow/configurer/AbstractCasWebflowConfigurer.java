@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.spel.SpringELExpressionParser;
@@ -77,11 +79,6 @@ import org.springframework.webflow.expression.spel.FlowVariablePropertyAccessor;
 import org.springframework.webflow.expression.spel.MapAdaptablePropertyAccessor;
 import org.springframework.webflow.expression.spel.MessageSourcePropertyAccessor;
 import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccessor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * The {@link AbstractCasWebflowConfigurer} is responsible for
@@ -806,7 +803,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param outputMapper the output mapper
      * @return the subflow attribute mapper
      */
-    public SubflowAttributeMapper createSubflowAttributeMapper(final Mapper inputMapper, final Mapper outputMapper) {
+    public SubflowAttributeMapper createSubflowAttributeMapper(final Mapper inputMapper, @Nullable final Mapper outputMapper) {
         return new GenericSubflowAttributeMapper(inputMapper, outputMapper);
     }
 

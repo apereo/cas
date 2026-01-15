@@ -1,11 +1,11 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.artifact;
 
+import module java.base;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
-
 import lombok.val;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -14,10 +14,6 @@ import org.opensaml.saml.saml2.core.impl.ArtifactResponseBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Header;
-
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Optional;
 
 /**
  * This is {@link SamlProfileArtifactResponseBuilder}.

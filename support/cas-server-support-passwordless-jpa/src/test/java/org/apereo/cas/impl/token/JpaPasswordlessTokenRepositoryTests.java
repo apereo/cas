@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.token;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
@@ -16,7 +17,6 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

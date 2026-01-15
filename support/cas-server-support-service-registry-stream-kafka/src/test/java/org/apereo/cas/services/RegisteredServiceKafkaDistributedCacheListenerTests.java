@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.config.CasServicesStreamingAutoConfiguration;
 import org.apereo.cas.config.CasServicesStreamingKafkaAutoConfiguration;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
@@ -16,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

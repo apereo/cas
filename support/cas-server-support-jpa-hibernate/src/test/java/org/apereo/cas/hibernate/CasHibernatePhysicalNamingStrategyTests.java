@@ -1,5 +1,6 @@
 package org.apereo.cas.hibernate;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;

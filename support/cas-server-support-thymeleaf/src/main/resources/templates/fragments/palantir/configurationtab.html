@@ -14,29 +14,160 @@
             </div>
         </div>
 
-        <div class="jqueryui-tabs">
+        <div class="jqueryui-tabs" id="configuration-tabs">
             <ul>
+                <li id="mutableConfigSources"><a href="#mutableconfigsource-tab">Dynamic Sources</a></li>
                 <li><a href="#environment-tab">Environment</a></li>
                 <li><a href="#config-tab">Configuration</a></li>
                 <li id="casConfigSecurity"><a href="#config-encryption-tab">Security</a></li>
                 <li id="casConfigSearch"><a href="#config-search">Search</a></li>
             </ul>
 
-            <div id="environment-tab">
-                 <table id="configurationTable" class="mdc-data-table__table table table-striped noborder">
+            <div id="mutableconfigsource-tab">
+                <p>This view presents configuration properties from dynamic configuration sources that can
+                accept updates at runtime.</p>
+
+                <table id="mutableConfigurationTable" class="mdc-data-table__table table table-striped noborder">
                     <thead>
                     <tr class="mdc-data-table__header-row">
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Source</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Property</th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
                     </tr>
                     </thead>
                     <tbody class="mdc-data-table__content">
                     </tbody>
                 </table>
+
+                 <input type="file" multiple id="configurationFilesToImport"
+                        accept=".properties,.yaml,.yml"
+                        style="display: none;">
+                
+                <div id="newConfigurationDialog" title="New Configuration Property" class="hide">
+                  <form id="newConfigurationForm">
+                        <section class="cas-field form-group my-3 mdc-input-group d-flex">
+                            <div id="newConfigurationMainPanel"
+                                 class="mdc-input-group-field mdc-input-group-field-append w-100">
+                                <label for="newConfigPropertyName"
+                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                    <span class="mdc-notched-outline">
+                                        <span class="mdc-notched-outline__leading"></span>
+                                        <span class="mdc-notched-outline__notch">
+                                            <span class="mdc-floating-label">Name</span>
+                                        </span>
+                                        <span class="mdc-notched-outline__trailing"></span>
+                                    </span>
+                                    <input class="mdc-text-field__input form-control" type="text"
+                                           name="newConfigPropertyName" tabindex="0" id="newConfigPropertyName"
+                                           size="50"
+                                           autocomplete="off" required/>
+                                </label>
+                                <label for="newConfigPropertyValue"
+                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                    <span class="mdc-notched-outline">
+                                        <span class="mdc-notched-outline__leading"></span>
+                                        <span class="mdc-notched-outline__notch">
+                                            <span class="mdc-floating-label">Value</span>
+                                        </span>
+                                        <span class="mdc-notched-outline__trailing"></span>
+                                    </span>
+                                    <input class="mdc-text-field__input form-control" type="text"
+                                           name="newConfigPropertyValue" tabindex="0" id="newConfigPropertyValue"
+                                           size="50" autocomplete="off" required/>
+                                </label>
+
+                                <script type="text/javascript">
+                                    const sources = mutablePropertySources.map(src => ({
+                                        value: src,
+                                        text: src
+                                    }));
+                                    if (sources.length === 1) {
+                                        sources[0].selected = true;
+                                    }
+
+                                    const section = $("<section>", {
+                                        id: `propertySourcesSection`,
+                                    });
+                                    
+                                    const container = $("<span>", {
+                                        id: `propertySourcesSelectContainer`,
+                                        class: `d-flex mb-2 mt-2`
+                                    });
+
+                                    const select = $("<select multiple>")
+                                        .attr("id", "propertySourcesSelect")
+                                        .addClass("jqueryui-multiselectmenu");
+
+                                    sources.forEach(o => {
+                                        select.append(
+                                            $("<option>").val(o.value).text(o.text).prop("selected", o.selected)
+                                        );
+                                    });
+
+                                    const label = $("<label>")
+                                        .addClass("pt-2")
+                                        .addClass("pr-2")
+                                        .addClass("mb-2")
+                                        .attr("id", "mylabel")
+                                        .css("display", "block")
+                                        .css("min-width", "max-content")
+                                        .attr("for", "propertySourcesSelectContainer").text("Property Source(s):");
+                                    container.append(label, select);
+                                    section.append(container);
+                                    
+                                    $(`#newConfigurationMainPanel`).append(section);
+                                    
+                                    let settings = {
+                                        plugins: ['remove_button']
+                                    };
+                                    new TomSelect("#propertySourcesSelect", settings);
+                                </script>
+                            </div>
+                        </section>
+                        <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptConfigProperty', label='#Encrypt Value')}"/>
+                  </form>
+                </div>
+            </div>
+
+            <div id="environment-tab">
+                <p>
+                    You can view all active property sources, (e.g. system properties, environment variables,  etc.)
+                    and determine which property source contributed which value. You can also examine the effective value for a
+                    particular configuration property directly, or add/update a property value at runtime assuming the
+                    underlying configuration property source supports dynamic updates.
+                </p>
+                 <div class="banner banner-info my-2">
+                     <h3>Configuration Value</h3>
+                     <p>The configuration property value shown for each property is the reported value
+                     by that particular property source. It may not be the overall effective value for the property
+                     specially if the same property is managed, owned or overridden by multiple property sources.</p>
+                </div>
+                <table id="configurationTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Source</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Property</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+
+                <h3>CAS Property Sources</h3>
+                <div class="d-flex align-items-start mb-4">
+                    <div id="casPropertySourcesChipset" class="mdc-chip-set" role="grid">
+                    </div>
+                </div>
             </div>
 
             <div id="config-tab">
+                <p>This view presents the collection of all application properties that can be parsed and accepted by
+                    <code>@ConfigurationProperties</code> beans including those that belong to CAS and any other
+                    third-party library.
+                </p>
                 <table id="configPropsTable" class="mdc-data-table__table table table-striped noborder">
                     <thead>
                     <tr class="mdc-data-table__header-row">
@@ -66,16 +197,19 @@
                                     <span class="mdc-notched-outline__trailing"></span>
                                 </span>
                                 <input class="mdc-text-field__input form-control" type="text"
-                                       name="configValue" tabindex="0" id="configValue" size="50" autocomplete="off" required/>
+                                       name="configValue" tabindex="0" id="configValue" size="50" autocomplete="off"
+                                       required/>
                             </label>
                         </div>
                     </section>
                     <div class="d-flex">
                         <button type="button" id="encryptConfigButton" class="mdc-button mdc-button--raised">
-                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-lock" aria-hidden="true"></i>Encrypt</span>
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-lock"
+                                                               aria-hidden="true"></i>Encrypt</span>
                         </button>
                         <button type="button" id="decryptConfigButton" class="mdc-button mdc-button--raised">
-                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-lock-open" aria-hidden="true"></i>Decrypt</span>
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-lock-open"
+                                                               aria-hidden="true"></i>Decrypt</span>
                         </button>
                     </div>
                     <div id="configEncryptionResult" class="d-none">
@@ -108,7 +242,8 @@
                     <div class="d-flex">
                         <button type="submit" name="configSearchButton" id="configSearchButton"
                                 class="mdc-button mdc-button--raised">
-                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-magnify" aria-hidden="true"></i>Search</span>
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-magnify"
+                                                               aria-hidden="true"></i>Search</span>
                         </button>
                     </div>
                 </form>

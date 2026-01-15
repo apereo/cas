@@ -1,21 +1,30 @@
 package org.apereo.cas.support.inwebo.web.flow.actions;
 
-
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.inwebo.service.InweboService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import static org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.M_ACCESS_WEB;
 import static org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties.BrowserAuthenticatorTypes.VIRTUAL_AUTHENTICATOR;
-import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.*;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.BROWSER_AUTHENTICATION_STATUS;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.BROWSER_AUTHENTICATOR;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.LOGIN;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.MA;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.MUST_ENROLL;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.PUSH;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.PUSH_AND_BROWSER_AUTHENTICATION_STATUS;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.SELECT;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.SITE_ALIAS;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.SITE_DESCRIPTION;
+import static org.apereo.cas.support.inwebo.web.flow.actions.InweboWebflowConstants.VA;
 
 /**
  * A web action to check the user (status).
@@ -32,7 +41,7 @@ public class InweboCheckUserAction extends BaseCasWebflowAction {
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val login = authentication.getPrincipal().getId();
         LOGGER.trace("Login: [{}]", login);

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.view;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
@@ -19,9 +20,6 @@ import org.jspecify.annotations.NonNull;
 import org.opensaml.saml.saml1.core.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 /**
  * Base class for all views that render SAML1 SOAP messages directly to the HTTP response stream.

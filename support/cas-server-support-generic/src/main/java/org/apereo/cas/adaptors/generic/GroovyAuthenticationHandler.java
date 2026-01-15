@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic;
 
+import module java.base;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;

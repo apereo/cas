@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.profile;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
@@ -15,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
-import java.util.Map;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import module java.base;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -16,8 +17,6 @@ import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * This is {@link GroovyResourceMetadataResolver}.

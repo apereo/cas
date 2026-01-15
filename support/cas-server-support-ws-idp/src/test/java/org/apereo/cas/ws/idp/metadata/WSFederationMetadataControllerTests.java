@@ -1,7 +1,7 @@
 package org.apereo.cas.ws.idp.metadata;
 
+import module java.base;
 import org.apereo.cas.BaseCoreWsSecurityIdentityProviderConfigurationTests;
-
 import lombok.val;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

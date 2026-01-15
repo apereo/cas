@@ -1,13 +1,10 @@
 package org.apereo.cas.logout.slo;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
-
-import java.io.Serializable;
-import java.net.URL;
-import java.util.Map;
 
 /**
  * Identifies a CAS logout request and its properties.

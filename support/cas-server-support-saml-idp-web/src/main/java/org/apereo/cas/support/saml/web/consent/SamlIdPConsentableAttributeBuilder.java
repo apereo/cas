@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.consent;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.consent.CasConsentableAttribute;
 import org.apereo.cas.consent.ConsentableAttributeBuilder;
@@ -11,8 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
-import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * This is {@link SamlIdPConsentableAttributeBuilder}.

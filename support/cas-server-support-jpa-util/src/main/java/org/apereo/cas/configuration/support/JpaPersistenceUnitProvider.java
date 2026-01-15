@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.val;

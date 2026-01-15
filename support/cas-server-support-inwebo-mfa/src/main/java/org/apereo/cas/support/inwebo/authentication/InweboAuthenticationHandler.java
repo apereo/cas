@@ -1,5 +1,6 @@
 package org.apereo.cas.support.inwebo.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
@@ -15,7 +16,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
-import javax.security.auth.login.FailedLoginException;
 
 /**
  * The Inwebo authentication handler.

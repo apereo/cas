@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web;
 
+import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyUsage;
@@ -15,9 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,15 +1,13 @@
 package org.apereo.cas.configuration.model.support.geo.googlemaps;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.geo.BaseGeoLocationProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
 
 /**
  * This is {@link GoogleMapsProperties}.

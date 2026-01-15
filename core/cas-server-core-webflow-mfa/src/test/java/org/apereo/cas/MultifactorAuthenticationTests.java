@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;

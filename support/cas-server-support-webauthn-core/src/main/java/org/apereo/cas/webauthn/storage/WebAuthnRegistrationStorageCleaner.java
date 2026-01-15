@@ -1,4 +1,5 @@
 package org.apereo.cas.webauthn.storage;
+import module java.base;
 
 /**
  * This is {@link WebAuthnRegistrationStorageCleaner}.

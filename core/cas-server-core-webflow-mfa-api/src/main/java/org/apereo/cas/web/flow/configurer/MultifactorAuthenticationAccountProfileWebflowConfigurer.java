@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -13,8 +14,6 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link MultifactorAuthenticationAccountProfileWebflowConfigurer}.

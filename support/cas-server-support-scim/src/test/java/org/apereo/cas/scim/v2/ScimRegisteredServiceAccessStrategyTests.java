@@ -1,5 +1,6 @@
 package org.apereo.cas.scim.v2;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.scim.v2.access.ScimRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
@@ -18,12 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

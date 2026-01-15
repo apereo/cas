@@ -1,11 +1,11 @@
 package org.apereo.cas.web.flow.passwordless;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessRequestParser;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialParser;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 

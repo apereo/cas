@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
@@ -9,9 +10,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
 import tools.jackson.databind.ObjectMapper;
-import java.nio.file.Files;
-import java.util.LinkedHashMap;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

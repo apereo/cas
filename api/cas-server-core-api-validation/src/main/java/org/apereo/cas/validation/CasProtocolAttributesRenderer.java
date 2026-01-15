@@ -1,8 +1,7 @@
 package org.apereo.cas.validation;
 
+import module java.base;
 import org.apache.commons.lang3.Strings;
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * This is {@link CasProtocolAttributesRenderer} that decides how cas protocol attributes

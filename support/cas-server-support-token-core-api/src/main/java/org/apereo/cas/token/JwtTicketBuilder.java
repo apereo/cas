@@ -1,5 +1,6 @@
 package org.apereo.cas.token;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -17,15 +18,6 @@ import org.apereo.cas.validation.TicketValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link JwtTicketBuilder}.

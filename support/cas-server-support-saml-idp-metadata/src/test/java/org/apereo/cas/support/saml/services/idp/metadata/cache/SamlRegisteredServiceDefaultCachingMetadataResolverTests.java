@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import module java.base;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -8,7 +9,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.Metadata
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.UrlResourceMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.DefaultSamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.util.MockWebServer;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
@@ -17,10 +17,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.retry.RetryException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-
 import static org.apereo.cas.util.junit.Assertions.assertThrowsWithRootCause;
 import static org.junit.jupiter.api.Assertions.*;
 

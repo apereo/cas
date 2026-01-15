@@ -1,13 +1,12 @@
 package org.apereo.cas.ticket.registry;
 
+import module java.base;
 import org.apereo.cas.ticket.Ticket;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link GeodeTicketDocument}.

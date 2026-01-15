@@ -1,21 +1,13 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
+import module java.base;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link SamlIdPResponseProperties}.

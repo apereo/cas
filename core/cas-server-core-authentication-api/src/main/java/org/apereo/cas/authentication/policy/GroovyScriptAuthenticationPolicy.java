@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
@@ -18,15 +19,10 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.Assert;
 import jakarta.persistence.Transient;
-import java.io.Serial;
-import java.io.Serializable;
-import java.security.GeneralSecurityException;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link GroovyScriptAuthenticationPolicy}.
@@ -52,15 +48,22 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
+    @Nullable
     private transient ExecutableCompiledScript executableScript;
 
     @Override
     public AuthenticationPolicyExecutionResult isSatisfiedBy(
-        final Authentication authentication,
+        @Nullable final Authentication authentication,
         final Set<AuthenticationHandler> authenticationHandlers,
         final ConfigurableApplicationContext applicationContext,
         final Map<String, ? extends Serializable> context) throws Throwable {
 
+        if (authentication == null) {
+            LOGGER.warn("Authentication attempt is null and cannot satisfy policy");
+            return AuthenticationPolicyExecutionResult.failure();
+        }
+
+        
         initializeWatchableScriptIfNeeded();
 
         val args = CollectionUtils.<String, Object>wrap(
@@ -68,7 +71,7 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
             "context", context,
             "applicationContext", applicationContext,
             "logger", LOGGER);
-        executableScript.setBinding(args);
+        Objects.requireNonNull(executableScript).setBinding(args);
         val ex = executableScript.execute(args.values().toArray(), Optional.class);
         if (ex != null && ex.isPresent()) {
             val exception = (Exception) ex.get();
@@ -82,8 +85,9 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
         val supplier = Unchecked.supplier(() -> {
             initializeWatchableScriptIfNeeded();
             val args = CollectionUtils.wrap("failure", failure, "logger", LOGGER);
-            executableScript.setBinding(args);
-            return executableScript.execute("shouldResumeOnFailure", Boolean.class, args.values().toArray());
+            Objects.requireNonNull(executableScript).setBinding(args);
+            return Boolean.TRUE.equals(executableScript.execute("shouldResumeOnFailure",
+                Boolean.class, args.values().toArray()));
         });
         val result = supplier.get();
         Assert.notNull(result, "Authentication policy result cannot be null");

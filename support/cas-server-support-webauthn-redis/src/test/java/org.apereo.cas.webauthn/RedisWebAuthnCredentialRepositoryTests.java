@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn;
 
+import module java.base;
 import org.apereo.cas.config.CasRedisWebAuthnAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;

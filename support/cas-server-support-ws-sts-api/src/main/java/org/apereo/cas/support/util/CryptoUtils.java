@@ -1,10 +1,9 @@
 package org.apereo.cas.support.util;
 
+import module java.base;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.Properties;
 
 /**
  * This is {@link CryptoUtils}.

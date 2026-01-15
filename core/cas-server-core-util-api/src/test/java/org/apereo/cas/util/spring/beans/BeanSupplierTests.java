@@ -1,14 +1,13 @@
 package org.apereo.cas.util.spring.beans;
 
+import module java.base;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.util.gen.RandomStringGenerator;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

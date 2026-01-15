@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
@@ -15,10 +16,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import org.jspecify.annotations.Nullable;
 
 /**
  * An abstraction that encapsulates interaction with
@@ -38,7 +36,7 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
         final HttpClient httpClient,
         final DuoSecurityClient duoClient,
         final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
-        final Cache<@NonNull String, DuoSecurityUserAccount> userAccountCache,
+        final Cache<String, DuoSecurityUserAccount> userAccountCache,
         final TenantExtractor tenantExtractor) {
         super(duoProperties, httpClient, tenantExtractor, multifactorAuthenticationPrincipalResolver, userAccountCache);
         this.duoClient = duoClient;
@@ -141,7 +139,7 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
     }
 
     protected void collectDuoAttribute(final Map<String, List<Object>> attributes,
-                                       final String name, final List values) {
+                                       final String name, @Nullable final List values) {
         if (values != null && !values.isEmpty()) {
             attributes.put(name, values);
         }

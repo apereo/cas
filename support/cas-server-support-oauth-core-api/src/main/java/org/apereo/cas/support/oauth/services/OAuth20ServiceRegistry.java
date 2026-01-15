@@ -1,14 +1,9 @@
 package org.apereo.cas.support.oauth.services;
 
+import module java.base;
 import org.apereo.cas.services.ImmutableInMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
-
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OAuth20ServiceRegistry}.

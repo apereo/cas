@@ -1,4 +1,5 @@
 package org.apereo.cas.configuration.model.support.delegation;
+import module java.base;
 
 /**
  * This is {@link DelegationAutoRedirectTypes}.

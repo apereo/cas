@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditResourceResolvers;
@@ -68,9 +69,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.StringUtils;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * This is {@link CasCoreAuditAutoConfiguration}.

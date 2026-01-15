@@ -1,11 +1,11 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.attr;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionResolutionContext;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -18,9 +18,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serial;
-import java.util.List;
 
 /**
  * This is {@link SamlIdPAttributeDefinition}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.rest.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
@@ -39,7 +40,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.util.LinkedMultiValueMap;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

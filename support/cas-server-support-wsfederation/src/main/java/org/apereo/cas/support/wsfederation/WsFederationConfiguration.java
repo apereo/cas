@@ -1,18 +1,14 @@
 package org.apereo.cas.support.wsfederation;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * This class gathers configuration information for the WS Federation Identity Provider.

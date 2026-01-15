@@ -1,11 +1,9 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.util.List;
 
 /**
  * Strategy interface for retrieving services from the request.

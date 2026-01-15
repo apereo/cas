@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.RandomUtils;
@@ -9,8 +10,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import tools.jackson.databind.ObjectMapper;
-import java.net.URI;
-import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,8 +1,8 @@
 package org.apereo.cas.pm;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.web.flow.resolver.CasWebflowAware;
-import java.io.Serial;
 
 /**
  * Raised when password management detects a weak password that does not match against

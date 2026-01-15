@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-
+import module java.base;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
@@ -11,7 +11,6 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.util.Optional;
 
 /**
  * This is {@link RedisSamlIdPMetadataLocator}.
