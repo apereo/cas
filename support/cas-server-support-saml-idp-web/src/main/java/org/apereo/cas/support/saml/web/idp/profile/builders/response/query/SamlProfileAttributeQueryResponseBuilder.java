@@ -1,11 +1,11 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.query;
 
+import module java.base;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
-
 import lombok.val;
 import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -14,9 +14,6 @@ import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Header;
 import org.springframework.http.MediaType;
-
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link SamlProfileAttributeQueryResponseBuilder}.

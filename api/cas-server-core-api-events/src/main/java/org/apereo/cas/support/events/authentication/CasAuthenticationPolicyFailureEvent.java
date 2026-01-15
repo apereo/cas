@@ -1,14 +1,11 @@
 package org.apereo.cas.support.events.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationTransaction;
-
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-
-import java.io.Serial;
-import java.util.Map;
 
 /**
  * This is {@link CasAuthenticationPolicyFailureEvent}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
 import org.apereo.cas.util.MockRequestContext;
 import lombok.val;

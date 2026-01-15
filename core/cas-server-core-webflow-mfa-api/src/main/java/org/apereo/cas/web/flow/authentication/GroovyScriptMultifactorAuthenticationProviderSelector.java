@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.principal.Principal;
@@ -9,8 +10,8 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.Resource;
-import java.util.Collection;
 
 /**
  * This is {@link GroovyScriptMultifactorAuthenticationProviderSelector}.
@@ -28,9 +29,9 @@ public class GroovyScriptMultifactorAuthenticationProviderSelector implements Mu
     }
 
     @Override
-    public MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,
-                                                     final RegisteredService service, final Principal principal) throws Throwable {
-        val args = new Object[]{service, principal, providers, LOGGER};
+    public @Nullable MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,
+                                                               @Nullable final RegisteredService service, final Principal principal) throws Throwable {
+        val args = new Object[]{Objects.requireNonNull(service), principal, providers, LOGGER};
         LOGGER.debug("Invoking Groovy script with service=[{}], principal=[{}], providers=[{}]", service, principal, providers);
         val provider = watchableScript.execute(args, String.class);
         if (StringUtils.isBlank(provider)) {

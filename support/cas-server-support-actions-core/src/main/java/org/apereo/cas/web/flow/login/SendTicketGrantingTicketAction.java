@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import module java.base;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.events.sso.CasSingleSignOnSessionCreatedEvent;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -43,7 +45,7 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
     private final SingleSignOnParticipationStrategy singleSignOnParticipationStrategy;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext context) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext context) throws Throwable {
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         val ticketGrantingTicketValueFromCookie = WebUtils.getTicketGrantingTicketIdFrom(context.getFlowScope());
 

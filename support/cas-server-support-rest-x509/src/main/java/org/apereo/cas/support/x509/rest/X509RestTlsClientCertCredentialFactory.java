@@ -1,5 +1,6 @@
 package org.apereo.cas.support.x509.rest;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
@@ -9,8 +10,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.util.MultiValueMap;
 import jakarta.servlet.http.HttpServletRequest;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link X509RestTlsClientCertCredentialFactory} that attempts to

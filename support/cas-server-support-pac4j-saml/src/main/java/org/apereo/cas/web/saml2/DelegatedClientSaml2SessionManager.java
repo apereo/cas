@@ -1,5 +1,6 @@
 package org.apereo.cas.web.saml2;
 
+import module java.base;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientSessionManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.ticket.TransientSessionTicket;

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.theme;
 
+import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;

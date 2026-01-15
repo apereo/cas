@@ -1,11 +1,10 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.jspecify.annotations.NonNull;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This is {@link EntityDescriptorMetadataResolver}.

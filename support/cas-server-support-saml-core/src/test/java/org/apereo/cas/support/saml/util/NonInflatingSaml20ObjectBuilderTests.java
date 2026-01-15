@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.util;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.BaseSamlConfigurationTests;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -24,13 +25,6 @@ import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

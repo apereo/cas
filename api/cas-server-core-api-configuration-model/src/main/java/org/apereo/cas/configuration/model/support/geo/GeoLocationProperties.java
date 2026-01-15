@@ -1,19 +1,16 @@
 package org.apereo.cas.configuration.model.support.geo;
 
+import module java.base;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.support.geo.azure.AzureMapsProperties;
 import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
 import org.apereo.cas.configuration.model.support.geo.ip.IPGeoLocationProperties;
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link GeoLocationProperties}.

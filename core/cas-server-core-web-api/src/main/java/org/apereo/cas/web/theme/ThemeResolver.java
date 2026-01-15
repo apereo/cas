@@ -1,5 +1,6 @@
 package org.apereo.cas.web.theme;
 
+import module java.base;
 import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

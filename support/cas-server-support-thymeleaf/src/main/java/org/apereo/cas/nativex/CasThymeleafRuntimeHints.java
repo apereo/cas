@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.services.web.CasThymeleafOutputTemplateHandler;
 import org.apereo.cas.services.web.CasThymeleafTemplatesDirector;
 import org.apereo.cas.services.web.ThemeViewResolverFactory;
@@ -18,7 +19,6 @@ import org.thymeleaf.standard.expression.FragmentExpression;
 import org.thymeleaf.standard.processor.StandardTextTagProcessor;
 import org.thymeleaf.standard.processor.StandardXmlNsTagProcessor;
 import org.thymeleaf.templatemode.TemplateMode;
-import java.util.List;
 
 /**
  * This is {@link CasThymeleafRuntimeHints}.

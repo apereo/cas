@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import module java.base;
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

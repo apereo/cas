@@ -1,5 +1,6 @@
 package org.apereo.cas.otp.web.flow;
 
+import module java.base;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;

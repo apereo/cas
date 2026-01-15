@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -33,14 +34,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
-import java.io.File;
-import java.io.Serial;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.security.KeyStore;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

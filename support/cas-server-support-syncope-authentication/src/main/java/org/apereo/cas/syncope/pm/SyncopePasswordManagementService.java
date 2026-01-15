@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope.pm;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeRequest;
@@ -28,12 +29,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.util.UriComponentsBuilder;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * This is {@link SyncopePasswordManagementService}.
@@ -62,7 +57,7 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
             .allMatch(domain -> {
                 val httpRequest = buildPasswordChangeHttpRequest(bean, url, domain);
                 val response = Objects.requireNonNull(HttpUtils.execute(httpRequest));
-                return HttpStatus.resolve(response.getCode()).is2xxSuccessful();
+                return Objects.requireNonNull(HttpStatus.resolve(response.getCode())).is2xxSuccessful();
             });
     }
 
@@ -107,7 +102,7 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
                 HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
             .build();
         val response = Objects.requireNonNull(HttpUtils.execute(exec));
-        if (HttpStatus.resolve(response.getCode()).is2xxSuccessful()
+        if (Objects.requireNonNull(HttpStatus.resolve(response.getCode())).is2xxSuccessful()
             && response instanceof final HttpEntityContainer container) {
             val entity = container.getEntity();
             val result = EntityUtils.toString(entity);
@@ -139,7 +134,7 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
             .maximumRetryAttempts(casProperties.getAuthn().getSyncope().getMaxRetryAttempts())
             .build();
         val response = Objects.requireNonNull(HttpUtils.execute(exec));
-        if (HttpStatus.resolve(response.getCode()).is2xxSuccessful()) {
+        if (Objects.requireNonNull(HttpStatus.resolve(response.getCode())).is2xxSuccessful()) {
             LOGGER.debug("Successfully updated the account status on Apache Syncope for [{}]", credential.getId());
             return true;
         }
@@ -168,7 +163,7 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
                 .maximumRetryAttempts(casProperties.getAuthn().getSyncope().getMaxRetryAttempts())
                 .build();
             response = Objects.requireNonNull(HttpUtils.execute(exec));
-            return HttpStatus.resolve(response.getCode()).is2xxSuccessful();
+            return Objects.requireNonNull(HttpStatus.resolve(response.getCode())).is2xxSuccessful();
         } finally {
             HttpUtils.close(response);
         }

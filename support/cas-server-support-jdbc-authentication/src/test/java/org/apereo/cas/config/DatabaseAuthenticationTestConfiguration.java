@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.hibernate.CasHibernatePersistenceProvider;
@@ -18,7 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import jakarta.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
+import module java.sql;
 
 /**
  * This is {@link DatabaseAuthenticationTestConfiguration}.

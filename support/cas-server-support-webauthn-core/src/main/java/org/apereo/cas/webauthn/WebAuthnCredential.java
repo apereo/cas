@@ -1,16 +1,14 @@
 package org.apereo.cas.webauthn;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.yubico.webauthn.data.ByteArray;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.io.Serial;
 
 /**
  * This is {@link WebAuthnCredential}.

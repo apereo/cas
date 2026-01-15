@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.mdui;
 
+import module java.base;
+import module java.xml;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -15,14 +17,6 @@ import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.Resource;
-import org.w3c.dom.Document;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link AbstractMetadataResolverAdapter} that encapsulates

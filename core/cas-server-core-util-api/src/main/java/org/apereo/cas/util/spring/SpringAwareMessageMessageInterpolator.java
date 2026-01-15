@@ -1,16 +1,14 @@
 package org.apereo.cas.util.spring;
 
+import module java.base;
 import lombok.Setter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
-
 import jakarta.validation.MessageInterpolator;
 import jakarta.validation.Validation;
-
-import java.util.Locale;
 
 /**
  * Configures the {@link jakarta.validation.Validator} to check the Spring Messages.

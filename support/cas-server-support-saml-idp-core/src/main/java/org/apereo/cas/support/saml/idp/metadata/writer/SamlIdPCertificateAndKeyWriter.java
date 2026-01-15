@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.writer;
 
-import java.io.Writer;
+import module java.base;
 
 /**
  * A metadata writer that defines how certificates, keys and metadata should be written to a destination.

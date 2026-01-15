@@ -1,10 +1,10 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.RequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

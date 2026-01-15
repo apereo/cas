@@ -1,5 +1,6 @@
 package org.apereo.cas.web.theme;
 
+import module java.base;
 import lombok.val;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;

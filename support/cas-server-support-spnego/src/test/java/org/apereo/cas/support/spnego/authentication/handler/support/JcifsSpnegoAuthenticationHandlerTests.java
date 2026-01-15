@@ -1,5 +1,6 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -9,16 +10,11 @@ import org.apereo.cas.support.spnego.MockJcifsAuthentication;
 import org.apereo.cas.support.spnego.MockUnsuccessfulJcifsAuthentication;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.apereo.cas.util.CollectionUtils;
-
 import jcifs.spnego.Authentication;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

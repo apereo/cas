@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.nativesso;
 
+import module java.base;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.RandomUtils;
 

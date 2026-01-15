@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.features;
 
+import module java.base;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.val;
@@ -9,12 +10,6 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
-import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * This is {@link CasFeatureModule}.

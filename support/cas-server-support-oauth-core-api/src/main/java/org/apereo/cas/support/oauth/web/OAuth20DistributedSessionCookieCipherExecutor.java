@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import module java.base;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 /**

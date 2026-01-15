@@ -1,5 +1,6 @@
 package org.apereo.cas.logout.slo;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -20,11 +21,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link BaseSingleLogoutServiceMessageHandler}.

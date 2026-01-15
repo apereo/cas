@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.util;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -8,7 +9,6 @@ import tools.jackson.core.JsonToken;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ValueSerializer;
 import tools.jackson.databind.jsontype.TypeSerializer;
-import java.util.Arrays;
 
 /**
  * This is {@link X509CertificateCredentialJsonSerializer}.

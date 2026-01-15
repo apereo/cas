@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import module java.base;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -22,13 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link RankedMultifactorAuthenticationProviderWebflowEventResolver}.
@@ -60,8 +58,8 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
 
     private static Set<Event> buildEventForMultifactorProvider(
         final RequestContext context,
-        final Service service,
-        final RegisteredService registeredService,
+        @Nullable final Service service,
+        @Nullable final RegisteredService registeredService,
         final Authentication authentication,
         final String id,
         final MultifactorAuthenticationProvider provider) {
@@ -164,7 +162,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         actionResolverName = AuditActionResolvers.AUTHENTICATION_EVENT_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.AUTHENTICATION_EVENT_RESOURCE_RESOLVER)
     @Override
-    public Event resolveSingle(final RequestContext context) throws Throwable {
+    public @Nullable Event resolveSingle(final RequestContext context) throws Throwable {
         return super.resolveSingle(context);
     }
 

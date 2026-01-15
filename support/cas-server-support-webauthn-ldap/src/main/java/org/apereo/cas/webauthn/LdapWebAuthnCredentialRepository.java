@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapConnectionFactory;
@@ -18,19 +19,6 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.springframework.beans.factory.DisposableBean;
-import java.time.Clock;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link LdapWebAuthnCredentialRepository}.

@@ -1,21 +1,16 @@
 package org.apereo.cas.uma.web.controllers.authz;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import org.apereo.cas.util.RandomUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

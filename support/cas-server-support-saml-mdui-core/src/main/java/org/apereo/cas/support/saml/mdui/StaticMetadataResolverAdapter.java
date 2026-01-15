@@ -1,11 +1,10 @@
 package org.apereo.cas.support.saml.mdui;
 
+import module java.base;
 import lombok.NoArgsConstructor;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.annotation.Scheduled;
-
-import java.util.Map;
 
 /**
  * A {@link StaticMetadataResolverAdapter} that loads metadata from static xml files

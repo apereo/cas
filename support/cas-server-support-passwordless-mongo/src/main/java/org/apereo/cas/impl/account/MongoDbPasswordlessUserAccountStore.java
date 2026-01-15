@@ -1,21 +1,18 @@
 package org.apereo.cas.impl.account;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountCustomizer;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationMongoDbAccountsProperties;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link MongoDbPasswordlessUserAccountStore}.

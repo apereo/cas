@@ -1,9 +1,7 @@
 package org.apereo.cas.pm.impl.history;
 
+import module java.base;
 import org.apereo.cas.pm.PasswordChangeRequest;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * This is {@link AmnesiacPasswordHistoryService}.

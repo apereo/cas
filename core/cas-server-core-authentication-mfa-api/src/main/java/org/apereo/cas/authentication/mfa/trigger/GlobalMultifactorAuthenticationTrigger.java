@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
@@ -18,16 +19,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link GlobalMultifactorAuthenticationTrigger}.
@@ -52,10 +49,10 @@ public class GlobalMultifactorAuthenticationTrigger implements MultifactorAuthen
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
-                                                                   final RegisteredService registeredService,
+                                                                   @Nullable final RegisteredService registeredService,
                                                                    final HttpServletRequest request,
                                                                    final HttpServletResponse response,
-                                                                   final Service service) throws Throwable {
+                                                                   @Nullable final Service service) throws Throwable {
 
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");

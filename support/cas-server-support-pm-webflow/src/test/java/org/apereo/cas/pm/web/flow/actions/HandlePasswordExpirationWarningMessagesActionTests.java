@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -17,7 +18,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

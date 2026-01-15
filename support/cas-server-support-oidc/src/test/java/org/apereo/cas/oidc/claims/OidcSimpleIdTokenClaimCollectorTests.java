@@ -1,8 +1,8 @@
 package org.apereo.cas.oidc.claims;
 
+import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.util.JsonUtils;
-
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
 import org.junit.jupiter.api.Tag;
@@ -10,10 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
-
-import java.util.List;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

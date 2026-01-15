@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jspecify.annotations.NonNull;

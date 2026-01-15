@@ -1,13 +1,12 @@
 package org.apereo.cas.validation;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.util.ArrayList;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,17 +1,10 @@
 package org.apereo.cas.redis.core;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
-
-import java.util.Objects;
-import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * This is {@link DefaultCasRedisTemplate}.

@@ -1,8 +1,8 @@
 package org.apereo.cas.uma.web.controllers.resource;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -10,10 +10,6 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
-
-import java.util.Map;
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring.boot;
 
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -9,8 +10,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.boot.diagnostics.AbstractFailureAnalyzer;
 import org.springframework.boot.diagnostics.FailureAnalysis;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 /**
  * Failure analyzer for spring boot startup exceptions from {@link BeanDefinitionStoreException}.

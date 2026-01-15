@@ -1,16 +1,12 @@
 package org.apereo.cas.support.geo;
 
+import module java.base;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import javax.net.ssl.HttpsURLConnection;
-import java.net.InetAddress;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

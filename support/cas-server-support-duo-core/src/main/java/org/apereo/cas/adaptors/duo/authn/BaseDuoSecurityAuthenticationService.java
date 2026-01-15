@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.authentication.Credential;
@@ -25,20 +26,9 @@ import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.json.JSONObject;
-import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
 import tools.jackson.databind.ObjectMapper;
-import javax.net.ssl.X509TrustManager;
-import java.net.URI;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link BaseDuoSecurityAuthenticationService}.
@@ -66,7 +56,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
 
-    private final Cache<@NonNull String, DuoSecurityUserAccount> userAccountCache;
+    private final Cache<String, DuoSecurityUserAccount> userAccountCache;
     
     @Override
     public DuoSecurityAuthenticationResult authenticate(final Credential credential) throws Exception {

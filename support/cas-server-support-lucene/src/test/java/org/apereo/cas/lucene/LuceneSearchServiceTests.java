@@ -1,5 +1,6 @@
 package org.apereo.cas.lucene;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,9 +8,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.core.io.ClassPathResource;
-import java.io.File;
-import java.util.List;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

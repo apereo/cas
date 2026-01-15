@@ -1,10 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
+import module java.base;
 import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
 import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceiver;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.google.cloud.spring.pubsub.support.BasicAcknowledgeablePubsubMessage;
 import com.google.cloud.spring.pubsub.support.converter.PubSubMessageConverter;
 import com.google.pubsub.v1.Subscription;
@@ -14,9 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.fi.util.function.CheckedFunction;
-
-import java.util.Objects;
-import java.util.function.Consumer;
 
 /**
  * This is {@link GoogleCloudTicketRegistryMessageQueueConsumer}.

@@ -1,11 +1,11 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import lombok.val;
 import org.graalvm.home.Version;
 import org.graalvm.nativeimage.ImageInfo;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
-import java.util.HashMap;
 
 /**
  * This is {@link CasNativeInfoContributor}.

@@ -1,11 +1,9 @@
 package org.apereo.cas.jpa;
 
+import module java.base;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * This is {@link JpaPersistenceProviderContext}.

@@ -1,15 +1,13 @@
 package org.apereo.cas.jdbc;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import lombok.val;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import module java.sql;
 
 /**
  * An {@link PersonAttributeDao}

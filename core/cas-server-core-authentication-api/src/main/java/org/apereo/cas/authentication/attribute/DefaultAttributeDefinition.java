@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.attribute;
 
+import module java.base;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
@@ -27,17 +28,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.NonNull;
-import java.io.Serial;
-import java.nio.charset.StandardCharsets;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultAttributeDefinition}.
@@ -56,6 +47,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Slf4j
 @With
+@SuppressWarnings("NullAway.Init")
 public class DefaultAttributeDefinition implements AttributeDefinition {
     @Serial
     private static final long serialVersionUID = 6898745248727445565L;
@@ -116,10 +108,10 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             .collect(Collectors.toList());
     }
 
-    private static List<Object> fetchAttributeValueFromExternalGroovyScript(final String attributeName,
-                                                                            final List<Object> currentValues,
-                                                                            final String file,
-                                                                            final AttributeDefinitionResolutionContext context) throws Throwable {
+    private static @Nullable List<Object> fetchAttributeValueFromExternalGroovyScript(final String attributeName,
+                                                                                      final List<Object> currentValues,
+                                                                                      final String file,
+                                                                                      final AttributeDefinitionResolutionContext context) throws Throwable {
         val result = ApplicationContextProvider.getScriptResourceCacheManager();
         if (result.isPresent()) {
             val cacheMgr = result.get();
@@ -139,17 +131,17 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         return ApplicationContextProvider.getScriptResourceCacheManager()
             .map(cacheManager -> FunctionUtils.doUnchecked(() -> {
                 val script = cacheManager.resolveScriptableResource(inlineGroovy, attributeName, inlineGroovy);
-                return fetchAttributeValueFromScript(script, attributeName, currentValues, context);
+                return fetchAttributeValueFromScript(Objects.requireNonNull(script), attributeName, currentValues, context);
             })).orElseGet(() -> {
                 LOGGER.warn("No groovy script cache manager is available to execute attribute mappings");
                 return new ArrayList<>();
             });
     }
 
-    private static List<Object> fetchAttributeValueFromScript(final ExecutableCompiledScript scriptToExec,
-                                                              final String attributeKey,
-                                                              final List<Object> currentValues,
-                                                              final AttributeDefinitionResolutionContext context) throws Throwable {
+    private static @Nullable List<Object> fetchAttributeValueFromScript(final ExecutableCompiledScript scriptToExec,
+                                                                        final String attributeKey,
+                                                                        final List<Object> currentValues,
+                                                                        final AttributeDefinitionResolutionContext context) throws Throwable {
         val args = CollectionUtils.<String, Object>wrap("attributeName", Objects.requireNonNull(attributeKey),
             "attributeValues", currentValues, "logger", LOGGER,
             "registeredService", context.getRegisteredService(),
@@ -162,13 +154,13 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     public int compareTo(@NonNull final AttributeDefinition definition) {
         return Comparator.comparing(AttributeDefinition::getKey).compare(this, definition);
     }
-    
+
     @JsonIgnore
     @Override
     public List<Object> resolveAttributeValues(final AttributeDefinitionResolutionContext context) throws Throwable {
         List<Object> currentValues = new ArrayList<>(context.getAttributeValues());
         if (StringUtils.isNotBlank(getScript())) {
-            currentValues = getScriptedAttributeValue(key, currentValues, context);
+            currentValues = Objects.requireNonNull(getScriptedAttributeValue(key, currentValues, context));
         }
         if (getPatterns() != null && !getPatterns().isEmpty() && !currentValues.isEmpty()) {
             currentValues = getPatternValuesFor(currentValues, context);
@@ -182,7 +174,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         if (StringUtils.isNotBlank(getHashingStrategy())) {
             currentValues = hashValues(currentValues);
         }
-        
+
         if (isEncrypted()) {
             currentValues = encryptValues(currentValues, context.getRegisteredService());
         }
@@ -206,7 +198,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         return currentValues
             .stream()
             .map(value -> switch (getHashingStrategy().toLowerCase(Locale.ENGLISH)) {
-                case "hex" -> EncodingUtils.hexEncode(value.toString());
+                case "hex" -> Objects.requireNonNull(EncodingUtils.hexEncode(value.toString()));
                 case "base64" -> EncodingUtils.encodeBase64(value.toString());
                 case "sha", "sha1" -> DigestUtils.sha(value.toString());
                 case "sha256" -> DigestUtils.sha256(value.toString());
@@ -240,13 +232,13 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             .collect(Collectors.toList());
     }
 
-    private List<Object> getScriptedAttributeValue(final String attributeKey,
-                                                   final List<Object> currentValues,
-                                                   final AttributeDefinitionResolutionContext context) throws Throwable {
+    private @Nullable List<Object> getScriptedAttributeValue(final String attributeKey,
+                                                             final List<Object> currentValues,
+                                                             final AttributeDefinitionResolutionContext context) throws Throwable {
         LOGGER.trace("Locating attribute value via script for definition [{}]", this);
 
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
-        
+
         if (scriptFactory.isInlineScript(getScript())) {
             val input = scriptFactory.getInlineScript(getScript()).orElseThrow();
             return fetchAttributeValueAsInlineGroovyScript(attributeKey, currentValues, input, context);
@@ -262,18 +254,18 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     }
 
     private static String getScriptedPatternedValue(final Object currentValue,
-                                                    final String patternedValue,
-                                                    final AttributeDefinitionResolutionContext context) {
+                                                              final String patternedValue,
+                                                              final AttributeDefinitionResolutionContext context) {
 
         val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
         if (scriptFactory.isPresent() && scriptFactory.get().isInlineScript(patternedValue)) {
             return ApplicationContextProvider.getScriptResourceCacheManager()
                 .map(cacheManager -> FunctionUtils.doUnchecked(() -> {
-                    val script = cacheManager.resolveScriptableResource(patternedValue);
+                    val script = Objects.requireNonNull(cacheManager.resolveScriptableResource(patternedValue));
                     val args = CollectionUtils.<String, Object>wrap("context", context,
                         "currentValue", currentValue, "logger", LOGGER);
                     script.setBinding(args);
-                    return script.execute(args.values().toArray(), String.class);
+                    return Objects.requireNonNull(script.execute(args.values().toArray(), String.class));
                 }))
                 .orElse(patternedValue);
         }

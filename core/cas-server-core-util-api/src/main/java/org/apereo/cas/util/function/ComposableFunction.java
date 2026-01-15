@@ -1,9 +1,7 @@
 package org.apereo.cas.util.function;
 
+import module java.base;
 import org.jooq.lambda.fi.util.function.CheckedConsumer;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * Represents a function that accepts one argument and produces a result and

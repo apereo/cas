@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.web.controllers.rpt;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
@@ -20,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link UmaRequestingPartyTokenJwksEndpointController}.

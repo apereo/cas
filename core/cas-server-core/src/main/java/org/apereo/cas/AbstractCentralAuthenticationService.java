@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.CasModelRegisteredService;
@@ -18,10 +19,6 @@ import lombok.val;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.util.ObjectUtils;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
@@ -35,10 +32,7 @@ import java.util.Objects;
 @Slf4j
 @Setter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable {
-
-    @Serial
-    private static final long serialVersionUID = -7572316677901391166L;
+public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService {
 
     protected final CentralAuthenticationServiceContext configurationContext;
 
@@ -55,14 +49,15 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     }
 
     protected @Nullable Authentication getAuthenticationSatisfiedByPolicy(
-        @Nullable
-        final Authentication authentication, final Service service,
-        @Nullable
-        final RegisteredService registeredService) throws AbstractTicketException {
+        @Nullable final Authentication authentication,
+        @Nullable final Service service,
+        @Nullable final RegisteredService registeredService) throws AbstractTicketException {
         val policy = configurationContext.getAuthenticationPolicy();
         try {
-            val policyContext = Map.of(RegisteredService.class.getName(), Objects.requireNonNull(registeredService), Service.class.getName(), service);
-            val executionResult = policy.isSatisfiedBy(authentication, configurationContext.getApplicationContext(), policyContext);
+            val policyContext = Map.of(RegisteredService.class.getName(), Objects.requireNonNull(registeredService),
+                Service.class.getName(), Objects.requireNonNull(service));
+            val executionResult = policy.isSatisfiedBy(authentication,
+                configurationContext.getApplicationContext(), policyContext);
             if (executionResult.isSuccess()) {
                 return authentication;
             }
@@ -72,7 +67,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         throw new UnsatisfiedAuthenticationPolicyException(policy);
     }
 
-    protected void evaluateProxiedServiceIfNeeded(final Service service,
+    protected void evaluateProxiedServiceIfNeeded(@Nullable final Service service,
                                                   final TicketGrantingTicket ticketGrantingTicket,
                                                   @Nullable final RegisteredService registeredService) {
         val proxiedBy = ticketGrantingTicket.getProxiedBy();
@@ -82,11 +77,13 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
             if (proxyingService != null) {
                 LOGGER.debug("Located proxying service [{}] in the service registry", proxyingService);
                 if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
-                    LOGGER.warn("Proxying service [{}] is not authorized to fulfill the proxy attempt made by [{}]", proxyingService.getId(), service.getId());
+                    LOGGER.warn("Proxying service [{}] is not authorized to fulfill the proxy attempt made by [{}]",
+                        proxyingService.getId(), Objects.requireNonNull(service).getId());
                     throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE + Objects.requireNonNull(registeredService).getId());
                 }
             } else {
-                LOGGER.warn("Proxy attempt by service [{}] (registered service [{}]) is not allowed.", service.getId(), Objects.requireNonNull(registeredService).getId());
+                LOGGER.warn("Proxy attempt by service [{}] (registered service [{}]) is not allowed.",
+                    Objects.requireNonNull(service).getId(), Objects.requireNonNull(registeredService).getId());
                 throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE + registeredService.getId());
             }
         } else {
@@ -94,7 +91,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
     }
 
-    protected Service resolveServiceFromAuthenticationRequest(final Service service) throws Throwable {
+    protected @Nullable Service resolveServiceFromAuthenticationRequest(final Service service) throws Throwable {
         return configurationContext.getAuthenticationServiceSelectionPlan().resolveService(service, Service.class);
     }
 

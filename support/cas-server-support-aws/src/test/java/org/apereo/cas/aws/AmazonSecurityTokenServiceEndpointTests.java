@@ -1,5 +1,6 @@
 package org.apereo.cas.aws;
 
+import module java.base;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasAmazonCoreAutoConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
@@ -21,7 +22,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.LinkedMultiValueMap;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

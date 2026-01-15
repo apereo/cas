@@ -1,7 +1,7 @@
 package org.apereo.cas.util.spring.boot;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -9,10 +9,9 @@ import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.diagnostics.FailureAnalysis;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-
-import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.beans.factory.support.BeanDefinitionBuilder.*;
+import static org.springframework.beans.factory.support.BeanDefinitionBuilder.genericBeanDefinition;
 
 /**
  * This is {@link BeanDefinitionStoreFailureAnalyzerTests}.

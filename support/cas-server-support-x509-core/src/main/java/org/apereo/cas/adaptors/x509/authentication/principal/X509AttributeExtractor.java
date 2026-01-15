@@ -1,8 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import module java.base;
 import java.security.cert.X509Certificate;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Extract person attributes from the certificate.

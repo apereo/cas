@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;

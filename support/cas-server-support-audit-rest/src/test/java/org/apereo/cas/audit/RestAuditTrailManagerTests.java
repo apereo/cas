@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import org.apereo.cas.config.CasSupportRestAuditAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -22,12 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import tools.jackson.databind.ObjectMapper;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

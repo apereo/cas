@@ -1,12 +1,12 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.util.RegexUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import java.io.Serial;
 
 /**
  * This is {@link FullRegexRegisteredServiceMatchingStrategy}.

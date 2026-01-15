@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions.logout;
 
+import module java.base;
 import org.apereo.cas.logout.slo.SingleLogoutContinuation;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -11,11 +12,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Optional;
 
 /**
  * This is {@link DelegatedAuthenticationIdentityProviderFinalizeLogoutAction}.
@@ -29,7 +30,7 @@ public class DelegatedAuthenticationIdentityProviderFinalizeLogoutAction extends
     private final DelegatedClientAuthenticationConfigurationContext configContext;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Exception {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val webContext = new JEEContext(request, response);

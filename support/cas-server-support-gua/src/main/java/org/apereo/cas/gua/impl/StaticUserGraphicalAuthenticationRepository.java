@@ -1,5 +1,6 @@
 package org.apereo.cas.gua.impl;
 
+import module java.base;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.util.LoggingUtils;
 import com.google.common.io.ByteSource;
@@ -8,9 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
-import java.io.ByteArrayOutputStream;
-import java.io.Serial;
-import java.util.Map;
 
 /**
  * This is {@link StaticUserGraphicalAuthenticationRepository}.

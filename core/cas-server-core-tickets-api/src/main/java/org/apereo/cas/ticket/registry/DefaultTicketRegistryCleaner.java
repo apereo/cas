@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import module java.base;
 import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.ticket.Ticket;
@@ -13,9 +14,6 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * This is {@link DefaultTicketRegistryCleaner}.

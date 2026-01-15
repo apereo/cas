@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import module java.base;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -8,8 +9,6 @@ import com.google.pubsub.v1.PubsubMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import tools.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 /**
  * This is {@link GoogleCloudPubSubMessageConverter}.

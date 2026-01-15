@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import module java.base;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -7,12 +8,8 @@ import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessag
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.Getter;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implementation of the ticket registry that is backed by a map.

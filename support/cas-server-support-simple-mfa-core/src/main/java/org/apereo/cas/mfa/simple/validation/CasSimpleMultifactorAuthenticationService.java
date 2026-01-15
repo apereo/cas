@@ -1,11 +1,11 @@
 package org.apereo.cas.mfa.simple.validation;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationConstants;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
-import java.util.Map;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationService}.

@@ -1,16 +1,15 @@
 package org.apereo.cas.web.report;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.SystemUtils;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
-
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
-import java.util.Map;
 
 /**
  * This is {@link CasInfoEndpointContributor}.

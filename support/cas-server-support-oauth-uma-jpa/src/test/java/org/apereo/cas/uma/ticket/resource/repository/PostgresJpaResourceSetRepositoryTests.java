@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.ticket.resource.repository;
 
+import module java.base;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasOAuthUmaJpaAutoConfiguration;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

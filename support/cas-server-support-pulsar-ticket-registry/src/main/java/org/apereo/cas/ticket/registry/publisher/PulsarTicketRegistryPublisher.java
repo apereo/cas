@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.publisher;
 
+import module java.base;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
 import org.apereo.cas.ticket.registry.pubsub.commands.TicketAwareQueueCommand;

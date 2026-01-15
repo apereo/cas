@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.discovery;
 
+import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.Strings;
 import tools.jackson.databind.ObjectMapper;
-import java.util.Set;
 
 /**
  * This is {@link OidcServerDiscoverySettings}.

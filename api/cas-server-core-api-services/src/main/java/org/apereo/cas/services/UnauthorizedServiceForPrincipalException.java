@@ -1,10 +1,7 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import lombok.Getter;
-
-import java.io.Serial;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link UnauthorizedServiceForPrincipalException}

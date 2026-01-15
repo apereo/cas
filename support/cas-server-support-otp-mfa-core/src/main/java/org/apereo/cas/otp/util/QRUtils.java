@@ -1,7 +1,7 @@
 package org.apereo.cas.otp.util;
 
+import module java.base;
 import org.apereo.cas.util.EncodingUtils;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.qrcode.QRCodeWriter;
@@ -9,15 +9,10 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import lombok.Cleanup;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-
 import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.EnumMap;
-import java.util.stream.IntStream;
 
 /**
  * This is {@link QRUtils}.

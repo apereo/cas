@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication.support;
 
+import module java.base;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +10,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
-
-import java.util.List;
 
 /**
  * The component supports both opt-in and opt-out warnings on a per-user basis.
@@ -22,6 +20,7 @@ import java.util.List;
 @Slf4j
 @Getter
 @Setter
+@SuppressWarnings("NullAway.Init")
 public class OptionalWarningLdapAccountStateHandler extends DefaultLdapAccountStateHandler {
 
     private String warnAttributeName;

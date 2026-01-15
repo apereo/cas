@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.rest;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.authentication.SurrogateAuthenticationException;
@@ -16,8 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.util.MultiValueMap;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link SurrogateAuthenticationRestHttpRequestCredentialFactory}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.properties;
 
+import module java.base;
 import org.apereo.cas.shell.commands.CasShellCommand;
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
@@ -9,12 +10,6 @@ import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
 
 /**
  * This is {@link ConvertPropertiesToYAMLCommand}.

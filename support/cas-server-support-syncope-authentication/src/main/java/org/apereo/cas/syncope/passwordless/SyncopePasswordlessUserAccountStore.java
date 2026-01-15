@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope.passwordless;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountCustomizer;
@@ -11,9 +12,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link SyncopePasswordlessUserAccountStore}.
@@ -57,8 +56,8 @@ public class SyncopePasswordlessUserAccountStore implements PasswordlessUserAcco
         return Optional.empty();
     }
 
-    protected String getPasswordlessUserAttribute(final Map<String, List<Object>> syncopeUser,
-                                                  final String attributeName) {
+    protected @Nullable String getPasswordlessUserAttribute(final Map<String, List<Object>> syncopeUser,
+                                                            final String attributeName) {
         return syncopeUser.containsKey(attributeName)
             ? syncopeUser.get(attributeName).getFirst().toString()
             : null;

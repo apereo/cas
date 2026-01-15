@@ -1,15 +1,11 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.policy;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.util.crypto.CertUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.security.cert.X509CRL;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 
 /**
  * Implements a policy to handle expired CRL data whereby expired data is permitted

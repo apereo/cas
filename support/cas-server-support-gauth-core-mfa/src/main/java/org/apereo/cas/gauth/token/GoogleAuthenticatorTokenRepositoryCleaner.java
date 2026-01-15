@@ -1,8 +1,8 @@
 package org.apereo.cas.gauth.token;
 
+import module java.base;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
-
 import org.springframework.scheduling.annotation.Scheduled;
 
 /**

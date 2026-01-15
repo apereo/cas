@@ -1,25 +1,17 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.adaptors.x509.util.MockX509CRL;
 import org.apereo.cas.util.DateTimeUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import javax.security.auth.x500.X500Principal;
-import java.security.GeneralSecurityException;
-import java.security.cert.X509CRL;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.stream.Stream;
-
-import static org.apereo.cas.util.junit.Assertions.*;
+import static org.apereo.cas.util.junit.Assertions.assertThrowsOrNot;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 /**

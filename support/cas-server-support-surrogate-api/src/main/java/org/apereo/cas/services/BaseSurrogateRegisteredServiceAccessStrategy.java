@@ -1,8 +1,7 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
-
-import java.io.Serial;
 
 /**
  * This is {@link BaseSurrogateRegisteredServiceAccessStrategy}.

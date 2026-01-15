@@ -1,5 +1,6 @@
 package org.apereo.cas.grouper;
 
+import module java.base;
 import org.apereo.cas.util.MockWebServer;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetPermissionAssignmentsResults;
@@ -8,8 +9,6 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import java.util.Map;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

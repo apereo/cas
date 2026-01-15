@@ -1,13 +1,14 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AttributeModification;
@@ -29,13 +30,6 @@ import org.ldaptive.control.util.PagedResultsClient;
 import org.ldaptive.extended.ExtendedOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
 import org.ldaptive.referral.FollowSearchReferralHandler;
-
-import java.io.Closeable;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link LdapConnectionFactory}.
@@ -138,7 +132,7 @@ public class LdapConnectionFactory implements Closeable {
         final FilterTemplate filter,
         final int pageSize,
         final String... returnAttributes) throws LdapException {
-        return executeSearchOperation(baseDn, filter, pageSize, null, returnAttributes);
+        return executeSearchOperation(baseDn, filter, pageSize, ArrayUtils.EMPTY_STRING_ARRAY, returnAttributes);
     }
 
     /**
@@ -156,6 +150,7 @@ public class LdapConnectionFactory implements Closeable {
         final String baseDn,
         final FilterTemplate filter,
         final int pageSize,
+        @Nullable
         final String[] binaryAttributes,
         final String[] returnAttributes) throws LdapException {
         val request = LdapUtils.newLdaptiveSearchRequest(baseDn, filter, binaryAttributes, returnAttributes);

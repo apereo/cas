@@ -1,11 +1,11 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
-import java.nio.file.Files;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

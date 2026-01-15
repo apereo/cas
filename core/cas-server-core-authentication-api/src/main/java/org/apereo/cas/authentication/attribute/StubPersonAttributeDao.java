@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.attribute;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
@@ -7,10 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Provides the ability to define static attributes and values.
@@ -33,14 +31,14 @@ public class StubPersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    public Set<String> getPossibleUserAttributeNames(final PersonAttributeDaoFilter filter) {
+    public Set<String> getPossibleUserAttributeNames(@Nullable final PersonAttributeDaoFilter filter) {
         return Set.copyOf(this.backingPerson.getAttributes().keySet());
     }
 
     @Override
     public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query,
-                                                                    final PersonAttributeDaoFilter filter,
-                                                                    final Set<PersonAttributes> resultPeople) {
+                                                                    @Nullable final PersonAttributeDaoFilter filter,
+                                                                    @Nullable final Set<PersonAttributes> resultPeople) {
         val list = query.get("username");
         if (list != null && !list.isEmpty()) {
             val newMap = new HashMap(this.getBackingMap());
@@ -51,9 +49,9 @@ public class StubPersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    public PersonAttributes getPerson(final String uid,
-                                      final Set<PersonAttributes> resultPeople,
-                                      final PersonAttributeDaoFilter filter) {
+    public @Nullable PersonAttributes getPerson(final String uid,
+                                                final Set<PersonAttributes> resultPeople,
+                                                final PersonAttributeDaoFilter filter) {
         if (!this.isEnabled()) {
             return null;
         }

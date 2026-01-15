@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.assurance.entity;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,10 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 import tools.jackson.core.util.MinimalPrettyPrinter;
 import tools.jackson.databind.ObjectMapper;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link Verification}.

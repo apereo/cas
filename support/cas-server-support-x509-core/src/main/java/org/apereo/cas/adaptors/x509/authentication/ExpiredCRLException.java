@@ -1,11 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
+import module java.base;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.io.Serial;
-import java.security.GeneralSecurityException;
-import java.time.ZonedDateTime;
 
 /**
  * Exception describing an expired CRL condition.

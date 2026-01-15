@@ -1,7 +1,7 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import org.apereo.cas.mongo.CasMongoOperations;
-
 import lombok.val;
 import org.bson.Document;
 

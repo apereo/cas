@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import module java.base;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.servlet.View;

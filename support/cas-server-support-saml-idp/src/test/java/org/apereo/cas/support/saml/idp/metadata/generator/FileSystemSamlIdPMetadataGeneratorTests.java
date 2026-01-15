@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
+import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.RandomUtils;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

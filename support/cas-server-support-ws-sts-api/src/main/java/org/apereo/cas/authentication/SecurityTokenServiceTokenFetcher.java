@@ -1,10 +1,8 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
-
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-
-import java.util.Optional;
 
 /**
  * This is {@link SecurityTokenServiceTokenFetcher}.

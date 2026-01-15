@@ -1,12 +1,9 @@
 package org.apereo.cas.ticket.refreshtoken;
 
+import module java.base;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.ServiceAwareTicket;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * A refresh token is an OAuth token which can be used multiple times and has a very long lifetime.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
@@ -21,7 +22,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

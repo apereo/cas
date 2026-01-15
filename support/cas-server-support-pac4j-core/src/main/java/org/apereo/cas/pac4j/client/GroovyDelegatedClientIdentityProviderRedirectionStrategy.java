@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.client;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
@@ -9,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link GroovyDelegatedClientIdentityProviderRedirectionStrategy}.

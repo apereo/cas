@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web.flow;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
@@ -12,6 +13,7 @@ import org.apereo.cas.web.flow.actions.MultifactorAuthenticationTrustedDevicePro
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -26,7 +28,7 @@ public class DefaultMultifactorAuthenticationTrustedDeviceProviderAction extends
     protected final MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
         val devices = mfaTrustEngine.get(principal.getId())

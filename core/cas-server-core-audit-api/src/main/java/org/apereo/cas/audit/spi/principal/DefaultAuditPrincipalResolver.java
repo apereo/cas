@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi.principal;
 
+import module java.base;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableEntity;
@@ -20,9 +21,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 /**
  * Inspektr {@link PrincipalResolver} that gets the value for principal id
@@ -37,7 +38,7 @@ import java.util.Optional;
 public class DefaultAuditPrincipalResolver implements PrincipalResolver {
     private final AuditPrincipalIdProvider auditPrincipalIdProvider;
     private final CasWebflowCredentialProvider webflowCredentialProvider;
-    
+
     @Override
     public String resolveFrom(final JoinPoint auditTarget, final Object returnValue) {
         LOGGER.trace("Resolving principal at audit point [{}]", auditTarget);
@@ -55,7 +56,9 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
         return UNKNOWN_USER;
     }
 
-    protected String getCurrentPrincipal(final JoinPoint auditTarget, final Object returnValue, final Exception exception) {
+    protected String getCurrentPrincipal(final JoinPoint auditTarget,
+                                         @Nullable final Object returnValue,
+                                         @Nullable final Exception exception) {
         var currentPrincipal = UNKNOWN_USER;
         if (auditTarget.getArgs() != null && auditTarget.getArgs().length > 0) {
             val firstArgument = auditTarget.getArgs()[0];
@@ -85,27 +88,35 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
         return currentPrincipal;
     }
 
-    protected String getPrincipalFromRequest(final JoinPoint auditTarget, final Object returnValue,
-                                             final Exception exception, final HttpServletRequest httpServletRequest) {
+    protected String getPrincipalFromRequest(final JoinPoint auditTarget,
+                                             @Nullable final Object returnValue,
+                                             @Nullable final Exception exception,
+                                             final HttpServletRequest httpServletRequest) {
         return Optional.ofNullable(httpServletRequest.getAttribute(Principal.class.getName()))
             .map(Principal.class::cast)
             .map(Principal::getId)
             .orElse(UNKNOWN_USER);
     }
 
-    protected String getPrincipalFromCredential(final JoinPoint auditTarget, final Object returnValue, final Exception exception,
+    protected String getPrincipalFromCredential(final JoinPoint auditTarget,
+                                                @Nullable final Object returnValue,
+                                                @Nullable final Exception exception,
                                                 final Credential credential) {
         return StringUtils.defaultIfBlank(credential.getId(), UNKNOWN_USER);
     }
 
-    protected String getPrincipalFromAssertion(final JoinPoint auditTarget, final Object returnValue, final Exception exception,
+    protected String getPrincipalFromAssertion(final JoinPoint auditTarget,
+                                               @Nullable final Object returnValue,
+                                               @Nullable final Exception exception,
                                                final Assertion assertion) {
         val authentication = assertion.getPrimaryAuthentication();
         val principalId = auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authentication, returnValue, exception);
         return StringUtils.defaultIfBlank(principalId, UNKNOWN_USER);
     }
 
-    protected String getPrincipalFromAuditContext(final JoinPoint auditTarget, final Object returnValue, final Exception exception,
+    protected String getPrincipalFromAuditContext(final JoinPoint auditTarget,
+                                                  @Nullable final Object returnValue,
+                                                  @Nullable final Exception exception,
                                                   final AuditableContext auditableContext) {
         return auditableContext.getAuthentication()
             .map(authentication -> {
@@ -116,31 +127,42 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
             .orElse(UNKNOWN_USER);
     }
 
-    protected String getPrincipalFromTicket(final JoinPoint auditTarget, final Object returnValue, final Exception exception, final AuthenticationAwareTicket ticket) {
+    protected String getPrincipalFromTicket(final JoinPoint auditTarget,
+                                            @Nullable final Object returnValue,
+                                            @Nullable final Exception exception,
+                                            final AuthenticationAwareTicket ticket) {
         val authentication = ticket.getAuthentication();
         val principalId = auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authentication, returnValue, exception);
         return StringUtils.defaultIfBlank(principalId, UNKNOWN_USER);
     }
 
-    protected String getPrincipalFromAuthenticationResult(final JoinPoint auditTarget, final Object returnValue, final Exception exception,
+    protected String getPrincipalFromAuthenticationResult(final JoinPoint auditTarget,
+                                                          @Nullable final Object returnValue,
+                                                          @Nullable final Exception exception,
                                                           final AuthenticationResult authenticationResult) {
         val authentication = authenticationResult.getAuthentication();
         val principalId = auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authentication, returnValue, exception);
         return StringUtils.defaultIfBlank(principalId, UNKNOWN_USER);
     }
 
-    protected String getPrincipalFromAuditableEntity(final JoinPoint auditTarget, final Object returnValue,
-                                                     final Exception exception, final AuditableEntity entity) {
+    protected String getPrincipalFromAuditableEntity(final JoinPoint auditTarget,
+                                                     @Nullable final Object returnValue,
+                                                     @Nullable final Exception exception,
+                                                     final AuditableEntity entity) {
         return StringUtils.defaultIfBlank(entity.getAuditablePrincipal(), UNKNOWN_USER);
     }
 
-    protected String getPrincipalFromAuthentication(final JoinPoint auditTarget, final Object returnValue, final Exception exception,
+    protected String getPrincipalFromAuthentication(final JoinPoint auditTarget,
+                                                    @Nullable final Object returnValue,
+                                                    @Nullable final Exception exception,
                                                     final Authentication authentication) {
         val principalId = auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authentication, returnValue, exception);
         return StringUtils.defaultIfBlank(principalId, UNKNOWN_USER);
     }
 
-    protected String getPrincipalFromSingleLogoutRequest(final JoinPoint auditTarget, final Object returnValue, final Exception exception,
+    protected String getPrincipalFromSingleLogoutRequest(final JoinPoint auditTarget,
+                                                         @Nullable final Object returnValue,
+                                                         @Nullable final Exception exception,
                                                          final SingleLogoutExecutionRequest sloRequest) {
         val authentication = sloRequest.getTicketGrantingTicket().getAuthentication();
         val principalId = auditPrincipalIdProvider.getPrincipalIdFrom(auditTarget, authentication, returnValue, exception);
@@ -152,8 +174,8 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
         return StringUtils.defaultIfBlank(credentialId, UNKNOWN_USER);
     }
 
-    protected String getPrincipalFromRequestContext(final JoinPoint auditTarget, final Object returnValue,
-                                                    final Exception exception, final RequestContext requestContext) {
+    protected String getPrincipalFromRequestContext(final JoinPoint auditTarget, @Nullable final Object returnValue,
+                                                    @Nullable final Exception exception, final RequestContext requestContext) {
         val credentials = webflowCredentialProvider.extract(requestContext);
         val credentialId = credentials.stream().map(Credential::getId).findFirst().orElse(UNKNOWN_USER);
 

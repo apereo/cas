@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope;
 
+import module java.base;
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.acct.AccountRegistrationResponse;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
@@ -26,8 +27,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link SyncopeAccountRegistrationProvisioner}.

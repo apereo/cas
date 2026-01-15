@@ -26,7 +26,7 @@
 
     "--cas.authn.pm.ldap[0].type=AD",
     "--cas.authn.pm.ldap[0].ldap-url=ldaps://localhost:10636",
-    "--cas.authn.pm.ldap[0].usernameAttribute=sAMAccountName",
+    "--cas.authn.pm.ldap[0].username-attribute=sAMAccountName",
     "--cas.authn.pm.ldap[0].bind-dn=CN=admin,CN=Users,DC=cas,DC=example,DC=org",
     "--cas.authn.pm.ldap[0].bind-credential=P@ssw0rd",
     "--cas.authn.pm.ldap[0].use-start-tls=false",

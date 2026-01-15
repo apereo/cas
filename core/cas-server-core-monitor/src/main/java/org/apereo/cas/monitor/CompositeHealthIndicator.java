@@ -1,14 +1,12 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.boot.health.contributor.AbstractHealthIndicator;
 import org.springframework.boot.health.contributor.Health;
 import org.springframework.boot.health.contributor.HealthIndicator;
 import org.springframework.boot.health.contributor.Status;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
 
 /**
  * This is {@link CompositeHealthIndicator}.

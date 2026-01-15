@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.radius.authentication.handler.support;
 
+import module java.base;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -8,15 +9,8 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Authentication Handler to authenticate a user against a RADIUS server.

@@ -1,12 +1,9 @@
 package org.apereo.cas.redis;
 
+import module java.base;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.redis.core.RedisHash;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link RedisUserAccount}.

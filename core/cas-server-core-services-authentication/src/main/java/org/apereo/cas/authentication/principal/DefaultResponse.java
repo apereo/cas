@@ -1,15 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.util.EncodingUtils;
-
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.io.Serial;
-import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Encapsulates a Response to send back for a particular service.

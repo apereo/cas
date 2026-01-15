@@ -1,14 +1,12 @@
 package org.apereo.cas;
 
+import module java.base;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link MongoDbProperty}.

@@ -1,12 +1,12 @@
 package org.apereo.cas.notifications;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.call.PhoneCallRequest;
 import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.sms.SmsRequest;
-import java.util.List;
 
 /**
  * This is {@link CommunicationsManager}.

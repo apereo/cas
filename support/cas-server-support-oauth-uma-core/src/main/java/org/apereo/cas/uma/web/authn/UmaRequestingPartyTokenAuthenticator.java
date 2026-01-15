@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.web.authn;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;

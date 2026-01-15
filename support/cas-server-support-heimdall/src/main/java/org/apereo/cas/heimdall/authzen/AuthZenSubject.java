@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall.authzen;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,10 +10,6 @@ import lombok.ToString;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import org.springframework.validation.annotation.Validated;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link AuthZenSubject}.

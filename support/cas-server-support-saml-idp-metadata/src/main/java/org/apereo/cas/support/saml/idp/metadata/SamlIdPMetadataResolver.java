@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -20,10 +21,6 @@ import org.jspecify.annotations.NonNull;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.resilience.annotation.Retryable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * This is {@link SamlIdPMetadataResolver}.

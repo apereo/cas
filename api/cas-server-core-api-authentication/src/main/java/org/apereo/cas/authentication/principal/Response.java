@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
-import java.io.Serializable;
-import java.util.Map;
+import module java.base;
 
 /**
  * This is {@link Response} that is outputted by each service principal.

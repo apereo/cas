@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi.resource;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.util.AopUtils;
@@ -8,8 +9,7 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.aspectj.lang.JoinPoint;
-import java.util.HashMap;
-import java.util.Map;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implementation of the ResourceResolver that can determine the Ticket Id from
@@ -26,7 +26,7 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
     }
 
     @Override
-    public String[] resolveFrom(final JoinPoint joinPoint, final Object returnValue) {
+    public String[] resolveFrom(final JoinPoint joinPoint, @Nullable final Object returnValue) {
         val results = new HashMap<String, Object>();
 
         val args = AopUtils.unWrapJoinPoint(joinPoint).getArgs();
@@ -50,7 +50,8 @@ public class TicketValidationResourceResolver extends TicketAsFirstParameterReso
     }
 
     protected Map<String, Object> finalizeResources(final Map<String, Object> results,
-                                                    final JoinPoint joinPoint, final Object returnValue) {
+                                                    final JoinPoint joinPoint,
+                                                    @Nullable final Object returnValue) {
         return results;
     }
 }

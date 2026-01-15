@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.decorator;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.web.flow.RestfulWebflowLoginDecoratorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;

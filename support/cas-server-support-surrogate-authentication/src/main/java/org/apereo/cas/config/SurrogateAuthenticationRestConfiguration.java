@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.authentication.rest.SurrogateAuthenticationRestHttpRequestCredentialFactory;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

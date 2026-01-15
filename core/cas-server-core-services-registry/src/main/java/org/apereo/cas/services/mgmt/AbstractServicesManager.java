@@ -1,5 +1,6 @@
 package org.apereo.cas.services.mgmt;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.IndexableServicesManager;
 import org.apereo.cas.services.RegisteredService;
@@ -22,18 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link AbstractServicesManager}.
@@ -337,14 +326,28 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
 
             val cachedServices = configurationContext.getServicesCache().asMap();
             if (cachedServices.isEmpty()) {
-                LOGGER.info("Loaded [{}] service(s) directly from service registry [{}].", servicesMap.size(),
-                    configurationContext.getServiceRegistry().getName());
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Loaded [{}] service(s) directly from service registry [{}].",
+                        countLoadedServices(servicesMap),
+                        configurationContext.getServiceRegistry().getName());
+                }
                 return servicesMap.values();
             }
-            LOGGER.info("Loaded [{}] service(s) from cache [{}].", cachedServices.size(),
-                configurationContext.getServiceRegistry().getName());
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Loaded [{}] service(s) from cache [{}].",
+                    countLoadedServices(cachedServices),
+                    configurationContext.getServiceRegistry().getName());
+            }
             return cachedServices.values();
         });
+    }
+
+    private static long countLoadedServices(final Map<Long, RegisteredService> servicesMap) {
+        return servicesMap
+            .values()
+            .stream()
+            .filter(Predicate.not(RegisteredService::isInternal))
+            .count();
     }
 
     private Map<Long, RegisteredService> cacheRegisteredServices(final Map<Long, RegisteredService> servicesMap) {

@@ -1,10 +1,9 @@
 package org.apereo.cas.gauth.token;
 
+import module java.base;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 /**
  * This is {@link GoogleAuthenticatorDynamoDbTokenRepository}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.scim.v2.access;
 
+import module java.base;
 import org.apereo.cas.scim.v2.ScimService;
 import org.apereo.cas.services.BaseRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
@@ -11,12 +12,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link ScimRegisteredServiceAccessStrategy}.

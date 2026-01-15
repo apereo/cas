@@ -1,14 +1,12 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Factory to create OAuth access tokens.

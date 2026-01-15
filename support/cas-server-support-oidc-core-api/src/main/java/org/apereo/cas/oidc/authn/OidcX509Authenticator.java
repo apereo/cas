@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.authn;
 
+import module java.base;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;

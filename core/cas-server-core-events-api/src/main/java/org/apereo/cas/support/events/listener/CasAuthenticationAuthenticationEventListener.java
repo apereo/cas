@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.listener;
 
+import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.logout.LogoutManager;
@@ -25,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.jspecify.annotations.Nullable;
-import java.time.Instant;
 
 /**
  * This is {@link CasAuthenticationAuthenticationEventListener} that attempts to consume CAS events
@@ -85,7 +85,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         val dto = prepareCasEvent(event);
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toInstant());
         dto.putEventId(messageSanitizer.sanitize(event.getTicketGrantingTicket().getId()));
-        dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
+        dto.setPrincipalId(Objects.requireNonNull(event.getTicketGrantingTicket().getAuthentication()).getPrincipal().getId());
         casEventRepository.save(dto);
     }
 
@@ -94,7 +94,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         val dto = prepareCasEvent(event);
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toInstant());
         dto.putEventId(messageSanitizer.sanitize(event.getTicketGrantingTicket().getId()));
-        dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
+        dto.setPrincipalId(Objects.requireNonNull(event.getTicketGrantingTicket().getAuthentication()).getPrincipal().getId());
         casEventRepository.save(dto);
     }
 

@@ -1,13 +1,10 @@
 package org.apereo.cas.authentication.support;
 
+import module java.base;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link NoOpProtocolAttributeEncoder} that does no encoding of attributes received.

@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import module java.base;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.RandomUtils;
@@ -14,13 +15,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
-import java.util.concurrent.RejectedExecutionException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

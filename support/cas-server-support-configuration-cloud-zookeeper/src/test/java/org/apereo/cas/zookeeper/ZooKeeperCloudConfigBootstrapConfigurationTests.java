@@ -1,5 +1,6 @@
 package org.apereo.cas.zookeeper;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -23,7 +24,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.zookeeper.config.ZookeeperConfigAutoConfiguration;
 import org.springframework.cloud.zookeeper.config.ZookeeperConfigBootstrapConfiguration;
 import org.springframework.core.retry.Retryable;
-import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

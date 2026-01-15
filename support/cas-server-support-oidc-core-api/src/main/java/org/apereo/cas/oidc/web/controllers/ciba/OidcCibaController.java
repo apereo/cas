@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers.ciba;
 
+import module java.base;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -27,6 +28,7 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import com.nimbusds.jwt.JWTClaimsSet;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -38,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.net.URIBuilder;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
@@ -52,14 +55,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link OidcCibaController}.
@@ -346,8 +341,8 @@ public class OidcCibaController extends BaseOidcController {
         return ResponseEntity.badRequest().body(body);
     }
 
-    protected Principal determineCibaRequestPrincipal(final CibaRequestContext cibaRequest,
-                                                      final OidcRegisteredService registeredService) throws Throwable {
+    protected @Nullable Principal determineCibaRequestPrincipal(final CibaRequestContext cibaRequest,
+                                                                final OidcRegisteredService registeredService) throws Throwable {
         var subject = cibaRequest.getLoginHint();
         if (StringUtils.isNotBlank(cibaRequest.getIdTokenHint())) {
             val claims = configurationContext.getIdTokenSigningAndEncryptionService()
@@ -355,7 +350,7 @@ public class OidcCibaController extends BaseOidcController {
             subject = claims.getSubject();
         }
         if (StringUtils.isNotBlank(cibaRequest.getLoginHintToken())) {
-            subject = JwtBuilder.parse(cibaRequest.getLoginHint()).getSubject();
+            subject = JwtBuilder.tryParse(cibaRequest.getLoginHint()).map(JWTClaimsSet::getSubject).orElse(null);
         }
         if (StringUtils.isNotBlank(subject)) {
             return configurationContext.getPrincipalResolver().resolve(new BasicIdentifiableCredential(subject));

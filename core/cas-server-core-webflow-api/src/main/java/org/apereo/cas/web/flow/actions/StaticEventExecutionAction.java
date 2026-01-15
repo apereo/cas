@@ -1,13 +1,12 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.Optional;
 
 /**
  * This is {@link StaticEventExecutionAction}.
@@ -30,7 +29,7 @@ public class StaticEventExecutionAction extends BaseCasWebflowAction {
     private final String eventId;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext context) {
+    protected @Nullable Event doExecuteInternal(final RequestContext context) {
         return Optional.ofNullable(eventId)
             .map(id -> eventFactory.event(this, id))
             .orElse(null);

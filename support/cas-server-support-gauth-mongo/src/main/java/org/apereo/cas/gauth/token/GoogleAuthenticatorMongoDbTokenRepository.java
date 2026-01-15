@@ -1,17 +1,13 @@
 package org.apereo.cas.gauth.token;
 
+import module java.base;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Collation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Locale;
 
 /**
  * This is {@link GoogleAuthenticatorMongoDbTokenRepository}.

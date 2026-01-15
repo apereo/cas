@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -20,7 +21,6 @@ import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,10 +32,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Class to automatically set the paths for the CookieGenerators.
@@ -80,7 +76,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext context) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext context) throws Throwable {
         configureCookieGenerators(context);
         configureWebflowForPostParameters(context);
         configureWebflowForCustomFields(context);

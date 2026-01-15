@@ -1,4 +1,5 @@
 package org.apereo.cas.ticket;
+import module java.base;
 
 /**
  * This is {@link EncodedTicket}.

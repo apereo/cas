@@ -1,10 +1,10 @@
 package org.apereo.cas.support.oauth.web.response.callback.mode;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +12,6 @@ import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link OAuth20ResponseModeFormPostBuilder}.

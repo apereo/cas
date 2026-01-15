@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn;
 
+import module java.base;
 import org.apereo.cas.config.CasRestfulWebAuthnAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -14,8 +15,6 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
