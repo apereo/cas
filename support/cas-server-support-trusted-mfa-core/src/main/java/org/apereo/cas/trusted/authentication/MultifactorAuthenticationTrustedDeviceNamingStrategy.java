@@ -1,15 +1,12 @@
 package org.apereo.cas.trusted.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-
 import jakarta.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 /**
  * This is {@link MultifactorAuthenticationTrustedDeviceNamingStrategy}.

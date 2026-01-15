@@ -1,16 +1,10 @@
 package org.apereo.cas.util.cache;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
-
-import java.io.Closeable;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 /**
  * This is {@link DistributedCacheManager} that acts as a facade for a cache implementation.

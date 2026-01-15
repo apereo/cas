@@ -1,9 +1,8 @@
 package org.apereo.cas.logout.slo;
 
+import module java.base;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.util.List;
 
 /**
  * Execute and initiate single logout operations

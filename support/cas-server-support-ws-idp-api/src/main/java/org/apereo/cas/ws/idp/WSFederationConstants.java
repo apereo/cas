@@ -1,4 +1,5 @@
 package org.apereo.cas.ws.idp;
+import module java.base;
 
 /**
  * This is {@link WSFederationConstants}.

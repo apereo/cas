@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.proxy;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketFactory;

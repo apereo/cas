@@ -1,10 +1,10 @@
 package org.apereo.cas.adaptors.x509.authentication.ldap;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -17,12 +17,7 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchResponse;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-
-import java.net.URI;
-import java.net.URL;
 import java.security.cert.CertificateException;
-import java.security.cert.X509CRL;
-import java.util.Objects;
 
 /**
  * Fetches a CRL from an LDAP instance.

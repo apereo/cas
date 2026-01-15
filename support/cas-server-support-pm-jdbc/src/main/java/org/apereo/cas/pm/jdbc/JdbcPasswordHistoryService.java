@@ -1,18 +1,15 @@
 package org.apereo.cas.pm.jdbc;
 
+import module java.base;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.impl.history.BasePasswordHistoryService;
 import org.apereo.cas.pm.impl.history.PasswordHistoryEntity;
-
 import lombok.Getter;
 import lombok.ToString;
 import lombok.val;
 import org.springframework.transaction.annotation.Transactional;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-
-import java.util.Collection;
 
 /**
  * This is {@link JdbcPasswordHistoryService}.

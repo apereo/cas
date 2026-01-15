@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage.generic;
 
+import module java.base;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import lombok.Getter;
 import jakarta.persistence.DiscriminatorValue;
@@ -8,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.io.Serial;
 
 /**
  * This is {@link JpaMultifactorAuthenticationTrustRecord}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.federation;
 
+import module java.base;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceContact;
@@ -16,10 +17,6 @@ import lombok.val;
 import net.minidev.json.JSONObject;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcFederationDefaultTrustChainResolver}.

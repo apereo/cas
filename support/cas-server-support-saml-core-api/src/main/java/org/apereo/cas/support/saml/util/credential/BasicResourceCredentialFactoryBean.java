@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.util.credential;
 
+import module java.base;
 import com.google.common.io.ByteStreams;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +16,6 @@ import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.core.io.Resource;
-import javax.crypto.SecretKey;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 
 /**
  * This is {@link BasicResourceCredentialFactoryBean}.

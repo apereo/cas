@@ -1,13 +1,10 @@
 package org.apereo.cas.oidc.jwks.generator;
 
+import module java.base;
 import org.apereo.cas.support.events.AbstractCasEvent;
-
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-
-import java.io.File;
-import java.io.Serial;
 
 /**
  * This is {@link OidcJsonWebKeystoreModifiedEvent}.

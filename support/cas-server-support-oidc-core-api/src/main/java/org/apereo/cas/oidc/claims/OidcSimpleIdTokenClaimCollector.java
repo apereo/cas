@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.claims;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
 import org.apereo.cas.oidc.assurance.AssuranceVerifiedClaimsProducer;
@@ -13,10 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwt.JwtClaims;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link OidcSimpleIdTokenClaimCollector}.

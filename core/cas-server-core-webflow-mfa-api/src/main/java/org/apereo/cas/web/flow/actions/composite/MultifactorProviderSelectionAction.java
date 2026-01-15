@@ -1,9 +1,11 @@
 package org.apereo.cas.web.flow.actions.composite;
 
+import module java.base;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.Event;
@@ -17,7 +19,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class MultifactorProviderSelectionAction extends BaseCasWebflowAction {
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val conditions = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, MultifactorProviderSelectionCriteria.class)
             .values()

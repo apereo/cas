@@ -1,5 +1,6 @@
 package org.apereo.cas.token;
 
+import module java.base;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
@@ -34,7 +35,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import java.util.List;
 import static org.mockito.Mockito.*;
 
 /**

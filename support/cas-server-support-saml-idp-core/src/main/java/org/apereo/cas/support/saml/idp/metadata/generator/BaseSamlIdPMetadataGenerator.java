@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
+import module java.base;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
@@ -16,12 +17,6 @@ import org.apache.velocity.VelocityContext;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import java.io.Serial;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
-import java.util.concurrent.Executors;
 
 /**
  * A metadata generator based on a predefined template.

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -17,8 +18,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
-import java.io.Serial;
-import java.util.Objects;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -35,6 +35,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Getter
 @Accessors(chain = true)
+@SuppressWarnings("NullAway.Init")
 public class ServiceTicketImpl extends AbstractTicket
     implements ServiceTicket, RenewableServiceTicket, ProxyGrantingTicketIssuerTicket {
 
@@ -42,6 +43,7 @@ public class ServiceTicketImpl extends AbstractTicket
     private static final long serialVersionUID = -4223319704861765405L;
 
     @JsonProperty("ticketGrantingTicket")
+    @Nullable
     private TicketGrantingTicket ticketGrantingTicket;
 
     @JsonProperty("authentication")
@@ -58,7 +60,7 @@ public class ServiceTicketImpl extends AbstractTicket
     @JsonCreator
     public ServiceTicketImpl(
         @JsonProperty("id") final @NonNull String id,
-        @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticket,
+        @Nullable @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticket,
         @JsonProperty("service") final @NonNull Service service,
         @JsonProperty("credentialProvided")
         @JsonSetter(nulls = Nulls.SKIP)

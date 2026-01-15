@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import module java.base;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.config.server.EnableConfigServer;
 import org.springframework.context.event.EventListener;
-import java.time.Instant;
 
 /**
  * This is {@link CasConfigurationServerWebApplication}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.refreshtoken;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.RegisteredServiceDefinition;
@@ -9,7 +10,6 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.io.Serial;
 
 /**
  * This is {@link OAuth20RefreshTokenExpirationPolicyBuilder}.

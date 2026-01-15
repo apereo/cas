@@ -1,6 +1,6 @@
-// CHECKSTYLE:OFF
 package org.apereo.cas.support.inwebo.service.soap.generated;
-
+import module java.base;
+import org.apache.commons.lang3.StringUtils;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -26,7 +26,7 @@ import jakarta.xml.bind.annotation.XmlType;
  * @since 6.4.0
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = "loginSearchReturn")
+@XmlType(name = StringUtils.EMPTY, propOrder = "loginSearchReturn")
 @XmlRootElement(name = "loginSearchResponse")
 public class LoginSearchResponse {
 

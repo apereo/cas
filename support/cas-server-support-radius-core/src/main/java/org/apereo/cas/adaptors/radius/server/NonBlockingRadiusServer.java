@@ -1,15 +1,13 @@
 package org.apereo.cas.adaptors.radius.server;
 
+import module java.base;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
-
 import lombok.Setter;
 import lombok.val;
 import net.jradius.client.RadiusClient;
 import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusResponse;
-
-import java.io.Serial;
 
 /**
  * Implementation of a RadiusServer that utilizes the JRadius packages available

@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.web.flow.account;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;

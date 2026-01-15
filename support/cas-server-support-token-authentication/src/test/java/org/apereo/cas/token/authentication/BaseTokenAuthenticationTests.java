@@ -1,5 +1,6 @@
 package org.apereo.cas.token.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;

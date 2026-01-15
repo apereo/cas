@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.code;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
@@ -22,11 +23,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OAuth20CodeCompactor}.

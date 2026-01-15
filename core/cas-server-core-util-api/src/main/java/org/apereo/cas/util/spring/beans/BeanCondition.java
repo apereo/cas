@@ -1,10 +1,8 @@
 package org.apereo.cas.util.spring.beans;
 
+import module java.base;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.PropertyResolver;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.function.Supplier;
 
 /**
  * This is {@link BeanCondition}.

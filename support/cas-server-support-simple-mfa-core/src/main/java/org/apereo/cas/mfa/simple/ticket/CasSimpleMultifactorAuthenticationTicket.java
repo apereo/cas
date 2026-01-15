@@ -1,9 +1,8 @@
 package org.apereo.cas.mfa.simple.ticket;
 
+import module java.base;
 import org.apereo.cas.ticket.PropertiesAwareTicket;
 import org.apereo.cas.ticket.ServiceAwareTicket;
-
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**

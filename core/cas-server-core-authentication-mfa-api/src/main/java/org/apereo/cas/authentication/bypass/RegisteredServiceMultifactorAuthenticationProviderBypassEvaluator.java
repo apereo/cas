@@ -1,13 +1,12 @@
 package org.apereo.cas.authentication.bypass;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.io.Serial;
 
 /**
  * Multifactor Bypass Provider based on Service Multifactor Policy.
@@ -25,9 +24,9 @@ public class RegisteredServiceMultifactorAuthenticationProviderBypassEvaluator e
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication,
-                                                                          final RegisteredService registeredService,
+                                                                          @Nullable final RegisteredService registeredService,
                                                                           final MultifactorAuthenticationProvider provider,
-                                                                          final HttpServletRequest request) {
+                                                                          @Nullable final HttpServletRequest request) {
         return registeredService == null
                || registeredService.getMultifactorAuthenticationPolicy() == null
                || !registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled();

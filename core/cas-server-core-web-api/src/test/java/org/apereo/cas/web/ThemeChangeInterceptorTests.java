@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.web.support.ThemeChangeInterceptor;
 import org.apereo.cas.web.theme.SessionThemeResolver;
 import lombok.val;

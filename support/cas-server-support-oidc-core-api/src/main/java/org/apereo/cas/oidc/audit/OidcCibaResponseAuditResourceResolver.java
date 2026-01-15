@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.audit;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.web.controllers.ciba.OidcCibaResponse;
@@ -9,10 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.ResponseEntity;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This is {@link OidcCibaResponseAuditResourceResolver}.
@@ -25,9 +24,9 @@ public class OidcCibaResponseAuditResourceResolver extends ReturnValueAsStringRe
     private final AuditEngineProperties properties;
 
     @Override
-    public String[] resolveFrom(final JoinPoint auditableTarget, final Object returnValue) {
+    public String[] resolveFrom(final JoinPoint auditableTarget, @Nullable final Object returnValue) {
         val values = new HashMap<>();
-        val responseEntity = (ResponseEntity) returnValue;
+        val responseEntity = Objects.requireNonNull((ResponseEntity) returnValue);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             val cibaResponse = Objects.requireNonNull((OidcCibaResponse) responseEntity.getBody());
             values.put(OidcConstants.AUTH_REQ_ID, DigestUtils.abbreviate(cibaResponse.getAuthenticationRequestId(), properties.getAbbreviationLength()));

@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket;
 
-import java.io.Serializable;
-import java.time.ZonedDateTime;
+import module java.base;
 
 /**
  * This is {@link ExpirableTicket}.

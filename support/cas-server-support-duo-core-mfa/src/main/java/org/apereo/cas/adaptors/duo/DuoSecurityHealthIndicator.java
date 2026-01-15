@@ -1,15 +1,13 @@
 package org.apereo.cas.adaptors.duo;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.boot.health.contributor.AbstractHealthIndicator;
 import org.springframework.boot.health.contributor.Health;
 import org.springframework.context.ApplicationContext;
-
-import java.util.Objects;
 
 /**
  * This is {@link DuoSecurityHealthIndicator}.

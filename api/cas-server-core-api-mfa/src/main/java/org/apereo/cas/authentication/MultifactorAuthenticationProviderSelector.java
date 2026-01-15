@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
-
-import java.util.Collection;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link MultifactorAuthenticationProviderSelector}
@@ -30,6 +30,6 @@ public interface MultifactorAuthenticationProviderSelector {
      * @return the multifactor authentication provider
      * @throws Throwable the throwable
      */
-    MultifactorAuthenticationProvider resolve(Collection<MultifactorAuthenticationProvider> providers,
-                                              RegisteredService service, Principal principal) throws Throwable;
+    @Nullable MultifactorAuthenticationProvider resolve(Collection<MultifactorAuthenticationProvider> providers,
+                                                        @Nullable RegisteredService service, Principal principal) throws Throwable;
 }

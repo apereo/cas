@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.factory;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
@@ -23,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.util.Map;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The {@link DefaultServiceTicketFactory} is responsible for
@@ -64,7 +65,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
     @Override
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket,
-                                       final Service service,
+                                       @Nullable final Service service,
                                        final boolean credentialProvided,
                                        final Class<T> clazz) throws Throwable {
         val ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
@@ -83,14 +84,14 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     }
 
     protected <T extends Ticket> T produceTicket(final TicketGrantingTicket ticketGrantingTicket,
-                                                 final Service service,
+                                                 @Nullable final Service service,
                                                  final boolean credentialProvided,
                                                  final String ticketId,
                                                  final Class<T> clazz) {
         val expirationPolicyToUse = determineExpirationPolicyForService(service);
         val result = ticketGrantingTicket.grantServiceTicket(
             ticketId,
-            service,
+            Objects.requireNonNull(service),
             expirationPolicyToUse,
             credentialProvided,
             serviceTicketSessionTrackingPolicy);
@@ -100,9 +101,10 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
         return (T) result;
     }
 
-    protected String produceTicketIdentifier(final Service service, final TicketGrantingTicket ticketGrantingTicket,
+    protected String produceTicketIdentifier(@Nullable final Service service,
+                                             @Nullable final TicketGrantingTicket ticketGrantingTicket,
                                              final boolean credentialProvided) throws Throwable {
-        val uniqueTicketIdGenKey = service.getClass().getName();
+        val uniqueTicketIdGenKey = Objects.requireNonNull(service).getClass().getName();
         var serviceTicketUniqueTicketIdGenerator = (UniqueTicketIdGenerator) null;
         if (uniqueTicketIdGeneratorsForService != null && !uniqueTicketIdGeneratorsForService.isEmpty()) {
             LOGGER.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);
@@ -116,7 +118,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
         return serviceTicketUniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX);
     }
 
-    private ExpirationPolicy determineExpirationPolicyForService(final Service service) {
+    private ExpirationPolicy determineExpirationPolicyForService(@Nullable final Service service) {
         val registeredService = servicesManager.findServiceBy(service, CasModelRegisteredService.class);
         if (registeredService != null && registeredService.getServiceTicketExpirationPolicy() != null) {
             val policy = registeredService.getServiceTicketExpirationPolicy();

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.pubsub.queue;
 
+import module java.base;
 import org.apereo.cas.ticket.registry.pubsub.commands.BaseMessageQueueCommand;
 
 /**

@@ -1,15 +1,11 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import lombok.ToString;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 /**
  * Default In Memory Service Registry Dao for test/demonstration purposes.

@@ -1,14 +1,13 @@
 package org.apereo.cas.authentication.bypass;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.io.Serial;
 
 /**
  * Multifactor bypass provider that will never allow MFA to execute and will always bypass.
@@ -27,9 +26,9 @@ public class NeverAllowMultifactorAuthenticationProviderBypassEvaluator extends 
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication,
-                                                                          final RegisteredService registeredService,
+                                                                          @Nullable final RegisteredService registeredService,
                                                                           final MultifactorAuthenticationProvider provider,
-                                                                          final HttpServletRequest request) {
+                                                                          @Nullable final HttpServletRequest request) {
         LOGGER.debug("Provider [{}] will always allow multifactor authentication to execute", provider.getId());
         return true;
     }

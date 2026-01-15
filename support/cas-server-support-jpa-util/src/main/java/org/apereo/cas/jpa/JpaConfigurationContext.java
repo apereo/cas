@@ -1,18 +1,13 @@
 package org.apereo.cas.jpa;
 
+import module java.base;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-
 import jakarta.persistence.spi.PersistenceProvider;
-import javax.sql.DataSource;
-
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import module java.sql;
 
 /**
  * Simple structure to collect and pass around pieces of JPA config data reusable across

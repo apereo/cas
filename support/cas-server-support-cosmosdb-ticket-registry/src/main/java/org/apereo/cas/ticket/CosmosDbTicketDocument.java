@@ -1,12 +1,10 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link CosmosDbTicketDocument}.
@@ -20,6 +18,7 @@ import java.io.Serializable;
 @SuperBuilder
 @NoArgsConstructor
 @Deprecated(since = "8.0.0", forRemoval = true)
+@SuppressWarnings("NullAway.Init")
 public class CosmosDbTicketDocument implements Serializable {
     @Serial
     private static final long serialVersionUID = -1741535838543052903L;

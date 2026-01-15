@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.code;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -11,9 +12,6 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import lombok.NoArgsConstructor;
 import org.jspecify.annotations.NonNull;
-import java.io.Serial;
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * An OAuth code implementation.

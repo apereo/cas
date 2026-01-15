@@ -1,12 +1,11 @@
 package org.apereo.cas.entity;
 
+import module java.base;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serial;
 
 /**
  * This is {@link SamlIdentityProviderLogoEntity}.

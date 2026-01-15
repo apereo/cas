@@ -1,5 +1,6 @@
 package org.apereo.cas.multitenancy;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -11,7 +12,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import tools.jackson.databind.ObjectMapper;
-import java.util.Optional;
 
 /**
  * This is {@link DefaultTenantExtractor}.

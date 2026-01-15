@@ -1,5 +1,6 @@
 package org.apereo.cas.discovery;
 
+import module java.base;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 

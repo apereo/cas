@@ -1,14 +1,10 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * A deny rule to refuse all service from receiving attributes, whether default or not.

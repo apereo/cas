@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
+import module java.base;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     "spring.mongodb.password=secret"
 })
 @Tag("MongoDb")
+@EnabledIfListeningOnPort(port = 27017)
 @ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class MongoSessionConfigurationTests {

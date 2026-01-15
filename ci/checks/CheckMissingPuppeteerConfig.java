@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicInteger;
+import module java.base;
 
 /**
  * This is {@link CheckMissingPuppeteerConfig}.

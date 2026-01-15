@@ -1,14 +1,10 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

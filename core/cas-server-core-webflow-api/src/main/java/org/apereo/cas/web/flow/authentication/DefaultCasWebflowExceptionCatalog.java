@@ -1,10 +1,7 @@
 package org.apereo.cas.web.flow.authentication;
 
+import module java.base;
 import lombok.Getter;
-
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * This is {@link DefaultCasWebflowExceptionCatalog}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationTransaction;
@@ -9,10 +10,10 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
-import java.util.Set;
 
 /**
  * This is {@link GroovyAuthenticationHandlerResolver}.
@@ -41,8 +42,8 @@ public class GroovyAuthenticationHandlerResolver implements AuthenticationHandle
     }
 
     @Override
-    public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,
-                                              final AuthenticationTransaction transaction) throws Throwable {
+    public @Nullable Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,
+                                                        final AuthenticationTransaction transaction) throws Throwable {
         val args = new Object[]{candidateHandlers, transaction, servicesManager, LOGGER};
         return watchableScript.execute(args, Set.class);
     }
@@ -51,7 +52,7 @@ public class GroovyAuthenticationHandlerResolver implements AuthenticationHandle
 
     public boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) throws Throwable {
         val args = new Object[]{handlers, transaction, servicesManager, LOGGER};
-        return watchableScript.execute("supports", Boolean.class, args);
+        return Boolean.TRUE.equals(watchableScript.execute("supports", Boolean.class, args));
     }
 
     @Override

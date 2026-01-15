@@ -1,10 +1,9 @@
 package org.apereo.cas.util.spring.boot;
 
+import module java.base;
 import lombok.val;
 import org.springframework.boot.Banner;
 import org.springframework.core.env.Environment;
-import java.util.Formatter;
-import java.util.ServiceLoader;
 
 /**
  * This is {@link CasBanner}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.services.replication;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServicesCoreProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -10,15 +11,11 @@ import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
 import org.apereo.cas.util.cache.DistributedCacheObject;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * This is {@link DefaultRegisteredServiceReplicationStrategy}.
@@ -61,7 +58,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
     }
 
     @Override
-    public RegisteredService getRegisteredServiceFromCacheByPredicate(
+    public @Nullable RegisteredService getRegisteredServiceFromCacheByPredicate(
         final RegisteredService service,
         final Predicate<DistributedCacheObject<RegisteredService>> predicate,
         final ServiceRegistry serviceRegistry) {

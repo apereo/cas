@@ -1,20 +1,16 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
+import module java.base;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.RadiusMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.jradius.exception.TimeoutException;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serial;
-import java.net.SocketTimeoutException;
-import java.util.List;
 
 /**
  * The authentication provider for yubikey.

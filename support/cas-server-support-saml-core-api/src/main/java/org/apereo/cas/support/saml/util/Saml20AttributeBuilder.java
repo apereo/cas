@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.util;
 
+import module java.base;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 

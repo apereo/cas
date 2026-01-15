@@ -1,5 +1,6 @@
 package org.apereo.cas.otp.repository.credentials;
 
+import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
@@ -8,10 +9,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OneTimeTokenCredentialDeviceManager}.

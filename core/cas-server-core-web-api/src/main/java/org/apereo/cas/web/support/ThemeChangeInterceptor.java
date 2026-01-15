@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import org.apereo.cas.web.theme.ThemeResolver;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

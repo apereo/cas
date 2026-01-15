@@ -1,4 +1,5 @@
 package org.apereo.cas;
+import module java.base;
 
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;

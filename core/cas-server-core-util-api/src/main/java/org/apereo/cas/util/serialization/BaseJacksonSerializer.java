@@ -1,5 +1,6 @@
 package org.apereo.cas.util.serialization;
 
+import module java.base;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -11,6 +12,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hjson.JsonValue;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import tools.jackson.core.PrettyPrinter;
 import tools.jackson.core.TokenStreamFactory;
@@ -22,17 +24,6 @@ import tools.jackson.databind.ObjectReader;
 import tools.jackson.databind.ObjectWriter;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.dataformat.yaml.YAMLFactory;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Serial;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Generic class to serialize objects to/from JSON based on jackson.
@@ -75,7 +66,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
     }
 
     @Override
-    public T from(final Reader json) {
+    public @Nullable T from(final Reader json) {
         return FunctionUtils.doAndHandle(() -> {
             val data = isJsonFormat() && isLenient()
                 ? readHumanJson(json)
@@ -85,7 +76,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
     }
 
     @Override
-    public T from(final InputStream json) {
+    public @Nullable T from(final InputStream json) {
         return FunctionUtils.doAndHandle(() -> {
             val jsonString = readJsonFrom(json);
             return readObjectFromString(jsonString);
@@ -93,7 +84,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
     }
 
     @Override
-    public T from(final File json) {
+    public @Nullable T from(final File json) {
         return FunctionUtils.doAndHandle(() -> {
             val data = isJsonFormat() && isLenient()
                 ? readHumanJson(FileUtils.readFileToString(json, StandardCharsets.UTF_8))

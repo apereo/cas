@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.nativex.features.DefaultNativeImageFeature;
 import lombok.val;
 import org.graalvm.nativeimage.hosted.Feature;

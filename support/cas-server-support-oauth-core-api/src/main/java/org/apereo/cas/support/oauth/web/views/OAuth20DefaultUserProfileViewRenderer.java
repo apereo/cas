@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.views;
 
+import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.model.support.oauth.OAuthCoreProperties;
@@ -16,10 +17,6 @@ import org.jose4j.jwt.JwtClaims;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link OAuth20DefaultUserProfileViewRenderer}.

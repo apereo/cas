@@ -1,9 +1,9 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import lombok.Getter;
 import org.jspecify.annotations.NonNull;
-import java.io.Serial;
 
 /**
  * Error condition arising at ticket creation or validation time when a ticketing operation relying on authentication

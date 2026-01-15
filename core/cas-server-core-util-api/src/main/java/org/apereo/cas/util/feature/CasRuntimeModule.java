@@ -1,5 +1,6 @@
 package org.apereo.cas.util.feature;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -7,8 +8,6 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link CasRuntimeModule}.

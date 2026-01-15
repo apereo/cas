@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import module java.base;
 import org.pac4j.core.client.Client;
 import org.springframework.core.Ordered;
 

@@ -1,19 +1,12 @@
 package org.apereo.cas.adaptors.radius;
 
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.jradius.packet.attribute.RadiusAttribute;
 import org.apache.commons.lang3.tuple.Pair;
-
-import javax.security.auth.login.FailedLoginException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link RadiusUtils}.

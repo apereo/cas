@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
@@ -17,8 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
-import javax.security.auth.login.FailedLoginException;
-import java.util.Objects;
 
 /**
  * An authentication handler that uses the token provided

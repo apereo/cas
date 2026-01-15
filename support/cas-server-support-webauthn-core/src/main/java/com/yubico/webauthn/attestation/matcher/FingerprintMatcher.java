@@ -1,13 +1,12 @@
 package com.yubico.webauthn.attestation.matcher;
 
+import module java.base;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.hash.Hashing;
 import com.yubico.webauthn.attestation.DeviceMatcher;
 import lombok.val;
-
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.util.Locale;
 
 /**
  * This is {@link FingerprintMatcher}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands.cipher;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.shell.commands.CasShellCommand;
@@ -12,8 +13,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link StringableCipherExecutorCommand}.

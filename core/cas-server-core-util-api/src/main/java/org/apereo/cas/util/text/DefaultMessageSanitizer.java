@@ -1,12 +1,10 @@
 package org.apereo.cas.util.text;
 
+import module java.base;
 import org.apereo.cas.util.InetAddressUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.regex.Pattern;
 
 /**
  * This is {@link DefaultMessageSanitizer}.

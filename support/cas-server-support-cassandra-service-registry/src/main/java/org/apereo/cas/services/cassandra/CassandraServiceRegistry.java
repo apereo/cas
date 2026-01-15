@@ -1,6 +1,6 @@
 package org.apereo.cas.services.cassandra;
 
-
+import module java.base;
 import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.configuration.model.support.cassandra.serviceregistry.CassandraServiceRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -10,7 +10,6 @@ import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
-
 import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +18,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.cassandra.core.InsertOptions;
 import org.springframework.data.cassandra.core.query.Query;
-
-import java.util.Collection;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CassandraServiceRegistry}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.support.events.web.flow.CasWebflowActionExecutedEvent;
 import org.apereo.cas.support.events.web.flow.CasWebflowActionExecutingEvent;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -10,6 +11,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -25,9 +27,6 @@ import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.execution.ActionExecutionException;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * This is {@link BaseCasWebflowAction}.
@@ -103,7 +102,7 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
         applicationContext.publishEvent(new CasWebflowActionExecutedEvent(this, scope, clientInfo));
     }
 
-    protected abstract Event doExecuteInternal(RequestContext requestContext) throws Throwable;
+    protected abstract @Nullable Event doExecuteInternal(RequestContext requestContext) throws Throwable;
 
     protected Optional<TransactionStatus> getTransaction(
         final Optional<PlatformTransactionManager> transactionManager) {

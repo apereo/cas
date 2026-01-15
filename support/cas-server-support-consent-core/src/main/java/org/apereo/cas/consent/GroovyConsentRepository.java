@@ -1,13 +1,12 @@
 package org.apereo.cas.consent;
 
+import module java.base;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
-import java.io.Serial;
-import java.util.Set;
 
 /**
  * This is {@link GroovyConsentRepository}.

@@ -1,14 +1,12 @@
 package org.apereo.cas.authentication.principal.provision;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-
 import lombok.RequiredArgsConstructor;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.profile.UserProfile;
-
-import java.util.List;
 
 /**
  * This is {@link ChainingDelegatedClientUserProfileProvisioner}.

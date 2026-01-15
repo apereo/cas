@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
@@ -18,13 +19,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link UniquePrincipalAuthenticationPolicy}
@@ -49,15 +46,19 @@ public class UniquePrincipalAuthenticationPolicy extends BaseAuthenticationPolic
 
     private final TicketRegistry ticketRegistry;
 
-    private final ObjectProvider<@NonNull SingleSignOnParticipationStrategy> singleSignOnParticipationStrategy;
+    private final ObjectProvider<SingleSignOnParticipationStrategy> singleSignOnParticipationStrategy;
 
     private final UniquePrincipalAuthenticationPolicyProperties properties;
 
     @Override
-    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authentication,
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(@Nullable final Authentication authentication,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
                                                              final Map<String, ? extends Serializable> context) throws Throwable {
+        if (authentication == null) {
+            LOGGER.warn("Authentication attempt is null and cannot satisfy policy");
+            return AuthenticationPolicyExecutionResult.failure();
+        }
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val ssoRequest = SingleSignOnParticipationRequest.builder()
             .httpServletRequest(request)

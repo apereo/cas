@@ -1,12 +1,12 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import lombok.val;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
-import java.util.function.Function;
 
 /**
  * This is {@link ExecutableObserver}.

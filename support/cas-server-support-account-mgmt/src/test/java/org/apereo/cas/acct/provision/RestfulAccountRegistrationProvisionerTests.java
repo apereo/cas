@@ -1,5 +1,6 @@
 package org.apereo.cas.acct.provision;
 
+import module java.base;
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -15,8 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import java.net.URI;
-import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

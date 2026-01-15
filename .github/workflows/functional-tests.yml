@@ -151,6 +151,8 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: AppArmor User Namespace Restrictions
         run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+      - name: Set up Gum
+        uses: unfunco/setup-gum@main
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:
@@ -206,6 +208,8 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: AppArmor User Namespace Restrictions
         run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+      - name: Set up Gum
+        uses: unfunco/setup-gum@main
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:
@@ -261,6 +265,8 @@ jobs:
           cache-dependency-path: ./ci/tests/puppeteer/package.json
       - name: AppArmor User Namespace Restrictions
         run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+      - name: Set up Gum
+        uses: unfunco/setup-gum@main
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:

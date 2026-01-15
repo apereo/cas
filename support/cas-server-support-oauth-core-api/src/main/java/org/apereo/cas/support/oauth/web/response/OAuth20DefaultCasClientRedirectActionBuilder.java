@@ -1,8 +1,8 @@
 package org.apereo.cas.support.oauth.web.response;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.util.EncodingUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -10,8 +10,6 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.http.FoundAction;
 import org.pac4j.core.exception.http.RedirectionAction;
-
-import java.util.Optional;
 
 /**
  * This is {@link OAuth20DefaultCasClientRedirectActionBuilder}.

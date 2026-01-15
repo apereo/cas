@@ -1,10 +1,8 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import lombok.Getter;
-
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.Map;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Authentication raised by {@link AuthenticationManager} to signal authentication failure.
@@ -27,7 +25,7 @@ public class AuthenticationException extends RootCasException {
 
     private final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses;
 
-    public AuthenticationException(final String msg) {
+    public AuthenticationException(@Nullable final String msg) {
         this(msg, new HashMap<>(), new HashMap<>());
     }
 
@@ -54,7 +52,7 @@ public class AuthenticationException extends RootCasException {
         this(String.format("%s errors, %s successes", handlerErrors.size(), handlerSuccesses.size()), handlerErrors, handlerSuccesses);
     }
 
-    public AuthenticationException(final String message, final Map<String, Throwable> handlerErrors,
+    public AuthenticationException(@Nullable final String message, final Map<String, Throwable> handlerErrors,
                                    final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses) {
         super(CODE, message);
         this.handlerErrors = new HashMap<>(handlerErrors);

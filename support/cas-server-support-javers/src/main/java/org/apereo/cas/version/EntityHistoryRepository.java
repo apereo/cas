@@ -1,6 +1,6 @@
 package org.apereo.cas.version;
 
-import java.util.List;
+import module java.base;
 
 /**
  * This is {@link EntityHistoryRepository}.

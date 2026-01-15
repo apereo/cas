@@ -1,12 +1,10 @@
 package org.apereo.cas.util;
 
+import module java.base;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.Servlet;
 import jakarta.servlet.ServletRegistration;
-
-import java.util.EventListener;
-
 import static org.mockito.Mockito.*;
 
 /**

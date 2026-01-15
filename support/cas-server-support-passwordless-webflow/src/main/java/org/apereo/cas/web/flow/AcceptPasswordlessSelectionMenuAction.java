@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -9,6 +10,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -32,8 +34,8 @@ public class AcceptPasswordlessSelectionMenuAction extends BasePasswordlessCasWe
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
-        val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        val user = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
 
         if (!user.isAllowSelectionMenu()) {
             LOGGER.error("Passwordless account [{}] is not allowed to select options", user.getUsername());
@@ -57,9 +59,9 @@ public class AcceptPasswordlessSelectionMenuAction extends BasePasswordlessCasWe
     }
 
     protected Event buildFinalSelectionEvent(final RequestContext requestContext, final PasswordlessSelectionMenu selection) {
-        val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         val finalEvent = switch (selection) {
             case PASSWORD -> {
+                val user = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
                 WebUtils.putCasLoginFormViewable(requestContext, doesPasswordlessAccountRequestPassword(user));
                 yield CasWebflowConstants.TRANSITION_ID_PROMPT;
             }

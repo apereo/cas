@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.notify;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -14,7 +15,6 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
-import java.util.List;
 
 /**
  * This is {@link AuthenticationRiskEmailNotifier}.

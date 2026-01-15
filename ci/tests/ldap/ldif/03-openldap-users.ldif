@@ -48,3 +48,14 @@ pwdMaxFailure: 3
 pwdMinLength: 6
 pwdLockout: FALSE
 pwdLockoutDuration: 0
+
+dn: ou=Groups,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: Groups
+
+dn: cn=casAdmins,ou=Groups,dc=example,dc=org
+objectClass: top
+objectClass: groupOfNames
+cn: casAdmins
+member: uid=casadmin,ou=People,dc=example,dc=org

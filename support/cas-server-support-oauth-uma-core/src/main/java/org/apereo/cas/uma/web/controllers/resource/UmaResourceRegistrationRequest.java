@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.web.controllers.resource;
 
+import module java.base;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -9,11 +10,6 @@ import lombok.Data;
 import lombok.val;
 import org.pac4j.core.profile.UserProfile;
 import tools.jackson.databind.ObjectMapper;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 
 /**
  * This is {@link UmaResourceRegistrationRequest}.

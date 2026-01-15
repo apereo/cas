@@ -1,17 +1,13 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
+import module java.base;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint;
-
-import java.util.List;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

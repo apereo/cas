@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import module java.base;
 import com.yubico.client.v2.YubicoClient;
 
 /**

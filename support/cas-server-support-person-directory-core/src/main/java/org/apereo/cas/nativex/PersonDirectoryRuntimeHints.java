@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.AggregatingPersonAttributeDao;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
@@ -12,7 +13,6 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import java.io.Closeable;
 
 /**
  * This is {@link PersonDirectoryRuntimeHints}.

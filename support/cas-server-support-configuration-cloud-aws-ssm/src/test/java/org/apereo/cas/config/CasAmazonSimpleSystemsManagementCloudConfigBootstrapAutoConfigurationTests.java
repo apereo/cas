@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.api.MutablePropertySource;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -13,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.bootstrap.config.BootstrapPropertySource;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 import software.amazon.awssdk.regions.Region;
@@ -51,6 +55,9 @@ class CasAmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurationTests
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ConfigurableEnvironment environment;
+    
     @BeforeAll
     public static void initialize() {
         val environment = new MockEnvironment();
@@ -83,5 +90,23 @@ class CasAmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurationTests
     void verifyOperation() {
         assertEquals(STATIC_AUTHN_USERS, casProperties.getAuthn().getAccept().getUsers());
         assertEquals("Example", casProperties.getAuthn().getAccept().getName());
+
+        val propertySource = environment.getPropertySources()
+            .stream()
+            .filter(source -> source instanceof BootstrapPropertySource<?>)
+            .map(BootstrapPropertySource.class::cast)
+            .map(BootstrapPropertySource::getDelegate)
+            .filter(MutablePropertySource.class::isInstance)
+            .map(MutablePropertySource.class::cast)
+            .findFirst()
+            .orElseThrow();
+        propertySource.setProperty("cas.server.prefix", "https://example.org/cas");
+        propertySource.setProperty("cas.server.prefix", "https://apereo.org/cas");
+        val prefix = environment.getProperty("cas.server.prefix");
+        assertEquals("https://apereo.org/cas", prefix);
+        propertySource.removeProperty("cas.server.prefix");
+        assertNull(environment.getProperty("cas.server.prefix"));
+        propertySource.removeAll();
+        assertEquals(0, propertySource.getPropertyNames().length);
     }
 }

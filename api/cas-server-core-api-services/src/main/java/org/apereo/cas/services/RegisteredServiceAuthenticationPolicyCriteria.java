@@ -1,11 +1,9 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationPolicy;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.io.Serializable;
 
 /**
  * This is {@link RegisteredServiceAuthenticationPolicyCriteria}.

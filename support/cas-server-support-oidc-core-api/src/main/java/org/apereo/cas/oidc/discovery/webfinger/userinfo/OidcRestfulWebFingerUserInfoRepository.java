@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.discovery.webfinger.userinfo;
 
+import module java.base;
 import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepository;
 import org.apereo.cas.util.CollectionUtils;
@@ -17,10 +18,6 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import tools.jackson.databind.ObjectMapper;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * This is {@link OidcRestfulWebFingerUserInfoRepository}.

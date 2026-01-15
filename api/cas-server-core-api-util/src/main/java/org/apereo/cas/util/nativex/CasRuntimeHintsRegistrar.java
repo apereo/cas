@@ -1,5 +1,6 @@
 package org.apereo.cas.util.nativex;
 
+import module java.base;
 import org.apereo.cas.util.ReflectionUtils;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
@@ -16,11 +17,6 @@ import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.aot.hint.TypeReference;
 import org.springframework.core.DecoratingProxy;
 import org.springframework.util.ClassUtils;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasRuntimeHintsRegistrar}.

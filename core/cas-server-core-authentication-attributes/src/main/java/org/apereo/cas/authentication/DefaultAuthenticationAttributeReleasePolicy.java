@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.services.RegisteredService;
@@ -7,18 +8,12 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Default AuthenticationAttributeReleasePolicy implementation.
@@ -148,7 +143,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
     }
 
     protected void decideAttributeReleaseBasedOnServiceAttributePolicy(final Map<String, List<Object>> attributes,
-                                                                       final String attributeValue,
+                                                                       @Nullable final String attributeValue,
                                                                        final String attributeName,
                                                                        final RegisteredService service,
                                                                        final boolean doesAttributePolicyAllow) {

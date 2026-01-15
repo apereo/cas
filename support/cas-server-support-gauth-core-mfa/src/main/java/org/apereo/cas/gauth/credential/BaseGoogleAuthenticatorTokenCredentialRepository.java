@@ -1,15 +1,12 @@
 package org.apereo.cas.gauth.credential;
 
+import module java.base;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.gauth.CasGoogleAuthenticator;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.Getter;
 import lombok.val;
-
-import java.util.ArrayList;
-import java.util.UUID;
 
 /**
  * This is {@link BaseGoogleAuthenticatorTokenCredentialRepository}.

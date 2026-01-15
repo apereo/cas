@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import module java.base;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
@@ -24,9 +25,6 @@ import org.opensaml.saml.metadata.resolver.impl.DefaultLocalDynamicSourceKeyGene
 import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.FileSystemResource;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * This is {@link FileSystemResourceMetadataResolver}.

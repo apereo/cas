@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
+import module java.xml;
 import org.apereo.cas.support.saml.util.credential.BasicResourceCredentialFactoryBean;
 import org.apereo.cas.support.saml.util.credential.BasicX509CredentialFactoryBean;
 import org.apereo.cas.util.CollectionUtils;
@@ -7,7 +9,6 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -15,6 +16,8 @@ import net.shibboleth.shared.codec.Base64Support;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.cryptacular.util.CertUtil;
+import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.util.XMLObjectSupport;
@@ -40,24 +43,7 @@ import org.opensaml.xmlsec.signature.support.SignatureValidationParametersCriter
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.w3c.dom.Element;
-
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 /**
  * This is {@link SamlUtils}.
@@ -68,7 +54,12 @@ import java.util.zip.InflaterInputStream;
 @Slf4j
 @UtilityClass
 public class SamlUtils {
-    private static final ThreadLocal<TransformerFactory> TRANSFORMER_FACTORY_INSTANCE = ThreadLocal.withInitial(TransformerFactory::newInstance);
+    private static final ThreadLocal<TransformerFactory> TRANSFORMER_FACTORY_INSTANCE = ThreadLocal.withInitial(
+        Unchecked.supplier(() -> {
+            val tf = TransformerFactory.newInstance();
+            tf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            return tf;
+        }));
 
     /**
      * The constant DEFAULT_ELEMENT_NAME_FIELD.
@@ -85,8 +76,8 @@ public class SamlUtils {
      */
     public QName getSamlObjectQName(final Class objectType) {
         try {
-            val f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
-            return (QName) f.get(null);
+            val field = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
+            return (QName) field.get(null);
         } catch (final Exception e) {
             throw new IllegalStateException("Cannot find/access field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD, e);
         }
@@ -184,7 +175,7 @@ public class SamlUtils {
      * @param clazz      the clazz
      * @return the t
      */
-    public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final String xml,
+    public static <T extends XMLObject> @Nullable T transformSamlObject(final OpenSamlConfigBean configBean, final String xml,
                                                               final Class<T> clazz) {
         return transformSamlObject(configBean, xml.getBytes(StandardCharsets.UTF_8), clazz);
     }
@@ -198,7 +189,7 @@ public class SamlUtils {
      * @param clazz      the clazz
      * @return the type
      */
-    public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean,
+    public static <T extends XMLObject> @Nullable T transformSamlObject(final OpenSamlConfigBean configBean,
                                                               final byte[] data,
                                                               final Class<T> clazz) {
         if (data != null && data.length > 0) {
@@ -210,7 +201,7 @@ public class SamlUtils {
                     val result = marshaller.unmarshall(root);
                     if (!clazz.isAssignableFrom(result.getClass())) {
                         throw new ClassCastException("Result [" + result + " is of type "
-                                                     + result.getClass() + " when we were expecting " + clazz);
+                            + result.getClass() + " when we were expecting " + clazz);
                     }
                     return (T) result;
                 }
@@ -240,9 +231,7 @@ public class SamlUtils {
                 val domSource = new DOMSource(element);
 
                 val result = new StreamResult(writer);
-                val tf = TRANSFORMER_FACTORY_INSTANCE.get();
-                tf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-                val transformer = tf.newTransformer();
+                val transformer = TRANSFORMER_FACTORY_INSTANCE.get().newTransformer();
 
                 if (indent) {
                     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -263,7 +252,7 @@ public class SamlUtils {
      * @return the metadata filter
      * @throws Exception the exception
      */
-    public static SignatureValidationFilter buildSignatureValidationFilter(final String signatureResourceLocation) throws Exception {
+    public static @Nullable SignatureValidationFilter buildSignatureValidationFilter(final String signatureResourceLocation) throws Exception {
         val resource = ResourceUtils.getResourceFrom(signatureResourceLocation);
         return buildSignatureValidationFilter(resource);
     }
@@ -275,8 +264,8 @@ public class SamlUtils {
      * @param signatureResourceLocation the signature resource location
      * @return the metadata filter
      */
-    public static SignatureValidationFilter buildSignatureValidationFilter(final ResourceLoader resourceLoader,
-                                                                           final String signatureResourceLocation) {
+    public static @Nullable SignatureValidationFilter buildSignatureValidationFilter(final ResourceLoader resourceLoader,
+                                                                                     final String signatureResourceLocation) {
         try {
             val resource = resourceLoader.getResource(signatureResourceLocation);
             return buildSignatureValidationFilter(resource);
@@ -293,7 +282,7 @@ public class SamlUtils {
      * @return the metadata filter
      * @throws Exception the exception
      */
-    public static SignatureValidationFilter buildSignatureValidationFilter(final Resource signatureResourceLocation) throws Exception {
+    public static @Nullable SignatureValidationFilter buildSignatureValidationFilter(final Resource signatureResourceLocation) throws Exception {
         if (!ResourceUtils.doesResourceExist(signatureResourceLocation)) {
             LOGGER.warn("Resource [{}] cannot be located", signatureResourceLocation);
             return null;
@@ -308,8 +297,10 @@ public class SamlUtils {
         LOGGER.debug("Attempting to resolve credentials from [{}]", signatureResourceLocation);
         val credential = buildCredentialForMetadataSignatureValidation(signatureResourceLocation);
         LOGGER.info("Successfully resolved credentials from [{}]", signatureResourceLocation);
+        Objects.requireNonNull(credential, "No credential found");
 
-        LOGGER.debug("Configuring credential resolver for key signature trust engine @ [{}]", credential.getCredentialType().getSimpleName());
+        LOGGER.debug("Configuring credential resolver for key signature trust engine @ [{}]",
+            credential.getCredentialType().getSimpleName());
         val resolver = new StaticCredentialResolver(credential);
         val keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(keyInfoProviderList);
         val trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyInfoResolver);
@@ -360,7 +351,7 @@ public class SamlUtils {
      * @return the basic credential
      * @throws Exception the exception
      */
-    private static BasicCredential buildCredentialForMetadataSignatureValidation(final Resource resource) throws Exception {
+    private static @Nullable BasicCredential buildCredentialForMetadataSignatureValidation(final Resource resource) throws Exception {
         try {
             val x509FactoryBean = new BasicX509CredentialFactoryBean();
             x509FactoryBean.setCertificateResources(CollectionUtils.wrap(resource));
@@ -380,14 +371,11 @@ public class SamlUtils {
         val sigConfigs = new ArrayList<SignatureValidationConfiguration>();
         sigConfigs.add(SecurityConfigurationSupport.getGlobalSignatureValidationConfiguration());
 
-        if (!sigConfigs.isEmpty()) {
-            val paramsResolver = new BasicSignatureValidationParametersResolver();
-
-            val configCriteria = new CriteriaSet(new SignatureValidationConfigurationCriterion(sigConfigs));
-            val params = FunctionUtils.doUnchecked(() -> paramsResolver.resolveSingle(configCriteria));
-            if (params != null) {
-                criteriaSet.add(new SignatureValidationParametersCriterion(params), true);
-            }
+        val paramsResolver = new BasicSignatureValidationParametersResolver();
+        val configCriteria = new CriteriaSet(new SignatureValidationConfigurationCriterion(sigConfigs));
+        val params = FunctionUtils.doUnchecked(() -> paramsResolver.resolveSingle(configCriteria));
+        if (params != null) {
+            criteriaSet.add(new SignatureValidationParametersCriterion(params), true);
         }
         return criteriaSet;
     }

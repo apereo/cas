@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.factory;
 
+import module java.base;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
@@ -8,9 +9,6 @@ import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.NoArgsConstructor;
 import org.jspecify.annotations.NonNull;
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The {@link DefaultTicketFactory} is responsible for creating ticket factory objects.

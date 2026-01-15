@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import module java.base;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +14,6 @@ import org.jasypt.iv.NoIvGenerator;
 import org.jasypt.iv.RandomIvGenerator;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.env.Environment;
-import java.security.Security;
-import java.util.function.Function;
-import java.util.regex.Pattern;
 
 /**
  * This is {@link CasConfigurationJasyptCipherExecutor}.
@@ -97,7 +95,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param value the value
      * @return true/false
      */
-    public static boolean isValueEncrypted(final String value) {
+    public static boolean isValueEncrypted(@Nullable final String value) {
         return StringUtils.isNotBlank(value) && value.startsWith(ENCRYPTED_VALUE_PREFIX);
     }
 
@@ -107,8 +105,8 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param value the value
      * @return the string
      */
-    public static String extractEncryptedValue(final String value) {
-        return isValueEncrypted(value) ? value.substring(ENCRYPTED_VALUE_PREFIX.length()) : value;
+    public static @Nullable String extractEncryptedValue(@Nullable final String value) {
+        return isValueEncrypted(value) ? Objects.requireNonNull(value).substring(ENCRYPTED_VALUE_PREFIX.length()) : value;
     }
 
     /**
@@ -171,12 +169,12 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     @Override
-    public @Nullable String encode(final String value, final Object[] parameters) {
+    public @Nullable String encode(@Nullable final String value, final Object[] parameters) {
         return encryptValue(value);
     }
 
     @Override
-    public @Nullable String decode(final String value, final Object[] parameters) {
+    public @Nullable String decode(@Nullable final String value, final Object[] parameters) {
         return decryptValue(value);
     }
 
@@ -192,7 +190,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param handler the handler
      * @return the string
      */
-    public @Nullable String encryptValue(final String value, final Function<Exception, @Nullable String> handler) {
+    public @Nullable String encryptValue(@Nullable final String value, final Function<Exception, @Nullable String> handler) {
         try {
             return encryptValueAndThrow(value);
         } catch (final Exception e) {
@@ -206,7 +204,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param value the value
      * @return the string
      */
-    public @Nullable String encryptValue(final String value) {
+    public @Nullable String encryptValue(@Nullable final String value) {
         return encryptValue(value, e -> {
             LOGGER.warn("Could not encrypt value [{}]", value, e);
             return null;
@@ -219,7 +217,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param value the value
      * @return the string
      */
-    public @Nullable String decryptValue(final String value) {
+    public @Nullable String decryptValue(@Nullable final String value) {
         try {
             return decryptValueAndThrow(value);
         } catch (final Exception e) {
@@ -234,7 +232,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param value the value
      * @return the string
      */
-    private String encryptValueAndThrow(final String value) {
+    private String encryptValueAndThrow(@Nullable final String value) {
         initializeJasyptInstanceIfNecessary();
         return ENCRYPTED_VALUE_PREFIX + jasyptInstance.encrypt(value);
     }
@@ -245,7 +243,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param value the value
      * @return the decrypted value, or parameter value as was passed.
      */
-    private String decryptValueDirect(final String value) {
+    private @Nullable String decryptValueDirect(@Nullable final String value) {
         initializeJasyptInstanceIfNecessary();
         LOGGER.trace("Decrypting value [{}]...", value);
         val result = jasyptInstance.decrypt(value);
@@ -263,7 +261,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param value the value
      * @return the string
      */
-    private String decryptValueAndThrow(final String value) {
+    private @Nullable String decryptValueAndThrow(@Nullable final String value) {
         if (isValueEncrypted(value)) {
             val encValue = extractEncryptedValue(value);
             return decryptValueDirect(encValue);
