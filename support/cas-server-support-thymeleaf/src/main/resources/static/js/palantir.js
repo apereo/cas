@@ -2436,8 +2436,13 @@ async function restoreActiveTabs() {
     const storedTabs = localStorage.getItem("ActiveTabs");
     const activeTabs = storedTabs ? JSON.parse(storedTabs) : {};
     for (const [key, value] of Object.entries(activeTabs)) {
-        $(`#${key}`).tabs("option", "active", Number(value));
-        $(`#${key}`).tabs("refresh");
+        const tabs = $(`#${key}`);
+        if (tabs.find("> ul > li").eq(Number(value)).is(":visible")) {
+            tabs.tabs("option", "active", Number(value));
+        } else {
+            tabs.tabs("option", "active", 0);
+        }
+        tabs.tabs("refresh");
     }
 }
 
