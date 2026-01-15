@@ -1,7 +1,9 @@
 package org.apereo.cas.ticket.tracking;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.Ticket;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link TicketTrackingPolicy}.
@@ -34,7 +36,7 @@ public interface TicketTrackingPolicy {
      * @param ticket      the tracked ticket
      * @param service     the service
      */
-    default String trackTicket(final Ticket ownerTicket, final Ticket ticket, final Service service) {
+    default @Nullable String trackTicket(@Nullable final Ticket ownerTicket, final Ticket ticket, @Nullable final Service service) {
         return null;
     }
 
@@ -46,7 +48,7 @@ public interface TicketTrackingPolicy {
      * @param ownerTicket the owner ticket
      * @param ticket      the tracked ticket
      */
-    default String trackTicket(final Ticket ownerTicket, final Ticket ticket) {
+    default @Nullable String trackTicket(final Ticket ownerTicket, final Ticket ticket) {
         return trackTicket(ownerTicket, ticket, null);
     }
 
@@ -67,7 +69,7 @@ public interface TicketTrackingPolicy {
      * @param entry the entry
      * @return the string
      */
-    default String extractTicket(final String entry) {
+    default @Nullable String extractTicket(final String entry) {
         return null;
     }
 

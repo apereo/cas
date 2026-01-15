@@ -1,6 +1,6 @@
 package org.apereo.cas.acct;
 
-import java.util.Map;
+import module java.base;
 
 /**
  * This is {@link AccountRegistrationPropertyLoader}.

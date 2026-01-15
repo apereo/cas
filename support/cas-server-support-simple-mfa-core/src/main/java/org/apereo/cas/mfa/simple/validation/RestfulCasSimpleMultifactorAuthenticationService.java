@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple.validation;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.simple.RestfulCasSimpleMultifactorAuthenticationTokenProperties;
@@ -28,12 +29,6 @@ import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import tools.jackson.core.util.MinimalPrettyPrinter;
 import tools.jackson.databind.ObjectMapper;
-import javax.security.auth.login.FailedLoginException;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link RestfulCasSimpleMultifactorAuthenticationService}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.slo;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.slo.BaseSingleLogoutServiceMessageHandler;
@@ -29,10 +30,6 @@ import org.pac4j.core.util.CommonHelper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * The message handler for the OIDC protocol.

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import module java.base;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasSamlIdPJpaAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;

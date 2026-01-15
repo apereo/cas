@@ -1,7 +1,6 @@
 package org.apereo.cas.rest;
 
-
-import java.io.Serial;
+import module java.base;
 
 /**
  * This is {@link BadRestRequestException}.

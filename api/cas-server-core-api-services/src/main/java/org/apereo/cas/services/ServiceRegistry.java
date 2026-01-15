@@ -1,17 +1,11 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.util.NamedObject;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
 
 /**
  * Registry of all RegisteredServices.
@@ -103,7 +97,7 @@ public interface ServiceRegistry extends NamedObject, Ordered {
      * @param id the id
      * @return the registered service
      */
-    RegisteredService findServiceById(long id);
+    @Nullable RegisteredService findServiceById(long id);
 
     /**
      * Find service by the numeric id.
@@ -113,7 +107,7 @@ public interface ServiceRegistry extends NamedObject, Ordered {
      * @param clazz the clazz
      * @return the registered service
      */
-    default <T extends RegisteredService> T findServiceById(final long id, final Class<T> clazz) {
+    default @Nullable <T extends RegisteredService> T findServiceById(final long id, final Class<T> clazz) {
         val service = findServiceById(id);
         if (service == null) {
             return null;
@@ -132,7 +126,7 @@ public interface ServiceRegistry extends NamedObject, Ordered {
      * @param id the id to match with.
      * @return the registered service
      */
-    default RegisteredService findServiceBy(final String id) {
+    default @Nullable RegisteredService findServiceBy(final String id) {
         return getServicesStream()
             .sorted()
             .filter(r -> r.matches(id))
@@ -146,7 +140,7 @@ public interface ServiceRegistry extends NamedObject, Ordered {
      * @param id the id
      * @return the registered service
      */
-    default RegisteredService findServiceByExactServiceId(final String id) {
+    default @Nullable RegisteredService findServiceByExactServiceId(final String id) {
         return getServicesStream()
             .sorted()
             .filter(r -> StringUtils.isNotBlank(r.getServiceId()) && r.getServiceId().equals(id))
@@ -160,7 +154,7 @@ public interface ServiceRegistry extends NamedObject, Ordered {
      * @param name the name
      * @return the registered service
      */
-    default RegisteredService findServiceByExactServiceName(final String name) {
+    default @Nullable RegisteredService findServiceByExactServiceName(final String name) {
         return getServicesStream()
             .sorted()
             .filter(r -> r.getName().equals(name))
@@ -176,7 +170,7 @@ public interface ServiceRegistry extends NamedObject, Ordered {
      * @param clazz the clazz
      * @return the t
      */
-    default <T extends RegisteredService> T findServiceByExactServiceName(final String name, final Class<T> clazz) {
+    default @Nullable <T extends RegisteredService> T findServiceByExactServiceName(final String name, final Class<T> clazz) {
         val service = findServiceByExactServiceName(name);
         if (service == null) {
             return null;

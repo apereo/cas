@@ -1,19 +1,13 @@
 package org.apereo.cas.util.jwt;
 
+import module java.base;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
-
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
 import org.jose4j.keys.AesKey;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

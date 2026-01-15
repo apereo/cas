@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.policy.AllAuthenticationHandlersSucceededAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
@@ -40,14 +41,6 @@ import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CoreAuthenticationUtils}.
@@ -84,25 +77,17 @@ public class CoreAuthenticationUtils {
      * @return the attribute merger
      */
     public static AttributeMerger getAttributeMerger(final PrincipalAttributesCoreProperties.MergingStrategyTypes mergingPolicy) {
-        switch (mergingPolicy) {
+        return switch (mergingPolicy) {
             case MULTIVALUED -> {
                 val merger = new MultivaluedAttributeMerger();
                 merger.setDistinctValues(true);
-                return merger;
+                yield merger;
             }
-            case ADD -> {
-                return new NoncollidingAttributeAdder();
-            }
-            case SOURCE -> {
-                return new ReturnOriginalAttributeMerger();
-            }
-            case DESTINATION -> {
-                return new ReturnChangesAttributeMerger();
-            }
-            default -> {
-                return new ReplacingAttributeAdder();
-            }
-        }
+            case ADD -> new NoncollidingAttributeAdder();
+            case SOURCE -> new ReturnOriginalAttributeMerger();
+            case DESTINATION -> new ReturnChangesAttributeMerger();
+            default -> new ReplacingAttributeAdder();
+        };
     }
 
     /**

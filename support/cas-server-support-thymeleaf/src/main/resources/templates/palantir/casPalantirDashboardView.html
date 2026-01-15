@@ -17,11 +17,16 @@
     <script type="text/javascript" th:src="@{#{webjars.ace-editor-beautify.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.sweet-alert.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.notyf.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.jsyaml.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.mermaid.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.hotkeys.js}}"></script>
 
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.sweet-alert.css}}" />
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.animate.css}}" />
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.notyf.css}}" />
+    <link rel="stylesheet" type="text/css" th:href="@{#{webjars.dataTables.jqueryui.css}}" />
+
+    <link rel="stylesheet" type="text/css" th:href="@{/css/palantir.css}" />
 
     <script th:inline="javascript">
         /*<![CDATA[*/
@@ -31,22 +36,54 @@
         const supportedServiceTypes = /*[[${supportedServiceTypes}]]*/;
         const availableMultifactorProviders = /*[[${availableMultifactorProviders}]]*/;
         const scriptFactoryAvailable = /*[[${scriptFactoryAvailable}]]*/;
+        const mutablePropertySources = /*[[${mutablePropertySources}]]*/;
+        const mutablePropertySourcesAvailable = mutablePropertySources.length > 0;
         /*]]>*/
     </script>
-    
     <script type="text/javascript" th:src="@{/js/palantir.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-dashboard.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-utils.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-settings.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-cas-config.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-mfa.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-pac4j.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-webflow.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-system.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-person-directory.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-consent.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-multitenancy.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-throttles.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-protocols.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-logging.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-tickets.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-tasks.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-sso.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-authn.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-authz.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-charts.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-cas-discovery.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-cas-features.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-cas-events.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-hotkeys.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-services.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-cas.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-oauth.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-oidc.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-saml2.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-wsfed.js}"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"></script>
+
+
 </head>
 
 <body>
 
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="dashboard" class="d-none">
+        <div th:utext="${#lists}"
         <div th:replace="~{fragments/palantir/navigationsidebar :: main}"/>
         <div class="mdc-card p-2 m-1" style="min-height: 100vh;">
             <div th:replace="~{fragments/palantir/dashboardtabs :: main}"/>
@@ -67,6 +104,35 @@
             <div th:replace="~{fragments/palantir/multitenancytab :: main}"/>
         </div>
         <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
+        <script type="text/javascript" th:src="@{#{webjars.dataTables.jqueryui.js}}"></script>
+
+
+
+        <div id="palantirSettingsDialog" title="Palantir Settings" class="hide">
+            <form id="palantirSettingsForm">
+                <section class="cas-field form-group my-3 mdc-input-group d-flex">
+                    <div id="palantirSettingsPanel"
+                         class="mdc-input-group-field mdc-input-group-field-append w-100">
+
+                        <label for="palantirRefreshInterval">
+                            Refresh Interval:
+                            <select id="palantirRefreshInterval">
+                                <option value="10">Every 10 Seconds</option>
+                                <option value="30">Every 30 Seconds</option>
+                                <option value="60">Every Minute</option>
+                                <option value="300">Every 5 Minutes</option>
+                                <option value="1500">Every 15 Minutes</option>
+                            </select>
+                        </label>
+                    </div>
+                </section>
+
+                <hr>
+                <h3>Shortcuts & Key Bindings</h3>
+                <p/>
+                <div id="palantirShortcutsPanel" class="grid-2" />
+            </form>
+        </div>
     </div>
 </main>
 </body>

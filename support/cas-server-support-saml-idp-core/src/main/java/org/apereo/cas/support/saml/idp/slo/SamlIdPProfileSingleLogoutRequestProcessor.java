@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.idp.slo;
 
+import module java.base;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.springframework.webflow.execution.RequestContext;

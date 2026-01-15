@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.executor;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowProperties;
 import org.apereo.cas.util.crypto.CipherExecutorResolver;
 import lombok.Getter;
@@ -18,9 +19,6 @@ import org.springframework.webflow.execution.FlowExecutionKeyFactory;
 import org.springframework.webflow.execution.repository.FlowExecutionLock;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Stores all flow execution state in {@link ClientFlowExecutionKey}, which effectively stores execution state on the

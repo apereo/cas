@@ -1,16 +1,14 @@
 package org.apereo.cas.ws.idp.services;
 
+import module java.base;
 import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.io.Serial;
 
 /**
  * This is {@link WSFederationRegisteredService}.

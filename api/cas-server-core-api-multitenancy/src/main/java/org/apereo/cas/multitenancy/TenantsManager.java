@@ -1,7 +1,6 @@
 package org.apereo.cas.multitenancy;
 
-import java.util.List;
-import java.util.Optional;
+import module java.base;
 
 /**
  * This is {@link TenantsManager}.

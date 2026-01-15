@@ -1,15 +1,11 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.code.OAuth20Code;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * OAuth tokens are mostly like service tickets: they deal with authentication and service.

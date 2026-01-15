@@ -1,17 +1,13 @@
 package org.apereo.cas.hz;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastWANReplicationTargetClusterProperties;
 import org.apereo.cas.test.CasTestExtension;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import java.util.Arrays;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

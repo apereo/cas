@@ -1,13 +1,11 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
-
 import lombok.ToString;
-
-import java.util.Optional;
 
 /**
  * Extracts the Principal out of PrincipalBearingCredential. It is very simple

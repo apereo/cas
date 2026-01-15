@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import com.hazelcast.instance.GeneratedBuildProperties;
 import com.hazelcast.internal.cluster.Versions;
@@ -79,8 +80,6 @@ import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
-import java.util.AbstractQueue;
-import java.util.List;
 
 /**
  * This is {@link HazelcastCoreRuntimeHints}.

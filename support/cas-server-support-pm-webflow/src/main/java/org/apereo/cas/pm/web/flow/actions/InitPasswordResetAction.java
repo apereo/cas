@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
@@ -22,11 +23,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link InitPasswordResetAction}, serves a as placeholder for extensions.
@@ -45,7 +45,7 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
     private final MultifactorAuthenticationContextValidator multifactorAuthenticationContextValidator;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val username = getPasswordResetUsername(requestContext);
         if (StringUtils.isBlank(username)) {
             LOGGER.error("Password reset token could not be verified to determine username");

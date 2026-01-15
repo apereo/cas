@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.credential;
 
+import module java.base;
 import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,19 +13,13 @@ import lombok.ToString;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.validation.ValidationContext;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.validation.DefaultValidationContext;
-
 import jakarta.validation.constraints.Size;
-
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Credential for authenticating with a username and password.
@@ -39,6 +33,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = "password", callSuper = true)
+@SuppressWarnings("NullAway.Init")
 public class UsernamePasswordCredential extends AbstractCredential implements MutableCredential {
     /**
      * Authentication attribute name for password.
@@ -57,7 +52,7 @@ public class UsernamePasswordCredential extends AbstractCredential implements Mu
 
     private Map<String, Object> customFields = new LinkedHashMap<>();
 
-    public UsernamePasswordCredential(final String username, final String password) {
+    public UsernamePasswordCredential(final String username, @Nullable final String password) {
         this.username = username;
         assignPassword(StringUtils.defaultString(password));
     }
@@ -92,7 +87,7 @@ public class UsernamePasswordCredential extends AbstractCredential implements Mu
         val field = ReflectionUtils.findField(DefaultValidationContext.class, "requestContext");
         Objects.requireNonNull(field).trySetAccessible();
         val requestContext = (RequestContext) ReflectionUtils.getField(field, context);
-        val props = requestContext.getActiveFlow().getApplicationContext().getBean(CasConfigurationProperties.class);
+        val props = Objects.requireNonNull(requestContext).getActiveFlow().getApplicationContext().getBean(CasConfigurationProperties.class);
         
         if (StringUtils.isBlank(source) && props.getAuthn().getPolicy().isSourceSelectionEnabled()) {
             messageContext.addMessage(new MessageBuilder()
@@ -110,7 +105,7 @@ public class UsernamePasswordCredential extends AbstractCredential implements Mu
      *
      * @return the string
      */
-    public String toPassword() {
+    public @Nullable String toPassword() {
         return FunctionUtils.doIfNull(this.password, () -> null, () -> new String(this.password)).get();
     }
 

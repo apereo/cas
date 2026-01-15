@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall.authorizer;
 
+import module java.base;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 

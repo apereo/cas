@@ -1,5 +1,6 @@
 package org.apereo.cas.qr.web.flow;
 
+import module java.base;
 import org.apereo.cas.config.CasQRAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;

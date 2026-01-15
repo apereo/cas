@@ -1,10 +1,11 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import java.io.Serial;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultTicketDefinitionProperties}.
@@ -28,6 +29,7 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
     /**
      * Storage/cache name that holds this ticket.
      */
+    @Nullable
     private String storageName;
 
     /**
@@ -38,6 +40,7 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
     /**
      * Password for this ticket storage, if any.
      */
+    @Nullable
     private String storagePassword;
 
     /**

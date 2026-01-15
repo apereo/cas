@@ -1,19 +1,12 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.util.NamedObject;
-
 import lombok.val;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 /**
  * Manages the storage, retrieval, and matching of Services wishing to use CAS
@@ -119,7 +112,7 @@ public interface ServicesManager extends Ordered, NamedObject {
      * @param clazz     the clazz
      * @return the t
      */
-    <T extends RegisteredService> @Nullable T findServiceBy(Service serviceId, Class<T> clazz);
+    <T extends RegisteredService> @Nullable T findServiceBy(@Nullable Service serviceId, Class<T> clazz);
 
     /**
      * Find a {@link RegisteredService} by matching with the supplied id.

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.bypass;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
@@ -10,12 +11,11 @@ import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.Serial;
-import java.util.Locale;
 
 /**
  * This is {@link RestMultifactorAuthenticationProviderBypassEvaluator}.
@@ -40,9 +40,9 @@ public class RestMultifactorAuthenticationProviderBypassEvaluator extends BaseMu
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecuteInternal(final Authentication authentication,
-                                                                          final RegisteredService registeredService,
+                                                                          @Nullable final RegisteredService registeredService,
                                                                           final MultifactorAuthenticationProvider provider,
-                                                                          final HttpServletRequest request) {
+                                                                          @Nullable final HttpServletRequest request) {
         try {
             val principal = resolvePrincipal(authentication.getPrincipal());
             val rest = bypassProperties.getRest();

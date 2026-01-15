@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.springframework.core.Ordered;
-import java.util.Set;
 
 /**
  * This is {@link AuthenticationPolicyResolver}.

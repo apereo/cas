@@ -1,10 +1,10 @@
 package org.apereo.cas.heimdall.authorizer.resource.policy;
 
+import module java.base;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.AuthorizationResult;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.io.Serializable;
 
 /**
  * This is {@link ResourceAuthorizationPolicy}.

@@ -1,13 +1,11 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
+import module java.base;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
-
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.io.Serial;
 
 /**
  * This is {@link MongoDbYubiKeyAccount}.

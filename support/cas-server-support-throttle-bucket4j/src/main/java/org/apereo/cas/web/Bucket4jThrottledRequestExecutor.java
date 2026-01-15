@@ -1,12 +1,11 @@
 package org.apereo.cas.web;
 
+import module java.base;
 import org.apereo.cas.bucket4j.consumer.BucketConsumer;
 import org.apereo.cas.throttle.ThrottledRequestExecutor;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 

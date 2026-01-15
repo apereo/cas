@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn.web.flow;
 
+import module java.base;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;

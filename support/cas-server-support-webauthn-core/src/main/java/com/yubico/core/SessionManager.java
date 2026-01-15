@@ -1,11 +1,10 @@
 package com.yubico.core;
 
+import module java.base;
 import org.apereo.cas.util.RandomUtils;
 import com.yubico.webauthn.data.ByteArray;
 import org.jspecify.annotations.NonNull;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Objects;
-import java.util.Optional;
 
 public interface SessionManager {
     /**

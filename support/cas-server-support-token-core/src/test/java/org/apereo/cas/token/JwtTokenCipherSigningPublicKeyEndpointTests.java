@@ -1,5 +1,6 @@
 package org.apereo.cas.token;
 
+import module java.base;
 import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.io.StringReader;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

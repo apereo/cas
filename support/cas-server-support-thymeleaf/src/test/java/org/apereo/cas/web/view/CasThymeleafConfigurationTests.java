@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import module java.base;
 import org.apereo.cas.BaseThymeleafTests;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.test.CasTestExtension;
@@ -22,7 +23,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecutionException;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.AbstractTemplateResolver;
-import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

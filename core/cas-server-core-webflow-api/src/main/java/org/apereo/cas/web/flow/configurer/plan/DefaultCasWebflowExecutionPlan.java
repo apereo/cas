@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer.plan;
 
+import module java.base;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -11,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.servlet.HandlerInterceptor;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link DefaultCasWebflowExecutionPlan}.

@@ -10,7 +10,7 @@ createConfig() {
 management.endpoints.web.exposure.include=health,info,env,loggers
 management.endpoint.health.access=UNRESTRICTED
 management.endpoint.info.access=UNRESTRICTED
-cas.monitor.endpoints.endpoint.defaults.access[0]=IP_ADDRESS
+cas.monitor.endpoints.endpoint.defaults.access=IP_ADDRESS
 cas.monitor.endpoints.endpoint.defaults.required-ip-addresses[0]=.*
 management.endpoint.health.show-details=always
 spring.cloud.discovery.client.composite-indicator.enabled=false

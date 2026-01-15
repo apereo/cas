@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -10,10 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-import java.util.HashMap;
-import java.util.Map;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is
@@ -47,7 +45,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         this(name, PrincipalFactoryUtils.newPrincipalFactory(), Integer.MAX_VALUE, new HashMap<>());
     }
 
-    public AcceptUsersAuthenticationHandler(final String name,
+    public AcceptUsersAuthenticationHandler(final @Nullable String name,
                                             final PrincipalFactory principalFactory, final Integer order,
                                             final Map<String, String> users) {
         super(name, principalFactory, order);
@@ -55,8 +53,9 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws Throwable {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential credential,
+        @Nullable final String originalPassword) throws Throwable {
 
         if (this.users == null || this.users.isEmpty()) {
             throw new FailedLoginException("No user can be accepted because none is defined");

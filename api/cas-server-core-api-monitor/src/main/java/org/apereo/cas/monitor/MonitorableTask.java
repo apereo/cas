@@ -1,12 +1,11 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
 import org.aspectj.lang.JoinPoint;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link MonitorableTask}.

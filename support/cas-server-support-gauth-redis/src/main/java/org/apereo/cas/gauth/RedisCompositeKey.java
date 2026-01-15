@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth;
 
+import module java.base;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +8,6 @@ import lombok.Getter;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
-import java.util.Locale;
 
 /**
  * This is {@link RedisCompositeKey}.

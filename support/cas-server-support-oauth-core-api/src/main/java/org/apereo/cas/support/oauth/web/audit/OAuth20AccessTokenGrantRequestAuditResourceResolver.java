@@ -1,16 +1,15 @@
 package org.apereo.cas.support.oauth.web.audit;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
-
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
-
-import java.util.HashMap;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The {@link OAuth20AccessTokenGrantRequestAuditResourceResolver} for audit advice
@@ -22,8 +21,8 @@ import java.util.HashMap;
 public class OAuth20AccessTokenGrantRequestAuditResourceResolver extends ReturnValueAsStringResourceResolver {
 
     @Override
-    public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
-        val auditResult = (AuditableExecutionResult) retval;
+    public String[] resolveFrom(final JoinPoint auditableTarget, @Nullable final Object retval) {
+        val auditResult = Objects.requireNonNull((AuditableExecutionResult) retval);
         val executionResult = auditResult.getExecutionResult();
 
         if (executionResult.isPresent()) {

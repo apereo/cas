@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
@@ -111,14 +112,6 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.webflow.execution.Action;
-import java.io.Serializable;
-import java.time.Duration;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 /**

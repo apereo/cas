@@ -1,17 +1,15 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.WatcherService;
-
 import lombok.Getter;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
-
-import java.util.Collection;
 
 /**
  * Implementation of {@link ServiceRegistry} that reads services definition from JSON

@@ -1,11 +1,11 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.soap;
 
+import module java.base;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
-
 import lombok.val;
 import org.apache.hc.core5.http.HttpStatus;
 import org.opensaml.soap.messaging.context.SOAP11Context;
@@ -16,8 +16,6 @@ import org.opensaml.soap.soap11.FaultActor;
 import org.opensaml.soap.soap11.FaultCode;
 import org.opensaml.soap.soap11.FaultString;
 import org.opensaml.soap.soap11.Header;
-
-import java.util.Objects;
 
 /**
  * The {@link SamlProfileSamlSoap11FaultResponseBuilder} is responsible for

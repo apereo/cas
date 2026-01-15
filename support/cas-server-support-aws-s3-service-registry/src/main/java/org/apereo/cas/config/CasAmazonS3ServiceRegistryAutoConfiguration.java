@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.aws.AmazonClientConfigurationBuilder;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.aws.s3.services.AmazonS3ServiceRegistry;
@@ -21,9 +22,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This is {@link CasAmazonS3ServiceRegistryAutoConfiguration}.

@@ -1,9 +1,7 @@
 package org.apereo.cas.uma.ticket.resource.repository;
 
+import module java.base;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link BaseResourceSetRepository}.

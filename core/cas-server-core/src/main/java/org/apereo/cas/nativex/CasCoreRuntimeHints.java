@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.jspecify.annotations.NonNull;
@@ -15,6 +16,6 @@ import org.springframework.aot.hint.RuntimeHints;
 public class CasCoreRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-        registerSerializableSpringProxyHints(hints, CentralAuthenticationService.class);
+        registerSpringProxyHints(hints, CentralAuthenticationService.class);
     }
 }

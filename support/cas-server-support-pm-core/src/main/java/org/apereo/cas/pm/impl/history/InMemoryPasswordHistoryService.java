@@ -1,13 +1,8 @@
 package org.apereo.cas.pm.impl.history;
 
+import module java.base;
 import org.apereo.cas.pm.PasswordChangeRequest;
-
 import lombok.val;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link InMemoryPasswordHistoryService}.

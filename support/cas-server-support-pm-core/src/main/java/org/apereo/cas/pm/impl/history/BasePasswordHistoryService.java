@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.impl.history;
 
+import module java.base;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.util.DigestUtils;
 

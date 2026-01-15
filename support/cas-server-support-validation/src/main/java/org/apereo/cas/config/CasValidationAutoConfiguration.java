@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -64,9 +65,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.web.servlet.View;
-import java.util.List;
-import java.util.Set;
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.MediaType.APPLICATION_XML_VALUE;
 
 /**
  * This is {@link CasValidationAutoConfiguration}.

@@ -1,13 +1,12 @@
 package org.apereo.cas.audit.spi;
 
+import module java.base;
 import org.apereo.cas.util.RandomUtils;
-
 import lombok.val;
 import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

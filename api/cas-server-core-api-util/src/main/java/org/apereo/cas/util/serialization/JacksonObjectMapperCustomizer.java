@@ -1,10 +1,8 @@
 package org.apereo.cas.util.serialization;
 
-
+import module java.base;
 import org.springframework.core.Ordered;
 import tools.jackson.databind.cfg.MapperBuilder;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link JacksonObjectMapperCustomizer}.

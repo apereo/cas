@@ -1,13 +1,12 @@
 package org.apereo.cas.util.cipher;
 
+import module java.base;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import lombok.experimental.UtilityClass;
 import lombok.val;
-
-import static org.jooq.lambda.Unchecked.*;
+import static org.jooq.lambda.Unchecked.supplier;
 
 /**
  * This is {@link CipherExecutorUtils}.

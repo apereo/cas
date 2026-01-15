@@ -1,7 +1,8 @@
 package org.apereo.cas.adaptors.ldap.services;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
-
+import org.jspecify.annotations.Nullable;
 import org.ldaptive.LdapEntry;
 
 /**
@@ -21,7 +22,7 @@ public interface LdapRegisteredServiceMapper {
      * @param result the result
      * @return the registered service
      */
-    RegisteredService mapToRegisteredService(LdapEntry result);
+    @Nullable RegisteredService mapToRegisteredService(LdapEntry result);
 
     /**
      * Map from registered service to ldap.
@@ -30,7 +31,7 @@ public interface LdapRegisteredServiceMapper {
      * @param svc the svc
      * @return the ldap entry
      */
-    LdapEntry mapFromRegisteredService(String dn, RegisteredService svc);
+    @Nullable LdapEntry mapFromRegisteredService(String dn, RegisteredService svc);
 
     /**
      * Gets the dn for registered service.

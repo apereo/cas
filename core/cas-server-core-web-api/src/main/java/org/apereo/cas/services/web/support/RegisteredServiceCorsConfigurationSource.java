@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web.support;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -11,8 +12,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * This is {@link RegisteredServiceCorsConfigurationSource}.

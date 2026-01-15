@@ -1,8 +1,8 @@
 package org.apereo.cas.interrupt.webflow;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptCoreProperties;
 import org.apereo.cas.interrupt.InterruptResponse;
-
 import lombok.experimental.UtilityClass;
 import org.springframework.webflow.execution.RequestContext;
 

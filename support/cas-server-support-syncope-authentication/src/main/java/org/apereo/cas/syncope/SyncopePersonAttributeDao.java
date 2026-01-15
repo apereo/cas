@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.BasePersonAttributeDao;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
@@ -8,12 +9,7 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttributesProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link SyncopePersonAttributeDao}.
@@ -27,7 +23,9 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
     private final SyncopePrincipalAttributesProperties properties;
 
     @Override
-    public PersonAttributes getPerson(final String uid, final Set<PersonAttributes> resolvedPeople, final PersonAttributeDaoFilter filter) {
+    public PersonAttributes getPerson(final String uid,
+                                      @Nullable final Set<PersonAttributes> resolvedPeople,
+                                      @Nullable final PersonAttributeDaoFilter filter) {
         val attributes = new HashMap<String, List<Object>>();
         val results = syncopeUserSearch(uid);
         results.forEach(attributes::putAll);
@@ -39,18 +37,19 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
     }
 
     @Override
-    public Set<PersonAttributes> getPeople(final Map<String, Object> map, final PersonAttributeDaoFilter filter,
-                                           final Set<PersonAttributes> resolvedPeople) {
+    public Set<PersonAttributes> getPeople(final Map<String, Object> map,
+                                           @Nullable final PersonAttributeDaoFilter filter,
+                                           @Nullable final Set<PersonAttributes> resolvedPeople) {
         return getPeopleWithMultivaluedAttributes(PersonAttributeDao.stuffAttributesIntoList(map), filter);
     }
 
     @Override
     public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(
-        final Map<String, List<Object>> map, final PersonAttributeDaoFilter filter,
-        final Set<PersonAttributes> resolvedPeople) {
+        final Map<String, List<Object>> map,
+        @Nullable final PersonAttributeDaoFilter filter,
+        @Nullable final Set<PersonAttributes> resolvedPeople) {
         return map.entrySet()
             .stream()
-            .filter(e -> Objects.nonNull(e.getValue()))
             .filter(e -> !e.getValue().isEmpty())
             .filter(e -> properties.getSearchFilter().contains(e.getKey()))
             .findFirst()

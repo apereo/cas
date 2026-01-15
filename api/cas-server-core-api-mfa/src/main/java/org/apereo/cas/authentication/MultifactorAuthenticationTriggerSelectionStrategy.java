@@ -1,13 +1,11 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-
+import org.jspecify.annotations.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * This interface is responsible for deciding which Multifactor provider to use based on the request, service, and
@@ -35,9 +33,9 @@ public interface MultifactorAuthenticationTriggerSelectionStrategy {
      */
     Optional<MultifactorAuthenticationProvider> resolve(HttpServletRequest request,
                                                         HttpServletResponse response,
-                                                        RegisteredService registeredService,
+                                                        @Nullable RegisteredService registeredService,
                                                         Authentication authentication,
-                                                        Service service) throws Throwable;
+                                                        @Nullable Service service) throws Throwable;
 
     /**
      * Gets multifactor authentication triggers.

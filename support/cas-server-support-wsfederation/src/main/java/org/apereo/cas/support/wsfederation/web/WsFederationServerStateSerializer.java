@@ -1,9 +1,8 @@
 package org.apereo.cas.support.wsfederation.web;
 
+import module java.base;
 import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.io.Serial;
-import java.util.Map;
 
 /**
  * This is {@link WsFederationServerStateSerializer}.

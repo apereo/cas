@@ -1,5 +1,6 @@
 package org.apereo.cas.consent;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import lombok.AllArgsConstructor;
@@ -7,8 +8,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.With;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This is {@link ConsentQueryResult}.

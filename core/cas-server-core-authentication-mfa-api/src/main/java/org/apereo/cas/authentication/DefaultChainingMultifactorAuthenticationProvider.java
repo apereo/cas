@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.bypass.DefaultChainingMultifactorAuthenticationBypassProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
@@ -13,12 +14,6 @@ import lombok.ToString;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.OrderComparator;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultChainingMultifactorAuthenticationProvider}.

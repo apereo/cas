@@ -1,15 +1,9 @@
 package org.apereo.cas.authentication.principal.merger;
 
+import module java.base;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import lombok.val;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 /**
  * Merges the Sets of Persons additively calling the abstract {@link #mergePersonAttributes(Map, Map)} method on the

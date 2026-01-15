@@ -1,7 +1,7 @@
 package org.apereo.cas.monitor;
 
+import module java.base;
 import org.apereo.cas.util.LoggingUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +9,6 @@ import lombok.val;
 import org.bson.Document;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
-
-import java.io.StringWriter;
 
 /**
  * This is {@link MongoDbCacheStatistics}.

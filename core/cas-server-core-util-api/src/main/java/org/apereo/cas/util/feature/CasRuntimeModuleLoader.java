@@ -1,6 +1,6 @@
 package org.apereo.cas.util.feature;
 
-import java.util.List;
+import module java.base;
 
 /**
  * This is {@link CasRuntimeModuleLoader}.

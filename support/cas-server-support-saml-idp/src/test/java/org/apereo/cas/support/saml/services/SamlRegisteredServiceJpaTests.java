@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import module java.base;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasJpaServiceRegistryAutoConfiguration;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

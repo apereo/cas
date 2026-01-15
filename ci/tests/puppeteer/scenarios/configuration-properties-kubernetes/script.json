@@ -1,0 +1,17 @@
+{
+  "dependencies": "configuration-cloud-kubernetes,reports,palantir",
+  "conditions": {
+    "docker": "true"
+  },
+  "requirements": {
+    "launch": {
+      "enabled": "false"
+    },
+    "docker": {
+      "build": "true"
+    }
+  },
+  "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh",
+  "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle",
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
+}

@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
+import module java.base;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -10,12 +10,9 @@ import lombok.experimental.SuperBuilder;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
-
-import java.util.Optional;
 
 /**
  * This is {@link SamlProfileBuilderContext}.

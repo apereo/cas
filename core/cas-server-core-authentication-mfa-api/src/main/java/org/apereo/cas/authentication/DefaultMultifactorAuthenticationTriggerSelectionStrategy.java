@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -9,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Default MFA Trigger selection strategy.

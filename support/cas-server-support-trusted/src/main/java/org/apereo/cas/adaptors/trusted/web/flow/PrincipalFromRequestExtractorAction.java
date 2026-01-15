@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import module java.base;
 import org.springframework.webflow.execution.Action;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 /**

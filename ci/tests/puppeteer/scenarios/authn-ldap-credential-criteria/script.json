@@ -1,5 +1,5 @@
 {
-  "dependencies": "ldap",
+  "dependencies": "ldap,reports",
   "conditions": {
     "docker": "true"
   },
@@ -12,6 +12,10 @@
 
     "--cas.authn.accept.enabled=false",
 
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+    
     "--logging.level.org.ldaptive=info",
     
     "--cas.authn.ldap[0].name=LDAP1",

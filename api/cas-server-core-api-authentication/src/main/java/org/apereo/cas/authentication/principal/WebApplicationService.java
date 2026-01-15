@@ -1,7 +1,9 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.validation.ValidationResponseType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Represents a service using CAS that comes from the web.
@@ -69,5 +71,5 @@ public interface WebApplicationService extends Service {
      *
      * @return the fragment
      */
-    String getFragment();
+    @Nullable String getFragment();
 }

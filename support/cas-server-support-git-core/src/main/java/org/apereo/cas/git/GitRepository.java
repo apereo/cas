@@ -1,5 +1,6 @@
 package org.apereo.cas.git;
 
+import module java.base;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.eclipse.jgit.lib.ObjectId;
@@ -7,10 +8,6 @@ import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
 import org.springframework.beans.factory.DisposableBean;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * This is {@link GitRepository}.

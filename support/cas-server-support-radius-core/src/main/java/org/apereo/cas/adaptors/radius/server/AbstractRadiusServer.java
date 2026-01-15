@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.radius.server;
 
+import module java.base;
 import org.apereo.cas.adaptors.radius.CasRadiusResponse;
 import org.apereo.cas.adaptors.radius.RadiusServer;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +31,6 @@ import net.jradius.packet.attribute.AttributeList;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.security.Security;
-import java.util.Optional;
 
 /**
  * Implementation of a RadiusServer that utilizes the JRadius packages available

@@ -1,14 +1,9 @@
 package org.apereo.cas.services.support;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.io.Serial;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * A filtering policy that selectively applies patterns to attributes mapped in the config.

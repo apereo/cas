@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.cassandra.services;
 
+import module java.base;
 import org.apereo.cas.config.CassandraServiceRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;

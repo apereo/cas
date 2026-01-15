@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
+import module java.base;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
@@ -30,9 +31,6 @@ import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Optional;
 
 /**
  * This is {@link SamlIdPProfileSingleLogoutMessageCreator}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityDirectCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.api.PasswordlessUserAccount;
@@ -14,12 +15,11 @@ import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * This is {@link DuoSecurityVerifyPasswordlessAuthenticationAction}.
@@ -39,7 +39,7 @@ public class DuoSecurityVerifyPasswordlessAuthenticationAction extends DuoSecuri
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val beanFactory = ((ConfigurableApplicationContext) requestContext.getActiveFlow().getApplicationContext()).getBeanFactory();
         val providers = new ArrayList<>(BeanFactoryUtils.beansOfTypeIncludingAncestors(beanFactory, DuoSecurityMultifactorAuthenticationProvider.class).values());
         return providers
@@ -48,8 +48,8 @@ public class DuoSecurityVerifyPasswordlessAuthenticationAction extends DuoSecuri
             .filter(BeanSupplier::isNotProxy)
             .filter(provider -> provider.getDuoAuthenticationService().getProperties().isPasswordlessAuthenticationEnabled())
             .map(provider -> FunctionUtils.doAndHandle(() -> {
-                val account = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
-                val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(account.getUsername());
+                val account = Objects.requireNonNull(PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class));
+                val principal = Objects.requireNonNull(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(account.getUsername()));
                 val credential = new DuoSecurityDirectCredential(principal, provider.getId());
                 val credentialMetadata = new BasicCredentialMetadata(credential);
                 credentialMetadata.setTenant(tenantExtractor.extract(requestContext).map(TenantDefinition::getId).orElse(null));
@@ -58,7 +58,7 @@ public class DuoSecurityVerifyPasswordlessAuthenticationAction extends DuoSecuri
                 val authenticationResultBuilder = authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
                 val authenticationResult = authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
                 WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
-                WebUtils.putAuthenticationResult(authenticationResult, requestContext);
+                WebUtils.putAuthenticationResult(Objects.requireNonNull(authenticationResult), requestContext);
                 WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);
                 WebUtils.putCredential(requestContext, credential);
                 return success();

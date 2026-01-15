@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket;
 
-import java.util.Collection;
-import java.util.Optional;
+import module java.base;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link TicketCatalog}.
@@ -44,7 +44,7 @@ public interface TicketCatalog {
      * @param ticketId the ticket id
      * @return the ticket definition
      */
-    TicketDefinition find(String ticketId);
+    @Nullable TicketDefinition find(String ticketId);
 
     /**
      * Find ticket definition.
@@ -52,7 +52,7 @@ public interface TicketCatalog {
      * @param ticket the ticket
      * @return the ticket definition
      */
-    TicketDefinition find(Ticket ticket);
+    @Nullable TicketDefinition find(Ticket ticket);
 
     /**
      * Find all ticket definitions that implement the given ticketClass.

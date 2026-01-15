@@ -1,4 +1,5 @@
 package org.apereo.cas.support.oauth.profile;
+import module java.base;
 
 
 /**

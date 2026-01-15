@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.jpa;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.jpa.JpaBeanFactory;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -16,9 +17,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
-import java.time.ZonedDateTime;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 /**
  * This is {@link JpaCasEventRepository} that stores event data into a RDBMS database.

@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web;
 
+import module java.base;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.services.ServicesManager;
@@ -18,8 +19,6 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JacksonJsonView;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 /**
  * This is {@link OidcCallbackAuthorizeViewResolver}.

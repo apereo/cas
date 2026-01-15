@@ -1,17 +1,11 @@
 package org.apereo.cas.configuration.model.core.web;
 
+import module java.base;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Configuration properties class for message.bundle.

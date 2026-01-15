@@ -58,7 +58,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `526` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `532` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
@@ -87,6 +87,29 @@ as opposed to the previous `7~9` seconds in earlier runs and with previous JDK v
      
 Support for this functionality will ultimately supersede CDS that is now available to 
 [CAS overlay installations](../installation/WAR-Overlay-Initializr.html).
+ 
+### Configuration Source Updates
+
+A number of CAS configuration sources are reworked to allow updating properties dynamically at runtime. The changes
+should eventually allow the CAS deployer to modify configuration properties without having to restart the server.
+The configuration sources that are affected include:
+
+- [Amazon S3](../configuration/Configuration-Server-Management-SpringCloud-AmazonS3.html)
+- [Amazon DynamoDb](../configuration/Configuration-Server-Management-SpringCloud-DynamoDb.html)
+- [Amazon Secret Manager](../configuration/Configuration-Server-Management-SpringCloud-AmazonSecretManager.html)
+- [Amazon Systems Manager Parameter Store (SSM)](../configuration/Configuration-Server-Management-SpringCloud-AmazonSSM.html)
+- [JDBC](../configuration/Configuration-Server-Management-SpringCloud-JDBC.html)
+- [MongoDb](../configuration/Configuration-Server-Management-SpringCloud-MongoDb.html)
+- [REST](../configuration/Configuration-Server-Management-SpringCloud-REST.html)
+
+Furthermore, the `casConfig` actuator endpoint is enhanced to allow updating a configuration property at runtime. 
+This functionality will eventually be employed by the [Palantir Admin Dashboard](../installation/Admin-Dashboard.html)
+to allow web-based operations to modify server configuration, assuming the underlying configuration source supports
+dynamic updates.
+
+<div class="alert alert-info">:information_source: <strong>Note</strong>
+<p>If CAS is configured using <code>.properties</code>, <code>.yml</code>, or <code>.yaml</code> 
+configuration files, you will not be able to take advantage of this capability yet.</p></div>
 
 ### Google Authenticator Scratch Codes
 
@@ -100,7 +123,8 @@ This may be a breaking change. You will need to adjust your database schema base
 ### Palantir Admin Dashboard
 
 [Palantir Admin Console](../installation/Admin-Dashboard.html) now supports a wizard-based web editor
-that allows **registering** registered services.
+that allows **registering** registered services. Support for editing existing services using this wizard
+will be worked out in the future.
 
 <div class="alert alert-warning">:warning: <strong>Usage</strong><p>
 This functionality is brand new, and may still have many rough edges. Not every configuration property and setting
@@ -189,12 +213,6 @@ with Spring Boot `4`.
 
 Support for [SpringBoot Admin](../monitoring/Configuring-SpringBootAdmin.html) is not yet compatible with Spring Boot `4`.
 We plan to re-add support for Spring Boot Admin in the future once compatibility is restored.
-      
-#### Spring Session 
-
-[Spring Session with MongoDb](../webflow/Webflow-Customization-Sessions-ServerSide-MongoDb.html) 
-is not yet compatible with Spring Boot `4`. We plan to re-add support for these features 
-in the future once compatibility is restored.
 
 #### Jackson & JSON Processing
 
@@ -223,3 +241,4 @@ records, etc are processed and loaded.
 - Spring Webflow actions may optionally run in the context of a transaction if the underlying action is configured to do so.
 - [OpenID Connect Claims Mapping rules](../authentication/OIDC-Authentication-Claims-Mapping.html) now support external Groovy scripts.
 - [Releasing a principal id based on attributes](../integration/Attribute-Release-PrincipalId-Attribute.html) now supports multiple comma-separated attributes as fallback options.
+- [CAS themes](../ux/User-Interface-Customization-Themes-Static.html) are now, optionally, able to capture and remember the submitted username.

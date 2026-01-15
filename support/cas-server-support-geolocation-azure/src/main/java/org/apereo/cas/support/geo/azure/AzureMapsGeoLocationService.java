@@ -1,5 +1,6 @@
 package org.apereo.cas.support.geo.azure;
 
+import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
@@ -18,8 +19,6 @@ import com.azure.maps.search.implementation.models.ReverseGeocodingResultTypeEnu
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.net.InetAddress;
-import java.util.List;
 
 /**
  * This is {@link AzureMapsGeoLocationService} that reads geo data

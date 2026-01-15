@@ -1,18 +1,17 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
 import lombok.val;
-
-import java.io.Serial;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Concrete implementation of a proxy granting ticket (PGT). A PGT is
@@ -42,7 +41,7 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
     @JsonCreator
     public ProxyGrantingTicketImpl(@JsonProperty("id") final String id,
                                    @JsonProperty("proxiedBy") final Service proxiedBy,
-                                   @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticketGrantingTicket,
+                                   @Nullable @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticketGrantingTicket,
                                    @JsonProperty("authentication") final Authentication authentication,
                                    @JsonProperty("expirationPolicy") final ExpirationPolicy expirationPolicy) {
         super(id, proxiedBy, ticketGrantingTicket, authentication, expirationPolicy);

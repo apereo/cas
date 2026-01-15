@@ -1,11 +1,11 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
-import java.io.Serializable;
 
 /**
  * This is {@link RegisteredServiceSingleSignOnParticipationPolicy}.

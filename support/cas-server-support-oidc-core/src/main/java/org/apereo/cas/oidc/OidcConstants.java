@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc;
 
+import module java.base;
 import lombok.Getter;
 import org.apache.commons.text.WordUtils;
 

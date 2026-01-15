@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.sub;
 
+import module java.base;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.key.RedisKeyGeneratorFactory;
 import org.apereo.cas.ticket.registry.pub.RedisMessagePayload;

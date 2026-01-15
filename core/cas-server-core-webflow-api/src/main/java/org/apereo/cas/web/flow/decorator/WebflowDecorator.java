@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.decorator;
 
+import module java.base;
 import org.springframework.webflow.execution.RequestContext;
 
 /**

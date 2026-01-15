@@ -1,5 +1,6 @@
 package org.apereo.cas.sba;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.DigestUtils;
 import de.codecentric.boot.admin.server.domain.values.InstanceId;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
-import java.util.Objects;
 
 /**
  * This is {@link CasServerInstanceIdGenerator}.

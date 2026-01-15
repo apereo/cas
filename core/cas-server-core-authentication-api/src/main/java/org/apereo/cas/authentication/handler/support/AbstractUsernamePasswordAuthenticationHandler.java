@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.Credential;
@@ -16,11 +17,9 @@ import lombok.val;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-import java.util.ArrayList;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
@@ -33,6 +32,7 @@ import java.util.ArrayList;
 @Slf4j
 @Setter
 @Getter
+@SuppressWarnings("NullAway.Init")
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     /**
      * Decide how to execute password policy handling, if at all.
@@ -45,7 +45,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     private PasswordPolicyContext passwordPolicyConfiguration;
 
-    protected AbstractUsernamePasswordAuthenticationHandler(final String name, final PrincipalFactory principalFactory, final Integer order) {
+    protected AbstractUsernamePasswordAuthenticationHandler(final @Nullable String name, final PrincipalFactory principalFactory, final Integer order) {
         super(name, principalFactory, order);
     }
 
@@ -116,7 +116,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      */
     protected abstract AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
         UsernamePasswordCredential credential,
-        String originalPassword) throws Throwable;
+        @Nullable String originalPassword) throws Throwable;
 
     /**
      * Used in case passwordEncoder is used to match raw password with encoded password. Mainly for BCRYPT password encoders where each encoded

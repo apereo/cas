@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication.bypass.audit;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.util.AopUtils;
-
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -12,9 +12,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link MultifactorAuthenticationProviderBypassAuditResourceResolver}.
