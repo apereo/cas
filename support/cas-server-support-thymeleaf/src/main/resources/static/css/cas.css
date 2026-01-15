@@ -846,6 +846,17 @@ span button.toolbar {
     max-width: 45%;
 }
 
+.mmw-65 {
+    min-width: 65%;
+    max-width: 65%;
+}
+
+.mmw-85 {
+    min-width: 85%;
+    max-width: 85%;
+}
+
+
 .min-vw-100 {
     min-width: 100vw;
 }
@@ -887,7 +898,15 @@ span button.toolbar {
 }
 
 .mt-4 {
-    margin-top: 4px;
+    margin-top: 4px !important;
+}
+
+.mt-10 {
+    margin-top: 4px !important;
+}
+
+.mt-4rem {
+    margin-top: 4rem !important;
 }
 
 .mt-auto {
