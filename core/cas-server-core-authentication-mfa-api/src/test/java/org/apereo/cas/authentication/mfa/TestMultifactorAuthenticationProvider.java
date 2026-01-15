@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.mfa;
 
+import module java.base;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
@@ -14,9 +15,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-import java.io.Serial;
-import java.util.List;
-import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall.authzen;
 
+import module java.base;
 import org.apereo.cas.heimdall.BaseHeimdallEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,9 +11,6 @@ import lombok.ToString;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import org.springframework.validation.annotation.Validated;
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link AuthZenResponse}.

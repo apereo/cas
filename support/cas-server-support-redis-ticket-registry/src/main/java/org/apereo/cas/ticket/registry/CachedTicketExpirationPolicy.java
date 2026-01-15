@@ -1,11 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
+import module java.base;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.key.RedisKeyGenerator;
 import com.github.benmanes.caffeine.cache.Expiry;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
-import java.time.Duration;
 
 /**
  * This is {@link CachedTicketExpirationPolicy}.

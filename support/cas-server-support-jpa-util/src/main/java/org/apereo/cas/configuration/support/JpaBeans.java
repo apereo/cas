@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.support;
 
+import module java.base;
+import module java.sql;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.jpa.JpaConfigurationContext;
 import org.apereo.cas.util.LoggingUtils;
@@ -15,10 +17,6 @@ import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import javax.sql.DataSource;
-import java.sql.Driver;
-import java.util.Properties;
-import java.util.UUID;
 
 /**
  * This is {@link JpaBeans}.

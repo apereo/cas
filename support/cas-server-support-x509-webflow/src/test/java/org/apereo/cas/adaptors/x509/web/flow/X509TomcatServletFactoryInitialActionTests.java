@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.web.flow;
 
+import module java.base;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;

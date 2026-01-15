@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import module java.base;
 import org.apereo.cas.notifications.call.PhoneCallOperator;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.test.CasTestExtension;

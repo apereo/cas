@@ -1,11 +1,12 @@
 package org.apereo.cas.audit.spi.resource;
 
+import module java.base;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.util.AopUtils;
-
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Audit resource resolver for logout requests.
@@ -22,7 +23,7 @@ public class LogoutRequestResourceResolver implements AuditResourceResolver {
     }
 
     @Override
-    public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
+    public String[] resolveFrom(final JoinPoint joinPoint, @Nullable final Object retval) {
         return toResources(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
     }
 

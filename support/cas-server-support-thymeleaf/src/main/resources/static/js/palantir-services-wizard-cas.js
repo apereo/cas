@@ -231,6 +231,6 @@ function createCasRegisteredServiceFields() {
         title: "Define the supported protocol(s) for this application, separated by comma (e.g., <code>CAS10,CAS20,CAS30,SAML1</code>)."
     })
         .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",")];
+            return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
         });
 }

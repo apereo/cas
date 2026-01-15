@@ -1,10 +1,9 @@
 package org.apereo.cas.support.oauth.web.response;
 
+import module java.base;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.http.RedirectionAction;
-
-import java.util.Optional;
 
 /**
  * This is {@link OAuth20CasClientRedirectActionBuilder}.

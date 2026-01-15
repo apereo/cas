@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.web;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.SecurityTokenServiceTokenFetcher;
 import org.apereo.cas.authentication.principal.Service;
@@ -14,7 +15,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.x509.rest;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.X509CertificateExtractor;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
@@ -10,8 +11,6 @@ import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.springframework.util.MultiValueMap;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link X509RestHttpRequestHeaderCredentialFactory} that attempts to

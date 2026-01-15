@@ -1,16 +1,14 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.credential.AbstractCredential;
 import org.apereo.cas.authentication.principal.Principal;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.io.Serial;
 
 /**
  * Credential that bear the fully resolved and authenticated Principal, or an

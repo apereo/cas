@@ -1,9 +1,9 @@
 package org.apereo.cas.aws;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -16,9 +16,6 @@ import software.amazon.awssdk.core.retry.RetryMode;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.http.apache.ProxyConfiguration;
 import software.amazon.awssdk.regions.Region;
-
-import java.net.InetAddress;
-import java.net.URI;
 
 /**
  * This is {@link AmazonClientConfigurationBuilder}.

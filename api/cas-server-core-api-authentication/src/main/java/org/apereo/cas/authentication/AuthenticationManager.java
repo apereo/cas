@@ -1,4 +1,5 @@
 package org.apereo.cas.authentication;
+import module java.base;
 
 /**
  * Authenticates one or more credentials.

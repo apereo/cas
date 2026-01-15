@@ -1,10 +1,10 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.RootCasException;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import java.io.Serial;
 
 /**
  * Exception that is thrown when an Unauthorized Service attempts to use CAS.

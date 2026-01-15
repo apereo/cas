@@ -1,13 +1,10 @@
 package org.apereo.cas.metadata;
 
+import module java.base;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * This is {@link ConfigurationMetadataCatalogQuery}.

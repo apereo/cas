@@ -1,5 +1,6 @@
 package org.apereo.cas.token;
 
+import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
@@ -11,7 +12,6 @@ import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.jose.Header;
@@ -33,17 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link JwtBuilder}.
@@ -89,23 +78,34 @@ public class JwtBuilder {
     }
 
     /**
+     * Try parsing JWT.
+     *
+     * @param jwt the jwt
+     * @return the optional
+     */
+    public static Optional<JWTClaimsSet> tryParse(@Nullable final String jwt) {
+        try {
+            return Optional.ofNullable(JWTParser.parse(jwt).getJWTClaimsSet());
+        } catch (final Exception e) {
+            LOGGER.trace("Unable to parse [{}] JWT; trying JWT claim set...", jwt);
+            try {
+                return Optional.ofNullable(JWTClaimsSet.parse(jwt));
+            } catch (final Exception ex) {
+                LOGGER.trace("Unable to parse JWT", ex);
+                return Optional.empty();
+            }
+        }
+    }
+
+    /**
      * Parse jwt.
      *
      * @param jwt the jwt
      * @return the jwt
      */
-    public static JWTClaimsSet parse(@Nullable final String jwt) {
-        try {
-            return JWTParser.parse(jwt).getJWTClaimsSet();
-        } catch (final Exception e) {
-            LOGGER.trace("Unable to parse [{}] JWT; trying JWT claim set...", jwt);
-            try {
-                return JWTClaimsSet.parse(jwt);
-            } catch (final Exception ex) {
-                LoggingUtils.error(LOGGER, ex);
-                throw new IllegalArgumentException("Unable to parse JWT");
-            }
-        }
+    public static @Nullable JWTClaimsSet parse(@Nullable final String jwt) {
+        val parsed = tryParse(jwt);
+        return parsed.orElse(null);
     }
 
     /**
@@ -124,7 +124,7 @@ public class JwtBuilder {
             return encryptedJWT.getHeader();
         }
     }
-    
+
     /**
      * Build plain string.
      *
@@ -146,7 +146,7 @@ public class JwtBuilder {
      * @param jwtJson the jwt json
      * @return the jwt claims set
      */
-    public JWTClaimsSet unpack(final String jwtJson) {
+    public @Nullable JWTClaimsSet unpack(final String jwtJson) {
         return unpack(Optional.empty(), jwtJson);
     }
 
@@ -157,7 +157,7 @@ public class JwtBuilder {
      * @param jwtJson the jwt json
      * @return the string
      */
-    public JWTClaimsSet unpack(final Optional<RegisteredService> service, final String jwtJson) {
+    public @Nullable JWTClaimsSet unpack(final Optional<RegisteredService> service, final String jwtJson) {
         return FunctionUtils.doUnchecked(() -> {
             service.ifPresent(svc -> {
                 LOGGER.trace("Located service [{}] in service registry", svc);
@@ -234,9 +234,9 @@ public class JwtBuilder {
                 .findFirst()
                 .orElseThrow(() -> UnauthorizedServiceException.denied(
                     """
-                    There is no application record registered with the CAS service registry that would match %s.
-                    Review the applications registered with the CAS service registry and make sure a matching record exists.
-                    """
+                        There is no application record registered with the CAS service registry that would match %s.
+                        Review the applications registered with the CAS service registry and make sure a matching record exists.
+                        """
                         .formatted(targetAudience).stripIndent().stripLeading())));
         return build(registeredService, claimsSet);
     }

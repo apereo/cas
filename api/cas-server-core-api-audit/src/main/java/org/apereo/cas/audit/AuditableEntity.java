@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 

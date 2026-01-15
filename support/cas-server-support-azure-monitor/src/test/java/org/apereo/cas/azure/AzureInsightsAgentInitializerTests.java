@@ -1,5 +1,6 @@
 package org.apereo.cas.azure;
 
+import module java.base;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
 import lombok.val;
@@ -7,7 +8,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import java.util.ServiceLoader;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

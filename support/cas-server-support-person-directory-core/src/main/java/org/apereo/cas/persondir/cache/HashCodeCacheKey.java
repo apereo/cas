@@ -1,11 +1,10 @@
 package org.apereo.cas.persondir.cache;
 
+import module java.base;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * Cache key which value is based on a pre-calculated hash code.

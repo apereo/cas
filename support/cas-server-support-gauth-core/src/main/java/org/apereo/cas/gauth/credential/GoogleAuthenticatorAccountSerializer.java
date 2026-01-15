@@ -1,9 +1,8 @@
 package org.apereo.cas.gauth.credential;
 
+import module java.base;
 import org.apereo.cas.util.serialization.BaseJacksonSerializer;
-
 import org.springframework.context.ConfigurableApplicationContext;
-import java.io.Serial;
 
 /**
  * This is {@link GoogleAuthenticatorAccountSerializer}.

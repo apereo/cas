@@ -1,5 +1,6 @@
 package org.apereo.cas.util.app;
 
+import module java.base;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.web;
 
+import module java.base;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientSessionManager;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
@@ -15,7 +16,6 @@ import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oidc.client.OidcClient;
 import org.springframework.beans.factory.ObjectProvider;
-import java.util.List;
 
 /**
  * This is {@link DelegatedClientOidcSessionManager}.

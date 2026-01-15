@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
+import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -8,10 +9,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-import javax.security.auth.login.AccountNotFoundException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.security.GeneralSecurityException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -74,6 +71,6 @@ class GroovyScriptAuthenticationPolicyTests {
     @Test
     void verifyBadFile() {
         val policy = new GroovyScriptAuthenticationPolicy("unknown-file");
-        assertThrows(IllegalArgumentException.class, () -> policy.shouldResumeOnFailure(new RuntimeException()));
+        assertFalse(policy.shouldResumeOnFailure(new RuntimeException()));
     }
 }

@@ -1,11 +1,11 @@
 package org.apereo.cas.support.events.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-import java.io.Serial;
 
 /**
  * Concrete subclass of {@link AbstractCasEvent} representing validation error of a

@@ -1,15 +1,11 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * This is {@link AttributeMappingRequest}.

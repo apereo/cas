@@ -1,17 +1,18 @@
 package org.apereo.cas.authentication.metadata;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * We utilize the {@link AuthenticationMetaDataPopulator} to retrieve and store
@@ -26,6 +27,7 @@ import org.apache.commons.lang3.ArrayUtils;
 @RequiredArgsConstructor
 public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
+    @Nullable
     private final CipherExecutor<String, String> cipherExecutor;
 
     public CacheCredentialsMetaDataPopulator() {

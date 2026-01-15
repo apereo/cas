@@ -1,5 +1,7 @@
 package org.apereo.cas.jdbc;
 
+import module java.base;
+import module java.sql;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -19,8 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import javax.sql.DataSource;
-import java.sql.Statement;
 
 /**
  * This is {@link BaseJdbcAttributeRepositoryTests}.

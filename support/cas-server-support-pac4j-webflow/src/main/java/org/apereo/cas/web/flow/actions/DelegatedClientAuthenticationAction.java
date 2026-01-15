@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.principal.ClientCredential;
@@ -25,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.CallContext;
@@ -38,10 +40,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This class represents an action to put at the beginning of the webflow.
@@ -79,7 +77,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext context) {
+    protected @Nullable Event doExecuteInternal(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         val webContext = new JEEContext(request, response);
@@ -162,7 +160,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     private void removeTicketGrantingTicketIfAny(final RequestContext context, final String clientName,
-                                                 final Service resolvedService) throws Exception {
+                                                 @Nullable final Service resolvedService) throws Exception {
         val tgt = WebUtils.getTicketGrantingTicketId(context);
         if (tgt != null) {
             configContext.getTicketRegistry().deleteTicket(tgt);
@@ -190,7 +188,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             Optional::empty);
     }
 
-    protected Event finalizeDelegatedClientAuthentication(final RequestContext context,
+    protected @Nullable Event finalizeDelegatedClientAuthentication(final RequestContext context,
                                                           final ClientCredential credentials) throws Throwable {
         val strategies = new ArrayList<>(configContext.getApplicationContext()
             .getBeansOfType(DelegatedClientAuthenticationCredentialResolver.class).values());
@@ -234,8 +232,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return super.doPreExecute(context);
     }
 
-    protected Service populateContextWithService(final RequestContext context,
-                                                 final Service service) throws Throwable {
+    protected @Nullable Service populateContextWithService(final RequestContext context,
+                                                 @Nullable final Service service) throws Throwable {
         if (service != null) {
             val resolvedService = configContext.getAuthenticationRequestServiceSelectionStrategies().resolveService(service);
             LOGGER.trace("Authentication is resolved by service request from [{}]", service);
@@ -272,7 +270,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return client;
     }
 
-    private void verifyClientIsAuthorizedForService(final RequestContext requestContext, final Service service, final BaseClient client) {
+    private void verifyClientIsAuthorizedForService(final RequestContext requestContext, @Nullable final Service service, final BaseClient client) {
         LOGGER.debug("Delegated authentication client is [{}] with service [{}]", client, service);
         if (service != null) {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -307,7 +305,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     }
 
     protected boolean isDelegatedClientAuthorizedForService(final Client client,
-                                                            final Service service,
+                                                            @Nullable final Service service,
                                                             final RequestContext requestContext) {
         return configContext.getDelegatedClientIdentityProviderAuthorizers()
             .stream()

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.util;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import java.security.cert.X509Certificate;
-import java.util.LinkedHashSet;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

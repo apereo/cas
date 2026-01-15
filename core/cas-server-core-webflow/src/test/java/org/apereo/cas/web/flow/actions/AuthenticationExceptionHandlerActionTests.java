@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -18,11 +19,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
-import javax.security.auth.login.AccountLockedException;
-import javax.security.auth.login.AccountNotFoundException;
-import java.security.GeneralSecurityException;
-import java.util.HashMap;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

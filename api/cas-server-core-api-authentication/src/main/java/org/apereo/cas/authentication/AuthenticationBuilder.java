@@ -1,14 +1,9 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Constructs immutable {@link Authentication} objects using the builder pattern.
@@ -31,7 +26,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @param p Authenticated principal.
      * @return This builder instance.
      */
-    AuthenticationBuilder setPrincipal(Principal p);
+    AuthenticationBuilder setPrincipal(@Nullable Principal p);
 
     /**
      * Add credentials authentication builder.
@@ -90,7 +85,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @param value Authentication attribute value.
      * @return This builder instance.
      */
-    AuthenticationBuilder addAttribute(String key, Object value);
+    AuthenticationBuilder addAttribute(String key, @Nullable Object value);
 
     /**
      * Add attributes.

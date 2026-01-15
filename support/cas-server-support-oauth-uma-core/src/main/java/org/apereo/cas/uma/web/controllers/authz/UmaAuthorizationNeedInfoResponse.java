@@ -1,16 +1,11 @@
 package org.apereo.cas.uma.web.controllers.authz;
 
+import module java.base;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.LinkedHashSet;
 
 /**
  * This is {@link UmaAuthorizationNeedInfoResponse}.

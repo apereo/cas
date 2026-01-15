@@ -1,12 +1,12 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import module java.base;
+import module java.xml;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import net.shibboleth.shared.resolver.ResolverException;
 import org.jspecify.annotations.NonNull;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.security.impl.MetadataCredentialResolver;
-import javax.xml.namespace.QName;
-import java.util.Objects;
 
 /**
  * This is {@link SamlIdPMetadataCredentialResolver}.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHolder;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -41,6 +42,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.WWWFormCodec;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.http.HttpMethod;
@@ -57,16 +59,6 @@ import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.Serializable;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Common utilities for the web tier.
@@ -140,7 +132,7 @@ public class WebUtils {
      *
      * @return the http servlet request
      */
-    public static HttpServletRequest getHttpServletRequestFromExternalWebflowContext() {
+    public static @Nullable HttpServletRequest getHttpServletRequestFromExternalWebflowContext() {
         val servletExternalContext = ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletRequest) servletExternalContext.getNativeRequest();
@@ -164,7 +156,7 @@ public class WebUtils {
      *
      * @return the http servlet response
      */
-    public static HttpServletResponse getHttpServletResponseFromExternalWebflowContext() {
+    public static @Nullable HttpServletResponse getHttpServletResponseFromExternalWebflowContext() {
         val servletExternalContext = ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletResponse) servletExternalContext.getNativeResponse();
@@ -191,7 +183,7 @@ public class WebUtils {
      * @param context the context
      * @return the service
      */
-    public static WebApplicationService getService(final RequestContext context) {
+    public static @Nullable WebApplicationService getService(final RequestContext context) {
         return Optional.ofNullable(context).map(requestContext
             -> (WebApplicationService) requestContext.getFlowScope().get(CasWebflowConstants.ATTRIBUTE_SERVICE)).orElse(null);
     }
@@ -202,7 +194,7 @@ public class WebUtils {
      * @param context the context
      * @return the service
      */
-    public static RegisteredService getRegisteredService(final RequestContext context) {
+    public static @Nullable RegisteredService getRegisteredService(final RequestContext context) {
         return Optional.ofNullable(context)
             .map(requestContext -> (RegisteredService)
                 requestContext.getFlowScope().get(CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)).orElse(null);
@@ -214,7 +206,7 @@ public class WebUtils {
      * @param request the request
      * @return the registered service
      */
-    public static RegisteredService getRegisteredService(final HttpServletRequest request) {
+    public static @Nullable RegisteredService getRegisteredService(final HttpServletRequest request) {
         return Optional.ofNullable(request)
             .map(requestContext -> (RegisteredService) request.getAttribute(CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE)).orElse(null);
     }
@@ -257,7 +249,7 @@ public class WebUtils {
      * @param context     the context
      * @param ticketValue the ticket value
      */
-    public static void putTicketGrantingTicketInScopes(final RequestContext context, final String ticketValue) {
+    public static void putTicketGrantingTicketInScopes(final RequestContext context, final @Nullable String ticketValue) {
         putTicketGrantingTicketIntoMap(context.getRequestScope(), ticketValue);
         putTicketGrantingTicketIntoMap(context.getFlowScope(), ticketValue);
 
@@ -380,7 +372,7 @@ public class WebUtils {
      * @param context the context
      * @param service the service
      */
-    public static void putServiceIntoFlowScope(final RequestContext context, final Service service) {
+    public static void putServiceIntoFlowScope(final RequestContext context, @Nullable final Service service) {
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
     }
 
@@ -390,7 +382,7 @@ public class WebUtils {
      * @param context the context
      * @param service the service
      */
-    public static void putServiceIntoFlashScope(final RequestContext context, final Service service) {
+    public static void putServiceIntoFlashScope(final RequestContext context, @Nullable final Service service) {
         context.getFlashScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
     }
 
@@ -421,7 +413,7 @@ public class WebUtils {
      * @param request           the request
      * @param registeredService the registered service
      */
-    public static void putRegisteredService(final HttpServletRequest request, final RegisteredService registeredService) {
+    public static void putRegisteredService(final HttpServletRequest request, @Nullable final RegisteredService registeredService) {
         request.setAttribute(CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE, registeredService);
     }
 
@@ -431,7 +423,8 @@ public class WebUtils {
      * @param context           the context
      * @param registeredService the service
      */
-    public static void putRegisteredService(final RequestContext context, final RegisteredService registeredService) {
+    public static void putRegisteredService(final RequestContext context,
+                                            @Nullable final RegisteredService registeredService) {
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_REGISTERED_SERVICE, registeredService);
     }
 
@@ -443,7 +436,7 @@ public class WebUtils {
      * @param clazz   the clazz
      * @return the credential
      */
-    public static <T extends Credential> T getCredential(final RequestContext context, final @NonNull Class<T> clazz) {
+    public static <T extends Credential> @Nullable T getCredential(final RequestContext context, final @NonNull Class<T> clazz) {
         val credential = getCredential(context);
         if (credential == null) {
             return null;
@@ -462,7 +455,7 @@ public class WebUtils {
      * @param context the context
      * @return the credential, or null if it can't be found in the context or if it has no id.
      */
-    public static Credential getCredential(final RequestContext context) {
+    public static @Nullable Credential getCredential(final RequestContext context) {
         val cFromRequest = (Credential) context.getRequestScope().get(PARAMETER_CREDENTIAL);
         val cFromFlashScope = (Credential) context.getFlashScope().get(PARAMETER_CREDENTIAL);
         val cFromFlow = (Credential) context.getFlowScope().get(PARAMETER_CREDENTIAL);
@@ -498,7 +491,7 @@ public class WebUtils {
      * @param context    the context
      * @param credential the credential
      */
-    public static void putCredential(final RequestContext context, final Credential credential) {
+    public static void putCredential(final RequestContext context, final @Nullable Credential credential) {
         if (credential == null) {
             context.getRequestScope().remove(PARAMETER_CREDENTIAL);
             context.getFlowScope().remove(PARAMETER_CREDENTIAL);
@@ -701,7 +694,7 @@ public class WebUtils {
      *
      * @return the http servlet request user agent
      */
-    public static String getHttpServletRequestUserAgentFromRequestContext() {
+    public static @Nullable String getHttpServletRequestUserAgentFromRequestContext() {
         val request = getHttpServletRequestFromExternalWebflowContext();
         return HttpRequestUtils.getHttpServletRequestUserAgent(request);
     }
@@ -732,7 +725,7 @@ public class WebUtils {
      *
      * @return the http servlet request geo location
      */
-    public static GeoLocationRequest getHttpServletRequestGeoLocationFromRequestContext() {
+    public static @Nullable GeoLocationRequest getHttpServletRequestGeoLocationFromRequestContext() {
         val servletRequest = getHttpServletRequestFromExternalWebflowContext();
         return getHttpServletRequestGeoLocation(servletRequest);
     }
@@ -754,7 +747,7 @@ public class WebUtils {
      * @param servletRequest the servlet request
      * @return the http servlet request geo location
      */
-    public static GeoLocationRequest getHttpServletRequestGeoLocation(final HttpServletRequest servletRequest) {
+    public static @Nullable GeoLocationRequest getHttpServletRequestGeoLocation(final @Nullable HttpServletRequest servletRequest) {
         if (servletRequest != null) {
             return HttpRequestUtils.getHttpServletRequestGeoLocation(servletRequest);
         }
@@ -916,7 +909,7 @@ public class WebUtils {
      * @param clazz   the clazz
      * @return the logout redirect url
      */
-    public static <T> T getLogoutRedirectUrl(final HttpServletRequest request, final Class<T> clazz) {
+    public static <T> @Nullable T getLogoutRedirectUrl(final HttpServletRequest request, final Class<T> clazz) {
         val value = request.getAttribute("logoutRedirectUrl");
         return Optional.ofNullable(value).map(clazz::cast).orElse(null);
     }
@@ -983,7 +976,7 @@ public class WebUtils {
      * @param clz            the clz
      * @return the service user interface metadata
      */
-    public static <T> T getServiceUserInterfaceMetadata(final RequestContext requestContext, final Class<T> clz) {
+    public static <T> @Nullable T getServiceUserInterfaceMetadata(final RequestContext requestContext, final Class<T> clz) {
         if (requestContext.getFlowScope().contains(PARAMETER_SERVICE_UI_METADATA)) {
             return requestContext.getFlowScope().get(PARAMETER_SERVICE_UI_METADATA, clz);
         }
@@ -1250,7 +1243,7 @@ public class WebUtils {
      * @param clazz          the clazz
      * @return the acceptable usage policy terms from flow scope
      */
-    public static <T> T getAcceptableUsagePolicyTermsFromFlowScope(final RequestContext requestContext, final Class<T> clazz) {
+    public static <T> @Nullable T getAcceptableUsagePolicyTermsFromFlowScope(final RequestContext requestContext, final Class<T> clazz) {
         if (requestContext.getFlowScope().contains("aupPolicy")) {
             return requestContext.getFlowScope().get("aupPolicy", clazz);
         }
@@ -1490,9 +1483,9 @@ public class WebUtils {
      * @param serviceSelectionStrategy the service selection strategy
      * @return the service
      */
-    public static RegisteredService resolveRegisteredService(final RequestContext requestContext,
-                                                             final ServicesManager servicesManager,
-                                                             final AuthenticationServiceSelectionPlan serviceSelectionStrategy) throws Throwable {
+    public static @Nullable RegisteredService resolveRegisteredService(final RequestContext requestContext,
+                                                                       final ServicesManager servicesManager,
+                                                                       final AuthenticationServiceSelectionPlan serviceSelectionStrategy) throws Throwable {
         val registeredService = getRegisteredService(requestContext);
         if (registeredService != null) {
             return registeredService;
@@ -1549,7 +1542,7 @@ public class WebUtils {
      * @param args           the args
      */
     public static void addErrorMessageToContext(final MessageContext messageContext, final String code,
-                                                final String defaultText, final Object[] args) {
+                                                final @Nullable String defaultText, final Object @Nullable [] args) {
         val msg = new MessageBuilder()
             .error()
             .code(code)

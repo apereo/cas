@@ -1,10 +1,7 @@
 package org.apereo.cas.web.view.attributes;
 
+import module java.base;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * This is {@link NoOpProtocolAttributesRenderer}.

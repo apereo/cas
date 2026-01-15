@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.attribute;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import lombok.EqualsAndHashCode;
@@ -9,18 +10,10 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.util.LinkedCaseInsensitiveMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * Base {@link PersonAttributeDao} that provides implementations of the deprecated methods.
@@ -57,7 +50,7 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
         this.id = id;
     }
     
-    protected PersonAttributes getSinglePerson(final Set<PersonAttributes> people) {
+    protected @Nullable PersonAttributes getSinglePerson(final Set<PersonAttributes> people) {
         try {
             return DataAccessUtils.singleResult(people);
         } catch (final IncorrectResultSizeDataAccessException e) {
@@ -111,13 +104,13 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
      * @return a Map from String to Set of Strings
      */
     public static Map<String, Set<String>> parseAttributeToAttributeMapping(final Map<String, ?> mapping) {
-        val mappedAttributesBuilder = new LinkedCaseInsensitiveMap<@NonNull Set<String>>();
+        val mappedAttributesBuilder = new LinkedCaseInsensitiveMap<Set<String>>();
         for (val mappingEntry : mapping.entrySet()) {
             val sourceAttrName = mappingEntry.getKey();
             val mappedAttribute = mappingEntry.getValue();
             switch (mappedAttribute) {
                 case null -> mappedAttributesBuilder.put(sourceAttrName, null);
-                case final String value -> {
+                case String _ -> {
                     val mappedSet = new HashSet<String>();
                     mappedSet.add(mappedAttribute.toString());
                     mappedAttributesBuilder.put(sourceAttrName, mappedSet);
@@ -127,8 +120,6 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
                     for (val sourceObj : sourceSet) {
                         if (sourceObj != null) {
                             mappedSet.add(sourceObj.toString());
-                        } else {
-                            mappedSet.add(null);
                         }
                     }
                     mappedAttributesBuilder.put(sourceAttrName, mappedSet);

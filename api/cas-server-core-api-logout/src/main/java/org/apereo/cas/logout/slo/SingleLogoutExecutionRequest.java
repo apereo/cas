@@ -1,16 +1,13 @@
 package org.apereo.cas.logout.slo;
 
+import module java.base;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.util.Optional;
 
 /**
  * This is {@link SingleLogoutExecutionRequest}.

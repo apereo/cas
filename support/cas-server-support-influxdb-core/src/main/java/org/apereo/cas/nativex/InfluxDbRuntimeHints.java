@@ -1,5 +1,6 @@
 package org.apereo.cas.nativex;
 
+import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apache.arrow.memory.AllocationManager;
 import org.apache.arrow.memory.netty.DefaultAllocationManagerFactory;

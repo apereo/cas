@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn.web;
 
+import module java.base;
 import com.yubico.core.WebAuthnServer;
 import com.yubico.data.AssertionRequestWrapper;
 import com.yubico.data.RegistrationRequest;
@@ -28,10 +29,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.security.Principal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link WebAuthnController}.

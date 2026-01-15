@@ -1,5 +1,6 @@
 package org.apereo.cas.pac4j.web;
 
+import module java.base;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpointContributor;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
@@ -8,7 +9,6 @@ import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuth20Configuration;
 import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.oidc.config.OidcConfiguration;
-import java.util.Map;
 
 /**
  * This is {@link DelegatedClientsOidcEndpointContributor}.

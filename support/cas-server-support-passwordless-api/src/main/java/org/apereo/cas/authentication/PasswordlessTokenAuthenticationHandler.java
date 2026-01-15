@@ -1,19 +1,15 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.security.auth.login.FailedLoginException;
-
-import java.util.ArrayList;
 
 /**
  * This is {@link PasswordlessTokenAuthenticationHandler}.

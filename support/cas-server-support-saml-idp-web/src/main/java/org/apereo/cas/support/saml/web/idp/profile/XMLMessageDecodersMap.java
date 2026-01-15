@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
+import module java.base;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.springframework.http.HttpMethod;
-import java.util.Map;
 
 /**
  * This is {@link XMLMessageDecodersMap}.

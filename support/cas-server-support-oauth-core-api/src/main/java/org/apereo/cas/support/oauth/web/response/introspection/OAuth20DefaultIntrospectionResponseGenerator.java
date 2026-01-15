@@ -1,13 +1,12 @@
 package org.apereo.cas.support.oauth.web.response.introspection;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
-import java.util.LinkedHashMap;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OAuth20DefaultIntrospectionResponseGenerator}.

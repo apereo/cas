@@ -1,14 +1,10 @@
 package org.apereo.cas.configuration.support;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.Closeable;
-import java.io.Serial;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

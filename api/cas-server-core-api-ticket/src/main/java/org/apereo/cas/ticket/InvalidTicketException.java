@@ -1,8 +1,7 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import lombok.Getter;
-
-import java.io.Serial;
 
 /**
  * Exception to alert that a {@link Ticket} was not found or that it is expired.

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.radius;
 
+import module java.base;
 import lombok.Getter;
 
 /**

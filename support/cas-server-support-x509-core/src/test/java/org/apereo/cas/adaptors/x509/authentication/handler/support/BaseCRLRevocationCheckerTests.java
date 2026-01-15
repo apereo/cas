@@ -1,16 +1,12 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import module java.base;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.AbstractCRLRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
 import org.apereo.cas.util.crypto.CertUtils;
-
 import lombok.val;
 import org.springframework.core.io.ClassPathResource;
-
-import java.security.GeneralSecurityException;
-import java.util.Arrays;
-
-import static org.apereo.cas.util.junit.Assertions.*;
+import static org.apereo.cas.util.junit.Assertions.assertThrowsOrNot;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

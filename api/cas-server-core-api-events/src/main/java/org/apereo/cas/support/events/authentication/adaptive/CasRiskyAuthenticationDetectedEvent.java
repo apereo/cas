@@ -1,13 +1,12 @@
 package org.apereo.cas.support.events.authentication.adaptive;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.AbstractCasEvent;
-
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-import java.io.Serial;
 
 /**
  * This is {@link CasRiskyAuthenticationDetectedEvent}.

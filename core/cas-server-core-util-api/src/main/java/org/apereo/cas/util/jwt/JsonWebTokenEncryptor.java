@@ -1,8 +1,8 @@
 package org.apereo.cas.util.jwt;
 
+import module java.base;
 import org.apereo.cas.util.crypto.IdentifiableKey;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.Builder;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -10,15 +10,6 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwe.JsonWebEncryption;
-
-import java.io.Serializable;
-import java.security.Key;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * This is {@link JsonWebTokenEncryptor}.

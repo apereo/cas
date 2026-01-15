@@ -1,18 +1,13 @@
 package org.apereo.cas.services;
 
+import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.context.ApplicationContext;
-
 import jakarta.validation.constraints.NotNull;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 
 /**
  * This is {@link RegisteredServiceAttributeReleasePolicyContext}.

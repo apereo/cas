@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -33,18 +34,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * This is {@link SyncopeUtils}.
@@ -121,7 +110,7 @@ public class SyncopeUtils {
 
         if (user.has("dynMemberships")) {
             val dynMemberships = new ArrayList<>();
-            user.get("dynMemberships").forEach(m -> dynMemberships.add(m.get("groupName").asString()));
+            user.get("dynMemberships").forEach(membership -> dynMemberships.add(membership.get("groupName").asString()));
             if (!dynMemberships.isEmpty()) {
                 name = attributeMappings.getOrDefault("dynMemberships", "syncopeUserDynMemberships");
                 attributes.put(name, dynMemberships);
@@ -232,7 +221,7 @@ public class SyncopeUtils {
                 .build();
             response = Objects.requireNonNull(HttpUtils.execute(exec));
             LOGGER.debug("Received http response status as [{}]", response.getReasonPhrase());
-            if (HttpStatus.resolve(response.getCode()).is2xxSuccessful()) {
+            if (Objects.requireNonNull(HttpStatus.resolve(response.getCode())).is2xxSuccessful()) {
                 val entity = ((HttpEntityContainer) response).getEntity();
                 return FunctionUtils.doUnchecked(() -> {
                     val result = EntityUtils.toString(entity);

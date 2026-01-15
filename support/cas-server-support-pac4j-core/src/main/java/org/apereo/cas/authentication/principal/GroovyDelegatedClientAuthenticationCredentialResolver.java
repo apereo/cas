@@ -1,14 +1,15 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.execution.RequestContext;
-import java.util.List;
 
 /**
  * This is {@link GroovyDelegatedClientAuthenticationCredentialResolver}.
@@ -30,8 +31,8 @@ public class GroovyDelegatedClientAuthenticationCredentialResolver
     }
 
     @Override
-    public List<DelegatedAuthenticationCandidateProfile> resolve(final RequestContext context,
-                                                                 final ClientCredential credentials) throws Throwable {
+    public @Nullable List<DelegatedAuthenticationCandidateProfile> resolve(final RequestContext context,
+                                                                           final ClientCredential credentials) throws Throwable {
         val profile = resolveUserProfile(context, credentials);
         val args = new Object[]{context, credentials, profile, LOGGER};
         return watchableScript.execute(args, List.class);

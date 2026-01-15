@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.client;
 
+import module java.base;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RegexUtils;
 import lombok.val;

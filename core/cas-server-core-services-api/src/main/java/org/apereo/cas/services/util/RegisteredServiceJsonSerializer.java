@@ -1,5 +1,6 @@
 package org.apereo.cas.services.util;
 
+import module java.base;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -7,10 +8,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
-import java.io.File;
-import java.io.Serial;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 /**
  * Serializes registered services to JSON based on the Jackson JSON library.

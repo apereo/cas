@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.logout;
 
+import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.test.CasTestExtension;

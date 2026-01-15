@@ -1,5 +1,6 @@
 package org.apereo.cas.support.geo.maxmind.config;
 
+import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasGeoLocationAutoConfiguration;
 import org.apereo.cas.config.CasGeoLocationMaxmindAutoConfiguration;

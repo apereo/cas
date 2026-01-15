@@ -1,14 +1,15 @@
 package org.apereo.cas.qr.web.flow;
 
+import module java.base;
 import org.apereo.cas.qr.authentication.QRAuthenticationTokenCredential;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -23,7 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class QRAuthenticationValidateTokenAction extends BaseCasWebflowAction {
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val token = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
         val deviceId = request.getParameter("deviceId");

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.metadata;
 
+import module java.base;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.PropertyOwner;
@@ -9,6 +10,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.Nulls;
+import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
@@ -31,19 +33,6 @@ import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ConfigurationMetadataGenerator}.
@@ -120,6 +109,7 @@ public class ConfigurationMetadataGenerator {
             throw new RuntimeException("Could not locate file " + inputSpringConfigurationMetadata.getCanonicalPath());
         }
         LOGGER.info("Project directory [{}]", projectDirectory);
+        StaticJavaParser.getParserConfiguration().setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_25);
         final Map<String, Object> jsonMap = MAPPER.readValue(inputSpringConfigurationMetadata, new TypeReference<>() {});
         final List<ConfigurationMetadataProperty> properties = MAPPER.convertValue(jsonMap.get("properties"), new TypeReference<>() {});
         Objects.requireNonNull(properties);

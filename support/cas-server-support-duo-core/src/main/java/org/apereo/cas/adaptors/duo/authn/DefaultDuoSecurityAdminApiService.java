@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import module java.base;
 import org.apereo.cas.adaptors.duo.DuoSecurityBypassCode;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountGroup;
@@ -20,18 +21,9 @@ import org.apache.commons.lang3.Strings;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.ReflectionUtils;
-import javax.net.ssl.X509TrustManager;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultDuoSecurityAdminApiService}.
@@ -80,7 +72,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
             FunctionUtils.doIfNotNull(newAccount.getStatus(), _ -> parameters.put("status", newAccount.getStatus().toValue()));
             val updateResponse = executeAdminEndpoint(parameters);
             val userAccount = (JSONObject) (updateResponse instanceof final JSONArray array ? array.get(0) : updateResponse);
-            return Optional.of(mapDuoSecurityUserAccount(userAccount));
+            return Optional.of(mapDuoSecurityUserAccount(Objects.requireNonNull(userAccount)));
         }
         return Optional.empty();
     }
@@ -129,7 +121,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     protected void prepareHttpRequest(final Http request) {
     }
 
-    private Object executeAdminEndpoint(final Map<String, String> params) throws Exception {
+    private @Nullable Object executeAdminEndpoint(final Map<String, String> params) throws Exception {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
         val uri = getAdminEndpointUri(params.getOrDefault("uri", StringUtils.EMPTY));
         val method = params.getOrDefault("method", HttpMethod.GET.name());

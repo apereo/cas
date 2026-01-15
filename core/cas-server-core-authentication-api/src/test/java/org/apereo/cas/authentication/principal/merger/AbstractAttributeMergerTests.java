@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.principal.merger;
 
+import module java.base;
 import org.junit.jupiter.api.Test;
-import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

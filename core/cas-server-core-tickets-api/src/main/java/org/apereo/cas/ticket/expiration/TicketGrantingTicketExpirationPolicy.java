@@ -1,10 +1,9 @@
 package org.apereo.cas.ticket.expiration;
 
-
+import module java.base;
 import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,9 +15,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.Assert;
-
-import java.io.Serial;
-import java.time.ZonedDateTime;
 
 /**
  * Provides the Ticket Granting Ticket expiration policy.  Ticket Granting Tickets

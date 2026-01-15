@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import module java.base;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.flow.configurer.BaseMultifactorWebflowConfigurerTests;

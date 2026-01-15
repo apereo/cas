@@ -1,6 +1,6 @@
 package org.apereo.cas.support.events;
 
-
+import module java.base;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import lombok.val;
@@ -10,7 +10,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.concurrent.Callable;
 
 
 /**

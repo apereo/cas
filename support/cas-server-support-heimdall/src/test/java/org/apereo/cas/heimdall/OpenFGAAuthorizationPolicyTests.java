@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall;
 
+import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.heimdall.authorizer.repository.AuthorizableResourceRepository;
 import org.apereo.cas.heimdall.authorizer.resource.policy.OpenFGAAuthorizationPolicy;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

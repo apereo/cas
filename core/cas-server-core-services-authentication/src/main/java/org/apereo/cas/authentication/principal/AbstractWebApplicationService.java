@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.jpa.MultivaluedMapToJsonAttributeConverter;
 import org.apereo.cas.validation.ValidationResponseType;
@@ -14,6 +15,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.DiscriminatorColumn;
@@ -22,9 +24,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.Table;
-import java.io.Serial;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Abstract implementation of a WebApplicationService.
@@ -42,6 +41,7 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
+@SuppressWarnings("NullAway.Init")
 public abstract class AbstractWebApplicationService implements WebApplicationService {
     @Serial
     private static final long serialVersionUID = 610105280927740076L;
@@ -49,6 +49,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     @Id
     @JsonProperty
     @Column
+    @Nullable
     private String id;
 
     @JsonProperty
@@ -56,6 +57,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     private String originalUrl;
 
     @Column
+    @Nullable
     private String artifactId;
 
     @JsonProperty
@@ -64,6 +66,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
     @JsonProperty
     @Column
+    @Nullable
     private String source;
 
     @JsonProperty
@@ -80,7 +83,8 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     @Convert(converter = MultivaluedMapToJsonAttributeConverter.class)
     private Map<String, Object> attributes = new HashMap<>();
 
-    protected AbstractWebApplicationService(final String id, final String originalUrl, final String artifactId) {
+    protected AbstractWebApplicationService(@Nullable final String id, final String originalUrl,
+                                            @Nullable final String artifactId) {
         this.id = id;
         this.originalUrl = originalUrl;
         this.artifactId = artifactId;
@@ -91,7 +95,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     @JsonIgnore
     public WebApplicationService setFragment(final String fragment) {
         if (StringUtils.isNotBlank(fragment)) {
-            this.id = collectFragmentFor(this.id, fragment);
+            this.id = collectFragmentFor(Objects.requireNonNull(this.id), fragment);
             this.originalUrl = collectFragmentFor(this.originalUrl, fragment);
         }
         return this;
@@ -99,7 +103,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
     @Override
     @JsonIgnore
-    public String getFragment() {
+    public @Nullable String getFragment() {
         return FunctionUtils.doAndHandle(() -> new URIBuilder(this.id).getFragment());
     }
 

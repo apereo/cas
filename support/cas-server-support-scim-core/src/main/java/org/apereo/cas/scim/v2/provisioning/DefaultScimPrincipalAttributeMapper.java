@@ -1,5 +1,6 @@
 package org.apereo.cas.scim.v2.provisioning;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -21,14 +22,6 @@ import de.captaingoldfish.scim.sdk.common.resources.multicomplex.PhoneNumber;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * This is {@link DefaultScimPrincipalAttributeMapper}.

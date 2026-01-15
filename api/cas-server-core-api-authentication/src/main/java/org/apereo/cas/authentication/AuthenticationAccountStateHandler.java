@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
-import java.util.List;
+import module java.base;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AuthenticationAccountStateHandler}.
@@ -20,6 +21,6 @@ public interface AuthenticationAccountStateHandler<AuthnResponse, Configuration>
      * @return the list
      * @throws Throwable the throwable
      */
-    List<MessageDescriptor> handle(AuthnResponse response, Configuration configuration) throws Throwable;
+    @Nullable List<MessageDescriptor> handle(@Nullable AuthnResponse response, Configuration configuration) throws Throwable;
 }
 

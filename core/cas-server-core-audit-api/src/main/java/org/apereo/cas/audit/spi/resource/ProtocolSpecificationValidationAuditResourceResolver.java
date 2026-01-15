@@ -1,21 +1,16 @@
 package org.apereo.cas.audit.spi.resource;
 
+import module java.base;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.validation.Assertion;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.support.ParametersAsStringResourceResolver;
-
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 /**
  * This is {@link ProtocolSpecificationValidationAuditResourceResolver}.

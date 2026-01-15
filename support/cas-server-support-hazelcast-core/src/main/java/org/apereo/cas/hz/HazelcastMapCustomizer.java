@@ -1,5 +1,6 @@
 package org.apereo.cas.hz;
 
+import module java.base;
 import com.hazelcast.config.NamedConfig;
 import org.springframework.core.Ordered;
 

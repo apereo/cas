@@ -1,13 +1,12 @@
 package org.apereo.cas.authentication;
 
+import module java.base;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Generic CAS exception that sits at the top of the exception hierarchy. Provides
@@ -35,7 +34,7 @@ public class RootCasException extends RuntimeException {
         this.code = code;
     }
 
-    protected RootCasException(final String code, final String msg) {
+    protected RootCasException(final String code, @Nullable final String msg) {
         super(msg);
         this.code = code;
     }

@@ -1,9 +1,9 @@
 package org.apereo.cas.util.scripting;
 
+import module java.base;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.DisposableBean;
-import java.util.Set;
 
 /**
  * This is {@link ScriptResourceCacheManager}.
@@ -25,7 +25,7 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
      * @param key the key
      * @return the item
      */
-    V get(K key);
+    @Nullable V get(K key);
 
     /**
      * Contains key ?

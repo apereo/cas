@@ -1,13 +1,12 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.jspecify.annotations.NonNull;
-import java.io.Serial;
-import java.util.Comparator;
 
 /**
  * This is {@link DefaultTicketDefinition}.

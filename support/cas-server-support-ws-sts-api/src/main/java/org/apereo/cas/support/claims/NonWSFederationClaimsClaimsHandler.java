@@ -1,13 +1,11 @@
 package org.apereo.cas.support.claims;
 
+import module java.base;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
 import org.apache.cxf.rt.security.claims.Claim;
 import org.apache.cxf.sts.claims.ClaimsParameters;
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link NonWSFederationClaimsClaimsHandler}.

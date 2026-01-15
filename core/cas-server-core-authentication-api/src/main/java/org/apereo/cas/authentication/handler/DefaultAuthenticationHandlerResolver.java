@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.handler;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
-
 import org.springframework.core.Ordered;
 
 /**

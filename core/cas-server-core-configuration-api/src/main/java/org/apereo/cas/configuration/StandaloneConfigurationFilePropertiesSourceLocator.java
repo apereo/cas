@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration;
 
+import module java.base;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +14,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.ResourceLoader;
-import java.io.File;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link StandaloneConfigurationFilePropertiesSourceLocator}.

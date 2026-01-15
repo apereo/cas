@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.principal.Response;
@@ -7,13 +8,9 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.web.UrlValidator;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.val;
-
-import java.io.Serial;
-import java.util.HashMap;
 
 /**
  * Builds responses to SAML service requests.

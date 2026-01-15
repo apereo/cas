@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication.clients;
 
+import module java.base;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

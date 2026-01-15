@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket;
 
+import module java.base;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
-
 import org.springframework.core.Ordered;
 
 /**

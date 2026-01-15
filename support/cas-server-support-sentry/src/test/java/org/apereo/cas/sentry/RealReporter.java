@@ -1,5 +1,6 @@
 package org.apereo.cas.sentry;
 
+import module java.base;
 import org.apereo.cas.monitor.NotMonitorable;
 import lombok.NoArgsConstructor;
 

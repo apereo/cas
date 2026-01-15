@@ -1,8 +1,7 @@
 package org.apereo.cas.support.oauth.validator.token.device;
 
+import module java.base;
 import org.apereo.cas.ticket.InvalidTicketException;
-
-import java.io.Serial;
 
 /**
  * This is {@link ThrottledOAuth20DeviceUserCodeApprovalException}.

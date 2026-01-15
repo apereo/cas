@@ -9,7 +9,7 @@
 <span th:fragment="main">
     <div class="attribute-tab w-100 mdc-data-table table-responsive noborder" id="attribute-tab-0">
 
-        <div class="jqueryui-tabs">
+        <div class="jqueryui-tabs" id="applications-tabs">
               <ul>
                 <li><a id="applications" href="#applications-tab">Applications</a></li>
                 <li><a id="saml2metadataproviders" href="#saml2metadataproviders-tab" class="hide">SAML2 Metadata Sources</a></li>
@@ -112,16 +112,22 @@
                         <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
                             <div class="mdc-dialog__content modal-body" id="edit-service-wizard-dialog-content">
 
-                                <div class="p-4 banner banner-warning"><h4>
+                                <div class="p-2 banner banner-info"><h4>
                                     The wizard-based service editor is a work in progress and not all features are supported yet.
                                     Use with caution and consider using the plain-text editor for production use cases.
                                     Verify with release notes for updates on the wizard functionality and feel free to contribute!
+
+                                    Keep the registration record as simple as possible; do NOT modify settings or assign values
+                                    unless you fully understand their purpose and implications. The generation process will only
+                                    accept and process non-default values to keep the service definition clean and concise.
                                 </h4></div>
-                                <p>The following application type is chosen:</p>
-                                <pre><code id="serviceClassType" class="border-rounded language-html"></code></pre>
+                                <span class="hide">
+                                    <p>The following application type is chosen:</p>
+                                    <pre><code id="serviceClassType" class="border-rounded language-html"></code></pre>
+                                </span>
 
                                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='hideAdvancedOptions',
-                                    label='#Hide Advanced Options', cssClass='pb-2', selected=true, dataAttrs='changeEventHandler=hideAdvancedRegisteredServiceOptions')}"/>
+                                    label='#Hide Advanced Options', cssClass='pb-2 pt-2', selected=true, dataAttrs='changeEventHandler=hideAdvancedRegisteredServiceOptions')}"/>
                                 
                                 <form id="editServiceWizardForm">
                                     <div id="editServiceWizardContainer" class="d-flex">
@@ -151,33 +157,25 @@
                                                  <div id="editServiceWizardOAuthOidcContainer"
                                                       class="mdc-input-group-field mdc-input-group-field-append w-100">
                                                      <script type="text/javascript">
-                                                          createRegisteredServiceOidcFields();
-                                                     </script>
-
-                                                     <section>
-                                                         <script type="text/javascript">
-                                                             createRegisteredServiceResponseMode();
-                                                         </script>
-                                                     </section>
-
-                                                   <section class="pt-2">
-                                                       <script type="text/javascript">
+                                                          createRegisteredServiceOidcFields().then(() => {
+                                                            createRegisteredServiceResponseMode();
                                                             createRegisteredServiceUserProfileViewType();
-                                                       </script>
+                                                          });
+                                                     </script>
+                                                     
+                                                 </div>
+                                                 <div id="editServiceWizardOAuthOidcOptionsContainer"
+                                                      class="mdc-input-group-field mdc-input-group-field-append w-100">
+                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassApprovalPrompt', label='#Bypass Approval Prompt', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='generateRefreshToken', label='#Generate Refresh Token', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='renewRefreshToken', label='#Renew Refresh Token', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtAccessToken', label='#JWT Access Token', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtRefreshToken', label='#JWT Refresh Token', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
 
-                                                     </section>
-
-                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassApprovalPrompt', label='#Bypass Approval Prompt', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
-                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='generateRefreshToken', label='#Generate Refresh Token', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
-                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='renewRefreshToken', label='#Renew Refresh Token', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
-                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtAccessToken', label='#JWT Access Token', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
-                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='jwtRefreshToken', label='#JWT Refresh Token', cssClass='pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
-
-                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='signIdToken', label='#Sign ID Tokens', cssClass='class-OidcRegisteredService pt-2', dataAttrs='param-skip-true=true', selected=true)}"/>
-                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptIdToken', label='#Encrypt ID Tokens', cssClass='class-OidcRegisteredService advanced-option', dataAttrs='param-skip-false=true')}"/>
-                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='idTokenEncryptionOptional', label='#Encrypt ID Tokens Optionally', cssClass='class-OidcRegisteredService pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
-                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='includeIdTokenClaims', label='#Include Claims in ID Tokens', selected=true, cssClass='class-OidcRegisteredService advanced-option', dataAttrs='param-skip-true=true')}"/>
-
+                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='signIdToken', label='#Sign ID Tokens', cssClass='class-OidcRegisteredService pt-2', dataAttrs='param-skip-true=true', selected=true)}"/>
+                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptIdToken', label='#Encrypt ID Tokens', cssClass='class-OidcRegisteredService advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='idTokenEncryptionOptional', label='#Encrypt ID Tokens Optionally', cssClass='class-OidcRegisteredService pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
+                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='includeIdTokenClaims', label='#Include Claims in ID Tokens', selected=true, cssClass='class-OidcRegisteredService advanced-option', dataAttrs='param-skip-true=true')}"/>
                                                  </div>
                                              </div>
 
@@ -338,6 +336,13 @@
                                                         dataAttrs='param-skip-false=true,param-name=proxyPolicy.exactMatch')}"/>
                                              </div>
 
+                                             <h3 class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect TLS Client Settings</h3>
+                                             <div class="class-OAuthRegisteredService class-OidcRegisteredService"
+                                                  id="editServiceWizardMenuItemOAuthOidcTlsClientSettings">
+                                                 <script type="text/javascript">
+                                                        createOidcRegisteredServiceTlsClientSettings();
+                                                 </script>
+                                             </div>
 
                                              <h3 class="class-OAuthRegisteredService class-OidcRegisteredService advanced-option">OAuth / OpenID Connect Code Expiration Policy</h3>
                                              <div class="class-OAuthRegisteredService class-OidcRegisteredService"
@@ -469,19 +474,19 @@
                                                   </div>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseCredentialPassword',
                                                         title='When enabled, the credential password is authorized to be released as an attribute',
-                                                        label='#Release Credential Password', cssClass='always-show',
+                                                        label='#Release Credential Password', cssClass='advanced-option',
                                                         dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.authorizedToReleaseCredentialPassword')}"/>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseProxyGrantingTicket',
                                                         title='When enabled, the proxy granting ticket is authorized to be released as an attribute',
-                                                        label='#Release Proxy-granting Ticket', cssClass='pt-2 always-show',
+                                                        label='#Release Proxy-granting Ticket', cssClass='pt-2 advanced-option',
                                                         dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.authorizedToReleaseProxyGrantingTicket')}"/>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseExcludeDefaultAttributes',
                                                         title='When enabled, default attributes are excluded from being released',
-                                                        label='#Exclude Default Attributes', cssClass='pt-2 always-show',
+                                                        label='#Exclude Default Attributes', cssClass='advanced-option',
                                                         dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.excludeDefaultAttributes')}"/>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseAuthenticationAttributes',
                                                         title='When enabled, authentication attributes are authorized to be released as attributes',
-                                                        label='#Release Authentication Attributes', cssClass='pt-2 always-show',
+                                                        label='#Release Authentication Attributes', cssClass='pt-2 advanced-option',
                                                         dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.authorizedToReleaseAuthenticationAttributes')}"/>
 
                                               </div>
@@ -711,7 +716,6 @@
 
                                 <section class="d-flex h-750px" id="serviceEditorContainer">
                                     <div id="serviceTemplatesContainer" class="w-25 py-3 mr-2 jqueryui-accordion">
-
                                     </div>
                                     <pre class="ace-editor ace-relative w-100 h-100" id="serviceEditor"></pre>
                                 </section>
@@ -774,6 +778,84 @@
                     <div class="mdc-dialog__scrim"></div>
                 </div>
 
+                <div id="validateServiceIdDialog" class="hide">
+                    <section class="cas-field form-group my-3 mdc-input-group d-flex">
+                        <div id="validateServiceIdPanel"
+                             class="mdc-input-group-field mdc-input-group-field-append w-100">
+                            <label for="serviceIdPattern"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Pattern</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="serviceIdPattern" tabindex="0" id="serviceIdPattern"
+                                       size="50"
+                                       oninput="validatePattern()"
+                                       autocomplete="off" required/>
+                            </label>
+                            <label for="serviceIdTestValue"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Test</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="serviceIdTestValue" tabindex="0" id="serviceIdTestValue"
+                                       oninput="validatePattern()"
+                                       size="50" autocomplete="off" required/>
+                            </label>
+
+                            <script type="text/javascript">
+                                cas.init("#validateServiceIdDialog");
+                                $("#serviceIdPattern").val($("#registeredServiceId").val()).focus();
+                                function validatePattern() {
+                                    console.log("Validating pattern...");
+
+                                    const pattern = $("#serviceIdPattern").val();
+                                    const testValue = $("#serviceIdTestValue").val();
+
+                                    if (pattern.length > 0 && testValue.length > 0) {
+                                        $("#serviceIdPatternTestResult").removeClass("hide");
+                                        try {
+                                            const regex = new RegExp(pattern, "i");
+                                            const match = regex.test(testValue);
+
+                                            if (match) {
+                                                console.log("Found", match[0]);
+                                                $("#serviceIdPatternTestResult")
+                                                    .addClass("banner-success")
+                                                    .removeClass("banner-danger")
+                                                    .text("✅ The given pattern matches the test value.");
+                                            } else {
+                                                $("#serviceIdPatternTestResult")
+                                                    .removeClass("banner-success")
+                                                    .addClass("banner-danger")
+                                                    .text("❌ The given pattern does NOT match the test value.");
+                                            }
+                                        } catch(e) {
+                                            $("#serviceIdPatternTestResult")
+                                                .removeClass("banner-success")
+                                                .addClass("banner-danger")
+                                                .text("❌ " + e);
+                                        }
+                                    } else {
+                                        $("#serviceIdPatternTestResult").addClass("hide");
+                                    }
+
+                                }
+                            </script>
+                        </div>
+                    </section>
+                    <div id="serviceIdPatternTestResult" class="p-2 banner hide"></div>
+                </div>
+                
             </div>
 
 

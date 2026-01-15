@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.impl;
 
+import module java.base;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementQuery;
@@ -8,10 +9,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ChainingPasswordManagementService}.

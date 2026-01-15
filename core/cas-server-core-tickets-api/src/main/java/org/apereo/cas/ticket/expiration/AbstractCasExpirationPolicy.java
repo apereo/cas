@@ -1,17 +1,13 @@
 package org.apereo.cas.ticket.expiration;
 
+import module java.base;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
-
-import java.io.Serial;
-import java.time.Clock;
-import java.util.UUID;
 
 /**
  * This is an {@link AbstractCasExpirationPolicy}

@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ClientCredential;
@@ -13,7 +14,6 @@ import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.client.Client;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Optional;
 
 /**
  * This is {@link DelegatedAuthenticationServiceTicketValidationAuthorizer}.
