@@ -49,6 +49,7 @@ async function initializeHeimdallOperations() {
                         let buttons = `
                         <button type="button" name="viewHeimdallResource" href="#" 
                             data-id="${resource.id}" data-namespace="${key}"
+                            title="View Resource"
                             class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                             <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
                         </button>

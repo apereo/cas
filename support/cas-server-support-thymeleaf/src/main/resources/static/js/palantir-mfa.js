@@ -32,6 +32,7 @@ async function initializeMultifactorOperations() {
                             data-provider='${device?.details?.providerId ?? "Unknown"}'
                             data-key='${device.id}'
                             data-username='${username}'
+                            title="Remove MFA Device"
                             class="mdc-button mdc-button--raised min-width-32x">
                         <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
                     </button>
@@ -161,6 +162,7 @@ async function initializeTrustedMultifactorOperations() {
                     let buttons = `
                      <button type="button" name="removeMfaTrustedDevice" href="#" 
                             data-key='${device.recordKey}'
+                            title="Remove Trusted MFA Device"
                             class="mdc-button mdc-button--raised min-width-32x">
                         <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
                     </button>

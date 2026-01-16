@@ -1048,47 +1048,6 @@ select.palantir {
     max-width: 50%;
 }
 
-/** jQuery UI **/
-
-.swal2-confirm {
-    background-color: var(--cas-theme-button-bg);
-}
-
-.ui-selectmenu-open {
-    background: var(--mdc-theme-background);
-}
-
-.ui-tooltip {
-    background-color: var(--cas-theme-primary) !important;
-    color: whitesmoke;
-    min-width: 450px !important;
-    max-width: 600px;
-}
-
-.ui-tabs-active {
-    background: var(--cas-theme-primary) !important;
-}
-
-.ui-widget, .ui-widget button {
-    font-family: var(--mdc-typography-font-family) !important;
-    font-size: unset;
-}
-
-ul.ui-widget-header {
-    background: unset;
-}
-
-.ui-widget-header {
-    border: unset;
-}
-
-.ui-tabs .ui-tabs-nav li {
-    border-bottom: 1px solid var(--cas-theme-button-bg-lite);
-    margin-right: 0.07em;
-}
-
-/***************************/
-
 
 #main-content {
     margin-right: 10px;

@@ -123,11 +123,13 @@ async function initializeSsoSessionOperations() {
                         let serviceButtons = `
                             <button type="button" name="removeSsoSession" href="#" 
                                 data-ticketgrantingticket='${session.ticket_granting_ticket}'
+                                title="Remove SSO Session"
                                 class="mdc-button mdc-button--raised min-width-32x">
                                 <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
                             </button>
                             <button type="button" name="viewSsoSession" href="#" 
                                 data-ticketgrantingticket='${session.ticket_granting_ticket}'
+                                title="View SSO Session Details"
                                 class="mdc-button mdc-button--raised min-width-32x">
                                 <i class="mdi mdi-account-eye min-width-32x" aria-hidden="true"></i>
                                 <span id="sessionAttributes" class="d-none">${JSON.stringify(attributes)}</span>
@@ -135,6 +137,7 @@ async function initializeSsoSessionOperations() {
                             </button>
                             <button type="button" name="copySsoSessionTicketGrantingTicket" href="#" 
                                 data-ticketgrantingticket='${session.ticket_granting_ticket}'
+                                title="Copy Ticket Granting Ticket to Clipboard"
                                 class="mdc-button mdc-button--raised min-width-32x">
                                 <i class="mdi mdi-content-copy min-width-32x" aria-hidden="true"></i>
                             </button>

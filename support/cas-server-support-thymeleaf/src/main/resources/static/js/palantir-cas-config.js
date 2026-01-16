@@ -442,7 +442,8 @@ function reloadConfigurationTable(response) {
             if (!key.endsWith(".origin")) {
                 const propertyName = key.replace(".value", "");
                 let buttons = `
-                    <button type="button" name="effectiveConfigPropertyValueButton" href="#" 
+                    <button type="button" name="effectiveConfigPropertyValueButton" href="#"
+                            title="View Effective Value" 
                             data-key='${propertyName}'
                             onclick="effectiveConfigPropertyValue('${propertyName}')"
                             class="mdc-button mdc-button--raised min-width-32x">
@@ -454,6 +455,7 @@ function reloadConfigurationTable(response) {
                     buttons += `
                             <button type="button" 
                                     name="searchForConfigPropertyButton" href="#" 
+                                    title="Configuration Property Help"
                                     data-key='${propertyName}'
                                     data-value="'${value}'"
                                     onclick="searchForConfigPropertyButton('${propertyName}')"
@@ -467,6 +469,7 @@ function reloadConfigurationTable(response) {
                     buttons += `
                             <button type="button" 
                             name="overrideConfigPropertyValueButton" href="#" 
+                                    title="Override Configuration Property Value"
                                     data-key='${propertyName}'
                                     data-value="'${value}'"
                                     onclick="overrideConfigPropertyValue('${propertyName}', '${value}')"
@@ -488,12 +491,14 @@ function reloadConfigurationTable(response) {
                     let buttons = `
                             <button type="button" name="effectiveConfigPropertyValueButton" href="#" 
                                     data-key='${propertyName}'
+                                    title="View Effective Value"
                                     onclick="effectiveConfigPropertyValue('${propertyName}')"
                                     class="mdc-button mdc-button--raised min-width-32x">
                                 <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
                             </button>
                             <button type="button" name="updateConfigPropertyValueButton" href="#" 
                                     data-key='${propertyName}'
+                                    title="Update Configuration Property Value"
                                     data-source='${source.name}'
                                     onclick="updateConfigPropertyValue(this, '${propertyName}')"
                                     class="mdc-button mdc-button--raised min-width-32x">
@@ -501,6 +506,7 @@ function reloadConfigurationTable(response) {
                             </button>
                             <button type="button" name="deleteConfigPropertyValueButton" href="#" 
                                     data-key='${propertyName}'
+                                    title="Delete Configuration Property Value"
                                     data-source='${source.name}'
                                     onclick="deleteConfigPropertyValue(this, '${propertyName}')"
                                     class="mdc-button mdc-button--raised min-width-32x">
@@ -513,6 +519,7 @@ function reloadConfigurationTable(response) {
                             <button type="button" 
                                     name="searchForConfigPropertyButton" href="#" 
                                     data-key='${propertyName}'
+                                    title="Configuration Property Help"
                                     data-value="'${value}'"
                                     onclick="searchForConfigPropertyButton('${propertyName}')"
                                     class="mdc-button mdc-button--raised min-width-32x">

@@ -66,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeMenus();
     initializeDropDowns();
     initializeDatePickers();
+    initializeTooltips();
 
     $("nav.sidebar-navigation ul li").off().on("click", function () {
         hideBanner();
