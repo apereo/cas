@@ -24,6 +24,7 @@ async function initializeThrottlesOperations() {
                 let buttons = `
                      <button type="button" name="removeThrottledAttempt" href="#" 
                             data-key='${record.key}'
+                            title="Remove Throttled Attempt"
                             class="mdc-button mdc-button--raised min-width-32x">
                         <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
                     </button>
