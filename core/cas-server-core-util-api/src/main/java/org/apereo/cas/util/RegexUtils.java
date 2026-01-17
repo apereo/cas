@@ -1,6 +1,8 @@
 package org.apereo.cas.util;
 
 import module java.base;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,7 +25,10 @@ public class RegexUtils {
      */
     public static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("a^");
 
-    private static final Map<String, Pattern> PATTERN_CACHE = new ConcurrentHashMap<>();
+    private static final Cache<String, Pattern> PATTERN_CACHE = Caffeine.newBuilder()
+        .expireAfterAccess(15, TimeUnit.MINUTES)
+        .maximumSize(10_000)
+        .build();
     
     /**
      * Check to see if the specified pattern is a valid regular expression.
@@ -191,10 +196,10 @@ public class RegexUtils {
     }
 
     private static Pattern computePattern(final String pattern) {
-        return PATTERN_CACHE.computeIfAbsent(pattern, Pattern::compile);
+        return PATTERN_CACHE.get(pattern, Pattern::compile);
     }
 
     private static Pattern computePattern(final String pattern, final int flags) {
-        return PATTERN_CACHE.computeIfAbsent(pattern, p -> Pattern.compile(p, flags));
+        return PATTERN_CACHE.get(pattern, p -> Pattern.compile(p, flags));
     }
 }
