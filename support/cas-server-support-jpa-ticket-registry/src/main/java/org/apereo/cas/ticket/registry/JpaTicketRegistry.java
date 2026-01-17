@@ -21,6 +21,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.support.TransactionOperations;
 import jakarta.persistence.EntityManager;
@@ -82,7 +83,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+    public @Nullable Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         return transactionTemplate.execute(callback -> {
             try {
                 val encTicketId = digestIdentifier(ticketId);
