@@ -68,13 +68,9 @@ import org.jspecify.annotations.Nullable;
  */
 @Slf4j
 public class DefaultCentralAuthenticationService extends AbstractCentralAuthenticationService {
-    @Serial
-    private static final long serialVersionUID = -8943828074939533986L;
-
     public DefaultCentralAuthenticationService(final CentralAuthenticationServiceContext context) {
         super(context);
     }
-
 
     @Audit(
         action = AuditableActions.TICKET_GRANTING_TICKET,
@@ -257,7 +253,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             val ticketGrantingTicket = (TicketGrantingTicket) serviceTicket.getTicketGrantingTicket();
             var authentication = serviceTicket.isStateless()
                 ? serviceTicket.getAuthentication()
-                : ticketGrantingTicket.getRoot().getAuthentication();
+                : Objects.requireNonNull(ticketGrantingTicket).getRoot().getAuthentication();
 
             authentication = getAuthenticationSatisfiedByPolicy(authentication, selectedService, Objects.requireNonNull(registeredService));
             Objects.requireNonNull(authentication, "Authentication cannot be determined for service ticket validation");
@@ -309,7 +305,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
             val assertionContext = serviceTicket.isStateless()
                 ? CollectionUtils.<String, Serializable>wrap(Principal.class.getName(), authentication.getPrincipal().getId())
-                : CollectionUtils.<String, Serializable>wrap(TicketGrantingTicket.class.getName(), ticketGrantingTicket.getRoot().getId());
+                : CollectionUtils.<String, Serializable>wrap(TicketGrantingTicket.class.getName(), Objects.requireNonNull(ticketGrantingTicket).getRoot().getId());
 
             val assertion = DefaultAssertionBuilder.builder()
                 .primaryAuthentication(finalAuthentication)
@@ -318,7 +314,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 .registeredService(registeredService)
                 .authentications(serviceTicket.isStateless()
                     ? List.of(Objects.requireNonNull(serviceTicket.getAuthentication()))
-                    : ticketGrantingTicket.getChainedAuthentications())
+                    : Objects.requireNonNull(ticketGrantingTicket).getChainedAuthentications())
                 .newLogin(((RenewableServiceTicket) serviceTicket).isFromNewLogin())
                 .stateless(serviceTicket.isStateless())
                 .context(assertionContext)
@@ -376,7 +372,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     val addedTicket = configurationContext.getTicketRegistry().addTicket(proxyGrantingTicket);
                     LOGGER.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
                     if (!serviceTicket.isStateless()) {
-                        configurationContext.getTicketRegistry().updateTicket(serviceTicket.getTicketGrantingTicket());
+                        configurationContext.getTicketRegistry()
+                            .updateTicket(Objects.requireNonNull(serviceTicket.getTicketGrantingTicket()));
                     }
                     val clientInfo = ClientInfoHolder.getClientInfo();
                     doPublishEvent(new CasProxyGrantingTicketCreatedEvent(this, addedTicket, clientInfo));
