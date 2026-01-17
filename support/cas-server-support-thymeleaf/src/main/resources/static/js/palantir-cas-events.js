@@ -2,6 +2,7 @@ async function initializeCasEventsOperations() {
     if (actuatorEndpoints.events) {
         const casEventsTable = $("#casEventsTable").DataTable({
             pageLength: 10,
+            autoWidth: false,
             drawCallback: settings => {
                 $("#casEventsTable tr").addClass("mdc-data-table__row");
                 $("#casEventsTable td").addClass("mdc-data-table__cell");
@@ -64,6 +65,7 @@ async function initializeAuditEventsOperations() {
     if (actuatorEndpoints.auditlog) {
         const auditEventsTable = $("#auditEventsTable").DataTable({
             pageLength: 10,
+            autoWidth: false,
             drawCallback: settings => {
                 $("#auditEventsTable tr").addClass("mdc-data-table__row");
                 $("#auditEventsTable td").addClass("mdc-data-table__cell");

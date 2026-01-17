@@ -1,6 +1,7 @@
 async function initializePersonDirectoryOperations() {
     const personDirectoryTable = $("#personDirectoryTable").DataTable({
         pageLength: 10,
+        autoWidth: false,
         drawCallback: settings => {
             $("#personDirectoryTable tr").addClass("mdc-data-table__row");
             $("#personDirectoryTable td").addClass("mdc-data-table__cell");
@@ -9,6 +10,7 @@ async function initializePersonDirectoryOperations() {
 
     const attributeDefinitionsTable = $("#attributeDefinitionsTable").DataTable({
         pageLength: 10,
+        autoWidth: false,
         drawCallback: settings => {
             $("#attributeDefinitionsTable tr").addClass("mdc-data-table__row");
             $("#attributeDefinitionsTable td").addClass("mdc-data-table__cell");
@@ -17,6 +19,7 @@ async function initializePersonDirectoryOperations() {
 
     const attributeRepositoriesTable = $("#attributeRepositoriesTable").DataTable({
         pageLength: 10,
+        autoWidth: false,
         drawCallback: settings => {
             $("#attributeRepositoriesTable tr").addClass("mdc-data-table__row");
             $("#attributeRepositoriesTable td").addClass("mdc-data-table__cell");
@@ -70,8 +73,6 @@ async function initializePersonDirectoryOperations() {
                 type: "GET",
                 contentType: "application/json",
                 success: (response, status, xhr) => {
-
-
                     for (const [key, values] of Object.entries(response.attributes)) {
                         personDirectoryTable.row.add({
                             0: `<code>${key}</code>`,

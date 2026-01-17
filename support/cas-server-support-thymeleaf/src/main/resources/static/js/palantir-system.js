@@ -296,6 +296,7 @@ async function initializeSystemOperations() {
 
     const systemTable = $("#systemTable").DataTable({
         pageLength: 10,
+        autoWidth: false,
         drawCallback: settings => {
             $("#systemTable tr").addClass("mdc-data-table__row");
             $("#systemTable td").addClass("mdc-data-table__cell");
@@ -305,10 +306,6 @@ async function initializeSystemOperations() {
     const systemMetricsTagsTable = $("#systemMetricsTagsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
-        columnDefs: [
-            {width: "50%", targets: 0},
-            {width: "50%", targets: 1}
-        ],
         drawCallback: settings => {
             $("#systemMetricsTagsTable tr").addClass("mdc-data-table__row");
             $("#systemMetricsTagsTable td").addClass("mdc-data-table__cell");
@@ -318,10 +315,6 @@ async function initializeSystemOperations() {
     const systemMetricsMeasurementsTable = $("#systemMetricsMeasurementsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
-        columnDefs: [
-            {width: "50%", targets: 0},
-            {width: "50%", targets: 1}
-        ],
         drawCallback: settings => {
             $("#systemMetricsMeasurementsTable tr").addClass("mdc-data-table__row");
             $("#systemMetricsMeasurementsTable td").addClass("mdc-data-table__cell");

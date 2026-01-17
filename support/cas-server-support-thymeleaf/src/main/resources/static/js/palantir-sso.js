@@ -3,10 +3,6 @@ async function initializeSsoSessionOperations() {
     const ssoSessionApplicationsTable = $("#ssoSessionApplicationsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
-        columnDefs: [
-            {width: "40%", targets: 0},
-            {width: "60%", targets: 1}
-        ],
         drawCallback: settings => {
             $("#ssoSessionApplicationsTable tr").addClass("mdc-data-table__row");
             $("#ssoSessionApplicationsTable td").addClass("mdc-data-table__cell");
@@ -16,11 +12,6 @@ async function initializeSsoSessionOperations() {
     const ssoSessionDetailsTable = $("#ssoSessionDetailsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
-        columnDefs: [
-            {width: "10%", targets: 0},
-            {width: "20%", targets: 1},
-            {width: "70%", targets: 2}
-        ],
         drawCallback: settings => {
             $("#ssoSessionDetailsTable tr").addClass("mdc-data-table__row");
             $("#ssoSessionDetailsTable td").addClass("mdc-data-table__cell");
@@ -31,13 +22,6 @@ async function initializeSsoSessionOperations() {
         pageLength: 10,
         autoWidth: false,
         columnDefs: [
-            {width: "13%", targets: 0},
-            {width: "37%", targets: 1},
-            {width: "10%", targets: 2},
-            {width: "15%", targets: 3},
-            {width: "5%", targets: 4},
-            {width: "8%", targets: 5},
-            {width: "12%", targets: 6},
             {visible: false, target: 7}
         ],
         drawCallback: settings => {

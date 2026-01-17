@@ -4,9 +4,6 @@ async function initializeAuthenticationOperations() {
         autoWidth: false,
         columnDefs: [
             {visible: false, targets: 0},
-            {width: "80%", targets: 1},
-            {width: "10%", targets: 2},
-            {width: "10%", targets: 3}
         ],
         order: [0, "asc"],
         drawCallback: settings => {
@@ -51,10 +48,6 @@ async function initializeAuthenticationOperations() {
         pageLength: 10,
         order: [0, "asc"],
         autoWidth: false,
-        columnDefs: [
-            {width: "80%", targets: 0},
-            {width: "20%", targets: 1}
-        ],
         drawCallback: settings => {
             $("#authenticationPoliciesTable tr").addClass("mdc-data-table__row");
             $("#authenticationPoliciesTable td").addClass("mdc-data-table__cell");
@@ -106,8 +99,6 @@ async function initializeAuthenticationOperations() {
         },
         columnDefs: [
             {visible: false, targets: 0},
-            {width: "40%", targets: 1},
-            {width: "60%", targets: 2},
             {visible: false, targets: 3}
         ],
         drawCallback: settings => {
@@ -164,7 +155,7 @@ async function initializeAuthenticationOperations() {
                         });
                         $(rows).eq(i).before(
                             `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                <td colspan="3"><span class="idp-group">${group}</span>${toolbarButtons.trim()} ${samlButtons.trim()}</td>
+                                <td colspan="2"><span class="idp-group">${group}</span>${toolbarButtons.trim()} ${samlButtons.trim()}</td>
                             </tr>`.trim()
                         );
                         configureSaml2ClientMetadataButtons();
