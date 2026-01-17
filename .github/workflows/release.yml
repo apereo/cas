@@ -41,11 +41,9 @@ jobs:
       - name: Determine version
         id: check
         run: |
-          casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
-          echo "Detected version: $casVersion"
-
-          # decide if it’s a SNAPSHOT
-          if [[ "$casVersion" == *-SNAPSHOT ]]; then
+          RELEASE_VERSION="${{ inputs.releaseVersion }}"
+          echo "Detected release version: $RELEASE_VERSION"
+          if [[ "$RELEASE_VERSION" == *-SNAPSHOT ]]; then
             echo "is_snapshot=true"
           else
             echo "is_snapshot=false"
