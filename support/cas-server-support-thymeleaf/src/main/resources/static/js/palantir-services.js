@@ -335,14 +335,17 @@ async function fetchServices(callback) {
 
                 let serviceButtons = `
                  <button type="button" name="editService" href="#" serviceId='${service.id}'
+                        title="Edit Service Definition"
                         class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                     <i class="mdi mdi-pencil min-width-32x" aria-hidden="true"></i>
                 </button>
                 <button type="button" name="deleteService" href="#" serviceId='${service.id}'
+                        title="Delete Service Definition"
                         class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                     <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
                 </button>
                 <button type="button" name="copyService" href="#" serviceId='${service.id}'
+                        title="Copy Service Definition"
                         class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                     <i class="mdi mdi-content-copy min-width-32x" aria-hidden="true"></i>
                 </button>
@@ -350,10 +353,12 @@ async function fetchServices(callback) {
                 if (actuatorEndpoints.entityhistory) {
                     serviceButtons += `
                     <button type="button" name="viewEntityHistory" href="#" serviceId='${service.id}'
+                            title="View Change History"
                             class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                         <i class="mdi mdi-history min-width-32x" aria-hidden="true"></i>
                     </button>
                     <button type="button" name="viewEntityChangelog" href="#" serviceId='${service.id}'
+                            title="View Change Log"
                             class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                         <i class="mdi mdi-delta min-width-32x" aria-hidden="true"></i>
                     </button>

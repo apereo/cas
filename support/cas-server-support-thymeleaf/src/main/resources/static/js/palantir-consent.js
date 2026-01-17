@@ -36,12 +36,15 @@ async function initializeConsentOperations() {
             for (const source of response) {
 
                 let consentButtons = `
-                 <button type="button" name="viewConsentAttributes" href="#" consentId='${source.decision.id}'
+                 <button type="button" name="viewConsentAttributes" href="#" 
+                        title="View Attributes"
+                        consentId='${source.decision.id}'
                         class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                     <i class="mdi mdi-pencil min-width-32x" aria-hidden="true"></i>
                     <span class="d-none">${JSON.stringify(source.attributes)}</span>
                 </button>
-                <button type="button" name="deleteConsent" href="#" 
+                <button type="button" name="deleteConsent" href="#"
+                        title="Delete Consent"
                         principal='${source.decision.principal}'
                         consentId='${source.decision.id}'
                         class="mdc-button mdc-button--raised btn btn-link min-width-32x">
