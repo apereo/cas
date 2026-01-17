@@ -1,4 +1,4 @@
-#applicationsTable th {
+.table th {
     resize: horizontal;
     overflow: auto;
 }

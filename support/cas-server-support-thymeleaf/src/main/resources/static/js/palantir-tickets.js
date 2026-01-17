@@ -47,12 +47,11 @@ async function initializeTicketsOperations() {
     });
 
     const ticketCatalogTable = $("#ticketCatalogTable").DataTable({
-
         pageLength: 10,
+        autoWidth: false,
         columnDefs: [
             {visible: false, targets: 0}
         ],
-
         order: [0, "desc"],
         drawCallback: settings => {
             $("#ticketCatalogTable tr").addClass("mdc-data-table__row");
@@ -105,6 +104,7 @@ async function initializeTicketsOperations() {
 
     const ticketExpirationPoliciesTable = $("#ticketExpirationPoliciesTable").DataTable({
         pageLength: 10,
+        autoWidth: false,
         columnDefs: [
             {visible: false, targets: 0}
         ],

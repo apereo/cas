@@ -49,20 +49,24 @@ public class DefaultMessageSanitizer implements MessageSanitizer {
             while (matcher.find()) {
                 val match = matcher.group();
                 val group = matcher.group(1);
-                val length = group.length();
-                var replaceLength = length - VISIBLE_TAIL_LENGTH - (HOST_NAME_LENGTH + 1);
-                if (replaceLength <= 0) {
-                    replaceLength = length;
+                if (StringUtils.isNotBlank(group)) {
+                    val length = group.length();
+                    var replaceLength = length - VISIBLE_TAIL_LENGTH - (HOST_NAME_LENGTH + 1);
+                    if (replaceLength <= 0) {
+                        replaceLength = length;
+                    }
+                    val newId = match.replace(group.substring(0, replaceLength), OBFUSCATED_STRING);
+                    modifiedMessage = modifiedMessage.replace(match, newId);
                 }
-                val newId = match.replace(group.substring(0, replaceLength), OBFUSCATED_STRING);
-                modifiedMessage = modifiedMessage.replace(match, newId);
             }
         }
 
         val matcher = SENSITIVE_TEXT_PATTERN.matcher(msg);
         while (matcher.find()) {
             val group = matcher.group(2);
-            modifiedMessage = modifiedMessage.replace(group, OBFUSCATED_STRING);
+            if (StringUtils.isNotBlank(group)) {
+                modifiedMessage = modifiedMessage.replace(group, OBFUSCATED_STRING);
+            }
         }
         return modifiedMessage;
     }

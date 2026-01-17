@@ -3,14 +3,6 @@ async function initializeScheduledTasksOperations() {
     const threadDumpTable = $("#threadDumpTable").DataTable({
         pageLength: 10,
         autoWidth: false,
-        columnDefs: [
-            {width: "5%", targets: 0},
-            {width: "35%", targets: 1},
-            {width: "30%", targets: 2},
-            {width: "10%", targets: 3},
-            {width: "10%", targets: 4},
-            {width: "10%", targets: 5}
-        ],
         drawCallback: settings => {
             $("#threadDumpTable tr").addClass("mdc-data-table__row");
             $("#threadDumpTable td").addClass("mdc-data-table__cell");
@@ -21,6 +13,7 @@ async function initializeScheduledTasksOperations() {
     const groupColumn = 0;
     const scheduledtasks = $("#scheduledTasksTable").DataTable({
         pageLength: 25,
+        autoWidth: false,
         columnDefs: [{visible: false, targets: groupColumn}],
         order: [groupColumn, "asc"],
         drawCallback: settings => {

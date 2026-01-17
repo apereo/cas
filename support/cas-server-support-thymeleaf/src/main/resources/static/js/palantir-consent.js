@@ -3,10 +3,6 @@ async function initializeConsentOperations() {
         const consentAttributesTable = $("#consentAttributesTable").DataTable({
             pageLength: 10,
             autoWidth: false,
-            columnDefs: [
-                {width: "40%", targets: 0},
-                {width: "60%", targets: 1}
-            ],
             drawCallback: settings => {
                 $("#consentAttributesTable tr").addClass("mdc-data-table__row");
                 $("#consentAttributesTable td").addClass("mdc-data-table__cell");

@@ -1,7 +1,7 @@
 async function initializeMultitenancyOperations() {
     const tenantsTable = $("#tenantsTable").DataTable({
         pageLength: 10,
-        autoWidth: true,
+        autoWidth: false,
         drawCallback: settings => {
             $("#tenantsTable tr").addClass("mdc-data-table__row");
             $("#tenantsTable td").addClass("mdc-data-table__cell");
