@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.mdui;
 
 import module java.base;
 import org.apereo.cas.services.WebBasedRegisteredService;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import lombok.Getter;
 import lombok.Setter;
@@ -95,7 +96,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
 
     private static Optional<String> findLocale(final String locale, final List<?> items) {
         LOGGER.trace("Looking for locale [{}]", locale);
-        val p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
+        val p = RegexUtils.createPattern(locale, Pattern.CASE_INSENSITIVE);
         return items.stream()
             .filter(LocalizedName.class::isInstance)
             .map(LocalizedName.class::cast)

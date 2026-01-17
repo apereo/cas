@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.RequiredArgsConstructor;
@@ -161,7 +162,7 @@ public class OAuth20HandlerInterceptorAdapter implements AsyncHandlerInterceptor
      */
     protected boolean doesUriMatchPattern(final String requestPath, final List<String> patternUrls) {
         return patternUrls.stream().anyMatch(patternUrl -> {
-            val pattern = Pattern.compile('/' + patternUrl + "(/)*$");
+            val pattern = RegexUtils.createPattern('/' + patternUrl + "(/)*$");
             return pattern.matcher(requestPath).find();
         });
     }

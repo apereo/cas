@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -240,7 +241,7 @@ class CasWebSecurityConfiguration {
         private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(false).build().toObjectMapper();
 
-        private static final Pattern PATTERN_PASSWORD_ALG = Pattern.compile("^\\{.+\\}.*");
+        private static final Pattern PATTERN_PASSWORD_ALG = RegexUtils.createPattern("^\\{.+\\}.*");
 
         @Bean
         @ConditionalOnMissingBean(name = "jsonUserDetailsService")

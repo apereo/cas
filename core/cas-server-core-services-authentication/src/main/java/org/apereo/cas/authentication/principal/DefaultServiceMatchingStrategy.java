@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal;
 import module java.base;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.RegexUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,7 +19,7 @@ import org.jspecify.annotations.Nullable;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultServiceMatchingStrategy implements ServiceMatchingStrategy {
-    private static final Pattern FRAGMENT_PATTERN = Pattern.compile("#.+");
+    private static final Pattern FRAGMENT_PATTERN = RegexUtils.createPattern("#.+");
 
     protected final ServicesManager servicesManager;
 

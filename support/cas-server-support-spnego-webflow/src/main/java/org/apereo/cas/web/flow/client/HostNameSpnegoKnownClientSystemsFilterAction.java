@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.client;
 
 import module java.base;
+import org.apereo.cas.util.RegexUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -20,19 +21,11 @@ public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnow
 
     private final Pattern hostNamePatternString;
 
-    /**
-     * Instantiates a new hostname spnego known client systems filter action.
-     *
-     * @param ipsToCheckPattern     the ips to check pattern
-     * @param alternativeHost       the alternative remote host attribute
-     * @param dnsTimeout            # of milliseconds to wait for a DNS request to return
-     * @param hostNamePatternString the host name pattern string.
-     */
     public HostNameSpnegoKnownClientSystemsFilterAction(final Pattern ipsToCheckPattern, final String alternativeHost,
                                                         final long dnsTimeout,
                                                         final String hostNamePatternString) {
         super(ipsToCheckPattern, alternativeHost, dnsTimeout);
-        this.hostNamePatternString = Pattern.compile(hostNamePatternString);
+        this.hostNamePatternString = RegexUtils.createPattern(hostNamePatternString);
     }
 
     /**

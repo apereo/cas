@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.adaptive.intel;
 import module java.base;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.util.RegexUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -43,6 +44,6 @@ public abstract class BaseIPAddressIntelligenceService implements IPAddressIntel
     private boolean isClientIpAddressRejected(final String clientIp) {
         val rejectIpAddresses = adaptiveAuthenticationProperties.getPolicy().getRejectIpAddresses();
         return StringUtils.isNotBlank(rejectIpAddresses)
-            && Pattern.compile(rejectIpAddresses).matcher(clientIp).find();
+            && RegexUtils.createPattern(rejectIpAddresses).matcher(clientIp).find();
     }
 }

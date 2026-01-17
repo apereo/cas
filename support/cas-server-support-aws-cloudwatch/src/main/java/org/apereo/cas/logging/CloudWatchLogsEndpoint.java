@@ -3,6 +3,7 @@ package org.apereo.cas.logging;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,7 +32,7 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.GetLogEventsRequest;
 @Endpoint(id = "cloudWatchLogs", defaultAccess = Access.NONE)
 @Slf4j
 public class CloudWatchLogsEndpoint extends BaseCasRestActuatorEndpoint {
-    private static final Pattern LOG_LEVEL_PATTERN = Pattern.compile("(\\[*(FATAL|CRITICAL|NOTICE|WARNING|ERROR|DEBUG|INFO|WARN|TRACE)\\]*)\\s", Pattern.CASE_INSENSITIVE);
+    private static final Pattern LOG_LEVEL_PATTERN = RegexUtils.createPattern("(\\[*(FATAL|CRITICAL|NOTICE|WARNING|ERROR|DEBUG|INFO|WARN|TRACE)\\]*)\\s", Pattern.CASE_INSENSITIVE);
 
     private final ObjectProvider<@NonNull CloudWatchLogsClient> awsLogsClient;
 

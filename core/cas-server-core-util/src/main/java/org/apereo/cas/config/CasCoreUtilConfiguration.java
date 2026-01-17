@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.util.feature.DefaultCasRuntimeModuleLoader;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -174,7 +175,7 @@ class CasCoreUtilConfiguration {
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
                 .collect(Collectors.joining("|"));
-            val pattern = Pattern.compile("(?:(?:" + prefixes + ")-\\d+-)([\\w.-]+)");
+            val pattern = RegexUtils.createPattern("(?:(?:" + prefixes + ")-\\d+-)([\\w.-]+)");
             return new DefaultMessageSanitizer(pattern);
         }
     }

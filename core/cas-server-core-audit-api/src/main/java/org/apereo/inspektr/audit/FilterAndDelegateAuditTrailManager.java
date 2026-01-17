@@ -4,6 +4,7 @@ import module java.base;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.util.RegexUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.boot.actuate.audit.listener.AuditApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
@@ -41,7 +42,7 @@ public class FilterAndDelegateAuditTrailManager implements AuditTrailManager, Ap
             .stream()
             .anyMatch(action -> {
                 var actionPerformed = ctx.getActionPerformed();
-                return "*".equals(action) || Pattern.compile(action).matcher(actionPerformed).find();
+                return "*".equals(action) || RegexUtils.createPattern(action).matcher(actionPerformed).find();
             });
 
         if (matched) {
@@ -49,7 +50,7 @@ public class FilterAndDelegateAuditTrailManager implements AuditTrailManager, Ap
                 .stream()
                 .noneMatch(action -> {
                     var actionPerformed = ctx.getActionPerformed();
-                    return "*".equals(action) || Pattern.compile(action).matcher(actionPerformed).find();
+                    return "*".equals(action) || RegexUtils.createPattern(action).matcher(actionPerformed).find();
                 });
         }
         if (matched) {
