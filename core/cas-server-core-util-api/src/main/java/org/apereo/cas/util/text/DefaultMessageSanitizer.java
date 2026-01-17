@@ -2,6 +2,7 @@ package org.apereo.cas.util.text;
 
 import module java.base;
 import org.apereo.cas.util.InetAddressUtils;
+import org.apereo.cas.util.RegexUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 @RequiredArgsConstructor
 public class DefaultMessageSanitizer implements MessageSanitizer {
     private static final Pattern SENSITIVE_TEXT_PATTERN =
-        Pattern.compile("(psw|pwd|clientSecret|password|token|credential|secret|secretKey)\\s*=\\s*(['\"]*\\S+\\b['\"]*)");
+        RegexUtils.createPattern("(psw|pwd|clientSecret|password|token|credential|secret|secretKey)\\s*=\\s*(['\"]*\\S+\\b['\"]*)");
 
     private static final Boolean CAS_TICKET_ID_SANITIZE_SKIP = Boolean.getBoolean("CAS_TICKET_ID_SANITIZE_SKIP");
 

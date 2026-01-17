@@ -189,7 +189,7 @@ ${contributors}
 
     echo "Closing milestone v${casVersion} on GitHub..."
     gh api /repos/apereo/cas/milestones \
-      --jq ".[] | select(.title == \"v${casVersion}\") | .number" |
+      --jq ".[] | select(.title == \"${casVersion}\") | .number" |
     while read -r number; do
       gh api \
         --method PATCH \
