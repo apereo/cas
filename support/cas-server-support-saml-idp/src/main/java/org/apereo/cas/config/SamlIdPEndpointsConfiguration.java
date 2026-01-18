@@ -13,7 +13,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.interrupt.InterruptCookieProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
@@ -511,7 +511,7 @@ class SamlIdPEndpointsConfiguration {
             final CasConfigurationProperties casProperties) {
 
             val cipherExecutorResolver = new DefaultCipherExecutorResolver(samlIdPDistributedSessionCookieCipherExecutor, tenantExtractor,
-                InterruptCookieProperties.class, bindingContext -> {
+                SamlIdPProperties.class, bindingContext -> {
                 val properties = bindingContext.value();
                 val crypto = properties.getAuthn().getSamlIdp().getCore().getSessionReplication().getCookie().getCrypto();
                 return CipherExecutorUtils.newStringCipherExecutor(crypto, SamlIdPDistributedSessionCookieCipherExecutor.class);

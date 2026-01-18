@@ -58,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(
     classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class,
     properties = {
+        "cas.authn.pac4j.core.session-replication.cookie.crypto.enabled=true",
         "cas.authn.pac4j.core.session-replication.cookie.crypto.alg=" + ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256,
         "cas.authn.pac4j.core.session-replication.cookie.crypto.encryption.key=3RXtt06xYUAli7uU-Z915ZGe0MRBFw3uDjWgOEf1GT8",
         "cas.authn.pac4j.core.session-replication.cookie.crypto.signing.key=jIFR-fojN0vOIUcT0hDRXHLVp07CV-YeU8GnjICsXpu65lfkJbiKP028pT74Iurkor38xDGXNcXk_Y1V4rNDqw",
