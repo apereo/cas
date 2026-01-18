@@ -66,3 +66,4 @@ are now configured to run with parallelism enabled.
   
 - Compiled valid regular expresions are now cached to improve performance across the board.
 - Continued efforts using advanced code analysis techniques to remove potential memory leaks and improve system performance.
+- Crypto operations that support generating cookies for *deprecated session replication capabilities* are now turned off by default.
