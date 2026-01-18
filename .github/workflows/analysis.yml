@@ -131,6 +131,7 @@ jobs:
           - CheckMissingUtilityClassAnnotation
           - CheckRedundantTestConfigurationInheritance
           - CheckSpringConfigurationBeanProxying
+          - CheckTestConfigurationBeanProxying
           - CheckSpringConfigurationFactories
           - CheckMissingTestTagAnnotation
           - CheckEnforceLombokAnnotations

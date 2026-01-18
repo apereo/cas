@@ -20,6 +20,7 @@ public class CasTestExtension implements BeforeAllCallback {
         System.setProperty("spring.mvc.pathmatch.matching-strategy", WebMvcProperties.MatchingStrategy.ANT_PATH_MATCHER.name());
         System.setProperty("spring.main.allow-bean-definition-overriding", "true");
         System.setProperty("spring.main.banner-mode", "off");
+        System.setProperty("spring.jmx.enabled", "false");
 
         val requestContext = MockRequestContext.create();
         requestContext

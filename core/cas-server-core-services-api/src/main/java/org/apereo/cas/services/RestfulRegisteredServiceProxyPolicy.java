@@ -72,7 +72,7 @@ public class RestfulRegisteredServiceProxyPolicy implements RegisteredServicePro
                 .headers(CollectionUtils.wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
                 .build();
             response = HttpUtils.execute(exec);
-            return HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
+            return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
