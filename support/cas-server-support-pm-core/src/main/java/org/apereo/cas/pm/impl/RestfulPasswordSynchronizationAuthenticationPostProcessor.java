@@ -55,8 +55,8 @@ public class RestfulPasswordSynchronizationAuthenticationPostProcessor implement
             headers.putAll(properties.getHeaders());
             val exec = HttpExecutionRequest.builder()
                 .url(properties.getUrl())
-                .basicAuthPassword(properties.getBasicAuthUsername())
-                .basicAuthUsername(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .basicAuthPassword(properties.getBasicAuthPassword())
                 .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .method(HttpMethod.POST)
                 .entity(entity)
