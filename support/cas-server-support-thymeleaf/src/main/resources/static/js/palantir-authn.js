@@ -74,6 +74,7 @@ async function initializeAuthenticationOperations() {
     let toolbarEntries = `
         <button type="button" id="loadExternalIdentityProvidersTableButton"
                 onclick="loadExternalIdentityProvidersTable()"
+                title="Reload external identity providers from sources"
                 class="mdc-button mdc-button--raised">
             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>Reload</span>
         </button>
@@ -83,6 +84,7 @@ async function initializeAuthenticationOperations() {
         toolbarEntries += `
             <button type="button" id="newExternalIdentityProvider"
                     onclick="newExternalIdentityProvider()"
+                    title="Create a new external identity provider"
                     class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus-thick" aria-hidden="true"></i>New</span>
             </button>
@@ -137,12 +139,14 @@ async function initializeAuthenticationOperations() {
                                     samlButtons = `
                                     <span class="px-2"  style="float: right;">
                                             <button type="button" title="Service Provider Metadata" 
+                                                    title="View Service Provider Metadata"
                                                     name="saml2ClientSpMetadata" href="#" clientName='${group}'
                                                     class="mdc-button mdc-button--raised toolbar pr-2">
                                                 <i class="mdi mdi-text-box min-width-32x" aria-hidden="true"></i>
                                                 Service Provider Metadata
                                             </button>
                                             <button type="button" title="Identity Provider Metadata" 
+                                                    title="View Identity Provider Metadata"
                                                     name="saml2ClientIdpMetadata" href="#" clientName='${group}'
                                                     class="mdc-button mdc-button--raised toolbar pr-2">
                                                 <i class="mdi mdi-file-xml-box min-width-32x" aria-hidden="true"></i>

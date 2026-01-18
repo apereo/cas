@@ -573,6 +573,7 @@ async function initializeConfigurationOperations() {
     const toolbar = document.createElement("div");
     let toolbarEntries = `
             <button type="button" id="reloadConfigurationTableButton" 
+                    title="Reload Configuration Table"
                     onclick="$.get(actuatorEndpoints.env, res => { reloadConfigurationTable(res); }).fail((xhr) => { displayBanner(xhr); });"
                     class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-database-arrow-down" aria-hidden="true"></i>Reload</span>
@@ -580,16 +581,17 @@ async function initializeConfigurationOperations() {
     `;
     if (mutablePropertySourcesAvailable) {
         toolbarEntries += `
-            <button type="button" onclick="createNewConfigurationProperty(this);" id="newConfigPropertyButton" class="mdc-button mdc-button--raised">
+            <button type="button" title="Create a new configuration property" onclick="createNewConfigurationProperty(this);" id="newConfigPropertyButton" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New Property</span>
             </button>
-            <button type="button" onclick="deleteAllConfigurationProperties(this);" id="deleteAllConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
+            <button type="button" title="Delete all configuration properties" onclick="deleteAllConfigurationProperties(this);" id="deleteAllConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-delete" aria-hidden="true"></i>Delete All</span>
             </button>
-            <button type="button" onclick="importConfigurationProperties(this);" id="importConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
+            <button type="button" title="Import configuration from properties from files" onclick="importConfigurationProperties(this);" id="importConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-import" aria-hidden="true"></i>Import</span>
             </button>
             <button type="button" id="refreshConfigurationButton"
+                    title="Refresh CAS Server Configuration"
                     onclick="refreshCasServerConfiguration('Context Refresh');" 
                     class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>Refresh CAS</span>

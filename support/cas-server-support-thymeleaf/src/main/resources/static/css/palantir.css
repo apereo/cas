@@ -125,8 +125,8 @@
     color: white;
     padding: 10px 20px;
     border-radius: 20px;
-    font: bold 14px "Helvetica Neue", Sans-Serif;
-    /*text-transform: uppercase;*/
+    font: var(--mdc-typography-font-family) !important;
+    font-size: 11pt !important;
     box-shadow: 0 0 7px black;
 }
 
