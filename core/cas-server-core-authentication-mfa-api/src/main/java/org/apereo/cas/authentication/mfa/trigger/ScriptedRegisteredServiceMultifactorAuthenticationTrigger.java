@@ -92,7 +92,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
         return Optional.empty();
     }
 
-    protected ExecutableCompiledScript fetchScript(final String mfaScript) throws Exception {
+    protected @Nullable ExecutableCompiledScript fetchScript(final String mfaScript) throws Exception {
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
         if (scriptFactory.isInlineScript(mfaScript) && CasRuntimeHintsRegistrar.notInNativeImage()) {
             return scriptFactory.fromScript(scriptFactory.getInlineScript(mfaScript).orElseThrow());
