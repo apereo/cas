@@ -213,6 +213,7 @@ TestCategories.values().each({ testCategory ->
                 logger.info "Predictive test selection for ${project.name} with task ${taskName} is ${ptsEnabled ? 'enabled' : 'disabled'}."
 
                 systemProperty("junit.platform.discovery.issue.severity.critical", "info")
+                systemProperty("spring.test.context.cache.maxSize", "32")
                 
                 if (testCategory.parallelEnabled) {
                     systemProperty("junit.jupiter.execution.parallel.enabled", true)
