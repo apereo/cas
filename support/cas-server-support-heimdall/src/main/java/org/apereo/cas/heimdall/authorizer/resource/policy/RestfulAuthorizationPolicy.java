@@ -46,7 +46,7 @@ public class RestfulAuthorizationPolicy implements ResourceAuthorizationPolicy {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).minimal(true).build().toObjectMapper();
-    
+
     /**
      * The endpoint URL to contact and retrieve attributes.
      */
@@ -82,7 +82,11 @@ public class RestfulAuthorizationPolicy implements ResourceAuthorizationPolicy {
             .entity(MAPPER.writeValueAsString(entity))
             .build();
         val response = HttpUtils.execute(exec);
-        val authorized = response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
-        return authorized ? AuthorizationResult.granted("OK") : AuthorizationResult.denied("Denied");
+        try {
+            val authorized = response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
+            return authorized ? AuthorizationResult.granted("OK") : AuthorizationResult.denied("Denied");
+        } finally {
+            HttpUtils.close(response);
+        }
     }
 }

@@ -113,9 +113,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
         return transactionTemplate.execute(_ ->
             Optional.ofNullable(entityManager.find(JpaRegisteredServiceEntity.class, id))
                 .map(this::toRegisteredService)
-                .stream()
-                .peek(this::invokeServiceRegistryListenerPostLoad)
-                .findFirst()
+                .map(this::invokeServiceRegistryListenerPostLoad)
                 .orElse(null));
     }
 
