@@ -1122,10 +1122,10 @@ body {
     display: inline-block;
     position: absolute;
     background-color: #313443;
-    padding: 8px 15px;
+    padding: 8px 10px;
     border-radius: 3px;
     margin-top: 5px;
-    left: 170px;
+    left: 130px;
     opacity: 0;
     visibility: hidden;
     font-size: 13px;

@@ -37,6 +37,7 @@
                         <span class="mdc-menu-surface--anchor">
                             <button name="newService" id="newService"
                                     onclick="cas.openMenu();"
+                                    title="Create New Application"
                                     class="mdc-button mdc-button--raised" aria-label="Create">
                                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus"
                                                                    aria-hidden="true"></i>New</span>
@@ -85,17 +86,18 @@
                         </span>
                         <input type="file" id="serviceFileInput" style="display: none;">
                         <button name="importService" id="importService" class="mdc-button mdc-button--raised"
-                                aria-label="Import">
+                                title="Import applications and service definitions" aria-label="Import">
                              <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-import"
                                                                 aria-hidden="true"></i>Import</span>
                         </button>
                         <button name="exportAll" id="exportAll" class="mdc-button mdc-button--raised"
-                                aria-label="Export All">
+                                title="Export applications and service definitions as a zip file" aria-label="Export All">
                              <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-export"
                                                                 aria-hidden="true"></i>Export</span>
                         </button>
                         <button name="reloadAll" id="reloadAll" class="mdc-button mdc-button--raised"
                                 aria-label="Reload"
+                                title="Reload applications and service definitions from the service registry"
                                 onclick="fetchServices();">
                              <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh"
                                                                 aria-hidden="true"></i>Reload</span>

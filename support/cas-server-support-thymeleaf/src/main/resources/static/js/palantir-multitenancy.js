@@ -14,6 +14,7 @@ async function initializeMultitenancyOperations() {
             for (const tenant of Object.values(response)) {
                 let buttons = `
                      <button type="button" name="viewTenantDefinition" href="#" 
+                            title="View Tenant Definition"
                             data-tenant-id='${tenant.id}' onclick="showTenantDefinition('${tenant.id}')"
                             class="mdc-button mdc-button--raised min-width-32x">
                         <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
