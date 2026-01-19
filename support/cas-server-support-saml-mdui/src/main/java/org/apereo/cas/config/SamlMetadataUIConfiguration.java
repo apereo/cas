@@ -30,7 +30,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 
 /**
  * This is {@link SamlMetadataUIConfiguration}.
