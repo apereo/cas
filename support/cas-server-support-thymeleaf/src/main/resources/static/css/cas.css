@@ -1119,7 +1119,8 @@ body {
 }
 
 .sidebar-navigation ul li .tooltip {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     position: absolute;
     background-color: #313443;
     padding: 8px 10px;

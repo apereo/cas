@@ -8,112 +8,182 @@
 <body>
 <span th:fragment="main">
     <div class="attribute-tab w-100 d-none" id="attribute-tab-6">
-        <h3>Single Sign-on Sessions</h3>
-        <p>You can query the ticket registry to find the active single sign-on sessions for a given CAS principal.</p>
-        
-        <form id="fmSsoSessions" class="d-block" onsubmit="return false;">
-            <section class="cas-field form-group my-3 mdc-input-group d-flex">
-                <div class="mdc-input-group-field mdc-input-group-field-append w-100">
-                    <label for="ssoSessionUsername"
-                           class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                        <span class="mdc-notched-outline">
-                            <span class="mdc-notched-outline__leading"></span>
-                            <span class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label">Username</span>
-                            </span>
-                            <span class="mdc-notched-outline__trailing"></span>
-                        </span>
-                        <input class="mdc-text-field__input form-control" type="text"
-                               name="ssoSessionUsername" data-param-name="username"
-                               tabindex="0" id="ssoSessionUsername" size="50" autocomplete="off" required/>
-                    </label>
-                </div>
-            </section>
-            <div class="d-flex">
-                <button type="button" name="ssoSessionButton" id="ssoSessionButton"
-                        class="mdc-button mdc-button--raised">
-                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-magnify" aria-hidden="true"></i>Search</span>
-                </button>
-                <button type="button" name="removeSsoSessionButton" id="removeSsoSessionButton"
-                        class="mdc-button mdc-button--raised">
-                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-delete" aria-hidden="true"></i>Remove User Sessions</span>
-                </button>
-                <button type="button" name="removeAllSsoSessionsButton" id="removeAllSsoSessionsButton"
-                        class="mdc-button mdc-button--raised">
-                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-broom" aria-hidden="true"></i>Remove All Sessions</span>
-                </button>
-            </div>
-        </form>
+         <div class="jqueryui-tabs">
+              <ul>
+                <li><a id="ssosessionstab" href="#ssosessions-tab">Single Sign-on Sessions</a></li>
+                <li><a id="springsessionstab" href="#springsession-tab">Spring Sessions</a></li>
+              </ul>
 
-        <table id="ssoSessionsTable" class="mdc-data-table__table table table-striped noborder">
-            <thead>
-                <tr class="mdc-data-table__header-row">
-                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Date</th>
-                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Ticket-Granting Ticket</th>
-                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Client IP</th>
-                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">User Agent</th>
-                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Usage</th>
-                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Remember Me</th>
-                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
-                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attributes</th>
-                </tr>
-            </thead>
-            <tbody class="mdc-data-table__content">
-            </tbody>
-         </table>
-        <div class="mdc-dialog modal" id="ssoSession-dialog" role="alertdialog"
-             aria-modal="true" aria-labelledby="ssoSession-dialog-title" aria-describedby="ssoSession-dialog-content">
-            <div class="mdc-dialog__container w-75 modal-dialog">
-                <div class="mdc-dialog__surface mw-75 modal-content">
-                    
-                    <h1 class="mdc-dialog__title modal-header mt-lg-2"
-                        id="ssoSession-dialog-title">SSO Session Details</h1>
-                    <div class="mdc-dialog__content modal-body" id="ssoSession-dialog-content">
-                        <div class="jqueryui-tabs" id="ssosessions-tabs">
-                            <ul>
-                                <li><a id="ssosessionattributes" href="#ssosessionattributes-tab">Session Attributes</a></li>
-                                <li><a id="ssosessionservices" href="#ssosessionservices-tab">Session Applications</a></li>
-                            </ul>
-
-                            <div id="ssosessionattributes-tab">
-                                <table id="ssoSessionDetailsTable" class="mdc-data-table__table table table-striped noborder">
-                                    <thead>
-                                        <tr class="mdc-data-table__header-row">
-                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Type</th>
-                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
-                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="mdc-data-table__content">
-                                    </tbody>
-                                 </table>
-                            </div>
-                            <div id="ssosessionservices-tab">
-                                <table id="ssoSessionApplicationsTable" class="mdc-data-table__table table table-striped noborder">
-                                    <thead>
-                                        <tr class="mdc-data-table__header-row">
-                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Ticket</th>
-                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">URL</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="mdc-data-table__content">
-                                    </tbody>
-                                 </table>
-                            </div>
+             <div id="ssosessions-tab">
+                <p>You can query the ticket registry to find the active single sign-on sessions for a given CAS principal.</p>
+                <form id="fmSsoSessions" class="d-block" onsubmit="return false;">
+                    <section class="cas-field form-group my-3 mdc-input-group d-flex">
+                        <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                            <label for="ssoSessionUsername"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Username</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="ssoSessionUsername" data-param-name="username"
+                                       tabindex="0" id="ssoSessionUsername" size="50" autocomplete="off" required/>
+                            </label>
                         </div>
-                        
-
-                    </div>
-                    <footer class="mdc-dialog__actions modal-footer">
-                        <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
-                                data-mdc-dialog-action="accept" data-mdc-dialog-button-default data-bs-dismiss="modal">
-                            <span class="mdc-button__label">Close</span>
+                    </section>
+                    <div class="d-flex">
+                        <button type="button" name="ssoSessionButton" id="ssoSessionButton"
+                                title="Search SSO Sessions"
+                                class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-magnify" aria-hidden="true"></i>Search</span>
                         </button>
-                    </footer>
+                        <button type="button" name="removeSsoSessionButton" id="removeSsoSessionButton"
+                                title="Remove Selected User Sessions"
+                                class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-delete" aria-hidden="true"></i>Remove User Sessions</span>
+                        </button>
+                    </div>
+                </form>
+
+                <table id="ssoSessionsTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                        <tr class="mdc-data-table__header-row">
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Date</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader"
+                                scope="col">Ticket-Granting Ticket</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Client IP</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">User Agent</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Usage</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Remember Me</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Attributes</th>
+                        </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                 </table>
+                <div class="mdc-dialog modal" id="ssoSession-dialog" role="alertdialog"
+                         aria-modal="true" aria-labelledby="ssoSession-dialog-title"
+                         aria-describedby="ssoSession-dialog-content">
+                <div class="mdc-dialog__container w-75 modal-dialog">
+                        <div class="mdc-dialog__surface mw-75 modal-content">
+
+                            <h1 class="mdc-dialog__title modal-header mt-lg-2"
+                                id="ssoSession-dialog-title">SSO Session Details</h1>
+                            <div class="mdc-dialog__content modal-body" id="ssoSession-dialog-content">
+                                <div class="jqueryui-tabs" id="ssosessions-tabs">
+                                    <ul>
+                                        <li><a id="ssosessionattributes"
+                                               href="#ssosessionattributes-tab">Session Attributes</a></li>
+                                        <li><a id="ssosessionservices"
+                                               href="#ssosessionservices-tab">Session Applications</a></li>
+                                    </ul>
+
+                                    <div id="ssosessionattributes-tab">
+                                        <table id="ssoSessionDetailsTable"
+                                               class="mdc-data-table__table table table-striped noborder">
+                                            <thead>
+                                                <tr class="mdc-data-table__header-row">
+                                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Type</th>
+                                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="mdc-data-table__content">
+                                            </tbody>
+                                         </table>
+                                    </div>
+                                    <div id="ssosessionservices-tab">
+                                        <table id="ssoSessionApplicationsTable"
+                                               class="mdc-data-table__table table table-striped noborder">
+                                            <thead>
+                                                <tr class="mdc-data-table__header-row">
+                                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Ticket</th>
+                                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">URL</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="mdc-data-table__content">
+                                            </tbody>
+                                         </table>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <footer class="mdc-dialog__actions modal-footer">
+                                <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
+                                        data-mdc-dialog-action="accept" data-mdc-dialog-button-default
+                                        data-bs-dismiss="modal">
+                                    <span class="mdc-button__label">Close</span>
+                                </button>
+                            </footer>
+                        </div>
+                    </div>
+                        <div class="mdc-dialog__scrim"></div>
                 </div>
-            </div>
-            <div class="mdc-dialog__scrim"></div>
-        </div>
+
+
+                 <div class="d-flex">
+                    <button type="button" name="removeAllSsoSessionsButton" id="removeAllSsoSessionsButton"
+                            title="Remove All Sessions"
+                            class="mdc-button mdc-button--raised">
+                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-broom" aria-hidden="true"></i>Remove All Sessions</span>
+                    </button>
+                </div>
+
+
+
+             </div>
+
+             <div id="springsession-tab">
+                <p>You can query the Spring Session repository to find the active Spring sessions for a given CAS principal.</p>
+                <form id="fmSpringSessions" class="d-block" onsubmit="return false;">
+                    <section class="cas-field form-group my-3 mdc-input-group d-flex">
+                        <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                            <label for="springSessionUsername"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Username</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="springSessionUsername" data-param-name="username"
+                                       tabindex="0" id="springSessionUsername" size="50" autocomplete="off" required/>
+                            </label>
+                        </div>
+                    </section>
+                </form>
+
+                <div class="d-flex">
+                    <button type="button" name="springSessionsButton" id="springSessionsButton"
+                            title="Search Spring Sessions"
+                            class="mdc-button mdc-button--raised">
+                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-magnify" aria-hidden="true"></i>Search</span>
+                    </button>
+                </div>
+                 
+                 <table id="springSessionsTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                        <tr class="mdc-data-table__header-row">
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">ID</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Creation Date</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Last Accessed Date</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                 </table>
+
+             </div>
+             
+         </div>
     </div>
 </span>
 </body>

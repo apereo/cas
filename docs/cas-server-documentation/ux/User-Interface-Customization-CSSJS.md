@@ -46,7 +46,7 @@ to specify a custom `cas.js` file under the `cas.standard.js.file` setting.
 
 Most importantly, the following JavaScript libraries are utilized by CAS automatically:
 
-* [JQuery](https://jquery.com)
+* [JQuery](https://github.com/jquery/jquery)
 * [Bootstrap for grid / flex utilities](https://getbootstrap.com)
 * [Material.io](https://material.io)
 
