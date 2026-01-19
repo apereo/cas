@@ -131,7 +131,7 @@ jodaTime = "2.14.0"
 jool = "0.9.15"
 jose4j = "0.9.6"
 jpaPersistenceApi = "3.2.0"
-jquery = "3.7.1"
+jquery = "4.0.0"
 jqueryUi = "1.14.1"
 jradius = "1.1.5"
 json = "20251224"
@@ -470,7 +470,7 @@ jmustache = { module = "com.samskivert:jmustache", version.ref = "mustache" }
 joda-time = { module = "joda-time:joda-time", version.ref = "jodaTime" }
 jool = { module = "org.jooq:jool", version.ref = "jool" }
 jose4j = { module = "org.bitbucket.b_c:jose4j", version.ref = "jose4j" }
-jquery-core = { module = "org.webjars:jquery", version.ref = "jquery" }
+jquery-core = { module = "org.webjars.npm:jquery", version.ref = "jquery" }
 jquery-ui = { module = "org.webjars.npm:jquery-ui", version.ref = "jqueryUi" }
 jradius-apps = { module = "net.jradius:jradius-apps", version.ref = "jradius" }
 jradius-client = { module = "net.jradius:jradius-client", version.ref = "jradius" }

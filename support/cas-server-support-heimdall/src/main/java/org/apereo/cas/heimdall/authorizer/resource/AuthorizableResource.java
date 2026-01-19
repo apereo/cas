@@ -3,6 +3,7 @@ package org.apereo.cas.heimdall.authorizer.resource;
 import module java.base;
 import org.apereo.cas.heimdall.authorizer.resource.policy.ResourceAuthorizationPolicy;
 import org.apereo.cas.util.serialization.PatternJsonDeserializer;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -22,6 +23,7 @@ import tools.jackson.databind.annotation.JsonDeserialize;
  * @since 7.2.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Getter
 @Setter
 @EqualsAndHashCode
