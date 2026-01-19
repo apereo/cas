@@ -61,10 +61,25 @@ The collection of end-to-end [browser tests based on Puppeteer](../../developer/
 and scenarios. At the moment, total number of jobs stands at approximately `532` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
+                                                                                                                            
+### Session Replication
+
+Crypto operations that support generating cookies for *deprecated session replication capabilities* are now turned off by default
+to avoid generating keys. Furthermore, the session replication capabilities that are not based on the
+[ticket registry](../webflow/Webflow-Customization-Sessions-ServerSide-TicketRegistry.html) are now turned off 
+by default. If you are using the deprecated legacy session replication features, you MUST explicitly 
+turn on these features by setting the following properties:
+
+```properties
+cas.x.y.z.session-replication.replicate-sessions=true
+cas.x.y.z.session-replication.cookie.crypto.enabled=true
+```
+
+Remember to substitute `x.y.z` with the appropriate session replication 
+module version you are using (i.e. `oauth`, `saml-idp`, etc).
 
 ## Other Stuff
   
 - Compiled valid regular expressions are now cached to improve performance across the board.
 - Continued efforts using advanced code analysis techniques to remove potential memory leaks and improve system performance.
-- Crypto operations that support generating cookies for *deprecated session replication capabilities* are now turned off by default.
 - CAS is now upgraded to use `jQuery` `4.0.0`.
