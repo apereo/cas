@@ -200,6 +200,6 @@ public class RegexUtils {
     }
 
     private static Pattern computePattern(final String pattern, final int flags) {
-        return PATTERN_CACHE.get(pattern + '|' + flags, p -> Pattern.compile(p, flags));
+        return PATTERN_CACHE.get(pattern + '|' + flags, p -> Pattern.compile(pattern, flags));
     }
 }
