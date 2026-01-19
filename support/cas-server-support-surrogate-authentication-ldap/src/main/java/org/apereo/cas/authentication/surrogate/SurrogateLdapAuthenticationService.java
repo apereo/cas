@@ -50,7 +50,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
                 LOGGER.debug("Using LDAP search filter [{}] to authorize principal [{}] to impersonate [{}]", searchFilter, id, surrogate);
                 var response = connectionFactory.executeSearchOperation(ldap.getBaseDn(), searchFilter, ldap.getPageSize());
                 LOGGER.debug("LDAP search response: [{}]", response);
-                if (LdapUtils.containsResultEntry(response) && doesSurrogateAccountExistInLdap(surrogate, connectionFactory, ldap)) {
+                if (LdapUtils.containsResultEntry(response) && doesSurrogateAccountExistInLdap(surrogate)) {
                     return true;
                 }
             } catch (final Throwable e) {
