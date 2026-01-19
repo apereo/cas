@@ -61,5 +61,6 @@ class DashboardControllerTests {
         
         mvc.perform(get("/palantir/")).andExpect(status().isOk());
         mvc.perform(get("/palantir")).andExpect(status().isOk());
+        mvc.perform(get("/palantir/dashboard/logout")).andExpect(status().isNoContent());
     }
 }

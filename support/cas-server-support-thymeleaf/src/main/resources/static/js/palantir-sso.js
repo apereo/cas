@@ -1,3 +1,30 @@
+function removeSpringSession(button, id) {
+    Swal.fire({
+        title: "Are you sure you want to delete this session?",
+        text: "Once deleted, you may not be able to recover this session.",
+        icon: "question",
+        showConfirmButton: true,
+        showDenyButton: true
+    })
+        .then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `${actuatorEndpoints.sessions}/${id}`,
+                    type: "DELETE",
+                    contentType: "application/x-www-form-urlencoded",
+                    success: (response, status, xhr) => {
+                        let nearestTr = $(button).closest("tr");
+                        const springSessionsTable = $("#springSessionsTable").DataTable();
+                        springSessionsTable.row(nearestTr).remove().draw();
+                    },
+                    error: (xhr, status, error) => {
+                        console.error("Error fetching data:", error);
+                        displayBanner(xhr);
+                    }
+                });
+            }
+        });
+}
 
 async function initializeSsoSessionOperations() {
     const ssoSessionApplicationsTable = $("#ssoSessionApplicationsTable").DataTable({
@@ -18,6 +45,15 @@ async function initializeSsoSessionOperations() {
         }
     });
 
+    const springSessionsTable = $("#springSessionsTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        drawCallback: settings => {
+            $("#ssoSessionsTable tr").addClass("mdc-data-table__row");
+            $("#ssoSessionsTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
     const ssoSessionsTable = $("#ssoSessionsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
@@ -35,7 +71,62 @@ async function initializeSsoSessionOperations() {
             $("#ssoSessionButton").click();
         }
     });
+    $("#springSessionUsername").on("keypress", e => {
+        if (e.which === 13) {
+            $("#springSessionsButton").click();
+        }
+    });
 
+    $("#springSessionsButton").off().on("click", () => {
+        if (actuatorEndpoints.sessions) {
+            const form = document.getElementById("fmSpringSessions");
+            if (!form.reportValidity()) {
+                return false;
+            }
+            const username = $("#springSessionUsername").val();
+            Swal.fire({
+                icon: "info",
+                title: `Fetching Spring Sessions for ${username}`,
+                text: "Please wait while Spring Sessions are retrieved...",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => Swal.showLoading()
+            });
+            springSessionsTable.clear();
+            $.ajax({
+                url: `${actuatorEndpoints.sessions}?username=${username}`,
+                type: "GET",
+                contentType: "application/x-www-form-urlencoded",
+                success: (response, status, xhr) => {
+                    for (const session of response.sessions) {
+                        springSessionsTable.row.add({
+                            0: `<code>${session.id}</code>`,
+                            1: `<code>${session.creationTime}</code>`,
+                            2: `<code>${session.lastAccessedTime}</code>`,
+                            3: `
+                                <button type="button" name="removeSpringSession" 
+                                    href="#" 
+                                    onclick="removeSpringSession(this, '${session.id}');"
+                                    data-id='${session.id}'
+                                    title="Remove Spring Session"
+                                    class="mdc-button mdc-button--raised min-width-32x">
+                                    <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
+                                </button>
+                            `
+                        });
+                    }
+                    springSessionsTable.draw();
+                    Swal.close();
+                },
+                error: (xhr, status, error) => {
+                    console.error("Error fetching data:", error);
+                    Swal.close();
+                    displayBanner(xhr);
+                }
+            });
+        }
+    });
+    
     $("#removeSsoSessionButton").off().on("click", () => {
         if (actuatorEndpoints.ssosessions) {
             const form = document.getElementById("fmSsoSessions");
