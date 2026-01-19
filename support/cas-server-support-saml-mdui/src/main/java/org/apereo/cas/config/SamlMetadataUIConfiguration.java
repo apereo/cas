@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 
 /**
  * This is {@link SamlMetadataUIConfiguration}.
@@ -69,7 +70,7 @@ class SamlMetadataUIConfiguration {
         val splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(resourceArray);
         Arrays.stream(splitArray).forEach(Unchecked.consumer(entry -> {
             val arr = Splitter.on(DEFAULT_SEPARATOR).splitToList(entry);
-            val metadataFile = arr.getFirst();
+            val metadataReference = arr.getFirst();
             val signingKey = arr.size() > 1 ? arr.get(1) : null;
             val filters = new ArrayList<MetadataFilter>();
             if (casProperties.getSamlMetadataUi().getMaxValidity() > 0) {
@@ -86,16 +87,16 @@ class SamlMetadataUIConfiguration {
                     sigFilter.initialize();
                     filters.add(sigFilter);
                 } else {
-                    LOGGER.warn("Failed to locate the signing key [{}] for [{}]", signingKey, metadataFile);
+                    LOGGER.warn("Failed to locate the signing key [{}] for [{}]", signingKey, metadataReference);
                     addResource = false;
                 }
             }
             chain.setFilters(filters);
-            val resource = applicationContext.getResource(metadataFile);
-            if (addResource && ResourceUtils.doesResourceExist(resource)) {
+            if (addResource && (ResourceUtils.isUrl(metadataReference) || ResourceUtils.doesResourceExist(metadataReference))) {
+                val resource = applicationContext.getResource(metadataReference);
                 resources.put(resource, chain);
             } else {
-                LOGGER.warn("Skipping metadata [{}]; Either the resource cannot be retrieved or its signing key is missing", metadataFile);
+                LOGGER.warn("Skipping metadata [{}]; Either the resource cannot be retrieved or its signing key is missing", metadataReference);
             }
         }));
     }
