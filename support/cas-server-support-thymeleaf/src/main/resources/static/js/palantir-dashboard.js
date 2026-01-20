@@ -82,7 +82,7 @@ function activateDashboardTab(idx) {
                 break;
             case Tabs.LOGOUT.index:
                 const url = new URL(location.href);
-                fetch(`${url.pathname}/dashboard/logout`, {
+                fetch(`${url.pathname}/logout`, {
                     method: 'GET',
                     credentials: 'include'
                 }).then((response) => {
@@ -271,4 +271,27 @@ function navigateToApplication(serviceIdToFind) {
         displayBanner(`Could not find a registered service with id ${serviceIdToFind}`);
         applicationsTable.search("").draw();
     }
+}
+
+async function initializePalantirSession() {
+    setInterval(async () => {
+        const url = new URL(location.href);
+        const result = await fetch(`${url.pathname}/session`, { credentials: "same-origin" });
+        if (result.status !== 200) {
+            Swal.close();
+            Swal.fire({
+                title: "Session Expired",
+                text: "Your Palantir session has expired. The dashboard will reload shortly.",
+                icon: "info",
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    activateDashboardTab(Tabs.LOGOUT.index);
+                }
+            });
+
+        }
+    }, 15000);
 }
