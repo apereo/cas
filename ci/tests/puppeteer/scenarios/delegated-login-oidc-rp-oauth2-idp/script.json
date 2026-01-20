@@ -15,9 +15,10 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
     
     "--cas.http-client.host-name-verifier=none",
+
+    "--cas.authn.pac4j.core.session-replication.replicate-sessions=true",
     
     "--cas.authn.pac4j.oauth2[0].profile-url=http://localhost:5432/userinfo.json",
-    
     "--cas.authn.pac4j.oauth2[0].auth-url=http://localhost:8988/realms/cas/protocol/openid-connect/auth",
     "--cas.authn.pac4j.oauth2[0].token-url=http://localhost:8988/realms/cas/protocol/openid-connect/token",
     "--cas.authn.pac4j.oauth2[0].profile-attrs.id=id",

@@ -110,7 +110,7 @@ async function initializePersonDirectoryOperations() {
                 attributeDefinitions++;
             }
             attributeDefinitionsTable.draw();
-            $("#attributeDefinitionsTab").toggle(attributeDefinitions > 0);
+            $("#attributeDefinitionsTab").parent().toggle(attributeDefinitions > 0);
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
             displayBanner(xhr);
