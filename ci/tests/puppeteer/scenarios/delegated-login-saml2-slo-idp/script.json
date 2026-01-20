@@ -20,6 +20,8 @@
     "--cas.authn.pac4j.cookie.enabled=true",
     "--cas.authn.pac4j.cookie.name=Pac4jCookie",
 
+    "--cas.authn.pac4j.core.session-replication.replicate-sessions=true",
+    
     "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
     "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",
     "--cas.authn.pac4j.saml[0].service-provider-entity-id=cas:apereo:pac4j:saml",
@@ -32,7 +34,6 @@
     "--cas.authn.pac4j.saml[0].principal-id-attribute=email",
 
     "--cas.service-registry.core.init-from-json=true",
-    
 
     "--logging.level.org.springframework.webflow=info",
     "--logging.level.org.springframework.webflow.mvc.servlet=warn",
