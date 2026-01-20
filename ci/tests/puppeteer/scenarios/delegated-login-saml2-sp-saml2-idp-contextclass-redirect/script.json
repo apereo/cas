@@ -19,6 +19,7 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
+    "--cas.authn.pac4j.core.session-replication.replicate-sessions=true",
     "--cas.authn.pac4j.core.groovy-redirection-strategy.location=file://${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/Redirection.groovy",
 
     "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
