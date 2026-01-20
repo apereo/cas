@@ -911,18 +911,40 @@ function createRegisteredServiceAttributeReleaseValueFilters() {
 }
 
 function createRegisteredServiceMultifactorPolicy() {
-    createInputField({
-        labelTitle: "Multifactor Providers",
-        name: "registeredServiceMfaProviders",
-        paramName: "multifactorPolicy.multifactorAuthenticationProviders",
-        paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-        required: false,
-        containerId: "editServiceWizardMenuItemMfaPolicy",
-        title: "Define the multifactor authentication providers to be used, separated by comma."
-    })
-        .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
-        });
+    if (!actuatorEndpoints.discoveryprofile) {
+        createInputField({
+            labelTitle: "Multifactor Providers",
+            name: "registeredServiceMfaProviders",
+            paramName: "multifactorPolicy.multifactorAuthenticationProviders",
+            paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+            required: false,
+            containerId: "editServiceWizardMenuItemMfaPolicy",
+            title: "Define the multifactor authentication providers to be used, separated by comma."
+        })
+            .data("renderer", function (value) {
+                return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
+            });
+    } else {
+        CasDiscoveryProfile.fetchIfNeeded()
+            .done(async () => {
+                const options = Object.entries(CasDiscoveryProfile.multifactorAuthenticationProviders()).map(([key, _value]) => ({
+                    value: key,
+                    text: _value
+                }));
+                createMultiSelectField({
+                    containerId: "bypassEnabledSwitchButtonPanel",
+                    labelTitle: "Multifactor Providers:",
+                    paramName: "multifactorPolicy.multifactorAuthenticationProviders",
+                    paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+                    title: "Define the multifactor authentication providers to be used, separated by comma.",
+                    options: options,
+                    allowCreateOption: false,
+                    inclusion: "before"
+                }).data("renderer", function (value) {
+                    return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
+                });
+            });
+    }
 
     createSelectField({
         cssClasses: "advanced-option",
@@ -2105,7 +2127,6 @@ function createRegisteredServiceFields() {
             <span class="sr-only">Validate</span>
         </button>
     `);
-    ;
 
     createInputField({
         labelTitle: "Description",
