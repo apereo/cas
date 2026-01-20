@@ -371,6 +371,10 @@ form button i.mdi {
     }
 }
 
+.bgimage {
+    background-image: var(--bg-image);
+}
+
 .cas-footer {
     background-color: var(--mdc-theme-primary, #6200ee);
     color: whitesmoke;
