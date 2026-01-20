@@ -58,7 +58,7 @@ class OAuth20JwtAccessTokenDecodableCipher implements DecodableCipher<String, St
         try {
             val header = JWTParser.parse(tokenId).getHeader();
             val claims = accessTokenJwtBuilder.unpack(Optional.ofNullable(resolveRegisteredService(header)), tokenId);
-            return claims.getJWTID();
+            return claims == null ? null : claims.getJWTID();
         } catch (final ParseException e) {
             LOGGER.trace("Token is not valid JWT, returning it as-is: [{}]", tokenId);
             return tokenId;
