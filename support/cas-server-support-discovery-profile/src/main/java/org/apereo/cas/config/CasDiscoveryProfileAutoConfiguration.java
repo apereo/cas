@@ -83,7 +83,8 @@ public class CasDiscoveryProfileAutoConfiguration {
         @ConditionalOnMissingBean(name = "discoveryProfileAvailableAttributes")
         public BeanContainer<String> discoveryProfileAvailableAttributes(
             final CasConfigurationProperties casProperties,
-            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final ObjectProvider<@NonNull PersonAttributeDao> attributeRepository) {
+            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+            final ObjectProvider<@NonNull PersonAttributeDao> attributeRepository) {
 
             val attributes = new LinkedHashSet<String>();
             attributeRepository.ifAvailable(repository -> {
@@ -93,6 +94,8 @@ public class CasDiscoveryProfileAutoConfiguration {
                 }
             });
 
+            attributes.addAll(transformAttributes(List.copyOf(casProperties.getAuthn().getSyncope().getAttributeMappings().values())));
+            
             val ldapProps = casProperties.getAuthn().getLdap();
             if (ldapProps != null) {
                 ldapProps.forEach(ldap -> {
