@@ -46,7 +46,8 @@ public class SimplePrincipal implements Principal {
         @JsonProperty("attributes")
         final Map<String, List<Object>> attributes) {
         this.id = id;
-        this.attributes = new HashMap<>(attributes);
+        this.attributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        this.attributes.putAll(attributes);
     }
 
     @Override
