@@ -134,7 +134,7 @@ class OAuth20UserProfileEndpointControllerTests extends AbstractOAuth20Tests {
         assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
         assertNotNull(entity.getBody());
-        assertTrue(entity.getBody().toString().contains(OAuth20Constants.INVALID_REQUEST));
+        assertTrue(entity.getBody().toString().contains(OAuth20Constants.MISSING_ACCESS_TOKEN));
     }
 
     @Test
