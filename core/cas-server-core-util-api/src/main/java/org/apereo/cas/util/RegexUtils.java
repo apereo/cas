@@ -72,7 +72,7 @@ public class RegexUtils {
      * if pattern is null or invalid.
      */
     public static Pattern createPattern(@Nullable final String pattern) {
-        return createPattern(pattern, 0);
+        return createPattern(pattern, Pattern.CASE_INSENSITIVE);
     }
 
     /**
