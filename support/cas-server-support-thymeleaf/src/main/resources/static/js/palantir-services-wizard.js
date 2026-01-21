@@ -1,21 +1,25 @@
 let editServiceWizardDialog = undefined;
 
-function validateServiceIdPattern(button) {
-    $("#validateServiceIdDialog").dialog({
+function validatePattern(button, targetFieldId = "#registeredServiceId") {
+    $("#validatePatternDialog").dialog({
         title: "Validate Pattern",
         modal: true,
         width: 600,
         closeOnEscape: false,
         buttons: {
             "Use Pattern": function () {
-                $("#registeredServiceId").val($("#serviceIdPattern").val()).focus();
+                $(targetFieldId).val($("#providedPattern").val()).focus();
                 $(this).dialog("close");
             },
             Cancel: function () {
                 $(this).dialog("close");
             }
         },
+        open: function () {
+            $("#providedPattern").val($(targetFieldId).val());
+        },
         close: function () {
+            $(this).find("input").val("");
             $(this).dialog("destroy");
         }
     });
@@ -2045,7 +2049,14 @@ function createRegisteredServiceUsernameAttributeProvider() {
         required: false,
         containerId: "editServiceWizardMenuItemUsernameAttribute",
         title: "Specifies a regex pattern to remove from the username."
-    });
+    }).after(`
+       <button class="mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button mr-2" 
+                type="button"
+                onclick="validatePattern(this, '#registeredServiceUsernameAttributeRemovePattern')">
+            <i class="mdi mdi-check-circle" aria-hidden="true"></i>
+            <span class="sr-only">Validate</span>
+        </button>
+    `);
 
     createSelectField({
         cssClasses: "DefaultRegisteredServiceUsernameProvider",
@@ -2122,7 +2133,7 @@ function createRegisteredServiceFields() {
     }).after(`
         <button class="mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button mr-2" 
                 type="button"
-                onclick="validateServiceIdPattern(this)">
+                onclick="validatePattern(this)">
             <i class="mdi mdi-check-circle" aria-hidden="true"></i>
             <span class="sr-only">Validate</span>
         </button>
