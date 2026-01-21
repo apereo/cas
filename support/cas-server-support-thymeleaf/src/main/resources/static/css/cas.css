@@ -873,6 +873,10 @@ span button.toolbar {
     min-height: 60%;
 }
 
+.min-height-90 {
+    min-height: 90% !important;
+}
+
 .vw-100 {
     width: 100vw;
 }
@@ -1013,6 +1017,10 @@ select.palantir {
 
 *, ::after, ::before {
     box-sizing: border-box;
+}
+
+.text-left {
+    text-align: left;
 }
 
 .text-justify {
