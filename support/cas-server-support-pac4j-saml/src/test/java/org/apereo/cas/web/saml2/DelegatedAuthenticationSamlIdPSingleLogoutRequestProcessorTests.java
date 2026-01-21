@@ -38,7 +38,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     CasSamlIdPAutoConfiguration.class,
     BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class
-}, properties = "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml4222")
+}, properties = {
+    "cas.authn.pac4j.core.session-replication.replicate-sessions=true",
+    "cas.authn.pac4j.core.session-replication.cookie.crypto.enabled=true",
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml4222"
+})
 @Tag("SAML2Web")
 @ExtendWith(CasTestExtension.class)
 class DelegatedAuthenticationSamlIdPSingleLogoutRequestProcessorTests {
