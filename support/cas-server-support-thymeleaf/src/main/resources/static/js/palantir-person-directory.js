@@ -109,12 +109,18 @@ async function initializePersonDirectoryOperations() {
                 });
                 attributeDefinitions++;
             }
-            attributeDefinitionsTable.draw();
-            $("#attributeDefinitionsTab").parent().toggle(attributeDefinitions > 0);
+            if (attributeDefinitions > 0) {
+                attributeDefinitionsTable.draw();
+                showElements($("#attributeDefinitionsTab").parent());
+            } else {
+                hideElements($("#attributeDefinitionsTab").parent());
+            }
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
             displayBanner(xhr);
         });
+    } else {
+        hideElements($("#attributeDefinitionsTab").parent());
     }
 
     attributeRepositoriesTable.clear();
