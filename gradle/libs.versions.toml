@@ -165,8 +165,8 @@ material = "14.0.0"
 maxmind = "5.0.2"
 mdiFont = "7.4.47"
 mermaid = "11.6.0"
-micrometer = "1.16.2"
-micrometerOtel = "1.6.2"
+micrometer = "1.17.0-M1"
+micrometerTracing = "1.7.0-M2"
 mockito = "5.21.0"
 mockitoInline = "5.2.0"
 mongoDriver = "5.6.2"
@@ -211,7 +211,7 @@ snakeYaml = "2.5"
 socketJsClient = "1.5.1"
 splunkLogging = "1.11.8"
 spring = "7.0.3"
-springBoot = "4.0.2"
+springBoot = "4.1.0-M1"
 springBootAdmin = "3.5.6"
 springCloudAzure = "6.1.0"
 springCloudBus = "5.0.0"
@@ -228,10 +228,10 @@ springDataCosmosDb = "6.1.0"
 springDataMongoDb = "5.0.2"
 springDataRedis = "4.0.2"
 springDoc = "3.0.1"
-springIntegration = "7.0.2"
+springIntegration = "7.1.0-M1"
 springKafka = "4.0.2"
-springRabbit = "4.0.2"
-springSecurity = "7.0.2"
+springRabbit = "4.1.0-M1"
+springSecurity = "7.1.0-M1"
 springSecurityRsa = "1.1.5"
 springSession = "4.0.1"
 springShell = "4.0.0"
@@ -541,8 +541,8 @@ micrometer-registry-new-relic = { module = "io.micrometer:micrometer-registry-ne
 micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
 micrometer-registry-statsd = { module = "io.micrometer:micrometer-registry-statsd", version.ref = "micrometer" }
 micrometer-registry-otel = { module = "io.micrometer:micrometer-registry-otlp", version.ref = "micrometer" }
-micrometer-tracing-bridge-brave = { module = "io.micrometer:micrometer-tracing-bridge-brave", version.ref = "micrometerOtel" }
-micrometer-tracing-bridge-otel = { module = "io.micrometer:micrometer-tracing-bridge-otel", version.ref = "micrometerOtel" }
+micrometer-tracing-bridge-brave = { module = "io.micrometer:micrometer-tracing-bridge-brave", version.ref = "micrometerTracing" }
+micrometer-tracing-bridge-otel = { module = "io.micrometer:micrometer-tracing-bridge-otel", version.ref = "micrometerTracing" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
