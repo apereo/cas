@@ -95,10 +95,11 @@ public class CasReportsAutoConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AttributeDefinitionsEndpoint attributeDefinitionsEndpoint(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final ObjectProvider<@NonNull AttributeDefinitionStore> attributeDefinitionStore,
             final CasConfigurationProperties casProperties) {
-            return new AttributeDefinitionsEndpoint(casProperties, attributeDefinitionStore);
+            return new AttributeDefinitionsEndpoint(casProperties, applicationContext, attributeDefinitionStore);
         }
         
         @Bean
