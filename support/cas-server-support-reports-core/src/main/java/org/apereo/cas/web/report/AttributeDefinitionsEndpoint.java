@@ -6,6 +6,9 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
@@ -51,7 +54,13 @@ public class AttributeDefinitionsEndpoint extends BaseCasRestActuatorEndpoint {
      * @param attributeDefinitions the attribute definitions
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Register new attribute definitions with CAS")
+    @Operation(summary = "Register new attribute definitions with CAS",
+        parameters = @Parameter(
+            description = "List of attribute definitions",
+            array = @ArraySchema(
+                schema = @Schema(implementation = AttributeDefinition.class)
+            )
+        ))
     public void registerAttributeDefinition(@RequestBody final List<AttributeDefinition> attributeDefinitions) {
         for (val defn : attributeDefinitions) {
             attributeDefinitionStore.getObject().registerAttributeDefinition(defn);
