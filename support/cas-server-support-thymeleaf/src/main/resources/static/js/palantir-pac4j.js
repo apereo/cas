@@ -1,5 +1,5 @@
 function removeIdentityProvider(idp, type) {
-    if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+    if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
         Swal.fire({
             title: `Are you sure you want to delete ${idp}?`,
             text: `
@@ -13,7 +13,7 @@ function removeIdentityProvider(idp, type) {
             .then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `${actuatorEndpoints.casconfig}/retrieve`,
+                        url: `${CasActuatorEndpoints.casConfig()}/retrieve`,
                         method: "POST",
                         contentType: "application/json",
                         data: JSON.stringify(
@@ -34,7 +34,7 @@ function removeIdentityProvider(idp, type) {
                             if (data.length === 1) {
                                 const group = `${data[0].name.match(/^(.*?\[\d+\])/)[1].replace("[", "\\[").replace("]", "\\]")}.*`;
                                 $.ajax({
-                                    url: `${actuatorEndpoints.casconfig}/retrieve`,
+                                    url: `${CasActuatorEndpoints.casConfig()}/retrieve`,
                                     method: "POST",
                                     contentType: "application/json",
                                     data: JSON.stringify(
@@ -53,7 +53,7 @@ function removeIdentityProvider(idp, type) {
                                         const requests = data.map(entry =>
                                             Promise.resolve(
                                                 $.ajax({
-                                                    url: actuatorEndpoints.casconfig,
+                                                    url: CasActuatorEndpoints.casConfig(),
                                                     method: "DELETE",
                                                     contentType: "application/json",
                                                     data: payloadFor(entry)
@@ -62,7 +62,7 @@ function removeIdentityProvider(idp, type) {
                                         );
                                         Promise.all(requests)
                                             .then(() => {
-                                                $.get(actuatorEndpoints.env, res => {
+                                                $.get(CasActuatorEndpoints.env(), res => {
                                                     reloadConfigurationTable(res);
                                                     refreshCasServerConfiguration(`The identity provider ${idp} has been removed.`);
                                                 })
@@ -158,7 +158,7 @@ function configureSaml2ClientMetadataButtons() {
 async function loadExternalIdentityProvidersTable() {
     const delegatedClientsTable = $("#delegatedClientsTable").DataTable();
     delegatedClientsTable.clear();
-    if (actuatorEndpoints.delegatedClients) {
+    if (CasActuatorEndpoints.delegatedClients()) {
         Swal.fire({
             icon: "info",
             title: `Loading Identity Providers`,
@@ -167,7 +167,7 @@ async function loadExternalIdentityProvidersTable() {
             showConfirmButton: false,
             didOpen: () => Swal.showLoading()
         });
-        $.get(actuatorEndpoints.delegatedClients, response => {
+        $.get(CasActuatorEndpoints.delegatedClients(), response => {
             for (const [key, idp] of Object.entries(response)) {
                 const details = flattenJSON(idp);
                 for (const [k, v] of Object.entries(details)) {
@@ -201,7 +201,7 @@ async function loadExternalIdentityProvidersTable() {
 }
 
 function newExternalIdentityProvider() {
-    if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+    if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
         const dialogContainer = $("<div>", {
             id: "newExternalIdentityProviderDialog"
         });
@@ -513,13 +513,13 @@ function newExternalIdentityProvider() {
                             ));
 
                         $.ajax({
-                            url: `${actuatorEndpoints.casconfig}/update`,
+                            url: `${CasActuatorEndpoints.casConfig()}/update`,
                             method: "POST",
                             contentType: "application/json",
                             data: JSON.stringify(payload),
                             success: response => {
                                 $(this).dialog("close");
-                                $.get(actuatorEndpoints.env, async res => {
+                                $.get(CasActuatorEndpoints.env(), async res => {
                                     reloadConfigurationTable(res);
                                     refreshCasServerConfiguration(`New Property ${name} Created`);
                                 })

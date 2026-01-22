@@ -27,8 +27,8 @@ async function initializeAuthenticationOperations() {
     });
 
     authenticationHandlersTable.clear();
-    if (actuatorEndpoints.authenticationHandlers) {
-        $.get(actuatorEndpoints.authenticationHandlers, response => {
+    if (CasActuatorEndpoints.authenticationHandlers()) {
+        $.get(CasActuatorEndpoints.authenticationHandlers(), response => {
             for (const handler of response) {
                 authenticationHandlersTable.row.add({
                     0: `${handler.name}`,
@@ -55,8 +55,8 @@ async function initializeAuthenticationOperations() {
     });
 
     authenticationPoliciesTable.clear();
-    if (actuatorEndpoints.authenticationPolicies) {
-        $.get(actuatorEndpoints.authenticationPolicies, response => {
+    if (CasActuatorEndpoints.authenticationPolicies()) {
+        $.get(CasActuatorEndpoints.authenticationPolicies(), response => {
             for (const handler of response) {
                 authenticationPoliciesTable.row.add({
                     0: `${handler.name}`,
@@ -80,7 +80,7 @@ async function initializeAuthenticationOperations() {
         </button>
     `;
 
-    if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+    if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
         toolbarEntries += `
             <button type="button" id="newExternalIdentityProvider"
                     onclick="newExternalIdentityProvider()"
@@ -118,7 +118,7 @@ async function initializeAuthenticationOperations() {
 
                         rows.data().each(entry => {
                             if (entry[0] === group) {
-                                if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+                                if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
                                     toolbarButtons = `
                                         <span class="px-2" style="float: right;">
                                             <button type="button" 

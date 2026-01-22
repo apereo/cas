@@ -8,7 +8,7 @@ async function initializeCasProtocolOperations() {
         const password = $("#casProtocolPassword").val();
         const service = $("#casProtocolService").val();
 
-        $.post(`${actuatorEndpoints.casvalidate}/${endpoint}`, {
+        $.post(`${CasActuatorEndpoints.casValidate()}/${endpoint}`, {
             username: username,
             password: password,
             service: service
@@ -50,7 +50,7 @@ async function initializeSAML1ProtocolOperations() {
         const password = $("#saml1ProtocolPassword").val();
         const service = $("#saml1ProtocolService").val();
 
-        $.post(`${actuatorEndpoints.samlvalidate}`, {
+        $.post(`${CasActuatorEndpoints.samlValidate()}`, {
             username: username,
             password: password,
             service: service
@@ -135,7 +135,7 @@ async function initializeOidcProtocolOperations() {
                 .then((result) => {
                     if (result.isConfirmed) {
                         $("#oidcKeyRotationButton").prop("disabled", true);
-                        $.get(`${actuatorEndpoints.oidcjwks}/rotate`, response => {
+                        $.get(`${CasActuatorEndpoints.oidcJwks()}/rotate`, response => {
                             Swal.fire({
                                 title: "Done!",
                                 text: "Keys in the OpenID Connect keystore are successfully rotated.",
@@ -164,7 +164,7 @@ async function initializeOidcProtocolOperations() {
                 .then((willDo) => {
                     if (willDo) {
                         $("#oidcKeyRevocationButton").prop("disabled", true);
-                        $.get(`${actuatorEndpoints.oidcjwks}/revoke`, response => {
+                        $.get(`${CasActuatorEndpoints.oidcJwks()}/revoke`, response => {
                             Swal.fire({
                                 title: "Done!",
                                 text: "Keys in the OpenID Connect keystore are successfully revoked.",
@@ -268,8 +268,8 @@ async function initializeOidcProtocolOperations() {
 
 async function initializeSAML2ProtocolOperations() {
     if (CAS_FEATURES.includes("SAMLIdentityProvider")) {
-        if (actuatorEndpoints.info) {
-            $.get(actuatorEndpoints.info, response => {
+        if (CasActuatorEndpoints.info()) {
+            $.get(CasActuatorEndpoints.info(), response => {
                 highlightElements();
                 $("#saml2EntityId").text(response.saml2.entityId);
             }).fail((xhr, status, error) => {
@@ -287,7 +287,7 @@ async function initializeSAML2ProtocolOperations() {
             const password = $("#saml2ProtocolPassword").val();
             const entityId = $("#saml2ProtocolEntityId").val();
 
-            $.post(`${actuatorEndpoints.samlpostprofileresponse}`, {
+            $.post(`${CasActuatorEndpoints.samlPostProfileResponse()}`, {
                 username: username,
                 password: password,
                 entityId: entityId
@@ -311,7 +311,7 @@ async function initializeSAML2ProtocolOperations() {
                 return false;
             }
             $.ajax({
-                url: `${actuatorEndpoints.samlpostprofileresponse}/logout/post`,
+                url: `${CasActuatorEndpoints.samlPostProfileResponse()}/logout/post`,
                 type: "POST",
                 data: {
                     entityId: $("#saml2ProtocolEntityId").val()
@@ -353,7 +353,7 @@ async function initializeSAML2ProtocolOperations() {
                 .then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `${actuatorEndpoints.samlidpregisteredservicemetadatacache}`,
+                            url: CasActuatorEndpoints.samlIdpRegisteredServiceMetadataCache(),
                             type: "DELETE",
                             data: {
                                 entityId: $("#saml2MetadataCacheEntityId").val(),
@@ -378,15 +378,13 @@ async function initializeSAML2ProtocolOperations() {
 
             $(this).prop("disabled", true);
             $.ajax({
-                url: `${actuatorEndpoints.samlidpregisteredservicemetadatacache}`,
+                url: CasActuatorEndpoints.samlIdpRegisteredServiceMetadataCache(),
                 type: "GET",
                 data: {
                     entityId: $("#saml2MetadataCacheEntityId").val(),
                     serviceId: $("#saml2MetadataCacheService").val()
                 },
                 success: (response, textStatus, jqXHR) => {
-
-
                     const editor = initializeAceEditor("saml2MetadataCacheEditor", "xml");
                     editor.setReadOnly(true);
                     for (const [entityId, entry] of Object.entries(response)) {

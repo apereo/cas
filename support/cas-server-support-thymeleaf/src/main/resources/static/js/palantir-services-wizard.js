@@ -915,7 +915,7 @@ function createRegisteredServiceAttributeReleaseValueFilters() {
 }
 
 function createRegisteredServiceMultifactorPolicy() {
-    if (!actuatorEndpoints.discoveryprofile) {
+    if (!CasActuatorEndpoints.discoveryProfile()) {
         createInputField({
             labelTitle: "Multifactor Providers",
             name: "registeredServiceMfaProviders",

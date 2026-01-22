@@ -27,7 +27,7 @@ async function initializePersonDirectoryOperations() {
     });
 
     $("button[name=personDirectoryClearButton]").off().on("click", () => {
-        if (actuatorEndpoints.persondirectory) {
+        if (CasActuatorEndpoints.personDirectory()) {
             const form = document.getElementById("fmPersonDirectory");
             if (!form.reportValidity()) {
                 return false;
@@ -44,7 +44,7 @@ async function initializePersonDirectoryOperations() {
                     if (result.isConfirmed) {
                         personDirectoryTable.clear();
                         $.ajax({
-                            url: `${actuatorEndpoints.persondirectory}/cache/${username}`,
+                            url: `${CasActuatorEndpoints.personDirectory()}/cache/${username}`,
                             type: "DELETE",
                             contentType: "application/json",
                             success: (response, status, xhr) => {
@@ -61,7 +61,7 @@ async function initializePersonDirectoryOperations() {
     });
 
     $("button[name=personDirectoryButton]").off().on("click", () => {
-        if (actuatorEndpoints.persondirectory) {
+        if (CasActuatorEndpoints.personDirectory()) {
             const form = document.getElementById("fmPersonDirectory");
             if (!form.reportValidity()) {
                 return false;
@@ -69,7 +69,7 @@ async function initializePersonDirectoryOperations() {
             const username = $("#personUsername").val();
             personDirectoryTable.clear();
             $.ajax({
-                url: `${actuatorEndpoints.persondirectory}/cache/${username}`,
+                url: `${CasActuatorEndpoints.personDirectory()}/cache/${username}`,
                 type: "GET",
                 contentType: "application/json",
                 success: (response, status, xhr) => {
@@ -91,8 +91,8 @@ async function initializePersonDirectoryOperations() {
 
     attributeDefinitionsTable.clear();
     let attributeDefinitions = 0;
-    if (actuatorEndpoints.attributeDefinitions) {
-        $.get(actuatorEndpoints.attributeDefinitions, response => {
+    if (CasActuatorEndpoints.attributeDefinitions()) {
+        $.get(CasActuatorEndpoints.attributeDefinitions(), response => {
             for (const definition of response) {
                 attributeDefinitionsTable.row.add({
                     0: `<code>${definition.key ?? "N/A"}</code>`,
@@ -125,8 +125,8 @@ async function initializePersonDirectoryOperations() {
 
     attributeRepositoriesTable.clear();
     let attributeRepositories = 0;
-    if (actuatorEndpoints.persondirectory) {
-        $.get(`${actuatorEndpoints.persondirectory}/repositories`, response => {
+    if (CasActuatorEndpoints.personDirectory()) {
+        $.get(`${CasActuatorEndpoints.personDirectory()}/repositories`, response => {
             for (const definition of response) {
                 attributeRepositoriesTable.row.add({
                     0: `<code>${definition.id ?? "N/A"}</code>`,

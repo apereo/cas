@@ -1,5 +1,5 @@
 async function populateMultifactorProviderTables() {
-    if (actuatorEndpoints.discoveryprofile) {
+    if (CasActuatorEndpoints.discoveryProfile()) {
         CasDiscoveryProfile.fetchIfNeeded()
             .done(async () => {
                 showElements($("#mfaProvidersTab").parent());
@@ -53,7 +53,7 @@ async function populateMultifactorProviderTables() {
                     const namespace = key.includes("duo") ? "duo" : key.replace("mfa-", "")
                         .replace("webauthn", "web-authn");
                     const configPrefix = `cas.authn.mfa.${namespace}`;
-                    $.get(`${actuatorEndpoints.env}?pattern=${configPrefix}`, response => {
+                    $.get(`${CasActuatorEndpoints.env()}?pattern=${configPrefix}`, response => {
                         response.propertySources.forEach(source => {
                             let properties = source.properties && Object.entries(source.properties || {});
 
@@ -123,7 +123,7 @@ async function initializeMultifactorOperations() {
             });
 
             mfaDevicesTable.clear();
-            $.get(`${actuatorEndpoints.mfadevices}/${username}`, response => {
+            $.get(`${CasActuatorEndpoints.mfaDevices()}/${username}`, response => {
                 for (const device of Object.values(response)) {
                     let buttons = `
                      <button type="button" name="removeMfaDevice" href="#" 
@@ -166,7 +166,7 @@ async function initializeMultifactorOperations() {
                         .then((result) => {
                             if (result.isConfirmed) {
                                 $.ajax({
-                                    url: `${actuatorEndpoints.mfadevices}/${username}/${providerId}/${key}`,
+                                    url: `${CasActuatorEndpoints.mfaDevices()}/${username}/${providerId}/${key}`,
                                     type: "DELETE",
                                     contentType: "application/x-www-form-urlencoded",
                                     success: (response, status, xhr) => {
@@ -215,7 +215,7 @@ async function initializeTrustedMultifactorOperations() {
     });
 
     $("#mfaTrustedDevicesButton").off().on("click", () => {
-        if (actuatorEndpoints.multifactortrusteddevices) {
+        if (CasActuatorEndpoints.multifactorTrustedDevices()) {
             mfaTrustedDevicesTable.clear();
             const username = $("#mfaTrustedUsername").val();
             $("#mfaTrustedDevicesButton").prop("disabled", true);
@@ -228,7 +228,7 @@ async function initializeTrustedMultifactorOperations() {
                 didOpen: () => Swal.showLoading()
             });
 
-            $.get(`${actuatorEndpoints.multifactortrusteddevices}/${username}`, response => {
+            $.get(`${CasActuatorEndpoints.multifactorTrustedDevices()}/${username}`, response => {
                 for (const device of Object.values(response)) {
                     let buttons = `
                      <button type="button" name="removeMfaTrustedDevice" href="#" 
@@ -266,7 +266,7 @@ async function initializeTrustedMultifactorOperations() {
                         .then((result) => {
                             if (result.isConfirmed) {
                                 $.ajax({
-                                    url: `${actuatorEndpoints.multifactortrusteddevices}/${key}`,
+                                    url: `${CasActuatorEndpoints.multifactorTrustedDevices()}/${key}`,
                                     type: "DELETE",
                                     contentType: "application/x-www-form-urlencoded",
                                     success: (response, status, xhr) => {

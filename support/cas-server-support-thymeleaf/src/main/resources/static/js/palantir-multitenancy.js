@@ -10,7 +10,7 @@ async function initializeMultitenancyOperations() {
 
     function fetchTenants() {
         tenantsTable.clear();
-        $.get(`${actuatorEndpoints.multitenancy}/tenants`, response => {
+        $.get(`${CasActuatorEndpoints.multitenancy()}/tenants`, response => {
             for (const tenant of Object.values(response)) {
                 let buttons = `
                      <button type="button" name="viewTenantDefinition" href="#" 
@@ -44,7 +44,7 @@ async function initializeMultitenancyOperations() {
 }
 
 function showTenantDefinition(id) {
-    $.get(`${actuatorEndpoints.multitenancy}/tenants/${id}`, response => {
+    $.get(`${CasActuatorEndpoints.multitenancy()}/tenants/${id}`, response => {
         let tenantDefinitionDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("tenantDefinitionDialog"));
         const editor = initializeAceEditor("tenantDefinitionDialogEditor", "json");
         editor.setValue(JSON.stringify(response, null, 2));

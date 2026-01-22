@@ -9,7 +9,7 @@ function removeSpringSession(button, id) {
         .then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `${actuatorEndpoints.sessions}/${id}`,
+                    url: `${CasActuatorEndpoints.sessions()}/${id}`,
                     type: "DELETE",
                     contentType: "application/x-www-form-urlencoded",
                     success: (response, status, xhr) => {
@@ -78,7 +78,7 @@ async function initializeSsoSessionOperations() {
     });
 
     $("#springSessionsButton").off().on("click", () => {
-        if (actuatorEndpoints.sessions) {
+        if (CasActuatorEndpoints.sessions()) {
             const form = document.getElementById("fmSpringSessions");
             if (!form.reportValidity()) {
                 return false;
@@ -94,7 +94,7 @@ async function initializeSsoSessionOperations() {
             });
             springSessionsTable.clear();
             $.ajax({
-                url: `${actuatorEndpoints.sessions}?username=${username}`,
+                url: `${CasActuatorEndpoints.sessions()}?username=${username}`,
                 type: "GET",
                 contentType: "application/x-www-form-urlencoded",
                 success: (response, status, xhr) => {
@@ -128,7 +128,7 @@ async function initializeSsoSessionOperations() {
     });
     
     $("#removeSsoSessionButton").off().on("click", () => {
-        if (actuatorEndpoints.ssosessions) {
+        if (CasActuatorEndpoints.ssoSessions()) {
             const form = document.getElementById("fmSsoSessions");
             if (!form.reportValidity()) {
                 return false;
@@ -146,7 +146,7 @@ async function initializeSsoSessionOperations() {
                         const username = $("#ssoSessionUsername").val();
 
                         $.ajax({
-                            url: `${actuatorEndpoints.ssosessions}/users/${username}`,
+                            url: `${CasActuatorEndpoints.ssoSessions()}/users/${username}`,
                             type: "DELETE",
                             contentType: "application/x-www-form-urlencoded",
                             success: (response, status, xhr) => ssoSessionsTable.clear().draw(),
@@ -161,7 +161,7 @@ async function initializeSsoSessionOperations() {
     });
 
     $("button[name=ssoSessionButton]").off().on("click", () => {
-        if (actuatorEndpoints.ssosessions) {
+        if (CasActuatorEndpoints.ssoSessions()) {
             const form = document.getElementById("fmSsoSessions");
             if (!form.reportValidity()) {
                 return false;
@@ -180,7 +180,7 @@ async function initializeSsoSessionOperations() {
             ssoSessionApplicationsTable.clear();
 
             $.ajax({
-                url: `${actuatorEndpoints.ssosessions}/users/${username}`,
+                url: `${CasActuatorEndpoints.ssoSessions()}/users/${username}`,
                 type: "GET",
                 contentType: "application/x-www-form-urlencoded",
                 success: (response, status, xhr) => {
@@ -278,7 +278,7 @@ async function initializeSsoSessionOperations() {
                             .then((result) => {
                                 if (result.isConfirmed) {
                                     $.ajax({
-                                        url: `${actuatorEndpoints.ssosessions}/${ticket}`,
+                                        url: `${CasActuatorEndpoints.ssoSessions()}/${ticket}`,
                                         type: "DELETE",
                                         contentType: "application/x-www-form-urlencoded",
                                         success: (response, status, xhr) => {
@@ -310,7 +310,7 @@ async function initializeSsoSessionOperations() {
     });
 
     $("button[name=removeAllSsoSessionsButton]").off().on("click", () => {
-        if (actuatorEndpoints.ssosessions) {
+        if (CasActuatorEndpoints.ssoSessions()) {
             Swal.fire({
                 title: "Are you sure you want to delete all sessions for all users?",
                 text: "Once deleted, you may not be able to recover and ALL sso sessions for ALL users will be removed.",
@@ -321,7 +321,7 @@ async function initializeSsoSessionOperations() {
                 .then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `${actuatorEndpoints.ssosessions}`,
+                            url: `${CasActuatorEndpoints.ssoSessions()}`,
                             type: "DELETE",
                             contentType: "application/x-www-form-urlencoded",
                             success: (response, status, xhr) => ssoSessionsTable.clear().draw(),

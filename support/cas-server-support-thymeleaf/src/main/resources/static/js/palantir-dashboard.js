@@ -112,120 +112,120 @@ function selectSidebarMenuButton(selectedItem) {
 }
 
 function processNavigationTabs() {
-    if (!actuatorEndpoints.registeredservices) {
+    if (!CasActuatorEndpoints.registeredServices()) {
         hideElements($("#applicationsTabButton"));
         hideElements($(`#attribute-tab-${Tabs.APPLICATIONS.index}`));
     }
-    if (!actuatorEndpoints.metrics || !actuatorEndpoints.httpexchanges || !actuatorEndpoints.auditevents
-        || !actuatorEndpoints.heapdump || !actuatorEndpoints.health || !actuatorEndpoints.statistics) {
+    if (!CasActuatorEndpoints.metrics() || !CasActuatorEndpoints.httpExchanges() || !CasActuatorEndpoints.auditEvents()
+        || !CasActuatorEndpoints.heapDump() || !CasActuatorEndpoints.health() || !CasActuatorEndpoints.statistics()) {
         hideElements($("#systemTabButton"));
         hideElements($(`#attribute-tab-${Tabs.SYSTEM.index}`));
     }
-    if (!actuatorEndpoints.metrics) {
+    if (!CasActuatorEndpoints.metrics()) {
         hideElements($("#systemmetricstab").parent());
     }
-    if (!actuatorEndpoints.springWebflow) {
+    if (!CasActuatorEndpoints.springWebflow()) {
         hideElements($("#caswebflowtab").parent());
     }
-    if (!actuatorEndpoints.ticketregistry) {
+    if (!CasActuatorEndpoints.ticketRegistry()) {
         hideElements($("#ticketsTabButton"));
         hideElements($(`#attribute-tab-${Tabs.TICKETS.index}`));
     }
-    if (!actuatorEndpoints.scheduledtasks) {
+    if (!CasActuatorEndpoints.scheduledTasks()) {
         hideElements($("#tasksTabButton"));
         hideElements($(`#attribute-tab-${Tabs.TASKS.index}`));
     }
-    if (!actuatorEndpoints.persondirectory) {
+    if (!CasActuatorEndpoints.personDirectory()) {
         hideElements($("#personDirectoryTabButton"));
         hideElements($(`#attribute-tab-${Tabs.PERSON_DIRECTORY.index}`));
     }
-    if (!actuatorEndpoints.authenticationHandlers || !actuatorEndpoints.authenticationPolicies) {
+    if (!CasActuatorEndpoints.authenticationHandlers() || !CasActuatorEndpoints.authenticationPolicies()) {
         hideElements($("#authenticationTabButton"));
         hideElements($(`#attribute-tab-${Tabs.AUTHENTICATION.index}`));
     }
-    if (!actuatorEndpoints.serviceaccess) {
+    if (!CasActuatorEndpoints.serviceAccess()) {
         hideElements($("#accessStrategyTabButton"));
         hideElements($(`#attribute-tab-${Tabs.ACCESS_STRATEGY.index}`));
     }
-    if (!actuatorEndpoints.ssosessions || !actuatorEndpoints.sessions) {
+    if (!CasActuatorEndpoints.ssoSessions() || !CasActuatorEndpoints.sessions()) {
         hideElements($("#ssoSessionsTabButton"));
         hideElements($(`#attribute-tab-${Tabs.SSO_SESSIONS.index}`));
     }
-    if (!actuatorEndpoints.ssosessions) {
+    if (!CasActuatorEndpoints.ssoSessions()) {
        hideElements($("#ssosessionstab").parent());
     }
-    if (!actuatorEndpoints.sessions) {
+    if (!CasActuatorEndpoints.sessions()) {
         hideElements($("#springsessionstab").parent());
     }
     
-    if (!actuatorEndpoints.auditlog) {
+    if (!CasActuatorEndpoints.auditLog()) {
         hideElements($("#auditEvents").parent());
     }
-    if (!actuatorEndpoints.events) {
+    if (!CasActuatorEndpoints.events()) {
         hideElements($("#casEvents").parent());
     }
-    if ((!actuatorEndpoints.loggingconfig || !actuatorEndpoints.loggers) && !actuatorEndpoints.auditlog) {
+    if ((!CasActuatorEndpoints.loggingConfig() || !CasActuatorEndpoints.loggers()) && !CasActuatorEndpoints.auditLog()) {
         hideElements($("#loggingTabButton"));
         hideElements($(`#attribute-tab-${Tabs.LOGGING.index}`));
     }
-    if (!actuatorEndpoints.env || !actuatorEndpoints.configprops) {
+    if (!CasActuatorEndpoints.env() || !CasActuatorEndpoints.configProps()) {
         hideElements($("#configurationTabButton"));
         hideElements($(`#attribute-tab-${Tabs.CONFIGURATION.index}`));
     }
-    if (!actuatorEndpoints.attributeconsent || !CAS_FEATURES.includes("Consent")) {
+    if (!CasActuatorEndpoints.attributeConsent() || !CAS_FEATURES.includes("Consent")) {
         hideElements($("#consentTabButton"));
         hideElements($(`#attribute-tab-${Tabs.CONSENT.index}`));
     }
-    if (!actuatorEndpoints.casvalidate) {
+    if (!CasActuatorEndpoints.casValidate()) {
         $("#casprotocol").parent().remove();
         hideElements($("#casProtocolContainer"));
     }
-    if (!actuatorEndpoints.samlpostprofileresponse || !CAS_FEATURES.includes("SAMLIdentityProvider")) {
+    if (!CasActuatorEndpoints.samlPostProfileResponse() || !CAS_FEATURES.includes("SAMLIdentityProvider")) {
         $("#saml2protocol").parent().remove();
         hideElements($("#saml2ProtocolContainer"));
     }
-    if (!actuatorEndpoints.samlvalidate || !CAS_FEATURES.includes("SAML")) {
+    if (!CasActuatorEndpoints.samlValidate() || !CAS_FEATURES.includes("SAML")) {
         hideElements($("#saml1ProtocolContainer"));
         $("#saml1protocol").parent().remove();
     }
-    if (!actuatorEndpoints.casconfig) {
+    if (!CasActuatorEndpoints.casConfig()) {
         hideElements($("#config-encryption-tab"));
         $("#casConfigSecurity").parent().remove();
     }
-    if (!actuatorEndpoints.refresh && !actuatorEndpoints.busrefresh) {
+    if (!CasActuatorEndpoints.refresh()) {
         hideElements($("#refreshConfigurationButton"));
     }
-    if (!actuatorEndpoints.configurationmetadata) {
+    if (!CasActuatorEndpoints.configurationMetadata()) {
         hideElements($("#casConfigSearch"));
     }
-    if (!actuatorEndpoints.oidcjwks || !CAS_FEATURES.includes("OpenIDConnect")) {
+    if (!CasActuatorEndpoints.oidcJwks() || !CAS_FEATURES.includes("OpenIDConnect")) {
         $("#oidcprotocol").parent().remove();
         hideElements($("#oidcProtocolContainer"));
     }
-    if (!actuatorEndpoints.samlvalidate && !actuatorEndpoints.casvalidate
-        && !actuatorEndpoints.samlpostprofileresponse && !actuatorEndpoints.oidcjwks) {
+    if (!CasActuatorEndpoints.samlValidate() && !CasActuatorEndpoints.casValidate()
+        && !CasActuatorEndpoints.samlPostProfileResponse() && !CasActuatorEndpoints.oidcJwks()) {
         hideElements($("#protocolsTabButton"));
         hideElements($(`#attribute-tab-${Tabs.PROTOCOLS.index}`));
     }
-    if (!actuatorEndpoints.throttles) {
+    if (!CasActuatorEndpoints.throttles()) {
         hideElements($("#throttlesTabButton"));
         hideElements($(`#attribute-tab-${Tabs.THROTTLES.index}`));
     }
-    if (!actuatorEndpoints.mfadevices || availableMultifactorProviders.length === 0) {
+    if (!CasActuatorEndpoints.mfaDevices() || availableMultifactorProviders.length === 0) {
         hideElements($("#mfaTabButton"));
         hideElements($("#mfaDevicesTab").parent());
         hideElements($(`#attribute-tab-${Tabs.MFA.index}`));
     }
-    if (!actuatorEndpoints.multifactortrusteddevices || availableMultifactorProviders.length === 0) {
+    if (!CasActuatorEndpoints.multifactorTrustedDevices() || availableMultifactorProviders.length === 0) {
         hideElements($("#trustedMfaDevicesTab").parent());
     }
-    if (!actuatorEndpoints.multitenancy || !CAS_FEATURES.includes("Multitenancy")) {
+    if (!CasActuatorEndpoints.multitenancy() || !CAS_FEATURES.includes("Multitenancy")) {
         hideElements($("#tenantsTabButton"));
     }
-    if (!actuatorEndpoints.restart) {
+    if (!CasActuatorEndpoints.restart()) {
         hideElements($("#restartServerButton"));
     }
-    if (!actuatorEndpoints.shutdown) {
+    if (!CasActuatorEndpoints.shutdown()) {
         hideElements($("#shutdownServerButton"));
     }
     if (!mutablePropertySourcesAvailable) {

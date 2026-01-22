@@ -15,7 +15,7 @@ async function initializeCasSpringWebflowOperations() {
         });
 
         const selectedState = $("#webflowStateFilter").val();
-        let url = `${actuatorEndpoints.springWebflow}?flowId=${flowId}`;
+        let url = `${CasActuatorEndpoints.springWebflow()}?flowId=${flowId}`;
         if (selectedState && selectedState !== "all") {
             url += `&stateId=${selectedState}`;
         }
@@ -180,7 +180,7 @@ async function initializeCasSpringWebflowOperations() {
         });
     }
 
-    if (actuatorEndpoints.springWebflow) {
+    if (CasActuatorEndpoints.springWebflow()) {
         mermaid.initialize({
             startOnLoad: false,
             securityLevel: "loose",
@@ -204,7 +204,7 @@ async function initializeCasSpringWebflowOperations() {
         });
 
         $.ajax({
-            url: `${actuatorEndpoints.springWebflow}`,
+            url: `${CasActuatorEndpoints.springWebflow()}`,
             type: "GET",
             headers: {
                 "Content-Type": "application/json"

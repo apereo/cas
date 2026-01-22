@@ -18,7 +18,7 @@ async function initializeThrottlesOperations() {
 
     function fetchThrottledAttempts() {
         throttlesTable.clear();
-        $.get(actuatorEndpoints.throttles, response => {
+        $.get(CasActuatorEndpoints.throttles(), response => {
             for (const record of response) {
 
                 let buttons = `
@@ -54,7 +54,7 @@ async function initializeThrottlesOperations() {
                     .then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
-                                url: `${actuatorEndpoints.throttles}?key=${encodeURIComponent(key)}`,
+                                url: `${CasActuatorEndpoints.throttles()}?key=${encodeURIComponent(key)}`,
                                 type: "DELETE",
                                 contentType: "application/x-www-form-urlencoded",
                                 success: (response, status, xhr) => {
@@ -75,7 +75,7 @@ async function initializeThrottlesOperations() {
         });
     }
 
-    if (actuatorEndpoints.throttles) {
+    if (CasActuatorEndpoints.throttles()) {
         fetchThrottledAttempts();
 
         $("button[name=releaseThrottlesButton]").off().on("click", () =>
@@ -89,7 +89,7 @@ async function initializeThrottlesOperations() {
                 .then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `${actuatorEndpoints.throttles}`,
+                            url: `${CasActuatorEndpoints.throttles()}`,
                             type: "DELETE",
                             data: {
                                 clear: false
@@ -111,7 +111,7 @@ async function initializeThrottlesOperations() {
                 .then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `${actuatorEndpoints.throttles}`,
+                            url: `${CasActuatorEndpoints.throttles()}`,
                             type: "DELETE",
                             data: {
                                 clear: true
