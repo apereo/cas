@@ -55,8 +55,8 @@ async function initializeScheduledTasksOperations() {
         }
     }
 
-    if (actuatorEndpoints.scheduledtasks) {
-        $.get(actuatorEndpoints.scheduledtasks, response => {
+    if (CasActuatorEndpoints.scheduledTasks()) {
+        $.get(CasActuatorEndpoints.scheduledTasks(), response => {
             scheduledtasks.clear();
             for (const group of Object.keys(response)) {
                 addScheduledTaskCategory(group, response[group]);
@@ -68,7 +68,7 @@ async function initializeScheduledTasksOperations() {
         });
     }
 
-    if (actuatorEndpoints.metrics) {
+    if (CasActuatorEndpoints.metrics()) {
         initializeJvmMetrics();
         setInterval(() => {
             if (currentActiveTab === Tabs.TASKS.index) {
@@ -78,7 +78,7 @@ async function initializeScheduledTasksOperations() {
     }
 
     function fetchThreadDump() {
-        $.get(actuatorEndpoints.threaddump, response => {
+        $.get(CasActuatorEndpoints.threadDump(), response => {
             threadDumpTable.clear();
             for (const thread of response.threads) {
                 threadDumpTable.row.add({
@@ -98,7 +98,7 @@ async function initializeScheduledTasksOperations() {
     }
 
 
-    if (actuatorEndpoints.threaddump) {
+    if (CasActuatorEndpoints.threadDump()) {
         fetchThreadDump();
         setInterval(() => {
             if (currentActiveTab === Tabs.TASKS.index) {
@@ -111,7 +111,7 @@ async function initializeScheduledTasksOperations() {
 function initializeJvmMetrics() {
     function fetchJvmThreadMetric(metricName) {
         return new Promise((resolve, reject) =>
-            $.get(`${actuatorEndpoints.metrics}/${metricName}`, response => resolve(response.measurements[0].value)).fail((xhr, status, error) => {
+            $.get(`${CasActuatorEndpoints.metrics()}/${metricName}`, response => resolve(response.measurements[0].value)).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
                 reject(error);
@@ -133,7 +133,7 @@ function initializeJvmMetrics() {
 
     async function fetchThreadDump() {
         return new Promise((resolve, reject) =>
-            $.get(actuatorEndpoints.threaddump, response => {
+            $.get(CasActuatorEndpoints.threadDump(), response => {
                 let threadData = {};
                 for (const thread of response.threads) {
                     if (!threadData[thread.threadState]) {
@@ -150,7 +150,7 @@ function initializeJvmMetrics() {
 
     }
 
-    if (actuatorEndpoints.metrics) {
+    if (CasActuatorEndpoints.metrics()) {
         fetchJvmThreadsMetrics()
             .then(payload => {
                 jvmThreadsChart.data.datasets[0].data = payload;
@@ -159,7 +159,7 @@ function initializeJvmMetrics() {
     }
 
 
-    if (actuatorEndpoints.threaddump) {
+    if (CasActuatorEndpoints.threadDump()) {
         fetchThreadDump().then(payload => {
             threadDumpChart.data.labels = Object.keys(payload);
             const values = Object.values(payload);

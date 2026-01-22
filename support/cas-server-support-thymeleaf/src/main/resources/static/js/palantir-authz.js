@@ -34,12 +34,12 @@ async function initializeHeimdallOperations() {
         }
     });
 
-    if (actuatorEndpoints.heimdall) {
+    if (CasActuatorEndpoints.heimdall()) {
         const heimdallViewResourceEditor = initializeAceEditor("heimdallViewResourceEditor", "json");
         heimdallViewResourceEditor.setReadOnly(true);
 
         function fetchHeimdallResources(heimdallViewResourceEditor) {
-            $.get(`${actuatorEndpoints.heimdall}/resources`, response => {
+            $.get(`${CasActuatorEndpoints.heimdall()}/resources`, response => {
                 heimdallResourcesTable.clear();
                 for (const [key, value] of Object.entries(response)) {
                     for (const resource of Object.values(value)) {
@@ -66,7 +66,7 @@ async function initializeHeimdallOperations() {
                 $("button[name=viewHeimdallResource]").off().on("click", function () {
                     const namespace = $(this).data("namespace");
                     const resourceId = $(this).data("id");
-                    $.get(`${actuatorEndpoints.heimdall}/resources/${namespace}/${resourceId}`, response => {
+                    $.get(`${CasActuatorEndpoints.heimdall()}/resources/${namespace}/${resourceId}`, response => {
                         heimdallViewResourceEditor.setValue(JSON.stringify(response, null, 2));
                         heimdallViewResourceEditor.gotoLine(1);
 
@@ -119,7 +119,7 @@ async function initializeAccessStrategyOperations() {
     });
 
     $("button[name=accessStrategyButton]").off().on("click", () => {
-        if (actuatorEndpoints.serviceaccess) {
+        if (CasActuatorEndpoints.serviceAccess()) {
             hideBanner();
             accessStrategyAttributesTable.clear();
 
@@ -136,7 +136,7 @@ async function initializeAccessStrategyOperations() {
             });
 
             $.ajax({
-                url: actuatorEndpoints.serviceaccess,
+                url: CasActuatorEndpoints.serviceAccess(),
                 type: "POST",
                 contentType: "application/x-www-form-urlencoded",
                 data: $.param(renamedData),
