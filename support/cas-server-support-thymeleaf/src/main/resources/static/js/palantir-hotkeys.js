@@ -22,6 +22,10 @@ async function initializeHotKeyOperations() {
                 event.preventDefault();
                 $("#newLoggerButton:visible").click();
             }
+            if (currentActiveTab === Tabs.AUTHENTICATION.index && $("#delegatedclients").is(":visible")) {
+                event.preventDefault();
+                $("#newExternalIdentityProvider:visible").click();
+            }
             
             break;
         default:
