@@ -6,6 +6,7 @@ echo "Running MySQL docker container..."
 export DOCKER_IMAGE="mysql:9.6"
 docker stop mysql-server || true
 docker run --rm -p 3306:3306 --name mysql-server --rm \
+  -e MYSQL_DATABASE=cas \
   -e MYSQL_ROOT_PASSWORD=password -d ${DOCKER_IMAGE} --lower_case_table_names=1
 
 docker ps | grep "mysql-server"

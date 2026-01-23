@@ -78,13 +78,21 @@ cas.x.y.z.session-replication.cookie.crypto.enabled=true
 Remember to substitute `x.y.z` with the appropriate session replication 
 module version you are using (i.e. `oauth`, `saml-idp`, etc).
 
+### Palantir Admin Dashboard
+
+[Palantir Admin Console](../installation/Admin-Dashboard.html) received significant changes across the board
+to handle and support more actuator endpoints, when it comes to adding external identity providers, retrieving
+user sessions, listing multifactor authentication providers, etc.
+
 ### Spring Boot 4
 
 CAS is now built with Spring Boot `4.1.x`. This is a major platform upgrade that affects almost all aspects of the codebase
 including many of the third-party core libraries used by CAS as well as some CAS functionality. 
+
 
 ## Other Stuff
   
 - Compiled valid regular expressions are now cached to improve performance across the board.
 - Continued efforts using advanced code analysis techniques to remove potential memory leaks and improve system performance.
 - CAS is now upgraded to use `jQuery` version `4.0.0`.
+- Integration tests have switched to use MySQL `9.6.x`.

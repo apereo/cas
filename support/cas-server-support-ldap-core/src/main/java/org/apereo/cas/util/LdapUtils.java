@@ -818,7 +818,7 @@ public class LdapUtils {
         if (StringUtils.isBlank(properties.getDnFormat())) {
             throw new IllegalArgumentException("Dn format cannot be empty/blank for direct bind authentication");
         }
-        return getAuthenticatorViaDnFormat(properties, null);
+        return getAuthenticatorViaDnFormat(properties, newLdaptiveConnectionFactory(properties));
     }
 
     private static Authenticator getActiveDirectoryAuthenticator(final AbstractLdapAuthenticationProperties properties) {

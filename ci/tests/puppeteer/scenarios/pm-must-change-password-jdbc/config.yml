@@ -6,7 +6,7 @@ cas:
           field-password: password
           field-expired: status
           driver-class: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE
+          url: jdbc:mysql://localhost:3306/cas?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE
           dialect: org.hibernate.dialect.MySQLDialect
           password: password
           user: root

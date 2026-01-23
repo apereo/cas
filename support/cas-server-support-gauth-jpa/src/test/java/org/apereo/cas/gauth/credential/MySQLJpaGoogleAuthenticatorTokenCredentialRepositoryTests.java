@@ -16,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.gauth.jpa.user=root",
     "cas.authn.mfa.gauth.jpa.password=password",
     "cas.authn.mfa.gauth.jpa.driver-class=com.mysql.cj.jdbc.Driver",
-    "cas.authn.mfa.gauth.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "cas.authn.mfa.gauth.jpa.url=jdbc:mysql://localhost:3306/cas?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.authn.mfa.gauth.jpa.dialect=org.hibernate.dialect.MySQLDialect"
 })
 @EnabledIfListeningOnPort(port = 3306)
