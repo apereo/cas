@@ -29,7 +29,7 @@ public class SyncopePersonAttributeDao extends BasePersonAttributeDao {
         val attributes = new HashMap<String, List<Object>>();
         val results = syncopeUserSearch(uid);
         results.forEach(attributes::putAll);
-        if (properties.isIncludeUserGroups()) {
+        if (!results.isEmpty() && properties.isIncludeUserGroups()) {
             val groups = syncopeUserGroupsSearch(uid);
             groups.forEach(attributes::putAll);
         }
