@@ -222,6 +222,10 @@ function newExternalIdentityProvider() {
                 value: "OAUTH2",
                 text: "OAuth2 Identity Provider"
             });
+            availableProviders.push({
+                value: "KEYCLOAK",
+                text: "Keycloak"
+            });
         }
         if (CAS_FEATURES.includes("DelegatedAuthentication.saml")) {
             availableProviders.push({
@@ -268,7 +272,7 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the Client ID provided by the OAuth2/OIDC identity provider.",
-            cssClasses: "OAUTH2 OIDC hide",
+            cssClasses: "OAUTH2 OIDC KEYCLOAK hide",
             paramName: "id"
         });
         createInputField({
@@ -277,7 +281,7 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the Client secret provided by the OAuth2/OIDC identity provider.",
-            cssClasses: "OAUTH2 OIDC hide",
+            cssClasses: "OAUTH2 OIDC KEYCLOAK hide",
             paramName: "secret"
         });
         createInputField({
@@ -313,16 +317,36 @@ function newExternalIdentityProvider() {
             required: true,
             containerId: dialogContainer,
             title: "Define the discovery URL of the OIDC identity provider.",
-            cssClasses: "OIDC hide",
+            cssClasses: "OIDC KEYCLOAK hide",
             paramName: "discovery-uri"
         });
+
+        createInputField({
+            labelTitle: "Realm",
+            name: "externalIdentityProviderKeycloakRealm",
+            required: true,
+            containerId: dialogContainer,
+            title: "Keycloak realm used to construct metadata discovery URI.",
+            cssClasses: "KEYCLOAK hide",
+            paramName: "realm"
+        });
+        createInputField({
+            labelTitle: "Base URI",
+            name: "externalIdentityProviderKeycloakBaseUri",
+            required: true,
+            containerId: dialogContainer,
+            title: "Keycloak base URL used to construct metadata discovery URI.",
+            cssClasses: "KEYCLOAK hide",
+            paramName: "base-uri"
+        });
+
         createInputField({
             labelTitle: "Scope",
             name: "externalIdentityProviderOAuthScope",
             required: true,
             containerId: dialogContainer,
             title: "Define the scope of the OAuth2 identity provider.",
-            cssClasses: "OAUTH2 OIDC hide",
+            cssClasses: "OAUTH2 OIDC KEYCLOAK hide",
             paramName: "scope"
         });
 
@@ -480,6 +504,9 @@ function newExternalIdentityProvider() {
                         switch (currentType) {
                         case "CAS":
                             group = "cas.authn.pac4j.cas[]";
+                            break;
+                        case "KEYCLOAK":
+                            group = "cas.authn.pac4j.oidc[].keycloak";
                             break;
                         case "OIDC":
                             group = "cas.authn.pac4j.oidc[].generic";

@@ -133,6 +133,15 @@ function initializeDatePickers() {
 function initializeTooltips() {
     $( function() {
         $( document ).tooltip({
+            show: {
+                effect: "fade",
+                delay: 800,
+                duration: 500
+            },
+            hide: {
+                effect: "fade",
+                delay: 100
+            },
             position: {
                 my: "center bottom-20",
                 at: "center top",
