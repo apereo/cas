@@ -7,6 +7,6 @@ Map<String, List<Object>> run(final Object... args) {
     def casProperties = args[3]
     def casApplicationContext = args[4]
     def returnAttrs = [username:[uid],someattribute:["somevalue"], allowedaccess:["false"]]
-    logger.warn("Groovy attributes retrieved for user [{}]", uid)
+    logger.info("Groovy attributes retrieved for user [{}]", uid)
     return returnAttrs
 }
