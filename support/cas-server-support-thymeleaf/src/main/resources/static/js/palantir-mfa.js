@@ -14,7 +14,7 @@ async function populateMultifactorProviderTables() {
 
                     $("#mfaProvidersGridPanel").append(`
                         <div class="min-height-90">
-                            <div class="mdc-card p-4 m-auto mmw-65 mfa-card">
+                            <div class="mdc-card p-4 m-auto mmw-65 gradient-card">
                                 <h3>
                                     <i class="p-1 mdc-tab__icon mdi ${icon}" style="vertical-align:baseline;" aria-hidden="true"></i>
                                     ${value}
