@@ -87,8 +87,18 @@ user sessions, listing multifactor authentication providers, etc.
 ### Spring Boot 4
 
 CAS is now built with Spring Boot `4.1.x`. This is a major platform upgrade that affects almost all aspects of the codebase
-including many of the third-party core libraries used by CAS as well as some CAS functionality. 
+including many of the third-party core libraries used by CAS as well as some CAS functionality.
 
+### JSpecify & NullAway
+
+CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations to indicate nullness contracts on method parameters,
+return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
+and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
+during compile time.
+
+### SpringBoot Admin
+
+Support for [SpringBoot Admin](../monitoring/Configuring-SpringBootAdmin.html) is now compatible with Spring Boot `4.x`.
 
 ## Other Stuff
   

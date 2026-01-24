@@ -91,16 +91,14 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             val requiredAuthnMethod = CredentialSource.FORM.name().equalsIgnoreCase(upc.getSource())
                 ? OAuth20ClientAuthenticationMethods.CLIENT_SECRET_POST
                 : OAuth20ClientAuthenticationMethods.CLIENT_SECRET_BASIC;
-            if (!isAuthenticationMethodSupported(callContext, registeredService, requiredAuthnMethod)) {
+            if (!isAuthenticationMethodSupported(callContext, Objects.requireNonNull(registeredService), requiredAuthnMethod)) {
                 LOGGER.warn("Client authentication method [{}] is not supported for service [{}]", requiredAuthnMethod, registeredService.getName());
                 return Optional.empty();
             }
 
             validateCredentials(upc, registeredService, callContext);
 
-            val credential = new OAuth20ClientIdClientSecretCredential(upc.getUsername(), upc.getPassword());
-            val resolvedPrincipal = principalResolver.resolve(credential);
-
+            val resolvedPrincipal = resolvePrincipal(upc);
             val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
             val profile = new CommonProfile();
             if (resolvedPrincipal instanceof NullPrincipal) {
@@ -126,6 +124,11 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
             credentials.setUserProfile(profile);
             return Optional.of(credentials);
         });
+    }
+
+    protected Principal resolvePrincipal(final UsernamePasswordCredentials upc) throws Throwable {
+        val credential = new OAuth20ClientIdClientSecretCredential(upc.getUsername(), upc.getPassword());
+        return Objects.requireNonNull(principalResolver.resolve(credential));
     }
 
     protected boolean isAuthenticationMethodSupported(final CallContext callContext, final OAuthRegisteredService registeredService,

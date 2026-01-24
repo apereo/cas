@@ -14,7 +14,6 @@ import de.codecentric.boot.admin.server.domain.values.Registration;
 import de.codecentric.boot.admin.server.services.InstanceIdGenerator;
 import de.codecentric.boot.admin.server.web.client.InstanceWebClientCustomizer;
 import lombok.val;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,7 +46,6 @@ import static org.mockito.Mockito.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ExtendWith(CasTestExtension.class)
-@Disabled("Not compatible with Spring Boot 4 yet")
 class CasSpringBootAdminServerTests {
     @Autowired
     @Qualifier("springBootAdminEndpointConfigurer")
