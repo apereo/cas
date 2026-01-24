@@ -67,7 +67,7 @@
     gap: 15px 5px;
 }
 
-.mfa-card {
+.gradient-card {
     background: linear-gradient(
             135deg,
             #114376 -1%,
@@ -84,7 +84,7 @@
     transform: rotateX(0) rotateY(0);
     transition: transform 0.3s ease;
 }
-.mfa-card:hover {
+.gradient-card:hover {
     /*transform: rotateX(18deg) rotateY(-6deg);*/
     transform: perspective(800px) translateY(-6px);
     box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);

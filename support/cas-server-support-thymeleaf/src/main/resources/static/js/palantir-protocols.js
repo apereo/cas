@@ -263,6 +263,30 @@ async function initializeOidcProtocolOperations() {
 
 
         });
+
+        if (CasActuatorEndpoints.env()) {
+            const oidcConfigurationPropsTable = $("#oidcConfigurationPropsTable").DataTable({
+                lengthChange: false
+            });
+            oidcConfigurationPropsTable.clear();
+
+            $.get(`${CasActuatorEndpoints.env()}?pattern=cas.authn.oidc`, response => {
+                response.propertySources.forEach(source => {
+                    let properties = source.properties && Object.entries(source.properties || {});
+                    properties.forEach(([propKey, propValue]) => {
+                        oidcConfigurationPropsTable.row.add(
+                            $("<tr class=\"mdc-data-table__row\">")
+                                .append(`<td class="mdc-data-table__cell"><code>${propKey}</code></td>`)
+                                .append(`<td class="mdc-data-table__cell"><code>${propValue.value}</code></td>`)
+                        ).draw(false);
+                    });
+                });
+                updateNavigationSidebar();
+                showElements("#oidcConfigurationPropsPanel");
+            });
+        } else {
+            hideElements("#oidcConfigurationPropsPanel");
+        }
     }
 }
 
@@ -405,5 +429,30 @@ async function initializeSAML2ProtocolOperations() {
             });
 
         });
+
+
+        if (CasActuatorEndpoints.env()) {
+            const saml2ConfigurationPropsTable = $("#saml2ConfigurationPropsTable").DataTable({
+                lengthChange: false
+            });
+            saml2ConfigurationPropsTable.clear();
+
+            $.get(`${CasActuatorEndpoints.env()}?pattern=cas.authn.saml-idp`, response => {
+                response.propertySources.forEach(source => {
+                    let properties = source.properties && Object.entries(source.properties || {});
+                    properties.forEach(([propKey, propValue]) => {
+                        saml2ConfigurationPropsTable.row.add(
+                            $("<tr class=\"mdc-data-table__row\">")
+                                .append(`<td class="mdc-data-table__cell"><code>${propKey}</code></td>`)
+                                .append(`<td class="mdc-data-table__cell"><code>${propValue.value}</code></td>`)
+                        ).draw(false);
+                    });
+                });
+                updateNavigationSidebar();
+                showElements("#saml2ConfigurationPropsPanel");
+            });
+        } else {
+            hideElements("#saml2ConfigurationPropsPanel");
+        }
     }
 }
