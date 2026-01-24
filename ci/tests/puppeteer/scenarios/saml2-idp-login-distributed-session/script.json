@@ -12,7 +12,7 @@
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
 
     "--cas.authn.saml-idp.core.session-storage-type=TICKET_REGISTRY",
-    "--cas.authn.saml-idp.core.session-replication.enabled=true",
+    "--cas.authn.saml-idp.core.session-replication.replicate-sessions=true",
     "--cas.authn.saml-idp.core.session-replication.cookie.crypto.enabled=true",
     "--cas.authn.saml-idp.core.session-replication.cookie.name=DISSESSION",
     "--cas.authn.saml-idp.core.session-replication.cookie.crypto.alg=A128CBC-HS256",
