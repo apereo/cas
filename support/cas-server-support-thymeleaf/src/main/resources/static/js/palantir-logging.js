@@ -110,7 +110,9 @@ async function initializeLoggingOperations() {
                     },
                     showConfirmButton: true,
                     showDenyButton: true,
-                    icon: "success",
+                    icon: "question",
+                    confirmButtonText: "Create Logger",
+                    denyButtonText: "Cancel",
                     title: "What's the name of the new logger?",
                     text: "The new logger will only be effective at runtime and will not be persisted."
                 })
@@ -185,7 +187,7 @@ async function initializeLoggingOperations() {
                     const logFileStream = $("#logFileStream");
 
                     $.ajax({
-                        url: CasActuatorEndpoints.logfile(),
+                        url: CasActuatorEndpoints.logFile(),
                         type: "GET",
                         success: response => {
                             logFileStream.empty();
