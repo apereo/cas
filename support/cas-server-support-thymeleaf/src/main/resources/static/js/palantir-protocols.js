@@ -433,7 +433,13 @@ async function initializeSAML2ProtocolOperations() {
 
         if (CasActuatorEndpoints.env()) {
             const saml2ConfigurationPropsTable = $("#saml2ConfigurationPropsTable").DataTable({
-                lengthChange: false
+                lengthChange: false,
+                columnDefs: [
+                    {
+                        targets: 1,
+                        className: "dt-left"
+                    }
+                ]
             });
             saml2ConfigurationPropsTable.clear();
 
