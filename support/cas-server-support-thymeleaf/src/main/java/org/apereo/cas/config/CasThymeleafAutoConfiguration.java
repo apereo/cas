@@ -3,13 +3,12 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.services.web.CasThymeleafOutputTemplateHandler;
+import org.apereo.cas.services.web.CasThymeleafPostProcessorDialect;
 import org.apereo.cas.services.web.CasThymeleafTemplatesDirector;
 import org.apereo.cas.services.web.CasThymeleafViewResolverConfigurer;
 import org.apereo.cas.services.web.ThemeBasedViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolverFactory;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -55,9 +54,6 @@ import org.springframework.util.MimeType;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.servlet.ViewResolver;
 import org.thymeleaf.dialect.IDialect;
-import org.thymeleaf.dialect.IPostProcessorDialect;
-import org.thymeleaf.postprocessor.IPostProcessor;
-import org.thymeleaf.postprocessor.PostProcessor;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.view.AbstractThymeleafView;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
@@ -305,23 +301,8 @@ public class CasThymeleafAutoConfiguration {
             resolver.setViewNames(thymeleafProperties.getViewNames());
             resolver.setContentType(appendCharset(thymeleafProperties.getServlet().getContentType(), resolver.getCharacterEncoding()));
             if (!springTemplateEngine.isInitialized()) {
-                springTemplateEngine.addDialect(new IPostProcessorDialect() {
-
-                    @Override
-                    public int getDialectPostProcessorPrecedence() {
-                        return Integer.MAX_VALUE;
-                    }
-
-                    @Override
-                    public Set<IPostProcessor> getPostProcessors() {
-                        return CollectionUtils.wrapSet(new PostProcessor(TemplateMode.parse(thymeleafProperties.getMode()), CasThymeleafOutputTemplateHandler.class, Integer.MAX_VALUE));
-                    }
-
-                    @Override
-                    public String getName() {
-                        return CasThymeleafOutputTemplateHandler.class.getSimpleName();
-                    }
-                });
+                val temlateMode = TemplateMode.parse(thymeleafProperties.getMode());
+                springTemplateEngine.addDialect(new CasThymeleafPostProcessorDialect(temlateMode));
             }
             resolver.setTemplateEngine(springTemplateEngine);
             thymeleafViewResolverConfigurers
