@@ -426,6 +426,10 @@ form button i.mdi {
     /*padding-right: 1px;*/
 }
 
+.valign-bottom {
+    vertical-align: bottom !important;
+}
+
 .ace-editor {
     top: 0;
     bottom: 0;
@@ -843,6 +847,16 @@ span button.toolbar {
 .min-width-48x {
     min-width: 48px !important;
     width: 24px;
+}
+
+.mmw-15 {
+    min-width: 15%;
+    max-width: 15%;
+}
+
+.mmw-25 {
+    min-width: 25%;
+    max-width: 25%;
 }
 
 .mmw-45 {

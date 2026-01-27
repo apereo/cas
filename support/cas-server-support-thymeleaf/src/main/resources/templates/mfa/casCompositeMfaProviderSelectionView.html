@@ -23,7 +23,7 @@
                             <span th:utext="#{'cas.mfa.providerselection.' + ${provider}}">Provider name</span>
                         </h3>
                         <p th:utext="#{'cas.mfa.providerselection.' + ${provider} + '.notes'}">Provider description</p>
-                        <button th:id="${'btn-' + provider}" class="mdc-button mdc-button--raised btn btn-primary" value="Use">
+                        <button th:id="${'btn-' + provider}" class="mdc-button mdc-button--raised btn btn-primary mmw-15" value="Use">
                             <span class="mdc-button__label" th:utext="#{cas.mfa.providerselection.button.label.use}">Use</span>
                         </button>
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
@@ -36,7 +36,7 @@
                     <h3 th:utext="#{cas.mfa.providerselection.optional.header}">Optional Multifactor Authentication</h3>
                     <p th:utext="#{cas.mfa.providerselection.optional.description}"></p>
                     <form th:name="fmMfaOptional" th:id="fmMfaOptional" method="post" th:action="@{/login}">
-                        <button th:id="btnMfaOptional" class="mdc-button mdc-button--raised btn btn-primary" value="Use">
+                        <button th:id="btnMfaOptional" class="mdc-button mdc-button--raised btn btn-primary mmw-15" value="Use">
                             <span class="mdc-button__label" th:utext="#{cas.mfa.providerselection.button.label.skip}">Skip</span>
                         </button>
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
@@ -45,8 +45,8 @@
                     </form>
                 </div>
                 
-                <a class="mdc-button mdc-button--outline btn btn-outline-secondary mt-4 button-cancel" id="cancel" name="cancel"
-                    onclick="location.href = location.href;">
+                <a class="mdc-button mdc-button--raised btn btn-outline-secondary mt-4 button-cancel mmw-15"
+                   id="cancel" name="cancel" th:href="@{/login}">
                     <span class="mdc-button__label" th:utext="#{cas.mfa.providerselection.button.label.cancel}">Cancel</span>
                 </a>
             </div>
