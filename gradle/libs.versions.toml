@@ -83,7 +83,7 @@ hazelcast = "5.6.0"
 hazelcastSession = "4.0.0-RC1"
 hazelcastJClouds = "3.7.2"
 hazelcastZooKeeper = "4.0.2"
-hibernate = "7.2.2.Final"
+hibernate = "7.3.0.CR1"
 hibernateValidator = "9.1.0.Final"
 highlightJs = "11.11.1"
 hikari = "7.0.2"
@@ -94,7 +94,7 @@ httpCore = "5.4"
 httpCore4 = "4.4.16"
 httpclient = "5.6"
 httpclient4 = "4.5.14"
-hypersistence = "3.14.1"
+hypersistence = "3.15.0"
 influxDb = "1.7.0"
 ipGeoLocation = "2.0.1"
 jackson2 = "2.21.0"
@@ -413,7 +413,7 @@ httpclient = { module = "org.apache.httpcomponents:httpclient", version.ref = "h
 httpclient5 = { module = "org.apache.httpcomponents.client5:httpclient5", version.ref = "httpclient" }
 httpcore = { module = "org.apache.httpcomponents:httpcore", version.ref = "httpCore4" }
 httpcore5 = { module = "org.apache.httpcomponents.core5:httpcore5", version.ref = "httpCore" }
-hypersistence-utils-hibernate = { module = "io.hypersistence:hypersistence-utils-hibernate-71", version.ref = "hypersistence" }
+hypersistence-utils-hibernate = { module = "io.hypersistence:hypersistence-utils-hibernate-73", version.ref = "hypersistence" }
 ignite-core = { module = "org.apache.ignite:ignite-core", version.ref = "apacheIgnite" }
 ignite-api = { module = "org.apache.ignite:ignite-api", version.ref = "apacheIgnite" }
 ignite-indexing = { module = "org.apache.ignite:ignite-index", version.ref = "apacheIgnite" }
