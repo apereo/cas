@@ -86,20 +86,19 @@ public class OidcWellKnownEndpointController extends BaseOidcController {
         produces = "application/jrd+json")
     @Operation(summary = "Handle webfinger discovery request")
     public ResponseEntity<@NonNull Map> getWebFingerResponse(
-        @RequestParam("resource")
-        final String resource,
-        @RequestParam(value = "rel", required = false)
-        final String rel) throws Throwable {
+        @RequestParam("resource") final String resource,
+        @RequestParam(value = "rel", required = false) final String rel) throws Throwable {
         return BeanSupplier.isNotProxy(webFingerDiscoveryService)
             ? webFingerDiscoveryService.handleRequest(resource, rel)
             : ResponseEntity.notFound().build();
     }
 
-    private ResponseEntity<@NonNull OidcServerDiscoverySettings> getOidcServerDiscoveryResponse(final HttpServletRequest request,
-                                                                                                final HttpServletResponse response,
-                                                                                                final List<String> endpoints) {
-        if (isIssuerValidForEndpoint(request, response, endpoints) && BeanSupplier.isNotProxy(webFingerDiscoveryService)) {
-            val discovery = webFingerDiscoveryService.getDiscovery();
+    private ResponseEntity<@NonNull OidcServerDiscoverySettings> getOidcServerDiscoveryResponse(
+        final HttpServletRequest request,
+        final HttpServletResponse response,
+        final List<String> endpoints) {
+        if (isIssuerValidForEndpoint(request, response, endpoints)) {
+            val discovery = configurationContext.getDiscoverySettings();
             return new ResponseEntity<>(discovery, HttpStatus.OK);
         }
         LOGGER.warn("Unable to accept request; issuer for endpoint(s) [{}] is invalid", endpoints);
