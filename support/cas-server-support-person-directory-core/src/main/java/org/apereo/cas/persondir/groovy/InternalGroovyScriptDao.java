@@ -1,6 +1,5 @@
 package org.apereo.cas.persondir.groovy;
 
-import module java.base;
 import org.apereo.cas.authentication.attribute.SimpleUsernameAttributeProvider;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.UsernameAttributeProvider;
@@ -14,6 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * This is {@link InternalGroovyScriptDao}.
@@ -38,7 +43,7 @@ public class InternalGroovyScriptDao implements PersonAttributeScriptDao {
         val username = usernameAttributeProvider.getUsernameFromQuery(attributes);
         val results = new HashMap<String, List<Object>>();
         if (StringUtils.isNotBlank(username)) {
-            FunctionUtils.doAndHandle(_ -> {
+            FunctionUtils.doAndHandle(__ -> {
                 val allAttributes = new HashMap<>(attributes);
                 if (resultPeople != null && !resultPeople.isEmpty()) {
                     allAttributes.put("people", new ArrayList<>(resultPeople));
