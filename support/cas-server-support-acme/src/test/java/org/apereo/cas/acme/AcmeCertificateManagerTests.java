@@ -53,7 +53,7 @@ class AcmeCertificateManagerTests extends BaseAcmeTests {
         FileUtils.deleteQuietly(casProperties.getAcme().getDomainKey().getLocation().getFile());
         FileUtils.deleteQuietly(casProperties.getAcme().getUserKey().getLocation().getFile());
     }
-    
+
     @Test
     void verifyOperation() throws Throwable {
         assertNotNull(acmeCertificateManager);
@@ -97,8 +97,9 @@ class AcmeCertificateManagerTests extends BaseAcmeTests {
         }
 
         @Override
-        public void update() {
+        public Optional<Instant> fetch() {
             status = Status.VALID;
+            return Optional.empty();
         }
 
         @Override

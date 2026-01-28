@@ -25,6 +25,7 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPri
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.model.core.authentication.policy.BaseAuthenticationPolicyProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.validation.Assertion;
@@ -232,7 +233,7 @@ public class CoreAuthenticationUtils {
             val predicateClazz = ClassUtils.getClass(selectionCriteria);
             return (Predicate<Credential>) predicateClazz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
-            val predicate = Pattern.compile(selectionCriteria).asPredicate();
+            val predicate = RegexUtils.createPattern(selectionCriteria).asPredicate();
             return credential -> predicate.test(credential.getId());
         }
     }

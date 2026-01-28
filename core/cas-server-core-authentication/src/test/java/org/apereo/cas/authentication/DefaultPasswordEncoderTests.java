@@ -26,8 +26,8 @@ class DefaultPasswordEncoderTests {
         val properties = new PasswordEncoderProperties();
         properties.setType(StandardPasswordEncoder.class.getName());
         properties.setSecret("SECRET");
-        val e = PasswordEncoderUtils.newPasswordEncoder(properties, mock(ApplicationContext.class));
-        assertNotNull(e);
+        val encoder = PasswordEncoderUtils.newPasswordEncoder(properties, mock(ApplicationContext.class));
+        assertNotNull(encoder);
     }
 
     @Test

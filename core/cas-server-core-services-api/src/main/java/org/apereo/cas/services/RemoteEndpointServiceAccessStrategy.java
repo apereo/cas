@@ -64,8 +64,12 @@ public class RemoteEndpointServiceAccessStrategy extends BaseRegisteredServiceAc
                 .entity(MAPPER.writeValueAsString(request))
                 .build();
             val response = HttpUtils.execute(exec);
-            val currentCodes = StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes);
-            return response != null && currentCodes.contains(String.valueOf(response.getCode()));
+            try {
+                val currentCodes = StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes);
+                return response != null && currentCodes.contains(String.valueOf(response.getCode()));
+            } finally {
+                HttpUtils.close(response);
+            }
         }).get();
     }
 

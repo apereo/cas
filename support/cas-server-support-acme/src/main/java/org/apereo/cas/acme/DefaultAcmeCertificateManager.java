@@ -100,14 +100,14 @@ public class DefaultAcmeCertificateManager implements AcmeCertificateManager {
                                       final Supplier<Status> statusSupplier) throws Exception {
         val acme = casProperties.getAcme();
         var attempts = acme.getRetryAttempts();
+        val timeout = Beans.newDuration(acme.getRetryInternal()).toMillis();
 
         while (statusSupplier.get() != Status.VALID && attempts-- > 0) {
             if (statusSupplier.get() == Status.INVALID) {
                 throw new AcmeException("Order failed");
             }
-            val timeout = Beans.newDuration(acme.getRetryInternal()).toMillis();
             Thread.sleep(timeout);
-            resource.update();
+            resource.fetch();
         }
     }
 

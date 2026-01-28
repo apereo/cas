@@ -10,10 +10,7 @@ async function initializeHeimdallOperations() {
         columnDefs: [
             {visible: false, targets: 0},
             {visible: false, targets: 1},
-            {width: "50%", targets: 2},
-            {width: "20%", targets: 3},
-            {width: "9%", targets: 4},
-            {width: "10%", targets: 5}
+            {visible: true, targets: 5}
         ],
         autoWidth: false,
         drawCallback: settings => {
@@ -29,7 +26,7 @@ async function initializeHeimdallOperations() {
                     if (last !== group) {
                         $(rows).eq(i).before(
                             `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                            <td colspan="6">Namespace: ${group}</td>
+                                            <td colspan="4">Namespace: ${group}</td>
                                         </tr>`.trim());
                         last = group;
                     }
@@ -37,12 +34,12 @@ async function initializeHeimdallOperations() {
         }
     });
 
-    if (actuatorEndpoints.heimdall) {
+    if (CasActuatorEndpoints.heimdall()) {
         const heimdallViewResourceEditor = initializeAceEditor("heimdallViewResourceEditor", "json");
         heimdallViewResourceEditor.setReadOnly(true);
 
         function fetchHeimdallResources(heimdallViewResourceEditor) {
-            $.get(`${actuatorEndpoints.heimdall}/resources`, response => {
+            $.get(`${CasActuatorEndpoints.heimdall()}/resources`, response => {
                 heimdallResourcesTable.clear();
                 for (const [key, value] of Object.entries(response)) {
                     for (const resource of Object.values(value)) {
@@ -56,9 +53,9 @@ async function initializeHeimdallOperations() {
                     `;
                         heimdallResourcesTable.row.add({
                             0: `<code>${key}</code>`,
-                            1: `${resource.id}`,
-                            2: `<code>${resource.pattern}</code>`,
-                            3: `<code>${resource.method}</code>`,
+                            1: `${resource.id ?? "N/A"}`,
+                            2: `<code>${resource.pattern ?? "N/A"}</code>`,
+                            3: `<code>${resource.method ?? "N/A"}</code>`,
                             4: `<code>${resource.enforceAllPolicies ?? "false"}</code>`,
                             5: buttons
                         });
@@ -69,7 +66,7 @@ async function initializeHeimdallOperations() {
                 $("button[name=viewHeimdallResource]").off().on("click", function () {
                     const namespace = $(this).data("namespace");
                     const resourceId = $(this).data("id");
-                    $.get(`${actuatorEndpoints.heimdall}/resources/${namespace}/${resourceId}`, response => {
+                    $.get(`${CasActuatorEndpoints.heimdall()}/resources/${namespace}/${resourceId}`, response => {
                         heimdallViewResourceEditor.setValue(JSON.stringify(response, null, 2));
                         heimdallViewResourceEditor.gotoLine(1);
 
@@ -122,7 +119,7 @@ async function initializeAccessStrategyOperations() {
     });
 
     $("button[name=accessStrategyButton]").off().on("click", () => {
-        if (actuatorEndpoints.serviceaccess) {
+        if (CasActuatorEndpoints.serviceAccess()) {
             hideBanner();
             accessStrategyAttributesTable.clear();
 
@@ -139,7 +136,7 @@ async function initializeAccessStrategyOperations() {
             });
 
             $.ajax({
-                url: actuatorEndpoints.serviceaccess,
+                url: CasActuatorEndpoints.serviceAccess(),
                 type: "POST",
                 contentType: "application/x-www-form-urlencoded",
                 data: $.param(renamedData),
