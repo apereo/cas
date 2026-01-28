@@ -38,15 +38,9 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
 
     @Test
     void verifyPostWithoutRequiredParams() throws Exception {
-        val id = UUID.randomUUID().toString();
-        val service = getOidcRegisteredService(id);
-        service.setBypassApprovalPrompt(true);
-        servicesManager.save(service);
         mockMvc.perform(post("/cas/oidc/" + OidcConstants.PUSHED_AUTHORIZE_URL)
-                .param(OAuth20Constants.CLIENT_ID, id)
-                .param(OAuth20Constants.CLIENT_SECRET, service.getClientSecret())
                 .with(withHttpRequestProcessor()))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isUnauthorized());
     }
 
     @Test

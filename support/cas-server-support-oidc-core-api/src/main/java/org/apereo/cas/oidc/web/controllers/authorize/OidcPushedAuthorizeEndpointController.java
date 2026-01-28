@@ -38,7 +38,7 @@ public class OidcPushedAuthorizeEndpointController extends OidcAuthorizeEndpoint
 
     @Override
     @PostMapping("/**/" + OidcConstants.PUSHED_AUTHORIZE_URL)
-    @Operation(summary = "Handle OIDC Pushed authorization request")
+    @Operation(summary = "Handle OIDC Pushed Authorization Request")
     public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, List.of(OidcConstants.PUSHED_AUTHORIZE_URL))) {
