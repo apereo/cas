@@ -15,9 +15,15 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
     
     "--cas.http-client.host-name-verifier=none",
+
+    "--cas.authn.pac4j.core.session-replication.replicate-sessions=true",
+    "--cas.authn.pac4j.core.session-replication.cookie.crypto.enabled=true",
     
+    "--cas.authn.oauth.session-replication.replicate-sessions=true",
+    "--cas.authn.oauth.session-replication.cookie.crypto.enabled=true",
+
+
     "--cas.authn.pac4j.oauth2[0].profile-url=http://localhost:5432/userinfo.json",
-    
     "--cas.authn.pac4j.oauth2[0].auth-url=http://localhost:8988/realms/cas/protocol/openid-connect/auth",
     "--cas.authn.pac4j.oauth2[0].token-url=http://localhost:8988/realms/cas/protocol/openid-connect/token",
     "--cas.authn.pac4j.oauth2[0].profile-attrs.id=id",
@@ -36,7 +42,7 @@
     "--cas.ticket.registry.jpa.user=root",
     "--cas.ticket.registry.jpa.password=password",
     "--cas.ticket.registry.jpa.driver-class=com.mysql.cj.jdbc.Driver",
-    "--cas.ticket.registry.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "--cas.ticket.registry.jpa.url=jdbc:mysql://localhost:3306/cas?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "--cas.ticket.registry.jpa.dialect=org.hibernate.dialect.MySQLDialect"
   ],
   "initScript": "${PWD}/ci/tests/mysql/run-mysql-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/keycloak/run-keycloak-server.sh"

@@ -7,7 +7,10 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    
+
+    "--cas.authn.oauth.session-replication.replicate-sessions=true",
+    "--cas.authn.oauth.session-replication.cookie.crypto.enabled=true",
+  
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.discovery.scopes=openid,profile,email,address,phone",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
@@ -21,6 +24,9 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
     
     "--cas.http-client.host-name-verifier=none",
+
+    "--cas.authn.pac4j.core.session-replication.replicate-sessions=true",
+    "--cas.authn.pac4j.core.session-replication.cookie.crypto.enabled=true",
     
     "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
     "--cas.authn.pac4j.cas[0].protocol=CAS30",

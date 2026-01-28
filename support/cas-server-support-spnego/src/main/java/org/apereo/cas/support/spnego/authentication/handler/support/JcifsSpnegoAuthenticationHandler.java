@@ -11,11 +11,13 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
+import org.apereo.cas.util.RegexUtils;
 import com.google.common.base.Splitter;
 import jcifs.spnego.Authentication;
 import jcifs.spnego.AuthenticationException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Implementation of an AuthenticationHandler for SPNEGO supports. This Handler
@@ -122,13 +124,13 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
         return SpnegoCredential.class.isAssignableFrom(clazz);
     }
 
-    protected Principal getPrincipal(final String name, final boolean isNtlm) throws Throwable {
+    protected @Nullable Principal getPrincipal(final String name, final boolean isNtlm) throws Throwable {
         if (spnegoProperties.isPrincipalWithDomainName()) {
             return this.principalFactory.createPrincipal(name);
         }
         if (isNtlm) {
-            if (Pattern.matches("\\S+\\\\\\S+", name)) {
-                val splitList = Splitter.on(Pattern.compile("\\\\")).splitToList(name);
+            if (RegexUtils.createPattern("\\S+\\\\\\S+").matcher(name).matches()) {
+                val splitList = Splitter.on(RegexUtils.createPattern("\\\\")).splitToList(name);
                 if (splitList.size() == 2) {
                     return this.principalFactory.createPrincipal(splitList.get(1));
                 }

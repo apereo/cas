@@ -26,6 +26,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
 import org.pac4j.jee.context.JEEContext;
@@ -126,7 +127,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         LOGGER.debug("Principal resolved for Duo Security as [{}]", principal);
         var principalId = principal.getId();
         val principalAttribute = provider.getDuoAuthenticationService().getProperties().getPrincipalAttribute();
-        if (principal.getAttributes().containsKey(principalAttribute)) {
+        if (StringUtils.isNotBlank(principalAttribute) && principal.getAttributes().containsKey(principalAttribute)) {
             principalId = principal.getAttributes().get(principalAttribute).getFirst().toString();
         }
 
