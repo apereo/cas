@@ -148,7 +148,7 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
     protected String getDuoPrincipalId(final DuoSecurityUniversalPromptCredential duoCredential) {
         val principal = resolvePrincipal(duoCredential.getAuthentication().getPrincipal());
         val principalAttribute = properties.getPrincipalAttribute();
-        if (principal.getAttributes().containsKey(principalAttribute)) {
+        if (StringUtils.isNotBlank(principalAttribute) && principal.getAttributes().containsKey(principalAttribute)) {
             return principal.getAttributes().get(principalAttribute).getFirst().toString();
         }
         return principal.getId();

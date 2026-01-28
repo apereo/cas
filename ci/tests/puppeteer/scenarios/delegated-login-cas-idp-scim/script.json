@@ -32,6 +32,7 @@
     "--cas.authn.pac4j.cas[0].protocol=CAS30",
     "--cas.authn.pac4j.cas[0].client-name=CasClient",
 
+    "--cas.authn.oauth.session-replication.cookie.crypto.enabled=true",
     "--cas.authn.oauth.session-replication.cookie.name=OAUTHDISSESSION",
     "--cas.authn.pac4j.core.session-replication.cookie.name=PAC4JDISSESSION"
   ],

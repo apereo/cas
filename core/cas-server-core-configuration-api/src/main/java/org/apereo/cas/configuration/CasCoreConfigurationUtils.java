@@ -2,6 +2,7 @@ package org.apereo.cas.configuration;
 
 import module java.base;
 import org.apereo.cas.configuration.api.MutablePropertySource;
+import org.apereo.cas.util.RegexUtils;
 import com.google.common.base.Splitter;
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -19,7 +20,7 @@ import org.springframework.core.io.Resource;
  */
 @UtilityClass
 public final class CasCoreConfigurationUtils {
-    private static final Pattern INDEXED = Pattern.compile("(.+)\\[(\\d+)]");
+    private static final Pattern INDEXED = RegexUtils.createPattern("(.+)\\[(\\d+)]");
 
     /**
      * Load yaml properties map.

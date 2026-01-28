@@ -1,6 +1,7 @@
 async function initializePersonDirectoryOperations() {
     const personDirectoryTable = $("#personDirectoryTable").DataTable({
         pageLength: 10,
+        autoWidth: false,
         drawCallback: settings => {
             $("#personDirectoryTable tr").addClass("mdc-data-table__row");
             $("#personDirectoryTable td").addClass("mdc-data-table__cell");
@@ -9,6 +10,7 @@ async function initializePersonDirectoryOperations() {
 
     const attributeDefinitionsTable = $("#attributeDefinitionsTable").DataTable({
         pageLength: 10,
+        autoWidth: false,
         drawCallback: settings => {
             $("#attributeDefinitionsTable tr").addClass("mdc-data-table__row");
             $("#attributeDefinitionsTable td").addClass("mdc-data-table__cell");
@@ -17,6 +19,7 @@ async function initializePersonDirectoryOperations() {
 
     const attributeRepositoriesTable = $("#attributeRepositoriesTable").DataTable({
         pageLength: 10,
+        autoWidth: false,
         drawCallback: settings => {
             $("#attributeRepositoriesTable tr").addClass("mdc-data-table__row");
             $("#attributeRepositoriesTable td").addClass("mdc-data-table__cell");
@@ -24,7 +27,7 @@ async function initializePersonDirectoryOperations() {
     });
 
     $("button[name=personDirectoryClearButton]").off().on("click", () => {
-        if (actuatorEndpoints.persondirectory) {
+        if (CasActuatorEndpoints.personDirectory()) {
             const form = document.getElementById("fmPersonDirectory");
             if (!form.reportValidity()) {
                 return false;
@@ -41,7 +44,7 @@ async function initializePersonDirectoryOperations() {
                     if (result.isConfirmed) {
                         personDirectoryTable.clear();
                         $.ajax({
-                            url: `${actuatorEndpoints.persondirectory}/cache/${username}`,
+                            url: `${CasActuatorEndpoints.personDirectory()}/cache/${username}`,
                             type: "DELETE",
                             contentType: "application/json",
                             success: (response, status, xhr) => {
@@ -58,7 +61,7 @@ async function initializePersonDirectoryOperations() {
     });
 
     $("button[name=personDirectoryButton]").off().on("click", () => {
-        if (actuatorEndpoints.persondirectory) {
+        if (CasActuatorEndpoints.personDirectory()) {
             const form = document.getElementById("fmPersonDirectory");
             if (!form.reportValidity()) {
                 return false;
@@ -66,12 +69,10 @@ async function initializePersonDirectoryOperations() {
             const username = $("#personUsername").val();
             personDirectoryTable.clear();
             $.ajax({
-                url: `${actuatorEndpoints.persondirectory}/cache/${username}`,
+                url: `${CasActuatorEndpoints.personDirectory()}/cache/${username}`,
                 type: "GET",
                 contentType: "application/json",
                 success: (response, status, xhr) => {
-
-
                     for (const [key, values] of Object.entries(response.attributes)) {
                         personDirectoryTable.row.add({
                             0: `<code>${key}</code>`,
@@ -90,8 +91,8 @@ async function initializePersonDirectoryOperations() {
 
     attributeDefinitionsTable.clear();
     let attributeDefinitions = 0;
-    if (actuatorEndpoints.attributeDefinitions) {
-        $.get(actuatorEndpoints.attributeDefinitions, response => {
+    if (CasActuatorEndpoints.attributeDefinitions()) {
+        $.get(CasActuatorEndpoints.attributeDefinitions(), response => {
             for (const definition of response) {
                 attributeDefinitionsTable.row.add({
                     0: `<code>${definition.key ?? "N/A"}</code>`,
@@ -108,18 +109,24 @@ async function initializePersonDirectoryOperations() {
                 });
                 attributeDefinitions++;
             }
-            attributeDefinitionsTable.draw();
-            $("#attributeDefinitionsTab").toggle(attributeDefinitions > 0);
+            if (attributeDefinitions > 0) {
+                attributeDefinitionsTable.draw();
+                showElements($("#attributeDefinitionsTab").parent());
+            } else {
+                hideElements($("#attributeDefinitionsTab").parent());
+            }
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
             displayBanner(xhr);
         });
+    } else {
+        hideElements($("#attributeDefinitionsTab").parent());
     }
 
     attributeRepositoriesTable.clear();
     let attributeRepositories = 0;
-    if (actuatorEndpoints.persondirectory) {
-        $.get(`${actuatorEndpoints.persondirectory}/repositories`, response => {
+    if (CasActuatorEndpoints.personDirectory()) {
+        $.get(`${CasActuatorEndpoints.personDirectory()}/repositories`, response => {
             for (const definition of response) {
                 attributeRepositoriesTable.row.add({
                     0: `<code>${definition.id ?? "N/A"}</code>`,

@@ -5,7 +5,8 @@ const fs = require("fs");
 
 (async () => {
     let browser = await cas.newBrowser(cas.browserOptions());
-    let page = await cas.newPage(browser);
+    let context = await browser.createBrowserContext();
+    let page = await cas.newPage(context);
     await cas.gotoLogin(page);
     
     await cas.loginWith(page, "aburr", "P@ssw0rd");
@@ -15,10 +16,12 @@ const fs = require("fs");
     assert(attributesldap.includes("aburr"));
     assert(attributesldap.includes("someattribute"));
     assert(attributesldap.includes("uid"));
+    await context.close();
     await cas.closeBrowser(browser);
 
     browser = await cas.newBrowser(cas.browserOptions());
-    page = await cas.newPage(browser);
+    context = await browser.createBrowserContext();
+    page = await cas.newPage(context);
 
     await page.setRequestInterception(true);
 
@@ -52,6 +55,7 @@ const fs = require("fs");
     await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.sleep(5000);
     await assertFailure(page);
+    await context.close();
     await cas.closeBrowser(browser);
 })();
 

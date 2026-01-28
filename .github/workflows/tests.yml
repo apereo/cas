@@ -24,7 +24,7 @@ env:
   JDK_CURRENT: 25
   JDK_DISTRIBUTION: "corretto"
   RETRY_ATTEMPTS: 2
-  RETRY_MINUTES: 40
+  RETRY_MINUTES: 45
   CATEGORY_REGEX: ".*"
 ##########################################################################
 

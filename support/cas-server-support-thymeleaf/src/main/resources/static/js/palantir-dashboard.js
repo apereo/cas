@@ -23,6 +23,7 @@ class Tabs {
     static MFA = new PalantirDashboardTab("MFA Tab", 13, "m");
     static MULTITENANCY = new PalantirDashboardTab("Multitenancy Tab", 14, "");
     static SETTINGS = new PalantirDashboardTab("Settings Dialog", 100, ",");
+    static LOGOUT = new PalantirDashboardTab("Logout", 200, "x");
 
     static values() {
         return Object.values(Tabs);
@@ -34,54 +35,66 @@ let currentActiveTab = Tabs.APPLICATIONS.index;
 function activateDashboardTab(idx) {
     try {
         const tabIndex = Number(idx);
-        if (tabIndex === Tabs.SETTINGS.index) {
-            $("#palantirSettingsDialog").dialog({
-                position: {
-                    my: "center top",
-                    at: "center top+100",
-                    of: window
-                },
-                autoOpen: false,
-                modal: true,
-                width: 600,
-                height: "auto",
-                buttons: {
-                    OK: function () {
-                        const storedSettings = localStorage.getItem("PalantirSettings");
-                        const palantirSettings = storedSettings ? JSON.parse(storedSettings) : {};
-                        palantirSettings.refreshInterval = Number($("#palantirRefreshInterval").val());
-                        localStorage.setItem("PalantirSettings", JSON.stringify(palantirSettings));
-                        $(this).dialog("close");
-                        location.reload(true);
+        switch(tabIndex) {
+            case Tabs.SETTINGS.index:
+                $("#palantirSettingsDialog").dialog({
+                    position: {
+                        my: "center top",
+                        at: "center top+100",
+                        of: window
                     },
-                    Cancel: function () {
-                        $(this).dialog("close");
+                    autoOpen: false,
+                    modal: true,
+                    width: 600,
+                    height: "auto",
+                    buttons: {
+                        OK: function () {
+                            const storedSettings = localStorage.getItem("PalantirSettings");
+                            const palantirSettings = storedSettings ? JSON.parse(storedSettings) : {};
+                            palantirSettings.refreshInterval = Number($("#palantirRefreshInterval").val());
+                            localStorage.setItem("PalantirSettings", JSON.stringify(palantirSettings));
+                            $(this).dialog("close");
+                            location.reload(true);
+                        },
+                        Cancel: function () {
+                            $(this).dialog("close");
+                        }
+                    },
+                    open: function () {
+                        cas.init("#palantirSettingsDialog");
+                        try {
+                            $("#palantirRefreshInterval").selectmenu("destroy");
+                        } catch (e) {
+                        } finally {
+                            $("#palantirRefreshInterval").selectmenu({
+                                appendTo: $(this).closest(".ui-dialog")
+                            });
+                            $("#palantirRefreshInterval")
+                                .val(palantirSettings().refreshInterval / 1000)
+                                .selectmenu("refresh");
+                        }
+                    },
+                    close: function () {
+                        $(this).dialog("destroy");
                     }
-                },
-                open: function () {
-                    cas.init("#palantirSettingsDialog");
-                    try {
-                        $("#palantirRefreshInterval").selectmenu("destroy");
-                    } catch (e) {
-                    } finally {
-                        $("#palantirRefreshInterval").selectmenu({
-                            appendTo: $(this).closest(".ui-dialog")
-                        });
-                        $("#palantirRefreshInterval")
-                            .val(palantirSettings().refreshInterval / 1000)
-                            .selectmenu("refresh");
-                    }
-                },
-                close: function () {
-                    $(this).dialog("destroy");
-                }
-            });
-            $("#palantirSettingsDialog").dialog("open");
-        } else {
-            let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
-            tabs.activateTab(tabIndex);
-            currentActiveTab = tabIndex;
-            updateNavigationSidebar();
+                });
+                $("#palantirSettingsDialog").dialog("open");
+                break;
+            case Tabs.LOGOUT.index:
+                const url = new URL(location.href);
+                fetch(`${url.pathname}/logout`, {
+                    method: 'GET',
+                    credentials: 'include'
+                }).then((response) => {
+                    window.location.reload();
+                });
+                break;
+            default:
+                let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
+                tabs.activateTab(tabIndex);
+                currentActiveTab = tabIndex;
+                updateNavigationSidebar();
+                break;
         }
     } catch (e) {
         console.error("An error occurred while activating tab:", e);
@@ -90,7 +103,7 @@ function activateDashboardTab(idx) {
 
 function selectSidebarMenuButton(selectedItem) {
     const index = $(selectedItem).data("tab-index");
-    if (index !== Tabs.SETTINGS.index) {
+    if (index !== Tabs.SETTINGS.index && index !== Tabs.LOGOUT.index) {
         $("nav.sidebar-navigation ul li").removeClass("active");
         $(selectedItem).addClass("active");
         window.localStorage.setItem("PalantirSelectedTab", index);
@@ -99,117 +112,124 @@ function selectSidebarMenuButton(selectedItem) {
 }
 
 function processNavigationTabs() {
-    if (!actuatorEndpoints.registeredservices) {
-        $("#applicationsTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.APPLICATIONS.index}`).addClass("d-none");
+    if (!CasActuatorEndpoints.registeredServices()) {
+        hideElements($("#applicationsTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.APPLICATIONS.index}`));
     }
-    if (!actuatorEndpoints.metrics || !actuatorEndpoints.httpexchanges || !actuatorEndpoints.auditevents
-        || !actuatorEndpoints.heapdump || !actuatorEndpoints.health || !actuatorEndpoints.statistics) {
-        $("#systemTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.SYSTEM.index}`).addClass("d-none");
+    if (!CasActuatorEndpoints.metrics() || !CasActuatorEndpoints.httpExchanges() || !CasActuatorEndpoints.auditEvents()
+        || !CasActuatorEndpoints.heapDump() || !CasActuatorEndpoints.health() || !CasActuatorEndpoints.statistics()) {
+        hideElements($("#systemTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.SYSTEM.index}`));
     }
-    if (!actuatorEndpoints.metrics) {
-        $("#systemmetricstab").parent().addClass("d-none");
+    if (!CasActuatorEndpoints.metrics()) {
+        hideElements($("#systemmetricstab").parent());
     }
-    if (!actuatorEndpoints.springWebflow) {
-        $("#caswebflowtab").parent().addClass("d-none");
+    if (!CasActuatorEndpoints.springWebflow()) {
+        hideElements($("#caswebflowtab").parent());
     }
-    if (!actuatorEndpoints.ticketregistry) {
-        $("#ticketsTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.TICKETS.index}`).addClass("d-none");
+    if (!CasActuatorEndpoints.ticketRegistry()) {
+        hideElements($("#ticketsTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.TICKETS.index}`));
     }
-    if (!actuatorEndpoints.scheduledtasks) {
-        $("#tasksTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.TASKS.index}`).addClass("d-none");
+    if (!CasActuatorEndpoints.scheduledTasks()) {
+        hideElements($("#tasksTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.TASKS.index}`));
     }
-    if (!actuatorEndpoints.persondirectory) {
-        $("#personDirectoryTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.PERSON_DIRECTORY.index}`).addClass("d-none");
+    if (!CasActuatorEndpoints.personDirectory()) {
+        hideElements($("#personDirectoryTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.PERSON_DIRECTORY.index}`));
     }
-    if (!actuatorEndpoints.authenticationHandlers || !actuatorEndpoints.authenticationPolicies) {
-        $("#authenticationTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.AUTHENTICATION.index}`).addClass("d-none");
+    if (!CasActuatorEndpoints.authenticationHandlers() || !CasActuatorEndpoints.authenticationPolicies()) {
+        hideElements($("#authenticationTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.AUTHENTICATION.index}`));
     }
-    if (!actuatorEndpoints.serviceaccess) {
-        $("#accessStrategyTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.ACCESS_STRATEGY.index}`).addClass("d-none");
+    if (!CasActuatorEndpoints.serviceAccess()) {
+        hideElements($("#accessStrategyTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.ACCESS_STRATEGY.index}`));
     }
-    if (!actuatorEndpoints.ssosessions) {
-        $("#ssoSessionsTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.SSO_SESSIONS.index}`).addClass("d-none");
+    if (!CasActuatorEndpoints.ssoSessions() || !CasActuatorEndpoints.sessions()) {
+        hideElements($("#ssoSessionsTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.SSO_SESSIONS.index}`));
     }
-    if (!actuatorEndpoints.auditlog) {
-        $("#auditEvents").parent().addClass("d-none");
+    if (!CasActuatorEndpoints.ssoSessions()) {
+       hideElements($("#ssosessionstab").parent());
     }
-    if (!actuatorEndpoints.events) {
-        $("#casEvents").parent().addClass("d-none");
+    if (!CasActuatorEndpoints.sessions()) {
+        hideElements($("#springsessionstab").parent());
     }
-    if ((!actuatorEndpoints.loggingconfig || !actuatorEndpoints.loggers) && !actuatorEndpoints.auditlog) {
-        $("#loggingTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.LOGGING.index}`).addClass("d-none");
+    
+    if (!CasActuatorEndpoints.auditLog()) {
+        hideElements($("#auditEvents").parent());
     }
-    if (!actuatorEndpoints.env || !actuatorEndpoints.configprops) {
-        $("#configurationTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.CONFIGURATION.index}`).addClass("d-none");
+    if (!CasActuatorEndpoints.events()) {
+        hideElements($("#casEvents").parent());
     }
-    if (!actuatorEndpoints.attributeconsent || !CAS_FEATURES.includes("Consent")) {
-        $("#consentTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.CONSENT.index}`).addClass("d-none");
+    if ((!CasActuatorEndpoints.loggingConfig() || !CasActuatorEndpoints.loggers()) && !CasActuatorEndpoints.auditLog()) {
+        hideElements($("#loggingTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.LOGGING.index}`));
     }
-    if (!actuatorEndpoints.casvalidate) {
+    if (!CasActuatorEndpoints.env() || !CasActuatorEndpoints.configProps()) {
+        hideElements($("#configurationTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.CONFIGURATION.index}`));
+    }
+    if (!CasActuatorEndpoints.attributeConsent() || !CAS_FEATURES.includes("Consent")) {
+        hideElements($("#consentTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.CONSENT.index}`));
+    }
+    if (!CasActuatorEndpoints.casValidate()) {
         $("#casprotocol").parent().remove();
-        $("#casProtocolContainer").addClass("d-none");
+        hideElements($("#casProtocolContainer"));
     }
-    if (!actuatorEndpoints.samlpostprofileresponse || !CAS_FEATURES.includes("SAMLIdentityProvider")) {
+    if (!CasActuatorEndpoints.samlPostProfileResponse() || !CAS_FEATURES.includes("SAMLIdentityProvider")) {
         $("#saml2protocol").parent().remove();
-        $("#saml2ProtocolContainer").addClass("d-none");
+        hideElements($("#saml2ProtocolContainer"));
     }
-    if (!actuatorEndpoints.samlvalidate || !CAS_FEATURES.includes("SAML")) {
-        $("#saml1ProtocolContainer").addClass("d-none");
+    if (!CasActuatorEndpoints.samlValidate() || !CAS_FEATURES.includes("SAML")) {
+        hideElements($("#saml1ProtocolContainer"));
         $("#saml1protocol").parent().remove();
     }
-    if (!actuatorEndpoints.casconfig) {
-        $("#config-encryption-tab").addClass("d-none");
+    if (!CasActuatorEndpoints.casConfig()) {
+        hideElements($("#config-encryption-tab"));
         $("#casConfigSecurity").parent().remove();
     }
-    if (!actuatorEndpoints.refresh && !actuatorEndpoints.busrefresh) {
-        $("#refreshConfigurationButton").addClass("d-none");
+    if (!CasActuatorEndpoints.refresh()) {
+        hideElements($("#refreshConfigurationButton"));
     }
-    if (!actuatorEndpoints.configurationmetadata) {
-        $("#casConfigSearch").addClass("d-none");
+    if (!CasActuatorEndpoints.configurationMetadata()) {
+        hideElements($("#casConfigSearch"));
     }
-    if (!actuatorEndpoints.oidcjwks || !CAS_FEATURES.includes("OpenIDConnect")) {
+    if (!CasActuatorEndpoints.oidcJwks() || !CAS_FEATURES.includes("OpenIDConnect")) {
         $("#oidcprotocol").parent().remove();
-        $("#oidcProtocolContainer").addClass("d-none");
+        hideElements($("#oidcProtocolContainer"));
     }
-    if (!actuatorEndpoints.samlvalidate && !actuatorEndpoints.casvalidate
-        && !actuatorEndpoints.samlpostprofileresponse && !actuatorEndpoints.oidcjwks) {
-        $("#protocolsTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.PROTOCOLS.index}`).addClass("d-none");
+    if (!CasActuatorEndpoints.samlValidate() && !CasActuatorEndpoints.casValidate()
+        && !CasActuatorEndpoints.samlPostProfileResponse() && !CasActuatorEndpoints.oidcJwks()) {
+        hideElements($("#protocolsTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.PROTOCOLS.index}`));
     }
-    if (!actuatorEndpoints.throttles) {
-        $("#throttlesTabButton").addClass("d-none");
-        $(`#attribute-tab-${Tabs.THROTTLES.index}`).addClass("d-none");
+    if (!CasActuatorEndpoints.throttles()) {
+        hideElements($("#throttlesTabButton"));
+        hideElements($(`#attribute-tab-${Tabs.THROTTLES.index}`));
     }
-    if (!actuatorEndpoints.mfadevices || availableMultifactorProviders.length === 0) {
-        $("#mfaTabButton").addClass("d-none");
-        $("#mfaDevicesTab").parent().addClass("d-none");
-        $(`#attribute-tab-${Tabs.MFA.index}`).addClass("d-none");
+    if (!CasActuatorEndpoints.mfaDevices() || availableMultifactorProviders.length === 0) {
+        hideElements($("#mfaTabButton"));
+        hideElements($("#mfaDevicesTab").parent());
+        hideElements($(`#attribute-tab-${Tabs.MFA.index}`));
     }
-    if (!actuatorEndpoints.multifactortrusteddevices || availableMultifactorProviders.length === 0) {
-        $("#trustedMfaDevicesTab").parent().addClass("d-none");
+    if (!CasActuatorEndpoints.multifactorTrustedDevices() || availableMultifactorProviders.length === 0) {
+        hideElements($("#trustedMfaDevicesTab").parent());
     }
-    if (!actuatorEndpoints.multitenancy || !CAS_FEATURES.includes("Multitenancy")) {
-        $("#tenantsTabButton").addClass("d-none");
+    if (!CasActuatorEndpoints.multitenancy() || !CAS_FEATURES.includes("Multitenancy")) {
+        hideElements($("#tenantsTabButton"));
     }
-    if (!actuatorEndpoints.restart) {
-        $("#restartServerButton").addClass("d-none");
+    if (!CasActuatorEndpoints.restart()) {
+        hideElements($("#restartServerButton"));
     }
-    if (!actuatorEndpoints.shutdown) {
-        $("#shutdownServerButton").addClass("d-none");
+    if (!CasActuatorEndpoints.shutdown()) {
+        hideElements($("#shutdownServerButton"));
     }
     if (!mutablePropertySourcesAvailable) {
-        $("#mutableConfigSources").addClass("d-none");
+        hideElements($("#mutableConfigSources"));
     }
     return $("nav.sidebar-navigation ul li:visible").length;
 }
@@ -251,4 +271,27 @@ function navigateToApplication(serviceIdToFind) {
         displayBanner(`Could not find a registered service with id ${serviceIdToFind}`);
         applicationsTable.search("").draw();
     }
+}
+
+async function initializePalantirSession() {
+    setInterval(async () => {
+        const url = new URL(location.href);
+        const result = await fetch(`${url.pathname}/session`, { credentials: "same-origin" });
+        if (result.status !== 200) {
+            Swal.close();
+            Swal.fire({
+                title: "Session Expired",
+                text: "Your Palantir session has expired. The dashboard will reload shortly.",
+                icon: "info",
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    activateDashboardTab(Tabs.LOGOUT.index);
+                }
+            });
+
+        }
+    }, 15000);
 }

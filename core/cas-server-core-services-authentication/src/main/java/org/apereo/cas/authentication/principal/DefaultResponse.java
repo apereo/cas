@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import module java.base;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.RegexUtils;
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,7 +20,7 @@ public record DefaultResponse(ResponseType responseType, String url, Map<String,
     /**
      * Pattern to detect unprintable ASCII characters.
      */
-    private static final Pattern NON_PRINTABLE = Pattern.compile("[\\x00-\\x1F\\x7F]+");
+    private static final Pattern NON_PRINTABLE = RegexUtils.createPattern("[\\x00-\\x1F\\x7F]+");
 
     private static final int RESPONSE_INITIAL_CAPACITY = 200;
 

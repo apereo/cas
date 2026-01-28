@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.attribute;
 import module java.base;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
+import org.apereo.cas.util.RegexUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -148,7 +149,7 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
         var queryBuilder = new StringBuilder();
         var queryMatcher = PersonAttributeDao.WILDCARD_PATTERN.matcher(queryString);
         if (!queryMatcher.find()) {
-            return Pattern.compile(Pattern.quote(queryString));
+            return RegexUtils.createPattern(Pattern.quote(queryString));
         }
 
         var start = queryMatcher.start();
@@ -179,7 +180,7 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
             queryBuilder.append(quotedQueryPart);
         }
 
-        return Pattern.compile(queryBuilder.toString());
+        return RegexUtils.createPattern(queryBuilder.toString());
     }
     
 }

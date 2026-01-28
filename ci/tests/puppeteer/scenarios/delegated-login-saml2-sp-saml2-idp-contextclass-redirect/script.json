@@ -7,7 +7,9 @@
   "properties": [
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
-
+    "--cas.authn.saml-idp.core.session-replication.replicate-sessions=true",
+    "--cas.authn.saml-idp.core.session-replication.cookie.crypto.enabled=true",
+    
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
 
     "--cas.server.name=https://localhost:8443",
@@ -19,6 +21,7 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
+    "--cas.authn.pac4j.core.session-replication.replicate-sessions=true",
     "--cas.authn.pac4j.core.groovy-redirection-strategy.location=file://${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/Redirection.groovy",
 
     "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",

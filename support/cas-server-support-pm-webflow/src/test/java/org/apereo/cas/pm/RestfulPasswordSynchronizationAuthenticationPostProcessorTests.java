@@ -71,7 +71,7 @@ class RestfulPasswordSynchronizationAuthenticationPostProcessorTests {
         }
     }
 
-    @TestConfiguration("AuthenticationTestConfiguration")
+    @TestConfiguration(value = "AuthenticationTestConfiguration", proxyBeanMethods = false)
     static class AuthenticationTestConfiguration {
         @Bean
         public AuthenticationEventExecutionPlanConfigurer testAuthenticationEventExecutionPlanConfigurer(
