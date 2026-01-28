@@ -1,21 +1,25 @@
 let editServiceWizardDialog = undefined;
 
-function validateServiceIdPattern(button) {
-    $("#validateServiceIdDialog").dialog({
+function validatePattern(button, targetFieldId = "#registeredServiceId") {
+    $("#validatePatternDialog").dialog({
         title: "Validate Pattern",
         modal: true,
         width: 600,
         closeOnEscape: false,
         buttons: {
             "Use Pattern": function () {
-                $("#registeredServiceId").val($("#serviceIdPattern").val()).focus();
+                $(targetFieldId).val($("#providedPattern").val()).focus();
                 $(this).dialog("close");
             },
             Cancel: function () {
                 $(this).dialog("close");
             }
         },
+        open: function () {
+            $("#providedPattern").val($(targetFieldId).val());
+        },
         close: function () {
+            $(this).find("input").val("");
             $(this).dialog("destroy");
         }
     });
@@ -911,18 +915,40 @@ function createRegisteredServiceAttributeReleaseValueFilters() {
 }
 
 function createRegisteredServiceMultifactorPolicy() {
-    createInputField({
-        labelTitle: "Multifactor Providers",
-        name: "registeredServiceMfaProviders",
-        paramName: "multifactorPolicy.multifactorAuthenticationProviders",
-        paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-        required: false,
-        containerId: "editServiceWizardMenuItemMfaPolicy",
-        title: "Define the multifactor authentication providers to be used, separated by comma."
-    })
-        .data("renderer", function (value) {
-            return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
-        });
+    if (!CasActuatorEndpoints.discoveryProfile()) {
+        createInputField({
+            labelTitle: "Multifactor Providers",
+            name: "registeredServiceMfaProviders",
+            paramName: "multifactorPolicy.multifactorAuthenticationProviders",
+            paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+            required: false,
+            containerId: "editServiceWizardMenuItemMfaPolicy",
+            title: "Define the multifactor authentication providers to be used, separated by comma."
+        })
+            .data("renderer", function (value) {
+                return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
+            });
+    } else {
+        CasDiscoveryProfile.fetchIfNeeded()
+            .done(async () => {
+                const options = Object.entries(CasDiscoveryProfile.multifactorAuthenticationProviders()).map(([key, _value]) => ({
+                    value: key,
+                    text: _value
+                }));
+                createMultiSelectField({
+                    containerId: "bypassEnabledSwitchButtonPanel",
+                    labelTitle: "Multifactor Providers:",
+                    paramName: "multifactorPolicy.multifactorAuthenticationProviders",
+                    paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+                    title: "Define the multifactor authentication providers to be used, separated by comma.",
+                    options: options,
+                    allowCreateOption: false,
+                    inclusion: "before"
+                }).data("renderer", function (value) {
+                    return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
+                });
+            });
+    }
 
     createSelectField({
         cssClasses: "advanced-option",
@@ -2023,7 +2049,14 @@ function createRegisteredServiceUsernameAttributeProvider() {
         required: false,
         containerId: "editServiceWizardMenuItemUsernameAttribute",
         title: "Specifies a regex pattern to remove from the username."
-    });
+    }).after(`
+       <button class="mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button mr-2" 
+                type="button"
+                onclick="validatePattern(this, '#registeredServiceUsernameAttributeRemovePattern')">
+            <i class="mdi mdi-check-circle" aria-hidden="true"></i>
+            <span class="sr-only">Validate</span>
+        </button>
+    `);
 
     createSelectField({
         cssClasses: "DefaultRegisteredServiceUsernameProvider",
@@ -2100,12 +2133,11 @@ function createRegisteredServiceFields() {
     }).after(`
         <button class="mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button mr-2" 
                 type="button"
-                onclick="validateServiceIdPattern(this)">
+                onclick="validatePattern(this)">
             <i class="mdi mdi-check-circle" aria-hidden="true"></i>
             <span class="sr-only">Validate</span>
         </button>
     `);
-    ;
 
     createInputField({
         labelTitle: "Description",

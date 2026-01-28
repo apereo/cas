@@ -1,12 +1,8 @@
 async function initializeConsentOperations() {
-    if (actuatorEndpoints.attributeconsent) {
+    if (CasActuatorEndpoints.attributeConsent()) {
         const consentAttributesTable = $("#consentAttributesTable").DataTable({
             pageLength: 10,
             autoWidth: false,
-            columnDefs: [
-                {width: "40%", targets: 0},
-                {width: "60%", targets: 1}
-            ],
             drawCallback: settings => {
                 $("#consentAttributesTable tr").addClass("mdc-data-table__row");
                 $("#consentAttributesTable td").addClass("mdc-data-table__cell");
@@ -32,7 +28,7 @@ async function initializeConsentOperations() {
             }
         });
         consentTable.clear();
-        $.get(actuatorEndpoints.attributeconsent, response => {
+        $.get(CasActuatorEndpoints.attributeConsent(), response => {
             for (const source of response) {
 
                 let consentButtons = `
@@ -92,7 +88,7 @@ async function initializeConsentOperations() {
                     .then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
-                                url: `${actuatorEndpoints.attributeconsent}/${principal}/${id}`,
+                                url: `${CasActuatorEndpoints.attributeConsent()}/${principal}/${id}`,
                                 type: "DELETE",
                                 contentType: "application/x-www-form-urlencoded",
                                 success: (response, status, xhr) => {
@@ -115,8 +111,8 @@ async function initializeConsentOperations() {
 
 
         $("button[name=exportAllConsent]").off().on("click", () => {
-            if (actuatorEndpoints.attributeconsent) {
-                fetch(`${actuatorEndpoints.attributeconsent}/export`)
+            if (CasActuatorEndpoints.attributeConsent()) {
+                fetch(`${CasActuatorEndpoints.attributeConsent()}/export`)
                     .then(response => {
                         const filename = response.headers.get("filename");
                         response.blob().then(blob => {

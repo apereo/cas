@@ -30,7 +30,9 @@
     "--cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
     "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
 
+    "--cas.authn.oauth.session-replication.cookie.crypto.enabled=true",
     "--cas.authn.oauth.session-replication.cookie.name=OAUTHDISSESSION",
+    "--cas.authn.pac4j.core.session-replication.replicate-sessions=true",
     "--cas.authn.pac4j.core.session-replication.cookie.name=PAC4JDISSESSION"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"

@@ -21,6 +21,7 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
@@ -130,7 +131,7 @@ class CasCoreAuthenticationHandlersConfiguration {
             val accept = casProperties.getAuthn().getAccept();
             val usersProperty = accept.getUsers();
             if (accept.isEnabled() && StringUtils.isNotBlank(usersProperty) && usersProperty.contains("::")) {
-                val pattern = Pattern.compile("::");
+                val pattern = RegexUtils.createPattern("::");
                 return Stream.of(usersProperty.split(","))
                     .map(pattern::split)
                     .collect(Collectors.toMap(userAndPassword -> userAndPassword[0], userAndPassword -> userAndPassword[1]));

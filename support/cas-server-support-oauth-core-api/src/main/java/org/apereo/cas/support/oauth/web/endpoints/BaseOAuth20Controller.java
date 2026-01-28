@@ -44,7 +44,8 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
     }
 
     protected String extractAccessTokenFrom(final String token) {
-        return OAuth20JwtAccessTokenEncoder.toDecodableCipher(getConfigurationContext().getAccessTokenJwtBuilder()).decode(token);
+        val decodableCipher = OAuth20JwtAccessTokenEncoder.toDecodableCipher(getConfigurationContext().getAccessTokenJwtBuilder());
+        return decodableCipher.decode(token);
     }
 
     protected void ensureSessionReplicationIsAutoconfiguredIfNeedBe(final HttpServletRequest request) {

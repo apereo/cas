@@ -35,14 +35,14 @@ import org.springframework.boot.test.context.SpringBootTest;
     "cas.authn.throttle.jdbc.user=root",
     "cas.authn.throttle.jdbc.password=password",
     "cas.authn.throttle.jdbc.driver-class=com.mysql.cj.jdbc.Driver",
-    "cas.authn.throttle.jdbc.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "cas.authn.throttle.jdbc.url=jdbc:mysql://localhost:3306/cas?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.authn.throttle.jdbc.dialect=org.hibernate.dialect.MySQLDialect",
 
     "cas.audit.jdbc.asynchronous=false",
     "cas.audit.jdbc.user=root",
     "cas.audit.jdbc.password=password",
     "cas.audit.jdbc.driver-class=com.mysql.cj.jdbc.Driver",
-    "cas.audit.jdbc.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "cas.audit.jdbc.url=jdbc:mysql://localhost:3306/cas?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.audit.jdbc.dialect=org.hibernate.dialect.MySQLDialect"
 })
 @EnabledIfListeningOnPort(port = 3306)
