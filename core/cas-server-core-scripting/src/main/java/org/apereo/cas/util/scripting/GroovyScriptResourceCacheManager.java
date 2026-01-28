@@ -79,11 +79,12 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
         final String scriptResource,
         final String... keys) {
 
-        val cacheKey = computeKey(keys);
+        val keysToCompute = keys.length == 0 ? new String[]{scriptResource} : keys;
+        val cacheKey = computeKey(keysToCompute);
         LOGGER.trace("Constructed cache key [{}] for keys [{}] mapped as groovy script", cacheKey, keys);
 
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
-        
+
         var script = (ExecutableCompiledScript) null;
         if (containsKey(cacheKey)) {
             script = get(cacheKey);

@@ -4,9 +4,6 @@ async function initializeAuthenticationOperations() {
         autoWidth: false,
         columnDefs: [
             {visible: false, targets: 0},
-            {width: "80%", targets: 1},
-            {width: "10%", targets: 2},
-            {width: "10%", targets: 3}
         ],
         order: [0, "asc"],
         drawCallback: settings => {
@@ -30,8 +27,8 @@ async function initializeAuthenticationOperations() {
     });
 
     authenticationHandlersTable.clear();
-    if (actuatorEndpoints.authenticationHandlers) {
-        $.get(actuatorEndpoints.authenticationHandlers, response => {
+    if (CasActuatorEndpoints.authenticationHandlers()) {
+        $.get(CasActuatorEndpoints.authenticationHandlers(), response => {
             for (const handler of response) {
                 authenticationHandlersTable.row.add({
                     0: `${handler.name}`,
@@ -51,10 +48,6 @@ async function initializeAuthenticationOperations() {
         pageLength: 10,
         order: [0, "asc"],
         autoWidth: false,
-        columnDefs: [
-            {width: "80%", targets: 0},
-            {width: "20%", targets: 1}
-        ],
         drawCallback: settings => {
             $("#authenticationPoliciesTable tr").addClass("mdc-data-table__row");
             $("#authenticationPoliciesTable td").addClass("mdc-data-table__cell");
@@ -62,8 +55,8 @@ async function initializeAuthenticationOperations() {
     });
 
     authenticationPoliciesTable.clear();
-    if (actuatorEndpoints.authenticationPolicies) {
-        $.get(actuatorEndpoints.authenticationPolicies, response => {
+    if (CasActuatorEndpoints.authenticationPolicies()) {
+        $.get(CasActuatorEndpoints.authenticationPolicies(), response => {
             for (const handler of response) {
                 authenticationPoliciesTable.row.add({
                     0: `${handler.name}`,
@@ -81,15 +74,17 @@ async function initializeAuthenticationOperations() {
     let toolbarEntries = `
         <button type="button" id="loadExternalIdentityProvidersTableButton"
                 onclick="loadExternalIdentityProvidersTable()"
+                title="Reload external identity providers from sources"
                 class="mdc-button mdc-button--raised">
             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>Reload</span>
         </button>
     `;
 
-    if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+    if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
         toolbarEntries += `
             <button type="button" id="newExternalIdentityProvider"
                     onclick="newExternalIdentityProvider()"
+                    title="Create a new external identity provider"
                     class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus-thick" aria-hidden="true"></i>New</span>
             </button>
@@ -106,8 +101,6 @@ async function initializeAuthenticationOperations() {
         },
         columnDefs: [
             {visible: false, targets: 0},
-            {width: "40%", targets: 1},
-            {width: "60%", targets: 2},
             {visible: false, targets: 3}
         ],
         drawCallback: settings => {
@@ -125,7 +118,7 @@ async function initializeAuthenticationOperations() {
 
                         rows.data().each(entry => {
                             if (entry[0] === group) {
-                                if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+                                if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
                                     toolbarButtons = `
                                         <span class="px-2" style="float: right;">
                                             <button type="button" 
@@ -146,12 +139,14 @@ async function initializeAuthenticationOperations() {
                                     samlButtons = `
                                     <span class="px-2"  style="float: right;">
                                             <button type="button" title="Service Provider Metadata" 
+                                                    title="View Service Provider Metadata"
                                                     name="saml2ClientSpMetadata" href="#" clientName='${group}'
                                                     class="mdc-button mdc-button--raised toolbar pr-2">
                                                 <i class="mdi mdi-text-box min-width-32x" aria-hidden="true"></i>
                                                 Service Provider Metadata
                                             </button>
                                             <button type="button" title="Identity Provider Metadata" 
+                                                    title="View Identity Provider Metadata"
                                                     name="saml2ClientIdpMetadata" href="#" clientName='${group}'
                                                     class="mdc-button mdc-button--raised toolbar pr-2">
                                                 <i class="mdi mdi-file-xml-box min-width-32x" aria-hidden="true"></i>
@@ -164,7 +159,7 @@ async function initializeAuthenticationOperations() {
                         });
                         $(rows).eq(i).before(
                             `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                <td colspan="3"><span class="idp-group">${group}</span>${toolbarButtons.trim()} ${samlButtons.trim()}</td>
+                                <td colspan="2"><span class="idp-group">${group}</span>${toolbarButtons.trim()} ${samlButtons.trim()}</td>
                             </tr>`.trim()
                         );
                         configureSaml2ClientMetadataButtons();

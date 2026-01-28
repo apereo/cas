@@ -175,12 +175,16 @@
 
                         </section>
                         <div class="d-flex">
-                            <button type="button" name="saml2ProtocolPostButton" id="saml2ProtocolPostButton"
+                            <button type="button" name="saml2ProtocolPostButton"
+                                    title="Simulate a SAML2 POST Response"
+                                    id="saml2ProtocolPostButton"
                                     class="mdc-button mdc-button--raised">
                                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
                                                                    aria-hidden="true"></i>POST Response</span>
                             </button>
-                            <button type="button" name="saml2ProtocolLogoutButton" id="saml2ProtocolLogoutButton"
+                            <button type="button" name="saml2ProtocolLogoutButton"
+                                    title="Simulate a SAML2 Logout Request"
+                                    id="saml2ProtocolLogoutButton"
                                     class="mdc-button mdc-button--raised">
                                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-exit-run"
                                                                    aria-hidden="true"></i>Logout Request</span>
@@ -232,12 +236,15 @@
 
                         </section>
                         <div class="d-flex">
-                            <button type="button" name="saml2MetadataCacheFetchButton" id="saml2MetadataCacheFetchButton"
+                            <button type="button" name="saml2MetadataCacheFetchButton"
+                                    title="Fetch SAML2 Metadata Cache Entry"
+                                    id="saml2MetadataCacheFetchButton"
                                     class="mdc-button mdc-button--raised">
                                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-download"
                                                                    aria-hidden="true"></i>Fetch</span>
                             </button>
                             <button type="button" name="saml2MetadataCacheInvalidateButton"
+                                    title="Invalidate SAML2 Metadata Cache Entry"
                                     id="saml2MetadataCacheInvalidateButton"
                                     class="mdc-button mdc-button--raised">
                                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-delete" aria-hidden="true"></i>Invalidate</span>
@@ -248,6 +255,30 @@
                     <section class="my-3 d-flex h-450px d-none" id="saml2MetadataCacheEditorContainer">
                         <pre class="ace-editor ace-relative w-100 h-100" id="saml2MetadataCacheEditor"></pre>
                     </section>
+
+                    <p class="pb-3">
+                    <div class="min-height-90 hide" id="saml2ConfigurationPropsPanel">
+                        <div class="mdc-card p-4 gradient-card">
+                            <h3>
+                                <i class="p-1 mdc-tab__icon mdi" style="vertical-align:baseline;" aria-hidden="true"></i>
+                                Configuration Properties
+                            </h3>
+                        </div>
+                        <div class="p-2" style="background: white;">
+                            <table id="saml2ConfigurationPropsTable" class="mdc-data-table__table table table-striped noborder">
+                                <thead>
+                                <tr class="mdc-data-table__header-row">
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Property</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
+                                </tr>
+                                </thead>
+                                <tbody class="mdc-data-table__content">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
                 </section>
 
                 <div class="mdc-dialog modal" id="saml2MetadataDialog" role="alertdialog"
@@ -457,6 +488,29 @@
                                 class="mdc-button mdc-button--raised">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-cog" aria-hidden="true"></i>Discovery Profile</span>
                         </button>
+                    </div>
+                    <p class="pb-3">
+                    
+                    <div class="min-height-90 hide" id="oidcConfigurationPropsPanel">
+                        <div class="mdc-card p-4 gradient-card">
+                            <h3>
+                                <i class="p-1 mdc-tab__icon mdi" style="vertical-align:baseline;" aria-hidden="true"></i>
+                                Configuration Properties
+                            </h3>
+                        </div>
+                        <div class="p-2" style="background: white;">
+                            <table id="oidcConfigurationPropsTable" class="mdc-data-table__table table table-striped noborder">
+                                <thead>
+                                <tr class="mdc-data-table__header-row">
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Property</th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
+                                </tr>
+                                </thead>
+                                <tbody class="mdc-data-table__content">
+
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div class="mdc-dialog modal" id="oidcOpConfigurationDialog" role="alertdialog"

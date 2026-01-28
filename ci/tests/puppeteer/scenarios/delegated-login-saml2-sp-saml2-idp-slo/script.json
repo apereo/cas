@@ -38,9 +38,11 @@
     "--cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
     "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
     "--cas.authn.pac4j.saml[0].principal-id-attribute=email",
-    
+
+    "--cas.authn.pac4j.core.session-replication.replicate-sessions=true",
+    "--cas.authn.pac4j.core.session-replication.cookie.crypto.enabled=true",
     "--cas.authn.pac4j.core.session-replication.cookie.same-site-policy=none",
-    
+
     "--cas.logout.follow-service-redirects=true",
 
     "--logging.level.PROTOCOL_MESSAGE=info",

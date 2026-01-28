@@ -22,7 +22,7 @@
                     <tr class="mdc-data-table__header-row">
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
-                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">URL</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">URL Pattern</th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
@@ -37,6 +37,7 @@
                         <span class="mdc-menu-surface--anchor">
                             <button name="newService" id="newService"
                                     onclick="cas.openMenu();"
+                                    title="Create New Application"
                                     class="mdc-button mdc-button--raised" aria-label="Create">
                                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus"
                                                                    aria-hidden="true"></i>New</span>
@@ -85,17 +86,18 @@
                         </span>
                         <input type="file" id="serviceFileInput" style="display: none;">
                         <button name="importService" id="importService" class="mdc-button mdc-button--raised"
-                                aria-label="Import">
+                                title="Import applications and service definitions" aria-label="Import">
                              <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-import"
                                                                 aria-hidden="true"></i>Import</span>
                         </button>
                         <button name="exportAll" id="exportAll" class="mdc-button mdc-button--raised"
-                                aria-label="Export All">
+                                title="Export applications and service definitions as a zip file" aria-label="Export All">
                              <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-export"
                                                                 aria-hidden="true"></i>Export</span>
                         </button>
                         <button name="reloadAll" id="reloadAll" class="mdc-button mdc-button--raised"
                                 aria-label="Reload"
+                                title="Reload applications and service definitions from the service registry"
                                 onclick="fetchServices();">
                              <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh"
                                                                 aria-hidden="true"></i>Reload</span>
@@ -778,11 +780,11 @@
                     <div class="mdc-dialog__scrim"></div>
                 </div>
 
-                <div id="validateServiceIdDialog" class="hide">
+                <div id="validatePatternDialog" class="hide">
                     <section class="cas-field form-group my-3 mdc-input-group d-flex">
                         <div id="validateServiceIdPanel"
                              class="mdc-input-group-field mdc-input-group-field-append w-100">
-                            <label for="serviceIdPattern"
+                            <label for="providedPattern"
                                    class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
                                 <span class="mdc-notched-outline">
                                     <span class="mdc-notched-outline__leading"></span>
@@ -792,9 +794,9 @@
                                     <span class="mdc-notched-outline__trailing"></span>
                                 </span>
                                 <input class="mdc-text-field__input form-control" type="text"
-                                       name="serviceIdPattern" tabindex="0" id="serviceIdPattern"
+                                       name="providedPattern" tabindex="0" id="providedPattern"
                                        size="50"
-                                       oninput="validatePattern()"
+                                       oninput="validatePatterns()"
                                        autocomplete="off" required/>
                             </label>
                             <label for="serviceIdTestValue"
@@ -808,52 +810,52 @@
                                 </span>
                                 <input class="mdc-text-field__input form-control" type="text"
                                        name="serviceIdTestValue" tabindex="0" id="serviceIdTestValue"
-                                       oninput="validatePattern()"
+                                       oninput="validatePatterns()"
                                        size="50" autocomplete="off" required/>
                             </label>
 
                             <script type="text/javascript">
-                                cas.init("#validateServiceIdDialog");
-                                $("#serviceIdPattern").val($("#registeredServiceId").val()).focus();
-                                function validatePattern() {
+                                cas.init("#validatePatternDialog");
+                                $("#providedPattern").val($("#registeredServiceId").val()).focus();
+                                function validatePatterns() {
                                     console.log("Validating pattern...");
 
-                                    const pattern = $("#serviceIdPattern").val();
+                                    const pattern = $("#providedPattern").val();
                                     const testValue = $("#serviceIdTestValue").val();
 
                                     if (pattern.length > 0 && testValue.length > 0) {
-                                        $("#serviceIdPatternTestResult").removeClass("hide");
+                                        $("#providedPatternTestResult").removeClass("hide");
                                         try {
                                             const regex = new RegExp(pattern, "i");
                                             const match = regex.test(testValue);
 
                                             if (match) {
                                                 console.log("Found", match[0]);
-                                                $("#serviceIdPatternTestResult")
+                                                $("#providedPatternTestResult")
                                                     .addClass("banner-success")
                                                     .removeClass("banner-danger")
                                                     .text("✅ The given pattern matches the test value.");
                                             } else {
-                                                $("#serviceIdPatternTestResult")
+                                                $("#providedPatternTestResult")
                                                     .removeClass("banner-success")
                                                     .addClass("banner-danger")
                                                     .text("❌ The given pattern does NOT match the test value.");
                                             }
                                         } catch(e) {
-                                            $("#serviceIdPatternTestResult")
+                                            $("#providedPatternTestResult")
                                                 .removeClass("banner-success")
                                                 .addClass("banner-danger")
                                                 .text("❌ " + e);
                                         }
                                     } else {
-                                        $("#serviceIdPatternTestResult").addClass("hide");
+                                        $("#providedPatternTestResult").addClass("hide");
                                     }
 
                                 }
                             </script>
                         </div>
                     </section>
-                    <div id="serviceIdPatternTestResult" class="p-2 banner hide"></div>
+                    <div id="providedPatternTestResult" class="p-2 banner hide"></div>
                 </div>
                 
             </div>

@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.support;
 
 import module java.base;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * Pattern for algorithms that require an initialization vector.
      * Regex matches all {@code PBEWITHHMACSHA###ANDAES} algorithms that aren't BouncyCastle.
      */
-    private static final Pattern ALGS_THAT_REQUIRE_IV_PATTERN = Pattern.compile("PBEWITHHMACSHA\\d+ANDAES_.*(?<!-BC)$");
+    private static final Pattern ALGS_THAT_REQUIRE_IV_PATTERN = RegexUtils.createPattern("PBEWITHHMACSHA\\d+ANDAES_.*(?<!-BC)$");
 
     /**
      * The Jasypt instance.
