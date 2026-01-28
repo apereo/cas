@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.interrupt.InterruptCookieProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.ServicesManager;
@@ -114,7 +114,7 @@ class DelegatedAuthenticationSaml2IdPConfiguration {
         logoutRequestCookie.setName("Saml2LogoutRequest");
 
         val cipherExecutorResolver = new DefaultCipherExecutorResolver(delegatedClientDistributedSessionCookieCipherExecutor, tenantExtractor,
-            InterruptCookieProperties.class, bindingContext -> {
+            Pac4jDelegatedAuthenticationProperties.class, bindingContext -> {
             val properties = bindingContext.value();
             val crypto = properties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie().getCrypto();
             return CipherExecutorUtils.newStringCipherExecutor(crypto, DelegatedClientAuthenticationDistributedSessionCookieCipherExecutor.class);

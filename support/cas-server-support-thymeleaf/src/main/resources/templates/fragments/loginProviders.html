@@ -188,7 +188,7 @@
                 /*<![CDATA[*/
                 
                 const identityProviderOptions = $('#identityProviderOptions');
-                const options = identityProviderOptions.find('option');
+                const options = identityProviderOptions.find('option').get();
                 const sorted = options.sort((a, b) => $(a).text().localeCompare($(b).text()));
                 identityProviderOptions.empty().append(sorted).prop("selectedIndex", 0);
 

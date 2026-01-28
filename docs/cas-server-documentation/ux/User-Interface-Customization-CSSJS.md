@@ -46,9 +46,9 @@ to specify a custom `cas.js` file under the `cas.standard.js.file` setting.
 
 Most importantly, the following JavaScript libraries are utilized by CAS automatically:
 
-* [JQuery](https://jquery.com/)
-* [Bootstrap for grid / flex utilities](https://getbootstrap.com/docs/4.5/getting-started/contents/#css-files)
-* [Material.io](https://material.io/)
+* [JQuery](https://github.com/jquery/jquery)
+* [Bootstrap for grid / flex utilities](https://getbootstrap.com)
+* [Material.io](https://material.io)
 
 ## Checking CAPSLOCK
 

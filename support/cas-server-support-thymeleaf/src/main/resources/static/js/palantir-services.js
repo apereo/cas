@@ -97,11 +97,11 @@ async function initializeServiceButtons() {
     const serviceEditor = initializeAceEditor("serviceEditor");
     let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("editServiceDialog"));
 
-    if (actuatorEndpoints.registeredservices) {
+    if (CasActuatorEndpoints.registeredServices()) {
         const entityHistoryTable = $("#entityHistoryTable").DataTable();
         $("button[name=viewEntityHistory]").off().on("click", function () {
             let serviceId = $(this).parent().attr("serviceId");
-            $.get(`${actuatorEndpoints.entityhistory}/registeredServices/${serviceId}`, response => {
+            $.get(`${CasActuatorEndpoints.entityHistory()}/registeredServices/${serviceId}`, response => {
                 entityHistoryTable.clear();
 
                 const editor = initializeAceEditor("entityHistoryEditor", "json");
@@ -143,7 +143,7 @@ async function initializeServiceButtons() {
     $("button[name=viewEntityChangelog]").off().on("click", function () {
         let serviceId = $(this).parent().attr("serviceId");
 
-        $.get(`${actuatorEndpoints.entityhistory}/registeredServices/${serviceId}/changelog`, response => {
+        $.get(`${CasActuatorEndpoints.entityHistory()}/registeredServices/${serviceId}/changelog`, response => {
             const editor = initializeAceEditor("entityChangelogEditor", "text");
             editor.setValue(response);
             editor.setReadOnly(true);
@@ -158,7 +158,7 @@ async function initializeServiceButtons() {
 
     $("button[name=deleteService]").off().on("click", function () {
         let serviceId = $(this).parent().attr("serviceId");
-        if (actuatorEndpoints.registeredservices) {
+        if (CasActuatorEndpoints.registeredServices()) {
             Swal.fire({
                 title: "Are you sure you want to delete this entry?",
                 text: "Once deleted, you may not be able to recover this entry.",
@@ -169,7 +169,7 @@ async function initializeServiceButtons() {
                 .then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `${actuatorEndpoints.registeredservices}/${serviceId}`,
+                            url: `${CasActuatorEndpoints.registeredServices()}/${serviceId}`,
                             type: "DELETE",
                             headers: {"Content-Type": "application/json"},
                             success: response => {
@@ -189,8 +189,8 @@ async function initializeServiceButtons() {
 
     $("button[name=editService]").off().on("click", function () {
         let serviceId = $(this).parent().attr("serviceId");
-        if (actuatorEndpoints.registeredservices) {
-            $.get(`${actuatorEndpoints.registeredservices}/${serviceId}`, response => {
+        if (CasActuatorEndpoints.registeredServices()) {
+            $.get(`${CasActuatorEndpoints.registeredServices()}/${serviceId}`, response => {
                 const value = JSON.stringify(response, null, 4);
                 serviceEditor.setValue(value, -1);
                 serviceEditor.gotoLine(1);
@@ -205,7 +205,7 @@ async function initializeServiceButtons() {
     });
 
     $("button[name=saveService],button[name=saveServiceWizard]").off().on("click", function () {
-        if (actuatorEndpoints.registeredservices) {
+        if (CasActuatorEndpoints.registeredServices()) {
             let isNewService = false;
             let value = "";
 
@@ -233,7 +233,7 @@ async function initializeServiceButtons() {
                 .then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `${actuatorEndpoints.registeredservices}`,
+                            url: `${CasActuatorEndpoints.registeredServices()}`,
                             type: isNewService ? "POST" : "PUT",
                             contentType: "application/json",
                             data: value,
@@ -260,9 +260,9 @@ async function initializeServiceButtons() {
     });
 
     $("button[name=copyService]").off().on("click", function () {
-        if (actuatorEndpoints.registeredservices) {
+        if (CasActuatorEndpoints.registeredServices()) {
             let serviceId = $(this).parent().attr("serviceId");
-            $.get(`${actuatorEndpoints.registeredservices}/${serviceId}`, response => {
+            $.get(`${CasActuatorEndpoints.registeredServices()}/${serviceId}`, response => {
                 let clone = {...response};
                 clone.serviceId = "...";
                 clone.name = `...`;
@@ -290,8 +290,8 @@ async function initializeServiceButtons() {
 }
 
 async function fetchServices(callback) {
-    if (actuatorEndpoints.registeredservices) {
-        $.get(actuatorEndpoints.registeredservices, response => {
+    if (CasActuatorEndpoints.registeredServices()) {
+        $.get(CasActuatorEndpoints.registeredServices(), response => {
             let serviceCountByType = [0, 0, 0, 0, 0];
             let applicationsTable = $("#applicationsTable").DataTable();
             applicationsTable.clear();
@@ -350,7 +350,7 @@ async function fetchServices(callback) {
                     <i class="mdi mdi-content-copy min-width-32x" aria-hidden="true"></i>
                 </button>
                 `;
-                if (actuatorEndpoints.entityhistory) {
+                if (CasActuatorEndpoints.entityHistory()) {
                     serviceButtons += `
                     <button type="button" name="viewEntityHistory" href="#" serviceId='${service.id}'
                             title="View Change History"
@@ -441,10 +441,10 @@ async function initializeFooterButtons() {
             if (originalIndex !== currentIndex) {
                 $("#editServiceWizardMenu").accordion("option", "active", originalIndex);
             }
-            if (actuatorEndpoints.registeredservices) {
+            if (CasActuatorEndpoints.registeredServices()) {
                 const editor = initializeAceEditor("wizardServiceEditor");
                 $.ajax({
-                    url: `${actuatorEndpoints.registeredservices}/validate`,
+                    url: `${CasActuatorEndpoints.registeredServices()}/validate`,
                     type: "POST",
                     contentType: "application/json",
                     data: editor.getValue(),
@@ -471,7 +471,7 @@ async function initializeFooterButtons() {
     });
 
     $("button[name=newServicePlain]").off().on("click", () => {
-        if (actuatorEndpoints.registeredservices) {
+        if (CasActuatorEndpoints.registeredServices()) {
             const editServiceDialogElement = document.getElementById("editServiceDialog");
             let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(editServiceDialogElement);
             const editor = initializeAceEditor("serviceEditor", "json");
@@ -484,7 +484,7 @@ async function initializeFooterButtons() {
     });
 
     $("button[name=importService]").off().on("click", () => {
-        if (actuatorEndpoints.registeredservices) {
+        if (CasActuatorEndpoints.registeredServices()) {
             $("#serviceFileInput").click();
             $("#serviceFileInput").change(event =>
                 Swal.fire({
@@ -503,7 +503,7 @@ async function initializeFooterButtons() {
                                 const fileContent = e.target.result;
 
                                 $.ajax({
-                                    url: `${actuatorEndpoints.registeredservices}`,
+                                    url: `${CasActuatorEndpoints.registeredServices()}`,
                                     type: "PUT",
                                     contentType: "application/json",
                                     data: fileContent,
@@ -520,9 +520,9 @@ async function initializeFooterButtons() {
     });
 
     $("button[name=exportService]").off().on("click", () => {
-        if (actuatorEndpoints.registeredservices) {
+        if (CasActuatorEndpoints.registeredServices()) {
             let serviceId = $(exportServiceButton).attr("serviceId");
-            fetch(`${actuatorEndpoints.registeredservices}/export/${serviceId}`)
+            fetch(`${CasActuatorEndpoints.registeredServices()}/export/${serviceId}`)
                 .then(response => {
                     const filename = response.headers.get("filename");
                     response.blob().then(blob => {
@@ -540,8 +540,8 @@ async function initializeFooterButtons() {
     });
 
     $("button[name=exportAll]").off().on("click", () => {
-        if (actuatorEndpoints.registeredservices) {
-            fetch(`${actuatorEndpoints.registeredservices}/export`)
+        if (CasActuatorEndpoints.registeredServices()) {
+            fetch(`${CasActuatorEndpoints.registeredServices()}/export`)
                 .then(response => {
                     const filename = response.headers.get("filename");
                     response.blob().then(blob => {

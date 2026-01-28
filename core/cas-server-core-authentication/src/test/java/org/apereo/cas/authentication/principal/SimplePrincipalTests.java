@@ -23,9 +23,9 @@ class SimplePrincipalTests {
 
     @Test
     void verifyEquality() {
-        val p = new SimplePrincipal("id", new HashMap<>());
-        assertNotEquals(null, p);
-        assertNotEquals("HelloWorld", p);
+        val principal = new SimplePrincipal("id", new HashMap<>());
+        assertNotEquals(null, principal);
+        assertNotEquals("HelloWorld", principal);
     }
 
     @Test
@@ -44,6 +44,14 @@ class SimplePrincipalTests {
         MAPPER.writeValue(JSON_FILE, principalWritten);
         val principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);
         assertEquals(principalWritten, principalRead);
+    }
+
+    @Test
+    void verifyAttributes() {
+        val principal = new SimplePrincipal("id", Map.of("givenName", List.of("CAS")));
+        assertTrue(principal.getAttributes().containsKey("givenName"));
+        assertTrue(principal.getAttributes().containsKey("givenname"));
+        
     }
 
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.util.text;
 
 import module java.base;
 import org.apereo.cas.util.InetAddressUtils;
+import org.apereo.cas.util.RegexUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 @RequiredArgsConstructor
 public class DefaultMessageSanitizer implements MessageSanitizer {
     private static final Pattern SENSITIVE_TEXT_PATTERN =
-        Pattern.compile("(psw|pwd|clientSecret|password|token|credential|secret|secretKey)\\s*=\\s*(['\"]*\\S+\\b['\"]*)");
+        RegexUtils.createPattern("(psw|pwd|clientSecret|password|token|credential|secret|secretKey)\\s*=\\s*(['\"]*\\S+\\b['\"]*)");
 
     private static final Boolean CAS_TICKET_ID_SANITIZE_SKIP = Boolean.getBoolean("CAS_TICKET_ID_SANITIZE_SKIP");
 
@@ -48,20 +49,24 @@ public class DefaultMessageSanitizer implements MessageSanitizer {
             while (matcher.find()) {
                 val match = matcher.group();
                 val group = matcher.group(1);
-                val length = group.length();
-                var replaceLength = length - VISIBLE_TAIL_LENGTH - (HOST_NAME_LENGTH + 1);
-                if (replaceLength <= 0) {
-                    replaceLength = length;
+                if (StringUtils.isNotBlank(group)) {
+                    val length = group.length();
+                    var replaceLength = length - VISIBLE_TAIL_LENGTH - (HOST_NAME_LENGTH + 1);
+                    if (replaceLength <= 0) {
+                        replaceLength = length;
+                    }
+                    val newId = match.replace(group.substring(0, replaceLength), OBFUSCATED_STRING);
+                    modifiedMessage = modifiedMessage.replace(match, newId);
                 }
-                val newId = match.replace(group.substring(0, replaceLength), OBFUSCATED_STRING);
-                modifiedMessage = modifiedMessage.replace(match, newId);
             }
         }
 
         val matcher = SENSITIVE_TEXT_PATTERN.matcher(msg);
         while (matcher.find()) {
             val group = matcher.group(2);
-            modifiedMessage = modifiedMessage.replace(group, OBFUSCATED_STRING);
+            if (StringUtils.isNotBlank(group)) {
+                modifiedMessage = modifiedMessage.replace(group, OBFUSCATED_STRING);
+            }
         }
         return modifiedMessage;
     }
