@@ -3,6 +3,8 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
+import org.apereo.cas.authentication.attribute.AttributeDefinition;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
@@ -47,8 +49,10 @@ public class CasDiscoveryProfileAutoConfiguration {
         public CasServerProfileRegistrar casServerProfileRegistrar(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("discoveryProfileAvailableAttributes") final BeanContainer<String> discoveryProfileAvailableAttributes,
-            @Qualifier("authenticationEventExecutionPlan") final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+            @Qualifier("discoveryProfileAvailableAttributes")
+            final BeanContainer<String> discoveryProfileAvailableAttributes,
+            @Qualifier("authenticationEventExecutionPlan")
+            final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
             return new DefaultCasServerProfileRegistrar(casProperties, discoveryProfileAvailableAttributes.toSet(),
                 authenticationEventExecutionPlan, applicationContext);
         }
@@ -83,7 +87,10 @@ public class CasDiscoveryProfileAutoConfiguration {
         @ConditionalOnMissingBean(name = "discoveryProfileAvailableAttributes")
         public BeanContainer<String> discoveryProfileAvailableAttributes(
             final CasConfigurationProperties casProperties,
-            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY) final ObjectProvider<@NonNull PersonAttributeDao> attributeRepository) {
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore,
+            @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
+            final ObjectProvider<@NonNull PersonAttributeDao> attributeRepository) {
 
             val attributes = new LinkedHashSet<String>();
             attributeRepository.ifAvailable(repository -> {
@@ -92,6 +99,15 @@ public class CasDiscoveryProfileAutoConfiguration {
                     attributes.addAll(possibleUserAttributeNames);
                 }
             });
+
+            attributes.addAll(transformAttributes(
+                attributeDefinitionStore.getAttributeDefinitions()
+                    .stream()
+                    .map(AttributeDefinition::getKey)
+                    .toList())
+            );
+
+            attributes.addAll(transformAttributes(List.copyOf(casProperties.getAuthn().getSyncope().getAttributeMappings().values())));
 
             val ldapProps = casProperties.getAuthn().getLdap();
             if (ldapProps != null) {
@@ -104,6 +120,8 @@ public class CasDiscoveryProfileAutoConfiguration {
             if (jdbcProps != null) {
                 jdbcProps.getQuery().forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
             }
+
+
             return BeanContainer.of(attributes);
         }
     }

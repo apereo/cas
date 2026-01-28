@@ -2,11 +2,11 @@ const CAS_FEATURES = [];
 
 async function fetchCasFeatures() {
     return new Promise((resolve, reject) => {
-        if (!actuatorEndpoints.casFeatures) {
+        if (!CasActuatorEndpoints.casFeatures()) {
             console.error("CAS Features endpoint is not available.");
             resolve(CAS_FEATURES);
         } else if (CAS_FEATURES.length === 0) {
-            $.get(actuatorEndpoints.casFeatures, response => {
+            $.get(CasActuatorEndpoints.casFeatures(), response => {
                 for (const element of response) {
                     const featureName = element.trim().replace("CasFeatureModule.", "");
                     CAS_FEATURES.push(featureName);

@@ -27,13 +27,19 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointPr
 import org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link DashboardController}.
@@ -55,10 +61,49 @@ public class DashboardController extends AbstractController {
      *
      * @return the model and view
      */
-    @GetMapping(path = {StringUtils.EMPTY, "/dashboard", "/", "/dashboard/**"}, produces = MediaType.TEXT_HTML_VALUE)
+    @GetMapping(path = {StringUtils.EMPTY, "/dashboard", "/"}, produces = MediaType.TEXT_HTML_VALUE)
     @Operation(summary = "Dashboard home page", description = "Dashboard home page")
     public ModelAndView dashboardRoot(final Authentication authentication, final HttpServletRequest request) throws Exception {
         return buildModelAndView(authentication, request);
+    }
+
+    /**
+     * Fetch session response entity.
+     *
+     * @param request the request
+     * @return the response entity
+     */
+    @GetMapping("/dashboard/session")
+    @Operation(summary = "Get active session", description = "Gets active authenticated session")
+    public ResponseEntity fetchSession(final HttpServletRequest request) {
+        val auth = SecurityContextHolder.getContext().getAuthentication();
+        val authenticated = auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken);
+        val session = request.getSession(false);
+
+        if (!authenticated || session == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(Map.of(
+            "name", auth.getName(),
+            "id", session.getId()
+        ));
+    }
+
+    /**
+     * Logout.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the response entity
+     */
+    @GetMapping("/dashboard/logout")
+    @Operation(summary = "Logout from the dashboard", description = "Logout from the dashboard")
+    public ResponseEntity<Void> logout(final HttpServletRequest request, final HttpServletResponse response) {
+        val auth = SecurityContextHolder.getContext().getAuthentication();
+        val logoutHandler = new SecurityContextLogoutHandler();
+        logoutHandler.logout(request, response, auth);
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.noContent().build();
     }
 
     private ModelAndView buildModelAndView(final Authentication authentication, final HttpServletRequest request) throws Exception {

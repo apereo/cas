@@ -9,8 +9,8 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import de.codecentric.boot.admin.client.config.ClientProperties;
 import de.codecentric.boot.admin.client.config.SpringBootAdminClientEnabledCondition;
-import de.codecentric.boot.admin.client.registration.BlockingRegistrationClient;
 import de.codecentric.boot.admin.client.registration.RegistrationClient;
+import de.codecentric.boot.admin.client.registration.RestClientRegistrationClient;
 import de.codecentric.boot.admin.server.config.AdminServerProperties;
 import de.codecentric.boot.admin.server.config.SpringBootAdminServerEnabledCondition;
 import de.codecentric.boot.admin.server.services.InstanceIdGenerator;
@@ -36,6 +36,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 import tools.jackson.databind.ObjectMapper;
 
@@ -60,7 +61,8 @@ public class CasSpringBootAdminAutoConfiguration {
             final ObjectMapper objectMapper,
             @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT) final HttpClient httpClient,
             final ClientProperties client) {
-            
+
+
             var builder = new RestTemplateBuilder()
                 .connectTimeout(client.getConnectTimeout())
                 .readTimeout(client.getReadTimeout())
@@ -73,7 +75,7 @@ public class CasSpringBootAdminAutoConfiguration {
             }
 
             val restTemplate = builder.build();
-            return new BlockingRegistrationClient(restTemplate);
+            return new RestClientRegistrationClient(RestClient.builder(restTemplate).build());
         }
     }
 
