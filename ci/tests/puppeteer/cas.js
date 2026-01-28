@@ -28,6 +28,7 @@ const speakeasy = require("speakeasy");
 const {createCanvas, loadImage} = require("@napi-rs/canvas");
 const jsQR = require("jsqr");
 const YAML = require("yaml");
+const PuppeteerHar = require("puppeteer-har");
 
 const USED_OTPS = [];
 
@@ -430,6 +431,16 @@ exports.attributeValue = async (page, selector, attribute, expectedValue = undef
         assert.equal(value, expectedValue);
     }
     return value;
+};
+
+exports.startHar = async (page, harPath = "network.har") => {
+    const har = new PuppeteerHar(page);
+    await har.start({path: harPath});
+    return har;
+};
+
+exports.stopHar = async (har) => {
+    await har.stop();
 };
 
 exports.newPage = async (browser) => {

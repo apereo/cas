@@ -11,7 +11,7 @@ The following document describes the set of coding conventions that are specific
 
 ## Tooling
 
-- The current codebase takes advantage of the [Checkstyle engine](https://checkstyle.sourceforge.io/) to [enforce conventions](https://github.com/Apereo/cas/blob/master/style/checkstyle-rules.xml) as much as possible. Certain number of checks are also executed using [SpotBugs](https://spotbugs.github.io/).
+- The current codebase takes advantage of the [Checkstyle engine](https://github.com/checkstyle/checkstyle) to [enforce conventions](https://github.com/Apereo/cas/blob/master/style/checkstyle-rules.xml) as much as possible. Certain number of checks are also executed using [SpotBugs](https://spotbugs.github.io/).
 - Where appropriate, the codebase takes advantage of [Project Lombok](https://projectlombok.org/) for auto-generation of code constructs such as getters and setters, etc.
 
 ## Consistency
