@@ -55,6 +55,7 @@ public class CookieSessionReplicationProperties extends PinnableCookieProperties
 
     @Deprecated(since = "7.3.0", forRemoval = true)
     public CookieSessionReplicationProperties() {
+        crypto.setEnabled(false);
         crypto.getEncryption().setKeySize(EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }

@@ -18,6 +18,7 @@
     "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
 
     "--cas.authn.oauth.session-replication.replicate-sessions=true",
+    "--cas.authn.oauth.session-replication.cookie.crypto.enabled=true",
     
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
