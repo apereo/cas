@@ -40,7 +40,7 @@ class JdbcAuthorizationPolicyTests {
     @Test
     void verifyOperation() throws Throwable {
         val strategy = new JdbcAuthorizationPolicy();
-        strategy.setUrl("jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE");
+        strategy.setUrl("jdbc:mysql://localhost:3306/cas?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE");
         strategy.setUsername("root");
         strategy.setPassword("password");
         strategy.setQuery("SELECT authorized FROM policies WHERE uri = :uri AND method = :method AND namespace = :namespace");

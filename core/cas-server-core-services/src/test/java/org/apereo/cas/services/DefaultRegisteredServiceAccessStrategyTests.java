@@ -155,7 +155,8 @@ class DefaultRegisteredServiceAccessStrategyTests {
         val required = new HashMap<String, Set<String>>();
         required.put(CN, Set.of("groovy { return attributes.containsKey('name') && currentValues.contains('admin') }"));
         authz.setRequiredAttributes(required);
-        var request = RegisteredServiceAccessStrategyRequest.builder().applicationContext(applicationContext)
+        var request = RegisteredServiceAccessStrategyRequest.builder()
+            .applicationContext(applicationContext)
             .attributes(Map.of(PHONE, List.of("1234567890")))
             .principalId(TEST).build();
         assertFalse(authz.authorizeRequest(request));
@@ -225,8 +226,11 @@ class DefaultRegisteredServiceAccessStrategyTests {
         val pAttrs = getPrincipalAttributes();
         pAttrs.put(CN, "CAS");
         pAttrs.put(GIVEN_NAME, "kaz");
-        assertFalse(authz.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().applicationContext(applicationContext)
-            .principalId(TEST).attributes(pAttrs).build()));
+        assertFalse(authz.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder()
+            .applicationContext(applicationContext)
+            .principalId(TEST)
+            .attributes(pAttrs)
+            .build()));
     }
 
     @Test

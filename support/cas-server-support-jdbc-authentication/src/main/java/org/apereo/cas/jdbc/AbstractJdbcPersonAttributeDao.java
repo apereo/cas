@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.attribute.AbstractQueryPersonAttributeDao;
 import org.apereo.cas.authentication.attribute.CaseCanonicalizationMode;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
+import org.apereo.cas.util.RegexUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ import module java.sql;
  */
 @Slf4j
 public abstract class AbstractJdbcPersonAttributeDao<R> extends AbstractQueryPersonAttributeDao<PartialWhereClause> {
-    private static final Pattern WHERE_PLACEHOLDER = Pattern.compile("\\{0\\}");
+    private static final Pattern WHERE_PLACEHOLDER = RegexUtils.createPattern("\\{0\\}");
 
     private final JdbcTemplate simpleJdbcTemplate;
     private final String queryTemplate;

@@ -19,7 +19,7 @@ class CasDiscoveryProfile {
             return this.loadingPromise;
         }
 
-        if (!actuatorEndpoints.discoveryprofile) {
+        if (!CasActuatorEndpoints.discoveryProfile()) {
             return $.Deferred()
                 .reject("No discovery profile endpoint")
                 .promise();
@@ -28,7 +28,7 @@ class CasDiscoveryProfile {
         const deferred = $.Deferred();
         this.loadingPromise = deferred.promise();
 
-        $.get(actuatorEndpoints.discoveryprofile)
+        $.get(CasActuatorEndpoints.discoveryProfile())
             .done(response => {
                 this.profile = CasDiscoveryProfile.fromProfile(response.profile);
                 deferred.resolve(this.profile);

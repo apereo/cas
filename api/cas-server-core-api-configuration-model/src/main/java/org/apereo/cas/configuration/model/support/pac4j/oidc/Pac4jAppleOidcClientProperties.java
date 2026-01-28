@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
 import module java.base;
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,5 +45,6 @@ public class Pac4jAppleOidcClientProperties extends BasePac4jOidcClientPropertie
      * Private key obtained from Apple.
      * Must point to a resource that resolved to an elliptic curve (EC) private key.
      */
+    @RequiredProperty
     private String privateKey;
 }
