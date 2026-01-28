@@ -311,7 +311,9 @@ tasks.withType(Test).configureEach {
     list.add("-Xms512m")
     list.add("-Xmx6g")
     
-    
+    list.add("-Dspring.jmx.enabled=false")
+
+    list.add("-XX:TieredStopAtLevel=1")
     list.add("-XX:+EnableDynamicAgentLoading")
     jvmArgs = list
 

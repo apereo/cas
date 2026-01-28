@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClient;
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClientBuilder;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ import org.pac4j.cas.config.CasProtocol;
 @RequiredArgsConstructor
 @Slf4j
 public class DelegatedClientCasBuilder implements ConfigurableDelegatedClientBuilder {
-    private static final Pattern PATTERN_LOGIN_URL = Pattern.compile('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '$');
+    private static final Pattern PATTERN_LOGIN_URL = RegexUtils.createPattern('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '$');
 
     private final CasSSLContext casSSLContext;
 

@@ -13,8 +13,8 @@ async function initializeTicketsOperations() {
         if (ticket && type) {
             const decode = new mdc.switchControl.MDCSwitch(document.getElementById("decodeTicketButton")).selected;
             ticketEditor.setValue("");
-            if (actuatorEndpoints.ticketregistry) {
-                $.get(`${actuatorEndpoints.ticketregistry}/query?type=${type}&id=${ticketId}&decode=${decode}`,
+            if (CasActuatorEndpoints.ticketRegistry()) {
+                $.get(`${CasActuatorEndpoints.ticketRegistry()}/query?type=${type}&id=${ticketId}&decode=${decode}`,
                     response => {
                         ticketEditor.setValue(JSON.stringify(response, null, 2));
                         ticketEditor.gotoLine(1);
@@ -29,9 +29,9 @@ async function initializeTicketsOperations() {
 
     $("button#cleanTicketsButton").off().on("click", () => {
         hideBanner();
-        if (actuatorEndpoints.ticketregistry) {
+        if (CasActuatorEndpoints.ticketRegistry()) {
             $.ajax({
-                url: `${actuatorEndpoints.ticketregistry}/clean`,
+                url: `${CasActuatorEndpoints.ticketRegistry()}/clean`,
                 type: "DELETE",
                 success: response => {
                     ticketEditor.setValue(JSON.stringify(response, null, 2));
@@ -47,12 +47,11 @@ async function initializeTicketsOperations() {
     });
 
     const ticketCatalogTable = $("#ticketCatalogTable").DataTable({
-
         pageLength: 10,
+        autoWidth: false,
         columnDefs: [
             {visible: false, targets: 0}
         ],
-
         order: [0, "desc"],
         drawCallback: settings => {
             $("#ticketCatalogTable tr").addClass("mdc-data-table__row");
@@ -74,8 +73,8 @@ async function initializeTicketsOperations() {
         }
     });
 
-    if (actuatorEndpoints.ticketregistry) {
-        $.get(`${actuatorEndpoints.ticketregistry}/ticketCatalog`, response => {
+    if (CasActuatorEndpoints.ticketRegistry()) {
+        $.get(`${CasActuatorEndpoints.ticketRegistry()}/ticketCatalog`, response => {
             response.forEach(entry => {
                 let item = `
                             <li class="mdc-list-item" data-value='${entry.prefix}' role="option">
@@ -105,6 +104,7 @@ async function initializeTicketsOperations() {
 
     const ticketExpirationPoliciesTable = $("#ticketExpirationPoliciesTable").DataTable({
         pageLength: 10,
+        autoWidth: false,
         columnDefs: [
             {visible: false, targets: 0}
         ],
@@ -130,8 +130,8 @@ async function initializeTicketsOperations() {
         }
     });
 
-    if (actuatorEndpoints.ticketExpirationPolicies) {
-        $.get(actuatorEndpoints.ticketExpirationPolicies, response => {
+    if (CasActuatorEndpoints.ticketExpirationPolicies()) {
+        $.get(CasActuatorEndpoints.ticketExpirationPolicies(), response => {
             ticketExpirationPoliciesTable.clear();
             for (const key of Object.keys(response)) {
                 const policy = response[key];

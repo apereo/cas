@@ -1,7 +1,7 @@
 async function initializeMultitenancyOperations() {
     const tenantsTable = $("#tenantsTable").DataTable({
         pageLength: 10,
-        autoWidth: true,
+        autoWidth: false,
         drawCallback: settings => {
             $("#tenantsTable tr").addClass("mdc-data-table__row");
             $("#tenantsTable td").addClass("mdc-data-table__cell");
@@ -10,10 +10,11 @@ async function initializeMultitenancyOperations() {
 
     function fetchTenants() {
         tenantsTable.clear();
-        $.get(`${actuatorEndpoints.multitenancy}/tenants`, response => {
+        $.get(`${CasActuatorEndpoints.multitenancy()}/tenants`, response => {
             for (const tenant of Object.values(response)) {
                 let buttons = `
                      <button type="button" name="viewTenantDefinition" href="#" 
+                            title="View Tenant Definition"
                             data-tenant-id='${tenant.id}' onclick="showTenantDefinition('${tenant.id}')"
                             class="mdc-button mdc-button--raised min-width-32x">
                         <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
@@ -43,7 +44,7 @@ async function initializeMultitenancyOperations() {
 }
 
 function showTenantDefinition(id) {
-    $.get(`${actuatorEndpoints.multitenancy}/tenants/${id}`, response => {
+    $.get(`${CasActuatorEndpoints.multitenancy()}/tenants/${id}`, response => {
         let tenantDefinitionDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("tenantDefinitionDialog"));
         const editor = initializeAceEditor("tenantDefinitionDialogEditor", "json");
         editor.setValue(JSON.stringify(response, null, 2));

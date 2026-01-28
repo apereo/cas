@@ -90,7 +90,9 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public long size() {
-        return getRegisteredServiceKeys().count();
+        try (val keys = getRegisteredServiceKeys()) {
+            return keys.count();
+        }
     }
 
     @Override

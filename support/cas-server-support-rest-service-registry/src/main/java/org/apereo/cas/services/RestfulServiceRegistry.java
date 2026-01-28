@@ -67,7 +67,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .entity(entity)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response.getCode() == HttpStatus.OK.value()) {
+            if (response != null && response.getCode() == HttpStatus.OK.value()) {
                 try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
                     val result = IOUtils.toString(content, StandardCharsets.UTF_8);
                     return this.serializer.from(result);
@@ -98,7 +98,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .headers(getRequestHeaders(properties))
                 .build();
             response = HttpUtils.execute(exec);
-            return response.getCode() == HttpStatus.OK.value();
+            return response != null && response.getCode() == HttpStatus.OK.value();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
@@ -174,7 +174,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                 .maximumRetryAttempts(properties.getMaximumRetryAttempts())
                 .build();
             response = HttpUtils.execute(exec);
-            if (response.getCode() == HttpStatus.OK.value()) {
+            if (response != null && response.getCode() == HttpStatus.OK.value()) {
                 try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
                     val result = IOUtils.toString(content, StandardCharsets.UTF_8);
                     return serializer.from(result);

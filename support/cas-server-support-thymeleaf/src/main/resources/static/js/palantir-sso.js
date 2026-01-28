@@ -1,12 +1,35 @@
+function removeSpringSession(button, id) {
+    Swal.fire({
+        title: "Are you sure you want to delete this session?",
+        text: "Once deleted, you may not be able to recover this session.",
+        icon: "question",
+        showConfirmButton: true,
+        showDenyButton: true
+    })
+        .then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `${CasActuatorEndpoints.sessions()}/${id}`,
+                    type: "DELETE",
+                    contentType: "application/x-www-form-urlencoded",
+                    success: (response, status, xhr) => {
+                        let nearestTr = $(button).closest("tr");
+                        const springSessionsTable = $("#springSessionsTable").DataTable();
+                        springSessionsTable.row(nearestTr).remove().draw();
+                    },
+                    error: (xhr, status, error) => {
+                        console.error("Error fetching data:", error);
+                        displayBanner(xhr);
+                    }
+                });
+            }
+        });
+}
 
 async function initializeSsoSessionOperations() {
     const ssoSessionApplicationsTable = $("#ssoSessionApplicationsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
-        columnDefs: [
-            {width: "40%", targets: 0},
-            {width: "60%", targets: 1}
-        ],
         drawCallback: settings => {
             $("#ssoSessionApplicationsTable tr").addClass("mdc-data-table__row");
             $("#ssoSessionApplicationsTable td").addClass("mdc-data-table__cell");
@@ -16,14 +39,18 @@ async function initializeSsoSessionOperations() {
     const ssoSessionDetailsTable = $("#ssoSessionDetailsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
-        columnDefs: [
-            {width: "10%", targets: 0},
-            {width: "20%", targets: 1},
-            {width: "70%", targets: 2}
-        ],
         drawCallback: settings => {
             $("#ssoSessionDetailsTable tr").addClass("mdc-data-table__row");
             $("#ssoSessionDetailsTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    const springSessionsTable = $("#springSessionsTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        drawCallback: settings => {
+            $("#ssoSessionsTable tr").addClass("mdc-data-table__row");
+            $("#ssoSessionsTable td").addClass("mdc-data-table__cell");
         }
     });
 
@@ -31,13 +58,6 @@ async function initializeSsoSessionOperations() {
         pageLength: 10,
         autoWidth: false,
         columnDefs: [
-            {width: "13%", targets: 0},
-            {width: "37%", targets: 1},
-            {width: "10%", targets: 2},
-            {width: "15%", targets: 3},
-            {width: "5%", targets: 4},
-            {width: "8%", targets: 5},
-            {width: "12%", targets: 6},
             {visible: false, target: 7}
         ],
         drawCallback: settings => {
@@ -51,9 +71,64 @@ async function initializeSsoSessionOperations() {
             $("#ssoSessionButton").click();
         }
     });
+    $("#springSessionUsername").on("keypress", e => {
+        if (e.which === 13) {
+            $("#springSessionsButton").click();
+        }
+    });
 
+    $("#springSessionsButton").off().on("click", () => {
+        if (CasActuatorEndpoints.sessions()) {
+            const form = document.getElementById("fmSpringSessions");
+            if (!form.reportValidity()) {
+                return false;
+            }
+            const username = $("#springSessionUsername").val();
+            Swal.fire({
+                icon: "info",
+                title: `Fetching Spring Sessions for ${username}`,
+                text: "Please wait while Spring Sessions are retrieved...",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => Swal.showLoading()
+            });
+            springSessionsTable.clear();
+            $.ajax({
+                url: `${CasActuatorEndpoints.sessions()}?username=${username}`,
+                type: "GET",
+                contentType: "application/x-www-form-urlencoded",
+                success: (response, status, xhr) => {
+                    for (const session of response.sessions) {
+                        springSessionsTable.row.add({
+                            0: `<code>${session.id}</code>`,
+                            1: `<code>${session.creationTime}</code>`,
+                            2: `<code>${session.lastAccessedTime}</code>`,
+                            3: `
+                                <button type="button" name="removeSpringSession" 
+                                    href="#" 
+                                    onclick="removeSpringSession(this, '${session.id}');"
+                                    data-id='${session.id}'
+                                    title="Remove Spring Session"
+                                    class="mdc-button mdc-button--raised min-width-32x">
+                                    <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
+                                </button>
+                            `
+                        });
+                    }
+                    springSessionsTable.draw();
+                    Swal.close();
+                },
+                error: (xhr, status, error) => {
+                    console.error("Error fetching data:", error);
+                    Swal.close();
+                    displayBanner(xhr);
+                }
+            });
+        }
+    });
+    
     $("#removeSsoSessionButton").off().on("click", () => {
-        if (actuatorEndpoints.ssosessions) {
+        if (CasActuatorEndpoints.ssoSessions()) {
             const form = document.getElementById("fmSsoSessions");
             if (!form.reportValidity()) {
                 return false;
@@ -71,7 +146,7 @@ async function initializeSsoSessionOperations() {
                         const username = $("#ssoSessionUsername").val();
 
                         $.ajax({
-                            url: `${actuatorEndpoints.ssosessions}/users/${username}`,
+                            url: `${CasActuatorEndpoints.ssoSessions()}/users/${username}`,
                             type: "DELETE",
                             contentType: "application/x-www-form-urlencoded",
                             success: (response, status, xhr) => ssoSessionsTable.clear().draw(),
@@ -86,7 +161,7 @@ async function initializeSsoSessionOperations() {
     });
 
     $("button[name=ssoSessionButton]").off().on("click", () => {
-        if (actuatorEndpoints.ssosessions) {
+        if (CasActuatorEndpoints.ssoSessions()) {
             const form = document.getElementById("fmSsoSessions");
             if (!form.reportValidity()) {
                 return false;
@@ -105,7 +180,7 @@ async function initializeSsoSessionOperations() {
             ssoSessionApplicationsTable.clear();
 
             $.ajax({
-                url: `${actuatorEndpoints.ssosessions}/users/${username}`,
+                url: `${CasActuatorEndpoints.ssoSessions()}/users/${username}`,
                 type: "GET",
                 contentType: "application/x-www-form-urlencoded",
                 success: (response, status, xhr) => {
@@ -203,7 +278,7 @@ async function initializeSsoSessionOperations() {
                             .then((result) => {
                                 if (result.isConfirmed) {
                                     $.ajax({
-                                        url: `${actuatorEndpoints.ssosessions}/${ticket}`,
+                                        url: `${CasActuatorEndpoints.ssoSessions()}/${ticket}`,
                                         type: "DELETE",
                                         contentType: "application/x-www-form-urlencoded",
                                         success: (response, status, xhr) => {
@@ -235,7 +310,7 @@ async function initializeSsoSessionOperations() {
     });
 
     $("button[name=removeAllSsoSessionsButton]").off().on("click", () => {
-        if (actuatorEndpoints.ssosessions) {
+        if (CasActuatorEndpoints.ssoSessions()) {
             Swal.fire({
                 title: "Are you sure you want to delete all sessions for all users?",
                 text: "Once deleted, you may not be able to recover and ALL sso sessions for ALL users will be removed.",
@@ -246,7 +321,7 @@ async function initializeSsoSessionOperations() {
                 .then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `${actuatorEndpoints.ssosessions}`,
+                            url: `${CasActuatorEndpoints.ssoSessions()}`,
                             type: "DELETE",
                             contentType: "application/x-www-form-urlencoded",
                             success: (response, status, xhr) => ssoSessionsTable.clear().draw(),

@@ -1,3 +1,101 @@
+async function populateMultifactorProviderTables() {
+    if (CasActuatorEndpoints.discoveryProfile()) {
+        CasDiscoveryProfile.fetchIfNeeded()
+            .done(async () => {
+                showElements($("#mfaProvidersTab").parent());
+
+                for (const [key, value] of Object.entries(CasDiscoveryProfile.multifactorAuthenticationProviders())) {
+                    let icon = "mdi-two-factor-authentication";
+                    if (key.includes("gauth")) {
+                        icon = "mdi-google";
+                    } else if (key.includes("web")) {
+                        icon = "mdi-fingerprint";
+                    }
+
+                    $("#mfaProvidersGridPanel").append(`
+                        <div class="min-height-90">
+                            <div class="mdc-card p-4 m-auto mmw-65 gradient-card">
+                                <h3>
+                                    <i class="p-1 mdc-tab__icon mdi ${icon}" style="vertical-align:baseline;" aria-hidden="true"></i>
+                                    ${value}
+                                    <sup class="mr-2">${key}</sup>
+                                </h3>
+                            </div>
+                            <div class="p-2 m-auto mmw-65 min-height-90" style="background: white;">
+                                <table id="mfaTable-${key}" class="mdc-data-table__table table table-striped noborder mfa-provider-table">
+                                    <thead>
+                                    <tr class="mdc-data-table__header-row">
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Property</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="mdc-data-table__content">
+                                    
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    `);
+                }
+                $(".mfa-provider-table").DataTable({
+                    searching: false,
+                    lengthChange: false,
+                    columnDefs: [
+                        {
+                            targets: 1,
+                            className: "dt-left"
+                        }
+                    ]
+                }).clear();
+
+                for (const key of Object.keys(CasDiscoveryProfile.multifactorAuthenticationProviders())) {
+                    const namespace = key.includes("duo") ? "duo" : key.replace("mfa-", "")
+                        .replace("webauthn", "web-authn");
+                    const configPrefix = `cas.authn.mfa.${namespace}`;
+                    $.get(`${CasActuatorEndpoints.env()}?pattern=${configPrefix}`, response => {
+                        response.propertySources.forEach(source => {
+                            let properties = source.properties && Object.entries(source.properties || {});
+
+                            if (key.includes("duo") && properties.length > 0) {
+                                const entry = properties.find(([propKey, propValue]) => {
+                                    const providerName = CasDiscoveryProfile.multifactorAuthenticationProviders()[propKey];
+                                    return (propKey.endsWith(".id") && propValue.value === key)
+                                        || (propKey.endsWith(".name") && propValue.value === providerName);
+                                });
+                                let prefix = `${configPrefix}[0]`;
+                                if (entry) {
+                                    prefix = entry[0].replace(".id", "").replace(".name", "");
+                                }
+                                properties = properties.filter(([propKey, propValue]) => propKey.startsWith(prefix));
+                            }
+                            properties.forEach(([propKey, propValue]) => {
+                                if (propKey.startsWith(configPrefix)) {
+                                    const table = $(`#mfaTable-${key}`).DataTable();
+
+                                    table.row.add(
+                                        $("<tr class=\"mdc-data-table__row\">")
+                                            .append(`<td class="mdc-data-table__cell"><code>${propKey}</code></td>`)
+                                            .append(`<td class="mdc-data-table__cell"><code>${propValue.value}</code></td>`)
+                                    ).draw(false);
+                                }
+                            });
+                        });
+
+                        updateNavigationSidebar();
+                    })
+                        .fail((xhr, status, error) => {
+                            console.error("Error fetching data:", error);
+                            displayBanner(xhr);
+                        });
+                }
+
+            });
+    } else {
+        hideElements($("#mfaProvidersTab").parent());
+    }
+}
+
 async function initializeMultifactorOperations() {
     const mfaDevicesTable = $("#mfaDevicesTable").DataTable({
         pageLength: 10,
@@ -25,7 +123,7 @@ async function initializeMultifactorOperations() {
             });
 
             mfaDevicesTable.clear();
-            $.get(`${actuatorEndpoints.mfadevices}/${username}`, response => {
+            $.get(`${CasActuatorEndpoints.mfaDevices()}/${username}`, response => {
                 for (const device of Object.values(response)) {
                     let buttons = `
                      <button type="button" name="removeMfaDevice" href="#" 
@@ -68,7 +166,7 @@ async function initializeMultifactorOperations() {
                         .then((result) => {
                             if (result.isConfirmed) {
                                 $.ajax({
-                                    url: `${actuatorEndpoints.mfadevices}/${username}/${providerId}/${key}`,
+                                    url: `${CasActuatorEndpoints.mfaDevices()}/${username}/${providerId}/${key}`,
                                     type: "DELETE",
                                     contentType: "application/x-www-form-urlencoded",
                                     success: (response, status, xhr) => {
@@ -100,34 +198,7 @@ async function initializeMultifactorOperations() {
 
         fetchMfaDevices();
     });
-
-    if (actuatorEndpoints.discoveryprofile) {
-        CasDiscoveryProfile.fetchIfNeeded()
-            .done(async () => {
-                showElements($("#mfaProvidersTab").parent());
-
-                for (const [key, value] of Object.entries(CasDiscoveryProfile.multifactorAuthenticationProviders())) {
-                    let icon = "mdi-two-factor-authentication"
-                    if (key.includes("gauth")) {
-                        icon = "mdi-google";
-                    } else if (key.includes("web")) {
-                        icon = "mdi-fingerprint";
-                    }
-                    $("#mfaProvidersGridPanel").append(`
-                        <div>
-                            <div class="mdc-card p-4 m-auto mmw-65 mfa-card">
-                                <h3><i class="p-1 mdc-tab__icon mdi ${icon}" style="vertical-align:baseline;" aria-hidden="true"></i>${value}</h3>
-                            </div>
-                            <div class="p-2 m-auto mmw-65" style="background: white;">
-                                ID: <code>${key}</code>
-                            </div>
-                        </div>
-                    `);
-                }
-            });
-    } else {
-        hideElements($("#mfaProvidersTab").parent());
-    }
+    await populateMultifactorProviderTables();
 }
 
 async function initializeTrustedMultifactorOperations() {
@@ -144,7 +215,7 @@ async function initializeTrustedMultifactorOperations() {
     });
 
     $("#mfaTrustedDevicesButton").off().on("click", () => {
-        if (actuatorEndpoints.multifactortrusteddevices) {
+        if (CasActuatorEndpoints.multifactorTrustedDevices()) {
             mfaTrustedDevicesTable.clear();
             const username = $("#mfaTrustedUsername").val();
             $("#mfaTrustedDevicesButton").prop("disabled", true);
@@ -157,7 +228,7 @@ async function initializeTrustedMultifactorOperations() {
                 didOpen: () => Swal.showLoading()
             });
 
-            $.get(`${actuatorEndpoints.multifactortrusteddevices}/${username}`, response => {
+            $.get(`${CasActuatorEndpoints.multifactorTrustedDevices()}/${username}`, response => {
                 for (const device of Object.values(response)) {
                     let buttons = `
                      <button type="button" name="removeMfaTrustedDevice" href="#" 
@@ -195,7 +266,7 @@ async function initializeTrustedMultifactorOperations() {
                         .then((result) => {
                             if (result.isConfirmed) {
                                 $.ajax({
-                                    url: `${actuatorEndpoints.multifactortrusteddevices}/${key}`,
+                                    url: `${CasActuatorEndpoints.multifactorTrustedDevices()}/${key}`,
                                     type: "DELETE",
                                     contentType: "application/x-www-form-urlencoded",
                                     success: (response, status, xhr) => {
