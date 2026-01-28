@@ -88,6 +88,12 @@ user sessions, listing multifactor authentication providers, etc.
 
 CAS is now built with Spring Boot `4.1.x`. This is a major platform upgrade that affects almost all aspects of the codebase
 including many of the third-party core libraries used by CAS as well as some CAS functionality.
+     
+#### Spring Cloud Bus w/ AMQP
+
+Support for [Spring Cloud Bus with AMQP](../configuration/Configuration-Management-Clustered-AMQP.html) is 
+not yet quite compatible with Spring Boot `4.1.x`. We will reintroduce this support in a future release 
+once compatibility is restored.
 
 ### JSpecify & NullAway
 
