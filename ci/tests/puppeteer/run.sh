@@ -780,7 +780,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
       for script in ${scripts}; do
         printgreen "Running initialization script: ${script}"
         chmod +x "${script}"
-        eval "${script}"
+        eval "source ${script}"
         if [[ $? -ne 0 ]]; then
           printred "Initialization script [${script}] failed."
           exit 1
