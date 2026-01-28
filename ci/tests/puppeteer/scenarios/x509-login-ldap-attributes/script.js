@@ -6,7 +6,8 @@ const request = require("request");
 
 (async () => {
     let browser = await cas.newBrowser(cas.browserOptions());
-    let page = await cas.newPage(browser);
+    let context = await browser.createBrowserContext();
+    let page = await cas.newPage(context);
     await cas.gotoLogin(page);
     await cas.loginWith(page, "aburr", "P@ssw0rd");
     await cas.assertCookie(page);
@@ -15,10 +16,12 @@ const request = require("request");
     assert(attributesldap.includes("aburr"));
     assert(attributesldap.includes("someattribute"));
     assert(attributesldap.includes("ldap-dn"));
+    await context.close();
     await cas.closeBrowser(browser);
 
     browser = await cas.newBrowser(cas.browserOptions());
-    page = await cas.newPage(browser);
+    context = await browser.createBrowserContext();
+    page = await cas.newPage(context);
 
     await page.setRequestInterception(true);
     const args = process.argv.slice(2);
@@ -67,5 +70,6 @@ const request = require("request");
     await cas.assertInnerTextContains(page, "#attribute-tab-0 table#attributesTable tbody", "user-account-control");
     await cas.assertInnerTextDoesNotContain(page, "#attribute-tab-0 table#attributesTable tbody", "shouldntbehere");
 
+    await context.close();
     await cas.closeBrowser(browser);
 })();

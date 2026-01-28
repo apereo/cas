@@ -36,6 +36,7 @@
     "--cas.webflow.crypto.signing.key=v43dwqO_GbGSVsFqgPFpVdwdMSEunMUzc4QSF13x18kInHPeRuvntleljO5Y5cKqDGAFe1vv10mM4tpyoKyBBA",
     "--cas.webflow.crypto.encryption.key=2PikjfOKY6n8Bbux2cy-Hg",
 
+    "--cas.authn.pac4j.core.session-replication.cookie.crypto.enabled=true",
     "--cas.authn.pac4j.core.session-replication.cookie.crypto.alg=A128CBC-HS256",
     "--cas.authn.pac4j.core.session-replication.cookie.crypto.encryption.key=d-YgjeElQfIZsUCuHlvEN2UyaQsy6q2GxOXP1UPCs7I",
     "--cas.authn.pac4j.core.session-replication.cookie.crypto.signing.key=8_Zisbdbm_6eW1ZjkBUz17koElqlArO6805yAq85kCiVYI1RRJArLiFYLZRS00ZCoscwo8qjrgonvDIdbVbobA",

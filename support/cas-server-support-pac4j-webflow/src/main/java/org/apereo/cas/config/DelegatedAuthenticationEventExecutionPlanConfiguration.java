@@ -19,7 +19,7 @@ import org.apereo.cas.authentication.principal.provision.ChainingDelegatedClient
 import org.apereo.cas.authentication.principal.provision.DelegatedClientUserProfileProvisioner;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.interrupt.InterruptCookieProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.discovery.CasServerProfileCustomizer;
@@ -160,7 +160,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
             final CasConfigurationProperties casProperties) {
 
             val cipherExecutorResolver = new DefaultCipherExecutorResolver(delegatedClientDistributedSessionCookieCipherExecutor, tenantExtractor,
-                InterruptCookieProperties.class, bindingContext -> {
+                Pac4jDelegatedAuthenticationProperties.class, bindingContext -> {
                 val properties = bindingContext.value();
                 val crypto = properties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie().getCrypto();
                 return CipherExecutorUtils.newStringCipherExecutor(crypto, DelegatedClientAuthenticationDistributedSessionCookieCipherExecutor.class);

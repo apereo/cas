@@ -34,7 +34,7 @@ public class SessionReplicationProperties implements Serializable {
      * @deprecated since 7.3.0
      */
     @Deprecated(since = "7.3.0", forRemoval = true)
-    private boolean replicateSessions = true;
+    private boolean replicateSessions;
 
     /**
      * Cookie setting for session replication.

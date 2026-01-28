@@ -235,7 +235,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                 ? FileUtils.listFiles(serviceRegistryDirectoryFile, getExtensions(), true)
                 : List.<File>of();
             
-            LOGGER.trace("Located [{}] files from [{}] are [{}]", getExtensions(), this.serviceRegistryDirectory, files);
+            LOGGER.trace("Located [{}] files from [{}] are [{}]",
+                Arrays.toString(getExtensions()), this.serviceRegistryDirectory, files);
             val clientInfo = ClientInfoHolder.getClientInfo();
 
             this.services = files
