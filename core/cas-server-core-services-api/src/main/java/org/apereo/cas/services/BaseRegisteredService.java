@@ -34,6 +34,13 @@ import org.springframework.data.annotation.Id;
 @Accessors(chain = true)
 public abstract class BaseRegisteredService implements RegisteredService {
 
+    private static final Comparator<RegisteredService> INTERNAL_COMPARATOR = Comparator
+            .comparingInt(RegisteredService::getEvaluationPriority)
+            .thenComparingInt(RegisteredService::getEvaluationOrder)
+            .thenComparing(service -> StringUtils.defaultString(service.getName()), String.CASE_INSENSITIVE_ORDER)
+            .thenComparing(RegisteredService::getServiceId)
+            .thenComparingLong(RegisteredService::getId);
+
     @Serial
     private static final long serialVersionUID = 7645279151115635245L;
 
@@ -96,15 +103,8 @@ public abstract class BaseRegisteredService implements RegisteredService {
     private List<RegisteredServiceContact> contacts = new ArrayList<>();
 
     @Override
-    public int compareTo(
-        @NonNull final RegisteredService other) {
-        return Comparator
-            .comparingInt(RegisteredService::getEvaluationPriority)
-            .thenComparingInt(RegisteredService::getEvaluationOrder)
-            .thenComparing(service -> StringUtils.defaultString(service.getName()).toLowerCase(Locale.ENGLISH))
-            .thenComparing(RegisteredService::getServiceId)
-            .thenComparingLong(RegisteredService::getId)
-            .compare(this, other);
+    public int compareTo(@NonNull final RegisteredService other) {
+        return INTERNAL_COMPARATOR.compare(this, other);
     }
 
     @Override
