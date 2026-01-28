@@ -371,6 +371,10 @@ form button i.mdi {
     }
 }
 
+.bgimage {
+    background-image: var(--bg-image);
+}
+
 .cas-footer {
     background-color: var(--mdc-theme-primary, #6200ee);
     color: whitesmoke;
@@ -420,6 +424,10 @@ form button i.mdi {
 #dashboardTabBar .mdi, .attribute-tab .mdi {
     vertical-align: sub;
     /*padding-right: 1px;*/
+}
+
+.valign-bottom {
+    vertical-align: bottom !important;
 }
 
 .ace-editor {
@@ -841,6 +849,16 @@ span button.toolbar {
     width: 24px;
 }
 
+.mmw-15 {
+    min-width: 15%;
+    max-width: 15%;
+}
+
+.mmw-25 {
+    min-width: 25%;
+    max-width: 25%;
+}
+
 .mmw-45 {
     min-width: 45%;
     max-width: 45%;
@@ -867,6 +885,10 @@ span button.toolbar {
 
 .min-height-60 {
     min-height: 60%;
+}
+
+.min-height-90 {
+    min-height: 90% !important;
 }
 
 .vw-100 {
@@ -1011,6 +1033,10 @@ select.palantir {
     box-sizing: border-box;
 }
 
+.text-left {
+    text-align: left;
+}
+
 .text-justify {
     text-align: justify;
 }
@@ -1119,13 +1145,14 @@ body {
 }
 
 .sidebar-navigation ul li .tooltip {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     position: absolute;
     background-color: #313443;
-    padding: 8px 15px;
+    padding: 8px 10px;
     border-radius: 3px;
     margin-top: 5px;
-    left: 170px;
+    left: 130px;
     opacity: 0;
     visibility: hidden;
     font-size: 13px;

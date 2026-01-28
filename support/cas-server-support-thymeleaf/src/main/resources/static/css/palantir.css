@@ -1,4 +1,4 @@
-#applicationsTable th {
+.table th {
     resize: horizontal;
     overflow: auto;
 }
@@ -58,7 +58,7 @@
 .grid-2 {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px 16px;
+    gap: 20px 16px;
 }
 
 .grid-4 {
@@ -67,7 +67,7 @@
     gap: 15px 5px;
 }
 
-.mfa-card {
+.gradient-card {
     background: linear-gradient(
             135deg,
             #114376 -1%,
@@ -84,9 +84,12 @@
     transform: rotateX(0) rotateY(0);
     transition: transform 0.3s ease;
 }
-.mfa-card:hover {
-    transform: rotateX(18deg) rotateY(-6deg);
+.gradient-card:hover {
+    /*transform: rotateX(18deg) rotateY(-6deg);*/
+    transform: perspective(800px) translateY(-6px);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.25);
 }
+
 
 .shortcut-item {
     display: flex;
@@ -125,8 +128,8 @@
     color: white;
     padding: 10px 20px;
     border-radius: 20px;
-    font: bold 14px "Helvetica Neue", Sans-Serif;
-    /*text-transform: uppercase;*/
+    font: var(--mdc-typography-font-family) !important;
+    font-size: 11pt !important;
     box-shadow: 0 0 7px black;
 }
 

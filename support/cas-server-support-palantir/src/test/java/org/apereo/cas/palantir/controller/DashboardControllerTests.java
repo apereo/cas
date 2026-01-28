@@ -11,8 +11,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -61,5 +65,20 @@ class DashboardControllerTests {
         
         mvc.perform(get("/palantir/")).andExpect(status().isOk());
         mvc.perform(get("/palantir")).andExpect(status().isOk());
+
+    }
+
+    @Test
+    @WithMockUser(username = "casuser", roles = "USER")
+    void verifySession() throws Throwable {
+        val session = new MockHttpSession();
+        session.setAttribute(
+            HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+            SecurityContextHolder.createEmptyContext()
+        );
+        
+        mvc.perform(get("/palantir/dashboard/session").session(session)).andExpect(status().isOk());
+        mvc.perform(get("/palantir/dashboard/logout").session(session)).andExpect(status().isNoContent());
+        mvc.perform(get("/palantir/dashboard/session")).andExpect(status().isUnauthorized());
     }
 }

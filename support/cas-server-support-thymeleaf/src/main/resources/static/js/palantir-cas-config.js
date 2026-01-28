@@ -13,7 +13,7 @@ function searchForConfigPropertyButton(name) {
 }
 
 function effectiveConfigPropertyValue(name) {
-    $.get(`${actuatorEndpoints.env}/${name}`, response => {
+    $.get(`${CasActuatorEndpoints.env()}/${name}`, response => {
         Swal.fire({
             title: "Effective Property Value",
             html: `
@@ -42,7 +42,7 @@ function effectiveConfigPropertyValue(name) {
 }
 
 function deleteConfigPropertyValue(button, name) {
-    if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+    if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
         const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable();
         const currentRow = mutableConfigurationTable.row($(button).closest("tr"));
         const propertySource = $(button).data("source").replace("bootstrapProperties-", "");
@@ -56,7 +56,7 @@ function deleteConfigPropertyValue(button, name) {
             .then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `${actuatorEndpoints.casconfig}`,
+                        url: `${CasActuatorEndpoints.casConfig()}`,
                         method: "DELETE",
                         contentType: "application/json",
                         data: JSON.stringify(
@@ -82,7 +82,7 @@ function deleteConfigPropertyValue(button, name) {
 }
 
 function updateConfigPropertyValue(button, name) {
-    if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+    if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
         const mutableConfigurationTable = $("#mutableConfigurationTable").DataTable();
         const currentRow = mutableConfigurationTable.row($(button).closest("tr"));
         const propertySource = $(button).data("source").replace("bootstrapProperties-", "");
@@ -112,7 +112,7 @@ function deleteAllConfigurationProperties(button) {
             .then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `${actuatorEndpoints.casconfig}`,
+                        url: `${CasActuatorEndpoints.casConfig()}`,
                         method: "DELETE",
                         contentType: "application/json",
                         data: JSON.stringify(
@@ -122,7 +122,7 @@ function deleteAllConfigurationProperties(button) {
                         )
                     })
                         .done(function (data, textStatus, jqXHR) {
-                            $.get(actuatorEndpoints.env, res => {
+                            $.get(CasActuatorEndpoints.env(), res => {
                                 reloadConfigurationTable(res);
                                 refreshCasServerConfiguration(`${propertySource}: All Properties Removed`);
                             })
@@ -178,13 +178,13 @@ function importConfigurationProperties(button) {
 
     function importProperties(payload) {
         $.ajax({
-            url: `${actuatorEndpoints.casconfig}/update`,
+            url: `${CasActuatorEndpoints.casConfig()}/update`,
             method: "POST",
             contentType: "application/json",
             data: JSON.stringify(payload),
             success: response => {
                 Swal.close();
-                $.get(actuatorEndpoints.env, res => {
+                $.get(CasActuatorEndpoints.env(), res => {
                     reloadConfigurationTable(res);
                     refreshCasServerConfiguration(`New Property ${name} Created`);
                 })
@@ -261,7 +261,7 @@ async function encryptConfigProperty(value) {
     try {
         return await $.ajax({
             method: "POST",
-            url: `${actuatorEndpoints.casconfig}/encrypt`,
+            url: `${CasActuatorEndpoints.casConfig()}/encrypt`,
             data: value,
             contentType: "text/plain; charset=utf-8",
             dataType: "text"
@@ -297,7 +297,7 @@ function openNewConfigurationPropertyDialog(config) {
                 let value = $("#newConfigPropertyValue").val();
                 const encrypt = $("#encryptConfigProperty").val();
 
-                if (encrypt && encrypt === "true" && actuatorEndpoints.casconfig) {
+                if (encrypt && encrypt === "true" && CasActuatorEndpoints.casConfig()) {
                     value = await encryptConfigProperty(value);
                 }
 
@@ -315,13 +315,13 @@ function openNewConfigurationPropertyDialog(config) {
                 }
 
                 $.ajax({
-                    url: `${actuatorEndpoints.casconfig}/update`,
+                    url: `${CasActuatorEndpoints.casConfig()}/update`,
                     method: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(payload),
                     success: response => {
                         $(this).dialog("close");
-                        $.get(actuatorEndpoints.env, res => {
+                        $.get(CasActuatorEndpoints.env(), res => {
                             reloadConfigurationTable(res);
                             refreshCasServerConfiguration(`New Property ${name} Created`);
                         })
@@ -360,7 +360,7 @@ function openNewConfigurationPropertyDialog(config) {
 }
 
 function refreshCasServerConfiguration(title) {
-    if (actuatorEndpoints.refresh || actuatorEndpoints.busrefresh) {
+    if (CasActuatorEndpoints.refresh()) {
         Swal.fire({
             showConfirmButton: true,
             showCancelButton: true,
@@ -391,7 +391,7 @@ function refreshCasServerConfiguration(title) {
                         didOpen: () => Swal.showLoading()
                     });
 
-                    const endpoint = actuatorEndpoints.busrefresh || actuatorEndpoints.refresh;
+                    const endpoint = CasActuatorEndpoints.refresh();
                     $.post(endpoint)
                         .done(() => {
                             loadExternalIdentityProvidersTable().then(r => {
@@ -451,7 +451,7 @@ function reloadConfigurationTable(response) {
                     </button>
                 `;
 
-                if (actuatorEndpoints.configurationmetadata) {
+                if (CasActuatorEndpoints.configurationMetadata()) {
                     buttons += `
                             <button type="button" 
                                     name="searchForConfigPropertyButton" href="#" 
@@ -465,7 +465,7 @@ function reloadConfigurationTable(response) {
                     `;
                 }
 
-                if (mutablePropertySourcesAvailable && actuatorEndpoints.casconfig) {
+                if (mutablePropertySourcesAvailable && CasActuatorEndpoints.casConfig()) {
                     buttons += `
                             <button type="button" 
                             name="overrideConfigPropertyValueButton" href="#" 
@@ -514,7 +514,7 @@ function reloadConfigurationTable(response) {
                             </button>
                         `;
 
-                    if (actuatorEndpoints.configurationmetadata) {
+                    if (CasActuatorEndpoints.configurationMetadata()) {
                         buttons += `
                             <button type="button" 
                                     name="searchForConfigPropertyButton" href="#" 
@@ -573,23 +573,25 @@ async function initializeConfigurationOperations() {
     const toolbar = document.createElement("div");
     let toolbarEntries = `
             <button type="button" id="reloadConfigurationTableButton" 
-                    onclick="$.get(actuatorEndpoints.env, res => { reloadConfigurationTable(res); }).fail((xhr) => { displayBanner(xhr); });"
+                    title="Reload Configuration Table"
+                    onclick="$.get(CasActuatorEndpoints.env(), res => { reloadConfigurationTable(res); }).fail((xhr) => { displayBanner(xhr); });"
                     class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-database-arrow-down" aria-hidden="true"></i>Reload</span>
             </button>
     `;
     if (mutablePropertySourcesAvailable) {
         toolbarEntries += `
-            <button type="button" onclick="createNewConfigurationProperty(this);" id="newConfigPropertyButton" class="mdc-button mdc-button--raised">
+            <button type="button" title="Create a new configuration property" onclick="createNewConfigurationProperty(this);" id="newConfigPropertyButton" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New Property</span>
             </button>
-            <button type="button" onclick="deleteAllConfigurationProperties(this);" id="deleteAllConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
+            <button type="button" title="Delete all configuration properties" onclick="deleteAllConfigurationProperties(this);" id="deleteAllConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-delete" aria-hidden="true"></i>Delete All</span>
             </button>
-            <button type="button" onclick="importConfigurationProperties(this);" id="importConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
+            <button type="button" title="Import configuration from properties from files" onclick="importConfigurationProperties(this);" id="importConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-import" aria-hidden="true"></i>Import</span>
             </button>
             <button type="button" id="refreshConfigurationButton"
+                    title="Refresh CAS Server Configuration"
                     onclick="refreshCasServerConfiguration('Context Refresh');" 
                     class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>Refresh CAS</span>
@@ -638,9 +640,9 @@ async function initializeConfigurationOperations() {
             return false;
         }
         const configValue = $("#configValue").val();
-        if (actuatorEndpoints.casconfig) {
+        if (CasActuatorEndpoints.casConfig()) {
             $.post({
-                url: `${actuatorEndpoints.casconfig}/${op}`,
+                url: `${CasActuatorEndpoints.casConfig()}/${op}`,
                 data: configValue,
                 contentType: "text/plain"
             }, data => {
@@ -657,8 +659,8 @@ async function initializeConfigurationOperations() {
     configurationTable.clear();
     mutableConfigurationTable.clear();
 
-    if (actuatorEndpoints.env) {
-        $.get(actuatorEndpoints.env, response => {
+    if (CasActuatorEndpoints.env()) {
+        $.get(CasActuatorEndpoints.env(), response => {
             reloadConfigurationTable(response);
 
             $("#casActiveProfiles").empty();
@@ -709,8 +711,8 @@ async function initializeConfigurationOperations() {
     });
     configPropsTable.clear();
 
-    if (actuatorEndpoints.configprops) {
-        $.get(actuatorEndpoints.configprops, response => {
+    if (CasActuatorEndpoints.configProps()) {
+        $.get(CasActuatorEndpoints.configProps(), response => {
             const casBeans = response.contexts["cas-1"].beans;
             const bootstrapBeans = response.contexts["bootstrap"].beans;
             for (const [sourceBean, bean] of Object.entries(casBeans)) {
@@ -749,7 +751,7 @@ async function initializeConfigurationOperations() {
     $("#encryptConfigButton").off().on("click", () => encryptOrDecryptConfig("encrypt"));
     $("#decryptConfigButton").off().on("click", () => encryptOrDecryptConfig("decrypt"));
 
-    if (actuatorEndpoints.configurationmetadata) {
+    if (CasActuatorEndpoints.configurationMetadata()) {
 
         const configSearchResultsTable = $("#configSearchResultsTable").DataTable({
             pageLength: 10,
@@ -777,7 +779,7 @@ async function initializeConfigurationOperations() {
                 showConfirmButton: false,
                 didOpen: () => Swal.showLoading()
             });
-            $.get(`${actuatorEndpoints.configurationmetadata}/${searchQuery}`, response => {
+            $.get(`${CasActuatorEndpoints.configurationMetadata()}/${searchQuery}`, response => {
                 for (const entry of response) {
                     configSearchResultsTable.row.add({
                         0: entry.id,

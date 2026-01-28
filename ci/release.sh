@@ -188,21 +188,21 @@ ${contributors}
     printgreen "Release process for Apereo CAS ${casVersion} completed successfully!"
 
     echo "Closing milestone v${casVersion} on GitHub..."
-    gh alias set milestone-close '
-      api /repos/apereo/cas/milestones --jq ".[] | select(.title == \"$1\") | .number" |
-      xargs -I{} gh api \
+    gh api /repos/apereo/cas/milestones \
+      --jq ".[] | select(.title == \"${casVersion}\") | .number" |
+    while read -r number; do
+      gh api \
         --method PATCH \
-        /apereo/cas/{repo}/milestones/{} \
+        /repos/apereo/cas/milestones/${number} \
         -f state=closed
-    '
-    gh milestone-close "v${casVersion}"
+    done
 
     echo "Updating CAS with the next development version: ${nextVersion}"
     git reset --hard
     sedi "s/^version=.*/version=${nextVersion}/" ./gradle.properties
     git add ./gradle.properties
     git commit -m "Bumping version to ${nextVersion} after release of ${casVersion} [skip ci]"
-    git push origin "${currentBranch}"
+    git push origin "${currentBranch}" --force
     if [ $? -ne 0 ]; then
         printred "Pushing the next development version ${nextVersion} failed."
         exit 1

@@ -1,7 +1,8 @@
 async function initializeCasEventsOperations() {
-    if (actuatorEndpoints.events) {
+    if (CasActuatorEndpoints.events()) {
         const casEventsTable = $("#casEventsTable").DataTable({
             pageLength: 10,
+            autoWidth: false,
             drawCallback: settings => {
                 $("#casEventsTable tr").addClass("mdc-data-table__row");
                 $("#casEventsTable td").addClass("mdc-data-table__cell");
@@ -12,7 +13,7 @@ async function initializeCasEventsOperations() {
             return setInterval(() => {
                 if (currentActiveTab === Tabs.LOGGING.index) {
                     $.ajax({
-                        url: `${actuatorEndpoints.events}`,
+                        url: `${CasActuatorEndpoints.events()}`,
                         type: "GET",
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded"
@@ -46,7 +47,7 @@ async function initializeCasEventsOperations() {
         }
 
         let refreshInterval = undefined;
-        if (actuatorEndpoints.events) {
+        if (CasActuatorEndpoints.events()) {
             refreshInterval = fetchCasEvents();
         }
         $("#casEventsRefreshFilter").selectmenu({
@@ -61,9 +62,10 @@ async function initializeCasEventsOperations() {
 }
 
 async function initializeAuditEventsOperations() {
-    if (actuatorEndpoints.auditlog) {
+    if (CasActuatorEndpoints.auditLog()) {
         const auditEventsTable = $("#auditEventsTable").DataTable({
             pageLength: 10,
+            autoWidth: false,
             drawCallback: settings => {
                 $("#auditEventsTable tr").addClass("mdc-data-table__row");
                 $("#auditEventsTable td").addClass("mdc-data-table__cell");
@@ -77,7 +79,7 @@ async function initializeAuditEventsOperations() {
                     const count = $("#auditEventsCountFilter").val();
 
                     $.ajax({
-                        url: `${actuatorEndpoints.auditlog}?interval=${interval}&count=${count}`,
+                        url: `${CasActuatorEndpoints.auditLog()}?interval=${interval}&count=${count}`,
                         type: "GET",
                         headers: {
                             "Content-Type": "application/x-www-form-urlencoded"
@@ -104,7 +106,7 @@ async function initializeAuditEventsOperations() {
         }
 
         let refreshInterval = undefined;
-        if (actuatorEndpoints.auditlog) {
+        if (CasActuatorEndpoints.auditLog()) {
             refreshInterval = fetchAuditLog();
         }
         $("#auditEventsRefreshFilter").selectmenu({

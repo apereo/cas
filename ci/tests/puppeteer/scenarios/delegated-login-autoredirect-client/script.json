@@ -5,7 +5,6 @@
   },
   "properties": [
 
-    
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.http-client.host-name-verifier=none",
@@ -14,6 +13,9 @@
     "--cas.authn.pac4j.cas[0].protocol=CAS30",
     "--cas.authn.pac4j.cas[0].client-name=CasClient",
 
+    "--cas.authn.pac4j.core.session-replication.replicate-sessions=true",
+    "--cas.authn.pac4j.core.session-replication.cookie.crypto.enabled=true",
+    
     "--cas.authn.pac4j.core.groovy-redirection-strategy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/DelegatedAuthnRedirection.groovy",
     
     "--cas.service-registry.core.init-from-json=true",
