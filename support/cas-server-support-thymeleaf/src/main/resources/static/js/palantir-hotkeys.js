@@ -3,7 +3,7 @@ async function initializeHotKeyOperations() {
         .filter(tab => tab.shortcut)
         .map(tab => tab.shortcut)
         .join(",");
-    shortcuts += ",w";
+    shortcuts += ",w,n";
 
     hotkeys(shortcuts, function (event, handler) {
         const key = handler.key.toLowerCase();
@@ -12,6 +12,21 @@ async function initializeHotKeyOperations() {
             event.preventDefault();
             $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.APPLICATIONS.index}]:visible`).click();
             openRegisteredServiceWizardDialog();
+            break;
+        case "n":
+            if (currentActiveTab === Tabs.CONFIGURATION.index && mutablePropertySourcesAvailable) {
+                event.preventDefault();
+                $("#newConfigPropertyButton:visible").click();
+            }
+            if (currentActiveTab === Tabs.LOGGING.index) {
+                event.preventDefault();
+                $("#newLoggerButton:visible").click();
+            }
+            if (currentActiveTab === Tabs.AUTHENTICATION.index && $("#delegatedclients").is(":visible")) {
+                event.preventDefault();
+                $("#newExternalIdentityProvider:visible").click();
+            }
+            
             break;
         default:
             const tab = Object.values(Tabs).find(

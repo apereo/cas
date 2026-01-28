@@ -49,6 +49,6 @@ public class DefaultDuoSecurityMultifactorAuthenticationProvider extends Abstrac
 
     @Override
     public String getFriendlyName() {
-        return "Duo Security";
+        return StringUtils.defaultIfBlank(duoAuthenticationService.getProperties().getName(), "Duo Security");
     }
 }
