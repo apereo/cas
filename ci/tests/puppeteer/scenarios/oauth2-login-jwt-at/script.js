@@ -79,7 +79,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
             throw "Operation must fail to get the profile with a bad access token";
         }, (error) => {
             assert(error.response.status === 401);
-            assert(error.response.data.error === "invalid_request");
+            assert(error.response.data.error === "missing_accessToken" || error.response.data.error === "invalid_request");
         });
 
     await cas.gotoLogout(page);

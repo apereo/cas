@@ -45,14 +45,14 @@ async function initializeLoggingOperations() {
 
     function handleLoggerLevelSelectionChange() {
         $("select[name=loggerLevelSelect]").off().on("change", function () {
-            if (actuatorEndpoints.loggers) {
+            if (CasActuatorEndpoints.loggers()) {
                 const logger = $(this).data("logger");
                 const level = $(this).val();
                 const loggerData = {
                     "configuredLevel": level
                 };
                 $.ajax({
-                    url: `${actuatorEndpoints.loggers}/${logger}`,
+                    url: `${CasActuatorEndpoints.loggers()}/${logger}`,
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(loggerData),
@@ -67,8 +67,8 @@ async function initializeLoggingOperations() {
     }
 
     function fetchLoggerData(callback) {
-        if (actuatorEndpoints.loggingconfig) {
-            $.get(actuatorEndpoints.loggingconfig, response => callback(response)).fail((xhr, status, error) => {
+        if (CasActuatorEndpoints.loggingConfig()) {
+            $.get(CasActuatorEndpoints.loggingConfig(), response => callback(response)).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
             });
@@ -110,7 +110,9 @@ async function initializeLoggingOperations() {
                     },
                     showConfirmButton: true,
                     showDenyButton: true,
-                    icon: "success",
+                    icon: "question",
+                    confirmButtonText: "Create Logger",
+                    denyButtonText: "Cancel",
                     title: "What's the name of the new logger?",
                     text: "The new logger will only be effective at runtime and will not be persisted."
                 })
@@ -138,14 +140,14 @@ async function initializeLoggingOperations() {
         updateLoggersTable();
     }
 
-    const logEndpoints = [actuatorEndpoints.cloudwatchlogs, actuatorEndpoints.gcplogs, actuatorEndpoints.loggingconfig, actuatorEndpoints.logfile];
+    const logEndpoints = [CasActuatorEndpoints.cloudWatchLogs(), CasActuatorEndpoints.gcpLogs(), CasActuatorEndpoints.loggingConfig(), CasActuatorEndpoints.logFile()];
     const hasLogEndpoint = logEndpoints.some(element => element !== undefined);
 
     if (hasLogEndpoint) {
         const scrollSwitch = new mdc.switchControl.MDCSwitch(document.getElementById("scrollLogsButton"));
         scrollSwitch.selected = true;
 
-        if (actuatorEndpoints.logfile) {
+        if (CasActuatorEndpoints.logFile()) {
             $("#logFileStream").parent().addClass("w-50");
             $("#logDataStream").parent().addClass("w-50");
         } else {
@@ -185,7 +187,7 @@ async function initializeLoggingOperations() {
                     const logFileStream = $("#logFileStream");
 
                     $.ajax({
-                        url: actuatorEndpoints.logfile,
+                        url: CasActuatorEndpoints.logFile(),
                         type: "GET",
                         success: response => {
                             logFileStream.empty();
@@ -203,9 +205,9 @@ async function initializeLoggingOperations() {
         function startStreamingLogData() {
             return setInterval(() => {
                 if (currentActiveTab === Tabs.LOGGING.index) {
-                    fetchLogsFrom(actuatorEndpoints.cloudwatchlogs);
-                    fetchLogsFrom(actuatorEndpoints.gcplogs);
-                    fetchLogsFrom(actuatorEndpoints.loggingconfig);
+                    fetchLogsFrom(CasActuatorEndpoints.cloudWatchLogs());
+                    fetchLogsFrom(CasActuatorEndpoints.gcpLogs());
+                    fetchLogsFrom(CasActuatorEndpoints.loggingConfig());
                 }
             }, $("#logRefreshFilter").val());
         }
@@ -213,7 +215,7 @@ async function initializeLoggingOperations() {
         let refreshStreamInterval = startStreamingLogData();
 
         let refreshLogFileInterval = undefined;
-        if (actuatorEndpoints.logfile) {
+        if (CasActuatorEndpoints.logFile()) {
             refreshLogFileInterval = startStreamingLogFile();
         }
 

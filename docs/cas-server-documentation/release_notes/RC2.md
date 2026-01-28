@@ -58,9 +58,57 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `526` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `532` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
+                                                                                                                            
+### Session Replication
+
+Crypto operations that support generating cookies for *deprecated session replication capabilities* are now turned off by default
+to avoid generating keys. Furthermore, the session replication capabilities that are not based on the
+[ticket registry](../webflow/Webflow-Customization-Sessions-ServerSide-TicketRegistry.html) are now turned off 
+by default. If you are using the deprecated legacy session replication features, you MUST explicitly 
+turn on these features by setting the following properties:
+
+```properties
+cas.x.y.z.session-replication.replicate-sessions=true
+cas.x.y.z.session-replication.cookie.crypto.enabled=true
+```
+
+Remember to substitute `x.y.z` with the appropriate session replication 
+module version you are using (i.e. `oauth`, `saml-idp`, etc).
+
+### Palantir Admin Dashboard
+
+[Palantir Admin Console](../installation/Admin-Dashboard.html) received significant changes across the board
+to handle and support more actuator endpoints, when it comes to adding external identity providers, retrieving
+user sessions, listing multifactor authentication providers, etc.
+
+### Spring Boot 4
+
+CAS is now built with Spring Boot `4.1.x`. This is a major platform upgrade that affects almost all aspects of the codebase
+including many of the third-party core libraries used by CAS as well as some CAS functionality.
+     
+#### Spring Cloud Bus w/ AMQP
+
+Support for [Spring Cloud Bus with AMQP](../configuration/Configuration-Management-Clustered-AMQP.html) is 
+not yet quite compatible with Spring Boot `4.1.x`. We will reintroduce this support in a future release 
+once compatibility is restored.
+
+### JSpecify & NullAway
+
+CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations to indicate nullness contracts on method parameters,
+return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
+and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
+during compile time.
+
+### SpringBoot Admin
+
+Support for [SpringBoot Admin](../monitoring/Configuring-SpringBootAdmin.html) is now compatible with Spring Boot `4.x`.
 
 ## Other Stuff
-     
+  
+- Compiled valid regular expressions are now cached to improve performance across the board.
+- Continued efforts using advanced code analysis techniques to remove potential memory leaks and improve system performance.
+- CAS is now upgraded to use `jQuery` version `4.0.0`.
+- Integration tests have switched to use MySQL `9.6.x`.

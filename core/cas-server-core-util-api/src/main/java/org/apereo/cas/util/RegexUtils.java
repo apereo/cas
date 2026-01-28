@@ -1,6 +1,8 @@
 package org.apereo.cas.util;
 
 import module java.base;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,6 +25,11 @@ public class RegexUtils {
      */
     public static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("a^");
 
+    private static final Cache<String, Pattern> PATTERN_CACHE = Caffeine.newBuilder()
+        .expireAfterAccess(15, TimeUnit.MINUTES)
+        .maximumSize(10_000)
+        .build();
+    
     /**
      * Check to see if the specified pattern is a valid regular expression.
      *
@@ -32,11 +39,11 @@ public class RegexUtils {
     public static boolean isValidRegex(final String pattern) {
         try {
             if (StringUtils.isNotBlank(pattern)) {
-                Pattern.compile(pattern);
+                computePattern(pattern);
                 return true;
             }
         } catch (final PatternSyntaxException exception) {
-            LOGGER.debug("Pattern [{}] is not a valid regex.", pattern);
+            LOGGER.debug("Pattern [{}] is not a valid regular expression pattern.", pattern);
         }
         return false;
     }
@@ -81,7 +88,7 @@ public class RegexUtils {
             return MATCH_NOTHING_PATTERN;
         }
         try {
-            return Pattern.compile(pattern, flags);
+            return computePattern(pattern, flags);
         } catch (final PatternSyntaxException exception) {
             LOGGER.debug("Pattern [{}] is not a valid regex.", pattern);
             return MATCH_NOTHING_PATTERN;
@@ -186,5 +193,13 @@ public class RegexUtils {
             LOGGER.trace("Falling back to regex match. Couldn't treat [{}] as an IP address or netmask: [{}]", pattern, e.getMessage());
             return find(pattern, remoteAddr);
         }
+    }
+
+    private static Pattern computePattern(final String pattern) {
+        return computePattern(pattern, 0);
+    }
+
+    private static Pattern computePattern(final String pattern, final int flags) {
+        return PATTERN_CACHE.get(pattern + '|' + flags, p -> Pattern.compile(pattern, flags));
     }
 }

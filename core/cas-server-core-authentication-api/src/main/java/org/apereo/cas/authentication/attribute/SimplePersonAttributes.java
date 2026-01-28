@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.attribute;
 import module java.base;
 import module java.sql;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
+import org.apereo.cas.util.RegexUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -84,7 +85,7 @@ public class SimplePersonAttributes implements PersonAttributes {
 
     protected Map<String, List<Object>> buildImmutableAttributeMap(final Map<String, List<Object>> attributes) {
         val valueBuilder = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
-        val arrayPattern = Pattern.compile("\\{(.*)\\}");
+        val arrayPattern = RegexUtils.createPattern("\\{(.*)\\}");
         for (val attrEntry : attributes.entrySet()) {
             val key = attrEntry.getKey();
             var value = attrEntry.getValue().stream().filter(Objects::nonNull).toList();

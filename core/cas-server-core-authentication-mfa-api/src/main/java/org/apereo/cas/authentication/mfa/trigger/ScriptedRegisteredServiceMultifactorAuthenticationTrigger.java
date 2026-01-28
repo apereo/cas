@@ -11,10 +11,10 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
     private final ApplicationContext applicationContext;
 
     private final TenantExtractor tenantExtractor;
-    
+
     @Setter
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -92,18 +92,22 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
         return Optional.empty();
     }
 
-    protected ExecutableCompiledScript fetchScript(final String mfaScript) throws Exception {
+    protected @Nullable ExecutableCompiledScript fetchScript(final String mfaScript) throws Exception {
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
-        if (scriptFactory.isInlineScript(mfaScript) && CasRuntimeHintsRegistrar.notInNativeImage()) {
-            return scriptFactory.fromScript(scriptFactory.getInlineScript(mfaScript).orElseThrow());
-        }
-        if (scriptFactory.isExternalScript(mfaScript)) {
-            val scriptPath = SpringExpressionLanguageValueResolver.getInstance()
-                .resolve(scriptFactory.getExternalScript(mfaScript).orElseThrow());
-            val resource = ResourceUtils.getResourceFrom(scriptPath);
-            return scriptFactory.fromResource(resource);
-        }
-        return null;
+        return ApplicationContextProvider.getScriptResourceCacheManager()
+            .map(cacheManager -> {
+                if (scriptFactory.isInlineScript(mfaScript) && CasRuntimeHintsRegistrar.notInNativeImage()) {
+                    val inlineScript = scriptFactory.getInlineScript(mfaScript).orElseThrow();
+                    return cacheManager.resolveScriptableResource(inlineScript);
+                }
+                if (scriptFactory.isExternalScript(mfaScript)) {
+                    val scriptPath = SpringExpressionLanguageValueResolver.getInstance()
+                        .resolve(scriptFactory.getExternalScript(mfaScript).orElseThrow());
+                    return cacheManager.resolveScriptableResource(scriptPath);
+                }
+                return null;
+            })
+            .orElseThrow(() -> new FileNotFoundException("No script resource cache manager is available to locate script"));
     }
 }
 
