@@ -69,7 +69,7 @@ async function requestProxyTicket(service, ticket) {
             throw (error);
         }, {
             "Content-Type": "application/json",
-            "Authorization": REQUEST_BASKET_AUTHZ_TOKEN
+            "Authorization": process.env.REQUEST_BASKET_AUTHZ_TOKEN
         });
 
     await cas.sleep(1000);
