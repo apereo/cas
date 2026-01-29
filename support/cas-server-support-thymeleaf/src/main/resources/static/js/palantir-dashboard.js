@@ -276,7 +276,7 @@ function navigateToApplication(serviceIdToFind) {
 async function initializePalantirSession() {
     setInterval(async () => {
         const url = new URL(location.href);
-        const result = await fetch(`${url.pathname}/session`, { credentials: "same-origin" });
+        const result = await fetch(`${url.pathname}/session`, { credentials: "include" });
         if (result.status !== 200) {
             Swal.close();
             Swal.fire({
