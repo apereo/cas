@@ -1069,6 +1069,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
     rm -f "$PWD"/cas.${projectType} >/dev/null 2>&1
     rm -f "${public_cert}" >/dev/null 2>&1
     rm -Rf "${PUPPETEER_DIR}/overlay" >/dev/null 2>&1
+    [ -d "${PUPPETEER_DIR}/screenshots" ] && rm -Rf "${PUPPETEER_DIR}/screenshots"/* >/dev/null 2>&1
 
     if [[ "${CI}" == "true" && $dockerInstalled -eq 0 ]]; then
       printgreen "Stopping Docker containers..."
