@@ -112,7 +112,9 @@ async function initializeConsentOperations() {
 
         $("button[name=exportAllConsent]").off().on("click", () => {
             if (CasActuatorEndpoints.attributeConsent()) {
-                fetch(`${CasActuatorEndpoints.attributeConsent()}/export`)
+                fetch(`${CasActuatorEndpoints.attributeConsent()}/export`, {
+                    credentials: 'include'
+                })
                     .then(response => {
                         const filename = response.headers.get("filename");
                         response.blob().then(blob => {

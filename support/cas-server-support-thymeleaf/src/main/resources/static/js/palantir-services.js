@@ -522,7 +522,9 @@ async function initializeFooterButtons() {
     $("button[name=exportService]").off().on("click", () => {
         if (CasActuatorEndpoints.registeredServices()) {
             let serviceId = $(exportServiceButton).attr("serviceId");
-            fetch(`${CasActuatorEndpoints.registeredServices()}/export/${serviceId}`)
+            fetch(`${CasActuatorEndpoints.registeredServices()}/export/${serviceId}`, {
+                credentials: 'include'
+            })
                 .then(response => {
                     const filename = response.headers.get("filename");
                     response.blob().then(blob => {
@@ -541,7 +543,9 @@ async function initializeFooterButtons() {
 
     $("button[name=exportAll]").off().on("click", () => {
         if (CasActuatorEndpoints.registeredServices()) {
-            fetch(`${CasActuatorEndpoints.registeredServices()}/export`)
+            fetch(`${CasActuatorEndpoints.registeredServices()}/export`, {
+                credentials: 'include'
+            })
                 .then(response => {
                     const filename = response.headers.get("filename");
                     response.blob().then(blob => {
