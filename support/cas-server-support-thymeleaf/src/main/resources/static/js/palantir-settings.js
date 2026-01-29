@@ -18,7 +18,7 @@ function palantirSettings() {
 
 async function initializePalantirActuatorsTable() {
     const palantirActuatorsTable = $("#palantirActuatorsTable").DataTable({
-        pageLength: 10,
+        pageLength: 5,
         columns: [
             { width: "10%", targets: 0},
             { width: "90%", targets: 1}

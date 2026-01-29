@@ -3,11 +3,15 @@ async function initializeHotKeyOperations() {
         .filter(tab => tab.shortcut)
         .map(tab => tab.shortcut)
         .join(",");
-    shortcuts += ",w,n";
+    shortcuts += ",w,n,esc";
 
     hotkeys(shortcuts, function (event, handler) {
         const key = handler.key.toLowerCase();
         switch (key) {
+        case "esc":
+            event.preventDefault();
+            closeAllDialogs();
+            break;
         case "w":
             event.preventDefault();
             $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.APPLICATIONS.index}]:visible`).click();
