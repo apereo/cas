@@ -108,7 +108,7 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
             "service", WebUtils.getService(requestContext),
             "logger", LOGGER);
         script.setBinding(args);
-        return !script.execute(args.values().toArray(), Boolean.class);
+        return Boolean.FALSE.equals(script.execute(args.values().toArray(), Boolean.class));
     }
 
     protected boolean shouldSkipInterruptForPrincipalAttributes(final WebBasedRegisteredService registeredService,

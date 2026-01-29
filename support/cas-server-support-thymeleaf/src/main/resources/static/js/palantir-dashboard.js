@@ -45,7 +45,7 @@ function activateDashboardTab(idx) {
                     },
                     autoOpen: false,
                     modal: true,
-                    width: 600,
+                    width: 850,
                     height: "auto",
                     buttons: {
                         OK: function () {
