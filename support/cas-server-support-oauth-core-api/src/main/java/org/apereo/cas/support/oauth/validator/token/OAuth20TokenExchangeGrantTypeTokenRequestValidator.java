@@ -16,6 +16,7 @@ import com.nimbusds.jwt.proc.JWTClaimsSetVerifier;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -74,8 +75,8 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
         return tokenExchangePolicy == null || tokenExchangePolicy.isTokenExchangeAllowed(registeredService, resources, audience, requestedTokenType);
     }
 
-    protected OAuthRegisteredService extractRegisteredService(final String subjectTokenType,
-                                                              final String subjectToken) throws Exception {
+    protected @Nullable OAuthRegisteredService extractRegisteredService(final String subjectTokenType,
+                                                                        final String subjectToken) throws Exception {
         val configurationContext = getConfigurationContext().getObject();
         return switch (OAuth20TokenExchangeTypes.from(subjectTokenType)) {
             case ACCESS_TOKEN -> {
