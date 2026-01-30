@@ -50,9 +50,20 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
     @Override
     protected List<SimpleGrantedAuthority> generateAuthorizationForLdapEntry(final Principal profile, final LdapEntry userEntry) {
         LOGGER.debug("Attempting to get roles for user [{}].", userEntry.getDn());
-        val response = FunctionUtils.doUnchecked(() -> groupSearchOperation.execute(
-            LdapUtils.newLdaptiveSearchFilter(groupSearchOperation.getTemplate().getFilter(),
-                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(userEntry.getDn()))));
+        val filterValues = CollectionUtils.wrap(userEntry.getDn());
+        
+        val filterParameters = new ArrayList<String>();
+        filterParameters.add(LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME);
+        filterParameters.addAll(Arrays.stream(userEntry.getAttributeNames()).toList());
+
+        Arrays.stream(userEntry.getAttributeNames()).forEach(name -> {
+            val attribute = userEntry.getAttribute(name);
+            if (attribute != null) {
+                filterValues.add(attribute.getStringValue());
+            }
+        });
+        val searchFilter = LdapUtils.newLdaptiveSearchFilter(groupSearchOperation.getTemplate().getFilter(), filterParameters, filterValues);
+        val response = FunctionUtils.doUnchecked(() -> groupSearchOperation.execute(searchFilter));
         LOGGER.debug("LDAP role search response: [{}]", response);
         return response
             .getEntries()
