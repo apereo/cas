@@ -74,7 +74,7 @@ public class OidcDPoPAuthenticator implements Authenticator {
         val verifier = new DPoPTokenRequestVerifier(algorithms, endpointURI, seconds, seconds, null);
         val signedProof = getSignedProofOfPosessionJwt(dPopProof);
         val dPopIssuer = new DPoPIssuer(new ClientID(clientId));
-        return verifier.verify(dPopIssuer, signedProof, null);
+        return verifier.verify(dPopIssuer, signedProof, Set.of());
     }
 
     protected Optional<Credentials> buildUserProfile(final Credentials credentials, final String dPopProof,
