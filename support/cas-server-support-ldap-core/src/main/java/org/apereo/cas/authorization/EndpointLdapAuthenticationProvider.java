@@ -4,7 +4,6 @@ import module java.base;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.model.core.monitor.LdapSecurityActuatorEndpointsMonitorProperties;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.LoggingUtils;
 import lombok.RequiredArgsConstructor;
@@ -95,7 +94,7 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
                 entry.getAttributes().forEach(attribute -> attributes.put(attribute.getName(), new ArrayList<>(attribute.getStringValues())));
                 val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(username, attributes);
                 val authZGen = buildAuthorizationGenerator();
-                var authorities = authZGen.apply(Objects.requireNonNull(principal));
+                val authorities = authZGen.apply(Objects.requireNonNull(principal));
 
                 LOGGER.debug("List of authorities remapped from profile roles are [{}]", authorities);
                 if (authorities.stream().anyMatch(authority -> requiredRoles.contains(authority.getAuthority()))) {
@@ -157,18 +156,21 @@ public class EndpointLdapAuthenticationProvider implements AuthenticationProvide
         return StringUtils.isNotBlank(properties.getBaseDn()) && StringUtils.isNotBlank(properties.getSearchFilter());
     }
 
-    private SearchOperation ldapAuthorizationGeneratorUserSearchOperation(final ConnectionFactory factory) {
+    protected SearchOperation ldapAuthorizationGeneratorUserSearchOperation(final ConnectionFactory factory) {
         val properties = ldapProperties.getLdapAuthz();
         val searchOperation = LdapUtils.newLdaptiveSearchOperation(properties.getBaseDn(), properties.getSearchFilter(),
-            new ArrayList<>(), CollectionUtils.wrap(properties.getRoleAttribute()));
+            List.of(), List.of());
         searchOperation.setConnectionFactory(factory);
         return searchOperation;
     }
 
-    private SearchOperation ldapAuthorizationGeneratorGroupSearchOperation(final ConnectionFactory factory) {
+    protected SearchOperation ldapAuthorizationGeneratorGroupSearchOperation(final ConnectionFactory factory) {
         val properties = ldapProperties.getLdapAuthz();
-        val searchOperation = LdapUtils.newLdaptiveSearchOperation(properties.getGroupBaseDn(), properties.getGroupFilter(),
-            new ArrayList<>(), CollectionUtils.wrap(properties.getGroupAttribute()));
+        val searchOperation = LdapUtils.newLdaptiveSearchOperation(
+            properties.getGroupBaseDn(),
+            properties.getGroupFilter(),
+            List.of(),
+            List.of());
         searchOperation.setConnectionFactory(factory);
         return searchOperation;
     }
