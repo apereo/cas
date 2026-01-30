@@ -175,6 +175,9 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         if (context.getGrantType() == OAuth20GrantTypes.CIBA) {
             generateCibaClaims(context, claims);
         }
+
+        Optional.ofNullable(accessToken.getAuthentication().getSingleValuedAttribute(OAuth20Constants.CLAIM_ACT, Map.class))
+            .ifPresent(value -> claims.setClaim(OAuth20Constants.CLAIM_ACT, value));
         return claims;
     }
 

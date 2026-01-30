@@ -37,6 +37,25 @@ async function exchangeToken(subjectToken, subjectTokenType, toType, actorToken,
             const decoded = await cas.decodeJwt(jwt);
             assert(decoded.sub === "client");
             assert(decoded.iss === "https://localhost:8443/cas/oidc");
+            assert(decoded.act.sub === "client");
+        }
+        if (toType === "access_token") {
+            const profileUrl = `https://localhost:8443/cas/oidc/profile?token=${payload.data.access_token}`;
+            await cas.log(`Calling user profile ${profileUrl}`);
+
+            await cas.doPost(profileUrl, "", {
+                "Content-Type": "application/json"
+            }, (res) => {
+                cas.log(res.data);
+                assert(res.data.sub !== undefined);
+                assert(res.data.act.sub === "client");
+            }, (error) => {
+                throw `Operation failed: ${error}`;
+            });
+        }
+        if (toType === "id_token") {
+            const decoded = await cas.decodeJwt(payload.data.id_token);
+            assert(decoded.act.sub === "client");
         }
     }, (error) => {
         throw `Operation failed: ${error}`;
@@ -55,7 +74,9 @@ async function exchangeToken(subjectToken, subjectTokenType, toType, actorToken,
         assert(res.data.refresh_token !== undefined);
         assert(res.data.id_token !== undefined);
 
-        await exchangeToken(res.data.access_token, "access_token", "jwt", res.data.id_token, "id_token");
+        // await exchangeToken(res.data.access_token, "access_token", "jwt", res.data.id_token, "id_token");
+        // await exchangeToken(res.data.access_token, "access_token", "access_token", res.data.id_token, "id_token");
+        await exchangeToken(res.data.access_token, "access_token", "id_token", res.data.access_token, "access_token");
     }, (error) => {
         throw `Operation failed: ${error}`;
     });

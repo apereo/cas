@@ -94,5 +94,17 @@ class OidcUserProfileDataCreatorTests {
             assertFalse(data.isEmpty());
             assertTrue(data.containsKey(OAuth20Constants.CLAIM_SUB));
         }
+
+        @Test
+        void verifyAccessTokenWithAct() throws Throwable {
+            val authentication = RegisteredServiceTestUtils.getAuthentication("casuser",
+                CollectionUtils.wrap(OAuth20Constants.CLAIM_ACT, List.of("actor")));
+            val accessToken = getAccessToken(authentication, UUID.randomUUID().toString());
+            ticketRegistry.addTicket(accessToken);
+            val data = oidcUserProfileDataCreator.createFrom(accessToken);
+            assertFalse(data.isEmpty());
+            assertTrue(data.containsKey(OAuth20Constants.CLAIM_SUB));
+            assertTrue(data.containsKey(OAuth20Constants.CLAIM_ACT));
+        }
     }
 }
