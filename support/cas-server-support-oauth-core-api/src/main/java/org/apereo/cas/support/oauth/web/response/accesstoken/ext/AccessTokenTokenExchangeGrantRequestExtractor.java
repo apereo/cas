@@ -126,7 +126,7 @@ public class AccessTokenTokenExchangeGrantRequestExtractor<T extends OAuth20Conf
         FunctionUtils.throwIf(actorToken.isPresent() && actorTokenType.isEmpty(),
             () -> new IllegalArgumentException("Actor token type cannot be undefined when actor token is provided"));
         if (actorToken.isPresent()) {
-            val actorAuthentication = extractActorTokenAuthentication(webContext);
+            val actorAuthentication = extractActorTokenAuthentication(webContext, extractedRequest);
             val tokenExchangePolicy = extractedRequest.registeredService() != null ? extractedRequest.registeredService().getTokenExchangePolicy() : null;
             if (tokenExchangePolicy == null || tokenExchangePolicy.canSubjectTokenActAs(extractedRequest.authentication(),
                 actorAuthentication, actorTokenType.map(OAuth20TokenExchangeTypes::getType).orElse(null))) {
@@ -136,16 +136,25 @@ public class AccessTokenTokenExchangeGrantRequestExtractor<T extends OAuth20Conf
         return null;
     }
 
-    protected Authentication extractActorTokenAuthentication(final WebContext webContext) throws Throwable {
+    protected Authentication extractActorTokenAuthentication(final WebContext webContext, final TokenExchangeRequest extractedRequest) throws Throwable {
         val configurationContext = getConfigurationContext().getObject();
-        val actorToken = configurationContext.getRequestParameterResolver().resolveRequestParameter(webContext, OAuth20Constants.ACTOR_TOKEN).orElseThrow();
-        val actorTokenType = configurationContext.getRequestParameterResolver().resolveRequestParameter(webContext, OAuth20Constants.ACTOR_TOKEN_TYPE)
+        val actorToken = configurationContext.getRequestParameterResolver()
+            .resolveRequestParameter(webContext, OAuth20Constants.ACTOR_TOKEN).orElseThrow();
+        val actorTokenType = configurationContext.getRequestParameterResolver()
+            .resolveRequestParameter(webContext, OAuth20Constants.ACTOR_TOKEN_TYPE)
             .map(OAuth20TokenExchangeTypes::from)
             .orElseThrow();
+        return buildActorTokenAuthentication(webContext, actorTokenType, actorToken);
+    }
+
+    protected Authentication buildActorTokenAuthentication(final WebContext webContext,
+                                                           final OAuth20TokenExchangeTypes actorTokenType,
+                                                           final String actorToken) throws Throwable {
+        val configurationContext = getConfigurationContext().getObject();
         return switch (actorTokenType) {
             case ACCESS_TOKEN -> {
                 val token = configurationContext.getTicketRegistry().getTicket(actorToken, OAuth20Token.class);
-                yield token.getAuthentication();
+                yield Objects.requireNonNull(token.getAuthentication());
             }
             case JWT -> buildActorTokenAuthenticationFromJwt(actorToken, webContext);
             default -> throw new IllegalArgumentException("Actor token type %s is not supported".formatted(actorTokenType));

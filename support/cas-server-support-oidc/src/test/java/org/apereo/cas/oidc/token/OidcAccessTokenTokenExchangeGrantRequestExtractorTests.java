@@ -80,4 +80,50 @@ class OidcAccessTokenTokenExchangeGrantRequestExtractorTests extends AbstractOid
         val tokenContext = extractor.extract(context);
         assertNotNull(tokenContext);
     }
+
+    @Test
+    void verifyActorTokenAsIdToken() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString()).setEncryptIdToken(true);
+        registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.TOKEN_EXCHANGE.getType()));
+        servicesManager.save(registeredService);
+
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+
+        val userProfile = new CommonProfile();
+        userProfile.setId("casuser");
+        userProfile.addAttributes((Map) RegisteredServiceTestUtils.getTestAttributes());
+        val profileManager = new ProfileManager(context, oauthDistributedSessionStore);
+        profileManager.save(true, userProfile, false);
+
+        val accessToken = getAccessToken(registeredService.getClientId());
+        when(accessToken.getScopes()).thenReturn(
+            Set.of(OidcConstants.StandardScopes.DEVICE_SSO.getScope(),
+                OidcConstants.StandardScopes.PROFILE.getScope(),
+                OidcConstants.StandardScopes.OPENID.getScope()));
+        ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
+        ticketRegistry.addTicket(accessToken);
+
+        val idTokenContext = IdTokenGenerationContext.builder()
+            .accessToken(accessToken)
+            .userProfile(profileManager.getProfile().orElseThrow())
+            .responseType(OAuth20ResponseTypes.CODE)
+            .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
+            .registeredService(registeredService)
+            .build();
+        val idToken = oidcIdTokenGenerator.generate(idTokenContext);
+
+        request.addParameter(OAuth20Constants.SUBJECT_TOKEN, idToken.token());
+        request.addParameter(OAuth20Constants.SUBJECT_TOKEN_TYPE, OAuth20TokenExchangeTypes.ID_TOKEN.getType());
+
+        request.addParameter(OAuth20Constants.ACTOR_TOKEN, idToken.token());
+        request.addParameter(OAuth20Constants.ACTOR_TOKEN_TYPE, OAuth20TokenExchangeTypes.ID_TOKEN.getType());
+
+        request.addParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.TOKEN_EXCHANGE.getType());
+        request.addParameter(OAuth20Constants.AUDIENCE, registeredService.getClientId());
+
+        val tokenContext = extractor.extract(context);
+        assertNotNull(tokenContext);
+    }
 }
