@@ -15,8 +15,10 @@ import org.apache.commons.lang3.StringUtils;
  */
 @RequiredArgsConstructor
 public class DefaultMessageSanitizer implements MessageSanitizer {
-    private static final Pattern SENSITIVE_TEXT_PATTERN =
-        RegexUtils.createPattern("(psw|pwd|clientSecret|password|token|credential|secret|secretKey)\\s*=\\s*(['\"]*\\S+\\b['\"]*)");
+    private static final String PATTERN1 = "(psw|pwd|clientSecret|password|token|credential|secret|secretKey)\\s*=\\s*(['\"]*\\S+\\b['\"]*)";
+    private static final String PATTERN2 = "('(password|clientSecret|token|secret|credential|secretKey)'\\s*->\\s*array<String>\\['([^']+)'\\])";
+    
+    private static final Pattern SENSITIVE_TEXT_PATTERN = RegexUtils.createPattern(PATTERN1 + '|' + PATTERN2);
 
     private static final Boolean CAS_TICKET_ID_SANITIZE_SKIP = Boolean.getBoolean("CAS_TICKET_ID_SANITIZE_SKIP");
 
@@ -63,7 +65,11 @@ public class DefaultMessageSanitizer implements MessageSanitizer {
 
         val matcher = SENSITIVE_TEXT_PATTERN.matcher(msg);
         while (matcher.find()) {
-            val group = matcher.group(2);
+            var group = matcher.group(2);
+            if (StringUtils.isNotBlank(group)) {
+                modifiedMessage = modifiedMessage.replace(group, OBFUSCATED_STRING);
+            }
+            group = matcher.group(5);
             if (StringUtils.isNotBlank(group)) {
                 modifiedMessage = modifiedMessage.replace(group, OBFUSCATED_STRING);
             }
