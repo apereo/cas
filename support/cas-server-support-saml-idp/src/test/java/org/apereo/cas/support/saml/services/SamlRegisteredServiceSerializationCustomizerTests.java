@@ -8,7 +8,6 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,10 +24,15 @@ class SamlRegisteredServiceSerializationCustomizerTests {
     class NoDefaults extends BaseSamlIdPConfigurationTests {
         @Test
         void verifyNoDefaults() throws Throwable {
-            val serializer = new RegisteredServiceJsonSerializer(applicationContext);
-            val service = (SamlRegisteredService) serializer.from(new ClassPathResource("services/SampleSAML-1000.json").getInputStream());
-            assertNotNull(service);
-            assertEquals(TriStateBoolean.FALSE, service.getSignAssertions());
+            val cl = SamlRegisteredServiceSerializationCustomizerTests.class.getClassLoader();
+            val url = cl.getResource("services/SampleSAML-1000.json");
+            assertNotNull(url, "Resource not on classpath");
+            try (val is = url.openStream()) {
+                val serializer = new RegisteredServiceJsonSerializer(applicationContext);
+                val service = (SamlRegisteredService) serializer.from(is);
+                assertNotNull(service);
+                assertEquals(TriStateBoolean.FALSE, service.getSignAssertions());
+            }
         }
     }
 
@@ -37,18 +41,28 @@ class SamlRegisteredServiceSerializationCustomizerTests {
     class WithDefaults extends BaseSamlIdPConfigurationTests {
         @Test
         void verifyDefaults() throws Throwable {
-            val serializer = new RegisteredServiceJsonSerializer(applicationContext);
-            val service = (SamlRegisteredService) serializer.from(new ClassPathResource("services/SampleSAML-1000.json").getInputStream());
-            assertNotNull(service);
-            assertEquals(TriStateBoolean.TRUE, service.getSignAssertions());
+            val cl = SamlRegisteredServiceSerializationCustomizerTests.class.getClassLoader();
+            val url = cl.getResource("services/SampleSAML-1000.json");
+            assertNotNull(url, "Resource not on classpath");
+            try (val is = url.openStream()) {
+                val serializer = new RegisteredServiceJsonSerializer(applicationContext);
+                val service = (SamlRegisteredService) serializer.from(is);
+                assertNotNull(service);
+                assertEquals(TriStateBoolean.TRUE, service.getSignAssertions());
+            }
         }
 
         @Test
         void verifyDefaultsOverriddenByService() throws Throwable {
-            val serializer = new RegisteredServiceJsonSerializer(applicationContext);
-            val service = (SamlRegisteredService) serializer.from(new ClassPathResource("services/SampleSAML-1001.json").getInputStream());
-            assertNotNull(service);
-            assertEquals(TriStateBoolean.UNDEFINED, service.getSignAssertions());
+            val cl = SamlRegisteredServiceSerializationCustomizerTests.class.getClassLoader();
+            val url = cl.getResource("services/SampleSAML-1001.json");
+            assertNotNull(url, "Resource not on classpath");
+            try (val is = url.openStream()) {
+                val serializer = new RegisteredServiceJsonSerializer(applicationContext);
+                val service = (SamlRegisteredService) serializer.from(is);
+                assertNotNull(service);
+                assertEquals(TriStateBoolean.UNDEFINED, service.getSignAssertions());
+            }
         }
     }
 }
