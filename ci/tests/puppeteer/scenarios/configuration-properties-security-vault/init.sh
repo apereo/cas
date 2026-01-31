@@ -1,6 +1,5 @@
 #!/bin/bash
-set -e
-clear
+
 echo Starting Vault
 docker stop vault || true && docker rm vault || true
 docker run -d --rm -e VAULT_SKIP_VERIFY=true \

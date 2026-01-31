@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 "${PWD}"/ci/tests/httpbin/run-httpbin-server.sh
 "${PWD}"/ci/tests/mongodb/run-mongodb-server.sh
