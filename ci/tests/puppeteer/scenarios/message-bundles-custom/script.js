@@ -1,6 +1,6 @@
 
 const cas = require("../../cas.js");
-const propertiesReader = require("properties-reader");
+const { propertiesReader } = require("properties-reader");
 const path = require("path");
 
 async function updateProperty(properties, propertiesFile, value) {
@@ -16,7 +16,12 @@ async function updateProperty(properties, propertiesFile, value) {
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const propertiesFile = path.join(__dirname, "custom_messages.properties");
-    const properties = propertiesReader(propertiesFile, "utf-8", {writer: { saveSections: false }});
+    const properties = propertiesReader({
+        propertiesFile,
+        encoding: "utf-8",
+        allowDuplicateSections: true,
+        saveSections: false
+    });
     try {
         await cas.log(`Loading properties file ${propertiesFile}`);
         const page = await cas.newPage(browser);
