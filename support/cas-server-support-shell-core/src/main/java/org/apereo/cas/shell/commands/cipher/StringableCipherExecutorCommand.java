@@ -58,20 +58,20 @@ public class StringableCipherExecutorCommand implements CasShellCommand {
             defaultValue = StringUtils.EMPTY + EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE,
             description = "Encryption key size"
         )
-        final int secretKeyEncryptionSize,
+        final Integer secretKeyEncryptionSize,
 
         @Option(
             longName = "secretKeySigningSize",
             defaultValue = StringUtils.EMPTY + SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE,
             description = "Signing key size"
         )
-        final int secretKeySigningSize,
+        final Integer secretKeySigningSize,
 
         @Option(longName = "encryptionEnabled", defaultValue = "true", description = "Whether value should be encrypted")
-        final boolean encryptionEnabled,
+        final Boolean encryptionEnabled,
 
         @Option(longName = "signingEnabled", defaultValue = "true", description = "Whether value should be signed")
-        final boolean signingEnabled
+        final Boolean signingEnabled
     ) {
 
         var toEncode = value;
@@ -98,8 +98,8 @@ public class StringableCipherExecutorCommand implements CasShellCommand {
      */
     @Command(group = "Cipher", name = "generate-key", description = "Generate signing/encryption crypto keys for CAS settings")
     public String generateKey(
-        @Option(longName = "keySize", defaultValue = "256", description = "Key size")
-        final int keySize) {
+        @Option(longName = "key-size", defaultValue = "256", description = "Key size")
+        final Integer keySize) {
         val key = EncodingUtils.generateJsonWebKey(keySize);
         LOGGER.info(key);
         return key;
@@ -147,13 +147,13 @@ public class StringableCipherExecutorCommand implements CasShellCommand {
             defaultValue = StringUtils.EMPTY + SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE,
             description = "Signing key size"
         )
-        final int secretKeySigningSize,
+        final Integer secretKeySigningSize,
 
         @Option(longName = "encryptionEnabled", defaultValue = "true", description = "Whether value should be encrypted")
-        final boolean encryptionEnabled,
+        final Boolean encryptionEnabled,
 
         @Option(longName = "signingEnabled", defaultValue = "true", description = "Whether value should be signed")
-        final boolean signingEnabled) {
+        final Boolean signingEnabled) {
 
         var toEncode = value;
         if (value != null && new File(value).exists()) {
