@@ -99,6 +99,10 @@ exports.assertElementDoesNotExist = async (page, s) => {
     assert(element === null);
 };
 
+exports.refreshPage = async (page, url = "https://localhost:8443/cas/login") => {
+    await page.reload(url);
+};
+
 exports.newBrowser = async (options) => {
     let retry = 0;
     const maxRetries = 5;
