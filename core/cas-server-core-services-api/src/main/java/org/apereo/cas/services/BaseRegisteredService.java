@@ -3,7 +3,9 @@ package org.apereo.cas.services;
 import module java.base;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
+import org.apereo.cas.util.RegexUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -31,6 +33,7 @@ import org.springframework.data.annotation.Id;
 @Setter
 @EqualsAndHashCode(exclude = "id")
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonIgnoreProperties("regexServiceId")
 @Accessors(chain = true)
 public abstract class BaseRegisteredService implements RegisteredService {
 
@@ -48,7 +51,9 @@ public abstract class BaseRegisteredService implements RegisteredService {
      * The unique identifier for this service.
      */
     @RegularExpressionCapable
-    protected String serviceId;
+    private String serviceId;
+
+    private Pattern regexServiceId;
 
     private String name;
 
@@ -139,5 +144,15 @@ public abstract class BaseRegisteredService implements RegisteredService {
         getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.INTERNAL_SERVICE_DEFINITION.getPropertyName(),
             new DefaultRegisteredServiceProperty("true"));
         return this;
+    }
+
+    /**
+     * Set the service identifier and pre-compute the regex pattern (for performance reasons).
+     *
+     * @param serviceId the service identifier
+     */
+    public void setServiceId(final String serviceId) {
+        this.serviceId = serviceId;
+        this.regexServiceId = RegexUtils.createPattern(serviceId);
     }
 }
