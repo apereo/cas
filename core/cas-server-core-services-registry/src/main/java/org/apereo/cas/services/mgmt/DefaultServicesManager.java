@@ -30,9 +30,16 @@ public class DefaultServicesManager extends AbstractServicesManager {
     }
 
     private List<RegisteredService> collectServices() {
-        return getCacheableServicesStream()
-            .get()
-            .sorted(Comparator.naturalOrder())
-            .collect(Collectors.toList());
+        return lock.tryLock(() -> {
+            if (configurationContext.getCasProperties().getServiceRegistry().getCache().getCacheSize() == 0 && this.sortedRegisteredServices != null) {
+                return this.sortedRegisteredServices;
+            }
+
+            this.sortedRegisteredServices = getCacheableServicesStream()
+                    .get()
+                    .sorted(Comparator.naturalOrder())
+                    .collect(Collectors.toList());
+            return this.sortedRegisteredServices;
+        });
     }
 }
