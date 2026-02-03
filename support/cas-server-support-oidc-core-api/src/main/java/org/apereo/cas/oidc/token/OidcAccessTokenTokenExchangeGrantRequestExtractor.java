@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -48,13 +49,13 @@ public class OidcAccessTokenTokenExchangeGrantRequestExtractor extends AccessTok
         if (subjectTokenType == OAuth20TokenExchangeTypes.ID_TOKEN) {
             val userProfile = extractUserProfile(webContext).orElseThrow();
             val requestingClientId = userProfile.getId();
-            
+
             val clientIdInIdToken = OAuth20Utils.extractClientIdFromToken(subjectToken);
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientIdInIdToken);
             val claimSet = configurationContext.getIdTokenSigningAndEncryptionService().decode(subjectToken, Optional.ofNullable(registeredService));
             val service = configurationContext.getWebApplicationServiceServiceFactory().createService(claimSet.getIssuer());
             service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(requestingClientId));
-            
+
             userProfile.setId(claimSet.getSubject());
             claimSet.getClaimsMap().forEach(userProfile::addAttribute);
             val authentication = configurationContext.getAuthenticationBuilder().build(userProfile, registeredService, webContext, service);
@@ -106,5 +107,25 @@ public class OidcAccessTokenTokenExchangeGrantRequestExtractor extends AccessTok
             return ticketGrantingTicket.getAuthentication();
         }
         return super.getActorTokenAuthentication(webContext, extractedRequest);
+    }
+
+    @Override
+    protected Authentication buildActorTokenAuthentication(final WebContext webContext,
+                                                           final OAuth20TokenExchangeTypes actorTokenType,
+                                                           final String actorToken) throws Throwable {
+        val configurationContext = getConfigurationContext().getObject();
+        if (actorTokenType == OAuth20TokenExchangeTypes.ID_TOKEN) {
+            val userProfile = extractUserProfile(webContext).orElseThrow();
+            val clientIdInIdToken = OAuth20Utils.extractClientIdFromToken(actorToken);
+            val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientIdInIdToken);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
+            val claimSet = configurationContext.getIdTokenSigningAndEncryptionService().decode(actorToken, Optional.ofNullable(registeredService));
+            val service = Objects.requireNonNull(configurationContext.getWebApplicationServiceServiceFactory().createService(claimSet.getIssuer()));
+            service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(clientIdInIdToken));
+            userProfile.setId(claimSet.getSubject());
+            claimSet.getClaimsMap().forEach(userProfile::addAttribute);
+            return configurationContext.getAuthenticationBuilder().build(userProfile, Objects.requireNonNull(registeredService), webContext, service);
+        }
+        return super.buildActorTokenAuthentication(webContext, actorTokenType, actorToken);
     }
 }

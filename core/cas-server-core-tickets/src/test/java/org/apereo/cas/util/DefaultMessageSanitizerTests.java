@@ -80,5 +80,8 @@ class DefaultMessageSanitizerTests {
 
         results = messageSanitizer.sanitize("found a ,clientSecret = p@$$wordSecret...");
         assertTrue(results.matches(".+,clientSecret = \\*\\*\\*\\*\\*\\*\\*\\*.*\\.\\.\\."));
+
+        results = messageSanitizer.sanitize("'password' -> array<String>['Mellon']");
+        assertTrue(results.matches("'password' -\\> array\\<String\\>\\['.*'\\]"));
     }
 }

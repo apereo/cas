@@ -107,33 +107,7 @@
         <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
         <script type="text/javascript" th:src="@{#{webjars.dataTables.jqueryui.js}}"></script>
 
-
-
-        <div id="palantirSettingsDialog" title="Palantir Settings" class="hide">
-            <form id="palantirSettingsForm">
-                <section class="cas-field form-group my-3 mdc-input-group d-flex">
-                    <div id="palantirSettingsPanel"
-                         class="mdc-input-group-field mdc-input-group-field-append w-100">
-
-                        <label for="palantirRefreshInterval">
-                            Refresh Interval:
-                            <select id="palantirRefreshInterval">
-                                <option value="10">Every 10 Seconds</option>
-                                <option value="30">Every 30 Seconds</option>
-                                <option value="60">Every Minute</option>
-                                <option value="300">Every 5 Minutes</option>
-                                <option value="1500">Every 15 Minutes</option>
-                            </select>
-                        </label>
-                    </div>
-                </section>
-
-                <hr>
-                <h3>Shortcuts & Key Bindings</h3>
-                <p/>
-                <div id="palantirShortcutsPanel" class="grid-2" />
-            </form>
-        </div>
+        <div th:replace="~{fragments/palantir/settingspanel :: main}"/>
     </div>
 </main>
 </body>
