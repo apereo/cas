@@ -39,13 +39,19 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
     @Override
     public LogoutRedirectionResponse handle(final HttpServletRequest request, final HttpServletResponse response) {
         val logoutResponse = LogoutRedirectionResponse.builder();
+
+        final String redirectUrl;
+        val authorizedRedirectUrlFromRequest = WebUtils.getLogoutRedirectUrl(request, String.class);
+        if (StringUtils.isNotBlank(authorizedRedirectUrlFromRequest)) {
+            redirectUrl = authorizedRedirectUrlFromRequest;
+        } else {
+            redirectUrl = casProperties.getView().getDefaultRedirectUrl();
+        }
+
         Optional.ofNullable(argumentExtractor.extractService(request))
-            .or(() -> {
-                val redirectUrl = casProperties.getView().getDefaultRedirectUrl();
-                return FunctionUtils.doIf(StringUtils.isNotBlank(redirectUrl),
+            .or(() -> FunctionUtils.doIf(StringUtils.isNotBlank(redirectUrl),
                     () -> Optional.ofNullable(serviceFactory.createService(redirectUrl)),
-                    Optional::<WebApplicationService>empty).get();
-            })
+                    Optional::<WebApplicationService>empty).get())
             .filter(service -> singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(service, Optional.of(request), Optional.of(response)))
             .filter(service -> {
                 val registeredService = servicesManager.findServiceBy(service);
@@ -62,7 +68,6 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
                                  + "Ensure the service is registered with CAS and is enabled to allow access", service);
                 }
             }, () -> {
-                val authorizedRedirectUrlFromRequest = WebUtils.getLogoutRedirectUrl(request, String.class);
                 if (StringUtils.isNotBlank(authorizedRedirectUrlFromRequest)) {
                     logoutResponse.logoutRedirectUrl(Optional.of(authorizedRedirectUrlFromRequest));
                 }
