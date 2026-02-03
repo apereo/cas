@@ -26,6 +26,6 @@ public class FullRegexRegisteredServiceMatchingStrategy implements RegisteredSer
     @Override
     public boolean matches(final RegisteredService registeredService, final String serviceId) {
         return RegexUtils.createPattern(registeredService.getServiceId())
-                .matcher(serviceId).matches();
+            .matcher(serviceId).matches();
     }
 }
