@@ -34,21 +34,22 @@ public class DefaultServicesManager extends AbstractServicesManager {
     private @Nullable List<RegisteredService> collectServices() {
         val cacheEnabled = configurationContext.getCasProperties().getServiceRegistry().getCache().getCacheSize() > 0;
         if (cacheEnabled) {
-            return getCacheableServicesStream()
-                .get()
-                .sorted(Comparator.naturalOrder())
-                .collect(Collectors.toList());
+            return fetchServicesFromCache();
         }
         return lock.tryLock(() -> {
             if (this.sortedRegisteredServices != null) {
                 return this.sortedRegisteredServices;
             }
 
-            this.sortedRegisteredServices = getCacheableServicesStream()
-                .get()
-                .sorted(Comparator.naturalOrder())
-                .collect(Collectors.toList());
+            this.sortedRegisteredServices = fetchServicesFromCache();
             return this.sortedRegisteredServices;
         });
+    }
+
+    private List<RegisteredService> fetchServicesFromCache() {
+        return getCacheableServicesStream()
+            .get()
+            .sorted(Comparator.naturalOrder())
+            .collect(Collectors.toList());
     }
 }
