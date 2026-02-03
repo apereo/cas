@@ -2,7 +2,6 @@ const assert = require("assert");
 const cas = require("../../cas.js");
 
 const pgtUrl = "http://localhost:56789/cas";
-const REQUEST_BASKET_AUTHZ_TOKEN = "SV00cPIKRdWjGkN1vkbEbPdhtvV5vIJ0ajygcdnZVBgl";
 
 async function proxyValidateRequest(service, ticket, pgtCallback = pgtUrl, format = "JSON") {
     let url = `https://localhost:8443/cas/p3/proxyValidate?service=${service}&ticket=${ticket}&format=${format}`;
@@ -29,7 +28,7 @@ async function requestProxyTicket(service, ticket) {
             throw err;
         }, {
             "Content-Type": "application/json",
-            "Authorization": REQUEST_BASKET_AUTHZ_TOKEN
+            "Authorization": process.env.REQUEST_BASKET_AUTHZ_TOKEN
         });
 
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -70,7 +69,7 @@ async function requestProxyTicket(service, ticket) {
             throw (error);
         }, {
             "Content-Type": "application/json",
-            "Authorization": REQUEST_BASKET_AUTHZ_TOKEN
+            "Authorization": process.env.REQUEST_BASKET_AUTHZ_TOKEN
         });
 
     await cas.sleep(1000);

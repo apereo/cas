@@ -111,7 +111,9 @@ async function initializeSystemOperations() {
 
             $("#downloadHeapDumpButton").off().on("click", () => {
                 $("#downloadHeapDumpButton").prop("disabled", true);
-                fetch(CasActuatorEndpoints.heapDump())
+                fetch(CasActuatorEndpoints.heapDump(), {
+                    credentials: 'include'
+                })
                     .then(response =>
                         response.blob().then(blob => {
                             const link = document.createElement("a");

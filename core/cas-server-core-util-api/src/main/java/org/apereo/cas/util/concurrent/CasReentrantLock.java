@@ -26,7 +26,7 @@ import org.jooq.lambda.fi.util.function.CheckedSupplier;
 public class CasReentrantLock {
     private static final int LOCK_TIMEOUT_SECONDS = 3;
 
-    private final ReentrantLock lock = new ReentrantLock(true);
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * Acquires the lock if it is not held by another thread within the given
@@ -38,7 +38,10 @@ public class CasReentrantLock {
     public boolean tryLock() {
         return FunctionUtils.doAndHandle(
             () -> lock.tryLock(LOCK_TIMEOUT_SECONDS, TimeUnit.SECONDS),
-            e -> false).get();
+            e -> {
+                Thread.currentThread().interrupt();
+                return false;
+            }).get();
     }
 
     /**

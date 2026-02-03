@@ -16,6 +16,10 @@ function hideBanner() {
     notyf.dismissAll();
 }
 
+function closeAllDialogs() {
+    $(".ui-dialog-content:visible").dialog("close");
+}
+
 function displayBanner(error) {
     let message = "";
     if (error.hasOwnProperty("status")) {
