@@ -48,7 +48,7 @@ public abstract class BaseRegisteredService implements RegisteredService {
      * The unique identifier for this service.
      */
     @RegularExpressionCapable
-    private String serviceId;
+    protected String serviceId;
 
     private String name;
 
