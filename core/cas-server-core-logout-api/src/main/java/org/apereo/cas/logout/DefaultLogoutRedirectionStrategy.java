@@ -39,39 +39,33 @@ public class DefaultLogoutRedirectionStrategy implements LogoutRedirectionStrate
     @Override
     public LogoutRedirectionResponse handle(final HttpServletRequest request, final HttpServletResponse response) {
         val logoutResponse = LogoutRedirectionResponse.builder();
-
-        final String redirectUrl;
-        val authorizedRedirectUrlFromRequest = WebUtils.getLogoutRedirectUrl(request, String.class);
-        if (StringUtils.isNotBlank(authorizedRedirectUrlFromRequest)) {
-            redirectUrl = authorizedRedirectUrlFromRequest;
+        val redirectUrlFromRequest = WebUtils.getLogoutRedirectUrl(request, String.class);
+        if (StringUtils.isNotBlank(redirectUrlFromRequest)) {
+            logoutResponse.logoutRedirectUrl(Optional.of(redirectUrlFromRequest));
         } else {
-            redirectUrl = casProperties.getView().getDefaultRedirectUrl();
-        }
-
-        Optional.ofNullable(argumentExtractor.extractService(request))
-            .or(() -> FunctionUtils.doIf(StringUtils.isNotBlank(redirectUrl),
+            val redirectUrl = casProperties.getView().getDefaultRedirectUrl();
+            Optional.ofNullable(argumentExtractor.extractService(request))
+                .or(() -> FunctionUtils.doIf(StringUtils.isNotBlank(redirectUrl),
                     () -> Optional.ofNullable(serviceFactory.createService(redirectUrl)),
                     Optional::<WebApplicationService>empty).get())
-            .filter(service -> singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(service, Optional.of(request), Optional.of(response)))
-            .filter(service -> {
-                val registeredService = servicesManager.findServiceBy(service);
-                return registeredService instanceof CasRegisteredService;
-            })
-            .ifPresentOrElse(service -> {
-                logoutResponse.service(Optional.of(service));
-                if (casProperties.getLogout().isFollowServiceRedirects()) {
-                    LOGGER.debug("Redirecting to logout URL identified by service [{}]", service);
-                    logoutResponse.logoutRedirectUrl(Optional.of(service.getOriginalUrl()));
-                } else {
-                    LOGGER.debug("Cannot redirect to [{}] given the service is unauthorized to use CAS, "
-                                 + "or following logout redirects is disabled in CAS settings. "
-                                 + "Ensure the service is registered with CAS and is enabled to allow access", service);
-                }
-            }, () -> {
-                if (StringUtils.isNotBlank(authorizedRedirectUrlFromRequest)) {
-                    logoutResponse.logoutRedirectUrl(Optional.of(authorizedRedirectUrlFromRequest));
-                }
-            });
+                .filter(service -> singleLogoutServiceLogoutUrlBuilder.isServiceAuthorized(service, Optional.of(request), Optional.of(response)))
+                .filter(service -> {
+                    val registeredService = servicesManager.findServiceBy(service);
+                    return registeredService instanceof CasRegisteredService;
+                })
+                .ifPresent(
+                    service -> {
+                        logoutResponse.service(Optional.of(service));
+                        if (casProperties.getLogout().isFollowServiceRedirects()) {
+                            LOGGER.debug("Redirecting to logout URL identified by service [{}]", service);
+                            logoutResponse.logoutRedirectUrl(Optional.of(service.getOriginalUrl()));
+                        } else {
+                            LOGGER.debug("Cannot redirect to [{}] given the service is unauthorized to use CAS, "
+                                + "or following logout redirects is disabled in CAS settings. "
+                                + "Ensure the service is registered with CAS and is enabled to allow access", service);
+                        }
+                    });
+        }
         return logoutResponse.build();
     }
 }
