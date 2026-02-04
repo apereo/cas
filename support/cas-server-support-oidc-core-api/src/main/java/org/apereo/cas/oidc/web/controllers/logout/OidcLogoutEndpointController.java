@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.web.controllers.logout;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutUrl;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
@@ -45,14 +46,18 @@ import java.util.stream.Collectors;
 @Tag(name = "OpenID Connect")
 public class OidcLogoutEndpointController extends BaseOidcController {
 
+    private final CasConfigurationProperties casProperties;
+
     private final UrlValidator urlValidator;
 
     private final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher;
 
-    public OidcLogoutEndpointController(final OidcConfigurationContext context,
+    public OidcLogoutEndpointController(final CasConfigurationProperties casProperties,
+                                        final OidcConfigurationContext context,
                                         final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher,
                                         final UrlValidator urlValidator) {
         super(context);
+        this.casProperties = casProperties;
         this.urlValidator = urlValidator;
         this.postLogoutRedirectUrlMatcher = postLogoutRedirectUrlMatcher;
     }
@@ -186,8 +191,18 @@ public class OidcLogoutEndpointController extends BaseOidcController {
             state.ifPresent(st -> builder.queryParam(OAuth20Constants.STATE, st));
             clientId.ifPresent(id -> builder.queryParam(OAuth20Constants.CLIENT_ID, id));
             val logoutUrl = builder.build().toUriString();
-            LOGGER.debug("Final logout redirect URL is [{}]", logoutUrl);
-            WebUtils.putLogoutRedirectUrl(request, logoutUrl);
+
+            // Redirect through the callbackAuthorize endpoint, to prevent custom URL schemes from being interpreted as
+            // relative paths. Otherwise, redirects intended for, e.g., custom://post_logout_redirect_uri would
+            // instead be redirected to https://localhost:8443/cas/custom://post_logout_redirect_uri.
+            val finalBuilder = UriComponentsBuilder.fromUriString(
+                    OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
+            finalBuilder.queryParam("redirect_uri", logoutUrl);
+            clientId.ifPresent(id -> finalBuilder.queryParam(OAuth20Constants.CLIENT_ID, id));
+            val finalUrl = finalBuilder.encode().build().toUriString();
+
+            LOGGER.error("Final logout redirect URL is [{}]", finalUrl);
+            WebUtils.putLogoutRedirectUrl(request, finalUrl);
         });
         request.setAttribute("status", HttpStatus.PERMANENT_REDIRECT);
         request.getServletContext()
