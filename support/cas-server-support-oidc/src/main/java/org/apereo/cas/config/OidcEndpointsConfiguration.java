@@ -351,13 +351,14 @@ class OidcEndpointsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcLogoutEndpointController")
         public OidcLogoutEndpointController oidcLogoutEndpointController(
+            final CasConfigurationProperties casProperties,
             @Qualifier(OidcPostLogoutRedirectUrlMatcher.BEAN_NAME_POST_LOGOUT_REDIRECT_URL_MATCHER)
             final OidcPostLogoutRedirectUrlMatcher postLogoutRedirectUrlMatcher,
             @Qualifier(UrlValidator.BEAN_NAME)
             final UrlValidator urlValidator,
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
-            return new OidcLogoutEndpointController(oidcConfigurationContext,
+            return new OidcLogoutEndpointController(casProperties, oidcConfigurationContext,
                 postLogoutRedirectUrlMatcher, urlValidator);
         }
 
