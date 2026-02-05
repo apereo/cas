@@ -5,6 +5,7 @@ import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
+import lombok.val;
 
 /**
  * Default implementation of the {@link ServicesManager} interface.
@@ -30,9 +31,28 @@ public class DefaultServicesManager extends AbstractServicesManager {
     }
 
     private List<RegisteredService> collectServices() {
-        return getCacheableServicesStream()
-            .get()
-            .sorted(Comparator.naturalOrder())
-            .collect(Collectors.toList());
+        val cacheEnabled = configurationContext.getCasProperties().getServiceRegistry().getCache().getCacheSize() > 0;
+        if (cacheEnabled) {
+
+            return getCacheableServicesStream()
+                    .get()
+                    .sorted(Comparator.naturalOrder())
+                    .collect(Collectors.toList());
+
+        } else {
+
+            return lock.tryLock(() -> {
+                if (this.sortedRegisteredServices != null) {
+                    return this.sortedRegisteredServices;
+                }
+
+                this.sortedRegisteredServices = getCacheableServicesStream()
+                        .get()
+                        .sorted(Comparator.naturalOrder())
+                        .collect(Collectors.toList());
+                return this.sortedRegisteredServices;
+            });
+
+        }
     }
 }
