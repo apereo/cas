@@ -14,21 +14,14 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.core.profile.CommonProfile;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -60,33 +53,14 @@ class OidcCibaControllerTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    @Autowired
-    @Qualifier("oidcCibaController")
-    protected OidcCibaController oidcCibaController;
-
-    private MockMvc mvc;
-
-    @BeforeEach
-    void setup() {
-        mvc = MockMvcBuilders
-            .webAppContextSetup(applicationContext)
-            .apply(springSecurity())
-            .defaultRequest(post("/")
-                .contextPath("/cas")
-                .header("Host", "sso.example.org")
-                .accept(MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN)
-                .contentType(MediaType.APPLICATION_JSON)
-            )
-            .build();
-    }
-
     @Test
     void verifyRequestWithoutScopes() throws Throwable {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CIBA.getType()));
         servicesManager.save(registeredService);
-        mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
+        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
+                .with(withHttpRequestProcessor())
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name()))
@@ -98,8 +72,9 @@ class OidcCibaControllerTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CIBA.getType()));
         servicesManager.save(registeredService);
-        mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
+        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
+                .with(withHttpRequestProcessor())
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
@@ -115,8 +90,9 @@ class OidcCibaControllerTests extends AbstractOidcTests {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
         registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CIBA.getType()));
         servicesManager.save(registeredService);
-        mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
+        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
+                .with(withHttpRequestProcessor())
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
@@ -128,8 +104,9 @@ class OidcCibaControllerTests extends AbstractOidcTests {
 
         registeredService.setBackchannelUserCodeParameterSupported(true);
         servicesManager.save(registeredService);
-        mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
+        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
+                .with(withHttpRequestProcessor())
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
@@ -145,8 +122,9 @@ class OidcCibaControllerTests extends AbstractOidcTests {
         registeredService.setBackchannelTokenDeliveryMode(OidcBackchannelTokenDeliveryModes.PUSH.getMode());
         registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CIBA.getType()));
         servicesManager.save(registeredService);
-        mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
+        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
+                .with(withHttpRequestProcessor())
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
@@ -164,8 +142,9 @@ class OidcCibaControllerTests extends AbstractOidcTests {
         registeredService.setBackchannelClientNotificationEndpoint("http://ciba.example.org");
 
         servicesManager.save(registeredService);
-        mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
+        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
+                .with(withHttpRequestProcessor())
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
@@ -198,8 +177,9 @@ class OidcCibaControllerTests extends AbstractOidcTests {
             .build();
         val idTokenHint = oidcIdTokenGenerator.generate(idTokenContext).token();
 
-        mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
+        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
+                .with(withHttpRequestProcessor())
                 .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
@@ -221,8 +201,9 @@ class OidcCibaControllerTests extends AbstractOidcTests {
             registeredService.setGenerateRefreshToken(true);
             servicesManager.save(registeredService);
             val userCode = UUID.randomUUID().toString();
-            var response = mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
+            var response = mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                     .secure(true)
+                    .with(withHttpRequestProcessor())
                     .header(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                         registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                     .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
@@ -242,7 +223,9 @@ class OidcCibaControllerTests extends AbstractOidcTests {
             Thread.sleep(3000);
 
             val verifyUrl = "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL + '/' + registeredService.getClientId() + '/' + authRequestId;
-            val result = mvc.perform(get(verifyUrl).secure(true))
+            val result = mockMvc.perform(get(verifyUrl)
+                    .secure(true)
+                    .with(withHttpRequestProcessor()))
                 .andExpect(status().isOk())
                 .andReturn();
             assertNotNull(result.getModelAndView());
@@ -255,8 +238,9 @@ class OidcCibaControllerTests extends AbstractOidcTests {
             webServer.start();
 
             val csrfToken = (CsrfToken) result.getRequest().getAttribute("_csrf");
-            mvc.perform(post(verifyUrl)
+            mockMvc.perform(post(verifyUrl)
                     .secure(true)
+                    .with(withHttpRequestProcessor())
                     .header(csrfToken.getHeaderName(), csrfToken.getToken())
                     .queryParam(csrfToken.getParameterName(), csrfToken.getToken())
                     .cookie(result.getResponse().getCookies())
@@ -264,8 +248,9 @@ class OidcCibaControllerTests extends AbstractOidcTests {
                 .andExpect(status().isBadRequest());
 
 
-            mvc.perform(post(verifyUrl)
+            mockMvc.perform(post(verifyUrl)
                     .secure(true)
+                    .with(withHttpRequestProcessor())
                     .header(csrfToken.getHeaderName(), csrfToken.getToken())
                     .queryParam(csrfToken.getParameterName(), csrfToken.getToken())
                     .queryParam("userCode", userCode)
@@ -277,8 +262,9 @@ class OidcCibaControllerTests extends AbstractOidcTests {
 
     @Test
     void verifyUnauthorizedRequest() throws Throwable {
-        mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
+        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
+                .with(withHttpRequestProcessor())
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
                 .queryParam(OidcConstants.CLIENT_NOTIFICATION_TOKEN, UUID.randomUUID().toString())

@@ -3,19 +3,15 @@ package org.apereo.cas.oidc.web.controllers.dynareg;
 import module java.base;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link OidcInitialAccessTokenControllerTests}.
@@ -29,16 +25,12 @@ class OidcInitialAccessTokenControllerTests {
     @TestPropertySource(properties = "cas.authn.oidc.registration.dynamic-client-registration-mode=OPEN")
     @Nested
     class OpenRegistrationTests extends AbstractOidcTests {
-        @Autowired
-        @Qualifier("oidcInitialAccessTokenController")
-        protected OidcInitialAccessTokenController controller;
 
         @Test
-        void verifyNotAllowed() {
-            val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
-            val response = new MockHttpServletResponse();
-            val entity = controller.handleRequestInternal(request, response);
-            assertEquals(HttpStatus.NOT_ACCEPTABLE, entity.getStatus());
+        void verifyNotAllowed() throws Throwable {
+            mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL)
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isNotAcceptable());
         }
     }
 
@@ -49,45 +41,44 @@ class OidcInitialAccessTokenControllerTests {
     })
     @Nested
     class ProtectedRegistrationTests extends AbstractOidcTests {
-        @Autowired
-        @Qualifier("oidcInitialAccessTokenController")
-        protected OidcInitialAccessTokenController controller;
 
         @Test
-        void verifyMismatchedEndpoint() {
-            val request = getHttpRequestForEndpoint("unknown/issuer");
-            request.setRequestURI("unknown/issuer");
-            val response = new MockHttpServletResponse();
-            request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("casuser:Mellon"));
-            val entity = controller.handleRequestInternal(request, response);
-            assertEquals(HttpStatus.BAD_REQUEST, entity.getStatus());
+        void verifyMismatchedEndpoint() throws Throwable {
+            val credentials = EncodingUtils.encodeBase64("casuser:Mellon");
+            mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL)
+                    .with(withHttpRequestProcessor())
+                    .with(request -> {
+                        request.setServerName("unknown.issuer.org");
+                        return request;
+                    })
+                    .header(HttpHeaders.AUTHORIZATION, "Basic " + credentials))
+                .andExpect(status().isBadRequest());
         }
 
         @Test
-        void verifyPasses() {
-            val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
-            val response = new MockHttpServletResponse();
-            request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("casuser:Mellon"));
-            val entity = controller.handleRequestInternal(request, response);
-            assertEquals(HttpStatus.OK, entity.getStatus());
-            assertTrue(entity.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
+        void verifyPasses() throws Throwable {
+            val credentials = EncodingUtils.encodeBase64("casuser:Mellon");
+            mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL)
+                    .with(withHttpRequestProcessor())
+                    .header(HttpHeaders.AUTHORIZATION, "Basic " + credentials))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.access_token").exists());
         }
 
         @Test
-        void verifyAuthFails() {
-            val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
-            val response = new MockHttpServletResponse();
-            request.addHeader(HttpHeaders.AUTHORIZATION, "Basic " + EncodingUtils.encodeBase64("casuser:unknown"));
-            val entity = controller.handleRequestInternal(request, response);
-            assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatus());
+        void verifyAuthFails() throws Throwable {
+            val credentials = EncodingUtils.encodeBase64("casuser:unknown");
+            mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL)
+                    .with(withHttpRequestProcessor())
+                    .header(HttpHeaders.AUTHORIZATION, "Basic " + credentials))
+                .andExpect(status().isUnauthorized());
         }
 
         @Test
-        void verifyAuthMissing() {
-            val request = getHttpRequestForEndpoint(OidcConstants.REGISTRATION_INITIAL_TOKEN_URL);
-            val response = new MockHttpServletResponse();
-            val entity = controller.handleRequestInternal(request, response);
-            assertEquals(HttpStatus.UNAUTHORIZED, entity.getStatus());
+        void verifyAuthMissing() throws Throwable {
+            mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL)
+                    .with(withHttpRequestProcessor()))
+                .andExpect(status().isUnauthorized());
         }
     }
 }

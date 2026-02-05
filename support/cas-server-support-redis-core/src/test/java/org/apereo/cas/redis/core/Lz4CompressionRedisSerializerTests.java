@@ -1,23 +1,11 @@
 package org.apereo.cas.redis.core;
 
 import module java.base;
-import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
-import org.junit.jupiter.api.Tag;
-
-import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.test.context.TestPropertySource;
-
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.awaitility.Awaitility.*;
 
 /**
  * This is {@link Lz4CompressionRedisSerializerTests}.

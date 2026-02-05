@@ -1,24 +1,14 @@
 package org.apereo.cas.oidc.web.controllers.profile;
 
 import module java.base;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.support.oauth.OAuth20GrantTypes;
-import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.mock.web.MockHttpServletResponse;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link OidcUserProfileEndpointControllerTests}.
@@ -28,47 +18,58 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDCWeb")
 class OidcUserProfileEndpointControllerTests extends AbstractOidcTests {
-    @Autowired
-    @Qualifier("oidcProfileController")
-    protected OidcUserProfileEndpointController oidcUserProfileEndpointController;
-
-    @Autowired
-    @Qualifier("defaultAccessTokenFactory")
-    protected OAuth20AccessTokenFactory accessTokenFactory;
 
     @Test
     void verifyBadEndpointRequest() throws Throwable {
-        val request = getHttpRequestForEndpoint("unknown/issuer");
-        request.setRequestURI("unknown/issuer");
-        val response = new MockHttpServletResponse();
-        val mv = oidcUserProfileEndpointController.handlePostRequest(request, response);
-        assertEquals(HttpStatus.BAD_REQUEST, mv.getStatusCode());
+        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.PROFILE_URL)
+                .with(withHttpRequestProcessor())
+                .with(request -> {
+                    request.setServerName("unknown.issuer.org");
+                    return request;
+                }))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
-    void verify() throws Throwable {
-        val map = new HashMap<String, List<Object>>();
-        map.put("cn", List.of("cas"));
+    void verifyGetRequest() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
 
-        val principal = CoreAuthenticationTestUtils.getPrincipal(UUID.randomUUID().toString(), map);
-        val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
-        val code = addCode(principal, getOidcRegisteredService());
-        val accessToken = accessTokenFactory.create(RegisteredServiceTestUtils.getService(), authentication,
-            new MockTicketGrantingTicket(principal.getId()), new ArrayList<>(),
-            code.getId(), code.getClientId(), new HashMap<>(),
-            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+        val accessToken = getAccessToken(registeredService.getClientId());
         ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
         ticketRegistry.addTicket(accessToken);
 
-        val mockRequest = getHttpRequestForEndpoint(OidcConstants.PROFILE_URL);
-        mockRequest.setMethod(HttpMethod.GET.name());
-        mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
-        val mockResponse = new MockHttpServletResponse();
+        mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.PROFILE_URL)
+                .with(withHttpRequestProcessor())
+                .param(OAuth20Constants.ACCESS_TOKEN, accessToken.getId()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.sub").exists());
+    }
 
-        var entity = oidcUserProfileEndpointController.handleGetRequest(mockRequest, mockResponse);
-        assertEquals(HttpStatus.OK, entity.getStatusCode());
+    @Test
+    void verifyPostRequest() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(registeredService);
 
-        entity = oidcUserProfileEndpointController.handlePostRequest(mockRequest, mockResponse);
-        assertEquals(HttpStatus.OK, entity.getStatusCode());
+        val accessToken = getAccessToken(registeredService.getClientId());
+        ticketRegistry.addTicket(accessToken.getTicketGrantingTicket());
+        ticketRegistry.addTicket(accessToken);
+
+        mockMvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.PROFILE_URL)
+                .with(withHttpRequestProcessor())
+                .param(OAuth20Constants.ACCESS_TOKEN, accessToken.getId()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.sub").exists());
+    }
+
+    @Test
+    void verifyWebFingerEndpoint() throws Throwable {
+        mockMvc.perform(get("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.WELL_KNOWN_URL + "/webfinger")
+                .queryParam("resource", "acct:casuser@sso.example.org")
+                .queryParam("rel", OidcConstants.WEBFINGER_REL)
+                .with(withHttpRequestProcessor()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.subject").value("acct:casuser@sso.example.org"))
+            .andExpect(jsonPath("$.links").isArray());
     }
 }
