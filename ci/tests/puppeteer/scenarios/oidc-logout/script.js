@@ -25,8 +25,8 @@ async function verifyLogoutWithIdTokenHint(clientId, casService, page) {
 
     if (casService.startsWith("custom://")) {
         const customSchemeRequests = [];
-        page.on('request', req => {
-            if (req.url().startsWith('custom://')) {
+        page.on("request", (req) => {
+            if (req.url().startsWith("custom://")) {
                 customSchemeRequests.push(req.url());
             }
         });
@@ -36,7 +36,7 @@ async function verifyLogoutWithIdTokenHint(clientId, casService, page) {
         assert(customSchemeRequests.length > 0);
         const finalUrl = customSchemeRequests[0];
         await cas.log(finalUrl);
-        assert(finalUrl.startsWith(`custom://localhost:9859/anything/customissuer`));
+        assert(finalUrl.startsWith("custom://localhost:9859/anything/customissuer"));
         assert(finalUrl.includes("state=1234567890"));
         assert(finalUrl.includes(`client_id=${clientId}`));
     } else {

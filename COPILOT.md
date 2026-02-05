@@ -67,7 +67,7 @@ Include tests for bug fixes and behavior changes.
 - Prefer Lombok where appropriate
 - Follow Checkstyle & SpotBugs expectations
 - Document public APIs and configuration properties
-- Make sure there are no unsed imports.
+- Make sure there are no unused imports.
 - Follow existing patterns for similar features
 - Use Java 25+ features where appropriate
 ---

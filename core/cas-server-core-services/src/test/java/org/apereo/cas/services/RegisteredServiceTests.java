@@ -11,7 +11,6 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
