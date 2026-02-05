@@ -1,10 +1,13 @@
 
 const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.gotoLogin(page);
+    const service = "https://localhost:9859/anything/cas";
+    
+    await cas.gotoLogin(page, service);
     await cas.loginWith(page, "duobypass", "Mellon");
     await cas.logPage(page);
     await cas.screenshot(page);
@@ -21,7 +24,13 @@ const cas = require("../../cas.js");
 
     await cas.assertInvisibility(page, "#cancel");
     await cas.submitForm(page, "#fm1");
+    await cas.sleep(2000);
+    await cas.logPage(page);
+    const ticket = await cas.assertTicketParameter(page);
+    const json = await cas.validateTicket(service, ticket);
+    const authenticationSuccess = json.serviceResponse.authenticationSuccess;
+    assert(authenticationSuccess.user.includes("duobypass"));
+    await cas.gotoLogin(page);
     await cas.assertCookie(page);
-    await cas.sleep(1000);
     await cas.closeBrowser(browser);
 })();
