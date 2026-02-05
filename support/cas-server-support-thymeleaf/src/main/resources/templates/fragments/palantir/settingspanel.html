@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+   <div id="palantirSettingsDialog" title="Palantir Settings" class="hide">
+        <form id="palantirSettingsForm">
+            <section class="cas-field form-group my-3 mdc-input-group d-flex">
+                <div id="palantirSettingsPanel"
+                     class="mdc-input-group-field mdc-input-group-field-append w-100">
+
+                    <label for="palantirRefreshInterval">
+                        Refresh Interval:
+                        <select id="palantirRefreshInterval">
+                            <option value="10">Every 10 Seconds</option>
+                            <option value="30">Every 30 Seconds</option>
+                            <option value="60">Every Minute</option>
+                            <option value="300">Every 5 Minutes</option>
+                            <option value="1500">Every 15 Minutes</option>
+                        </select>
+                    </label>
+                </div>
+            </section>
+
+            <hr>
+            <h3>Shortcuts & Key Bindings</h3>
+            <p/>
+            <div id="palantirShortcutsPanel" class="grid-2"></div>
+
+            <hr>
+            <h3 class="mt-2 mb-2">Actuator Endpoints</h3>
+            <div>
+                <table id="palantirActuatorsTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Status</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Endpoint</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+            </div>
+        </form>
+   </div>
+</span>
+</body>
+</html>

@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Default implementation of the {@link ServicesManager} interface.
@@ -21,38 +22,34 @@ public class DefaultServicesManager extends AbstractServicesManager {
     }
 
     @Override
-    public Collection<RegisteredService> getServicesForDomain(final String domain) {
+    public @Nullable Collection<RegisteredService> getServicesForDomain(final String domain) {
         return collectServices();
     }
 
     @Override
-    protected Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
+    protected @Nullable Collection<RegisteredService> getCandidateServicesToMatch(final String serviceId) {
         return collectServices();
     }
 
-    private List<RegisteredService> collectServices() {
+    private @Nullable List<RegisteredService> collectServices() {
         val cacheEnabled = configurationContext.getCasProperties().getServiceRegistry().getCache().getCacheSize() > 0;
         if (cacheEnabled) {
-
-            return getCacheableServicesStream()
-                    .get()
-                    .sorted(Comparator.naturalOrder())
-                    .collect(Collectors.toList());
-
-        } else {
-
-            return lock.tryLock(() -> {
-                if (this.sortedRegisteredServices != null) {
-                    return this.sortedRegisteredServices;
-                }
-
-                this.sortedRegisteredServices = getCacheableServicesStream()
-                        .get()
-                        .sorted(Comparator.naturalOrder())
-                        .collect(Collectors.toList());
-                return this.sortedRegisteredServices;
-            });
-
+            return fetchServicesFromCache();
         }
+        return lock.tryLock(() -> {
+            if (this.sortedRegisteredServices != null) {
+                return this.sortedRegisteredServices;
+            }
+
+            this.sortedRegisteredServices = fetchServicesFromCache();
+            return this.sortedRegisteredServices;
+        });
+    }
+
+    private List<RegisteredService> fetchServicesFromCache() {
+        return getCacheableServicesStream()
+            .get()
+            .sorted(Comparator.naturalOrder())
+            .collect(Collectors.toList());
     }
 }
