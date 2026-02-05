@@ -35,7 +35,9 @@ import org.springframework.context.ApplicationEvent;
 public abstract class AbstractServicesManager implements IndexableServicesManager {
     protected final ServicesManagerConfigurationContext configurationContext;
 
-    private final CasReentrantLock lock = new CasReentrantLock();
+    protected final CasReentrantLock lock = new CasReentrantLock();
+
+    protected List<RegisteredService> sortedRegisteredServices;
 
     protected AbstractServicesManager(final ServicesManagerConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
@@ -128,6 +130,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
                 publishEvent(new CasRegisteredServicePreDeleteEvent(this, service, clientInfo));
                 configurationContext.getServiceRegistry().delete(service);
                 configurationContext.getServicesCache().invalidate(service.getId());
+                sortedRegisteredServices = null;
                 deleteInternal(service);
                 publishEvent(new CasRegisteredServiceDeletedEvent(this, service, clientInfo));
             }
@@ -357,6 +360,8 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
         servicesCache.invalidateAll();
         servicesCache.putAll(servicesMap);
 
+        sortedRegisteredServices = null;
+
         configurationContext.getRegisteredServiceIndexService().clear();
         configurationContext.getRegisteredServiceIndexService().indexServices(servicesMap.values());
         return servicesCache.asMap();
@@ -413,6 +418,8 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     private void cacheRegisteredService(final RegisteredService service) {
         configurationContext.getServicesCache().put(service.getId(), service);
         configurationContext.getRegisteredServiceIndexService().indexService(service);
+
+        sortedRegisteredServices = null;
     }
 
     private void evaluateExpiredServiceDefinitions() {
