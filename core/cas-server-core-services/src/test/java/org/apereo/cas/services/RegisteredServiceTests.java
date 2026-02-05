@@ -66,13 +66,6 @@ class RegisteredServiceTests {
         private static final long serialVersionUID = 1L;
 
         @Override
-        @CanIgnoreReturnValue
-        public BaseRegisteredService setServiceId(final String id) {
-            serviceId = id;
-            return this;
-        }
-
-        @Override
         public boolean matches(final Service service) {
             return true;
         }

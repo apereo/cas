@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import module java.base;
-import org.apereo.cas.util.RegexUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -25,7 +24,6 @@ public class FullRegexRegisteredServiceMatchingStrategy implements RegisteredSer
     
     @Override
     public boolean matches(final RegisteredService registeredService, final String serviceId) {
-        return RegexUtils.createPattern(registeredService.getServiceId())
-            .matcher(serviceId).matches();
+        return registeredService.compileServiceIdPattern().matcher(serviceId).matches();
     }
 }
