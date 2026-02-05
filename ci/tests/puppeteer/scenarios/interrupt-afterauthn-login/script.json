@@ -1,6 +1,7 @@
 {
   "dependencies": "duo,interrupt-webflow",
   "conditions": {
+    "docker": "true",
     "env": "DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST,DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY"
   },
   "properties": [
@@ -11,7 +12,7 @@
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",
 
     "--cas.authn.accept.users=duobypass::Mellon",
-    "--cas.authn.mfa.duo[0].account-status-enabled=false",
+    "--cas.authn.mfa.duo[0].account-status-enabled=true",
 
     "--cas.authn.mfa.duo[0].duo-secret-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_SKEY']}",
     "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",
@@ -24,6 +25,10 @@
     "--management.endpoints.web.exposure.include=duoAdmin",
     "--management.endpoints.access.default=UNRESTRICTED",
 
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    
     "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
