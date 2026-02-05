@@ -1,0 +1,53 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "name": "Sample",
+  "id": 1,
+  "serviceId": "^https://localhost:9859/anything/.+",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "bypassApprovalPrompt": true,
+  "renewRefreshToken": true,
+  "scopes" : [ "java.util.HashSet", ["openid"]],
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "authorization_code",
+      "refresh_token",
+      "client_credentials",
+      "urn:ietf:params:oauth:grant-type:token-exchange"
+    ]
+  ],
+  "generateRefreshToken": true,
+  "supportedResponseTypes": [
+    "java.util.HashSet",
+    [
+      "code",
+      "id_token token"
+    ]
+  ],
+  "tokenExchangePolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
+    "allowedActorTokenTypes": [
+      "java.util.HashSet",
+      [
+        "urn:ietf:params:oauth:token-type:access_token",
+        "urn:ietf:params:oauth:token-type:jwt",
+        "urn:ietf:params:oauth:token-type:id_token"
+      ]
+    ]
+  },
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes": [
+      "java.util.ArrayList",
+      [
+        "firstName",
+        "lastName",
+        "mail",
+        "displayName",
+        "roles",
+        "lastLogon"
+      ]
+    ]
+  }
+}

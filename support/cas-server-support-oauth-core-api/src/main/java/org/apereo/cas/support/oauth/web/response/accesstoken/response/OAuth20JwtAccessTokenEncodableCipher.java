@@ -105,6 +105,10 @@ class OAuth20JwtAccessTokenEncodableCipher implements EncodableCipher<String, St
             attributesToRelease.put(OAuth20Constants.DPOP_CONFIRMATION, originalAttributes.get(OAuth20Constants.DPOP_CONFIRMATION));
         }
 
+        if (originalAttributes.containsKey(OAuth20Constants.CLAIM_ACT)) {
+            attributesToRelease.put(OAuth20Constants.CLAIM_ACT, originalAttributes.get(OAuth20Constants.CLAIM_ACT));
+        }
+
         if (originalAttributes.containsKey(OAuth20Constants.X509_CERTIFICATE_DIGEST)) {
             CollectionUtils.firstElement(originalAttributes.get(OAuth20Constants.X509_CERTIFICATE_DIGEST))
                 .ifPresent(conf -> {

@@ -1,0 +1,41 @@
+{
+  "dependencies": "reports,ldap",
+  "conditions": {
+    "docker": "true"
+  },
+  "environmentVariables": [
+    "CAS_LDAP_BIND_DN=cn=Directory Manager"
+  ],
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--management.endpoints.access.default=UNRESTRICTED",
+    "--management.endpoints.web.exposure.include=*",
+
+    "--cas.monitor.endpoints.endpoint.info.access=ROLE",
+    "--cas.monitor.endpoints.endpoint.info.required-roles=INFO",
+
+    "--cas.monitor.endpoints.endpoint.ssoSessions.access=ROLE",
+    "--cas.monitor.endpoints.endpoint.ssoSessions.required-roles=SSO",
+
+    "--cas.monitor.endpoints.endpoint.health.access=ROLE",
+    "--cas.monitor.endpoints.endpoint.health.required-roles=SSO,INFO",
+    
+    "--cas.monitor.endpoints.ldap.ldap-url=ldap://localhost:10389",
+    "--cas.monitor.endpoints.ldap.base-dn=ou=people,dc=example,dc=org",
+    "--cas.monitor.endpoints.ldap.search-filter=uid={user}",
+    "--cas.monitor.endpoints.ldap.bind-dn=cn=admin,dc=example,dc=org",
+    "--cas.monitor.endpoints.ldap.bind-credential=password",
+
+    "--cas.monitor.endpoints.ldap.ldap-authz.base-dn=ou=people,dc=example,dc=org",
+    "--cas.monitor.endpoints.ldap.ldap-authz.search-filter=uid={user}",
+    "--cas.monitor.endpoints.ldap.ldap-authz.group-filter=uid={uid}",
+    "--cas.monitor.endpoints.ldap.ldap-authz.group-base-dn=ou=people,dc=example,dc=org",
+    "--cas.monitor.endpoints.ldap.ldap-authz.group-attribute=description",
+    "--cas.monitor.endpoints.ldap.ldap-authz.group-prefix=ROLE_",
+
+    "--spring.security.user.roles=INFO,SSO"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

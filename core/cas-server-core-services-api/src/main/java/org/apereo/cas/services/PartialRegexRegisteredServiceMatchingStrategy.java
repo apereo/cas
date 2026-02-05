@@ -22,6 +22,6 @@ public class PartialRegexRegisteredServiceMatchingStrategy implements Registered
 
     @Override
     public boolean matches(final RegisteredService registeredService, final String serviceId) {
-        return ((BaseRegisteredService) registeredService).getPatternServiceId().matcher(serviceId).find();
+        return registeredService.compileServiceIdPattern().matcher(serviceId).find();
     }
 }
