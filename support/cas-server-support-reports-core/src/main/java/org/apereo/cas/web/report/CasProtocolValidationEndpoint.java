@@ -161,7 +161,7 @@ public class CasProtocolValidationEndpoint extends BaseCasRestActuatorEndpoint {
             Objects.requireNonNull(modelAndView.getView()).render(modelAndView.getModel(), requestWrapper, responseWrapper);
         } finally {
             val responseArray = responseWrapper.getContentAsByteArray();
-            val output = new String(responseArray, responseWrapper.getCharacterEncoding());
+            val output = new String(responseArray, Charset.forName(responseWrapper.getCharacterEncoding()));
             modelAndView.addObject("response", output);
             modelAndView.setView(new JacksonJsonView());
             modelAndView.setStatus(HttpStatus.OK);

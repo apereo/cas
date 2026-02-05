@@ -122,8 +122,8 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
                 ticketRegistry.deleteTicket(accessTokenTicket.getId());
             } else {
                 ticketRegistry.updateTicket(accessTokenTicket);
-                FunctionUtils.doAndHandle(_ -> {
-                    val tgt = ticketRegistry.getTicket(accessTokenTicket.getTicketGrantingTicket().getId(), TicketGrantingTicket.class);
+                FunctionUtils.doIfNull(accessTokenTicket.getTicketGrantingTicket(), ticket -> {
+                    val tgt = ticketRegistry.getTicket(ticket.getId(), TicketGrantingTicket.class);
                     ticketRegistry.updateTicket(tgt.update());
                 });
             }

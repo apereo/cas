@@ -45,7 +45,7 @@ function activateDashboardTab(idx) {
                     },
                     autoOpen: false,
                     modal: true,
-                    width: 600,
+                    width: 850,
                     height: "auto",
                     buttons: {
                         OK: function () {
@@ -276,7 +276,7 @@ function navigateToApplication(serviceIdToFind) {
 async function initializePalantirSession() {
     setInterval(async () => {
         const url = new URL(location.href);
-        const result = await fetch(`${url.pathname}/session`, { credentials: "same-origin" });
+        const result = await fetch(`${url.pathname}/session`, { credentials: "include" });
         if (result.status !== 200) {
             Swal.close();
             Swal.fire({

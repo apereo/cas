@@ -57,7 +57,6 @@ class OidcIdTokenGeneratorServiceTests {
 
     private static final String OIDC_CLAIM_PREFERRED_USERNAME = "preferred_username";
 
-
     private OAuth20AccessToken buildAccessToken(final TicketGrantingTicket tgt, final Set<String> scope) {
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getAuthentication()).thenReturn(tgt.getAuthentication());
@@ -355,7 +354,8 @@ class OidcIdTokenGeneratorServiceTests {
 
             val authentication = CoreAuthenticationTestUtils.getAuthentication(principal,
                 CollectionUtils.wrap(OAuth20Constants.STATE, List.of("some-state"),
-                    OAuth20Constants.NONCE, List.of("some-nonce")));
+                    OAuth20Constants.NONCE, List.of("some-nonce"),
+                    OAuth20Constants.CLAIM_ACT, List.of(Map.of("sub", "actor"))));
             val tgt = new MockTicketGrantingTicket(authentication);
             val callback = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
@@ -384,6 +384,7 @@ class OidcIdTokenGeneratorServiceTests {
             val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
             assertNotNull(claims);
             assertTrue(claims.hasClaim(OIDC_CLAIM_EMAIL));
+            assertTrue(claims.hasClaim(OAuth20Constants.CLAIM_ACT));
             assertEquals(authentication.getAuthenticationDate().toEpochSecond(), (long) claims.getClaimValue(OidcConstants.CLAIM_AUTH_TIME));
             assertTrue(claims.hasClaim(OIDC_CLAIM_NAME));
             assertTrue(claims.hasClaim(OIDC_CLAIM_PHONE_NUMBER));
