@@ -24,6 +24,6 @@ public class FullRegexRegisteredServiceMatchingStrategy implements RegisteredSer
     
     @Override
     public boolean matches(final RegisteredService registeredService, final String serviceId) {
-        return ((BaseRegisteredService) registeredService).getPatternServiceId().matcher(serviceId).matches();
+        return registeredService.compileServiceIdPattern().matcher(serviceId).matches();
     }
 }

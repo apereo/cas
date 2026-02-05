@@ -130,5 +130,16 @@ class DefaultLogoutRedirectionStrategyTests {
             assertFalse(response.getLogoutRedirectUrl().isEmpty());
             assertEquals("https://google.com", response.getLogoutRedirectUrl().get());
         }
+
+        @Test
+        void verifyRedirectToNonDefaultUrl() throws Throwable {
+            val context = getMockRequestContext();
+            servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("https://google.com"));
+            WebUtils.putLogoutRedirectUrl(context.getHttpServletRequest(), "https://google.com/search");
+            val response = defaultLogoutRedirectionStrategy.handle(context.getHttpServletRequest(),
+                    context.getHttpServletResponse());
+            assertFalse(response.getLogoutRedirectUrl().isEmpty());
+            assertEquals("https://google.com/search", response.getLogoutRedirectUrl().get());
+        }
     }
 }
