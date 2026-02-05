@@ -140,6 +140,13 @@ public interface RegisteredService extends RegisteredServiceDefinition, Comparab
     boolean matches(String serviceId);
 
     /**
+     * Compile service id pattern if necessary.
+     *
+     * @return the pattern
+     */
+    Pattern compileServiceIdPattern();
+
+    /**
      * Gets the attribute filtering policy to determine
      * how attributes are to be filtered and released for
      * this service.

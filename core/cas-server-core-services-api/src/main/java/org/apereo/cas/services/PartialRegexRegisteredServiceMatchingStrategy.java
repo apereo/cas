@@ -1,12 +1,10 @@
 package org.apereo.cas.services;
 
 import module java.base;
-import org.apereo.cas.util.RegexUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.val;
 
 /**
  * This is {@link PartialRegexRegisteredServiceMatchingStrategy}.
@@ -24,8 +22,6 @@ public class PartialRegexRegisteredServiceMatchingStrategy implements Registered
 
     @Override
     public boolean matches(final RegisteredService registeredService, final String serviceId) {
-        val pattern = RegexUtils.createPattern(registeredService.getServiceId());
-        return pattern.matcher(serviceId).find();
+        return registeredService.compileServiceIdPattern().matcher(serviceId).find();
     }
-
 }
