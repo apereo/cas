@@ -49,7 +49,8 @@ async function initializePalantir() {
                         initializeCasSpringWebflowOperations(),
                         initializeHotKeyOperations(),
                         restoreActiveTabs(),
-                        initializePalantirSession()
+                        initializePalantirSession(),
+                        initializePalantirActuatorsTable()
                     ]);
 
                     window.addEventListener("resize", updateNavigationSidebar, {passive: true});

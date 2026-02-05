@@ -12,18 +12,13 @@ import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.file.PathUtils;
-import org.apache.commons.io.file.StandardDeleteOption;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
@@ -41,29 +36,11 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
-
-    private static final ClassPathResource RESOURCE = new ClassPathResource("services");
-
+    
     private static final String SAML_SERVICE = "SAMLService";
 
     private static final String METADATA_LOCATION = "classpath:/metadata/idp-metadata.xml";
-
-    private static final String JSON_SERVICE_REGISTRY_FOLDER = "json-service-registry";
-
-    @BeforeAll
-    public static void prepTests() throws Exception {
-        val jsonFolder = new File(FileUtils.getTempDirectory(), JSON_SERVICE_REGISTRY_FOLDER);
-        if (jsonFolder.isDirectory()) {
-            FunctionUtils.doAndHandle(
-                _ -> PathUtils.deleteDirectory(jsonFolder.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
-            jsonFolder.delete();
-        }
-        if (!jsonFolder.mkdir()) {
-            throw new IOException("Unable to make json folder: " + jsonFolder.getName());
-        }
-        FileUtils.cleanDirectory(RESOURCE.getFile());
-    }
-
+    
     @Test
     void verifySavingSamlService() {
         val appCtx = new StaticApplicationContext();
@@ -74,7 +51,9 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
         registeredService.setServiceId("http://mmoayyed.unicon.net");
         registeredService.setMetadataLocation(METADATA_LOCATION);
 
-        val dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
+        val resource = new FileSystemResource(FileUtils.getTempDirectoryPath() + File.separator + "json-" + RandomUtils.nextLong());
+        resource.getFile().mkdirs();
+        val dao = new JsonServiceRegistry(resource, WatcherService.noOp(),
             appCtx, new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());
@@ -96,8 +75,9 @@ class SamlRegisteredServiceTests extends BaseSamlIdPConfigurationTests {
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
 
-        val dao = new JsonServiceRegistry(new FileSystemResource(FileUtils.getTempDirectoryPath()
-                                                                 + File.separator + "json-service-registry"), WatcherService.noOp(),
+        val resource = new FileSystemResource(FileUtils.getTempDirectoryPath() + File.separator + "json-" + RandomUtils.nextLong());
+        resource.getFile().mkdirs();
+        val dao = new JsonServiceRegistry(resource, WatcherService.noOp(),
             appCtx, new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy(),
             new ArrayList<>());

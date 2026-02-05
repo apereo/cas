@@ -17,6 +17,7 @@ bin/
 **/ignite/work/marshaller/
 **/.history
 *.orig
+*.har
 .idea/
 *.class
 .DS_Store
