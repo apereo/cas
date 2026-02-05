@@ -804,6 +804,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
         runArgs="${runArgs} --add-exports java.base/jdk.internal.ref=ALL-UNNAMED"
         runArgs="${runArgs} --add-opens java.base/java.lang=ALL-UNNAMED"
         runArgs="${runArgs} --add-opens java.base/sun.nio.ch=ALL-UNNAMED"
+        runArgs="${runArgs} --add-opens java.base/java.util.regex=ALL-UNNAMED"
         runArgs="${runArgs} --add-opens java.management/sun.management=ALL-UNNAMED"
         runArgs="${runArgs} --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED"
         runArgs="${runArgs} --add-opens java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED"
