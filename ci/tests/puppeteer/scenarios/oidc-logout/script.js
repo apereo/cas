@@ -22,14 +22,33 @@ async function verifyLogoutWithIdTokenHint(clientId, casService, page) {
     logoutUrl += "&state=1234567890";
     logoutUrl += `&client_id=${clientId}`;
     logoutUrl += `&id_token_hint=${idToken}`;
-    const response = await cas.goto(page, logoutUrl);
-    await cas.sleep(1000);
-    await cas.logPage(page);
-    await cas.log(`${response.status()} ${response.statusText()}`);
 
-    await cas.assertPageUrlStartsWith(page, casService);
-    await cas.assertParameter(page, "state");
-    await cas.assertParameter(page, "client_id");
+    if (casService.startsWith("custom://")) {
+        const customSchemeRequests = [];
+        page.on("request", (req) => {
+            if (req.url().startsWith("custom://")) {
+                customSchemeRequests.push(req.url());
+            }
+        });
+        await cas.goto(page, logoutUrl, 1);
+        await cas.sleep(1000);
+       
+        assert(customSchemeRequests.length > 0);
+        const finalUrl = customSchemeRequests[0];
+        await cas.log(finalUrl);
+        assert(finalUrl.startsWith("custom://localhost:9859/anything/customissuer"));
+        assert(finalUrl.includes("state=1234567890"));
+        assert(finalUrl.includes(`client_id=${clientId}`));
+    } else {
+        const response = await cas.goto(page, logoutUrl);
+        await cas.sleep(1000);
+        await cas.logPage(page);
+        await cas.log(`${response.status()} ${response.statusText()}`);
+
+        await cas.assertPageUrlStartsWith(page, casService);
+        await cas.assertParameter(page, "state");
+        await cas.assertParameter(page, "client_id");
+    }
 
     await cas.gotoLogout(page, "https://localhost:9859/anything/oidc&client_id=whatever");
     await cas.sleep(1000);
@@ -39,7 +58,8 @@ async function verifyLogoutWithIdTokenHint(clientId, casService, page) {
 (async () => {
     const casService = "https://localhost:9859/anything/cas";
     const browser = await cas.newBrowser(cas.browserOptions());
-    const page = await cas.newPage(browser);
+    const context = await browser.createBrowserContext();
+    const page = await cas.newPage(context);
     let response = await cas.gotoLogout(page, casService);
     await cas.sleep(1000);
     await cas.logPage(page);
@@ -55,8 +75,13 @@ async function verifyLogoutWithIdTokenHint(clientId, casService, page) {
     await cas.assertPageUrl(page, casService);
     
     await verifyLogoutWithIdTokenHint("client", casService, page);
-    
+
     const customIssuerService = "https://localhost:9859/anything/customissuer";
     await verifyLogoutWithIdTokenHint("customclient", customIssuerService, page);
+
+    const customScheme = "custom://localhost:9859/anything/customissuer";
+    await verifyLogoutWithIdTokenHint("customclient", customScheme, page);
+
+    await context.close();
     await cas.closeBrowser(browser);
 })();

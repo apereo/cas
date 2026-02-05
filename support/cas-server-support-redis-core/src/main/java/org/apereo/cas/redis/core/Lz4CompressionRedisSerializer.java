@@ -55,6 +55,9 @@ public class Lz4CompressionRedisSerializer<T> implements RedisSerializer<@NonNul
         }
         val buffer = ByteBuffer.wrap(bytes);
         val originalLength = buffer.getInt();
+        if (originalLength <= 0) {
+            return delegate.deserialize(bytes);
+        }
         val restored = new byte[originalLength];
         decompressor.decompress(
             bytes, HEADER_LENGTH,

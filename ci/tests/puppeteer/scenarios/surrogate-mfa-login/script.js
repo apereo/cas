@@ -1,4 +1,3 @@
-
 const cas = require("../../cas.js");
 
 async function impersonatePreSelected(page, browser) {
@@ -41,8 +40,10 @@ async function impersonateWithMenu(page, browser) {
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
-    const page = await cas.newPage(browser);
-    await impersonatePreSelected(page, browser);
-    await impersonateWithMenu(page, browser);
+    const context = await browser.createBrowserContext();
+    const page = await cas.newPage(context);
+    await impersonatePreSelected(page, context);
+    await impersonateWithMenu(page, context);
+    await context.close();
     await cas.closeBrowser(browser);
 })();

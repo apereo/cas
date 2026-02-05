@@ -267,9 +267,9 @@ function captureAndStoreUsername() {
         console.log("Public workstation mode is enabled; skipping username capture.");
         return;
     }
-    
+
     $("form").submit(function () {
-        const username = $(this).find('input[name="username"]').val();
+        const username = $(this).find("input[name=\"username\"]").val();
         if (username) {
             localStorage.setItem("username", username);
         }
@@ -372,9 +372,11 @@ function resourceLoadedSuccessfully() {
         }
 
         try {
-            $("table.auto-init").DataTable();
+            if (typeof $.fn.DataTable !== "undefined") {
+                $("table.auto-init").DataTable();
+            }
         } catch (e) {
-            console.log(`Failed to initialize DataTable: ${e}`);
+            console.error(`Failed to initialize DataTable: ${e}`);
         }
         preserveAnchorTagOnForm();
         preventFormResubmission();

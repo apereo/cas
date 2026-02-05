@@ -780,7 +780,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
       for script in ${scripts}; do
         printgreen "Running initialization script: ${script}"
         chmod +x "${script}"
-        eval "${script}"
+        eval "source ${script}"
         if [[ $? -ne 0 ]]; then
           printred "Initialization script [${script}] failed."
           exit 1
@@ -804,6 +804,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
         runArgs="${runArgs} --add-exports java.base/jdk.internal.ref=ALL-UNNAMED"
         runArgs="${runArgs} --add-opens java.base/java.lang=ALL-UNNAMED"
         runArgs="${runArgs} --add-opens java.base/sun.nio.ch=ALL-UNNAMED"
+        runArgs="${runArgs} --add-opens java.base/java.util.regex=ALL-UNNAMED"
         runArgs="${runArgs} --add-opens java.management/sun.management=ALL-UNNAMED"
         runArgs="${runArgs} --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED"
         runArgs="${runArgs} --add-opens java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED"
@@ -1069,6 +1070,7 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
     rm -f "$PWD"/cas.${projectType} >/dev/null 2>&1
     rm -f "${public_cert}" >/dev/null 2>&1
     rm -Rf "${PUPPETEER_DIR}/overlay" >/dev/null 2>&1
+    [ -d "${PUPPETEER_DIR}/screenshots" ] && rm -Rf "${PUPPETEER_DIR}/screenshots"/* >/dev/null 2>&1
 
     if [[ "${CI}" == "true" && $dockerInstalled -eq 0 ]]; then
       printgreen "Stopping Docker containers..."
