@@ -1,8 +1,6 @@
 const assert = require("assert");
 const cas = require("../../cas.js");
 
-const REQUEST_BASKET_AUTHZ_TOKEN = "SV00cPIKRdWjGkN1vkbEbPdhtvV5vIJ0ajygcdnZVBgl";
-
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -39,7 +37,7 @@ const REQUEST_BASKET_AUTHZ_TOKEN = "SV00cPIKRdWjGkN1vkbEbPdhtvV5vIJ0ajygcdnZVBgl
             throw (error);
         }, {
             "Content-Type": "application/json",
-            "Authorization": REQUEST_BASKET_AUTHZ_TOKEN
+            "Authorization": process.env.REQUEST_BASKET_AUTHZ_TOKEN
         });
 
     await cas.closeBrowser(browser);

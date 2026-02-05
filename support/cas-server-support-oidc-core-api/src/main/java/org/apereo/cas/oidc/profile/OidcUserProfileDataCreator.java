@@ -60,6 +60,9 @@ public class OidcUserProfileDataCreator extends DefaultOAuth20UserProfileDataCre
         if (!modelAttributes.containsKey(OAuth20Constants.CLAIM_SUB)) {
             modelAttributes.put(OAuth20Constants.CLAIM_SUB, principal.getId());
         }
+
+        Optional.ofNullable(accessToken.getAuthentication().getAttributes().get(OAuth20Constants.CLAIM_ACT))
+                .ifPresent(value -> modelAttributes.put(OAuth20Constants.CLAIM_ACT, value));
         LOGGER.trace("Finalized user profile data as [{}] for access token [{}]", modelAttributes, accessToken.getId());
     }
 }

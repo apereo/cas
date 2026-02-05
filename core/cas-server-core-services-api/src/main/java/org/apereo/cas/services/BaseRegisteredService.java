@@ -5,12 +5,12 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.util.RegexUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +19,7 @@ import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.annotation.Id;
+import org.springframework.util.Assert;
 
 /**
  * Base class for mutable, persistable registered services.
@@ -32,17 +33,16 @@ import org.springframework.data.annotation.Id;
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = "id")
-@JsonIgnoreProperties("patternServiceId")
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Accessors(chain = true)
 public abstract class BaseRegisteredService implements RegisteredService {
 
     private static final Comparator<RegisteredService> INTERNAL_COMPARATOR = Comparator
-            .comparingInt(RegisteredService::getEvaluationPriority)
-            .thenComparingInt(RegisteredService::getEvaluationOrder)
-            .thenComparing(service -> StringUtils.defaultString(service.getName()), String.CASE_INSENSITIVE_ORDER)
-            .thenComparing(RegisteredService::getServiceId)
-            .thenComparingLong(RegisteredService::getId);
+        .comparingInt(RegisteredService::getEvaluationPriority)
+        .thenComparingInt(RegisteredService::getEvaluationOrder)
+        .thenComparing(service -> StringUtils.defaultString(service.getName()), String.CASE_INSENSITIVE_ORDER)
+        .thenComparing(RegisteredService::getServiceId)
+        .thenComparingLong(RegisteredService::getId);
 
     @Serial
     private static final long serialVersionUID = 7645279151115635245L;
@@ -53,6 +53,9 @@ public abstract class BaseRegisteredService implements RegisteredService {
     @RegularExpressionCapable
     private String serviceId;
 
+    @JsonIgnore
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private Pattern patternServiceId;
 
     private String name;
@@ -151,8 +154,19 @@ public abstract class BaseRegisteredService implements RegisteredService {
      *
      * @param serviceId the service id
      */
-    public void setServiceId(final String serviceId) {
+    @CanIgnoreReturnValue
+    public BaseRegisteredService setServiceId(final String serviceId) {
+        Assert.notNull(serviceId, "Service id cannot be null");
         this.serviceId = serviceId;
         this.patternServiceId = RegexUtils.createPattern(serviceId);
+        return this;
+    }
+
+    @Override
+    public Pattern compileServiceIdPattern() {
+        if (this.patternServiceId == null) {
+            setServiceId(this.serviceId);
+        }
+        return this.patternServiceId;
     }
 }
