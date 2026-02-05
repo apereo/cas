@@ -37,7 +37,6 @@ import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.action.EvaluateAction;
-import org.springframework.webflow.action.ExternalRedirectAction;
 import org.springframework.webflow.action.RenderAction;
 import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
