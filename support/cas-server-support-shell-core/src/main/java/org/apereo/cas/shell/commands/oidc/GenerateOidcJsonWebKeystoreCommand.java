@@ -49,10 +49,10 @@ public class GenerateOidcJsonWebKeystoreCommand implements CasShellCommand {
 
         @Option(
             longName = "jwksKeySize",
-            description = "The key size (an algorithm-specific) for the generated jwks.",
+            description = "The key size (algorithm-specific) for the generated jwks.",
             defaultValue = "2048"
         )
-        final int jwksKeySize,
+        final Integer jwksKeySize,
 
         @Option(
             longName = "jwksKeyType",
