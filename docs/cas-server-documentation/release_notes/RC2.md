@@ -58,17 +58,16 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `532` distinct scenarios. The overall
-test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
-are now configured to run with parallelism enabled.
+and scenarios. At the moment, total number of jobs stands at approximately `535` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`. 
                                                                                                                             
-### Session Replication
+### Session Replication (Deprecated)
 
 Crypto operations that support generating cookies for *deprecated session replication capabilities* are now turned off by default
 to avoid generating keys. Furthermore, the session replication capabilities that are not based on the
 [ticket registry](../webflow/Webflow-Customization-Sessions-ServerSide-TicketRegistry.html) are now turned off 
 by default. If you are using the deprecated legacy session replication features, you MUST explicitly 
-turn on these features by setting the following properties:
+turn on the following settings:
 
 ```properties
 cas.x.y.z.session-replication.replicate-sessions=true
@@ -76,7 +75,18 @@ cas.x.y.z.session-replication.cookie.crypto.enabled=true
 ```
 
 Remember to substitute `x.y.z` with the appropriate session replication 
-module version you are using (i.e. `oauth`, `saml-idp`, etc).
+module version you are using (i.e. `oauth`, `saml-idp`, etc):
+                                                             
+```properties
+cas.authn.pac4j.core.session-replication.replicate-sessions=true
+cas.authn.pac4j.core.session-replication.cookie.crypto.enabled=true
+          
+cas.authn.oauth.session-replication.replicate-sessions=true
+cas.authn.oauth.session-replication.cookie.crypto.enabled=true
+                
+cas.authn.saml-idp.core.session-replication.replicate-sessions=true
+cas.authn.saml-idp.core.session-replication.cookie.crypto.enabled=true
+```
 
 ### Palantir Admin Dashboard
 
@@ -112,3 +122,6 @@ Support for [SpringBoot Admin](../monitoring/Configuring-SpringBootAdmin.html) i
 - Continued efforts using advanced code analysis techniques to remove potential memory leaks and improve system performance.
 - CAS is now upgraded to use `jQuery` version `4.0.0`.
 - Integration tests have switched to use MySQL `9.6.x`.
+- Better log data sanitization to avoid logging sensitive information, particularly when `DEBUG` logs are enabled.
+- Minor bug fixes to improve [OpenID Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html).
+- Sorting operations and locating service definitions registered with CAS is now optimized to improve performance large numbers of applications.
