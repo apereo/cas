@@ -62,7 +62,7 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
                 getView().render(model, requestWrapper, responseWrapper);
             } finally {
                 val responseArray = responseWrapper.getContentAsByteArray();
-                val output = new String(responseArray, responseWrapper.getCharacterEncoding());
+                val output = new String(responseArray, Charset.forName(responseWrapper.getCharacterEncoding()));
                 val message = String.format("Final CAS response for [%s] is:%n%s%n", getView().toString(), output);
                 LOGGER.debug(message);
                 responseWrapper.copyBodyToResponse();

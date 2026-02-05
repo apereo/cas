@@ -250,7 +250,7 @@ public class EncodingUtils {
      * @return the encoded value
      */
     public static String urlEncode(final String value, final String encoding) {
-        return Unchecked.supplier(() -> URLEncoder.encode(value, encoding)).get();
+        return Unchecked.supplier(() -> URLEncoder.encode(value, Charset.forName(encoding))).get();
     }
 
     /**
