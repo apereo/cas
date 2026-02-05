@@ -27,21 +27,21 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
 
     @Override
     public String encode(final CharSequence password) {
-        if (password == null) {
-            return null;
-        }
-
-        if (StringUtils.isBlank(this.encodingAlgorithm)) {
-            LOGGER.warn("No encoding algorithm is defined. Password cannot be encoded;");
-            return null;
-        }
-
-        val encodingCharToUse = StringUtils.isNotBlank(this.characterEncoding)
-            ? this.characterEncoding : Charset.defaultCharset().name();
-
-        LOGGER.debug("Using [{}] as the character encoding algorithm to update the digest", encodingCharToUse);
-
         try {
+            if (password == null) {
+                return null;
+            }
+
+            if (StringUtils.isBlank(this.encodingAlgorithm)) {
+                LOGGER.warn("No encoding algorithm is defined. Password cannot be encoded;");
+                return null;
+            }
+
+            val encodingCharToUse = StringUtils.isNotBlank(this.characterEncoding)
+                ? Charset.forName(this.characterEncoding)
+                : Charset.defaultCharset();
+
+            LOGGER.debug("Using [{}] as the character encoding algorithm to update the digest", encodingCharToUse);
             val pswBytes = password.toString().getBytes(encodingCharToUse);
             val encoded = Hex.encodeHexString(DigestUtils.getDigest(this.encodingAlgorithm).digest(pswBytes));
             LOGGER.debug("Encoded password via algorithm [{}] and character-encoding [{}] is [{}]", this.encodingAlgorithm,
