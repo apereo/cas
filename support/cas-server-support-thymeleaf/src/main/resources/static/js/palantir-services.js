@@ -93,9 +93,14 @@ async function initializeServicesOperations() {
     }
 }
 
+// Module-level variables for edit service functionality
+let currentEditServiceData = null;
+let serviceEditorInstance = null;
+let editServiceDialogInstance = null;
+
 async function initializeServiceButtons() {
-    const serviceEditor = initializeAceEditor("serviceEditor");
-    let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("editServiceDialog"));
+    serviceEditorInstance = initializeAceEditor("serviceEditor");
+    editServiceDialogInstance = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("editServiceDialog"));
 
     if (CasActuatorEndpoints.registeredServices()) {
         const entityHistoryTable = $("#entityHistoryTable").DataTable();
@@ -187,20 +192,96 @@ async function initializeServiceButtons() {
         }
     });
 
-    $("button[name=editService]").off().on("click", function () {
+    // Close edit menu when clicking outside
+    $(document).off("click.editMenu").on("click.editMenu", function(e) {
+        const $menu = $("#editServiceMenuContainer");
+        if ($menu.is(":visible") && !$(e.target).closest("#editServiceMenuContainer").length &&
+            !$(e.target).closest("button[name=editService]").length) {
+            $menu.hide();
+            currentEditServiceData = null;
+        }
+    });
+
+    // Move the edit menu to body for proper positioning (do this once)
+    const $editMenu = $("#editServiceMenuContainer");
+    if ($editMenu.parent()[0] !== document.body) {
+        $editMenu.appendTo("body");
+    }
+
+    $("button[name=editService]").off().on("click", function (e) {
         let serviceId = $(this).parent().attr("serviceId");
+        const $button = $(this);
+
         if (CasActuatorEndpoints.registeredServices()) {
             $.get(`${CasActuatorEndpoints.registeredServices()}/${serviceId}`, response => {
-                const value = JSON.stringify(response, null, 4);
-                serviceEditor.setValue(value, -1);
-                serviceEditor.gotoLine(1);
-                const editServiceDialogElement = document.getElementById("editServiceDialog");
-                $(editServiceDialogElement).attr("newService", false);
-                editServiceDialog["open"]();
+                currentEditServiceData = response;
+
+                const $menu = $("#editServiceMenuContainer");
+
+                // Use offset() for document-relative positioning with position:absolute
+                const buttonOffset = $button.offset();
+                const buttonHeight = $button.outerHeight();
+                const buttonWidth = $button.outerWidth();
+
+                // Show menu temporarily to get its dimensions
+                $menu.css({display: "block", visibility: "hidden"});
+                const menuHeight = $menu.outerHeight();
+                const menuWidth = $menu.outerWidth();
+                $menu.css({visibility: "visible"});
+
+                // Calculate position - place below and to the left of button
+                let menuTop = buttonOffset.top + buttonHeight + 5;
+                let menuLeft = buttonOffset.left - menuWidth + buttonWidth;
+
+                // Ensure menu doesn't go off-screen horizontally
+                if (menuLeft < 10) {
+                    menuLeft = 10;
+                }
+                if (menuLeft + menuWidth > $(document).width()) {
+                    menuLeft = $(document).width() - menuWidth - 10;
+                }
+
+                // Ensure menu doesn't go below the document
+                // Note: with position:absolute, we use document coordinates, not viewport
+                if (menuTop + menuHeight > $(document).height()) {
+                    // Show above the button instead
+                    menuTop = buttonOffset.top - menuHeight - 5;
+                }
+                if (menuTop < 0) {
+                    menuTop = 10;
+                }
+
+                $menu.css({
+                    top: menuTop + "px",
+                    left: menuLeft + "px"
+                });
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
             });
+        }
+    });
+
+    // Handle edit with plain editor - use event delegation for persistence
+    $(document).off("click.editServicePlain").on("click.editServicePlain", "button[name=editServicePlain]", function () {
+        if (currentEditServiceData) {
+            const value = JSON.stringify(currentEditServiceData, null, 4);
+            serviceEditorInstance.setValue(value, -1);
+            serviceEditorInstance.gotoLine(1);
+            const editServiceDialogElement = document.getElementById("editServiceDialog");
+            $(editServiceDialogElement).attr("newService", false);
+            editServiceDialogInstance["open"]();
+            $("#editServiceMenuContainer").hide();
+            currentEditServiceData = null;
+        }
+    });
+
+    // Handle edit with wizard - use event delegation for persistence
+    $(document).off("click.editServiceWizard").on("click.editServiceWizard", "button[name=editServiceWizard]", function () {
+        if (currentEditServiceData) {
+            openRegisteredServiceWizardDialog(currentEditServiceData);
+            $("#editServiceMenuContainer").hide();
+            currentEditServiceData = null;
         }
     });
 
@@ -212,14 +293,15 @@ async function initializeServiceButtons() {
             const saveButton = $(this);
             switch (saveButton.attr("name")) {
             case "saveServiceWizard":
-                isNewService = true;
+                const editServiceWizardDialogElement = document.getElementById("editServiceWizardDialog");
+                isNewService = $(editServiceWizardDialogElement).attr("newService") === "true";
                 const wizardEditor = initializeAceEditor("wizardServiceEditor");
                 value = wizardEditor.getValue();
                 break;
             case "saveService":
                 const editServiceDialogElement = document.getElementById("editServiceDialog");
                 isNewService = $(editServiceDialogElement).attr("newService") === "true";
-                value = serviceEditor.getValue();
+                value = serviceEditorInstance.getValue();
                 break;
             }
 
@@ -274,13 +356,13 @@ async function initializeServiceButtons() {
                     }
                 });
                 const value = JSON.stringify(clone, null, 4);
-                serviceEditor.setValue(value, -1);
-                serviceEditor.gotoLine(1);
-                serviceEditor.findAll("...", {regExp: false});
+                serviceEditorInstance.setValue(value, -1);
+                serviceEditorInstance.gotoLine(1);
+                serviceEditorInstance.findAll("...", {regExp: false});
 
                 const editServiceDialogElement = document.getElementById("editServiceDialog");
                 $(editServiceDialogElement).attr("newService", true);
-                editServiceDialog["open"]();
+                editServiceDialogInstance["open"]();
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
