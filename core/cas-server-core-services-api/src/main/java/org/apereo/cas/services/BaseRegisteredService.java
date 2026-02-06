@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.util.Assert;
+import jakarta.persistence.Transient;
 
 /**
  * Base class for mutable, persistable registered services.
@@ -32,7 +33,7 @@ import org.springframework.util.Assert;
 @ToString
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = "id")
+@EqualsAndHashCode(exclude = {"patternServiceId", "id"})
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Accessors(chain = true)
 public abstract class BaseRegisteredService implements RegisteredService {
@@ -56,7 +57,8 @@ public abstract class BaseRegisteredService implements RegisteredService {
     @JsonIgnore
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    private Pattern patternServiceId;
+    @Transient
+    private transient Pattern patternServiceId;
 
     private String name;
 
