@@ -31,6 +31,10 @@ class CasActuatorEndpoints {
         return actuatorEndpoints.metrics;
     }
 
+    static prometheus() {
+        return actuatorEndpoints.prometheus;
+    }
+
     static auditEvents() {
         return actuatorEndpoints.auditevents || actuatorEndpoints.auditEvents;
     }

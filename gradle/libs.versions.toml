@@ -19,7 +19,7 @@ awsmemcached = "1.2.3"
 azureIdentity = "1.18.2"
 azureMapsGeoLocation = "1.0.0-beta.3"
 azureMapsSearch = "2.0.0-beta.2"
-azuread = "1.23.1"
+azuread = "1.24.0"
 base64Js = "1.5.1"
 bootstrap = "5.3.8"
 bootstrapSelect = "1.13.18"
@@ -28,7 +28,7 @@ bucket4j = "8.10.1"
 caffeine = "3.2.3"
 casClient = "4.0.4"
 cbor = "4.5.6"
-chartJs = "4.5.1"
+chartJsCore = "4.5.1"
 checkstyle = "13.2.0"
 classgraph = "4.8.184"
 commonsBeans = "1.11.0"
@@ -190,7 +190,7 @@ oktaSdk = "3.0.0"
 opensaml = "5.2.0"
 oracleJdbc = "23.26.1.0.0"
 oshi = "6.9.3"
-otel = "1.58.0"
+otel = "1.59.0"
 pac4j = "6.3.1"
 permitio = "2.2.5"
 postgresql = "42.7.9"
@@ -318,7 +318,7 @@ bucket4j-core = { module = "com.bucket4j:bucket4j-core", version.ref = "bucket4j
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 cas-client-core = { module = "org.apereo.cas.client:cas-client-core", version.ref = "casClient" }
 cbor = { module = "com.upokecenter:cbor", version.ref = "cbor" }
-chart-js = { module = "org.webjars.npm:chart.js", version.ref = "chartJs" }
+chart-js-core = { module = "org.webjars.npm:chart.js", version.ref = "chartJsCore" }
 classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph" }
 client = { module = "com.nexmo:client", version.ref = "nexmo" }
 clouddirectory = { module = "software.amazon.awssdk:clouddirectory", version.ref = "amazonSdk" }

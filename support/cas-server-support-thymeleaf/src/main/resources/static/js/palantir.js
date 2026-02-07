@@ -24,6 +24,7 @@ async function initializePalantir() {
 
                     Promise.all([
                         initializeAllCharts(),
+                        initializePrometheusCharts(),
                         initializeScheduledTasksOperations(),
                         initializeServicesOperations(),
                         initializeAccessStrategyOperations(),
