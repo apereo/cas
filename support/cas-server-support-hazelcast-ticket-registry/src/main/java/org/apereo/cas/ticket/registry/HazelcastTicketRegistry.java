@@ -138,7 +138,6 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             .filter(Objects::nonNull)
             .mapToInt(instance -> {
                 val size = instance.size();
-                instance.evictAll();
                 instance.clear();
                 return size;
             })
