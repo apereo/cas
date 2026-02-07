@@ -242,11 +242,13 @@ stompWebSocket = "2.3.4"
 streamBuffer = "2.1.0"
 swagger = "2.2.42"
 sweetAlert = "11.26.18"
+trumbowyg = "2.31.0"
 textEncoding = "0.7.0"
 textMagic = "3.0.43863"
 thymeleaf = "3.1.3.RELEASE"
 thymeleafDialect = "3.2.0"
 tomcat = "11.0.18"
+tomSelect = "2.4.3"
 twilio = "11.3.3"
 unboundid = "7.0.4"
 undertow = "2.3.23.Final"
@@ -763,6 +765,7 @@ swagger-core-jakarta = { module = "io.swagger.core.v3:swagger-core-jakarta", ver
 swagger-jaxrs2-jakarta = { module = "io.swagger.core.v3:swagger-jaxrs2-jakarta", version.ref = "swagger" }
 swagger-models = { module = "io.swagger.core.v3:swagger-models", version.ref = "swagger" }
 sweetalert2 = { module = "org.webjars.npm:sweetalert2", version.ref = "sweetAlert" }
+trumbowyg = { module = "org.webjars.npm:trumbowyg", version.ref = "trumbowyg" }
 text-encoding = { module = "org.webjars.npm:text-encoding", version.ref = "textEncoding" }
 textmagic-java-sdk = { module = "com.textmagic.sdk:textmagic-java-sdk", version.ref = "textMagic" }
 thymeleafsdk = { module = "org.thymeleaf:thymeleaf", version.ref = "thymeleaf" }
@@ -772,6 +775,7 @@ tomcat-catalina-ha = { module = "org.apache.tomcat:tomcat-catalina-ha", version.
 tomcat-embed-core = { module = "org.apache.tomcat.embed:tomcat-embed-core", version.ref = "tomcat" }
 tomcat-embed-el = { module = "org.apache.tomcat.embed:tomcat-embed-el", version.ref = "tomcat" }
 tomcat-embed-websocket = { module = "org.apache.tomcat.embed:tomcat-embed-websocket", version.ref = "tomcat" }
+tom-select = { module = "org.webjars.npm:tom-select", version.ref = "tomSelect" }
 twilio = { module = "com.twilio.sdk:twilio", version.ref = "twilio" }
 unboundid-ldapsdk = { module = "com.unboundid:unboundid-ldapsdk", version.ref = "unboundid" }
 undertow-servlet = { module = "io.undertow:undertow-servlet", version.ref = "undertow" }
