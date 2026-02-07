@@ -28,7 +28,7 @@ bucket4j = "8.10.1"
 caffeine = "3.2.3"
 casClient = "4.0.4"
 cbor = "4.5.6"
-chartJs = "4.5.1"
+chartJsCore = "4.5.1"
 checkstyle = "13.2.0"
 classgraph = "4.8.184"
 commonsBeans = "1.11.0"
@@ -318,7 +318,7 @@ bucket4j-core = { module = "com.bucket4j:bucket4j-core", version.ref = "bucket4j
 caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
 cas-client-core = { module = "org.apereo.cas.client:cas-client-core", version.ref = "casClient" }
 cbor = { module = "com.upokecenter:cbor", version.ref = "cbor" }
-chart-js = { module = "org.webjars.npm:chart.js", version.ref = "chartJs" }
+chart-js-core = { module = "org.webjars.npm:chart.js", version.ref = "chartJsCore" }
 classgraph = { module = "io.github.classgraph:classgraph", version.ref = "classgraph" }
 client = { module = "com.nexmo:client", version.ref = "nexmo" }
 clouddirectory = { module = "software.amazon.awssdk:clouddirectory", version.ref = "amazonSdk" }

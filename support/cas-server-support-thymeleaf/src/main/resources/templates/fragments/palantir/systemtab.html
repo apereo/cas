@@ -14,6 +14,7 @@
             <li><a id="systemstatustab" href="#systemstatus-tab">System Status</a></li>
             <li><a id="httprequeststab" href="#httprequests-tab">HTTP Requests</a></li>
             <li><a id="systemmetricstab" href="#systemmetrics-tab">System Metrics</a></li>
+            <li><a id="prometheusmetricstab" href="#prometheusmetrics-tab">Prometheus</a></li>
             <li><a id="casfeaturestab" href="#casfeaturestab-tab">Feature Catalog</a></li>
             <li><a id="caswebflowtab" href="#caswebflowtab-tab">Authentication Flows</a></li>
           </ul>
@@ -100,7 +101,19 @@
                     </tbody>
                 </table>
             </div>
-            
+
+            <div id="prometheusmetrics-tab">
+                <div id="prometheusMetricsContainer">
+                    <p>This section displays all metrics from the Prometheus endpoint.
+                       The charts auto-refresh at the configured interval.</p>
+
+                    <div id="prometheusChartsGrid" class="mdc-layout-grid">
+                        <div class="mdc-layout-grid__inner" id="prometheusChartsRow">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="httprequests-tab">
                 <div id="httpRequests" class="text-center">
                     <div class="elevation-surface mdc-elevation--z20">
