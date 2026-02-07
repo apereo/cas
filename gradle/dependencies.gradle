@@ -4202,6 +4202,12 @@ ext.libraries = [
                 dependencies.create(libs.mermaid.get()) {
                     exclude(group: "org.webjars", module: "jquery")
                     exclude(group: "org.webjars.npm", module: "mermaid-js__parser")
+                },
+                dependencies.create(libs.trumbowyg.get()) {
+                    exclude(group: "org.webjars", module: "jquery")
+                },
+                dependencies.create(libs.tom.select.get()) {
+                    exclude(group: "org.webjars", module: "jquery")
                 }
         ],
         webjars                    : [

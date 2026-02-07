@@ -147,14 +147,14 @@ function createRegisteredServiceAttributeReleasePolicy() {
         ],
         helpText: "Specifies the canonicalization mode for attributes released."
     });
-    
+
     CasDiscoveryProfile.fetchIfNeeded()
         .done(async () => {
             const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
                 value: attr,
                 text: attr
             }));
-            
+
             createMultiSelectField({
                 cssClasses: "hide advanced-option",
                 singleSelect: true,
@@ -164,8 +164,8 @@ function createRegisteredServiceAttributeReleasePolicy() {
                 title: "Define the principal ID to include in attribute release.",
                 options: options,
                 allowCreateOption: true
-            })
-            
+            });
+
             createMultiSelectField({
                 cssClasses: "hide ReturnAllAttributeReleasePolicy",
                 containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
@@ -204,7 +204,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
                 .data("renderer", function (value) {
                     return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
                 });
-            
+
             cas.init("#editServiceWizardMenuItemAttributeReleasePolicy");
         });
 
@@ -222,9 +222,6 @@ function createRegisteredServiceAttributeReleasePolicy() {
             return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
         });
 
-    
-
-    
 
     createInputField({
         cssClasses: "hide ReturnRestfulAttributeReleasePolicy",
@@ -1950,7 +1947,7 @@ function handleUsernameAttributeProviderChange(select) {
         .not(`.${type}`)
         .not(".always-show")
         .not(".DefaultRegisteredServiceUsernameProvider"));
-    
+
     $("#editServiceWizardMenuItemUsernameAttribute [id$='FieldContainer'] input")
         .val("");
 
@@ -2036,10 +2033,10 @@ function createRegisteredServiceUsernameAttributeProvider() {
                 options: options,
                 allowCreateOption: true,
                 inclusion: "before"
-            })
+            });
 
         });
-    
+
     if (scriptFactoryAvailable) {
         createInputField({
             cssClasses: "hide GroovyRegisteredServiceUsernameProvider",
@@ -2169,6 +2166,8 @@ function createRegisteredServiceFields() {
         containerId: "editServiceWizardGeneralContainer",
         title: "Provide a brief description of the application."
     });
+
+    initializeDescriptionEditor();
 
     createInputField({
         cssClasses: "advanced-option",
@@ -2311,10 +2310,11 @@ function toggleJsonEditorVisibility() {
     const $editorContainer = $("#wizardJsonEditorContainer");
     const $wizardMenu = $("#editServiceWizardMenu");
 
+    localStorage.setItem("showJsonEditorPreference", showEditor);
+
     if (showEditor === "true" || showEditor === true) {
         $editorContainer.show();
         $wizardMenu.removeClass("w-100").addClass("mmw-45");
-        // Refresh the ace editor to ensure it renders correctly
         const editor = ace.edit("wizardServiceEditor");
         if (editor) {
             editor.resize();
@@ -2324,12 +2324,10 @@ function toggleJsonEditorVisibility() {
         $wizardMenu.removeClass("mmw-45").addClass("w-100");
     }
 
-    // Refresh the accordion to adjust to new size
     $("#editServiceWizardMenu").accordion("refresh");
 }
 
 function generateServiceDefinition() {
-    // Skip generation during population to avoid partial/incorrect data
     if (isPopulatingWizard) {
         return;
     }
@@ -2860,6 +2858,69 @@ function createMultiSelectField(config) {
     return $select;
 }
 
+/**
+ * Initializes the Trumbowyg WYSIWYG editor for the description field.
+ * Replaces the standard input field with a rich text editor that only allows
+ * bold, italic, and underline formatting with Monospace font at 10pt.
+ */
+function initializeDescriptionEditor() {
+    setTimeout(function () {
+        const $input = $("#registeredServiceDescription");
+        if ($input.length === 0) {
+            return;
+        }
+
+        const $container = $input.closest("[id$='FieldContainer']");
+        $container.hide();
+
+        const editorContainer = $("<div>", {
+            id: "registeredServiceDescriptionEditorContainer",
+            class: "mb-2"
+        });
+        
+
+        const editorTextarea = $("<textarea>", {
+            id: "registeredServiceDescriptionEditor",
+            name: "registeredServiceDescriptionEditor",
+            "data-param-name": "description"
+        });
+
+
+        editorContainer.append(editorTextarea);
+
+        $container.after(editorContainer);
+
+        if (typeof trumbowygIconsPath !== "undefined" && trumbowygIconsPath) {
+            $.trumbowyg.svgPath = trumbowygIconsPath;
+        }
+
+        $("#registeredServiceDescriptionEditor").trumbowyg({
+            btns: [["bold", "italic", "underline", "removeformat"]],
+            removeformatPasted: true,
+            semantic: false,
+            autogrow: true,
+            defaultLinkTarget: "_blank"
+        });
+
+        $("#registeredServiceDescriptionEditor").on("tbwchange tbwblur", function () {
+            const htmlContent = $(this).trumbowyg("html");
+            $input.val(htmlContent);
+            generateServiceDefinition();
+        });
+    }, 150);
+}
+
+function setDescriptionEditorValue(value) {
+    if (typeof jQuery === "undefined" || typeof jQuery.fn.trumbowyg === "undefined") {
+        return;
+    }
+    const $editor = $("#registeredServiceDescriptionEditor");
+    if ($editor.length > 0) {
+        $editor.trumbowyg("html", value || "");
+        $("#registeredServiceDescription").val(value || "");
+    }
+}
+
 function createInputField(config) {
     const {
         labelTitle,
@@ -2995,11 +3056,15 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
      * @returns {*} The value at the path, or undefined if not found
      */
     function getNestedValue(obj, path) {
-        if (!obj || !path) return undefined;
+        if (!obj || !path) {
+            return undefined;
+        }
         const parts = path.split(".");
         let current = obj;
         for (const part of parts) {
-            if (current === null || current === undefined) return undefined;
+            if (current === null || current === undefined) {
+                return undefined;
+            }
             current = current[part];
         }
         return current;
@@ -3064,7 +3129,9 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
      * @param {string} value - The value to set
      */
     function setSelectValue($select, value) {
-        if (!$select.length || value === undefined || value === null) return;
+        if (!$select.length || value === undefined || value === null) {
+            return;
+        }
 
         // Convert booleans to strings
         let stringValue = value;
@@ -3107,7 +3174,9 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
      * @param {Array|string} values - The values to set
      */
     function setMultiSelectValue($select, values) {
-        if (!$select.length) return;
+        if (!$select.length) {
+            return;
+        }
 
         const tomSelect = $select[0].tomselect;
         if (tomSelect) {
@@ -3116,7 +3185,7 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
             for (const val of valueArray) {
                 if (val && val.trim().length > 0) {
                     if (!tomSelect.options[val.trim()]) {
-                        tomSelect.addOption({ value: val.trim(), text: val.trim() });
+                        tomSelect.addOption({value: val.trim(), text: val.trim()});
                     }
                     tomSelect.addItem(val.trim());
                 }
@@ -3133,7 +3202,9 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
         const $input = $(`input#${buttonId}`);
         const $button = $(`button#${buttonId}Button`);
 
-        if (!$input.length) return;
+        if (!$input.length) {
+            return;
+        }
 
         const currentValue = $input.val() === "true" || $input.val() === true;
         const newValue = value === true || value === "true" || value === "TRUE";
@@ -3150,21 +3221,27 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
      * @param {string} policyClassName - Optional: the policy class name to find the correct container
      */
     function populateMappedField(containerFieldName, mapData, policyClassName = null) {
-        if (!mapData || typeof mapData !== "object") return;
+        if (!mapData || typeof mapData !== "object") {
+            return;
+        }
 
         const entries = Object.entries(mapData).filter(([key]) => key !== "@class");
-        if (entries.length === 0) return;
+        if (entries.length === 0) {
+            return;
+        }
 
         // Find inputs matching the param name
         let $inputs = $(`form#editServiceWizardForm input[data-param-name="${containerFieldName}"]`);
-        if ($inputs.length === 0) return;
+        if ($inputs.length === 0) {
+            return;
+        }
 
         // If a policy class name is provided, find the container that matches
         let $container = null;
         if (policyClassName) {
             const policyShortName = getLastWord(policyClassName);
             // Find a container that has the policy class in its CSS classes
-            $inputs.each(function() {
+            $inputs.each(function () {
                 const $potentialContainer = $(this).closest("[id$='MapContainer']");
                 if ($potentialContainer.hasClass(policyShortName) ||
                     $potentialContainer.find(`.${policyShortName}`).length > 0 ||
@@ -3181,7 +3258,7 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
             $container = $firstKeyInput.closest("[id$='MapContainer']");
 
             // Try to find a visible container
-            $inputs.each(function() {
+            $inputs.each(function () {
                 const $potentialContainer = $(this).closest("[id$='MapContainer']");
                 if ($potentialContainer.is(":visible") && !$potentialContainer.hasClass("hide")) {
                     $container = $potentialContainer;
@@ -3190,7 +3267,9 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
             });
         }
 
-        if (!$container || !$container.length) return;
+        if (!$container || !$container.length) {
+            return;
+        }
 
         const $addButton = $container.find("button[name$='AddButton']");
 
@@ -3242,16 +3321,25 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
         const $input = $(this);
         const paramName = $input.data("param-name");
 
-        if (!paramName) return;
+        if (!paramName) {
+            return;
+        }
 
         // Skip if this is part of a mapped field (handled separately)
-        if ($input.closest("[id$='MapContainer']").length > 0) return;
+        if ($input.closest("[id$='MapContainer']").length > 0) {
+            return;
+        }
 
         const value = getNestedValue(serviceDefinition, paramName);
 
         if (value !== undefined && value !== null) {
             const stringValue = arrayToString(value);
             $input.val(stringValue);
+
+            // Special handling for description field with WYSIWYG editor
+            if (paramName === "description") {
+                setDescriptionEditorValue(stringValue);
+            }
 
             // Float the label if we have a value
             if (stringValue.length > 0) {
@@ -3265,7 +3353,9 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
         const $select = $(this);
         const paramName = $select.data("param-name");
 
-        if (!paramName) return;
+        if (!paramName) {
+            return;
+        }
 
         let value = getNestedValue(serviceDefinition, paramName);
 
@@ -3284,7 +3374,9 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
         const $select = $(this);
         const paramName = $select.data("param-name");
 
-        if (!paramName) return;
+        if (!paramName) {
+            return;
+        }
 
         let value = getNestedValue(serviceDefinition, paramName);
 
@@ -3300,7 +3392,9 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
         const paramName = $input.data("param-name");
         const inputId = $input.attr("id");
 
-        if (!paramName || !inputId) return;
+        if (!paramName || !inputId) {
+            return;
+        }
 
         const value = getNestedValue(serviceDefinition, paramName);
 
@@ -3438,10 +3532,13 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
 function openRegisteredServiceWizardDialog(existingService = null) {
     function openWizardDialog(serviceClass, serviceData = null) {
         $("#editServiceWizardGeneralContainer").find("input").val("");
-        $('.jqueryui-multiselectmenu').each(function () {
+        $(".jqueryui-multiselectmenu").each(function () {
             this.tomselect?.clear();
         });
-        
+
+        // Reset the Trumbowyg description editor
+        setDescriptionEditorValue("");
+
         const editor = initializeAceEditor("wizardServiceEditor");
         editor.setReadOnly(true);
         editor.setValue("");
@@ -3526,6 +3623,17 @@ function openRegisteredServiceWizardDialog(existingService = null) {
             $("#hideAdvancedOptionsButton").click();
         }
         hideAdvancedRegisteredServiceOptions();
+
+        // Restore the JSON editor visibility preference from localStorage
+        const savedJsonEditorPref = localStorage.getItem("showJsonEditorPreference");
+        const currentJsonEditorValue = $("#showJsonEditor").val();
+        if (savedJsonEditorPref !== null) {
+            // If saved preference differs from current state, toggle it
+            if ((savedJsonEditorPref === "true") !== (currentJsonEditorValue === "true")) {
+                $("#showJsonEditorButton").click();
+            }
+        }
+        toggleJsonEditorVisibility();
 
         switch (className) {
         case "CasRegisteredService":

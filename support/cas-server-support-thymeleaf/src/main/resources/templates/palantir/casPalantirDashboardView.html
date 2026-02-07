@@ -20,11 +20,14 @@
     <script type="text/javascript" th:src="@{#{webjars.jsyaml.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.mermaid.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.hotkeys.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.tomselect.js}}"></script>
 
+    <link rel="stylesheet" type="text/css" th:href="@{#{webjars.trumbowyg.css}}" />
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.sweet-alert.css}}" />
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.animate.css}}" />
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.notyf.css}}" />
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.dataTables.jqueryui.css}}" />
+    <link rel="stylesheet" type="text/css" th:href="@{#{webjars.tomselect.css}}" />
 
     <link rel="stylesheet" type="text/css" th:href="@{/css/palantir.css}" />
 
@@ -38,6 +41,8 @@
         const scriptFactoryAvailable = /*[[${scriptFactoryAvailable}]]*/;
         const mutablePropertySources = /*[[${mutablePropertySources}]]*/;
         const mutablePropertySourcesAvailable = mutablePropertySources.length > 0;
+
+        const trumbowygIconsPath = /*[[@{#{webjars.trumbowyg.icons}}]]*/ '';
         /*]]>*/
     </script>
     <script type="text/javascript" th:src="@{/js/palantir.js}"></script>
@@ -73,11 +78,7 @@
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-oidc.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-saml2.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-wsfed.js}"></script>
-
-    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"></script>
-
-
+    
 </head>
 
 <body>
@@ -106,7 +107,8 @@
         </div>
         <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
         <script type="text/javascript" th:src="@{#{webjars.dataTables.jqueryui.js}}"></script>
-
+        <script type="text/javascript" th:src="@{#{webjars.trumbowyg.js}}"></script>
+        
         <div th:replace="~{fragments/palantir/settingspanel :: main}"/>
     </div>
 </main>
