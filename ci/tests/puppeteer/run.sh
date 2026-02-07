@@ -404,6 +404,52 @@ function validateScenario() {
     fi
   fi
 
+  runsOn=$(jq -j '.conditions.runsOn // empty' "${config}")
+  if [[ -n "${runsOn}" ]]; then
+    
+    runsOnDay=$(echo "${runsOn}" | awk '{print $1}')
+    runsOnStart=$(echo "${runsOn}" | awk '{print $2}')
+    runsOnEnd=$(echo "${runsOn}" | awk '{print $3}')
+    
+    case "${runsOnDay}" in
+      M) allowedDayNum=1 ;;
+      T) allowedDayNum=2 ;;
+      W) allowedDayNum=3 ;;
+      R) allowedDayNum=4 ;;
+      F) allowedDayNum=5 ;;
+      S) allowedDayNum=6 ;;
+      U) allowedDayNum=7 ;;
+    esac
+
+    if [[ -n "${allowedDayNum}" ]]; then
+
+      currentDayNum=$(TZ=UTC date +%u)
+      currentHour=$(TZ=UTC date +%H)
+
+      startHour=$(echo "${runsOnStart}" | sed 's/[^0-9]//g')
+      if [[ "${runsOnStart}" == *"pm"* && "${startHour}" -ne 12 ]]; then
+        startHour=$((startHour + 12))
+      elif [[ "${runsOnStart}" == *"am"* && "${startHour}" -eq 12 ]]; then
+        startHour=0
+      fi
+
+      endHour=$(echo "${runsOnEnd}" | sed 's/[^0-9]//g')
+      if [[ "${runsOnEnd}" == *"pm"* && "${endHour}" -ne 12 ]]; then
+        endHour=$((endHour + 12))
+      elif [[ "${runsOnEnd}" == *"am"* && "${endHour}" -eq 12 ]]; then
+        endHour=0
+      fi
+      printcyan "Current UTC day number is ${currentDayNum} and hour is ${currentHour}. Allowed day is ${allowedDayNum} and allowed hours are between ${startHour} and ${endHour}."
+
+      if [[ "${currentDayNum}" -eq "${allowedDayNum}" && "${currentHour}" -ge "${startHour}" && "${currentHour}" -lt "${endHour}" ]]; then
+        printgreen "Current UTC time is within the allowed window (Day: ${runsOnDay}, ${runsOnStart}-${runsOnEnd})."
+      else
+        printyellow "Test scenario ${scenario##*/} is configured to only run on ${runsOnDay} between ${runsOnStart}-${runsOnEnd} UTC."
+        exit 0
+      fi
+    fi
+  fi
+
   buildDockerImage=$(jq -j '.requirements.docker.build // empty' "${config}")
   if [[ "${buildDockerImage}" == "true" && $dockerInstalled -ne 0 ]]; then
     printred "Docker engine is not running. The test is unable to build a Docker image."
