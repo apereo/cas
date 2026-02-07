@@ -1057,7 +1057,6 @@ function createRegisteredServiceMultifactorPolicy() {
 
 function handleMatchingStrategyChange(select) {
     const type = getLastWord($(select).val());
-    console.log("Selected matching strategy type:", type);
     $(`#editServiceWizardMenuItemMatchingStrategy .${type}`).show();
     $("#editServiceWizardMenuItemMatchingStrategy [id$='ButtonPanel']")
         .not(`.${type}`)
@@ -2922,6 +2921,10 @@ function createInputField(config) {
         }
     })
         .on("blur", function () {
+            // Skip validation styling during wizard population
+            if (isPopulatingWizard) {
+                return;
+            }
             if (!this.checkValidity()) {
                 $(this).parent().addClass("missing-required-field");
             } else {
@@ -2966,8 +2969,6 @@ let isPopulatingWizard = false;
  * @param {Object} serviceDefinition - The service definition JSON object
  */
 function populateWizardFromServiceDefinition(serviceDefinition) {
-    console.log("Populating wizard from service definition:", serviceDefinition);
-
     // Show loading indicator while populating and generating
     // Use scrollbarPadding: false and heightAuto: false to prevent page jumping
     Swal.fire({
@@ -2978,6 +2979,7 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
         showConfirmButton: false,
         scrollbarPadding: false,
         heightAuto: false,
+        returnFocus: false,
         didOpen: () => {
             Swal.showLoading();
         }
@@ -3021,6 +3023,7 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
 
     /**
      * Properly floats the MDC text field label when a value is set programmatically
+     * Also removes the missing-required-field class and clears validation errors
      * @param {jQuery} $input - The input element
      */
     function floatMdcTextFieldLabel($input) {
@@ -3042,6 +3045,15 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
                 mdcTextField.layout();
             } catch (e) {
                 // Component may already be attached, which is fine
+            }
+        }
+
+        // Remove the missing-required-field class from parent if value is set
+        if ($input.val() && $input.val().length > 0) {
+            $input.parent().removeClass("missing-required-field");
+            // Clear any custom validity
+            if ($input[0] && $input[0].setCustomValidity) {
+                $input[0].setCustomValidity("");
             }
         }
     }
@@ -3396,8 +3408,30 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
     // - Some buffer time for DOM updates
     setTimeout(() => {
         isPopulatingWizard = false;
+
+        // Clean up any missing-required-field classes on fields that have values
+        $("form#editServiceWizardForm input[data-param-name]").each(function () {
+            const $input = $(this);
+            const value = $input.val();
+            if (value && value.length > 0) {
+                $input.parent().removeClass("missing-required-field");
+                if (this.setCustomValidity) {
+                    this.setCustomValidity("");
+                }
+            }
+        });
+
         generateServiceDefinition();
         Swal.close();
+
+        // Focus on the first visible input field after dialog is fully ready
+        // Use a longer timeout to ensure MDC dialog animation is complete
+        setTimeout(() => {
+            const $firstInput = $("form#editServiceWizardForm input[data-param-name]:visible").first();
+            if ($firstInput.length > 0) {
+                $firstInput.trigger("focus");
+            }
+        }, 300);
     }, 600);
 }
 
