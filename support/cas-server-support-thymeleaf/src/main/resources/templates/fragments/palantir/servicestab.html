@@ -32,6 +32,43 @@
                     </tbody>
                 </table>
 
+                <!-- Edit Service Popup Menu - appended to body via JS for proper positioning -->
+                <div id="editServiceMenuContainer" style="position: absolute; display: none; z-index: 9999; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.25); padding: 16px;">
+                    <ul class="mdc-list" aria-orientation="vertical" role="menu" tabindex="-1" style="padding: 0;">
+                        <li class="mdc-list-item pb-3" role="menuitem">
+                            <span class="mdc-list-item__ripple"></span>
+                            <i class="mdi mdi-pencil fas fa-pencil" style="margin-top: 2px;" aria-hidden="true"></i>
+                            <div class="text-justify">
+                                <h3>Editor</h3>
+                                <span>Edit the service definition using a plain-text JSON editor.
+                                    Best for advanced users who are familiar with the service definition model.</span>
+                                <p></p>
+                                <button name="editServicePlain" id="editServicePlain"
+                                        class="mdc-button mdc-button--raised" aria-label="Edit with Editor">
+                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-pencil"
+                                                                       aria-hidden="true"></i>Proceed</span>
+                                </button>
+                            </div>
+                        </li>
+                        <li class="mdc-list-item pb-3" role="menuitem" style="margin-top: 10px;">
+                            <span class="mdc-list-item__ripple"></span>
+                            <i class="mdi mdi-wizard-hat" aria-hidden="true"></i>
+                            <div class="text-justify">
+                                <h3 style="margin-top: 2px;">Wizard</h3>
+                                <span>Edit the service definition using a step-by-step wizard and form editor,
+                                    allowing you to modify individual settings and policies.</span>
+                                <p></p>
+                                <button name="editServiceWizard" id="editServiceWizard"
+                                        class="mdc-button mdc-button--raised" style="margin-bottom: 2px;"
+                                        aria-label="Edit with Wizard">
+                                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-wizard-hat"
+                                                                       aria-hidden="true"></i>Proceed</span>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
                 <div width="10%">
                     <div class="mdc-touch-target-wrapper">
                         <span class="mdc-menu-surface--anchor">
@@ -128,9 +165,13 @@
                                     <pre><code id="serviceClassType" class="border-rounded language-html"></code></pre>
                                 </span>
 
-                                <div th:replace="~{fragments/switchbutton :: switchbutton (id='hideAdvancedOptions',
-                                    label='#Hide Advanced Options', cssClass='pb-2 pt-2', selected=true, dataAttrs='changeEventHandler=hideAdvancedRegisteredServiceOptions')}"/>
-                                
+                                <div class="d-flex align-items-center">
+                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='hideAdvancedOptions',
+                                        label='#Hide Advanced Options', cssClass='pb-2 pt-2', selected=true, dataAttrs='changeEventHandler=hideAdvancedRegisteredServiceOptions')}"/>
+                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='showJsonEditor',
+                                        label='#Show JSON Editor', cssClass='pb-2 pt-2 pl-2', selected=true, dataAttrs='changeEventHandler=toggleJsonEditorVisibility')}"/>
+                                </div>
+
                                 <form id="editServiceWizardForm">
                                     <div id="editServiceWizardContainer" class="d-flex">
                                         <div id="editServiceWizardMenu" class="jqueryui-accordion mr-2 mmw-45">
@@ -673,7 +714,7 @@
                                                         dataAttrs='param-skip-false=true,param-name=surrogatePolicy.enabled,param-type=org.apereo.cas.services.DefaultRegisteredServiceSurrogatePolicy')}"/>
                                               </div>
                                         </div>
-                                        <div class="h-750px">
+                                        <div id="wizardJsonEditorContainer" class="h-750px">
                                             <pre class="ace-editor ace-relative w-100 h-100 mb-0 mt-0"
                                                  id="wizardServiceEditor"></pre>
 
