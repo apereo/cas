@@ -40,20 +40,23 @@ function handleAttributeReleasePolicyChange(select) {
         .not(`.${type}`)
         .not(".always-show"));
 
-    $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='FieldContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='MapContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='ButtonPanel'] button")
-        .each(function () {
-            const selected = $(this).data("param-selected");
-            if (selected) {
-                $(this).click();
-            }
+    // Only clear values when not populating from an existing service
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='FieldContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='MapContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='ButtonPanel'] button")
+            .each(function () {
+                const selected = $(this).data("param-selected");
+                if (selected) {
+                    $(this).click();
+                }
+            });
+        $("#editServiceWizardMenuItemAttributeReleasePolicy .jqueryui-multiselectmenu").each(function () {
+            this.tomselect?.clear();
         });
-    $("#editServiceWizardMenuItemAttributeReleasePolicy .jqueryui-multiselectmenu").each(function () {
-        this.tomselect?.clear();
-    });
+    }
 }
 
 function createRegisteredServiceAttributeReleasePolicy() {
@@ -586,17 +589,21 @@ function handleAttributeReleasePolicyActivationCriteriaChange(select) {
         .not(`.${type}`)
         .not(".always-show")
         .hide();
-    $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='FieldContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='MapContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='ButtonPanel'] button")
-        .each(function () {
-            const selected = $(this).data("param-selected");
-            if (selected) {
-                $(this).click();
-            }
-        });
+
+    // Only clear values when not populating from an existing service
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='FieldContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='MapContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='ButtonPanel'] button")
+            .each(function () {
+                const selected = $(this).data("param-selected");
+                if (selected) {
+                    $(this).click();
+                }
+            });
+    }
 }
 
 function createRegisteredServiceAttributeReleasePolicyActivationCriteria() {
@@ -684,17 +691,21 @@ function handleAttributeReleasePolicyPrincipalAttributeRepositoryChange(select) 
         .not(`.${type}`)
         .not(".always-show")
         .hide();
-    $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='FieldContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='MapContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='ButtonPanel'] button")
-        .each(function () {
-            const selected = $(this).data("param-selected");
-            if (selected) {
-                $(this).click();
-            }
-        });
+
+    // Only clear values when not populating from an existing service
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='FieldContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='MapContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='ButtonPanel'] button")
+            .each(function () {
+                const selected = $(this).data("param-selected");
+                if (selected) {
+                    $(this).click();
+                }
+            });
+    }
 }
 
 function createRegisteredServiceAttributeReleasePrincipalAttributesRepository() {
@@ -809,17 +820,21 @@ function handleAttributeReleasePolicyValueFilterChange(select) {
         .not(`.${type}`)
         .not(".always-show")
         .hide();
-    $("#editServiceWizardMenuItemAttributeReleaseValueFilters [id$='FieldContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemAttributeReleaseValueFilters [id$='MapContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemAttributeReleaseValueFilters [id$='ButtonPanel'] button")
-        .each(function () {
-            const selected = $(this).data("param-selected");
-            if (selected) {
-                $(this).click();
-            }
-        });
+
+    // Only clear values when not populating from an existing service
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemAttributeReleaseValueFilters [id$='FieldContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemAttributeReleaseValueFilters [id$='MapContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemAttributeReleaseValueFilters [id$='ButtonPanel'] button")
+            .each(function () {
+                const selected = $(this).data("param-selected");
+                if (selected) {
+                    $(this).click();
+                }
+            });
+    }
 }
 
 function createRegisteredServiceAttributeReleaseValueFilters() {
@@ -1042,7 +1057,6 @@ function createRegisteredServiceMultifactorPolicy() {
 
 function handleMatchingStrategyChange(select) {
     const type = getLastWord($(select).val());
-    console.log("Selected matching strategy type:", type);
     $(`#editServiceWizardMenuItemMatchingStrategy .${type}`).show();
     $("#editServiceWizardMenuItemMatchingStrategy [id$='ButtonPanel']")
         .not(`.${type}`)
@@ -1099,17 +1113,21 @@ function handleAccessStrategyChange(select) {
     $("#editServiceWizardMenuItemAccessStrategy [id$='MapContainer']")
         .not(`.${type}`)
         .hide();
-    $("#editServiceWizardMenuItemAccessStrategy [id$='FieldContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemAccessStrategy [id$='MapContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemAccessStrategy [id$='ButtonPanel'] button")
-        .each(function () {
-            const selected = $(this).data("param-selected");
-            if (selected) {
-                $(this).click();
-            }
-        });
+
+    // Only clear values when not populating from an existing service
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemAccessStrategy [id$='FieldContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemAccessStrategy [id$='MapContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemAccessStrategy [id$='ButtonPanel'] button")
+            .each(function () {
+                const selected = $(this).data("param-selected");
+                if (selected) {
+                    $(this).click();
+                }
+            });
+    }
 }
 
 function createRegisteredServiceAccessStrategy() {
@@ -1791,17 +1809,21 @@ function handleSsoParticipationPolicyChange(select) {
     $("#editServiceWizardMenuItemSSOParticipationPolicy [id$='ButtonPanel']")
         .not(`.${type}`)
         .hide();
-    $("#editServiceWizardMenuItemSSOParticipationPolicy [id$='FieldContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemSSOParticipationPolicy [id$='MapContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemSSOParticipationPolicy [id$='ButtonPanel'] button")
-        .each(function () {
-            const selected = $(this).data("param-selected");
-            if (selected) {
-                $(this).click();
-            }
-        });
+
+    // Only clear values when not populating from an existing service
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemSSOParticipationPolicy [id$='FieldContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemSSOParticipationPolicy [id$='MapContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemSSOParticipationPolicy [id$='ButtonPanel'] button")
+            .each(function () {
+                const selected = $(this).data("param-selected");
+                if (selected) {
+                    $(this).click();
+                }
+            });
+    }
 }
 
 function createRegisteredServiceSsoParticipationPolicy() {
@@ -2284,12 +2306,46 @@ function hideAdvancedRegisteredServiceOptions() {
     }
 }
 
+function toggleJsonEditorVisibility() {
+    const showEditor = $("#showJsonEditor").val();
+    const $editorContainer = $("#wizardJsonEditorContainer");
+    const $wizardMenu = $("#editServiceWizardMenu");
+
+    if (showEditor === "true" || showEditor === true) {
+        $editorContainer.show();
+        $wizardMenu.removeClass("w-100").addClass("mmw-45");
+        // Refresh the ace editor to ensure it renders correctly
+        const editor = ace.edit("wizardServiceEditor");
+        if (editor) {
+            editor.resize();
+        }
+    } else {
+        $editorContainer.hide();
+        $wizardMenu.removeClass("mmw-45").addClass("w-100");
+    }
+
+    // Refresh the accordion to adjust to new size
+    $("#editServiceWizardMenu").accordion("refresh");
+}
+
 function generateServiceDefinition() {
+    // Skip generation during population to avoid partial/incorrect data
+    if (isPopulatingWizard) {
+        return;
+    }
+
     setTimeout(function () {
         const editor = initializeAceEditor("wizardServiceEditor");
         let serviceDefinition = {
             "@class": $("#serviceClassType").text().trim()
         };
+
+        // Track which param names have been processed to avoid duplicates from hidden containers
+        const processedMappedFields = new Set();
+
+        // Get currently selected attribute release policy type for filtering
+        const $attrReleasePolicySelect = $("select#registeredServiceAttributeReleasePolicy");
+        const selectedAttrReleasePolicy = $attrReleasePolicySelect.length > 0 ? getLastWord($attrReleasePolicySelect.val()) : "";
 
         $("form#editServiceWizardForm")
             .find("input,select")
@@ -2299,6 +2355,58 @@ function generateServiceDefinition() {
                 const paramType = $input.data("param-type");
                 const skipWhenFalse = $input.data("param-skip-false");
                 const skipWhenTrue = $input.data("param-skip-true");
+
+                // Skip inputs in MapContainers (handled specially)
+                const $mapContainer = $input.closest("[id$='MapContainer']");
+                if ($mapContainer.length > 0) {
+                    // For mapped fields, only process once per container
+                    const containerKey = `${paramName}:${$mapContainer.attr("id")}`;
+                    if (processedMappedFields.has(containerKey)) {
+                        return; // Already processed this container
+                    }
+                    processedMappedFields.add(containerKey);
+
+                    // For attributeReleasePolicy.allowedAttributes, only process the container
+                    // that matches the currently selected policy type
+                    if (paramName === "attributeReleasePolicy.allowedAttributes") {
+                        // Check if this container has the class matching the selected policy
+                        if (selectedAttrReleasePolicy && !$mapContainer.hasClass(selectedAttrReleasePolicy)) {
+                            return; // Skip containers for other policy types
+                        }
+                    }
+
+                    // Check if this container has any non-empty values before processing
+                    const $allInputs = $mapContainer.find("input");
+                    let hasNonEmptyValue = false;
+                    for (let i = 0; i < $allInputs.length; i += 2) {
+                        const key = $($allInputs[i]).val();
+                        if (key && key.trim().length > 0) {
+                            hasNonEmptyValue = true;
+                            break;
+                        }
+                    }
+                    if (!hasNonEmptyValue) {
+                        return; // Skip empty containers
+                    }
+                } else {
+                    // For regular inputs/selects (not in MapContainer), check if they're in a hidden container
+                    // This handles fields like ReturnAllowedAttributeReleasePolicy's allowedAttributes
+                    const $fieldContainer = $input.closest("[id$='FieldContainer'], [id$='SelectContainer']");
+                    if ($fieldContainer.length > 0 && $fieldContainer.hasClass("hide")) {
+                        // Don't skip if this is an advanced-option that has a value
+                        if (!$fieldContainer.hasClass("advanced-option")) {
+                            return; // Skip inputs in hidden field containers (except advanced-option)
+                        }
+                    }
+
+                    // For attributeReleasePolicy.allowedAttributes, check if this field matches the selected policy
+                    if (paramName === "attributeReleasePolicy.allowedAttributes") {
+                        if (selectedAttrReleasePolicy && $fieldContainer.length > 0 && !$fieldContainer.hasClass(selectedAttrReleasePolicy)) {
+                            return; // Skip fields for other policy types
+                        }
+                    }
+                }
+
                 let value = $input.val();
 
                 if (value && Array.isArray(value)) {
@@ -2336,15 +2444,22 @@ function generateServiceDefinition() {
 
                             for (let i = 0; i < parts.length; i++) {
                                 let part = parts[i];
-                                if (!current[part]) {
-                                    const effectiveValue = (i === parts.length - 1) ? value : {};
-                                    if (typeof effectiveValue !== "object"
-                                        || (typeof effectiveValue === "object" && Object.keys(effectiveValue).length > 0)) {
-                                        current[part] = effectiveValue;
-                                    }
-                                }
+                                const isLastPart = (i === parts.length - 1);
 
-                                current = current[part];
+                                if (isLastPart) {
+                                    // Always set the value at the last part of the path
+                                    if (typeof value === "object" && Object.keys(value).length > 0) {
+                                        current[part] = value;
+                                    } else if (typeof value !== "object") {
+                                        current[part] = value;
+                                    }
+                                } else {
+                                    // For intermediate parts, create empty object if it doesn't exist
+                                    if (!current[part]) {
+                                        current[part] = {};
+                                    }
+                                    current = current[part];
+                                }
                             }
                         } else {
                             serviceDefinition[paramName] = value;
@@ -2391,7 +2506,7 @@ function generateServiceDefinition() {
             editor.setValue("");
         }
         editor.gotoLine(1);
-    }, 100);
+    }, 10);
 }
 
 function generateMappedFieldValue(sectionId, config) {
@@ -2409,13 +2524,18 @@ function generateMappedFieldValue(sectionId, config) {
         const key = $(inputs[i]).val();
         const value = $(inputs[i + 1]).val();
 
+        // Skip empty keys
+        if (!key || key.trim().length === 0) {
+            continue;
+        }
+
         if (valueFieldRenderer !== undefined && typeof valueFieldRenderer === "function") {
             definition[key] = valueFieldRenderer($(inputs[i]), $(inputs[i + 1]));
-        } else if (key && key.trim().length > 0 && value && value.trim().length > 0) {
+        } else if (value && value.trim().length > 0) {
             if (multipleValues) {
                 const valueArray = value.split(",").filter(s => s.trim().length > 0);
                 if (unwrapSingleElement && valueArray.length === 1) {
-                    definition[key] = value;
+                    definition[key] = value.trim();
                 } else {
                     definition[key] = [multipleValuesType, valueArray];
                 }
@@ -2801,6 +2921,10 @@ function createInputField(config) {
         }
     })
         .on("blur", function () {
+            // Skip validation styling during wizard population
+            if (isPopulatingWizard) {
+                return;
+            }
             if (!this.checkValidity()) {
                 $(this).parent().addClass("missing-required-field");
             } else {
@@ -2835,8 +2959,484 @@ function createInputField(config) {
     return input;
 }
 
-function openRegisteredServiceWizardDialog() {
-    function openWizardDialog(serviceClass) {
+// Flag to prevent generateServiceDefinition from running during population
+let isPopulatingWizard = false;
+
+/**
+ * Populates wizard fields from an existing service definition.
+ * Handles all field types: input fields, select fields, switch buttons,
+ * multi-select fields, and mapped fields.
+ * @param {Object} serviceDefinition - The service definition JSON object
+ */
+function populateWizardFromServiceDefinition(serviceDefinition) {
+    // Show loading indicator while populating and generating
+    // Use scrollbarPadding: false and heightAuto: false to prevent page jumping
+    Swal.fire({
+        title: "Loading Service Definition",
+        text: "Preparing wizard fields and generating JSON...",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        scrollbarPadding: false,
+        heightAuto: false,
+        returnFocus: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    // Set flag to prevent generateServiceDefinition from running during population
+    isPopulatingWizard = true;
+
+    /**
+     * Extracts a nested value from an object using dot notation path
+     * @param {Object} obj - The object to extract from
+     * @param {string} path - Dot notation path (e.g., "accessStrategy.enabled")
+     * @returns {*} The value at the path, or undefined if not found
+     */
+    function getNestedValue(obj, path) {
+        if (!obj || !path) return undefined;
+        const parts = path.split(".");
+        let current = obj;
+        for (const part of parts) {
+            if (current === null || current === undefined) return undefined;
+            current = current[part];
+        }
+        return current;
+    }
+
+    /**
+     * Converts array values to comma-separated strings
+     * Handles Java collection wrappers like ["java.util.HashSet", [...]]
+     * @param {*} value - The value to convert
+     * @returns {string} Comma-separated string or original value as string
+     */
+    function arrayToString(value) {
+        if (Array.isArray(value)) {
+            if (value.length === 2 && typeof value[0] === "string" && value[0].startsWith("java.util.") && Array.isArray(value[1])) {
+                return value[1].join(",");
+            }
+            return value.join(",");
+        }
+        return value !== null && value !== undefined ? String(value) : "";
+    }
+
+    /**
+     * Properly floats the MDC text field label when a value is set programmatically
+     * Also removes the missing-required-field class and clears validation errors
+     * @param {jQuery} $input - The input element
+     */
+    function floatMdcTextFieldLabel($input) {
+        const textFieldEl = $input.closest(".mdc-text-field")[0];
+        if (textFieldEl) {
+            // Add the floating label class
+            textFieldEl.classList.add("mdc-text-field--label-floating");
+
+            // Handle the notched outline
+            const notchedOutline = textFieldEl.querySelector(".mdc-notched-outline");
+            if (notchedOutline) {
+                notchedOutline.classList.add("mdc-notched-outline--notched");
+            }
+
+            // Re-attach the MDC text field to update its state
+            try {
+                const mdcTextField = mdc.textField.MDCTextField.attachTo(textFieldEl);
+                // Force layout update
+                mdcTextField.layout();
+            } catch (e) {
+                // Component may already be attached, which is fine
+            }
+        }
+
+        // Remove the missing-required-field class from parent if value is set
+        if ($input.val() && $input.val().length > 0) {
+            $input.parent().removeClass("missing-required-field");
+            // Clear any custom validity
+            if ($input[0] && $input[0].setCustomValidity) {
+                $input[0].setCustomValidity("");
+            }
+        }
+    }
+
+    /**
+     * Updates a select field's value and triggers change handlers
+     * @param {jQuery} $select - The select element
+     * @param {string} value - The value to set
+     */
+    function setSelectValue($select, value) {
+        if (!$select.length || value === undefined || value === null) return;
+
+        // Convert booleans to strings
+        let stringValue = value;
+        if (typeof value === "boolean") {
+            stringValue = value.toString();
+        }
+
+        // Try to find the option with exact match, then uppercase, then lowercase
+        let $option = $select.find(`option[value="${stringValue}"]`);
+        if ($option.length === 0) {
+            $option = $select.find(`option[value="${stringValue.toString().toUpperCase()}"]`);
+        }
+        if ($option.length === 0) {
+            $option = $select.find(`option[value="${stringValue.toString().toLowerCase()}"]`);
+        }
+
+        if ($option.length > 0) {
+            $select.val($option.val());
+            try {
+                $select.selectmenu("refresh");
+            } catch (e) {
+                // Selectmenu not initialized yet
+            }
+
+            const handlerNames = $select.data("change-handler");
+            if (handlerNames) {
+                const handlers = handlerNames.split(",");
+                for (const handlerName of handlers) {
+                    if (handlerName && handlerName.length > 0 && handlerName !== "generateServiceDefinition" && typeof window[handlerName] === "function") {
+                        window[handlerName]($select);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Updates a TomSelect multi-select field
+     * @param {jQuery} $select - The select element
+     * @param {Array|string} values - The values to set
+     */
+    function setMultiSelectValue($select, values) {
+        if (!$select.length) return;
+
+        const tomSelect = $select[0].tomselect;
+        if (tomSelect) {
+            tomSelect.clear();
+            const valueArray = Array.isArray(values) ? values : (values ? values.split(",") : []);
+            for (const val of valueArray) {
+                if (val && val.trim().length > 0) {
+                    if (!tomSelect.options[val.trim()]) {
+                        tomSelect.addOption({ value: val.trim(), text: val.trim() });
+                    }
+                    tomSelect.addItem(val.trim());
+                }
+            }
+        }
+    }
+
+    /**
+     * Updates a switch button (checkbox) field
+     * @param {string} buttonId - The button ID (without Button suffix)
+     * @param {boolean} value - The value to set
+     */
+    function setSwitchButtonValue(buttonId, value) {
+        const $input = $(`input#${buttonId}`);
+        const $button = $(`button#${buttonId}Button`);
+
+        if (!$input.length) return;
+
+        const currentValue = $input.val() === "true" || $input.val() === true;
+        const newValue = value === true || value === "true" || value === "TRUE";
+
+        if (currentValue !== newValue) {
+            $button.click();
+        }
+    }
+
+    /**
+     * Populates a mapped input field section (key-value pairs)
+     * @param {string} containerFieldName - The field name for the container
+     * @param {Object} mapData - The map data object
+     * @param {string} policyClassName - Optional: the policy class name to find the correct container
+     */
+    function populateMappedField(containerFieldName, mapData, policyClassName = null) {
+        if (!mapData || typeof mapData !== "object") return;
+
+        const entries = Object.entries(mapData).filter(([key]) => key !== "@class");
+        if (entries.length === 0) return;
+
+        // Find inputs matching the param name
+        let $inputs = $(`form#editServiceWizardForm input[data-param-name="${containerFieldName}"]`);
+        if ($inputs.length === 0) return;
+
+        // If a policy class name is provided, find the container that matches
+        let $container = null;
+        if (policyClassName) {
+            const policyShortName = getLastWord(policyClassName);
+            // Find a container that has the policy class in its CSS classes
+            $inputs.each(function() {
+                const $potentialContainer = $(this).closest("[id$='MapContainer']");
+                if ($potentialContainer.hasClass(policyShortName) ||
+                    $potentialContainer.find(`.${policyShortName}`).length > 0 ||
+                    $potentialContainer.closest(`.${policyShortName}`).length > 0) {
+                    $container = $potentialContainer;
+                    return false; // break
+                }
+            });
+        }
+
+        // Fallback: find visible container or first container
+        if (!$container || !$container.length) {
+            const $firstKeyInput = $inputs.first();
+            $container = $firstKeyInput.closest("[id$='MapContainer']");
+
+            // Try to find a visible container
+            $inputs.each(function() {
+                const $potentialContainer = $(this).closest("[id$='MapContainer']");
+                if ($potentialContainer.is(":visible") && !$potentialContainer.hasClass("hide")) {
+                    $container = $potentialContainer;
+                    return false; // break
+                }
+            });
+        }
+
+        if (!$container || !$container.length) return;
+
+        const $addButton = $container.find("button[name$='AddButton']");
+
+        entries.forEach(([key, value], index) => {
+            if (index > 0 && $addButton.length) {
+                $addButton.click();
+            }
+
+            setTimeout(() => {
+                const $allInputs = $container.find(`input[data-param-name="${containerFieldName}"]`);
+                const keyIndex = index * 2;
+                const valueIndex = keyIndex + 1;
+
+                if ($allInputs.length > keyIndex) {
+                    const $keyInput = $($allInputs[keyIndex]);
+                    $keyInput.val(key).trigger("input");
+                    floatMdcTextFieldLabel($keyInput);
+                }
+                if ($allInputs.length > valueIndex) {
+                    let valueStr = value;
+                    if (typeof value === "object" && value !== null) {
+                        if (value["@class"]) {
+                            if (value.pattern) {
+                                valueStr = value.pattern;
+                            } else if (value.values) {
+                                valueStr = arrayToString(value.values);
+                            } else {
+                                valueStr = JSON.stringify(value);
+                            }
+                        } else if (Array.isArray(value)) {
+                            // Handle Java collection wrapper like ["java.util.ArrayList", [...]]
+                            valueStr = arrayToString(value);
+                        } else {
+                            valueStr = arrayToString(value);
+                        }
+                    } else {
+                        valueStr = arrayToString(value);
+                    }
+                    const $valueInput = $($allInputs[valueIndex]);
+                    $valueInput.val(valueStr).trigger("input");
+                    floatMdcTextFieldLabel($valueInput);
+                }
+            }, index * 20);
+        });
+    }
+
+    // Populate all input fields
+    $("form#editServiceWizardForm input[data-param-name]").each(function () {
+        const $input = $(this);
+        const paramName = $input.data("param-name");
+
+        if (!paramName) return;
+
+        // Skip if this is part of a mapped field (handled separately)
+        if ($input.closest("[id$='MapContainer']").length > 0) return;
+
+        const value = getNestedValue(serviceDefinition, paramName);
+
+        if (value !== undefined && value !== null) {
+            const stringValue = arrayToString(value);
+            $input.val(stringValue);
+
+            // Float the label if we have a value
+            if (stringValue.length > 0) {
+                floatMdcTextFieldLabel($input);
+            }
+        }
+    });
+
+    // Populate select fields
+    $("form#editServiceWizardForm select[data-param-name]").each(function () {
+        const $select = $(this);
+        const paramName = $select.data("param-name");
+
+        if (!paramName) return;
+
+        let value = getNestedValue(serviceDefinition, paramName);
+
+        if (value !== undefined && value !== null) {
+            // Handle objects with @class property
+            if (typeof value === "object" && value["@class"]) {
+                value = value["@class"];
+            }
+
+            setSelectValue($select, value);
+        }
+    });
+
+    // Populate multi-select fields (TomSelect)
+    $("form#editServiceWizardForm select.jqueryui-multiselectmenu[data-param-name]").each(function () {
+        const $select = $(this);
+        const paramName = $select.data("param-name");
+
+        if (!paramName) return;
+
+        let value = getNestedValue(serviceDefinition, paramName);
+
+        if (value !== undefined && value !== null) {
+            const arrayValue = arrayToString(value);
+            setMultiSelectValue($select, arrayValue);
+        }
+    });
+
+    // Populate switch buttons (hidden inputs with corresponding buttons)
+    $("form#editServiceWizardForm input[type='hidden'][data-param-name]").each(function () {
+        const $input = $(this);
+        const paramName = $input.data("param-name");
+        const inputId = $input.attr("id");
+
+        if (!paramName || !inputId) return;
+
+        const value = getNestedValue(serviceDefinition, paramName);
+
+        if (value !== undefined && value !== null) {
+            setSwitchButtonValue(inputId, value);
+        }
+    });
+
+    // Populate mapped fields (key-value pair containers)
+    // Use a delay to ensure select field change handlers have executed and shown/hidden the correct containers
+    setTimeout(() => {
+        const mappedFieldContainers = new Set();
+
+        // First, handle attributeReleasePolicy.allowedAttributes specially
+        // because it needs to find the right container based on the policy class
+        if (serviceDefinition.attributeReleasePolicy && serviceDefinition.attributeReleasePolicy.allowedAttributes) {
+            const policyClass = serviceDefinition.attributeReleasePolicy["@class"];
+            const policyShortName = getLastWord(policyClass);
+
+            // Find the container with the matching policy class
+            $("form#editServiceWizardForm [id$='MapContainer']").each(function () {
+                const $container = $(this);
+                const $inputs = $container.find("input[data-param-name='attributeReleasePolicy.allowedAttributes']");
+
+                if ($inputs.length > 0 && $container.hasClass(policyShortName)) {
+                    const containerKey = `attributeReleasePolicy.allowedAttributes:${$container.attr("id")}`;
+                    if (!mappedFieldContainers.has(containerKey)) {
+                        mappedFieldContainers.add(containerKey);
+                        populateMappedField("attributeReleasePolicy.allowedAttributes",
+                            serviceDefinition.attributeReleasePolicy.allowedAttributes, policyClass);
+                        return false; // break
+                    }
+                }
+            });
+        }
+
+        // Then handle other mapped fields
+        $("form#editServiceWizardForm [id$='MapContainer']").each(function () {
+            const $container = $(this);
+
+            // Only process visible containers for non-allowedAttributes fields
+            if ($container.hasClass("hide") || !$container.is(":visible")) {
+                return;
+            }
+
+            const $inputs = $container.find("input[data-param-name]");
+
+            if ($inputs.length > 0) {
+                const paramName = $inputs.first().data("param-name");
+                // Create a unique key based on paramName and container ID to avoid conflicts
+                const containerKey = `${paramName}:${$container.attr("id")}`;
+                if (paramName && !mappedFieldContainers.has(containerKey)) {
+                    mappedFieldContainers.add(containerKey);
+                    const mapData = getNestedValue(serviceDefinition, paramName);
+                    if (mapData) {
+                        // Pass the attribute release policy class if applicable
+                        let policyClass = null;
+                        if (paramName.startsWith("attributeReleasePolicy.") && serviceDefinition.attributeReleasePolicy) {
+                            policyClass = serviceDefinition.attributeReleasePolicy["@class"];
+                        }
+                        populateMappedField(paramName, mapData, policyClass);
+                    }
+                }
+            }
+        });
+    }, 50);
+
+    // Handle special cases for different service types
+    const serviceClass = serviceDefinition["@class"];
+    if (serviceClass) {
+        // OAuth/OIDC specific fields
+        if (serviceClass.includes("OAuthRegisteredService") || serviceClass.includes("OidcRegisteredService")) {
+            if (serviceDefinition.supportedGrantTypes) {
+                const $grantTypes = $("select#registeredServiceSupportedGrantTypes");
+                setMultiSelectValue($grantTypes, arrayToString(serviceDefinition.supportedGrantTypes));
+            }
+            if (serviceDefinition.supportedResponseTypes) {
+                const $responseTypes = $("select#registeredServiceSupportedResponseTypes");
+                setMultiSelectValue($responseTypes, arrayToString(serviceDefinition.supportedResponseTypes));
+            }
+            if (serviceDefinition.scopes) {
+                const $scopes = $("select#registeredServiceScopes");
+                setMultiSelectValue($scopes, arrayToString(serviceDefinition.scopes));
+            }
+        }
+
+        // SAML specific fields
+        if (serviceClass.includes("SamlRegisteredService")) {
+            if (serviceDefinition.attributeNameFormats) {
+                populateMappedField("attributeNameFormats", serviceDefinition.attributeNameFormats);
+            }
+            if (serviceDefinition.attributeFriendlyNames) {
+                populateMappedField("attributeFriendlyNames", serviceDefinition.attributeFriendlyNames);
+            }
+            if (serviceDefinition.attributeValueTypes) {
+                populateMappedField("attributeValueTypes", serviceDefinition.attributeValueTypes);
+            }
+        }
+    }
+
+    // Reset the population flag and generate the service definition after all fields are populated
+    // Use a timeout to account for:
+    // - 50ms delay for mapped fields to start populating
+    // - Additional delay for each entry (index * 20ms)
+    // - Some buffer time for DOM updates
+    setTimeout(() => {
+        isPopulatingWizard = false;
+
+        // Clean up any missing-required-field classes on fields that have values
+        $("form#editServiceWizardForm input[data-param-name]").each(function () {
+            const $input = $(this);
+            const value = $input.val();
+            if (value && value.length > 0) {
+                $input.parent().removeClass("missing-required-field");
+                if (this.setCustomValidity) {
+                    this.setCustomValidity("");
+                }
+            }
+        });
+
+        generateServiceDefinition();
+        Swal.close();
+
+        // Focus on the first visible input field after dialog is fully ready
+        // Use a longer timeout to ensure MDC dialog animation is complete
+        setTimeout(() => {
+            const $firstInput = $("form#editServiceWizardForm input[data-param-name]:visible").first();
+            if ($firstInput.length > 0) {
+                $firstInput.trigger("focus");
+            }
+        }, 300);
+    }, 600);
+}
+
+function openRegisteredServiceWizardDialog(existingService = null) {
+    function openWizardDialog(serviceClass, serviceData = null) {
         $("#editServiceWizardGeneralContainer").find("input").val("");
         $('.jqueryui-multiselectmenu').each(function () {
             this.tomselect?.clear();
@@ -2871,7 +3471,9 @@ function openRegisteredServiceWizardDialog() {
 
         const editServiceWizardDialogElement = document.getElementById("editServiceWizardDialog");
         editServiceWizardDialog = window.mdc.dialog.MDCDialog.attachTo(editServiceWizardDialogElement);
-        $(editServiceWizardDialogElement).attr("newService", true);
+
+        const isNewService = serviceData === null;
+        $(editServiceWizardDialogElement).attr("newService", isNewService);
         $(editServiceWizardDialogElement).attr("serviceClass", serviceClass);
 
         $("#editServiceWizardForm input[type=hidden]")
@@ -2909,7 +3511,14 @@ function openRegisteredServiceWizardDialog() {
             dropdown.selectmenu();
         }
 
-        generateServiceDefinition();
+        if (serviceData !== null) {
+            setTimeout(() => {
+                populateWizardFromServiceDefinition(serviceData);
+            }, 300);
+        } else {
+            generateServiceDefinition();
+        }
+
         editServiceWizardDialog["open"]();
 
         const value = $("#hideAdvancedOptions").val();
@@ -2963,7 +3572,10 @@ function openRegisteredServiceWizardDialog() {
         }, 200);
     }
 
-    if (Object.keys(supportedServiceTypes).length === 1) {
+    if (existingService !== null) {
+        const serviceClass = existingService["@class"];
+        openWizardDialog(serviceClass, existingService);
+    } else if (Object.keys(supportedServiceTypes).length === 1) {
         openWizardDialog(Object.keys(supportedServiceTypes)[0]);
     } else {
         const sortedServiceTypes = Object.keys(supportedServiceTypes)

@@ -94,6 +94,11 @@ cas.authn.saml-idp.core.session-replication.cookie.crypto.enabled=true
 to handle and support more actuator endpoints, when it comes to adding external identity providers, retrieving
 user sessions, listing multifactor authentication providers, etc.
 
+### Gradle 9.4
+
+CAS is now built with Gradle `9.4` and the build process has been updated to use the latest Gradle
+features and capabilities. This also prepares future CAS versions to build and run against JDK `26`.
+
 ### Spring Boot 4
 
 CAS is now built with Spring Boot `4.1.x`. This is a major platform upgrade that affects almost all aspects of the codebase

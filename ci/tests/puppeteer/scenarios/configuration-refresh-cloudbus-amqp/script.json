@@ -1,5 +1,6 @@
 {
   "dependencies": "reports,configuration-cloud-amqp",
+  "enabled": "false",
   "conditions": {
     "docker": "true"
   },

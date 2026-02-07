@@ -124,6 +124,9 @@ function processNavigationTabs() {
     if (!CasActuatorEndpoints.metrics()) {
         hideElements($("#systemmetricstab").parent());
     }
+    if (!CasActuatorEndpoints.prometheus()) {
+        hideElements($("#prometheusmetricstab").parent());
+    }
     if (!CasActuatorEndpoints.springWebflow()) {
         hideElements($("#caswebflowtab").parent());
     }
