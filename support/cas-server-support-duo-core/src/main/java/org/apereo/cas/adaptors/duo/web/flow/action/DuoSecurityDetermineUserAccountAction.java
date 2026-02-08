@@ -48,7 +48,7 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
     @Override
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val authentication = WebUtils.getAuthentication(requestContext);
-        val provider = getProvider(requestContext);
+        val provider = resolveMultifactorAuthenticationProvider(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         val account = getDuoSecurityUserAccount(principal, provider);
         val eventFactorySupport = eventFactory;
