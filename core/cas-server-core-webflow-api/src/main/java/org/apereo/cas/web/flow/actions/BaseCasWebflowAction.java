@@ -72,9 +72,7 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
         try {
             WebUtils.putActiveFlow(requestContext);
             val clientInfo = ClientInfoHolder.getClientInfo();
-            val scope = new HashMap<>(requestContext.getConversationScope().asMap());
-            scope.putAll(requestContext.getFlowScope().asMap());
-            scope.putAll(requestContext.getFlashScope().asMap());
+            val scope = buildScopeMap(requestContext);
             applicationContext.publishEvent(new CasWebflowActionExecutingEvent(this, scope, clientInfo));
             val result = doExecuteInternal(requestContext);
             transactionManager.ifPresent(mgr -> transactionStatus.ifPresent(mgr::commit));
@@ -96,9 +94,7 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
     protected void doPostExecute(final RequestContext requestContext) {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val clientInfo = ClientInfoHolder.getClientInfo();
-        val scope = new HashMap<>(requestContext.getConversationScope().asMap());
-        scope.putAll(requestContext.getFlowScope().asMap());
-        scope.putAll(requestContext.getFlashScope().asMap());
+        val scope = buildScopeMap(requestContext);
         applicationContext.publishEvent(new CasWebflowActionExecutedEvent(this, scope, clientInfo));
     }
 
@@ -123,5 +119,17 @@ public abstract class BaseCasWebflowAction extends AbstractAction {
             val transactionManagerName = annotation.transactionManager();
             return Optional.of(applicationContext.getBean(transactionManagerName, PlatformTransactionManager.class));
         }, Optional::<PlatformTransactionManager>empty).get();
+    }
+
+    protected Map<String, Object> buildScopeMap(final RequestContext requestContext) {
+        val conversationScope = requestContext.getConversationScope().asMap();
+        val flowScope = requestContext.getFlowScope().asMap();
+        val flashScope = requestContext.getFlashScope().asMap();
+        val totalSize = conversationScope.size() + flowScope.size() + flashScope.size();
+        val scope = new HashMap<String, Object>(totalSize);
+        scope.putAll(conversationScope);
+        scope.putAll(flowScope);
+        scope.putAll(flashScope);
+        return scope;
     }
 }

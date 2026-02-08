@@ -26,19 +26,17 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @SuppressWarnings("NullAway.Init")
 public abstract class AbstractMultifactorAuthenticationAction<T extends MultifactorAuthenticationProvider> extends BaseCasWebflowAction {
-    /**
-     * The resolved provider for this flow.
-     */
-    protected T provider;
-
+    private static final String FLOW_SCOPE_MFA_PROVIDER = "mfaProvider";
+    
     @Override
     protected Event doPreExecute(final RequestContext requestContext) throws Exception {
         val providerId = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(requestContext);
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
-        this.provider = (T) MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(providerId, applicationContext)
+        val provider = (T) MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(providerId, applicationContext)
             .orElseThrow(() -> new AuthenticationException("Unable to determine multifactor authentication provider for " + providerId));
         Assert.isTrue(providerId.equalsIgnoreCase(provider.getId()),
             "Requested provider id %s does not match the available provider id %s".formatted(providerId, provider.getId()));
+        requestContext.getFlowScope().put(FLOW_SCOPE_MFA_PROVIDER, provider);
         return super.doPreExecute(requestContext);
     }
 
@@ -54,7 +52,11 @@ public abstract class AbstractMultifactorAuthenticationAction<T extends Multifac
             .map(r -> r.resolve(principal))
             .orElseThrow(() -> new IllegalStateException("Unable to resolve principal for multifactor authentication"));
     }
-
+    
+    protected T getProvider(final RequestContext requestContext) {
+        return (T) requestContext.getFlowScope().get(FLOW_SCOPE_MFA_PROVIDER);
+    }
+    
     protected String getThrottledRequestKeyFor(final Authentication authentication,
                                                final RequestContext requestContext) {
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);

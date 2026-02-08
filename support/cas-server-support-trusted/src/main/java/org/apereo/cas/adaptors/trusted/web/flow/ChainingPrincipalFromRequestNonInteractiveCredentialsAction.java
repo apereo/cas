@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -16,7 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * @since 5.2.0
  */
 public class ChainingPrincipalFromRequestNonInteractiveCredentialsAction extends BasePrincipalFromNonInteractiveCredentialsAction {
-    private final List<PrincipalFromRequestExtractorAction> chain = new ArrayList<>();
+    private final List<PrincipalFromRequestExtractorAction> chain = new CopyOnWriteArrayList<>();
 
     public ChainingPrincipalFromRequestNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                                        final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
@@ -38,7 +39,7 @@ public class ChainingPrincipalFromRequestNonInteractiveCredentialsAction extends
     }
 
     @Override
-    public String getRemotePrincipalId(final HttpServletRequest request) {
+    public @Nullable String getRemotePrincipalId(final HttpServletRequest request) {
         return this.chain
             .stream()
             .map(action -> action.getRemotePrincipalId(request))
