@@ -8,7 +8,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.binding.expression.support.LiteralExpression;
-import org.springframework.webflow.test.MockExternalContext;
+import org.springframework.http.HttpHeaders;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,9 +24,7 @@ class ExternalRedirectActionTests {
         val action = new ExternalRedirectAction(new LiteralExpression("https://apereo.github.io"));
         val context = MockRequestContext.create();
         val results = action.execute(context);
-        val external = (MockExternalContext) context.getExternalContext();
-        assertTrue(external.isResponseComplete());
-        assertEquals("https://apereo.github.io", external.getExternalRedirectUrl());
+        assertEquals("https://apereo.github.io", context.getHttpServletResponse().getHeader(HttpHeaders.LOCATION));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, results.getId());
     }
 
@@ -35,8 +33,7 @@ class ExternalRedirectActionTests {
         val action = new ExternalRedirectAction(new LiteralExpression("custom://apereo.github.io"));
         val context = MockRequestContext.create();
         val results = action.execute(context);
-        assertTrue(context.getExternalContext().isResponseComplete());
-        assertEquals("custom://apereo.github.io", context.getHttpServletResponse().getHeader("Location"));
+        assertEquals("custom://apereo.github.io", context.getHttpServletResponse().getHeader(HttpHeaders.LOCATION));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, results.getId());
     }
 }
