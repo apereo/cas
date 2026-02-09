@@ -11,8 +11,10 @@ import org.springframework.core.io.Resource;
  *
  * @author Misagh Moayyed
  * @since 6.5.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
 @RequiredArgsConstructor
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class WsFederationStaticCertificateProvider implements WsFederationCertificateProvider {
     private final Resource signingCertificate;
 

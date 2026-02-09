@@ -15,6 +15,7 @@ import lombok.val;
  *
  * @author John Gasper
  * @since 4.2.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
 @Slf4j
 @ToString(of = {"id", "issuer"})
@@ -22,6 +23,7 @@ import lombok.val;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class WsFederationCredential extends AbstractCredential {
 
     @Serial
