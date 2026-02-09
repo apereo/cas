@@ -93,7 +93,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
 
         val urlWithStatePair = createAuthUrlWithState(duoProvider, properties, requestContext, state);
         requestContext.getFlowScope().put("duoUniversalPromptLoginUrl", urlWithStatePair.getLeft());
-
+        val provider = resolveMultifactorAuthenticationProvider(requestContext);
         if (!provider.getDuoAuthenticationService().getProperties().getSessionStorageType().isTicketRegistry()) {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
