@@ -59,7 +59,11 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
 and scenarios. At the moment, total number of jobs stands at approximately `535` distinct scenarios. The overall
-test coverage of the CAS codebase is approximately `94%`. 
+test coverage of the CAS codebase is approximately `94%`.
+
+Furthermore the test scenario construction logic is given the ability to limit its run to a pre-specified 
+time window, which is specially useful when when the test requires external resources and APIs that may 
+not be available at all times. 
                                                                                                                             
 ### Session Replication (Deprecated)
 
@@ -90,9 +94,14 @@ cas.authn.saml-idp.core.session-replication.cookie.crypto.enabled=true
 
 ### Palantir Admin Dashboard
 
-[Palantir Admin Console](../installation/Admin-Dashboard.html) received significant changes across the board
+[Palantir Admin Console](../installation/Admin-Dashboard.html) receives significant changes across the board
 to handle and support more actuator endpoints, when it comes to adding external identity providers, retrieving
-user sessions, listing multifactor authentication providers, etc.
+user sessions, listing multifactor authentication providers, rendering metrics, etc.
+
+Notably, Palantir now supports editing application definitions using a wizard-based interface
+in addition to using a plain JSON editor. Note that this functionality is brand, and somewhat fragile
+and may not work for all service definitions, specially if advanced or complex constructions are used. 
+We will continue to polish this feature in future releases.
 
 ### Gradle 9.4
 
@@ -125,8 +134,9 @@ Support for [SpringBoot Admin](../monitoring/Configuring-SpringBootAdmin.html) i
   
 - Compiled valid regular expressions are now cached to improve performance across the board.
 - Continued efforts using advanced code analysis techniques to remove potential memory leaks and improve system performance.
+- Continued efforts using advanced code analysis techniques to fix potential thread safety issues.
 - CAS is now upgraded to use `jQuery` version `4.0.0`.
 - Integration tests have switched to use MySQL `9.6.x`.
 - Better log data sanitization to avoid logging sensitive information, particularly when `DEBUG` logs are enabled.
-- Minor bug fixes to improve [OpenID Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html).
+- Minor bug fixes to improve [OpenID Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html) to ensure the `act` claim is correctly processed in the right flows.
 - Sorting operations and locating service definitions registered with CAS is now optimized to improve performance large numbers of applications.

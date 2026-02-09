@@ -185,3 +185,60 @@ ul.ui-widget-header {
     bottom: -20px;
     top: auto;
 }
+
+/* Trumbowyg WYSIWYG Editor Styles */
+.trumbowyg-box {
+    margin-bottom: 0.5rem;
+}
+
+.trumbowyg-box .trumbowyg-editor,
+.trumbowyg-box .trumbowyg-textarea,
+#registeredServiceDescriptionEditorContainer .trumbowyg-editor,
+#registeredServiceDescriptionEditorContainer .trumbowyg-editor p,
+#registeredServiceDescriptionEditorContainer .trumbowyg-editor div,
+#registeredServiceDescriptionEditorContainer .trumbowyg-editor span {
+    font-family: "Courier New", Courier, monospace !important;
+    font-size: 12pt !important;
+    line-height: 1.4 !important;
+}
+
+.trumbowyg-box .trumbowyg-editor {
+    min-height: 80px;
+}
+
+.trumbowyg-button-pane {
+    background-color: #e8f4fc !important;
+    border-bottom: 1px solid #ccc;
+}
+
+.trumbowyg-button-pane button {
+    color: #333 !important;
+}
+
+.trumbowyg-button-pane button svg {
+    fill: #333 !important;
+    width: 17px !important;
+    height: 17px !important;
+}
+
+
+
+.trumbowyg-button-pane button.trumbowyg-active {
+    background-color: #c5dff0 !important;
+}
+
+#registeredServiceDescriptionEditorContainer {
+    width: 100%;
+}
+
+#registeredServiceDescriptionEditorContainer .trumbowyg-box {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+}
+
+#registeredServiceDescriptionEditorContainer .trumbowyg-editor {
+    padding: 10px;
+
+}
+

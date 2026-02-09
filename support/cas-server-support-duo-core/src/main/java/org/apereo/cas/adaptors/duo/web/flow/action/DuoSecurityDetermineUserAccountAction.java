@@ -44,13 +44,15 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
     protected final ServiceFactory serviceFactory;
 
     protected final TenantExtractor tenantExtractor;
-    
+
     @Override
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val authentication = WebUtils.getAuthentication(requestContext);
+        val provider = resolveMultifactorAuthenticationProvider(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
-        val account = getDuoSecurityUserAccount(principal);
+        val account = getDuoSecurityUserAccount(principal, provider);
         val eventFactorySupport = eventFactory;
+
         if (account.getStatus() == DuoSecurityUserAccountStatus.ENROLL
             && StringUtils.isNotBlank(provider.getRegistration().getRegistrationUrl())) {
             val url = buildDuoRegistrationUrlFor(requestContext, provider, principal);
@@ -71,7 +73,9 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
         return success();
     }
 
-    protected DuoSecurityUserAccount getDuoSecurityUserAccount(final Principal principal) {
+    protected DuoSecurityUserAccount getDuoSecurityUserAccount(
+        final Principal principal,
+        final DuoSecurityMultifactorAuthenticationProvider provider) {
         val duoAuthenticationService = provider.getDuoAuthenticationService();
         if (!duoAuthenticationService.getProperties().isAccountStatusEnabled()) {
             LOGGER.debug("Checking Duo Security for user's [{}] account status is disabled", principal.getId());
