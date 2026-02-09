@@ -31,7 +31,7 @@ public class MultifactorAuthenticationBypassAction extends AbstractMultifactorAu
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val service = WebUtils.getService(requestContext);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
-
+        val provider = resolveMultifactorAuthenticationProvider(requestContext);
         val bypass = provider.getBypassEvaluator();
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         val bypassAllowed = isMultifactorAuthenticationBypass(requestContext, registeredService, provider);

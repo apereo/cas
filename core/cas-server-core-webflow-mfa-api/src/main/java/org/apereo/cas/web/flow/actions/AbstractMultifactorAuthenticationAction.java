@@ -14,7 +14,6 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.util.Assert;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -26,22 +25,6 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @SuppressWarnings("NullAway.Init")
 public abstract class AbstractMultifactorAuthenticationAction<T extends MultifactorAuthenticationProvider> extends BaseCasWebflowAction {
-    /**
-     * The resolved provider for this flow.
-     */
-    protected T provider;
-
-    @Override
-    protected Event doPreExecute(final RequestContext requestContext) throws Exception {
-        val providerId = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(requestContext);
-        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
-        this.provider = (T) MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(providerId, applicationContext)
-            .orElseThrow(() -> new AuthenticationException("Unable to determine multifactor authentication provider for " + providerId));
-        Assert.isTrue(providerId.equalsIgnoreCase(provider.getId()),
-            "Requested provider id %s does not match the available provider id %s".formatted(providerId, provider.getId()));
-        return super.doPreExecute(requestContext);
-    }
-
     protected Principal resolvePrincipal(final Principal principal, final RequestContext requestContext) {
         val beanFactory = ((ConfigurableApplicationContext) requestContext.getActiveFlow().getApplicationContext()).getBeanFactory();
         val resolvers = new ArrayList<>(BeanFactoryUtils.beansOfTypeIncludingAncestors(beanFactory, MultifactorAuthenticationPrincipalResolver.class).values());
@@ -53,6 +36,16 @@ public abstract class AbstractMultifactorAuthenticationAction<T extends Multifac
             .findFirst()
             .map(r -> r.resolve(principal))
             .orElseThrow(() -> new IllegalStateException("Unable to resolve principal for multifactor authentication"));
+    }
+
+    protected T resolveMultifactorAuthenticationProvider(final RequestContext requestContext) {
+        val providerId = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(requestContext);
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
+        val provider = (T) MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(providerId, applicationContext)
+            .orElseThrow(() -> new AuthenticationException("Unable to determine multifactor authentication provider for " + providerId));
+        Assert.isTrue(providerId.equalsIgnoreCase(provider.getId()),
+            "Requested provider id %s does not match the available provider id %s".formatted(providerId, provider.getId()));
+        return provider;
     }
 
     protected String getThrottledRequestKeyFor(final Authentication authentication,
