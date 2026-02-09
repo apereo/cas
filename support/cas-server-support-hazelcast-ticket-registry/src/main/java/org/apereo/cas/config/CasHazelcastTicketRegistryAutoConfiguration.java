@@ -99,6 +99,8 @@ public class CasHazelcastTicketRegistryAutoConfiguration {
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "id"));
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "type"));
                     mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "principal"));
+                    mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "service"));
+                    mapConfig.addIndexConfig(new IndexConfig(IndexType.HASH, "prefix"));
 
                     val attributeConfig = new AttributeConfig();
                     attributeConfig.setName("attributes");
