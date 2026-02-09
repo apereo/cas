@@ -13,6 +13,7 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 
 
@@ -26,7 +27,13 @@ import jakarta.persistence.Table;
 @NoArgsConstructor
 @AttributeOverrides(@AttributeOverride(name = "body", column = @Column(columnDefinition = "text")))
 @Entity(name = "PostgresJpaTicketEntity")
-@Table(name = "CasTickets")
+@Table(name = "CasTickets", indexes = {
+    @Index(name = "idx_ticket_type", columnList = "type"),
+    @Index(name = "idx_ticket_principal", columnList = "principalId"),
+    @Index(name = "idx_ticket_parent", columnList = "parentId"),
+    @Index(name = "idx_ticket_service", columnList = "service"),
+    @Index(name = "idx_type_principal", columnList = "type,principalId")
+})
 @Setter
 @Getter
 @Accessors(chain = true)
