@@ -246,8 +246,8 @@ tasks.named('test') {
 tasks.withType(Test).configureEach {
     scanForTestClasses = false
     ignoreFailures = providers.systemProperty("ignoreTestFailures").present
-    forkEvery = 2000
-    maxParallelForks = 8
+    forkEvery = 200
+    maxParallelForks = Math.max(1, (Runtime.runtime.availableProcessors() / 2).intValue())
     
     failFast = true
 
@@ -309,7 +309,7 @@ tasks.withType(Test).configureEach {
     list.add("-Dio.netty.tryReflectionSetAccessible=true")
     
     list.add("-Xms512m")
-    list.add("-Xmx6g")
+    list.add("-Xmx4g")
     
     list.add("-Dspring.jmx.enabled=false")
 
