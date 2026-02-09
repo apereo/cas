@@ -9,7 +9,9 @@ import org.opensaml.security.credential.Credential;
  *
  * @author Misagh Moayyed
  * @since 6.5.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class ChainingWsFederationCertificateProvider implements WsFederationCertificateProvider {
     private final List<WsFederationCertificateProvider> providers = new ArrayList<>();
 

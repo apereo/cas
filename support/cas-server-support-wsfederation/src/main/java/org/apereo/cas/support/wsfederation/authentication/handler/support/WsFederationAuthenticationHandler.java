@@ -14,7 +14,9 @@ import lombok.val;
  *
  * @author John Gasper
  * @since 4.2.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     public WsFederationAuthenticationHandler(final String name,

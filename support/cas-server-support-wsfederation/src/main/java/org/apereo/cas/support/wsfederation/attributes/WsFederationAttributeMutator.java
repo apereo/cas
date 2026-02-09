@@ -8,8 +8,10 @@ import module java.base;
  *
  * @author John Gasper
  * @since 4.2.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
 @FunctionalInterface
+@Deprecated(since = "8.0.0", forRemoval = true)
 public interface WsFederationAttributeMutator extends Serializable {
     /**
      * modifyAttributes manipulates the attributes before they

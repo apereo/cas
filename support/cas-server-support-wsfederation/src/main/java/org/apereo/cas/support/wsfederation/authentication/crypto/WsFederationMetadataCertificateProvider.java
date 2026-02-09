@@ -27,9 +27,11 @@ import org.springframework.core.io.Resource;
  * its signing x509 certificate in the metadata to locate the certificate.
  * @author Misagh Moayyed
  * @since 6.5.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
 @RequiredArgsConstructor
 @Slf4j
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class WsFederationMetadataCertificateProvider implements WsFederationCertificateProvider {
     private final Resource metadataResource;
 

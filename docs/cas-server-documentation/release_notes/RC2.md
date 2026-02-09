@@ -130,6 +130,11 @@ during compile time.
 
 Support for [SpringBoot Admin](../monitoring/Configuring-SpringBootAdmin.html) is now compatible with Spring Boot `4.x`.
 
+### ADFS Delegated Authentication (Deprecated)
+
+[Delegating authentication requests to ADFS](../integration/ADFS-Integration.html) is now **deprecated** 
+and scheduled for removal in a future CAS version.
+
 ## Other Stuff
   
 - Compiled valid regular expressions are now cached to improve performance across the board.

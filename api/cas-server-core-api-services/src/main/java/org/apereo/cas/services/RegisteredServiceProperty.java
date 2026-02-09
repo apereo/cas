@@ -97,6 +97,7 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * Property group for WSFED authn settings.
          */
+        @Deprecated(since = "8.0.0", forRemoval = true)
         DELEGATED_AUTHN_WSFED,
         /**
          * Property group for OIDC delegated authn settings.

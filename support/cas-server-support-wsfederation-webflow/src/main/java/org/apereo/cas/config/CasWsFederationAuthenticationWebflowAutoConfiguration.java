@@ -41,10 +41,13 @@ import org.springframework.webflow.execution.Action;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederation)
 @AutoConfiguration
+@Deprecated(since = "8.0.0", forRemoval = true)
+@SuppressWarnings("removal")
 public class CasWsFederationAuthenticationWebflowAutoConfiguration {
 
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")

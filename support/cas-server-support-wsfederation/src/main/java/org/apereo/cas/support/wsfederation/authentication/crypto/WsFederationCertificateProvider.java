@@ -17,8 +17,10 @@ import java.security.cert.X509Certificate;
  *
  * @author Misagh Moayyed
  * @since 6.5.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
 @FunctionalInterface
+@Deprecated(since = "8.0.0", forRemoval = true)
 public interface WsFederationCertificateProvider {
     /**
      * Gets providers.

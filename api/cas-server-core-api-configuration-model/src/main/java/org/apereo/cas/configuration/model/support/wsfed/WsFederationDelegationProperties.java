@@ -17,11 +17,13 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 8.0.0, WS-Federation delegation support is deprecated and scheduled for removal.
  */
 @RequiresModule(name = "cas-server-support-wsfederation-webflow")
 @Getter
 @Setter
 @Accessors(chain = true)
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class WsFederationDelegationProperties implements Serializable {
 
     @Serial

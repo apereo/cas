@@ -8,7 +8,9 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class WsFederationCookieCipherExecutor extends BaseStringCipherExecutor {
     public WsFederationCookieCipherExecutor(final String secretKeyEncryption,
                                             final String secretKeySigning,

@@ -29,10 +29,12 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
 @RequestMapping
 @Tag(name = "WS Federation")
 @RequiredArgsConstructor
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class WsFederationNavigationController extends AbstractController {
     /**
      * Endpoint path controlled by this controller to make the redirect.

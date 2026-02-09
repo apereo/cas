@@ -15,7 +15,9 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  *
  * @author Misagh Moayyed
  * @since 4.2
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public WsFederationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,

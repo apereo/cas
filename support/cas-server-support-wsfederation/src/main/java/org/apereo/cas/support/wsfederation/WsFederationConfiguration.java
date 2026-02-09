@@ -16,9 +16,11 @@ import org.springframework.core.io.Resource;
  * @author John Gasper
  * @author Misagh Moayyed
  * @since 4.2.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
 @Getter
 @Setter
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class WsFederationConfiguration implements Serializable {
 
     @Serial
