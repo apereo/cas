@@ -38,10 +38,13 @@ import org.springframework.core.Ordered;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederation)
 @Configuration(value = "WsFederationAuthenticationConfiguration", proxyBeanMethods = false)
+@Deprecated(since = "8.0.0", forRemoval = true)
+@SuppressWarnings("removal")
 class WsFederationAuthenticationConfiguration {
 
     @Configuration(value = "WsFederationAuthenticationHelperConfiguration", proxyBeanMethods = false)

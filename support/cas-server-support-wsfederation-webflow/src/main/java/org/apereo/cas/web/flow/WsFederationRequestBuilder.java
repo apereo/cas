@@ -23,8 +23,10 @@ import jakarta.servlet.http.HttpServletRequest;
  *
  * @author Misagh Moayyed
  * @since 5.3.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
 @RequiredArgsConstructor
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class WsFederationRequestBuilder {
     private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
     

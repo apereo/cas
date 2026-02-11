@@ -2158,16 +2158,7 @@ function createRegisteredServiceFields() {
         </button>
     `);
 
-    createInputField({
-        labelTitle: "Description",
-        name: "registeredServiceDescription",
-        paramName: "description",
-        required: false,
-        containerId: "editServiceWizardGeneralContainer",
-        title: "Provide a brief description of the application."
-    });
-
-    initializeDescriptionEditor();
+    initializeDescriptionEditor("editServiceWizardGeneralContainer");
 
     createInputField({
         cssClasses: "advanced-option",
@@ -2346,7 +2337,7 @@ function generateServiceDefinition() {
         const selectedAttrReleasePolicy = $attrReleasePolicySelect.length > 0 ? getLastWord($attrReleasePolicySelect.val()) : "";
 
         $("form#editServiceWizardForm")
-            .find("input,select")
+            .find("input,select,textarea")
             .each(function () {
                 const $input = $(this);
                 const paramName = $input.data("param-name");
@@ -2858,66 +2849,46 @@ function createMultiSelectField(config) {
     return $select;
 }
 
-/**
- * Initializes the Trumbowyg WYSIWYG editor for the description field.
- * Replaces the standard input field with a rich text editor that only allows
- * bold, italic, and underline formatting with Monospace font at 10pt.
- */
-function initializeDescriptionEditor() {
+function initializeDescriptionEditor(containerId) {
     setTimeout(function () {
-        const $input = $("#registeredServiceDescription");
-        if ($input.length === 0) {
-            return;
-        }
-
-        const $container = $input.closest("[id$='FieldContainer']");
-        $container.hide();
-
         const editorContainer = $("<div>", {
             id: "registeredServiceDescriptionEditorContainer",
             class: "mb-2"
         });
         
-
         const editorTextarea = $("<textarea>", {
             id: "registeredServiceDescriptionEditor",
             name: "registeredServiceDescriptionEditor",
-            "data-param-name": "description"
+            "data-param-name": "description",
+            title: "Provide a brief description of the application."
         });
 
-
         editorContainer.append(editorTextarea);
-
-        $container.after(editorContainer);
+        $(`#${containerId}`).append(editorContainer);
 
         if (typeof trumbowygIconsPath !== "undefined" && trumbowygIconsPath) {
             $.trumbowyg.svgPath = trumbowygIconsPath;
         }
 
         $("#registeredServiceDescriptionEditor").trumbowyg({
-            btns: [["bold", "italic", "underline", "removeformat"]],
+            btns: [["bold", "italic", "underline", "removeformat", "viewHTML"]],
             removeformatPasted: true,
             semantic: false,
             autogrow: true,
-            defaultLinkTarget: "_blank"
-        });
-
-        $("#registeredServiceDescriptionEditor").on("tbwchange tbwblur", function () {
-            const htmlContent = $(this).trumbowyg("html");
-            $input.val(htmlContent);
+            defaultLinkTarget: "_blank",
+            autogrowOnEnter: true
+        }).on("tbwchange tbwblur", function () {
             generateServiceDefinition();
         });
     }, 150);
 }
 
 function setDescriptionEditorValue(value) {
-    if (typeof jQuery === "undefined" || typeof jQuery.fn.trumbowyg === "undefined") {
-        return;
-    }
     const $editor = $("#registeredServiceDescriptionEditor");
-    if ($editor.length > 0) {
+    if ($editor.length > 0 && $editor.data("trumbowyg")) {
         $editor.trumbowyg("html", value || "");
-        $("#registeredServiceDescription").val(value || "");
+    } else {
+        setTimeout(() => setDescriptionEditorValue(value), 150);
     }
 }
 
@@ -3317,7 +3288,7 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
     }
 
     // Populate all input fields
-    $("form#editServiceWizardForm input[data-param-name]").each(function () {
+    $("form#editServiceWizardForm input[data-param-name], form#editServiceWizardForm textarea[data-param-name]").each(function () {
         const $input = $(this);
         const paramName = $input.data("param-name");
 
