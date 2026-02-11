@@ -23,10 +23,12 @@ import org.springframework.webflow.execution.RequestContext;
  *
  * @author John Gasper
  * @since 4.2.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
 @Slf4j
 @Getter
 @Setter
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class WsFederationAction extends AbstractAuthenticationAction {
     private static final String WA = "wa";
 

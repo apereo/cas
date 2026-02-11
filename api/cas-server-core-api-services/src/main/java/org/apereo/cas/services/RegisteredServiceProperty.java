@@ -96,7 +96,9 @@ public interface RegisteredServiceProperty extends Serializable {
         DELEGATED_AUTHN_SAML2,
         /**
          * Property group for WSFED authn settings.
+         * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
          */
+        @Deprecated(since = "8.0.0", forRemoval = true)
         DELEGATED_AUTHN_WSFED,
         /**
          * Property group for OIDC delegated authn settings.
