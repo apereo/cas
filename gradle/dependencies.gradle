@@ -781,6 +781,7 @@ ext.libraries = [
         eclipselink                : [
                 dependencies.create(libs.eclipse.persistence.jpa.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "jakarta.persistence", module: "jakarta.persistence-api")
                 }
         ],
         hibernatevalidator         : [
