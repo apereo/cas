@@ -8,9 +8,13 @@ category: Authentication
 
 # Overview
 
+
 The integration between the CAS Server and ADFS delegates user authentication from CAS Server
 to ADFS, making CAS Server a WS-Federation client. Claims released from ADFS are made 
 available as attributes to CAS Server, and by extension CAS Clients.
+
+<div class="alert alert-warning">:warning: <strong>Deprecated</strong><p>WS-Federation support is deprecated
+and is scheduled for removal in a future CAS version.</p></div>
 
 <div class="alert alert-info">:information_source: <strong>Remember</strong><p>The functionality described 
 here allows CAS to use ADFS as an external identity provider. If you wish to do the 

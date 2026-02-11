@@ -14,13 +14,7 @@ async function initializeConsentOperations() {
             autoWidth: false,
             columnDefs: [
                 {visible: false, targets: 0},
-                {width: "12%", targets: 1},
-                {width: "20%", targets: 2},
                 {visible: false, targets: 3},
-                {width: "15%", targets: 4},
-                {width: "8%", targets: 5},
-                {width: "8%", targets: 6},
-                {width: "12%", targets: 7}
             ],
             drawCallback: settings => {
                 $("#consentTable tr").addClass("mdc-data-table__row");

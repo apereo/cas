@@ -92,7 +92,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                     val sql = String.format("SELECT t FROM %s t WHERE t.id = :id", factory.getEntityName());
                     val query = entityManager.createQuery(sql, factory.getType());
                     query.setParameter("id", encTicketId);
-                    query.setLockMode(LockModeType.valueOf(casProperties.getTicket().getRegistry().getJpa().getTicketLockType()));
+                    query.setLockMode(getConfiguredLockModeType());
                     val ticket = query.getSingleResult();
                     val entity = getJpaTicketEntityFactory().toTicket(ticket);
                     val result = decodeTicket(entity);
@@ -137,7 +137,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             val factory = getJpaTicketEntityFactory();
             val sql = String.format("SELECT t FROM %s t", factory.getEntityName());
             val query = entityManager.createQuery(sql, factory.getType());
-            query.setLockMode(LockModeType.valueOf(casProperties.getTicket().getRegistry().getJpa().getTicketLockType()));
+            query.setLockMode(getConfiguredLockModeType());
 
             return query
                 .getResultStream()
@@ -148,7 +148,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket updateTicket(final Ticket ticket) {
+    public @Nullable Ticket updateTicket(final Ticket ticket) {
         return transactionTemplate.execute(_ -> FunctionUtils.doUnchecked(() -> {
             LOGGER.trace("Updating ticket [{}]", ticket);
             val ticketEntity = getTicketEntityFrom(ticket);
@@ -283,7 +283,6 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         val sql = String.format("%s WHERE t.type='%s' AND %s", selectClause,
             getTicketTypeName(TicketGrantingTicket.class), criteria);
         LOGGER.debug("Executing SQL query [{}]", sql);
-        entityManager.flush();
         val query = entityManager.createNativeQuery(sql, factory.getType());
         return jpaBeanFactory.streamQuery(query)
             .map(BaseTicketEntity.class::cast)
@@ -337,7 +336,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             }
             return totalCount;
         });
-        return Objects.requireNonNull(result);
+        return result != null ? result : 0L;
     }
 
     protected BaseTicketEntity getTicketEntityFrom(final Ticket ticket) {
@@ -364,5 +363,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             query.setParameter("id", ticketId);
             return query.executeUpdate();
         });
+    }
+
+    protected LockModeType getConfiguredLockModeType() {
+        val lockTypeName = casProperties.getTicket().getRegistry().getJpa().getTicketLockType();
+        return LockModeType.valueOf(lockTypeName);
     }
 }

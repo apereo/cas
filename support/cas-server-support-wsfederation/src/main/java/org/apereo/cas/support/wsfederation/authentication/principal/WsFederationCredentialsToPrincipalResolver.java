@@ -19,10 +19,12 @@ import lombok.val;
  *
  * @author John Gasper
  * @since 4.2.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
 @Slf4j
 @Setter
 @ToString(callSuper = true)
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
     protected WsFederationConfiguration configuration;
 
