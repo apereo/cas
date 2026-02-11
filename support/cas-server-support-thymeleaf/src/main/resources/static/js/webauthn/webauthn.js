@@ -47,8 +47,7 @@
  * WebAuthN Core
  *******************************************************/
 
-const pathSegments = window.location.pathname.split('/');
-const contextPath = pathSegments[1] ? `/${pathSegments[1]}` : '';
+const contextPath = document.querySelector('meta[name="context-path"]').getAttribute('content').slice(0, -1);
 
 ((root, factory) => {
     if (typeof define === 'function' && define.amd) {
