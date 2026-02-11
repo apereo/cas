@@ -12,7 +12,9 @@ import org.springframework.aot.hint.RuntimeHints;
  *
  * @author Misagh Moayyed
  * @since 7.0.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class WsFederationAuthenticationWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final @NonNull RuntimeHints hints, final @Nullable ClassLoader classLoader) {

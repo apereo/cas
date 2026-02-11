@@ -11,9 +11,11 @@ import lombok.val;
  *
  * @author Misagh Moayyed
  * @since 6.0.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
 @Slf4j
 @RequiredArgsConstructor
+@Deprecated(since = "8.0.0", forRemoval = true)
 public class GroovyWsFederationAttributeMutator implements WsFederationAttributeMutator {
     @Serial
     private static final long serialVersionUID = -3864465057274774578L;
