@@ -4,7 +4,6 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <meta name="context-path" th:content="@{/}"/>
     <title>Web AuthN Registration View</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 
@@ -16,6 +15,7 @@
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
         const appId = /*[[${webauthnApplicationId}]]*/;
+        const contextPath = (/*[[@{/}]]*/ '/').slice(0,-1);
         /*]]>*/
     </script>
     <script th:src="@{/js/webauthn/webauthn.js}"></script>
