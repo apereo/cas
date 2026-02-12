@@ -7,7 +7,7 @@ const cas = require("../../cas.js");
 
     const virtualAuthenticator = await cas.createWebAuthnVirtualAuthenticator(page);
 
-    await cas.gotoLogin(page);
+    await cas.goto(page, "https://localhost:8443/login");
 
     await cas.loginWith(page);
     await cas.sleep(1000);
