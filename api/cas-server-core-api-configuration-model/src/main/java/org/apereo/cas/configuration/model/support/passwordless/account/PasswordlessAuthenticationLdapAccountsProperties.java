@@ -54,6 +54,28 @@ public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLd
 
     /**
      * Name of the LDAP attribute that
+     * indicates the MFA configuration.
+     * Values are true, false or undefined.
+     * Comparisons are not case sensitive.
+     */
+    private String multifactorAuthenticationEligibleAttribute = "multifactorAuthenticationEligible";
+
+    /**
+     * Name of the LDAP attribute that
+     * indicates the delegation configuration.
+     * Values are true, false or undefined.
+     * Comparisons are not case sensitive.
+     */
+    private String delegatedAuthenticationEligibleAttribute = "delegatedAuthenticationEligible";
+
+    /**
+     * Name of the multi-values LDAP attribute that
+     * indicates the allowed delegated clients configuration.
+     */
+    private String allowedDelegatedClientsAttribute = "allowedDelegatedClients";
+
+    /**
+     * Name of the LDAP attribute that
      * is the passwordless flow to request a password prompt from user.
      * The attribute value must be a boolean. Accepted values
      * are {@code true}, {@code false}, {@code on}, {@code off}, {@code yes}, {@code no},
@@ -61,6 +83,15 @@ public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLd
      * Comparisons are not case sensitive.
      */
     private String requestPasswordAttribute = "requestPassword";
+
+    /**
+     * Name of the LDAP attribute that allows the selection menu.
+     * The attribute value must be a boolean. Accepted values
+     * are {@code true}, {@code false}, {@code on}, {@code off}, {@code yes}, {@code no},
+     * {@code Y}, {@code T}, {@code F}, {@code N}, etc.
+     * Comparisons are not case sensitive.
+     */
+    private String allowSelectionMenuAttribute = "allowSelectionMenu";
 
     /**
      * Name of the LDAP attribute that is required to be present
