@@ -55,11 +55,14 @@ import org.springframework.context.annotation.ScopedProxyMode;
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
  * @since 5.1.0
+ * @deprecated Since 8.0.0, WS-Federation support is deprecated and scheduled for removal.
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederation)
 @Configuration(value = "WsFedAuthenticationEventExecutionPlanConfiguration", proxyBeanMethods = false)
+@Deprecated(since = "8.0.0", forRemoval = true)
+@SuppressWarnings("removal")
 class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Configuration(value = "WsFedAuthenticationProvidersConfiguration", proxyBeanMethods = false)

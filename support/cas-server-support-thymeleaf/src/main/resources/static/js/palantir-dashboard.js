@@ -10,18 +10,18 @@ class Tabs {
     static APPLICATIONS = new PalantirDashboardTab("Applications Tab", 0, "a");
     static SYSTEM = new PalantirDashboardTab("System Tab", 1, "s");
     static TICKETS = new PalantirDashboardTab("Tickets Tab", 2, "t");
-    static TASKS = new PalantirDashboardTab("Tasks Tab", 3, "");
+    static TASKS = new PalantirDashboardTab("Tasks Tab", 3, "k");
     static ACCESS_STRATEGY = new PalantirDashboardTab("Access Strategy Tab", 4, "z");
     static LOGGING = new PalantirDashboardTab("Logging Tab", 5, "l");
     static SSO_SESSIONS = new PalantirDashboardTab("SSO Sessions Tab", 6, "o");
     static CONFIGURATION = new PalantirDashboardTab("Configuration Tab", 7, "c");
     static PERSON_DIRECTORY = new PalantirDashboardTab("Person Directory Tab", 8, "d");
     static AUTHENTICATION = new PalantirDashboardTab("Authentication Tab", 9, "h");
-    static CONSENT = new PalantirDashboardTab("Consent Tab", 10, "");
+    static CONSENT = new PalantirDashboardTab("Consent Tab", 10, "e");
     static PROTOCOLS = new PalantirDashboardTab("Protocols Tab", 11, "p");
-    static THROTTLES = new PalantirDashboardTab("Throttles Tab", 12, "");
+    static THROTTLES = new PalantirDashboardTab("Throttles Tab", 12, "r");
     static MFA = new PalantirDashboardTab("MFA Tab", 13, "m");
-    static MULTITENANCY = new PalantirDashboardTab("Multitenancy Tab", 14, "");
+    static MULTITENANCY = new PalantirDashboardTab("Multitenancy Tab", 14, "u");
     static SETTINGS = new PalantirDashboardTab("Settings Dialog", 100, ",");
     static LOGOUT = new PalantirDashboardTab("Logout", 200, "x");
 
