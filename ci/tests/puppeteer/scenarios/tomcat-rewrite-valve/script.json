@@ -3,7 +3,6 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--server.servlet.context-path=/cas",
     "--cas.server.tomcat.rewrite-valve.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/rewrite.config"
   ]
 }

@@ -39,11 +39,13 @@
   ],
   "variations": [
     {
+      "name": "BrowserStorage",
       "properties": [
         "--cas.authn.mfa.duo[0].session-storage-type=BROWSER_STORAGE"
       ]
     },
     {
+      "name": "TicketRegistry",
       "properties": [
         "--cas.authn.mfa.duo[0].session-storage-type=TICKET_REGISTRY"
       ]

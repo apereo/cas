@@ -1066,11 +1066,16 @@ exports.goto = async (page, url, retryCount = 5) => {
 
 exports.gotoLoginWithLocale = async (page, service, locale = "en") => this.gotoLoginWithAuthnMethod(page, service, undefined, locale);
 
-exports.gotoLoginWithAuthnMethod = async (page, service, authnMethod = undefined, locale = undefined) => {
+exports.gotoLoginWithAuthnMethod = async (page, service,
+    authnMethod = undefined, locale = undefined,
+    contextPath = "/cas") => {
     let queryString = (service === undefined ? "" : `service=${service}&`);
     queryString += (authnMethod === undefined ? "" : `authn_method=${authnMethod}&`);
     queryString += (locale === undefined ? "" : `locale=${locale}&`);
-    const url = `https://localhost:8443/cas/login?${queryString}`;
+    if (contextPath === "/" || contextPath === "" || contextPath === undefined) {
+        contextPath = "";
+    }
+    const url = `https://localhost:8443${contextPath}/login?${queryString}`;
     return this.goto(page, url);
 };
 

@@ -1005,7 +1005,13 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
             printcyan "Waiting for CAS instance #${c} under process id ${pid}"
           fi
 
-          casLogin="https://localhost:${serverPort}/cas/login"
+          prefix="/cas"
+          if [[ "$properties" =~ server\.servlet\.context-path=([^[:space:]]*) ]]; then
+              value="${BASH_REMATCH[1]}"
+              prefix="$value"
+          fi
+          printcyan "CAS server prefix is: $prefix"
+          casLogin="https://localhost:${serverPort}${prefix}/login"
           healthCheckUrls=$(jq -r '.healthcheck?.urls[]?' "${config}" 2>/dev/null)
           if [[ -n "$healthCheckUrls" ]]; then
             url_array=()
@@ -1185,6 +1191,9 @@ else
 
   for index in "${!variationsArray[@]}"; do
     element=${variationsArray[index]}
+    variationName=$(jq -c -r '.variations['"${index}"'].name // empty' "${config}")
+    export SCENARIO_VARIATION="${variationName}"
+    
     currentVariationProperties=$(echo "${element}" | jq -j -r -c '. // empty | join(" ")')
     printcyan "Running test scenario ${scenarioName}, variation: ${index}"
     buildAndRun

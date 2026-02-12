@@ -285,6 +285,7 @@ A basic modest outline of the test configuration may be:
   },
   "variations": [
     {
+      "name": "...",
       "properties": [
       ]
     }
