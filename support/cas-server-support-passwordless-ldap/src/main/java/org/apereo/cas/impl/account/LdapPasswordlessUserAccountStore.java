@@ -95,10 +95,7 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
             value -> acctBuilder.delegatedAuthenticationEligible(TriStateBoolean.fromString(value)));
         val clientsAttribute = entry.getAttribute(ldapProperties.getAllowedDelegatedClientsAttribute());
         if (clientsAttribute != null) {
-            val values = clientsAttribute.getStringValues();
-            if (values != null) {
-                acctBuilder.allowedDelegatedClients(new ArrayList<>(values));
-            }
+            acctBuilder.allowedDelegatedClients(new ArrayList<>(clientsAttribute.getStringValues()));
         }
         setAttribute(entry, ldapProperties::getRequestPasswordAttribute,
             value -> acctBuilder.requestPassword(BooleanUtils.toBoolean(value)));

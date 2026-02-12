@@ -55,7 +55,7 @@ public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLd
     /**
      * Name of the LDAP attribute that
      * indicates the MFA configuration.
-     * Values are true, false or anything else (for undefined).
+     * Values are true, false or undefined.
      * Comparisons are not case sensitive.
      */
     private String multifactorAuthenticationEligibleAttribute = "multifactorAuthenticationEligible";
@@ -63,7 +63,7 @@ public class PasswordlessAuthenticationLdapAccountsProperties extends AbstractLd
     /**
      * Name of the LDAP attribute that
      * indicates the delegation configuration.
-     * Values are true, false or anything else (for undefined).
+     * Values are true, false or undefined.
      * Comparisons are not case sensitive.
      */
     private String delegatedAuthenticationEligibleAttribute = "delegatedAuthenticationEligible";

@@ -54,13 +54,7 @@ public enum TriStateBoolean {
      * @return the tri state boolean
      */
     public static TriStateBoolean fromString(final String value) {
-        if (Strings.CI.equals(value, Boolean.TRUE.toString())) {
-            return TriStateBoolean.TRUE;
-        }
-        if (Strings.CI.equals(value, Boolean.FALSE.toString())) {
-            return TriStateBoolean.FALSE;
-        }
-        return TriStateBoolean.UNDEFINED;
+        return TriStateBoolean.valueOf(value.toUpperCase(Locale.ROOT));
     }
 
     /**
