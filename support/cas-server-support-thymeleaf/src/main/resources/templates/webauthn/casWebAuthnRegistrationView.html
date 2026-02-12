@@ -15,6 +15,7 @@
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
         const appId = /*[[${webauthnApplicationId}]]*/;
+        const contextPath = (/*[[@{/}]]*/ '/').slice(0,-1);
         /*]]>*/
     </script>
     <script th:src="@{/js/webauthn/webauthn.js}"></script>

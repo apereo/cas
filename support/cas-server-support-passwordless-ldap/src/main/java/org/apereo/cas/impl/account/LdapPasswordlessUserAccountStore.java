@@ -6,6 +6,7 @@ import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountCustomizer;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.model.support.passwordless.account.PasswordlessAuthenticationLdapAccountsProperties;
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
@@ -88,8 +89,18 @@ public class LdapPasswordlessUserAccountStore implements PasswordlessUserAccount
         setAttribute(entry, ldapProperties::getNameAttribute, acctBuilder::name);
         setAttribute(entry, ldapProperties::getEmailAttribute, acctBuilder::email);
         setAttribute(entry, ldapProperties::getPhoneAttribute, acctBuilder::phone);
+        setAttribute(entry, ldapProperties::getMultifactorAuthenticationEligibleAttribute,
+            value -> acctBuilder.multifactorAuthenticationEligible(TriStateBoolean.fromString(value)));
+        setAttribute(entry, ldapProperties::getDelegatedAuthenticationEligibleAttribute,
+            value -> acctBuilder.delegatedAuthenticationEligible(TriStateBoolean.fromString(value)));
+        val clientsAttribute = entry.getAttribute(ldapProperties.getAllowedDelegatedClientsAttribute());
+        if (clientsAttribute != null) {
+            acctBuilder.allowedDelegatedClients(new ArrayList<>(clientsAttribute.getStringValues()));
+        }
         setAttribute(entry, ldapProperties::getRequestPasswordAttribute,
             value -> acctBuilder.requestPassword(BooleanUtils.toBoolean(value)));
+        setAttribute(entry, ldapProperties::getAllowSelectionMenuAttribute,
+            value -> acctBuilder.allowSelectionMenu(BooleanUtils.toBoolean(value)));
 
         val attributes = entry.getAttributes()
             .stream()

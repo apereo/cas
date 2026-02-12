@@ -48,6 +48,16 @@ public enum TriStateBoolean {
     }
 
     /**
+     * From string.
+     *
+     * @param value the value
+     * @return the tri state boolean
+     */
+    public static TriStateBoolean fromString(final String value) {
+        return TriStateBoolean.valueOf(value.toUpperCase(Locale.ROOT));
+    }
+
+    /**
      * Is true.
      *
      * @return true/false
