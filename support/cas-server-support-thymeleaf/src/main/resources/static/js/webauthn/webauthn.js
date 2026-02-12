@@ -47,9 +47,6 @@
  * WebAuthN Core
  *******************************************************/
 
-const pathSegments = window.location.pathname.split('/');
-const contextPath = pathSegments[1] ? `/${pathSegments[1]}` : '';
-
 ((root, factory) => {
     if (typeof define === 'function' && define.amd) {
         define(['base64url'], factory);
