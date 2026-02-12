@@ -1,9 +1,9 @@
 const assert = require("assert");
 const cas = require("../../cas.js");
 
-async function verifyWebAuthnLogin(browser) {
+async function verifyWebAuthnLogin(browser, contextPath) {
     const page = await cas.newPage(browser);
-    await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-webauthn");
+    await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-webauthn", undefined, contextPath);
     await cas.sleep(1000);
     await cas.assertVisibility(page, "#webauthnLoginPanel div h2#status");
     await cas.assertTextContent(page, "#webauthnLoginPanel div h2#status","Login with FIDO2-enabled Device");
@@ -30,7 +30,7 @@ async function verifyWebAuthnLogin(browser) {
     await cas.click(page, "#authnButton");
     await cas.sleep(1000);
 
-    const baseEndpoint = "https://localhost:8443/cas/webauthn";
+    const baseEndpoint = `https://localhost:8443${contextPath}/webauthn`;
     const urls = [
         `${baseEndpoint}/authenticate`,
         `${baseEndpoint}/register`
@@ -51,7 +51,7 @@ async function verifyWebAuthnLogin(browser) {
 
     await cas.log("Checking actuator endpoints...");
     const endpoints = ["health", "webAuthnDevices/casuser"];
-    const baseUrl = "https://localhost:8443/cas/actuator/";
+    const baseUrl = `https://localhost:8443${contextPath}/actuator/`;
     for (let i = 0; i < endpoints.length; i++) {
         const url = baseUrl + endpoints[i];
         const response = await cas.goto(page, url);
@@ -60,9 +60,9 @@ async function verifyWebAuthnLogin(browser) {
     }
 }
 
-async function verifyWebAuthnQRCode(browser) {
+async function verifyWebAuthnQRCode(browser, contextPath) {
     const page = await cas.newPage(browser);
-    await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-webauthn");
+    await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-webauthn", undefined, contextPath);
     await cas.loginWith(page);
     await cas.sleep(1000);
     await cas.assertTextContent(page, "#status", "Login with FIDO2-enabled Device");
@@ -81,14 +81,18 @@ async function verifyWebAuthnQRCode(browser) {
 }
 
 (async () => {
+    let contextPath = "/cas";
+    if (process.env.SCENARIO_VARIATION === "WithoutContextPath") {
+        contextPath = "";
+    }
     const browser = await cas.newBrowser(cas.browserOptions());
 
     let context = await browser.createBrowserContext();
-    await verifyWebAuthnLogin(context);
+    await verifyWebAuthnLogin(context, contextPath);
     await context.close();
 
     context = await browser.createBrowserContext();
-    await verifyWebAuthnQRCode(context);
+    await verifyWebAuthnQRCode(context, contextPath);
     await context.close();
 
     await cas.closeBrowser(browser);
