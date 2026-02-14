@@ -1,10 +1,15 @@
 #!/bin/bash
 
+RED="\e[31m"
 GREEN="\e[32m"
 ENDCOLOR="\e[0m"
 
 function printgreen() {
   printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
+}
+
+function printred() {
+  printf "🚨  ${RED}$1${ENDCOLOR}\n"
 }
 
 printgreen "Building Postgres image..."
@@ -19,7 +24,7 @@ retVal=$?
 if [ $retVal == 0 ]; then
     printgreen "Postgres docker container is running."
 else
-    echo "Postgres docker container failed to start."
+    printred "Postgres docker container failed to start."
     exit $retVal
 fi
 
@@ -35,6 +40,6 @@ retVal=$?
 if [ $retVal == 0 ]; then
     printgreen "TimescaleDB docker container is running."
 else
-    echo "TimescaleDB docker container failed to start."
+    printred "TimescaleDB docker container failed to start."
     exit $retVal
 fi
