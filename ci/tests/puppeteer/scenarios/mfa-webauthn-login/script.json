@@ -1,11 +1,10 @@
 {
-  "dependencies": "session-ticket-registry,webauthn,reports,mongo-ticket-registry",
+  "dependencies": "reports,session-ticket-registry,webauthn,reports,mongo-ticket-registry",
   "conditions": {
     "docker": "true"
   },
   "properties": [
     "--cas.server.name=https://localhost:8443",
-    "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.authn.mfa.web-authn.core.qr-code-authentication-enabled=true",
     "--cas.authn.mfa.web-authn.core.allowed-origins=https://localhost:8443",
@@ -27,9 +26,25 @@
     "--cas.ticket.registry.mongo.password=secret",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-    "--management.endpoints.web.exposure.include=health,webAuthnDevices",
+    "--management.endpoints.web.exposure.include=health,webAuthnDevices,env",
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "variations": [
+    {
+      "name": "WithContextPath",
+      "properties": [
+        "--cas.server.prefix=${cas.server.name}/cas",
+        "--server.servlet.context-path=/cas"
+      ]
+    },
+    {
+      "name": "WithoutContextPath",
+      "properties": [
+        "--cas.server.prefix=${cas.server.name}",
+        "--server.servlet.context-path="
+      ]
+    }
   ],
   "initScript": "${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
 }

@@ -2,7 +2,8 @@
   "dependencies": "interrupt-webflow,wsfederation-webflow,scripting",
   "conditions": {
     "env": "ADFS_HOST,ADFS_RELYING_PARTY_ID,ADFS_USERNAME,ADFS_PASSWORD",
-    "docker": "true"
+    "docker": "true",
+    "runsOn": "MWF 3pm 3am"
   },
   "properties": [
     "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/interrupt.json",
