@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
@@ -78,7 +79,7 @@ public class DefaultMultifactorAuthenticationProviderWebflowEventResolver extend
         if (registeredService != null && registeredService.getMultifactorAuthenticationPolicy().isBypassEnabled()) {
             return Optional.empty();
         }
-        if (multifactorAuthenticationTrigger.supports(request, registeredService, authentication, service)) {
+        if (BeanSupplier.isNotProxy(multifactorAuthenticationTrigger) && multifactorAuthenticationTrigger.supports(request, registeredService, authentication, service)) {
             return multifactorAuthenticationTrigger.isActivated(authentication, registeredService, request, response, service);
         }
         return Optional.empty();
