@@ -2,6 +2,7 @@
   "dependencies": "yubikey,simple-mfa,wsfederation-webflow",
   "conditions": {
     "docker": "true",
+    "runsOn": "MWF 3pm 3am",
     "env": "ADFS_HOST,ADFS_RELYING_PARTY_ID,ADFS_USERNAME,ADFS_PASSWORD"
   },
   "properties": [

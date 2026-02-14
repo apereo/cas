@@ -142,6 +142,9 @@ and scheduled for removal in a future CAS version.
 - Continued efforts using advanced code analysis techniques to fix potential thread safety issues.
 - CAS is now upgraded to use `jQuery` version `4.0.0`.
 - Integration tests have switched to use MySQL `9.6.x`.
+- Integration tests have switched to use Redis `8.6.x`.
 - Better log data sanitization to avoid logging sensitive information, particularly when `DEBUG` logs are enabled.
 - Minor bug fixes to improve [OpenID Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html) to ensure the `act` claim is correctly processed in the right flows.
 - Sorting operations and locating service definitions registered with CAS is now optimized to improve performance large numbers of applications.
+- [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) capabilities can be functional when CAS is deployed at the root context path.
+- [Passwordless Authentication via LDAP](../authentication/Passwordless-Authentication-Storage-LDAP.html) is given a few more configuration options to control attributes that drive the passwordless account.
