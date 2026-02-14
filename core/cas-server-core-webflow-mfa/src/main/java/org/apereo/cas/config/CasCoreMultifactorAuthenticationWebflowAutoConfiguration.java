@@ -430,7 +430,7 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(MultifactorAuthenticationTrigger.class)
-                .when(BeanCondition.on("cas.authn.mfa.triggers.global-principal-attribute-predicate.location").exists().given(applicationContext.getEnvironment()))
+                .when(BeanCondition.on("cas.authn.mfa.triggers.principal.global-principal-attribute-predicate.location").exists().given(applicationContext.getEnvironment()))
                 .supply(() -> new PredicatedPrincipalAttributeMultifactorAuthenticationTrigger(casProperties, applicationContext))
                 .otherwiseProxy()
                 .get();
