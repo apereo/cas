@@ -404,49 +404,81 @@ function validateScenario() {
     fi
   fi
 
-  runsOn=$(jq -j '.conditions.runsOn // empty' "${config}")
+  runsOn=$(jq -r '.conditions.runsOn // empty' "${config}")
   if [[ -n "${runsOn}" ]]; then
-    
-    runsOnDay=$(echo "${runsOn}" | awk '{print $1}')
-    runsOnStart=$(echo "${runsOn}" | awk '{print $2}')
-    runsOnEnd=$(echo "${runsOn}" | awk '{print $3}')
-    
-    case "${runsOnDay}" in
-      M) allowedDayNum=1 ;;
-      T) allowedDayNum=2 ;;
-      W) allowedDayNum=3 ;;
-      R) allowedDayNum=4 ;;
-      F) allowedDayNum=5 ;;
-      S) allowedDayNum=6 ;;
-      U) allowedDayNum=7 ;;
-    esac
+    read -r runsOnDay runsOnStart runsOnEnd <<< "${runsOn}"
 
-    if [[ -n "${allowedDayNum}" ]]; then
+    allowedDayNum=""
+    for (( i=0; i<${#runsOnDay}; i++ )); do
+      case "${runsOnDay:i:1}" in
+        M) allowedDayNum+="1 " ;;
+        T) allowedDayNum+="2 " ;;
+        W) allowedDayNum+="3 " ;;
+        R) allowedDayNum+="4 " ;;
+        F) allowedDayNum+="5 " ;;
+        S) allowedDayNum+="6 " ;;
+        U) allowedDayNum+="7 " ;;
+      esac
+    done
+    allowedDayNum="${allowedDayNum% }" 
 
-      currentDayNum=$(TZ=UTC date +%u)
-      currentHour=$(TZ=UTC date +%H)
+    currentDayNum=$(TZ=UTC date +%u)
+    currentHour=$(TZ=UTC date +%H)
+    currentHour=$((10#$currentHour))
 
-      startHour=$(echo "${runsOnStart}" | sed 's/[^0-9]//g')
-      if [[ "${runsOnStart}" == *"pm"* && "${startHour}" -ne 12 ]]; then
-        startHour=$((startHour + 12))
-      elif [[ "${runsOnStart}" == *"am"* && "${startHour}" -eq 12 ]]; then
-        startHour=0
+    is_in_list() {
+      local needle="$1"; shift
+      local haystack="$*"
+      [[ " $haystack " == *" $needle "* ]]
+    }
+
+    prev_day() {
+      local d="$1"
+      (( d == 1 )) && echo 7 || echo $((d - 1))
+    }
+
+    to_24h() {
+      local t="$1"
+      local h="${t//[^0-9]/}"
+      h=$((10#$h))
+      if [[ "$t" == *pm* && "$h" -ne 12 ]]; then
+        h=$((h + 12))
+      elif [[ "$t" == *am* && "$h" -eq 12 ]]; then
+        h=0
+      fi
+      echo "$h"
+    }
+
+    startHour="$(to_24h "${runsOnStart}")"
+    endHour="$(to_24h "${runsOnEnd}")"
+
+    printcyan "Current UTC day number is ${currentDayNum} and current hour is ${currentHour}. Allowed day is [${allowedDayNum}] and allowed hours are between ${startHour} and ${endHour}."
+
+    allowed=false
+
+    if (( startHour == endHour )); then
+      if is_in_list "${currentDayNum}" ${allowedDayNum}; then
+        allowed=true
       fi
 
-      endHour=$(echo "${runsOnEnd}" | sed 's/[^0-9]//g')
-      if [[ "${runsOnEnd}" == *"pm"* && "${endHour}" -ne 12 ]]; then
-        endHour=$((endHour + 12))
-      elif [[ "${runsOnEnd}" == *"am"* && "${endHour}" -eq 12 ]]; then
-        endHour=0
+    elif (( startHour < endHour )); then
+      if is_in_list "${currentDayNum}" ${allowedDayNum} && (( currentHour >= startHour && currentHour < endHour )); then
+        allowed=true
       fi
-      printcyan "Current UTC day number is ${currentDayNum} and hour is ${currentHour}. Allowed day is ${allowedDayNum} and allowed hours are between ${startHour} and ${endHour}."
 
-      if [[ "${currentDayNum}" -eq "${allowedDayNum}" && "${currentHour}" -ge "${startHour}" && "${currentHour}" -lt "${endHour}" ]]; then
-        printgreen "Current UTC time is within the allowed window (Day: ${runsOnDay}, ${runsOnStart}-${runsOnEnd})."
-      else
-        printyellow "Test scenario ${scenario##*/} is configured to only run on ${runsOnDay} between ${runsOnStart}-${runsOnEnd} UTC."
-        exit 0
+    else
+      if (( currentHour >= startHour )) && is_in_list "${currentDayNum}" ${allowedDayNum}; then
+        allowed=true
+      elif (( currentHour < endHour )) && is_in_list "$(prev_day "${currentDayNum}")" ${allowedDayNum}; then
+        allowed=true
       fi
+    fi
+
+    if [[ "${allowed}" == true ]]; then
+      printgreen "Current UTC time is within the allowed window (Day: ${runsOnDay}, ${runsOnStart}-${runsOnEnd})."
+    else
+      printyellow "Test scenario ${scenario##*/} is configured to only run on ${runsOnDay} between ${runsOnStart}-${runsOnEnd} UTC."
+      exit 0
     fi
   fi
 
@@ -973,7 +1005,13 @@ ${BUILD_SCRIPT:+ $BUILD_SCRIPT}${DAEMON:+ $DAEMON} \
             printcyan "Waiting for CAS instance #${c} under process id ${pid}"
           fi
 
-          casLogin="https://localhost:${serverPort}/cas/login"
+          prefix="/cas"
+          if [[ "$properties" =~ server\.servlet\.context-path=([^[:space:]]*) ]]; then
+              value="${BASH_REMATCH[1]}"
+              prefix="$value"
+          fi
+          printcyan "CAS server prefix is: $prefix"
+          casLogin="https://localhost:${serverPort}${prefix}/login"
           healthCheckUrls=$(jq -r '.healthcheck?.urls[]?' "${config}" 2>/dev/null)
           if [[ -n "$healthCheckUrls" ]]; then
             url_array=()
@@ -1153,6 +1191,9 @@ else
 
   for index in "${!variationsArray[@]}"; do
     element=${variationsArray[index]}
+    variationName=$(jq -c -r '.variations['"${index}"'].name // empty' "${config}")
+    export SCENARIO_VARIATION="${variationName}"
+    
     currentVariationProperties=$(echo "${element}" | jq -j -r -c '. // empty | join(" ")')
     printcyan "Running test scenario ${scenarioName}, variation: ${index}"
     buildAndRun

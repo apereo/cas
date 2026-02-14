@@ -1,13 +1,13 @@
 services:
   redis-master:
-    image: redis:8.4.0
+    image: redis:8.6.0
     container_name: redis_server_master
     # Bitnami-style envs removed: the official image ignores them anyway.
     ports:
       - "6379:6379"
 
   redis-ssl:
-    image: redis:8.4.0
+    image: redis:8.6.0
     container_name: redis_server_ssl
     command: >
       redis-server
@@ -23,7 +23,7 @@ services:
       - ./certs:/etc/ssl/certs
 
   redis-master2:
-    image: redis:8.4.0
+    image: redis:8.6.0
     container_name: redis_server_master2
     # These envs were also Bitnami-specific; kept or removed won't affect tests.
     environment:

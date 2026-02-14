@@ -1,4 +1,4 @@
-FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:555.0.0-alpine
+FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:556.0.0-alpine
 ARG GCLOUD_COMPONENT
 
 RUN apk add --update --no-cache openjdk21

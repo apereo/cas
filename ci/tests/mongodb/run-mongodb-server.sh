@@ -4,11 +4,14 @@
 
 GREEN="\e[32m"
 ENDCOLOR="\e[0m"
+RED="\e[31m"
 
 function printgreen() {
   printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
 }
-
+function printred() {
+  printf "🚨  ${RED}$1${ENDCOLOR}\n"
+}
 
 function runscript {
     docker exec mongodb-server mongosh --authenticationDatabase admin mongodb://root:secret@localhost:27017/cas --eval "$1"
@@ -29,7 +32,6 @@ retVal=$?
 if [ $retVal == 0 ]; then
     printgreen "MongoDb docker container is running."
 else
-    echo "MongoDb docker container failed to start."
+    printred "MongoDb docker container failed to start."
     exit $retVal
 fi
-

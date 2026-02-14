@@ -58,18 +58,28 @@ public class LettuceRedisModulesOperations implements RedisModulesOperations {
      */
     public static RediSearchCommands newRediSearchCommands(
         final BaseRedisProperties redis, final CasSSLContext casSslContext) throws Exception {
-        val uriBuilder = RedisURI.builder()
+        var uriBuilder = RedisURI.builder()
             .withStartTls(redis.isStartTls())
             .withVerifyPeer(redis.isVerifyPeer())
-            .withHost(redis.getHost())
-            .withPort(redis.getPort())
             .withDatabase(redis.getDatabase())
             .withSsl(redis.isUseSsl());
 
         if (StringUtils.hasText(redis.getUsername()) && StringUtils.hasText(redis.getPassword())) {
-            uriBuilder.withAuthentication(redis.getUsername(), redis.getPassword());
+            uriBuilder = uriBuilder.withAuthentication(redis.getUsername(), redis.getPassword());
         } else if (StringUtils.hasText(redis.getPassword())) {
-            uriBuilder.withPassword(redis.getPassword().toCharArray());
+            uriBuilder = uriBuilder.withPassword(redis.getPassword().toCharArray());
+        }
+        if (redis.getSentinel() != null && StringUtils.hasText(redis.getSentinel().getMaster())) {
+            uriBuilder = uriBuilder.withSentinelMasterId(redis.getSentinel().getMaster());
+            val nodes = redis.getSentinel().getNode();
+            for (val node : nodes) {
+                val hostAndPort = Objects.requireNonNull(StringUtils.split(node, ":"));
+                uriBuilder = uriBuilder.withSentinel(hostAndPort[0],
+                    Integer.parseInt(hostAndPort[1]),
+                    redis.getSentinel().getPassword());
+            }
+        } else {
+            uriBuilder = uriBuilder.withHost(redis.getHost()).withPort(redis.getPort());
         }
 
         val redisModulesClient = RedisModulesClient.create(uriBuilder.build());
