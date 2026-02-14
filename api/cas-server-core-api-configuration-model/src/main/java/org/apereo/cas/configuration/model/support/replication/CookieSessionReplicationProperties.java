@@ -30,7 +30,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class CookieSessionReplicationProperties extends PinnableCookieProperties {
     /**
      * Default cookie name.
+     * @deprecated since 7.3.0
      */
+    @Deprecated(since = "7.3.0", forRemoval = true)
     public static final String DEFAULT_COOKIE_NAME = "DISSESSION";
 
     @Serial
