@@ -58,7 +58,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `535` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `536` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 Furthermore the test scenario construction logic is given the ability to limit its run to a pre-specified 
@@ -108,7 +108,7 @@ We will continue to polish this feature in future releases.
 CAS is now built with Gradle `9.4` and the build process has been updated to use the latest Gradle
 features and capabilities. This also prepares future CAS versions to build and run against JDK `26`.
 
-### Spring Boot 4
+### Spring Boot 4.1
 
 CAS is now built with Spring Boot `4.1.x`. This is a major platform upgrade that affects almost all aspects of the codebase
 including many of the third-party core libraries used by CAS as well as some CAS functionality.
