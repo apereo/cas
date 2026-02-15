@@ -99,7 +99,7 @@ to handle and support more actuator endpoints, when it comes to adding external 
 user sessions, listing multifactor authentication providers, rendering metrics, etc.
 
 Notably, Palantir now supports editing application definitions using a wizard-based interface
-in addition to using a plain JSON editor. Note that this functionality is brand, and somewhat fragile
+in addition to using a plain JSON editor. Note that this functionality is brand new, and somewhat fragile
 and may not work for all service definitions, specially if advanced or complex constructions are used. 
 We will continue to polish this feature in future releases.
 
@@ -145,6 +145,6 @@ and scheduled for removal in a future CAS version.
 - Integration tests have switched to use Redis `8.6.x`.
 - Better log data sanitization to avoid logging sensitive information, particularly when `DEBUG` logs are enabled.
 - Minor bug fixes to improve [OpenID Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html) to ensure the `act` claim is correctly processed in the right flows.
-- Sorting operations and locating service definitions registered with CAS is now optimized to improve performance large numbers of applications.
+- Sorting operations and locating service definitions registered with CAS is now optimized to improve performance for a large numbers of applications.
 - [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) capabilities can be functional when CAS is deployed at the root context path.
 - [Passwordless Authentication via LDAP](../authentication/Passwordless-Authentication-Storage-LDAP.html) is given a few more configuration options to control attributes that drive the passwordless account.
