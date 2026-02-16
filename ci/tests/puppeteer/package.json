@@ -13,7 +13,7 @@
     "figlet": "1.10.0",
     "http-cas-client": "0.4.3",
     "jose": "6.1.3",
-    "jsonpath-plus": "10.3.0",
+    "jsonpath-plus": "10.4.0",
     "jsonwebtoken": "9.0.3",
     "jsqr": "1.4.0",
     "jwk-to-pem": "2.0.7",
