@@ -2,9 +2,12 @@ services:
   redis-master:
     image: redis:8.6.0
     container_name: redis_server_master
-    # Bitnami-style envs removed: the official image ignores them anyway.
     ports:
       - "6379:6379"
+      
+  redis-sentinel-image:
+    build: ./redis-sentinel
+    image: local/redis-sentinel:8.4.0
 
   redis-ssl:
     image: redis:8.6.0
@@ -32,11 +35,11 @@ services:
       - "16389:6379"
 
   sentinel_1:
-    build: ./redis-sentinel
     image: local/redis-sentinel:8.4.0
     container_name: redis_sentinel_1
     depends_on:
       - redis-master
+      - redis-sentinel-image
     ports:
       - "26379:26379"
     environment:
@@ -47,11 +50,11 @@ services:
       - REDIS_SENTINEL_PASSWORD=password456 # sentinel password (CAS uses this)
 
   sentinel_2:
-    build: ./redis-sentinel
     image: local/redis-sentinel:8.4.0
     container_name: redis_sentinel_2
     depends_on:
       - redis-master
+      - redis-sentinel-image
     ports:
       - "26380:26379"
     environment:
@@ -62,11 +65,11 @@ services:
       - REDIS_SENTINEL_PASSWORD=password456
 
   sentinel_3:
-    build: ./redis-sentinel
     image: local/redis-sentinel:8.4.0
     container_name: redis_sentinel_3
     depends_on:
       - redis-master
+      - redis-sentinel-image
     ports:
       - "26381:26379"
     environment:
