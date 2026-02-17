@@ -22,6 +22,7 @@ import org.apache.commons.lang3.Strings;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -78,42 +79,40 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
 
     @Override
     public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) throws Throwable {
-        val questionKey = searchUser(PasswordManagementQuery.builder().username(query.getUsername()).build())
+        val users = searchUser(PasswordManagementQuery.builder().username(query.getUsername()).build());
+        return users
             .stream()
             .findFirst()
             .map(syncopeUser -> syncopeUser.getOrDefault("securityQuestion", syncopeUser.get("syncopeUserSecurityQuestion")))
             .filter(Objects::nonNull)
             .filter(values -> !values.isEmpty())
             .map(values -> values.getFirst().toString())
-            .orElse(null);
-        if (questionKey == null) {
-            // security questions are not always required for password change
-            return Map.of();
-        }
-
-        val securityQuestionUrl = Strings.CI.appendIfMissing(
-            SpringExpressionLanguageValueResolver.getInstance().resolve(
-                casProperties.getAuthn().getPm().getSyncope().getUrl()),
-            "/rest/securityQuestions/%s".formatted(questionKey));
-        val exec = HttpExecutionRequest.builder()
-            .method(HttpMethod.GET)
-            .url(securityQuestionUrl)
-            .basicAuthUsername(casProperties.getAuthn().getPm().getSyncope().getBasicAuthUsername())
-            .basicAuthPassword(casProperties.getAuthn().getPm().getSyncope().getBasicAuthPassword())
-            .headers(Map.of(
-                SyncopeUtils.SYNCOPE_HEADER_DOMAIN, casProperties.getAuthn().getPm().getSyncope().getDomain(),
-                HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
-                HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
-            .build();
-        val response = Objects.requireNonNull(HttpUtils.execute(exec));
-        if (Objects.requireNonNull(HttpStatus.resolve(response.getCode())).is2xxSuccessful()
-            && response instanceof final HttpEntityContainer container) {
-            val entity = container.getEntity();
-            val result = EntityUtils.toString(entity);
-            LOGGER.debug("Received security question entity as [{}]", result);
-            return Map.of(MAPPER.readTree(result).get("content").asString(), UUID.randomUUID().toString());
-        }
-        return Map.of();
+            .map(Unchecked.function(questionKey -> {
+                val securityQuestionUrl = Strings.CI.appendIfMissing(
+                    SpringExpressionLanguageValueResolver.getInstance().resolve(
+                        casProperties.getAuthn().getPm().getSyncope().getUrl()),
+                    "/rest/securityQuestions/%s".formatted(questionKey));
+                val exec = HttpExecutionRequest.builder()
+                    .method(HttpMethod.GET)
+                    .url(securityQuestionUrl)
+                    .basicAuthUsername(casProperties.getAuthn().getPm().getSyncope().getBasicAuthUsername())
+                    .basicAuthPassword(casProperties.getAuthn().getPm().getSyncope().getBasicAuthPassword())
+                    .headers(Map.of(
+                        SyncopeUtils.SYNCOPE_HEADER_DOMAIN, casProperties.getAuthn().getPm().getSyncope().getDomain(),
+                        HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE,
+                        HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                    .build();
+                val response = Objects.requireNonNull(HttpUtils.execute(exec));
+                if (Objects.requireNonNull(HttpStatus.resolve(response.getCode())).is2xxSuccessful()
+                    && response instanceof final HttpEntityContainer container) {
+                    val entity = container.getEntity();
+                    val result = EntityUtils.toString(entity);
+                    LOGGER.debug("Received security question entity as [{}]", result);
+                    return Map.of(MAPPER.readTree(result).get("content").asString(), UUID.randomUUID().toString());
+                }
+                return Map.<String, String>of();
+            }))
+            .orElseGet(Map::of);
     }
 
     @Override
