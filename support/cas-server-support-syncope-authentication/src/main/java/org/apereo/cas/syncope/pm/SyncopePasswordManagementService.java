@@ -85,7 +85,11 @@ public class SyncopePasswordManagementService extends BasePasswordManagementServ
             .filter(Objects::nonNull)
             .filter(values -> !values.isEmpty())
             .map(values -> values.getFirst().toString())
-            .orElseThrow();
+            .orElse(null);
+        if (questionKey == null) {
+            // security questions are not always required for password change
+            return Map.of();
+        }
 
         val securityQuestionUrl = Strings.CI.appendIfMissing(
             SpringExpressionLanguageValueResolver.getInstance().resolve(
