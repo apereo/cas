@@ -80,6 +80,13 @@ class SyncopePasswordManagementServiceTests {
     }
 
     @Test
+    void verifyNoSecurityQuestions() throws Throwable {
+        val query = PasswordManagementQuery.builder().username("casuser").build();
+        val questions = passwordChangeService.getSecurityQuestions(query);
+        assertTrue(questions.isEmpty());
+    }
+
+    @Test
     void verifyUnlockAccount() throws Throwable {
         assertTrue(passwordChangeService.unlockAccount(new BasicIdentifiableCredential("syncopesuspend4")));
     }
