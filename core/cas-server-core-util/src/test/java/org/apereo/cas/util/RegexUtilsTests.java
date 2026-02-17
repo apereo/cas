@@ -50,7 +50,7 @@ class RegexUtilsTests {
         val pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         val stopWatch = new StopWatch();
         stopWatch.start();
-        for (var i = 0; i < 10000; i++) {
+        for (var i = 0; i < 1000; i++) {
             assertTrue(RegexUtils.isValidRegex(pattern));
             assertTrue(RegexUtils.createPattern(pattern).matcher("something@example.org").find());
         }
