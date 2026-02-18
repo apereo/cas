@@ -145,6 +145,8 @@ and scheduled for removal in a future CAS version.
 - Integration tests have switched to use Redis `8.6.x`.
 - Better log data sanitization to avoid logging sensitive information, particularly when `DEBUG` logs are enabled.
 - Minor bug fixes to improve [OpenID Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html) to ensure the `act` claim is correctly processed in the right flows.
+- Small corrections to how disabled security questions with [Apache Syncope](../authentication/Syncope-Authentication.html) are handled.
 - Sorting operations and locating service definitions registered with CAS is now optimized to improve performance for a large numbers of applications.
+- Bug fixes to remove URL decoding issues with client secret validation in OAuth and OpenID Connect flows.
 - [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) capabilities can be functional when CAS is deployed at the root context path.
 - [Passwordless Authentication via LDAP](../authentication/Passwordless-Authentication-Storage-LDAP.html) is given a few more configuration options to control attributes that drive the passwordless account.
