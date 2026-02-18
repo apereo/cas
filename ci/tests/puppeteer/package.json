@@ -27,7 +27,7 @@
     "properties-reader": "3.0.1",
     "ps-node": "0.1.6",
     "puppeteer-har": "1.1.2",
-    "puppeteer": "24.37.3",
+    "puppeteer": "24.37.4",
     "puppeteer-loadtest": "2.2.1",
     "request": "2.88.2",
     "@napi-rs/canvas": "0.1.93",
