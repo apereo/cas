@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -69,7 +70,8 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
     @Override
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService,
-                                       final CallContext callContext) {
+                                       final CallContext callContext,
+                                       final OAuth20ClientAuthenticationMethods authnMethod) {
         val clientSecret = getRequestParameterResolver().resolveClientIdAndClientSecret(callContext).getRight();
         if (!getClientSecretValidator().validate(registeredService, clientSecret)) {
             throw new CredentialsException("Client Credentials provided is not valid for service: " + registeredService.getName());
