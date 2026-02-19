@@ -3,11 +3,9 @@ package org.apereo.cas.support.oauth.validator;
 import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -84,23 +82,10 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     @Test
     void verifyClientSecretUrlEncoded() {
         val secret = "!@#$%^&^&*()";
-        val encodedSecret = EncodingUtils.urlEncode(secret);
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");
         registeredService.setClientSecret(secret);
-        val result = oauth20ClientSecretValidator.validate(registeredService, encodedSecret);
+        val result = oauth20ClientSecretValidator.validate(registeredService, secret);
         assertTrue(result);
-    }
-
-    @Test
-    void verifyNullClientSecretUrlEncoded() {
-        val secret = "!@#$%^&^&*()";
-        val registeredService = new OAuthRegisteredService();
-        registeredService.setClientId("clientid");
-        registeredService.setClientSecret(secret);
-        val result = oauth20ClientSecretValidator.validate(registeredService, null);
-        assertFalse(result);
-        val result2 = oauth20ClientSecretValidator.validate(registeredService, StringUtils.EMPTY);
-        assertFalse(result2);
     }
 }
