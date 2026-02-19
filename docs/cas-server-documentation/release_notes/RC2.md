@@ -58,7 +58,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `535` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `536` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 Furthermore the test scenario construction logic is given the ability to limit its run to a pre-specified 
@@ -99,7 +99,7 @@ to handle and support more actuator endpoints, when it comes to adding external 
 user sessions, listing multifactor authentication providers, rendering metrics, etc.
 
 Notably, Palantir now supports editing application definitions using a wizard-based interface
-in addition to using a plain JSON editor. Note that this functionality is brand, and somewhat fragile
+in addition to using a plain JSON editor. Note that this functionality is brand new, and somewhat fragile
 and may not work for all service definitions, specially if advanced or complex constructions are used. 
 We will continue to polish this feature in future releases.
 
@@ -108,7 +108,7 @@ We will continue to polish this feature in future releases.
 CAS is now built with Gradle `9.4` and the build process has been updated to use the latest Gradle
 features and capabilities. This also prepares future CAS versions to build and run against JDK `26`.
 
-### Spring Boot 4
+### Spring Boot 4.1
 
 CAS is now built with Spring Boot `4.1.x`. This is a major platform upgrade that affects almost all aspects of the codebase
 including many of the third-party core libraries used by CAS as well as some CAS functionality.
@@ -145,6 +145,8 @@ and scheduled for removal in a future CAS version.
 - Integration tests have switched to use Redis `8.6.x`.
 - Better log data sanitization to avoid logging sensitive information, particularly when `DEBUG` logs are enabled.
 - Minor bug fixes to improve [OpenID Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html) to ensure the `act` claim is correctly processed in the right flows.
-- Sorting operations and locating service definitions registered with CAS is now optimized to improve performance large numbers of applications.
+- Small corrections to how disabled security questions with [Apache Syncope](../authentication/Syncope-Authentication.html) are handled.
+- Sorting operations and locating service definitions registered with CAS is now optimized to improve performance for a large numbers of applications.
+- Bug fixes to remove URL decoding issues with client secret validation in OAuth and OpenID Connect flows.
 - [FIDO2 WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) capabilities can be functional when CAS is deployed at the root context path.
 - [Passwordless Authentication via LDAP](../authentication/Passwordless-Authentication-Storage-LDAP.html) is given a few more configuration options to control attributes that drive the passwordless account.

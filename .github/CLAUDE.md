@@ -1,0 +1,239 @@
+# CLAUDE.md
+
+This repository is **Apereo CAS** (Central Authentication Service), a large-scale enterprise authentication server built with Java, Gradle, and Spring Boot. This file provides guidance for Claude Code and Claude AI assistants so that changes remain consistent with CAS project practices and reviewer expectations.
+
+> **Note**: If you are trying to *deploy/configure* CAS, you should **not** be editing this repository directly; use the **WAR Overlay** approach instead. Building from source is for contributors only.
+
+---
+
+## Project Overview
+
+- **Type**: Multi-module Gradle project (500+ modules)
+- **Language**: Java 25+
+- **Frameworks**: Spring Boot 4.x, Spring Cloud, Spring Webflow
+- **Build Tool**: Gradle 9.x with parallel builds and configuration cache enabled
+- **Architecture**: Modular design — API → Core → Support → Webapp layers
+
+### Module Organization
+
+```
+api/           → Interface definitions and contracts
+core/          → Core implementations of API contracts
+support/       → Feature modules (LDAP, OIDC, SAML, Duo, etc.)
+webapp/        → Web application modules (Tomcat, Jetty, etc.)
+docs/          → User-facing documentation
+ci/            → CI scripts and test helpers
+style/         → Checkstyle, SpotBugs, ErrorProne configs
+```
+
+**Key principle**: `api/` modules define contracts, `core/` implements them, `support/` adds features. Always respect module boundaries and avoid circular dependencies.
+
+---
+
+## Goals for AI-Assisted Changes
+
+When generating or modifying code in this project, optimize for:
+
+- **Small, reviewable diffs** — keep changes focused and minimal
+- **Consistency with existing patterns** — follow the conventions already in the codebase
+- **Tests + docs** — every bug fix needs a test; user-facing changes need documentation
+- **Build correctness** — respect Gradle module boundaries and dependency scopes
+- **Security correctness** — authentication, authorization, and crypto must not be weakened
+
+---
+
+## Build & Run
+
+### Full Build (Skip Tests)
+```bash
+./gradlew build --parallel -x test -x javadoc -x check
+```
+
+### Build Specific Module
+```bash
+./gradlew :core:cas-server-core-authentication:build
+```
+
+### Run Locally
+```bash
+cd webapp/cas-server-webapp-tomcat
+../../gradlew bootRun
+```
+Access at: `https://localhost:8443/cas`
+
+### Clean Build
+```bash
+./gradlew clean build --no-build-cache
+```
+
+---
+
+## Testing
+
+### Test Framework
+Use `./testcas.sh` for comprehensive testing:
+
+```bash
+# See available test categories
+./gradlew -q testCategories
+
+# Run specific test category
+./testcas.sh --category CategoryName
+
+# Run specific test class
+./testcas.sh --test TestClassName
+
+# Run with coverage
+./testcas.sh --category CategoryName --with-coverage
+
+# Debug mode (port 5005)
+./testcas.sh --category CategoryName --debug
+```
+
+### Run Single Test (Direct Gradle)
+```bash
+./gradlew :core:cas-server-core-authentication:test --tests "*AuthenticationHandlerTests"
+./gradlew :support:cas-server-support-ldap:test --tests "*LdapAuthenticationHandlerTests.verifySuccess"
+```
+
+### Test Conventions
+- Every bug fix needs a test
+- New features require comprehensive test coverage
+- Tests belong in the same module as the code they test
+- Use `@SpringBootTest` for integration tests
+- Use `@Nested` for organizing related test cases
+
+---
+
+## Code Conventions
+
+### Java Style
+- **Java version**: Java 25+ (use modern features: records, pattern matching, switch expressions, sealed classes)
+- **Indentation**: 4 spaces, NO tabs
+- **Braces**: Always use braces, even for single-line blocks
+- **Null safety**: Use `@NullMarked` at package level (JSpecify annotations)
+- **Conditionals**: Avoid needless `else` statements
+- **Imports**: No unused imports (enforced by Checkstyle)
+- **Line length**: 200 characters max
+
+### Lombok Usage
+Lombok is heavily used throughout the codebase:
+- `@Getter` / `@Setter` for bean properties
+- `@RequiredArgsConstructor` for dependency injection
+- `@Slf4j` for logging (field name: `LOGGER`, static)
+- `@ToString` / `@EqualsAndHashCode` with `doNotUseGetters = true`
+- **Avoid** `@Data` (too implicit)
+
+### Spring Configuration Patterns
+- Use `@AutoConfiguration` or `@Configuration` for config classes
+- Always use `@ConditionalOnFeatureEnabled` for feature toggles
+- Use `@RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)` for runtime-refreshable beans
+- Use `@ConditionalOnMissingBean` to allow overrides
+- Order beans with `@Order` or implement `Ordered`
+
+### Bean Registration Example
+```java
+@Bean
+@RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+@ConditionalOnMissingBean(name = "myService")
+public MyService myService(final CasConfigurationProperties casProperties) {
+    return new DefaultMyService(casProperties);
+}
+```
+
+### Package Structure
+```java
+@NullMarked
+package org.apereo.cas.authentication;
+
+import org.jspecify.annotations.NullMarked;
+```
+
+### Module Dependencies
+- `api/` modules: Define interfaces only, minimal dependencies
+- `core/` modules: Depend on corresponding `api/` modules
+- `support/` modules: Can depend on `core/` and other `support/` modules
+- Use `api` vs `implementation` dependency scopes appropriately
+
+---
+
+## Quality Checks
+
+- **Checkstyle**: Enforced via `style/checkstyle-rules.xml` (line length: 200 chars)
+- **SpotBugs**: Static analysis via `style/spotbugs-excludes.xml`
+- **ErrorProne**: Enabled by default (skip with `-DskipErrorProneCompiler=true`)
+- **NullAway**: Null safety analysis (skip with `-DskipNullAway=true`)
+
+---
+
+## Documentation
+
+- Update `docs/cas-server-documentation/` for any user-facing change
+- Public APIs require Javadoc with `@since` version tags
+- Configuration properties need `@RequiresModule` annotation
+
+---
+
+## Security Guidance
+
+**CRITICAL**: Do not blindly accept or generate changes in these areas without careful review and testing:
+- Authentication flows (login, logout, SSO)
+- Authorization and access control
+- Ticket validation and issuance
+- Cryptographic operations
+- MFA workflows
+- Session management
+- Input validation and sanitization
+
+### Security Rules
+- Never weaken existing security constraints
+- Always validate user input
+- Use CAS-provided crypto utilities (don't roll your own)
+- Test security changes with both positive and negative cases
+- Follow the principle of least privilege
+
+---
+
+## What Claude Should NOT Do
+
+- ❌ Add dependencies without justification
+- ❌ Reformat unrelated code
+- ❌ Skip tests or quality checks
+- ❌ Replace CAS-specific patterns with generic alternatives
+- ❌ Make broad refactorings without discussion
+- ❌ Modify authentication/authorization without thorough testing
+- ❌ Generate code that weakens security posture
+
+---
+
+## PR Checklist
+
+- ✅ Builds locally without errors
+- ✅ Tests pass (or new tests added)
+- ✅ Checkstyle/SpotBugs/ErrorProne clean
+- ✅ Documentation updated for user-facing changes
+- ✅ Scope is focused and reviewable
+- ✅ No unused imports or trailing whitespace
+- ✅ Security implications reviewed
+
+---
+
+## Useful Gradle Tasks
+
+```bash
+./gradlew tasks                                                    # List all tasks
+./gradlew -q testCategories                                        # Show test categories
+./gradlew :core:cas-server-core-authentication:dependencies        # Module dependencies
+./gradlew dependencyUpdates                                        # Check for updates
+./gradlew javadoc                                                  # Generate Javadoc
+```
+
+---
+
+## Additional Resources
+
+- [Contributor Guidelines](https://apereo.github.io/cas/developer/Contributor-Guidelines.html)
+- [Build Process](https://apereo.github.io/cas/developer/Build-Process.html)
+- [Documentation](https://apereo.github.io/cas/development)
+- [Architecture](https://apereo.github.io/cas/development/planning/Architecture.html)
+
