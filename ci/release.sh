@@ -143,11 +143,11 @@ function publish {
     printgreen "Current commit is ${currentCommit}"
 
     previousTag=$(git describe --tags --abbrev=0 "${releaseTag}^")
-    echo "Looking at commits in range: $previousTag..$releaseTag" 2>/dev/null
+    echo "Looking at commits in range: $previousTag..$releaseTag"
       
     if [[ -n "${previousTag}" && -n "${releaseTag}" ]]; then
-      contributors=$(gh api repos/apereo/cas/compare/$previousTag...$releaseTag \
-        --jq '.commits[].author.login // .commits[].commit.author.name' \
+      contributors=$(gh api "repos/apereo/cas/compare/$previousTag...$releaseTag" \
+        --jq '.commits[] | (.author.login // .commit.author.name)' \
         | sort -u \
         | sed 's/.*/- @&/')
       printgreen "Contributors: ${contributors}"
