@@ -39,6 +39,6 @@ public class OracleJpaTicketEntity extends BaseTicketEntity {
     private static final long serialVersionUID = 6546716187959834795L;
 
     @Type(JsonType.class)
-    @Column(columnDefinition = "varchar2(4000 char)")
+    @Column(columnDefinition = "CLOB CHECK (attributes IS JSON)")
     private Map<String, List<Object>> attributes;
 }
