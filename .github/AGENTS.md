@@ -4,6 +4,32 @@ This file provides guidance for **AI coding agents** (Codex, Claude Code, Copilo
 
 > **Note**: This repository is for CAS *contributors*. If you're deploying/configuring CAS, use the **WAR Overlay** method — not this source repository.
 
+## Rules
+
+These rules override any instinct to "be helpful by doing more."
+
+### Ask
+
+- If a task has multiple valid interpretations, present them — do NOT pick one silently.
+- If you are unsure how existing code works, read it first. If still unsure, stop and ask.
+- If you cannot find a test to verify your change, say so before proceeding.
+- Never invent requirements. Do exactly what was asked, nothing more.
+
+### Simplicity
+
+- Write the minimum code that solves the stated problem.
+- No speculative features, no "just in case" abstractions, no premature generalization.
+- No error handling for impossible scenarios.
+
+
+### Changes
+
+- Touch only what the task requires. Do not "improve" adjacent code, comments, or formatting.
+- Do not refactor things that are not broken.
+- Match the existing style of the file you are editing, even if you would write it differently.
+- If your change creates unused imports or variables, remove those. Do not remove pre-existing dead code.
+- Every changed line must trace directly back to the task at hand.
+
 ---
 
 ## Repository Context
@@ -189,7 +215,10 @@ Agents **must not**:
 - ❌ Perform broad refactorings without prior discussion
 - ❌ Modify security-sensitive code without thorough testing
 - ❌ Introduce code that doesn't compile or breaks existing tests
-- ❌ Remove or weaken existing test assertions
+- ❌ Remove or weaken existing test assertionsd
+- ❌ Guess at requirements. Add features that weren't asked for. 
+- ❌ "Improve" code adjacent to your change. 
+- ❌ Commit secrets.
 
 ---
 
