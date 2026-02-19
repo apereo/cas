@@ -25,6 +25,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -96,7 +97,7 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
                 return Optional.empty();
             }
 
-            validateCredentials(upc, registeredService, callContext);
+            validateCredentials(upc, registeredService, callContext, requiredAuthnMethod);
 
             val resolvedPrincipal = resolvePrincipal(upc);
             val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
@@ -164,8 +165,13 @@ public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator {
 
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService,
-                                       final CallContext callContext) {
-        if (!clientSecretValidator.validate(registeredService, credentials.getPassword())) {
+                                       final CallContext callContext,
+                                       final OAuth20ClientAuthenticationMethods authnMethod) {
+        var pwdToCheck = credentials.getPassword();
+        if (authnMethod == OAuth20ClientAuthenticationMethods.CLIENT_SECRET_BASIC) {
+            pwdToCheck = EncodingUtils.urlDecode(credentials.getPassword());
+        }
+        if (!clientSecretValidator.validate(registeredService, pwdToCheck)) {
             throw new CredentialsException("Invalid client credentials provided for registered service: " + registeredService.getName());
         }
     }

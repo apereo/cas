@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -72,7 +73,8 @@ public class OAuth20RefreshTokenAuthenticator extends OAuth20ClientIdClientSecre
     @Override
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService,
-                                       final CallContext callContext) {
+                                       final CallContext callContext,
+                                       final OAuth20ClientAuthenticationMethods authnMethod) {
         val token = credentials.getPassword();
         LOGGER.trace("Received refresh token [{}] for authentication", token);
 
