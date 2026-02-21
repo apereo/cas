@@ -58,9 +58,28 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `526` distinct scenarios. The overall
-test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
-are now configured to run with parallelism enabled.
+and scenarios. At the moment, total number of jobs stands at approximately `538` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`.
+
+Furthermore the test scenario construction logic is given the ability to limit its run to a pre-specified
+time window, which is specially useful when when the test requires external resources and APIs that may
+not be available at all times.
+
+### Gradle 9.4
+
+CAS is now built with Gradle `9.4` and the build process has been updated to use the latest Gradle
+features and capabilities. This also prepares future CAS versions to build and run against JDK `26`.
+
+### Spring Boot 4.1
+
+CAS is now built with Spring Boot `4.1.x`. This is a major platform upgrade that affects almost all aspects of the codebase
+including many of the third-party core libraries used by CAS as well as some CAS functionality.
+
+### JSpecify & NullAway
+
+CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations to indicate nullness contracts on method parameters,
+return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
+and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
+during compile time.
 
 ## Other Stuff
-     
