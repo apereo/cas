@@ -49,8 +49,7 @@ public class UmaCreatePolicyForResourceSetEndpointController extends BaseUmaEndp
     @Operation(summary = "Create policy for resource set", description = "Creates a policy for the specified resource set",
         parameters = @Parameter(name = "resourceId", required = true, in = ParameterIn.PATH, description = "Resource ID"))
     public ResponseEntity createPolicyForResourceSet(
-        @PathVariable("resourceId")
-        final long resourceId,
+        @PathVariable final long resourceId,
         @RequestBody
         final String body,
         final HttpServletRequest request,

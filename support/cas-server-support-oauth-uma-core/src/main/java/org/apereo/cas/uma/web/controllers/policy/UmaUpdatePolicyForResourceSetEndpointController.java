@@ -54,10 +54,8 @@ public class UmaUpdatePolicyForResourceSetEndpointController extends BaseUmaEndp
             @Parameter(name = "policyId", required = true, in = ParameterIn.PATH, description = "Policy ID")
         })
     public ResponseEntity updatePoliciesForResourceSet(
-        @PathVariable("resourceId")
-        final long resourceId,
-        @PathVariable("policyId")
-        final long policyId,
+        @PathVariable final long resourceId,
+        @PathVariable final long policyId,
         @RequestBody
         final String body,
         final HttpServletRequest request,

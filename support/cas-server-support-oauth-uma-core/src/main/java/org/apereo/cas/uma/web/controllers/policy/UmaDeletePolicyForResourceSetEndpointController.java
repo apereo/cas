@@ -51,10 +51,8 @@ public class UmaDeletePolicyForResourceSetEndpointController extends BaseUmaEndp
         }
     )
     public ResponseEntity deletePoliciesForResourceSet(
-        @PathVariable("resourceId")
-        final long resourceId,
-        @PathVariable("policyId")
-        final long policyId,
+        @PathVariable final long resourceId,
+        @PathVariable final long policyId,
         final HttpServletRequest request,
         final HttpServletResponse response) {
         try {

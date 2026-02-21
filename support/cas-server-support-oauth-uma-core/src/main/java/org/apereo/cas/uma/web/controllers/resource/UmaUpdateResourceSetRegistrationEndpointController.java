@@ -50,8 +50,8 @@ public class UmaUpdateResourceSetRegistrationEndpointController extends BaseUmaE
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update resource set", description = "Updates a resource set registered by the client",
         parameters = @Parameter(name = "id", required = true, in = ParameterIn.PATH, description = "Resource ID"))
-    public ResponseEntity updateResourceSet(@PathVariable("id") final long id, @RequestBody final String body,
-        final HttpServletRequest request, final HttpServletResponse response) {
+    public ResponseEntity updateResourceSet(@PathVariable final long id, @RequestBody final String body,
+                                            final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
             val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), UmaResourceRegistrationRequest.class);

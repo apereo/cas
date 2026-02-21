@@ -79,8 +79,7 @@ public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEnd
         parameters = @Parameter(name = "id", required = true, in = ParameterIn.PATH, description = "Resource ID")
     )
     public ResponseEntity findResourceSet(
-        @PathVariable("id")
-        final long id, final HttpServletRequest request, final HttpServletResponse response) {
+        @PathVariable final long id, final HttpServletRequest request, final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
 

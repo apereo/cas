@@ -42,8 +42,7 @@ public class AcmeWellKnownChallengeController {
     @Operation(summary = "Handle ACME well-known challenge",
         parameters = @Parameter(name = "token", required = true, in = ParameterIn.PATH, description = "Challenge token"))
     public String handleRequest(
-        @PathVariable("token")
-        final String token,
+        @PathVariable final String token,
         final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.debug("Handling ACME challenge...");
         return acmeChallengeRepository.get(token);
