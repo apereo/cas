@@ -142,8 +142,10 @@ function publish {
     currentCommit=$(git rev-parse HEAD)
     printgreen "Current commit is ${currentCommit}"
 
-    previousTag=$(git describe --tags --abbrev=0 "${releaseTag}^")
-    echo "Looking at commits in range: $previousTag..$releaseTag"
+    printgreen "Checking release tag ${releaseTag} against the previous tag to identify contributors..."
+    git cat-file -t "$releaseTag"
+    previousTag=$(git describe --tags --abbrev=0 "${releaseTag}^{}^" 2>/dev/null)
+    echo "Previous tag: ${previousTag}. Now looking at commits in range: $previousTag..$releaseTag"
       
     if [[ -n "${previousTag}" && -n "${releaseTag}" ]]; then
       contributors=$(gh api "repos/apereo/cas/compare/$previousTag...$releaseTag" \
@@ -158,7 +160,7 @@ function publish {
       contributors="- No contributors found."
     fi
     
-    notes='
+    releaseNotes=$(cat <<EOF
 # :star: Release Notes
 
 - [Documentation](https://apereo.github.io/cas/${documentationBranch})
@@ -170,12 +172,11 @@ ${changelog}
 
 # :couple: Contributions
 
-Special thanks to the following individuals for their excellent contributions:	
+Special thanks to the following individuals for their excellent contributions:
 
 ${contributors}
-    '
-
-    releaseNotes=$(eval "cat <<EOF $notes")
+EOF
+    )
     echo -e "\nRelease Notes:\n${releaseNotes}\n"
     
     gh release create "${releaseTag}" --notes "${releaseNotes}" \
