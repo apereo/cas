@@ -21,6 +21,7 @@ import org.jooq.lambda.Unchecked;
 import org.jose4j.json.JsonUtil;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.PublicJsonWebKey;
+import org.jspecify.annotations.Nullable;
 
 /**
  * The {@link BaseStringCipherExecutor} is the default
@@ -119,8 +120,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         return decode(value, parameters, getEncryptionKey(), getSigningKey());
     }
 
-    protected String decode(final Serializable value, final Object[] parameters,
-                            final Key encKey, final Key signingKey) {
+    protected @Nullable String decode(final Serializable value, final Object[] parameters,
+                                      final Key encKey, final Key signingKey) {
         if (strategyType == CipherOperationsStrategyType.ENCRYPT_AND_SIGN) {
             return verifyAndDecrypt(value, encKey, signingKey);
         }
