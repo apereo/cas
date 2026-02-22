@@ -44,7 +44,7 @@ class RegisteredServiceResourceTests {
     @Test
     void checkNoCredentials() throws Throwable {
         runTest("memberOf", "something", StringUtils.EMPTY, status().isBadRequest());
-        runTest("memberOf", "something", ":", status().isUnauthorized());
+        runTest("memberOf", "something", ":", status().isBadRequest());
     }
 
     @Test

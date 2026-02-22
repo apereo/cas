@@ -83,7 +83,9 @@ public class RegisteredServiceResource {
                                                 final HttpServletResponse response) throws Throwable {
         try {
             val auth = authenticateRequest(request);
-            Objects.requireNonNull(auth, "Unable to determine or verify authentication attempt");
+            if (auth == null) {
+                throw new AuthenticationException("Unable to authenticate request to register service " + service.getName());
+            }
             if (isAuthenticatedPrincipalAuthorized(auth)) {
                 this.servicesManager.save(service);
                 return new ResponseEntity<>(HttpStatus.OK);
