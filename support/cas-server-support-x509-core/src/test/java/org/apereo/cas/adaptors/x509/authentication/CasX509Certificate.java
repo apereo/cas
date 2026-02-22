@@ -8,10 +8,12 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import static org.mockito.Mockito.*;
 
@@ -40,6 +42,8 @@ public class CasX509Certificate extends X509Certificate {
     private String subjectDn;
 
     private Boolean keyUsage;
+
+    private List<?> subjectAltNames;
 
     /**
      * Gets content.
@@ -185,5 +189,14 @@ public class CasX509Certificate extends X509Certificate {
 
     @Override
     public void verify(final PublicKey arg0) {
+    }
+
+    @Override
+    public @Nullable Collection<List<?>> getSubjectAlternativeNames() throws CertificateParsingException {
+        var names = super.getSubjectAlternativeNames();
+        if (names == null && subjectAltNames != null) {
+            return Collections.singleton(subjectAltNames);
+        }
+        return names;
     }
 }

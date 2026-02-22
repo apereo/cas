@@ -29,6 +29,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
@@ -123,6 +124,10 @@ public abstract class BaseOAuth20AuthenticatorTests {
     protected OAuthRegisteredService serviceWithoutSecret2;
 
     protected OAuthRegisteredService serviceWithAttributesMapping;
+    
+    protected OAuthRegisteredService serviceTlsAuth;
+
+    protected OAuthRegisteredService serviceTlsAuthSpiffe;
 
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
@@ -173,8 +178,25 @@ public abstract class BaseOAuth20AuthenticatorTests {
         serviceWithAttributesMapping.setUsernameAttributeProvider(provider);
         serviceWithAttributesMapping.setAttributeReleasePolicy(
             new ReturnAllowedAttributeReleasePolicy(List.of("eduPersonAffiliation")));
+        
+        serviceTlsAuth = new OAuthRegisteredService();
+        serviceTlsAuth.setName("OAuthTls");
+        serviceTlsAuth.setId(RandomUtils.nextLong());
+        serviceTlsAuth.setServiceId("https://www.exampletls.org");
+        serviceTlsAuth.setClientId("TlsWithClientId");
+        serviceTlsAuth.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        serviceTlsAuth.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType());
 
-        servicesManager.save(service, serviceWithoutSecret, serviceWithoutSecret2, serviceJwtAccessToken, serviceWithAttributesMapping);
+        serviceTlsAuthSpiffe = new OAuthRegisteredService();
+        serviceTlsAuthSpiffe.setName("OAuthTls");
+        serviceTlsAuthSpiffe.setId(RandomUtils.nextLong());
+        serviceTlsAuthSpiffe.setServiceId("https://www.exampletlsspiffe.org");
+        serviceTlsAuthSpiffe.setClientId("spiffe://example.org/client");
+        serviceTlsAuthSpiffe.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        serviceTlsAuthSpiffe.setTokenEndpointAuthenticationMethod(OAuth20ClientAuthenticationMethods.TLS_CLIENT_AUTH.getType());
+        
+        servicesManager.save(service, serviceWithoutSecret, serviceWithoutSecret2,
+            serviceJwtAccessToken, serviceWithAttributesMapping, serviceTlsAuth, serviceTlsAuthSpiffe);
     }
 
     @SpringBootTestAutoConfigurations
