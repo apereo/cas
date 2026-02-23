@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,9 +38,9 @@ public class RestResourceUtils {
      * @param applicationContext the application context
      * @return the response entity
      */
-    public static ResponseEntity<@NonNull String> createResponseEntityForAuthnFailure(final AuthenticationException e,
-                                                                                      final HttpServletRequest request,
-                                                                                      final ApplicationContext applicationContext) {
+    public static ResponseEntity<String> createResponseEntityForAuthnFailure(final AuthenticationException e,
+                                                                             final HttpServletRequest request,
+                                                                             final ApplicationContext applicationContext) {
         try {
             val authnExceptions = e.getHandlerErrors().values()
                 .stream()

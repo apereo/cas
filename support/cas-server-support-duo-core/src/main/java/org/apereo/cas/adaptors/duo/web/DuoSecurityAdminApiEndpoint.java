@@ -52,7 +52,7 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
         @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to fetch"),
         @Parameter(name = "providerId", description = "The multifactor authentication provider id defined in CAS settings")
     })
-    public Map<String, DuoSecurityUserAccount> getUser(@PathVariable("username") final String username,
+    public Map<String, DuoSecurityUserAccount> getUser(@PathVariable final String username,
                                                        @RequestParam(required = false) final String providerId) {
         val results = new LinkedHashMap<String, DuoSecurityUserAccount>();
         val providers = applicationContext.getBeansOfType(DuoSecurityMultifactorAuthenticationProvider.class).values();
@@ -124,7 +124,7 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
         @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to update"),
         @Parameter(name = "providerId", description = "The multifactor authentication provider id defined in CAS settings")
     })
-    public ResponseEntity updateUser(@PathVariable("username") final String username,
+    public ResponseEntity updateUser(@PathVariable final String username,
                                      @RequestParam(required = false) final String providerId,
                                      @io.swagger.v3.oas.annotations.parameters.RequestBody(
                                          description = "Duo user account as a JSON entity to update",

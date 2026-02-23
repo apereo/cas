@@ -1,0 +1,24 @@
+{
+  "dependencies": "oauth-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.organization=apereo",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--server.ssl.trust-store=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/client-truststore.p12",
+    "--server.ssl.trust-store-password=changeit",
+    "--server.ssl.trust-store-type=PKCS12",
+
+    "--server.ssl.client-auth=want"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
+

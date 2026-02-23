@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -85,12 +84,11 @@ public class ServiceTicketResource {
             @Parameter(name = "tgtId", required = true, in = ParameterIn.PATH, description = "Ticket-granting ticket id"),
             @Parameter(name = "requestBody", required = false, description = "Request body containing credentials")
         })
-    public ResponseEntity<@NonNull String> createServiceTicket(
+    public ResponseEntity<String> createServiceTicket(
         final HttpServletRequest httpServletRequest,
         @RequestBody(required = false)
-        final MultiValueMap<@NonNull String, String> requestBody,
-        @PathVariable("tgtId")
-        final String tgtId) {
+        final MultiValueMap<String, String> requestBody,
+        @PathVariable final String tgtId) {
         try {
             val authn = ticketRegistrySupport.getAuthenticationFrom(StringEscapeUtils.escapeHtml4(tgtId));
             if (authn == null) {
@@ -104,11 +102,11 @@ public class ServiceTicketResource {
                     throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
                 }
                 val authenticationResult = authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
-                return serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
+                return serviceTicketResourceEntityResponseFactory.build(tgtId, service, Objects.requireNonNull(authenticationResult));
             }
             val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
             val authenticationResult = builder.collect(authn).build(service);
-            return serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
+            return serviceTicketResourceEntityResponseFactory.build(tgtId, service, Objects.requireNonNull(authenticationResult));
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(tgtId) + " could not be found or is considered invalid", HttpStatus.NOT_FOUND);
         } catch (final AuthenticationException e) {
