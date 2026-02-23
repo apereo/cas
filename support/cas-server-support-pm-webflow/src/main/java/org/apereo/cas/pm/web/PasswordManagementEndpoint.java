@@ -117,7 +117,7 @@ public class PasswordManagementEndpoint extends BaseCasRestActuatorEndpoint {
             @Parameter(name = "service", description = "The service requesting the password reset")
         })
     @PostMapping(path = "/reset/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity passwordReset(@PathVariable("username") final String username,
+    public ResponseEntity passwordReset(@PathVariable final String username,
                                         @RequestParam("service") final String service,
                                         final HttpServletRequest request) throws Throwable {
         val query = PasswordManagementQuery.builder().username(username).build();

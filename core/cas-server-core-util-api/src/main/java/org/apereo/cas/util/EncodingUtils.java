@@ -23,6 +23,7 @@ import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.RsaJwkGenerator;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link EncodingUtils} that encapsulates common base64,
@@ -279,13 +280,13 @@ public class EncodingUtils {
      * Verify jws signature byte [ ].
      *
      * @param signingKey the signing key
-     * @param asString   the as string
+     * @param value      the as string
      * @return the byte [ ]
      */
-    public static byte[] verifyJwsSignature(final Key signingKey, final String asString) {
+    public static byte @Nullable [] verifyJwsSignature(final Key signingKey, final String value) {
         return Unchecked.supplier(() -> {
             val jws = new JsonWebSignature();
-            jws.setCompactSerialization(asString);
+            jws.setCompactSerialization(value);
             jws.setKey(signingKey);
 
             val verified = jws.verifySignature();
@@ -305,7 +306,7 @@ public class EncodingUtils {
      * @param signingKey the signing key
      * @return the byte [ ]
      */
-    public static byte[] verifyJwsSignature(final Key signingKey, final byte[] value) {
+    public static byte @Nullable [] verifyJwsSignature(final Key signingKey, final byte[] value) {
         val asString = new String(value, StandardCharsets.UTF_8);
         return verifyJwsSignature(signingKey, asString);
     }

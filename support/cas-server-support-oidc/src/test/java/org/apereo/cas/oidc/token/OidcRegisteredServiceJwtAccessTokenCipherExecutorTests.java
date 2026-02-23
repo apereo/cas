@@ -40,6 +40,22 @@ class OidcRegisteredServiceJwtAccessTokenCipherExecutorTests extends AbstractOid
         assertEquals(at.getId(), decoded);
     }
 
+    @Test
+    void verifyOperationEC() throws Throwable {
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
+        service.setJwksKeyId("EC");
+        service.setJwtAccessTokenSigningAlg(AlgorithmIdentifiers.ECDSA_USING_P521_CURVE_AND_SHA512);
+        service.setClientId(UUID.randomUUID().toString());
+        
+        val at = getAccessToken(service.getClientId());
+        val encoded = oidcRegisteredServiceJwtAccessTokenCipherExecutor.encode(at.getId(), Optional.of(service));
+        assertNotNull(encoded);
+        val header = SignedJWT.parse(encoded).getHeader();
+        assertNotNull(header.getAlgorithm());
+        val decoded = oidcRegisteredServiceJwtAccessTokenCipherExecutor.decode(encoded, Optional.of(service));
+        assertNotNull(decoded);
+        assertEquals(at.getId(), decoded);
+    }
 
     @Test
     void verifyOperationByService() throws Throwable {

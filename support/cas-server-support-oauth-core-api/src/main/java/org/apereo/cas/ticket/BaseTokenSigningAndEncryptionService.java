@@ -15,6 +15,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link BaseTokenSigningAndEncryptionService}.
@@ -100,7 +101,7 @@ public abstract class BaseTokenSigningAndEncryptionService implements OAuth20Tok
         return JwtBuilder.buildPlain(claimSet, Optional.of(registeredService));
     }
 
-    protected byte[] verifySignature(final String token, final PublicJsonWebKey jsonWebKey) {
+    protected byte @Nullable [] verifySignature(final String token, final PublicJsonWebKey jsonWebKey) {
         return EncodingUtils.verifyJwsSignature(jsonWebKey.getPublicKey(), token);
     }
 }

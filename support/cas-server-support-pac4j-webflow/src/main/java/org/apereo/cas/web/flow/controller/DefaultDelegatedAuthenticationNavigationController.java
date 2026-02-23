@@ -53,8 +53,7 @@ public class DefaultDelegatedAuthenticationNavigationController extends Abstract
     @Operation(summary = "Redirect response to flow",
         parameters = @Parameter(name = "clientName", in = ParameterIn.PATH, required = true, description = "The client name"))
     public View redirectResponseToFlow(
-        @PathVariable("clientName")
-        final String clientName,
+        @PathVariable final String clientName,
         final HttpServletRequest request,
         final HttpServletResponse response) throws Exception {
         return buildRedirectViewBackToFlow(clientName, request);
@@ -74,8 +73,7 @@ public class DefaultDelegatedAuthenticationNavigationController extends Abstract
     @Operation(summary = "Redirect response to flow",
         parameters = @Parameter(name = "clientName", in = ParameterIn.PATH, required = true, description = "The client name"))
     public View postResponseToFlow(
-        @PathVariable("clientName")
-        final String clientName,
+        @PathVariable final String clientName,
         final HttpServletRequest request,
         final HttpServletResponse response) throws Exception {
         return buildRedirectViewBackToFlow(clientName, request);

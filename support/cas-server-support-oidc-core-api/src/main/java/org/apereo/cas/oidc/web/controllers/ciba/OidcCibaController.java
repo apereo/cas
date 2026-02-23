@@ -90,10 +90,8 @@ public class OidcCibaController extends BaseOidcController {
             @Parameter(name = "requestId", in = ParameterIn.PATH, description = "Request ID")
         })
     public Object initializeBackchannelVerificationRequest(
-        @PathVariable("clientId")
-        final String clientId,
-        @PathVariable("requestId")
-        final String requestId) {
+        @PathVariable final String clientId,
+        @PathVariable final String requestId) {
         try {
             val registeredService = findRegisteredService(clientId);
             val cibaRequest = fetchOidcCibaRequest(requestId);
@@ -134,10 +132,8 @@ public class OidcCibaController extends BaseOidcController {
     public ResponseEntity verifyBackchannelVerificationRequest(
         @RequestParam(value = "userCode", required = false)
         final String userCode,
-        @PathVariable("clientId")
-        final String clientId,
-        @PathVariable("requestId")
-        final String requestId) throws Throwable {
+        @PathVariable final String clientId,
+        @PathVariable final String requestId) throws Throwable {
         try {
             val registeredService = findRegisteredService(clientId);
             val cibaRequest = fetchOidcCibaRequest(requestId);

@@ -58,7 +58,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `538` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `539` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 Furthermore the test scenario construction logic is given the ability to limit its run to a pre-specified
@@ -81,5 +81,13 @@ CAS codebase is now annotated with [JSpecify](https://jspecify.dev/) annotations
 return types and fields. We will gradually extend the coverage of such annotations across the entire codebase in future releases
 and will integrate the Gradle build tool with tools such as [NullAway](https://github.com/uber/NullAway) to prevent nullness contract violations
 during compile time.
+   
+### SPIFFE Support
+
+CAS now supports [SPIFFE](https://spiffe.io/), used for client mTLS authentication in OAuth and OpenID Connect flows.
+It’s a method where an OAuth client authenticates to CAS using its SPIFFE-issued identity, 
+instead of a static secret or manually managed certificate. 
+[CAS gains the ability](../authentication/OIDC-Authentication-AccessToken-AuthMethods.html) to extract and identify the SPIFFE ID 
+in the certtificate and map it to the client application definition. 
 
 ## Other Stuff

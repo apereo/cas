@@ -671,12 +671,15 @@ exports.doDelete = async (url, statusCode = 0, successHandler = undefined,
 };
 
 exports.doPost = async (url, params = "", headers = {},
-    successHandler, failureHandler, verbose = true) => {
+    successHandler, failureHandler, verbose = true, httpsAgent = undefined) => {
+    if (httpsAgent === undefined || httpsAgent === null) {
+        httpsAgent = new https.Agent({
+            rejectUnauthorized: false
+        });
+    }
     const instance = axios.create({
         timeout: 12000,
-        httpsAgent: new https.Agent({
-            rejectUnauthorized: false
-        })
+        httpsAgent: httpsAgent
     });
     const urlParams = params instanceof URLSearchParams ? params : new URLSearchParams(params);
     if (verbose) {
