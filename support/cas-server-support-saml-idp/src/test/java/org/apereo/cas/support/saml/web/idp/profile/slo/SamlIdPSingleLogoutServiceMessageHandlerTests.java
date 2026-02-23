@@ -1,7 +1,10 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import module java.base;
+import org.apereo.cas.logout.DefaultSingleLogoutRequestContext;
+import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
+import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -18,9 +21,11 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
@@ -134,7 +139,19 @@ class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigura
         val service = RegisteredServiceTestUtils.getService("urn:soap:slo:example");
         service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(service.getId()));
         val result = samlSingleLogoutServiceMessageHandler.handle(service, "ST-1234567890",
-            SingleLogoutExecutionRequest.builder().ticketGrantingTicket(new MockTicketGrantingTicket("casuser")).build());
+                SingleLogoutExecutionRequest.builder().ticketGrantingTicket(new MockTicketGrantingTicket("casuser")).build());
         assertFalse(result.isEmpty());
+    }
+
+    @Test
+    void verifySoapMessagePreparation() throws Throwable {
+        val properties = new HashMap<String, String>();
+        properties.put(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING, SAMLConstants.SAML2_SOAP11_BINDING_URI);
+        val logoutRequest = DefaultSingleLogoutRequestContext.builder().properties(properties).build();
+        val logoutMsg = SingleLogoutMessage.builder().payload("SOAP_envelop").build();
+        val msg = samlSingleLogoutServiceMessageHandler.prepareLogoutHttpMessageToSend(logoutRequest, logoutMsg);
+        assertNotNull(msg);
+        assertEquals(MediaType.TEXT_XML_VALUE, msg.getContentType());
+        assertNull(((LogoutHttpMessage) msg).getLogoutRequestParameter());
     }
 }

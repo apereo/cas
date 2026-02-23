@@ -78,7 +78,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
     @GetMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get collection of trusted devices for the user",
         parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to look up"))
-    public Set<? extends MultifactorAuthenticationTrustRecord> devicesForUser(@PathVariable(name = "username") final String username) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> devicesForUser(@PathVariable final String username) {
         cleanExpiredRecords();
         return mfaTrustEngine.getObject().get(username);
     }
@@ -92,7 +92,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
     @Operation(summary = "Remove trusted device using its key",
         parameters = @Parameter(name = "key", required = true, in = ParameterIn.PATH, description = "The key to look up"))
     @DeleteMapping(value = "/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Integer revoke(@PathVariable(name = "key") final String key) {
+    public Integer revoke(@PathVariable final String key) {
         mfaTrustEngine.getObject().remove(key);
         return HttpStatus.OK.value();
     }
@@ -151,7 +151,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
     @ResponseBody
     @Operation(summary = "Export all device records as a zip file for a given username",
         parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to look up"))
-    public ResponseEntity<@NonNull Resource> exportUserDevices(@PathVariable("username") final String username) {
+    public ResponseEntity<@NonNull Resource> exportUserDevices(@PathVariable final String username) {
         val accounts = mfaTrustEngine.getObject().get(username);
         val resource = CompressionUtils.toZipFile(accounts.stream(),
             Unchecked.function(entry -> {

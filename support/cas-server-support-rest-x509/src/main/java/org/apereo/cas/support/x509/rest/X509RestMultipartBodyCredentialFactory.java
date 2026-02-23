@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.util.MultiValueMap;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +32,7 @@ public class X509RestMultipartBodyCredentialFactory implements RestHttpRequestCr
     private static final String CERTIFICATE = "cert";
     
     @Override
-    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<@NonNull String, String> requestBody) {
+    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
         if (requestBody == null || requestBody.isEmpty()) {
             LOGGER.trace("Skipping [{}] because the request body is null or empty", getClass().getSimpleName());
             return new ArrayList<>();
