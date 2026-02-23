@@ -44,8 +44,7 @@ public class UmaFindPolicyForResourceSetEndpointController extends BaseUmaEndpoi
     @Operation(summary = "Get policies for resource set", description = "Gets policies for the specified resource set",
         parameters = @Parameter(name = "resourceId", required = true, in = ParameterIn.PATH, description = "Resource ID"))
     public ResponseEntity getPoliciesForResourceSet(
-        @PathVariable("resourceId")
-        final long resourceId,
+        @PathVariable final long resourceId,
         final HttpServletRequest request,
         final HttpServletResponse response) {
         try {
@@ -85,10 +84,8 @@ public class UmaFindPolicyForResourceSetEndpointController extends BaseUmaEndpoi
         }
     )
     public ResponseEntity getPolicyForResourceSet(
-        @PathVariable("resourceId")
-        final long resourceId,
-        @PathVariable("policyId")
-        final long policyId,
+        @PathVariable final long resourceId,
+        @PathVariable final long policyId,
         final HttpServletRequest request,
         final HttpServletResponse response) {
         try {

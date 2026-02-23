@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.validator.token;
 import module java.base;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
@@ -40,11 +41,11 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
         val configurationContext = getConfigurationContext().getObject();
         val callContext = new CallContext(context, configurationContext.getSessionStore());
         val clientIdAndSecret = configurationContext.getRequestParameterResolver().resolveClientIdAndClientSecret(callContext);
-
-        if (StringUtils.isBlank(clientIdAndSecret.getKey())) {
+        val clientId = StringUtils.defaultIfBlank(clientIdAndSecret.getKey(), (String) uProfile.getAttribute(OAuth20Constants.CLIENT_ID));
+        if (StringUtils.isBlank(clientId)) {
+            LOGGER.warn("No client id is provided in the request");
             return false;
         }
-        val clientId = clientIdAndSecret.getKey();
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);

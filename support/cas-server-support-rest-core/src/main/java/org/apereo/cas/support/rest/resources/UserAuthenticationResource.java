@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.text.StringEscapeUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -64,9 +63,9 @@ public class UserAuthenticationResource {
         })
     @Operation(summary = "Authenticate user credentials",
         parameters = @Parameter(name = "requestBody", required = true, description = "Username and password values"))
-    public ResponseEntity<@NonNull String> authenticateRequest(@RequestBody final MultiValueMap<@NonNull String, String> requestBody,
-                                                               final HttpServletRequest request,
-                                                               final HttpServletResponse response) throws Throwable {
+    public ResponseEntity<String> authenticateRequest(@RequestBody final MultiValueMap<String, String> requestBody,
+                                                      final HttpServletRequest request,
+                                                      final HttpServletResponse response) throws Throwable {
         try {
             val authenticationResult = authenticationService.authenticate(requestBody, request, response);
             val result = authenticationResult.orElseThrow(FailedLoginException::new);
