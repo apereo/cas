@@ -30,6 +30,9 @@ public class LogoutHttpMessage extends HttpMessage {
 
     @Override
     protected String formatOutputMessageInternal(final String message) {
-        return this.logoutRequestParameter + '=' + super.formatOutputMessageInternal(message);
+        if (logoutRequestParameter != null) {
+            return this.logoutRequestParameter + '=' + super.formatOutputMessageInternal(message);
+        }
+        return super.formatOutputMessageInternal(message);
     }
 }

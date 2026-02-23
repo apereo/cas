@@ -40,6 +40,7 @@ import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 /**
  * This is {@link SamlIdPSingleLogoutServiceMessageHandler}.
@@ -163,6 +164,12 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
 
     @Override
     public HttpMessage prepareLogoutHttpMessageToSend(final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
+        val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
+        if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {
+            val msg = new LogoutHttpMessage(null, request.getLogoutUrl(), logoutMessage.getPayload(), isAsynchronous());
+            msg.setContentType(MediaType.TEXT_XML_VALUE);
+            return msg;
+        }
         return new LogoutHttpMessage(SamlProtocolConstants.PARAMETER_SAML_REQUEST, request.getLogoutUrl(), logoutMessage.getPayload(), isAsynchronous());
     }
 }

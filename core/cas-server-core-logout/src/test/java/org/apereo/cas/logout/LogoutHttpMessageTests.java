@@ -20,4 +20,11 @@ class LogoutHttpMessageTests {
         val message = new LogoutHttpMessage(CasProtocolConstants.PARAMETER_LOGOUT_REQUEST, new URI("https://github.com").toURL(), "LogoutMessage", false);
         assertTrue(message.getMessage().startsWith(CasProtocolConstants.PARAMETER_LOGOUT_REQUEST));
     }
+
+    @Test
+    void verifyOperationNullParamater() throws Throwable {
+        val logoutMsg = "SOAPEnvelop";
+        val message = new LogoutHttpMessage(null, new URI("https://github.com").toURL(), logoutMsg, false);
+        assertTrue(message.getMessage().startsWith(logoutMsg));
+    }
 }
