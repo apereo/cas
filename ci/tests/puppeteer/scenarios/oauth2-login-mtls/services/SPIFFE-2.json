@@ -1,0 +1,14 @@
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "spiffe://example.org/ns/payments/sa/service-sample",
+  "serviceId" : "^https://localhost:9859/anything/spiffe.*",
+  "bypassApprovalPrompt": true,
+  "name" : "SPIFFE",
+  "id" : 2,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy"
+  },
+  "tokenEndpointAuthenticationMethod": "tls_client_auth",
+  "tlsClientAuthSubjectDn": "(.+)",
+  "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials" ] ]
+}

@@ -79,3 +79,45 @@ The following parameters are supported:
 | `tlsClientAuthSanUri`    | The expected uniformResourceIdentifier SAN entry in the certificate.                                              |
 | `tlsClientAuthSanIp`     | The expected iPAddress SAN entry in the certificate in either for IPv4 or IPv6.                                   |
 | `tlsClientAuthSanEmail`  | The expected rfc822Name SAN entry in the certificate.                                                             |
+               
+### SPIFFE
+
+CAS supports the SPIFFE standard for mutual TLS client authentication. To use SPIFFE, the client must present a certificate 
+with a URI SAN entry that follows the SPIFFE format, i.e. `spiffe://...`. CAS will validate the certificate and 
+extract the client identifier from the SPIFFE URI. The client identifier is then used to locate the service definition.
+
+```json
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "spiffe://example.org/ns/payments/sa/service-sample",
+  "serviceId" : "^https://localhost:9859/anything/cas.*",
+  "name": "MyApplication",
+  "id": 1,
+  "tokenEndpointAuthenticationMethod": "tls_client_auth",
+  "tlsClientAuthSubjectDn": "(.+)",
+  "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials" ] ]
+}
+```
+      
+An example request with `curl` would look like the following:
+
+```bash
+curl --cert /var/run/secrets/svid.pem \
+     --key /var/run/secrets/key.pem \
+     --cacert /var/run/secrets/bundle.pem \
+     -X POST https://sso.example.org/cas/oidc/token \
+     -d "grant_type=client_credentials&scope=xyz"
+```
+
+You can verify SPIFFE ID is present in your certificate:
+
+```bash
+openssl x509 -in svid.pem -text -noout
+```
+
+Look for:
+    
+```bash
+X509v3 Subject Alternative Name:
+    URI:spiffe://example.org/ns/payments/sa/service-sample
+```

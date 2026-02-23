@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -35,14 +37,15 @@ import org.pac4j.http.credentials.authenticator.X509Authenticator;
 @RequiredArgsConstructor
 @Slf4j
 public class OAuth20X509Authenticator implements Authenticator {
+    private static final String SUBJECT_ALT_NAME_SPIFFE_PREFIX = "spiffe://";
+
     private final ServicesManager servicesManager;
 
     private final OAuth20RequestParameterResolver requestParameterResolver;
 
     @Override
     public Optional<Credentials> validate(final CallContext ctx, final Credentials credentials) {
-        val clientIdAndSecret = requestParameterResolver.resolveClientIdAndClientSecret(ctx);
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientIdAndSecret.getKey());
+        val registeredService = locateRegisteredService(ctx, credentials);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
         if (!isAuthenticationMethodSupported(ctx, registeredService)) {
@@ -50,7 +53,8 @@ public class OAuth20X509Authenticator implements Authenticator {
             return Optional.empty();
         }
 
-        val allowedSubjectPattern = StringUtils.defaultIfBlank(registeredService.getTlsClientAuthSubjectDn(), "CN=(.*?)(?:,|$)");
+        val allowedSubjectPattern = StringUtils.defaultIfBlank(
+            registeredService.getTlsClientAuthSubjectDn(), "CN=(.*?)(?:,|$)");
         val x509Authenticator = new X509Authenticator(allowedSubjectPattern);
         val result = x509Authenticator.validate(ctx, credentials);
         if (result.isPresent()) {
@@ -59,8 +63,8 @@ public class OAuth20X509Authenticator implements Authenticator {
             val digest = EncodingUtils.encodeBase64(DigestUtils.digest("SHA-256", certificate.getPublicKey().getEncoded()));
             profile.addAttribute(OAuth20Constants.X509_CERTIFICATE_DIGEST, digest);
             profile.addAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, "X.509");
-            profile.addAttribute(OAuth20Constants.CLIENT_ID, clientIdAndSecret.getKey());
-            
+            profile.addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
+
             val attributeMap = CollectionUtils.<String, String>wrap(
                 "x509-sanEmail", registeredService.getTlsClientAuthSanEmail(),
                 "x509-sanDNS", registeredService.getTlsClientAuthSanDns(),
@@ -77,6 +81,39 @@ public class OAuth20X509Authenticator implements Authenticator {
         }
 
         return result;
+    }
+
+    protected @Nullable OAuthRegisteredService locateRegisteredService(
+        final CallContext ctx, final Credentials credentials) {
+        if (credentials instanceof final X509Credentials x509Credentials) {
+            val certificate = x509Credentials.getCertificate();
+            val subjectAltNames = FunctionUtils.doUnchecked(certificate::getSubjectAlternativeNames);
+            if (subjectAltNames != null) {
+                val spiffeEntries = new ArrayList<String>();
+                subjectAltNames.forEach(altName -> {
+                    altName.stream()
+                        .filter(String.class::isInstance)
+                        .map(String.class::cast)
+                        .filter(name -> Strings.CI.startsWith(name, SUBJECT_ALT_NAME_SPIFFE_PREFIX))
+                        .forEach(spiffeEntries::add);
+                });
+                LOGGER.debug("Located SPIFFE IDs [{}] from certificate subject alternative names", spiffeEntries);
+                val result = spiffeEntries
+                    .stream()
+                    .map(spiffeId -> {
+                        LOGGER.debug("Locating registered service for SPIFFE ID [{}]", spiffeId);
+                        return OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, spiffeId);
+                    })
+                    .filter(Objects::nonNull)
+                    .findFirst();
+                if (result.isPresent()) {
+                    return result.get();
+                }
+            }
+        }
+
+        val clientIdAndSecret = requestParameterResolver.resolveClientIdAndClientSecret(ctx);
+        return OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientIdAndSecret.getKey());
     }
 
     protected boolean isAuthenticationMethodSupported(final CallContext ctx, final OAuthRegisteredService registeredService) {

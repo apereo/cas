@@ -21,6 +21,7 @@ import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.PublicJsonWebKey;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link InternalJwtAccessTokenCipherExecutor}.
@@ -90,7 +91,7 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
     }
 
 
-    private Key getEncryptionKeyForDecryption(final RegisteredService registeredService) {
+    private @Nullable Key getEncryptionKeyForDecryption(final RegisteredService registeredService) {
         if (registeredService instanceof final OidcRegisteredService oidcService) {
             val jwks = Objects.requireNonNull(cipherExecutor.getRegisteredServiceJsonWebKeystoreCache().get(
                 new OidcJsonWebKeyCacheKey(oidcService, OidcJsonWebKeyUsage.ENCRYPTION)));

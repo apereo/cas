@@ -72,8 +72,7 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
     public ModelAndView startAuthentication(
         final HttpServletRequest request,
         final HttpServletResponse response,
-        @PathVariable("ticketId")
-        final String ticketId) throws Throwable {
+        @PathVariable final String ticketId) throws Throwable {
         try {
             verifyQRCodeAuthenticationIsEnabled();
             val transientTicket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
@@ -104,8 +103,7 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
     @ResponseBody
     public ResponseEntity checkQRTicketStatus(
         final HttpServletRequest request,
-        @PathVariable("ticketId")
-        final String ticketId) throws Throwable {
+        @PathVariable final String ticketId) throws Throwable {
         try {
             verifyQRCodeAuthenticationIsEnabled();
             val transientTicket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
