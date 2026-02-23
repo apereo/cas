@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.text.StringEscapeUtils;
-import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +44,7 @@ public class TicketStatusResource {
     @GetMapping(RestProtocolConstants.ENDPOINT_TICKETS + "/{id:.+}")
     @Operation(summary = "Get the status of a ticket",
         parameters = @Parameter(name = "id", required = true, in = ParameterIn.PATH, description = "Ticket id"))
-    public ResponseEntity<@NonNull String> getTicketStatus(@PathVariable("id") final String id) {
+    public ResponseEntity<String> getTicketStatus(@PathVariable final String id) {
         try {
             val ticket = ticketRegistry.getTicket(id, Ticket.class);
             return new ResponseEntity<>(ticket.getId(), HttpStatus.OK);
