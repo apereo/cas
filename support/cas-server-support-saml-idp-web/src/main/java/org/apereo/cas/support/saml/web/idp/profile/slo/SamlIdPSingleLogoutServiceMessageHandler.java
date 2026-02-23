@@ -166,7 +166,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
     public HttpMessage prepareLogoutHttpMessageToSend(final SingleLogoutRequestContext request, final SingleLogoutMessage logoutMessage) {
         val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
         if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {
-            val msg = new LogoutHttpMessage(null, request.getLogoutUrl(), logoutMessage.getPayload(), isAsynchronous());
+            val msg = new LogoutHttpMessage(request.getLogoutUrl(), logoutMessage.getPayload(), isAsynchronous());
             msg.setContentType(MediaType.TEXT_XML_VALUE);
             return msg;
         }

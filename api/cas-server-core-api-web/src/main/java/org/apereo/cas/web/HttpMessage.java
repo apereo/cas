@@ -1,10 +1,12 @@
 package org.apereo.cas.web;
 
 import module java.base;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.http.MediaType;
@@ -20,6 +22,7 @@ import org.springframework.http.MediaType;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@SuperBuilder
 public class HttpMessage implements Serializable {
 
     @Serial
@@ -46,14 +49,9 @@ public class HttpMessage implements Serializable {
      * The content type for this message once submitted.
      * Default is {@link MediaType#APPLICATION_FORM_URLENCODED}.
      **/
+    @Builder.Default
     private String contentType = MediaType.APPLICATION_FORM_URLENCODED_VALUE;
-
-    /**
-     * Prepare the sender with a given url and the message to send.
-     *
-     * @param url     the url to which the message will be sent.
-     * @param message the message itself.
-     */
+    
     public HttpMessage(final URL url, final String message) {
         this(url, message, DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED);
     }

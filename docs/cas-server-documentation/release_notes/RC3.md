@@ -91,3 +91,5 @@ instead of a static secret or manually managed certificate.
 in the certtificate and map it to the client application definition. 
 
 ## Other Stuff
+
+- SAML logout requests for SOAP bindings correct the `Content-Type` header and formatted body.
