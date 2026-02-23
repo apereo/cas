@@ -16,10 +16,14 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.bouncycastle.crypto.params.ECDomainParameters;
+import org.bouncycastle.jcajce.provider.asymmetric.util.EC5Util;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.math.ec.FixedPointCombMultiplier;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Abstract cipher to provide common operations around signing objects.
@@ -159,7 +163,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         setSigningKey(object);
     }
 
-    protected byte[] verifySignature(final byte[] value, final Key givenKey) {
+    protected byte @Nullable [] verifySignature(final byte[] value, final Key givenKey) {
         if (givenKey == null) {
             return value;
         }
@@ -169,6 +173,28 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
                 val keySpec = new RSAPublicKeySpec(privKey.getModulus(), RSA_PUBLIC_KEY_EXPONENT);
                 val pubKey = KeyFactory.getInstance("RSA").generatePublic(keySpec);
                 return EncodingUtils.verifyJwsSignature(pubKey, value);
+            }
+            if (activeSigningKey instanceof final ECPrivateKey privKey) {
+                val jceParams = privKey.getParams();
+                val bcCurve = EC5Util.convertCurve(jceParams.getCurve());
+                val bcG = EC5Util.convertPoint(bcCurve, jceParams.getGenerator());
+
+                val domainParameters = new ECDomainParameters(
+                    bcCurve,
+                    bcG,
+                    jceParams.getOrder(),
+                    BigInteger.valueOf(jceParams.getCofactor())
+                );
+
+                val point = new FixedPointCombMultiplier().multiply(domainParameters.getG(), privKey.getS()).normalize();
+                val ecPoint = new ECPoint(
+                    point.getAffineXCoord().toBigInteger(),
+                    point.getAffineYCoord().toBigInteger()
+                );
+
+                val pubSpec = new ECPublicKeySpec(ecPoint, jceParams);
+                val publicKey = KeyFactory.getInstance("EC").generatePublic(pubSpec);
+                return EncodingUtils.verifyJwsSignature(publicKey, value);
             }
             return EncodingUtils.verifyJwsSignature(activeSigningKey, value);
         } catch (final Exception e) {

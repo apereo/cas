@@ -108,7 +108,7 @@ public class DelegatedSaml2ClientMetadataController extends AbstractController {
     @Operation(summary = "Get service provider metadata by name",
         parameters = @Parameter(name = "client", in = ParameterIn.PATH, required = true, description = "The client name"))
     public ResponseEntity<@NonNull String> getServiceProviderMetadataByName(
-        @PathVariable("client") final String client,
+        @PathVariable final String client,
         final HttpServletRequest request, final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);
         val saml2Client = identityProviders.findClient(client, webContext);
@@ -127,8 +127,7 @@ public class DelegatedSaml2ClientMetadataController extends AbstractController {
     @Operation(summary = "Get identity provider metadata by name",
         parameters = @Parameter(name = "client", in = ParameterIn.PATH, required = true, description = "The client name"))
     public ResponseEntity<@NonNull String> getIdentityProviderMetadataByName(
-        @PathVariable("client")
-        final String client,
+        @PathVariable final String client,
         final HttpServletRequest request, final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);
         val saml2Client = identityProviders.findClient(client, webContext);

@@ -14,7 +14,6 @@ import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,7 +37,7 @@ public class JwtTicketGrantingTicketResourceEntityResponseFactory extends Defaul
     private final TokenTicketBuilder tokenTicketBuilder;
 
     @Override
-    public ResponseEntity<@NonNull String> build(final Ticket ticketGrantingTicket, final HttpServletRequest request) throws Throwable {
+    public ResponseEntity<String> build(final Ticket ticketGrantingTicket, final HttpServletRequest request) throws Throwable {
         var tokenParam = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
         if (StringUtils.isBlank(tokenParam)) {
             tokenParam = request.getHeader(TokenConstants.PARAMETER_NAME_TOKEN);

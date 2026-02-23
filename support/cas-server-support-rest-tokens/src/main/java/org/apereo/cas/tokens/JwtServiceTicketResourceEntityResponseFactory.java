@@ -33,10 +33,11 @@ public class JwtServiceTicketResourceEntityResponseFactory extends CasProtocolSe
 
     private final ServicesManager servicesManager;
 
-    public JwtServiceTicketResourceEntityResponseFactory(final CentralAuthenticationService centralAuthenticationService,
-                                                         final TokenTicketBuilder tokenTicketBuilder,
-                                                         final TicketRegistrySupport ticketRegistrySupport,
-                                                         final ServicesManager servicesManager) {
+    public JwtServiceTicketResourceEntityResponseFactory(
+        final CentralAuthenticationService centralAuthenticationService,
+        final TokenTicketBuilder tokenTicketBuilder,
+        final TicketRegistrySupport ticketRegistrySupport,
+        final ServicesManager servicesManager) {
         super(centralAuthenticationService);
         this.tokenTicketBuilder = tokenTicketBuilder;
         this.ticketRegistrySupport = ticketRegistrySupport;
@@ -60,7 +61,7 @@ public class JwtServiceTicketResourceEntityResponseFactory extends CasProtocolSe
 
         if (!tokenAsResponse) {
             LOGGER.debug("Service [{}] does not require JWT tickets; properties assigned are [{}]",
-                webApplicationService, registeredService.getProperties());
+                webApplicationService, Objects.requireNonNull(registeredService).getProperties());
             return super.grantServiceTicket(ticketGrantingTicket, webApplicationService, authenticationResult);
         }
 
