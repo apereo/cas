@@ -22,7 +22,8 @@
     "--cas.authn.mfa.simple.mail.subject=CASToken",
     "--cas.authn.mfa.simple.mail.text=${token}",
     "--cas.authn.mfa.simple.mail.attribute-name=email",
-
+    "--cas.authn.mfa.simple.token.core.time-to-kill-in-seconds=60",
+    
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.access.default=UNRESTRICTED",
