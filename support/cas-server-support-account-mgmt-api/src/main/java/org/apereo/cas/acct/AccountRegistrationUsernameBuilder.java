@@ -1,5 +1,6 @@
 package org.apereo.cas.acct;
 import module java.base;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link AccountRegistrationUsernameBuilder}.
@@ -25,5 +26,5 @@ public interface AccountRegistrationUsernameBuilder {
      * @param registrationRequest the registration request
      * @return the string
      */
-    String build(AccountRegistrationRequest registrationRequest);
+    @Nullable String build(AccountRegistrationRequest registrationRequest);
 }
