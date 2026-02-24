@@ -178,6 +178,25 @@ public class BaseRedisProperties implements Serializable, CasFeatureModule {
     private String keyPassword;
 
     /**
+     * The maximum number of keepalive probes TCP should send before dropping the connection.
+     * By default, leaving this number at zero disables keepalive.
+     */
+    private int keepAliveCount;
+
+    /**
+     * The time the connection needs to remain idle before TCP starts
+     * sending keepalive probes if keepalive is enabled.
+     */
+    @DurationCapable
+    private String keepAliveIdleTimeout = "PT2H";
+
+    /**
+     * The time the connection needs to remain idle before TCP starts sending keepalive probes.
+     */
+    @DurationCapable
+    private String keepAliveInterval = "PT60S";
+    
+    /**
      * The Lettuce library {@code ReadFrom} types that determine how Lettuce routes read operations to replica nodes.
      */
     public enum RedisReadFromTypes {

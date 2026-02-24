@@ -59,7 +59,7 @@ public class RedisObjectFactory {
 
         template.setKeySerializer(stringRedisSerializer);
         template.setHashKeySerializer(stringRedisSerializer);
-        
+
         val compressedSerializer = new Lz4CompressionRedisSerializer(valueSerializer);
         template.setValueSerializer(compressedSerializer);
         template.setHashValueSerializer(compressedSerializer);
@@ -237,7 +237,18 @@ public class RedisObjectFactory {
         val clientOptionsBuilder = initializeClientOptionsBuilder(redis);
         if (StringUtils.hasText(redis.getConnectTimeout())) {
             val connectTimeout = Beans.newDuration(redis.getConnectTimeout());
-            clientOptionsBuilder.socketOptions(SocketOptions.builder().connectTimeout(connectTimeout).build());
+            val keepAliveOptions = SocketOptions.KeepAliveOptions.builder()
+                .enable(redis.getKeepAliveCount() > 0)
+                .idle(Beans.newDuration(redis.getKeepAliveIdleTimeout()))
+                .interval(Beans.newDuration(redis.getKeepAliveInterval()))
+                .count(redis.getKeepAliveCount())
+                .build();
+            clientOptionsBuilder.socketOptions(
+                SocketOptions.builder()
+                    .connectTimeout(connectTimeout)
+                    .keepAlive(keepAliveOptions)
+                    .build()
+            );
         }
         val sslOptionsBuilder = SslOptions.builder()
             .jdkSslProvider()
