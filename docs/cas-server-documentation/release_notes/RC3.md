@@ -92,4 +92,5 @@ in the certtificate and map it to the client application definition.
 
 ## Other Stuff
 
-- SAML logout requests for SOAP bindings correct the `Content-Type` header and formatted body.
+- SAML2 logout requests for SOAP bindings correct the `Content-Type` header and formatted body.
+- JSON web keys that use the `EC` algorithm can now be used for token validation operations.
