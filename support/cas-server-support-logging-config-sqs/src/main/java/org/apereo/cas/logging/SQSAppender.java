@@ -15,7 +15,6 @@ import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
-import org.apache.logging.log4j.core.layout.PatternLayout;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
@@ -31,10 +30,7 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
  */
 @Plugin(name = "SQSAppender", category = "Core", elementType = "appender", printObject = true)
 @SuppressWarnings("NullAway.Init")
-public class SQSAppender extends AbstractAppender implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1144758913028847477L;
-
+public class SQSAppender extends AbstractAppender {
     private final SqsAsyncClient sqsAsyncClient;
 
     private final String queueName;
@@ -51,9 +47,7 @@ public class SQSAppender extends AbstractAppender implements Serializable {
                        final String endpoint,
                        final String queueName,
                        final String queueTags) {
-        super(name, null, layout == null
-            ? PatternLayout.createDefaultLayout()
-            : layout, false, Property.EMPTY_ARRAY);
+        super(name, null, layout, false, Property.EMPTY_ARRAY);
 
         val builder = SqsAsyncClient.builder();
         if (StringUtils.isNotBlank(endpoint)) {

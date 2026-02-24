@@ -42,7 +42,7 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
                                                         final String characterEncoding,
                                                         final Map<String, Object> templateResolutionAttributes) {
         val rest = casProperties.getView().getRest();
-        val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        val request = Objects.requireNonNull(HttpRequestUtils.getHttpServletRequestFromRequestAttributes());
         val themeName = themeResolver.resolveThemeName(request);
         val headers = new LinkedHashMap<String, String>();
         headers.put("owner", ownerTemplate);

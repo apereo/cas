@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -36,10 +36,8 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
     private int order = LOWEST_PRECEDENCE;
 
     @Override
-    public View resolveViewName(
-        @NonNull
-        final String viewName, @NonNull
-        final Locale locale) {
+    public @Nullable View resolveViewName(
+        final String viewName, final Locale locale) {
         try {
             val theme = Optional.of(RequestContextHolder.currentRequestAttributes())
                 .filter(ServletRequestAttributes.class::isInstance)
