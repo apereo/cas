@@ -30,7 +30,9 @@ public class KafkaTicketRegistryPublisher implements QueueableTicketRegistryMess
     public void publishMessageToQueue(final BaseMessageQueueCommand cmd) {
         FunctionUtils.doAndHandle(_ -> {
             if (cmd instanceof final TicketAwareQueueCommand taqm) {
-                val topic = ticketCatalog.find(taqm.getTicketId()).getProperties().getStorageName();
+                val ticketDefinition = ticketCatalog.find(taqm.getTicketId());
+                Objects.requireNonNull(ticketDefinition, "Ticket definition cannot be null");
+                val topic = ticketDefinition.getProperties().getStorageName();
                 publishMessage(cmd, topic);
             } else {
                 for (val ticketDefinition : ticketCatalog.findAll()) {

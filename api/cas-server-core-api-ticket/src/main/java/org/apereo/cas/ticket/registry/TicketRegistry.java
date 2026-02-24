@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.jooq.lambda.Unchecked;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Interface for a registry that stores tickets. The underlying registry can be
@@ -36,14 +37,14 @@ public interface TicketRegistry {
      * @return ticket
      * @throws Exception the exception
      */
-    Ticket addTicket(Ticket ticket) throws Exception;
+    @Nullable Ticket addTicket(Ticket ticket) throws Exception;
 
     /**
      * Save.
      *
      * @param toSave the to save
      */
-    default List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) {
+    default @Nullable List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) {
         return toSave.parallel().map(Unchecked.function(this::addTicket)).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
@@ -56,7 +57,7 @@ public interface TicketRegistry {
      * @param clazz    The expected class of the ticket we wish to retrieve.
      * @return the requested ticket.
      */
-    <T extends Ticket> T getTicket(String ticketId, Class<T> clazz);
+    <T extends Ticket> @Nullable T getTicket(String ticketId, Class<T> clazz);
 
     /**
      * Retrieve a ticket from the registry.
@@ -64,7 +65,7 @@ public interface TicketRegistry {
      * @param ticketId the id of the ticket we wish to retrieve
      * @return the requested ticket.
      */
-    Ticket getTicket(String ticketId);
+    @Nullable Ticket getTicket(String ticketId);
 
     /**
      * Gets ticket from registry using a predicate.
@@ -73,7 +74,7 @@ public interface TicketRegistry {
      * @param predicate the predicate that tests the ticket
      * @return the ticket
      */
-    Ticket getTicket(String ticketId, Predicate<Ticket> predicate);
+    @Nullable Ticket getTicket(String ticketId, Predicate<Ticket> predicate);
 
     /**
      * Remove a specific ticket from the registry.
@@ -133,7 +134,7 @@ public interface TicketRegistry {
      * @return the updated ticket
      * @throws Exception the exception
      */
-    Ticket updateTicket(Ticket ticket) throws Exception;
+    @Nullable Ticket updateTicket(Ticket ticket) throws Exception;
 
     /**
      * Computes the number of SSO sessions stored in the ticket registry.
