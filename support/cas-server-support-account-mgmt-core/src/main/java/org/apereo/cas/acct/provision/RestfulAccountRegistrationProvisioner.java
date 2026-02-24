@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,8 @@ import tools.jackson.databind.ObjectMapper;
  */
 @RequiredArgsConstructor
 public class RestfulAccountRegistrationProvisioner implements AccountRegistrationProvisioner {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory
+        .builder()
         .defaultTypingEnabled(true)
         .build()
         .toObjectMapper();
@@ -40,15 +42,14 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
 
     @Override
     public AccountRegistrationResponse provision(final AccountRegistrationRequest request) throws Exception {
-        val response = new AtomicReference<HttpResponse>();
+        HttpResponse response = null;
         try {
-            response.set(executeRequest(request));
-            return FunctionUtils.doIfNull(response.get(),
-                    AccountRegistrationResponse::new,
-                    () -> buildAccountRegistrationResponse(response.get()))
-                .get();
+            response = executeRequest(request);
+            return response == null
+                ? new AccountRegistrationResponse()
+                : buildAccountRegistrationResponse(Objects.requireNonNull(response));
         } finally {
-            HttpUtils.close(response.get());
+            HttpUtils.close(response);
         }
     }
 
@@ -59,9 +60,9 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
                     val entity = IOUtils.toString(content, StandardCharsets.UTF_8);
                     val success = AccountRegistrationResponse.success();
                     Arrays.stream(response.getHeaders())
-                            .forEach(header -> success.putProperty(header.getName(), header.getValue()));
+                        .forEach(header -> success.putProperty(header.getName(), header.getValue()));
                     FunctionUtils.doIf(StringUtils.isNotBlank(entity),
-                            value -> success.putProperty("entity", value)).accept(StringUtils.defaultString(entity));
+                        value -> success.putProperty("entity", value)).accept(StringUtils.defaultString(entity));
                     success.putProperty("status", response.getCode());
                     success.putProperty("entity", StringUtils.defaultString(entity));
                     return success;
@@ -75,7 +76,7 @@ public class RestfulAccountRegistrationProvisioner implements AccountRegistratio
         });
     }
 
-    protected HttpResponse executeRequest(final AccountRegistrationRequest request) throws Exception {
+    protected @Nullable HttpResponse executeRequest(final AccountRegistrationRequest request) {
         val headers = new HashMap<String, String>();
         headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         headers.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);

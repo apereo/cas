@@ -132,16 +132,16 @@ public class DynamoDbAuditTrailManagerFacilitator {
                 count,
                 queryKeys,
                 item -> {
-                    val principal = item.get(ColumnNames.PRINCIPAL.getColumnName()).s();
-                    val actionPerformed = item.get(ColumnNames.ACTION_PERFORMED.getColumnName()).s();
-                    val appCode = item.get(ColumnNames.APPLICATION_CODE.getColumnName()).s();
-                    val clientIp = item.get(ColumnNames.CLIENT_IP_ADDRESS.getColumnName()).s();
-                    val serverIp = item.get(ColumnNames.SERVER_IP_ADDRESS.getColumnName()).s();
-                    val resource = item.get(ColumnNames.RESOURCE_OPERATED_UPON.getColumnName()).s();
-                    val userAgent = item.get(ColumnNames.USER_AGENT.getColumnName()).s();
-                    val geoLocation = item.get(ColumnNames.GEO_LOCATION.getColumnName()).s();
-                    val tenant = item.get(ColumnNames.TENANT.getColumnName()).s();
-                    val auditTime = Long.parseLong(item.get(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName()).s());
+                    val principal = Objects.requireNonNull(item.get(ColumnNames.PRINCIPAL.getColumnName())).s();
+                    val actionPerformed = Objects.requireNonNull(item.get(ColumnNames.ACTION_PERFORMED.getColumnName())).s();
+                    val appCode = Objects.requireNonNull(item.get(ColumnNames.APPLICATION_CODE.getColumnName())).s();
+                    val clientIp = Objects.requireNonNull(item.get(ColumnNames.CLIENT_IP_ADDRESS.getColumnName())).s();
+                    val serverIp = Objects.requireNonNull(item.get(ColumnNames.SERVER_IP_ADDRESS.getColumnName())).s();
+                    val resource = Objects.requireNonNull(item.get(ColumnNames.RESOURCE_OPERATED_UPON.getColumnName())).s();
+                    val userAgent = Objects.requireNonNull(item.get(ColumnNames.USER_AGENT.getColumnName())).s();
+                    val geoLocation = Objects.requireNonNull(item.get(ColumnNames.GEO_LOCATION.getColumnName())).s();
+                    val tenant = Objects.requireNonNull(item.get(ColumnNames.TENANT.getColumnName())).s();
+                    val auditTime = Long.parseLong(Objects.requireNonNull(item.get(ColumnNames.WHEN_ACTION_PERFORMED.getColumnName())).s());
                     val clientInfo = new ClientInfo(clientIp, serverIp, userAgent, geoLocation).setTenant(tenant);
                     return new AuditActionContext(principal, resource, actionPerformed, appCode,
                         DateTimeUtils.localDateTimeOf(auditTime), clientInfo);

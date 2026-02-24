@@ -17,6 +17,7 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link DefaultAccountRegistrationService}.
@@ -44,7 +45,7 @@ public class DefaultAccountRegistrationService implements AccountRegistrationSer
         actionResolverName = AuditActionResolvers.ACCOUNT_REGISTRATION_TOKEN_VALIDATION_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.ACCOUNT_REGISTRATION_TOKEN_VALIDATION_RESOURCE_RESOLVER)
     @Override
-    public AccountRegistrationRequest validateToken(final String token) throws Exception {
+    public @Nullable AccountRegistrationRequest validateToken(final String token) throws Exception {
         val claimsJson = this.cipherExecutor.decode(token);
         val claims = JwtClaims.parse(claimsJson);
 
@@ -95,8 +96,8 @@ public class DefaultAccountRegistrationService implements AccountRegistrationSer
         claims.setIssuer(casProperties.getServer().getPrefix());
         claims.setAudience(casProperties.getServer().getPrefix());
         val props = casProperties.getAccountRegistration().getCore();
-        val minutes = Beans.newDuration(props.getExpiration()).toMinutes();
-        claims.setExpirationTimeMinutesInTheFuture((float) minutes);
+        val minutes = (float) Beans.newDuration(props.getExpiration()).toMinutes();
+        claims.setExpirationTimeMinutesInTheFuture(minutes);
         claims.setIssuedAtToNow();
 
         val holder = ClientInfoHolder.getClientInfo();
