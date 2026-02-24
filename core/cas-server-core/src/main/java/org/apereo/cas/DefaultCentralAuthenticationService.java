@@ -102,9 +102,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         resourceResolverName = AuditResourceResolvers.GRANT_SERVICE_TICKET_RESOURCE_RESOLVER)
     @Override
     public Ticket grantServiceTicket(final String ticketGrantingTicketId, final Service service,
-                                     final AuthenticationResult authenticationResult) throws Throwable {
-
-        val credentialProvided = authenticationResult.isCredentialProvided();
+                                     @Nullable final AuthenticationResult authenticationResult) throws Throwable {
+        val credentialProvided = authenticationResult != null && authenticationResult.isCredentialProvided();
         val clientInfo = ClientInfoHolder.getClientInfo();
         return configurationContext.getLockRepository().execute(ticketGrantingTicketId,
             Unchecked.supplier(new CheckedSupplier<Ticket>() {
@@ -436,13 +435,14 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         val authentication = serviceTicket.getAuthentication();
         return configurationContext.getPrincipalResolver()
             .resolve(new BasicIdentifiableCredential(
-                Objects.requireNonNull(authentication).getPrincipal().getId()),
+                    Objects.requireNonNull(authentication).getPrincipal().getId()),
                 Optional.of(authentication.getPrincipal()), Optional.empty(),
                 Optional.of(serviceTicket.getService()));
     }
 
-    private static @Nullable Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
-                                                                                 final TicketGrantingTicket ticketGrantingTicket) {
+    private static @Nullable Authentication evaluatePossibilityOfMixedPrincipals(
+        @Nullable final AuthenticationResult context,
+        final TicketGrantingTicket ticketGrantingTicket) {
         if (context == null) {
             val error = "Provided authentication result is undefined to evaluate for mixed principals";
             LOGGER.warn(error);

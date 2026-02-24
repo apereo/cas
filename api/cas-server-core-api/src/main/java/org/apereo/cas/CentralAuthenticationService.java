@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.validation.Assertion;
+import org.jspecify.annotations.Nullable;
 
 /**
  * CAS viewed as a set of services to generate and validate Tickets.
@@ -69,7 +70,7 @@ public interface CentralAuthenticationService {
      * @return Non -null service ticket identifier.
      * @throws Throwable the throwable
      */
-    Ticket grantServiceTicket(String ticketGrantingTicketId, Service service, AuthenticationResult authenticationResult) throws Throwable;
+    Ticket grantServiceTicket(String ticketGrantingTicketId, Service service, @Nullable AuthenticationResult authenticationResult) throws Throwable;
 
     /**
      * Grant a {@link ProxyTicket} that may be used to access the given service
