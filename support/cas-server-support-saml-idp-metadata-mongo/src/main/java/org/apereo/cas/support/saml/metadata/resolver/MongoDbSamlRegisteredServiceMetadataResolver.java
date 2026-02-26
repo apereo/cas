@@ -71,6 +71,13 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     }
 
     @Override
+    public void removeAll() {
+        val query = new Query();
+        query.addCriteria(Criteria.where("id").exists(true));
+        mongoTemplate.remove(query, SamlMetadataDocument.class, this.collectionName);
+    }
+
+    @Override
     public void removeById(final long id) {
         val query = new Query();
         query.addCriteria(Criteria.where("id").is(id));

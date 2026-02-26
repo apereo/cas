@@ -71,6 +71,7 @@ class RestfulSamlRegisteredServiceMetadataResolverTests extends BaseRestfulSamlM
             assertDoesNotThrow(() -> metadataManager.store(doc));
             assertDoesNotThrow(() -> metadataManager.removeById(doc.getId()));
             assertDoesNotThrow(() -> metadataManager.removeByName(doc.getName()));
+            assertDoesNotThrow(metadataManager::removeAll);
         }
 
         try (val webServer = new MockWebServer(8078,

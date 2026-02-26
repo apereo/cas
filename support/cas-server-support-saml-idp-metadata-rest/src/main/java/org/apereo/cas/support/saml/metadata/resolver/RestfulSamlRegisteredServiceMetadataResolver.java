@@ -199,6 +199,30 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     }
 
     @Override
+    public void removeAll() {
+        HttpResponse response = null;
+        try {
+            val rest = samlIdPProperties.getMetadata().getRest();
+            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE);
+            headers.putAll(rest.getHeaders());
+
+            val exec = HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.DELETE)
+                .url(rest.getUrl())
+                .maximumRetryAttempts(rest.getMaximumRetryAttempts())
+                .headers(headers)
+                .build();
+            response = HttpUtils.execute(exec);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    @Override
     public void removeByName(final String name) {
         HttpResponse response = null;
         try {

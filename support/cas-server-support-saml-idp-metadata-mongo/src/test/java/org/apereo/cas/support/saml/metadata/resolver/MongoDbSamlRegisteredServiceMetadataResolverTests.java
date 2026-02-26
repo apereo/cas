@@ -10,12 +10,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,14 +36,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("MongoDb")
 @EnabledIfListeningOnPort(port = 27017)
 class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlMetadataTests {
-    @Autowired
-    @Qualifier("mongoDbSamlMetadataResolverTemplate")
-    private MongoOperations mongoDbSamlIdPMetadataTemplate;
 
     @BeforeEach
     void setup() {
-        mongoDbSamlIdPMetadataTemplate.remove(new Query(), SamlMetadataDocument.class,
-            casProperties.getAuthn().getSamlIdp().getMetadata().getMongo().getCollection());
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        metadataManager.removeAll();
     }
 
     @Test
