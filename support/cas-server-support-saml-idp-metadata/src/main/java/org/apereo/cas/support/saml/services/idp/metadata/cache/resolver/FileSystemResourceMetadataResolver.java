@@ -23,6 +23,7 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.DefaultLocalDynamicSourceKeyGenerator;
 import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -33,7 +34,7 @@ import org.springframework.core.io.FileSystemResource;
  * @since 5.2.0
  */
 @Slf4j
-public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
+public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver implements DisposableBean {
     private static final Timer LOCAL_DYNAMIC_METADATA_RESOLVER_TIMER =
         new Timer("local-dynamic-metadata-resolver-timer", true) {
             @Override
@@ -80,6 +81,11 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
             val metadataLocations = org.springframework.util.StringUtils.commaDelimitedListToSet(metadataLocation);
             return metadataLocations.stream().anyMatch(FileSystemResourceMetadataResolver::isMetadataFileSystemResource);
         }, throwable -> false).get();
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        LOCAL_DYNAMIC_METADATA_RESOLVER_TIMER.cancel();
     }
 
     private static boolean isMetadataFileSystemResource(final String location) {
