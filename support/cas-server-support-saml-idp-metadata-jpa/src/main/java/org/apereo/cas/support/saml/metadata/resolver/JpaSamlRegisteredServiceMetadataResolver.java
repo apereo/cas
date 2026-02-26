@@ -69,6 +69,11 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     }
 
     @Override
+    public String getSourceId() {
+        return "jdbc://";
+    }
+
+    @Override
     public void saveOrUpdate(final SamlMetadataDocument document) {
         this.entityManager.merge(document);
     }

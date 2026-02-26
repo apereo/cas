@@ -56,7 +56,8 @@ class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlM
         val md = new SamlMetadataDocument();
         md.setName("SP");
         md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
-        resolver.saveOrUpdate(md);
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        val storedDocument = metadataManager.store(md);
 
         val service = new SamlRegisteredService();
         service.setName("SAML Service");
@@ -67,6 +68,12 @@ class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlM
         assertTrue(resolver.isAvailable(service));
         val resolvers = resolver.resolve(service);
         assertEquals(1, resolvers.size());
+
+        metadataManager.removeById(storedDocument.getId());
+        metadataManager.removeByName(storedDocument.getName());
+        assertTrue(metadataManager.findById(storedDocument.getId()).isEmpty());
+        assertTrue(metadataManager.findByName(storedDocument.getName()).isEmpty());
+        assertTrue(metadataManager.load().isEmpty());
     }
 
     @Test
@@ -75,7 +82,7 @@ class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlM
         val md = new SamlMetadataDocument();
         md.setName("SP");
         md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
-        resolver.saveOrUpdate(md);
+        resolver.getMetadataManager().orElseThrow().store(md);
 
         val service = new SamlRegisteredService();
         service.setName("SAML Service");
@@ -87,6 +94,5 @@ class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlM
     @Test
     void verifyResolverDoesNotSupport() {
         assertFalse(resolver.supports(null));
-
     }
 }

@@ -62,4 +62,9 @@ public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMet
         }
         return false;
     }
+
+    @Override
+    public String getSourceId() {
+        return "groovy://";
+    }
 }

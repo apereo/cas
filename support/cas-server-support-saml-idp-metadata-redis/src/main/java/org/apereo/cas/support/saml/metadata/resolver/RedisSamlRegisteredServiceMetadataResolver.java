@@ -64,7 +64,12 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
     @Override
     public boolean supports(final SamlRegisteredService service) {
         val metadataLocation = service != null ? service.getMetadataLocation() : StringUtils.EMPTY;
-        return metadataLocation.trim().startsWith("redis://");
+        return metadataLocation.trim().startsWith(getSourceId());
+    }
+
+    @Override
+    public String getSourceId() {
+        return "redis://";
     }
 
     @Override

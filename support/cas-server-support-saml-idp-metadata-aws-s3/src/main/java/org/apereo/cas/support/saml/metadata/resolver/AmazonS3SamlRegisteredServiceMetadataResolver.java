@@ -96,7 +96,7 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     public boolean supports(final SamlRegisteredService service) {
         try {
             val metadataLocation = service.getMetadataLocation();
-            return metadataLocation.trim().startsWith("awss3://");
+            return metadataLocation.trim().startsWith(getSourceId());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -117,6 +117,11 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
             .metadata(Map.of("signature", document.getSignature()))
             .build();
         s3Client.putObject(request, RequestBody.fromString(document.getValue()));
+    }
+
+    @Override
+    public String getSourceId() {
+        return "awss3://";
     }
 
     @Override

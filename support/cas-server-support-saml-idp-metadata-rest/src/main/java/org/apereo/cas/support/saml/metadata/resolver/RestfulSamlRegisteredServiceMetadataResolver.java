@@ -105,6 +105,11 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     }
 
     @Override
+    public String getSourceId() {
+        return "rest://";
+    }
+
+    @Override
     public void saveOrUpdate(final SamlMetadataDocument document) {
         HttpResponse response = null;
         try {
