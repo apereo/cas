@@ -3,7 +3,7 @@
   "serviceId" : "https://localhost:8444/cas/login\\?client_name=SAML",
   "name" : "SAML",
   "id" : 1,
-  "metadataLocation" : "./ci/tests/puppeteer/scenarios/delegated-login-saml2-idp-frontchannel-logout-cas2cas/saml-md/sp-metadata.xml",
+  "metadataLocation" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/saml-md/sp-metadata.xml",
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
   },

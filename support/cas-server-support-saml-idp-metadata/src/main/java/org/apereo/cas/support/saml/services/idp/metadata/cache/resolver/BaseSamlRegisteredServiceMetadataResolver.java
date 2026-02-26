@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.EntityRoleFilter;
@@ -114,7 +115,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
     }
 
     private static void addSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
-                                                             final SignatureValidationFilter signatureValidationFilter,
+                                                             @Nullable final SignatureValidationFilter signatureValidationFilter,
                                                              final List<MetadataFilter> metadataFilterList) throws Exception {
         if (signatureValidationFilter != null) {
             if (!signatureValidationFilter.isInitialized()) {
@@ -166,8 +167,8 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
         addSignatureValidationFilterIfNeeded(service, signatureValidationFilter, metadataFilterList);
     }
 
-    protected AbstractMetadataResolver buildMetadataResolverFrom(final SamlRegisteredService service,
-                                                                 final SamlMetadataDocument metadataDocument) {
+    protected @Nullable AbstractMetadataResolver buildMetadataResolverFrom(final SamlRegisteredService service,
+                                                                           final SamlMetadataDocument metadataDocument) {
         try {
             val desc = StringUtils.defaultIfBlank(service.getDescription(), service.getName());
             val metadataResource = ResourceUtils.buildInputStreamResourceFrom(metadataDocument.getDecodedValue(), desc);

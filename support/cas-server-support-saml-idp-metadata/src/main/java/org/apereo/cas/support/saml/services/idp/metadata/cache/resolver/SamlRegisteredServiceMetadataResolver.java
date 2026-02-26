@@ -6,6 +6,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.util.NamedObject;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.NotImplementedException;
+import org.jspecify.annotations.Nullable;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 /**
@@ -24,7 +25,7 @@ public interface SamlRegisteredServiceMetadataResolver extends NamedObject {
      * @return the list
      * @throws Exception the exception
      */
-    Collection<? extends MetadataResolver> resolve(SamlRegisteredService service,
+    Collection<? extends MetadataResolver> resolve(@Nullable SamlRegisteredService service,
                                                    CriteriaSet criteriaSet) throws Exception;
 
     /**
@@ -34,7 +35,7 @@ public interface SamlRegisteredServiceMetadataResolver extends NamedObject {
      * @return the collection
      * @throws Exception the exception
      */
-    default Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) throws Exception {
+    default Collection<? extends MetadataResolver> resolve(@Nullable final SamlRegisteredService service) throws Exception {
         return resolve(service, new CriteriaSet());
     }
 
@@ -44,7 +45,7 @@ public interface SamlRegisteredServiceMetadataResolver extends NamedObject {
      * @param service the service
      * @return true/false
      */
-    boolean supports(SamlRegisteredService service);
+    boolean supports(@Nullable SamlRegisteredService service);
 
     /**
      * Save or update metadata document in the source.
@@ -64,7 +65,7 @@ public interface SamlRegisteredServiceMetadataResolver extends NamedObject {
      * @param service the service
      * @return true /false
      */
-    default boolean isAvailable(final SamlRegisteredService service) {
+    default boolean isAvailable(@Nullable final SamlRegisteredService service) {
         return supports(service);
     }
 }
