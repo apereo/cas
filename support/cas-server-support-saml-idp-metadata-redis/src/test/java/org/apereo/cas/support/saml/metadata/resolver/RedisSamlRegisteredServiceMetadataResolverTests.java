@@ -31,10 +31,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class RedisSamlRegisteredServiceMetadataResolverTests extends BaseRedisSamlMetadataTests {
     @BeforeEach
     void setup() {
-        val key = RedisSamlRegisteredServiceMetadataResolver.CAS_PREFIX + '*';
-        try (val keys = redisSamlRegisteredServiceMetadataResolverTemplate.scan(key, 0L)) {
-            redisSamlRegisteredServiceMetadataResolverTemplate.delete(keys.collect(Collectors.toSet()));
-        }
+        val metadataManager = resolver.getMetadataManager().orElseThrow();
+        metadataManager.removeAll();
     }
 
     @Test

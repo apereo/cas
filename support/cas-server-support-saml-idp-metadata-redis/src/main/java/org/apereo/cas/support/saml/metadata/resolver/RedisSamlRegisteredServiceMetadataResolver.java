@@ -109,6 +109,13 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
     }
 
     @Override
+    public void removeAll() {
+        try (val results = redisTemplate.scan(getPatternRedisKey(), this.scanCount)) {
+            results.forEach(redisTemplate::delete);
+        }
+    }
+
+    @Override
     public Optional<SamlMetadataDocument> findByName(final String name) {
         val pattern = CAS_PREFIX + name + ":*";
         try (val results = redisTemplate.scan(pattern, this.scanCount)) {

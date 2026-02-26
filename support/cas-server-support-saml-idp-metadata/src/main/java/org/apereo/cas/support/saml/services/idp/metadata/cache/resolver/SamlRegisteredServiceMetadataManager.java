@@ -55,4 +55,9 @@ public interface SamlRegisteredServiceMetadataManager extends NamedObject {
      * @return the optional
      */
     Optional<SamlMetadataDocument> findById(long id);
+
+    /**
+     * Remove all.
+     */
+    void removeAll();
 }
