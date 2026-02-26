@@ -24,7 +24,7 @@ public interface SamlRegisteredServiceMetadataManager extends NamedObject {
      *
      * @param document the metadata document.
      */
-    SamlMetadataDocument store(final SamlMetadataDocument document);
+    SamlMetadataDocument store(SamlMetadataDocument document);
 
     /**
      * Remove by id.

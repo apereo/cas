@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.BaseRestfulSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -40,7 +41,7 @@ class RestfulSamlRegisteredServiceMetadataResolverTests extends BaseRestfulSamlM
         assertFalse(resolver.isAvailable(null));
 
         val doc = new SamlMetadataDocument();
-        doc.setId(1);
+        doc.setId(RandomUtils.nextLong());
         doc.setName("SAML Document");
         doc.setSignature(null);
         doc.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
@@ -52,11 +53,24 @@ class RestfulSamlRegisteredServiceMetadataResolverTests extends BaseRestfulSamlM
             assertTrue(resolver.isAvailable(service));
             val resolvers = resolver.resolve(service);
             assertEquals(1, resolvers.size());
+
+            val metadataManager = resolver.getMetadataManager().orElseThrow();
+            assertTrue(metadataManager.findById(doc.getId()).isPresent());
+            assertTrue(metadataManager.findByName(doc.getName()).isPresent());
+        }
+
+        try (val webServer = new MockWebServer(8078, MAPPER.writeValueAsString(List.of(doc)), HttpStatus.OK)) {
+            webServer.start();
+            val metadataManager = resolver.getMetadataManager().orElseThrow();
+            assertFalse(metadataManager.load().isEmpty());
         }
 
         try (val webServer = new MockWebServer(8078, HttpStatus.OK)) {
             webServer.start();
-            assertDoesNotThrow(() -> resolver.saveOrUpdate(doc));
+            val metadataManager = resolver.getMetadataManager().orElseThrow();
+            assertDoesNotThrow(() -> metadataManager.store(doc));
+            assertDoesNotThrow(() -> metadataManager.removeById(doc.getId()));
+            assertDoesNotThrow(() -> metadataManager.removeByName(doc.getName()));
         }
 
         try (val webServer = new MockWebServer(8078,
