@@ -103,4 +103,32 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
         }
         return false;
     }
+
+    @Override
+    public void saveOrUpdate(final SamlMetadataDocument document) {
+        HttpResponse response = null;
+        try {
+            val rest = samlIdPProperties.getMetadata().getRest();
+            val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE);
+            headers.putAll(rest.getHeaders());
+
+            val exec = HttpExecutionRequest.builder()
+                .basicAuthPassword(rest.getBasicAuthPassword())
+                .basicAuthUsername(rest.getBasicAuthUsername())
+                .method(HttpMethod.POST)
+                .url(rest.getUrl())
+                .maximumRetryAttempts(rest.getMaximumRetryAttempts())
+                .headers(headers)
+                .entity(MAPPER.writeValueAsString(document))
+                .build();
+            response = HttpUtils.execute(exec);
+            if (response != null) {
+                LOGGER.debug("Uploaded etadata document [{}]. Status: [{}]", document.getName(), response.getCode());
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
 }
