@@ -84,7 +84,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         LOCAL_DYNAMIC_METADATA_RESOLVER_TIMER.cancel();
     }
 
