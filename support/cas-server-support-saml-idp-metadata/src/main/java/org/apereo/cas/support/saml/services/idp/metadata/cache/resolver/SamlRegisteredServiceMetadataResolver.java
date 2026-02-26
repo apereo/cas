@@ -56,7 +56,6 @@ public interface SamlRegisteredServiceMetadataResolver extends NamedObject {
         throw new NotImplementedException("Operation saveOrUpdate is not implemented/supported");
     }
 
-
     /**
      * Is the resolver available and able to resolve metadata?
      * This method may contact the metadata source checking for
