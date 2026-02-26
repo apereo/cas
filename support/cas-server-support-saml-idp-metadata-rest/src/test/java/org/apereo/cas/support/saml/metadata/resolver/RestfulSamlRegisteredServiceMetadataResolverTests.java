@@ -54,6 +54,11 @@ class RestfulSamlRegisteredServiceMetadataResolverTests extends BaseRestfulSamlM
             assertEquals(1, resolvers.size());
         }
 
+        try (val webServer = new MockWebServer(8078, HttpStatus.OK)) {
+            webServer.start();
+            assertDoesNotThrow(() -> resolver.saveOrUpdate(doc));
+        }
+
         try (val webServer = new MockWebServer(8078,
             new ByteArrayResource("@$@".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
